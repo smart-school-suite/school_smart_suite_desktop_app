@@ -1,53 +1,47 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
-
+import { Icon } from "@iconify/react";
+import Sidebar from "./components/Sidebar";
+import Navbar from "./components/Navbar";
+import Table from "./components/Tables";
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
-
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
-
   return (
-    <div className="container">
-      <h1>Welcome to Tauri!</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <>
+      <div className="container">
+        <div className="row">
+          <Sidebar />
+          <div className="col-lg-10">
+            <div className="container">
+              <Navbar />
+              <div className="d-flex flex-row align-items-center mt-4 w-100">
+                <div className="d-block">
+                  <p className="font-size-xs my-0">Total Number of students</p>
+                  <h1 className="fw-bold my-0">12,000</h1>
+                </div>
+                <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+                  <div className="search-group">
+                    <span>
+                      <Icon
+                        icon="material-symbols:search"
+                        className="fs-5"
+                        style={{ color: "#888" }}
+                      />
+                    </span>
+                    <input type="search" placeholder="Search for anything" />
+                  </div>
+                  <button className="filter-btn border-none justify-content-between px-2 width-10 search-btn-color d-flex flex-row align-items-center rounded-3">
+                    <span className="font-size-sm fw-medium">Filter</span>
+                    <Icon icon="iconoir:filter" />
+                  </button>
+                  <button className="action-btn border-none justify-content-center px-2 fw-medium d-flex flex-row rounded-3 align-items-center green-bg text-white font-size-sm ">
+                    Create Student
+                  </button>
+                </div>
+              </div>
+             <Table />
+            </div>
+          </div>
+        </div>
       </div>
-
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-
-      <p>{greetMsg}</p>
-    </div>
+    </>
   );
 }
-
 export default App;
