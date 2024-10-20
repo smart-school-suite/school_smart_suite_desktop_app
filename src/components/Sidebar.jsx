@@ -105,7 +105,7 @@ function Sidebar(){
                       <span>
                         <Icon icon="streamline:customer-support-1" />
                       </span>
-                      <p>Customer Support</p>
+                      <p>Customer Supportsss</p>
                     </div>
                   </div>
                   <div className="nav-item-box-inactive">
