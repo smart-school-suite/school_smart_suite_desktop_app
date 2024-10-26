@@ -75,6 +75,8 @@
     padding-inline: 0.5rem;
     border-left: 3px solid var(--primary-color);
     color: var(--primary-color);
+    transition: all 0.42s;
+    cursor: pointer;
 }
 .nav-item-box-inactive{
     display: flex;
@@ -85,6 +87,8 @@
     font-size: var(--font-size-sm);
     padding-inline: 0.5rem;
     color: #888;
+    transition: all 0.42s;
+    cursor: pointer;
 }
 .nav-item{
     display: flex;
@@ -161,11 +165,6 @@
     align-items: center;
     font-size: var(--font-size-lg);
 }
-.svg-card{
-    width: 22.625rem;
-    height: 10.188rem;
-    clip-path: path('M294 1H16C7.71573 1 1 7.71573 1 16V149C1 157.284 7.71572 164 16 164H348C356.284 164 363 157.284 363 149V72.2116C363 62.4531 353.421 54.933 343.949 52.5834C337.767 51.0496 330.966 47.839 325 41.5C317.303 33.3219 313.309 23.6396 311.236 15.7928C309.12 7.78331 302.284 1 294 1Z');
-}
 .card-badge{
     width: 2.5rem;
     height: 2.5rem;
@@ -201,40 +200,130 @@
     
 }
 .action-btn{
-    width: 15%;
+    padding: 0.7rem;
 }
-.table-container{
+aside{
+    height: 100dvh;
+}
+.subbox-nav{
+    font-size: var(--font-size-sm);
+    width: 10rem;
+    position: absolute;
+    top: 1.9rem;
+    left: 2.5rem;
+    color: #888;
+}
+.box-nav{
+    height: 2.5rem;
+    border-bottom: 2.5px solid #f9f9f9;
+    border-radius: 0 0 0 15px;
+    width: 2rem;
+    position: relative;
+}
+.subbox-container-nav {
+    max-height: 40dvh; /* Set a maximum height for the parent */
+    height: auto; /* Allows it to grow if needed */
+    margin-bottom: 0.9rem;
+    transition: all 0.3s;
+}
+.subbox-container-nav-inactive{
     height: auto;
-    max-height: 70dvh;
-    overflow: hidden;
+    max-height: 0; /* Initially hidden */
+    opacity: 0;    /* Initially hidden */
+    overflow: hidden; /* Prevent content overflow while hidden */
+    border-left: 2.5px solid #f9f9f9;
+    margin-bottom: 0.2rem;
+    transition: max-height 0.3s ease-out, opacity 0.4s ease-out;
 }
-.table-head{
-    background-color: var(--acent-color-six);
-    border-radius: 1rem;
-    color: #555;
-    padding-inline: 5rem;
+.drop-down-container {
+    height: auto; /* Allow to grow based on content */
+    max-height: 80%; /* Set to grow up to 80% of parent */
+    border-left: 2.5px solid #f9f9f9;
+    transition: all 0.3s;
+}
+.rotate-icon{
+    transform: rotate(180deg);
+    transition: all 0.3s;
+}
+.rotate-reset{
+    transform: rotate(90deg);
+    transition: all 0.3s;
+}
+.text-decoration-none{
+    text-decoration: none;
+}
+.badge-settings{
+    width: 3rem;
     height: 3rem;
+    border-radius: 50%;
+    background-color: var(--acent-color-five);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--font-size-lg);
 }
-.table-head-form-check input{
-    width: 1.1rem;
-    height: 1.1rem;
+.settings-green-pill{
+    width: 5px;
+    height: 5px;
+    border-radius: 5px;
+    background-color: #5CB85C;
 }
-.table-head th{
-    font-weight: 400;
-    font-size: var(--font-size-sm);
-    
+.protrait{
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
 }
-.table-head tr{
-    margin-left: 4rem;
+.protrait img{
+    width: 100%;
+    height: 3.5rem;
+    border-radius: 50%;
 }
-td input{
-    width: 1.1rem !important;
-    height: 1.1rem !important;
+.vertical-line{
+    height: 4rem;
+    width: 1px;
+    background-color: #999;
 }
-tbody tr{
-    border-bottom: 0.01rem solid #cecece;
-    height: 2.8rem;
-    font-size: var(--font-size-sm);
-    color: #555;
+.top-section{
+    background: linear-gradient(-225deg, #5D9FFF 0%, #B8DCFF 48%, #6BBBFF 100%);
+    height: 40%;
+}
+.profile-section{
+    height: 48dvh;
+}
+.profile-img{
+    height: 9.5rem;
+    width: 9.5rem;
+    border-radius: 50%;
+    border: 4px solid var(--acent-color-five);
+    background-color: var(--acent-color-one-darker);
+}
+.profile-img img{
+    object-fit: cover;
+    width: 100%;
+    height: 8.5rem;
+    border-radius: 50%;
 
+}
+.profile-picture-group{
+    bottom: -5rem;
+    position: relative;
+}
+.divider-pill{
+    width: 7px;
+    height: 7px;
+    border-radius: 7px;
+    background-color: var(--primary-color);
+}
+.pointer-cursor{
+    cursor: pointer;
+}
+.security-badge{
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--acent-color-six);
+    font-size: var(--font-size-lg);
 }

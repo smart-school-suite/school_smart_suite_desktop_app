@@ -1,139 +1,75 @@
+import { useEffect, useState } from "react";
+import axios from "../axios/axios";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-// Theme
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
-// React Grid Logic
-import '@ag-grid-community/styles/ag-grid.css';
-// Core CSS
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { useState, useMemo } from 'react';
+import clean_array_data from "../utils/functions";
 import { themeQuartz } from '@ag-grid-community/theming';
-
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
-const gridDiv = document.querySelector('#myGrid');
-
-const rowSelection = {
-    mode: 'multiRow',
-    headerCheckbox: false,
-};
-
-const myTheme = themeQuartz
+function Table() {
+    const KEY = '29e494f1837c47baa9e19c559';
+    const [data, setData] = useState([]);
+    const [colDefs, setColDefs] = useState([
+        { field: 'name', filter: true, floatingFilter: true },
+        { field: 'phone_one', filter: true, floatingFilter: true },
+        { field: 'phone_two', filter: true, floatingFilter: true },
+        { field: 'gender', filter: true, floatingFilter: true },
+        { field: 'fee_status', filter: true, floatingFilter: true },
+        { field: 'total_fee_debt', filter: true, floatingFilter: true }
+    ]);
+    
+    const defaultColDef = {
+        flex: 1,
+    };
+    
+    const rowSelection = {
+        mode: 'multiRow',
+        headerCheckbox: false,
+    };
+    
+    const myTheme = themeQuartz
 	.withParams({
-        backgroundColor: "#FFFFFF",
-        browserColorScheme: "dark",
-        chromeBackgroundColor: {
-            ref: "foregroundColor",
-            mix: 0.07,
-            onto: "backgroundColor"
+        browserColorScheme: "light",
+        headerFontSize: 14,
+        fontFamily: {
+            googleFont: "Poppins"
         },
-        foregroundColor: "#7F7F7F",
-        headerBackgroundColor: "#FAFAFA",
-        headerFontSize: 14
     });
 
-// Create new GridExample component
-const Table = () => {
-    const [rowData, setRowData] = useState([
-        { make: 'Tesla', model: 'Model Y', price: 64950, electric: true, month: 'June' },
-        { make: 'Ford', model: 'F-Series', price: 33850, electric: false, month: 'October' },
-        { make: 'Toyota', model: 'Corolla', price: 29600, electric: false, month: 'August' },
-        { make: 'Mercedes', model: 'EQA', price: 48890, electric: true, month: 'February' },
-        { make: 'Fiat', model: '500', price: 15774, electric: false, month: 'January' },
-        { make: 'Nissan', model: 'Juke', price: 20675, electric: false, month: 'March' },
-        { make: 'Vauxhall', model: 'Corsa', price: 18460, electric: false, month: 'July' },
-        { make: 'Volvo', model: 'EX30', price: 33795, electric: true, month: 'September' },
-        { make: 'Mercedes', model: 'Maybach', price: 175720, electric: false, month: 'December' },
-        { make: 'Vauxhall', model: 'Astra', price: 25795, electric: false, month: 'April' },
-        { make: 'Fiat', model: 'Panda', price: 13724, electric: false, month: 'November' },
-        { make: 'Jaguar', model: 'I-PACE', price: 69425, electric: true, month: 'May' },
-        { make: 'Tesla', model: 'Model Y', price: 64950, electric: true, month: 'June' },
-        { make: 'Ford', model: 'F-Series', price: 33850, electric: false, month: 'October' },
-        { make: 'Toyota', model: 'Corolla', price: 29600, electric: false, month: 'August' },
-        { make: 'Mercedes', model: 'EQA', price: 48890, electric: true, month: 'February' },
-        { make: 'Fiat', model: '500', price: 15774, electric: false, month: 'January' },
-        { make: 'Nissan', model: 'Juke', price: 20675, electric: false, month: 'March' },
-        { make: 'Vauxhall', model: 'Corsa', price: 18460, electric: false, month: 'July' },
-        { make: 'Volvo', model: 'EX30', price: 33795, electric: true, month: 'September' },
-        { make: 'Mercedes', model: 'Maybach', price: 175720, electric: false, month: 'December' },
-        { make: 'Vauxhall', model: 'Astra', price: 25795, electric: false, month: 'April' },
-        { make: 'Fiat', model: 'Panda', price: 13724, electric: false, month: 'November' },
-        { make: 'Jaguar', model: 'I-PACE', price: 69425, electric: true, month: 'May' },
-        { make: 'Tesla', model: 'Model Y', price: 64950, electric: true, month: 'June' },
-        { make: 'Ford', model: 'F-Series', price: 33850, electric: false, month: 'October' },
-        { make: 'Toyota', model: 'Corolla', price: 29600, electric: false, month: 'August' },
-        { make: 'Mercedes', model: 'EQA', price: 48890, electric: true, month: 'February' },
-        { make: 'Fiat', model: '500', price: 15774, electric: false, month: 'January' },
-        { make: 'Nissan', model: 'Juke', price: 20675, electric: false, month: 'March' },
-        { make: 'Vauxhall', model: 'Corsa', price: 18460, electric: false, month: 'July' },
-        { make: 'Volvo', model: 'EX30', price: 33795, electric: true, month: 'September' },
-        { make: 'Mercedes', model: 'Maybach', price: 175720, electric: false, month: 'December' },
-        { make: 'Vauxhall', model: 'Astra', price: 25795, electric: false, month: 'April' },
-        { make: 'Fiat', model: 'Panda', price: 13724, electric: false, month: 'November' },
-        { make: 'Jaguar', model: 'I-PACE', price: 69425, electric: true, month: 'May' },
-    ]);
-
-    const [columnDefs, setColumnDefs] = useState([
-        {
-            field: 'make',
-            editable: true,
-            cellEditor: 'agSelectCellEditor',
-            cellEditorParams: {
-                values: ['Tesla', 'Ford', 'Toyota', 'Mercedes', 'Fiat', 'Nissan', 'Vauxhall', 'Volvo', 'Jaguar'],
-            },
-        },
-        { field: 'model' },
-        { field: 'price', filter: 'agNumberColumnFilter' },
-        { field: 'electric' },
-        { field: "names"},
-        {
-            field: 'month',
-            comparator: (valueA, valueB) => {
-                const months = [
-                    'January',
-                    'February',
-                    'March',
-                    'April',
-                    'May',
-                    'June',
-                    'July',
-                    'August',
-                    'September',
-                    'October',
-                    'November',
-                    'December',
-                ];
-                const idxA = months.indexOf(valueA);
-                const idxB = months.indexOf(valueB);
-                return idxA - idxB;
-            },
-        },
-    ]);
-
-    const defaultColDef = useMemo(() => {
-        return {
-            filter: 'agTextColumnFilter',
-            floatingFilter: true,
+    useEffect(() => {
+        const fetch_student = async () => {
+            try {
+                const response = await axios.get('api/student/get-students', {
+                    headers: {
+                        SCHOOL_BRANCH_KEY: KEY
+                    }
+                });
+                setData(response.data.students);
+            } catch (e) {
+                console.log("something went wrong");
+            }
         };
+        fetch_student();
     }, []);
-    // Container: Defines the grid's theme & dimensions.
+
+    ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
     return (
         <div
-            className="ag-theme-quartz"
-            
-            style={{ width: '100%', height: '75dvh', borderRadius:'25px !important' }}
-            theme={myTheme}
+             // Use the default ag-theme-quartz class
+            style={{ width: '100%', height: '78vh' }} // Use vh instead of dvh
         >
             <AgGridReact
-                rowData={rowData}
-                columnDefs={columnDefs}
+                rowData={clean_array_data(data, ['name', 'phone_one', 'phone_two', 'gender', 'fee_status', 'total_fee_debt'])}
+                columnDefs={colDefs}
                 defaultColDef={defaultColDef}
-                rowSelection={rowSelection}
                 pagination={true}
-                paginationPageSize={10}
-                paginationPageSizeSelector={[10, 25, 50]}
+                paginationPageSize={50}
+                paginationPageSizeSelector={[50, 25, 75]}
+                rowSelection={rowSelection}
+                theme={myTheme}
             />
         </div>
     );
-};
+}
 
 export default Table;

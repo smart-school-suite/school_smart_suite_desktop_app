@@ -18,7 +18,7 @@
     --acent-color-four: #9DBFDC;
     --acent-color-five: #fff;
     --acent-color-six: #FAFAFA;
-    --acent-color-seven: #D5D5D5;
+    --acent-color-seven: #888;
     --acent-color-eight: transparent;
     --acent-color-nine: #BAE7FD;
     --acent-color-ten: #5CB85C;
@@ -263,4 +263,8 @@
 body{
     font-family: 'Poppins', sans-serif;
     background-color: #f9f9f9;
+}
+
+.transition-four-sec{
+    transition: all 0.4s;
 }
