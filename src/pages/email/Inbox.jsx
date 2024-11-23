@@ -1,118 +1,12 @@
+import CustomTooltip from "../../components/Tooltip";
 import { Icon } from "@iconify/react";
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-function Emails(){
+import Emailsidebar from "../../components/Emailsidebar";
+function Inbox(){
     return(
         <>
-        <div>
+              <div>
             <div className="row">
-                <div className="col-lg-3">
-                    <div className="card border-none pt-3 pb-3 height-100">
-                        <div className="d-flex flex-row mb-2 align-items-center color-primary px-2 w-100 justify-content-start gap-3">
-                            <span><Icon icon="clarity:email-line" className="fs-4"/></span>
-                        <h5 className=" fw-bold my-0">Emails</h5>
-                        </div>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1 primary-background-50 color-primary mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 fw-medium font-size-sm">
-                          <span className="fs-6"><Icon icon="solar:inbox-broken" /></span>
-                          <span>Inbox</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm fw-medium">230</span>
-                        </div>
-                      </div>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1  mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 gainsboro-color font-size-sm">
-                          <span className="fs-6"><Icon icon="material-symbols:draft-outline" /></span>
-                          <span>Draft</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm">230</span>
-                        </div>
-                      </div>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1  mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 gainsboro-color font-size-sm">
-                          <span className="fs-6"><Icon icon="hugeicons:sent" /></span>
-                          <span>Sent</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm">230</span>
-                        </div>
-                      </div>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1  mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 gainsboro-color font-size-sm">
-                          <span className="fs-6"><Icon icon="ion:trash-bin-outline" /></span>
-                          <span>Junk</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm">230</span>
-                        </div>
-                      </div>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1  mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 gainsboro-color font-size-sm">
-                          <span className="fs-6"><Icon icon="tabler:trash" /></span>
-                          <span>Trash</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm">230</span>
-                        </div>
-                      </div>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1  mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 gainsboro-color font-size-sm">
-                          <span className="fs-6"><Icon icon="solar:archive-broken" /></span>
-                          <span>Archive</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm">230</span>
-                        </div>
-                      </div>
-                      <hr className="mx-3"/>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1  mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 gainsboro-color font-size-sm">
-                          <span className="fs-6"><Icon icon="uit:social-distancing" /></span>
-                          <span>Socials</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm">230</span>
-                        </div>
-                      </div>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1  mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 gainsboro-color font-size-sm">
-                          <span className="fs-6"><Icon icon="solar:smartphone-update-broken" /></span>
-                          <span>Updates</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm">230</span>
-                        </div>
-                      </div>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1  mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 gainsboro-color font-size-sm">
-                          <span className="fs-6"><Icon icon="healthicons:forum-outline" /></span>
-                          <span>Forums</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm">230</span>
-                        </div>
-                      </div>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1  mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 gainsboro-color font-size-sm">
-                          <span className="fs-6"><Icon icon="ic:outline-shopping-bag" /></span>
-                          <span>Shopping</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm">230</span>
-                        </div>
-                      </div>
-                      <div className="d-flex flex-row align-items-center justify-content-between my-1  mx-1 py-2 rounded-2 font">
-                        <div className="d-flex align-items-center gap-3 flex-row ps-3 gainsboro-color font-size-sm">
-                          <span className="fs-6"><Icon icon="hugeicons:promotion" /></span>
-                          <span>Promotion</span>
-                        </div>
-                        <div className="pe-3">
-                            <span className="font-size-sm">230</span>
-                        </div>
-                      </div>
-                    </div>
-                </div>
+                <Emailsidebar />
                 <div className="col-lg-4">
                     <div className="card border-none px-2 pt-3 pb-2 height-100">
                        <div className="d-flex flex-row justify-content-between align-items-center border-bottom pb-1">
@@ -131,40 +25,40 @@ function Emails(){
                             <p className="my-0 fw-semibold font-size-xs gainsboro-color">About 3 Months Ago</p>
                         </div>
                         <div className="d-flex flex-row align-items-center my-2 justify-content-between">
-                            <p className="my-0 fw-semibold font-size-sm">About 3 Months Ago</p>
+                            <p className="my-0 fw-semibold font-size-sm">Web development intern</p>
                         </div>
                         <p className="font-size-sm gainsboro-color">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Blanditiis, neque.
                              Esse laudantium sequi, sapiente....</p>
                        </div>
-                       <div className="card my-1 rounded-3 p-2">
+                       <div className="card my-1 rounded-3 p-2 hoverable-primary-color-100">
                         <div className="d-flex flex-row align-items-center justify-content-between">
                             <p className="my-0 fw-bold font-size-sm">William Smith</p>
                             <p className="my-0 fw-semibold font-size-xs gainsboro-color">About 3 Months Ago</p>
                         </div>
                         <div className="d-flex flex-row align-items-center my-2 justify-content-between">
-                            <p className="my-0 fw-semibold font-size-sm">About 3 Months Ago</p>
+                            <p className="my-0 fw-semibold font-size-sm">Web development intern</p>
                         </div>
                         <p className="font-size-sm gainsboro-color">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Blanditiis, neque.
                              Esse laudantium sequi, sapiente....</p>
                        </div>
-                       <div className="card my-1 rounded-3 p-2">
+                       <div className="card my-1 rounded-3 p-2 hoverable-primary-color-100">
                         <div className="d-flex flex-row align-items-center justify-content-between">
                             <p className="my-0 fw-bold font-size-sm">William Smith</p>
                             <p className="my-0 fw-semibold font-size-xs gainsboro-color">About 3 Months Ago</p>
                         </div>
                         <div className="d-flex flex-row align-items-center my-2 justify-content-between">
-                            <p className="my-0 fw-semibold font-size-sm">About 3 Months Ago</p>
+                            <p className="my-0 fw-semibold font-size-sm">Web development intern</p>
                         </div>
                         <p className="font-size-sm gainsboro-color">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Blanditiis, neque.
                              Esse laudantium sequi, sapiente....</p>
                        </div>
-                       <div className="card my-1 rounded-3 p-2">
+                       <div className="card my-1 rounded-3 p-2 hoverable-primary-color-100">
                         <div className="d-flex flex-row align-items-center justify-content-between">
                             <p className="my-0 fw-bold font-size-sm">William Smith</p>
                             <p className="my-0 fw-semibold font-size-xs gainsboro-color">About 3 Months Ago</p>
                         </div>
                         <div className="d-flex flex-row align-items-center my-2 justify-content-between">
-                            <p className="my-0 fw-semibold font-size-sm">About 3 Months Ago</p>
+                            <p className="my-0 fw-semibold font-size-sm">Web development intern</p>
                         </div>
                         <p className="font-size-sm gainsboro-color">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Blanditiis, neque.
                              Esse laudantium sequi, sapiente....</p>
@@ -175,16 +69,30 @@ function Emails(){
                     <div className="card d-flex flex-column border-none pt-3 pb-2 height-100 px-1">
                          <div className="d-flex flex-row justify-content-between px-2 gainsboro-color align-items-center">
                          <div className="d-flex flex-row align-items-center gap-4 border-right">
+                         <CustomTooltip placement="bottom" tooltipText="Archive Email"> 
                          <span className="fs-6"><Icon icon="solar:archive-broken" /></span>
-                         <span className="fs-6" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete Message"><Icon icon="ion:trash-bin-outline" /></span>
+                         </CustomTooltip>
+                         <CustomTooltip placement="bottom" tooltipText="Move Email To Junk">
+                         <span className="fs-6"><Icon icon="ion:trash-bin-outline" /></span>
+                         </CustomTooltip>
+                         <CustomTooltip placement="bottom" tooltipText="Move email to Trash">
                          <span className="fs-6"><Icon icon="tabler:trash" /></span>
+                         </CustomTooltip>
                          <div className="divider-sm"></div>
+                         <CustomTooltip placement="bottom" tooltipText="Snooze">
                          <span className="fs-6"><Icon  icon="weui:time-outlined" /></span>
+                         </CustomTooltip>
                          </div>
                          <div className="d-flex align-items-center gap-4">
+                            <CustomTooltip placement="bottom" tooltipText="reply">
                             <span className="fs-6"><Icon icon="proicons:arrow-reply" /></span>
+                            </CustomTooltip>
+                            <CustomTooltip placement="bottom" tooltipText="Reply All">
                             <span className="fs-6"><Icon icon="streamline:mail-send-reply-all-email-message-reply-all-actions-action-arrow" /></span>
+                            </CustomTooltip>
+                            <CustomTooltip placement="bottom" tooltipText="forward">
                             <span className="fs-6"><Icon icon="proicons:arrow-foward" /></span>
+                            </CustomTooltip>
                             <div className="divider-sm"></div>
                             <span><Icon icon="charm:menu-kebab" /></span>
                          </div>
@@ -243,4 +151,4 @@ function Emails(){
         </>
     )
 }
-export default Emails;
+export default Inbox;

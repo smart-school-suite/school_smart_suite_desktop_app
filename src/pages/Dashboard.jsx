@@ -1,21 +1,31 @@
-import { Icon } from "@iconify/react";
 import Navbar from "../components/Navbar";
-import Greenbutton from "../components/Buttons";
+import Progress from "../components/Progress";
 function Dashboard(){
+    const navBarOptions = {
+         route_data: [
+             {
+                 lable:"Financial Analysis",
+                 icon:"fluent-mdl2:financial",
+                 route:"/"
+             },
+             {
+                lable:"Operational Analysis",
+                route:"/operational-analysis",
+                icon:"ep:operation"
+             },
+             {
+                lable:"Academic Analysis",
+                icon:"heroicons:academic-cap",
+                route:"/academic-analysis"
+             }
+         ],
+    }
     return(
         <>
-        <Navbar />
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-                <div className="d-block">
-                  <p className="font-size-xs my-0">Total Number of students</p>
-                  <h1 className="fw-bold my-0">12,000</h1>
-                </div>
-                <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-                  <Greenbutton 
-                    lable="Create Admin"
-                  />
-                </div>
-              </div>
+        <Navbar 
+          options={navBarOptions}
+        />
+        <Progress />
         </>
     )
 }

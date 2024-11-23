@@ -6,7 +6,7 @@ function Customersupport(){
         <div className="card border-none rounded-3 w-100 mt-1 shadow-sm py-2 px-2">
             <div className="d-flex flex-row gap-3">
                 <div className="cs-avatar">
-                    <img src="./protrait.jpg" alt="" />
+                    <img src="./images/protrait-one.jpg" alt="" />
                 </div>
                 <div className="d-block">
                     <p className="my-0 fw-medium">Flora Ondricka</p>

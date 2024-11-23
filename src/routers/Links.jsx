@@ -1,66 +1,752 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { Suspense } from "react";
 import Layout from "../layouts/layout";
-import Dashboard from "../pages/Dashboard";
-import Schooladmin from "../pages/Schooladmin";
-import Exams from "../pages/Exams";
-import Students from "../pages/Students";
-import Examresits from "../pages/Examsresit";
-import Scores from "../pages/Scores";
-import Timetable from "../pages/Timetable";
-import Schoolexpenses from "../pages/Schoolexpenses";
-import Transferredstudents from "../pages/Transferredstudents";
-import Transferrequest from "../pages/Transferrequest";
-import Events from "../pages/Events";
-import Messages from "../pages/Messages";
-import Annoucements from "../pages/Annoucements";
-import Emails from "../pages/Emails";
-import Customersupport from "../pages/Customersupport";
-import Departments from "../pages/Departments";
-import Specialties from "../pages/Specialties";
-import Teachers from "../pages/Teachers";
-import Courses from "../pages/Courses";
-import Account from "../pages/settings/Account";
-import Display from "../pages/settings/Display";
-import Generalsettings from "../pages/settings/Generalsettings";
-import New from "../pages/settings/New";
-import Profile from "../pages/settings/Profile";
-import Security from "../pages/settings/Security";
-import Help from "../pages/settings/Help";
+import Pageloaderspinner from "../components/Spinners";
+const SchoolTimeTable = React.lazy(() => import("../pages/schoolTimeTable"));
+const Dashboard = React.lazy(() => import("../pages/Dashboard"));
+const Schooladmin = React.lazy(() => import("../pages/Schooladmin"));
+const Exams = React.lazy(() => import("../pages/Exams"));
+const Students = React.lazy(() => import("../pages/Students"));
+const Examresits = React.lazy(() => import("../pages/Examsresit"));
+const Scores = React.lazy(() => import("../pages/Scores"));
+const Timetable = React.lazy(() => import("../pages/Timetable"));
+const Schoolexpenses = React.lazy(() => import("../pages/Schoolexpenses"));
+const Transferredstudents = React.lazy(() =>
+  import("../pages/Transferredstudents")
+);
+const Transferrequest = React.lazy(() => import("../pages/Transferrequest"));
+const Events = React.lazy(() => import("../pages/Events"));
+const Messages = React.lazy(() => import("../pages/Messages"));
+const Annoucements = React.lazy(() => import("../pages/Annoucements"));
+const Customersupport = React.lazy(() => import("../pages/Customersupport"));
+const Departments = React.lazy(() => import("../pages/Departments"));
+const Specialties = React.lazy(() => import("../pages/Specialties"));
+const Teachers = React.lazy(() => import("../pages/Teachers"));
+const Courses = React.lazy(() => import("../pages/Courses"));
+const Account = React.lazy(() => import("../pages/settings/Account"));
+const Display = React.lazy(() => import("../pages/settings/Display"));
+const Generalsettings = React.lazy(() =>
+  import("../pages/settings/Generalsettings")
+);
+const New = React.lazy(() => import("../pages/settings/New"));
+const Profile = React.lazy(() => import("../pages/settings/Profile"));
+const Security = React.lazy(() => import("../pages/settings/Security"));
+const Help = React.lazy(() => import("../pages/settings/Help"));
+const Inbox = React.lazy(() => import("../pages/email/Inbox"));
+const Junk = React.lazy(() => import("../pages/email/Junk"));
+const Archieve = React.lazy(() => import("../pages/email/Archieve"));
+const Draft = React.lazy(() => import("../pages/email/Draft"));
+const Forums = React.lazy(() => import("../pages/email/Forums"));
+const Promotion = React.lazy(() => import("../pages/email/Promotion"));
+const Sent = React.lazy(() => import("../pages/email/Sent"));
+const Shopping = React.lazy(() => import("../pages/email/Shopping"));
+const Socials = React.lazy(() => import("../pages/email/Socials"));
+const Trash = React.lazy(() => import("../pages/email/Trash"));
+const Updates = React.lazy(() => import("../pages/email/Updates"));
+const Composeemail = React.lazy(() => import("../pages/email/Composeemail"));
+const Createannoucement = React.lazy(() =>
+  import("../pages/forms/Createannouncement")
+);
+const Createcourse = React.lazy(() => import("../pages/forms/Createcourse"));
+const Createdepartment = React.lazy(() =>
+  import("../pages/forms/Createdepartment")
+);
+const Createexam = React.lazy(() => import("../pages/forms/Createexam"));
+const Createschooladmin = React.lazy(() =>
+  import("../pages/forms/Createschooladmin")
+);
+const Createspecialties = React.lazy(() =>
+  import("../pages/forms/Createspecialties")
+);
+const Createstudent = React.lazy(() => import("../pages/forms/Createstudent"));
+const Createtimetable = React.lazy(() =>
+  import("../pages/forms/Createtimetable")
+);
+const Createexpenses = React.lazy(() =>
+  import("../pages/forms/Createexpenses")
+);
+const Parentdetails = React.lazy(() =>
+  import("../pages/details/Parentdetails")
+);
+const Schooladmindetails = React.lazy(() =>
+  import("../pages/details/Schooladmindetails")
+);
+const Createteacher = React.lazy(() => import("../pages/forms/Createteacher"));
+const Studentdetails = React.lazy(() =>
+  import("../pages/details/Studentdetails")
+);
+const Teacherdetails = React.lazy(() =>
+  import("../pages/details/Teacherdetails")
+);
+const Feepayment = React.lazy(() => import("../pages/Feepayment"));
+const Gradesconfiguration = React.lazy(() =>
+  import("../pages/Gradesconfiguration")
+);
+const Createfeepayment = React.lazy(() =>
+  import("../pages/forms/Createfeepayment")
+);
+const Parents = React.lazy(() => import("../pages/Parents"));
+const Createstudentscores = React.lazy(() =>
+  import("../pages/forms/Createstudentscores")
+);
+const AcademicAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Academic/AcademicAnalysis")
+);
+const OperationalAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Operational/OperationalAnalysis")
+);
+const CoursesAcademicAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Academic/coursesAcademicAnalysis")
+);
+const DepartmentAcademicAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Academic/departmentAcademicAnalysis")
+);
+const ExamAcademicAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Academic/examAcademicAnalysis")
+);
+const SpecialtiesAcademicAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Academic/specialtyAcademicAnalysis")
+);
+const StudentAcademicAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Academic/studentAcademicAnalysis")
+);
+const TeachersAcademicAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Academic/teachersAcademicAnalysis")
+);
+const CoursesFinancialAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Financial/coursesFinancialAnalysis")
+);
+const DepartmentFinancialAnalysis = React.lazy(() =>
+  import(
+    "../pages/statistics and analysis/Financial/departmentFinancialAnalysis"
+  )
+);
+const FeePaymentFinancialAnalysis = React.lazy(() =>
+  import(
+    "../pages/statistics and analysis/Financial/feePaymentFinancialAnalysis"
+  )
+);
+const SchoolExpensesFinancialAnalysis = React.lazy(() =>
+  import(
+    "../pages/statistics and analysis/Financial/schoolExpensesFinancialAnalysis"
+  )
+);
+const SpecialtiesFinancialAnalysis = React.lazy(() =>
+  import(
+    "../pages/statistics and analysis/Financial/specialtyFinancialAnalysis"
+  )
+);
+const StudentFinancialAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Financial/studentFinancialAnalysis")
+);
+const TeacherFinancialAnalysis = React.lazy(() =>
+  import("../pages/statistics and analysis/Financial/teacherFinancialAnalysis")
+);
+const StudentBatches = React.lazy(() => import("../pages/studentBatches"));
 function Links() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route element={<Layout />}>
-                   <Route path="/settings/account" element={<Account />}></Route>
-                   <Route path="/settings/general-settings" element={<Generalsettings />}></Route>
-                   <Route path="/settings/display" element={<Display />}></Route>
-                   <Route path="/settings/updates" element={<New />}></Route>
-                   <Route path="/settings/profile" element={<Profile />}></Route>
-                   <Route path="/settings/security" element={<Security />}></Route>
-                   <Route path="/settings/help" element={<Help />}></Route>
-                    <Route path="/customer-support" element={<Customersupport />}></Route>
-                    <Route index element={<Dashboard />} />
-                    <Route path="/school-admins" element={<Schooladmin />}></Route>
-                    <Route path="/exams" element={<Exams />}></Route>
-                    <Route path="/students" element={<Students />}></Route>
-                    <Route path="/exam-resits" element={<Examresits />}></Route>
-                    <Route path="/scores" element={<Scores />}></Route>
-                    <Route path="/time-table" element={<Timetable />}></Route>
-                    <Route path="/school-expenses" element={<Schoolexpenses />}></Route>
-                    <Route path="/transfer-request" element={<Transferrequest />}></Route>
-                    <Route path="/transferred-students" element={<Transferredstudents />}></Route>
-                    <Route path="/events" element={<Events />}></Route>
-                    <Route path="/emails" element={<Emails />}></Route>
-                    <Route path="/annoucements" element={<Annoucements />}></Route>
-                    <Route path="/messages" element={<Messages />}></Route>
-                    <Route path="/departments" element={<Departments />}></Route>
-                    <Route path="/specialties" element={<Specialties />}></Route>
-                    <Route path="/teachers" element={<Teachers />}></Route>
-                    <Route path="/courses" element={<Courses />}></Route>
-                </Route>
-            </Routes>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          {/*stats and analysis routes starts*/}
+          <Route
+            path="/academic-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <AcademicAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/operational-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <OperationalAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/courses/academic-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <CoursesAcademicAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/department/academic-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <DepartmentAcademicAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/exam/academic-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <ExamAcademicAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/specailty/academic-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <SpecialtiesAcademicAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/student/academic-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <StudentAcademicAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/teacher/academic-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <TeachersAcademicAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/teacher/financial-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <TeacherFinancialAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/student/financial-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <StudentFinancialAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/specailty/financial-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <SpecialtiesFinancialAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/school-expenses/financial-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <SchoolExpensesFinancialAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/fee-payment/financial-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <FeePaymentFinancialAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/department/financial-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <DepartmentFinancialAnalysis />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/courses/financial-analysis"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <CoursesFinancialAnalysis />
+              </Suspense>
+            }
+          />
+          {/*stats and analysis routes starts*/}
+
+          {/*details routes starts*/}
+          <Route
+            path="/parent-details/:id"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Parentdetails />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/parents"
+            element={
+              <Suspense>
+                <Parents />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/school-admin-details/:id"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Schooladmindetails />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/student-details/:id"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Studentdetails />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/teacher-details/:id"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Teacherdetails />
+              </Suspense>
+            }
+          ></Route>
+          {/*details routes starts*/}
+
+          {/*form routes starts*/}
+          <Route
+            path="/create-annoucement"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createannoucement />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-feepayment"
+            element={
+              <Suspense>
+                <Createfeepayment />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-course"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createcourse />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-scores"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createstudentscores />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-department"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createdepartment />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-exam"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createexam />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-school-admin"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createschooladmin />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-specialty"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createspecialties />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-student"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createstudent />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-teacher"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createteacher />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-timetable"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createtimetable />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/create-expense"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Createexpenses />
+              </Suspense>
+            }
+          ></Route>
+          {/*form routes end */}
+
+          <Route
+            path="/emails/compose-email"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Composeemail />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/fee-payments"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Feepayment />
+              </Suspense>
+            }
+          ></Route>
+          <Route 
+           path="/student-batches"
+           element={
+             <Suspense fallback={<Pageloaderspinner />}>
+              <StudentBatches />
+             </Suspense>
+           }
+          >
+          </Route>
+          <Route
+            path="/emails/inbox"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Inbox />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/emails/junk"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Junk />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/emails/archieve"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Archieve />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/emails/draft"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Draft />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/emails/forums"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Forums />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/emails/promotion"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Promotion />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/emails/sent"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Sent />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/emails/shopping"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Shopping />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/emails/socials"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Socials />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/emails/trash"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Trash />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/emails/updates"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Updates />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/settings/account"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Account />
+              </Suspense>
+            }
+          ></Route>
+          <Route 
+           path="/school-timetable"
+           element={
+             <Suspense fallback={<Pageloaderspinner />}>
+              <SchoolTimeTable />
+             </Suspense>
+           }
+          >
+          </Route>
+          <Route
+            path="/settings/general-settings"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Generalsettings />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/settings/display"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Display />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/settings/updates"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <New />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/settings/profile"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Profile />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/settings/security"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Security />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/settings/help"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Help />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/customer-support"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Customersupport />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            index
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Dashboard />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/school-admins"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Schooladmin />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/exams"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Exams />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/students"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Students />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/exam-resits"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Examresits />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/scores"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Scores />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/time-table"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Timetable />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/school-expenses"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Schoolexpenses />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/transfer-request"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Transferrequest />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/transferred-students"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Transferredstudents />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/events"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Events />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/annoucements"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Annoucements />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/messages"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Messages />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/departments"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Departments />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/specialties"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Specialties />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/teachers"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Teachers />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/courses"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Courses />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/grades-configuration"
+            element={
+              <Suspense fallback={<Pageloaderspinner />}>
+                <Gradesconfiguration />
+              </Suspense>
+            }
+          ></Route>
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default Links;

@@ -2,13 +2,15 @@ import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { IsPathInRoutes } from "../utils/functions";
+import { Emailpaths, Mediapaths, Settingspaths } from "../utils/paths";
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   return (
     <>
-      <div className="col-lg-2 pe-0">
-        <aside className=" white-bg d-flex flex-column ps-3  pt-2">
+      <div className="col-lg-2 col-sm-2 col-md-2 pe-0 gx-lg-0">
+        <aside className=" white-bg d-flex flex-column ps-3  pt-2 pb-4">
           <div className="logo-area">
             <div className="d-flex align-items-center flex-row gap-3">
               <span>
@@ -293,6 +295,8 @@ function Sidebar() {
                       ? "nav-item-box-active fw-medium"
                       : location.pathname === "/parents"
                       ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/student-batches"
+                      ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -313,6 +317,8 @@ function Sidebar() {
                           ? "rotate-icon nav-dropdown-icon"
                           : location.pathname === "/parents"
                           ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/student-batches"
+                          ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
                     />
@@ -324,6 +330,8 @@ function Sidebar() {
                     location.pathname === "/students"
                       ? "subbox-container-nav ps-3"
                       : location.pathname === "/parents"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/student-batches" 
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -354,6 +362,20 @@ function Sidebar() {
                           }
                         >
                           <p>Parents</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/student-batches"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Student Batches</p>
                         </NavLink>
                       </div>
                     </div>
@@ -542,16 +564,12 @@ function Sidebar() {
 
                 <div
                   className={
-                    location.pathname === "/messages"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/emails"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/annoucements"
+                      IsPathInRoutes(Mediapaths) || IsPathInRoutes(Emailpaths)
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
-                    navigate("/messages");
+                    navigate("/emails/inbox");
                   }}
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
@@ -568,11 +586,7 @@ function Sidebar() {
                       <Icon
                         icon="octicon:chevron-down-24"
                         className={
-                          location.pathname === "/messages"
-                            ? "rotate-icon nav-dropdown-icon"
-                            : location.pathname === "/emails"
-                            ? "rotate-icon nav-dropdown-icon"
-                            : location.pathname === "/annoucements"
+                          IsPathInRoutes(Mediapaths) || IsPathInRoutes(Emailpaths)
                             ? "rotate-icon nav-dropdown-icon"
                             : "nav-dropdown-icon"
                         }
@@ -582,16 +596,28 @@ function Sidebar() {
                 </div>
                 <div
                   className={
-                    location.pathname === "/messages"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/emails"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/annoucements"
+                      IsPathInRoutes(Mediapaths) || IsPathInRoutes(Emailpaths)
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
                 >
                   <div className="drop-down-container">
+                    
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <div
+                          onClick={() => {
+                             navigate("/emails/inbox")
+                          }}
+                          className={
+                              IsPathInRoutes(Emailpaths) ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"
+                          }
+                        >
+                          <p>Emails</p>
+                        </div>
+                      </div>
+                    </div>
                     <div className="box-nav">
                       <div className="subbox-nav">
                         <NavLink
@@ -603,20 +629,6 @@ function Sidebar() {
                           }
                         >
                           <p>Messages</p>
-                        </NavLink>
-                      </div>
-                    </div>
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <NavLink
-                          to="/emails"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
-                          }
-                        >
-                          <p>Emails</p>
                         </NavLink>
                       </div>
                     </div>
@@ -653,21 +665,9 @@ function Sidebar() {
                 </NavLink>
                 <div
                   className={
-                    location.pathname === "/settings/account"
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : location.pathname === "/settings/general-settings"
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : location.pathname === "/settings/display"
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : location.pathname === "/settings/updates"
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : location.pathname === "/settings/profile"
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : location.pathname === "/settings/security"
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : location.pathname === "/settings/help"
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : "nav-item-box-inactive text-decoration-none"
+                      IsPathInRoutes(Settingspaths)
+                      ? "nav-item-box-active fw-medium text-decoration-none pointer-cursor"
+                      : "nav-item-box-inactive text-decoration-none pointer-cursor"
                   }
                   onClick={() => {
                     navigate("/settings/account");
@@ -683,9 +683,10 @@ function Sidebar() {
               </div>
             </div>
           </div>
-          <div className="bottom-section mt-auto d-flex flex-column justify-content-center align-items-center pe-3">
-            <div className="card border-none primary-background-100 w-100 py-2 rounded-4">
-              <div className="d-flex flex-row align-items-center gap-2 font-size-sm my-2 px-1  ms-2">
+          <div className="mt-auto d-flex flex-column justify-content-center align-items-center w-100">
+           <div className="w-100 pe-4">
+           <div className="card border-none primary-background-100 w-100 py-2 rounded-4">
+              <div className="d-flex flex-row align-items-center gap-2 font-size-sm my-1 px-1  ms-2">
                 <p className="my-0">
                   <Icon
                     icon="material-symbols:next-plan"
@@ -694,21 +695,22 @@ function Sidebar() {
                 </p>
                 <span>Ultimate Plan</span>
               </div>
-              <div className="d-flex flex-row align-items-center gap-3 font-size-sm my-2 px-2  ms-2">
+              <div className="d-flex flex-row align-items-center gap-3  my-1 px-2  ms-2 font-size-sm">
                 <span>Payment Type</span>
                 <p className="my-0 color-primary fw-medium">Yearly</p>
               </div>
-              <div className="d-flex flex-row align-items-center gap-3 font-size-sm my-2 px-2  ms-2">
+              <div className="d-flex flex-row align-items-center gap-3  my-1 px-2  ms-2 font-size-sm">
                 <span>Expires At</span>
                 <p className="my-0 color-primary fw-medium">12 Jan 2025</p>
               </div>
-              <div className="d-flex flex-row justify-content-center px-3">
-                <button className="border-none primary-background rounded-2 text-white font-size-sm fw-medium py-2 w-100 ">
+              <div className="d-flex flex-row justify-content-center px-3 my-1">
+                <button className="border-none primary-background rounded-2 text-white font-size-sm fw-medium py-1 w-100 ">
                   upgrade plan
                 </button>
               </div>
             </div>
-            <div>
+           </div>
+            <div className="w-100 pe-3">
               <hr className="bg-primary w-100" />
               <span className="font-size-sm gainsboro-color mb-5">
                 @2024 Edumanage Company

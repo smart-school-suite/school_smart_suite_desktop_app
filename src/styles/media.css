@@ -88,3 +88,15 @@
     align-items: center;
     justify-content: center;
 }
+.compose-email-input:focus{
+    outline: none;
+}
+.compose-email-input{
+    caret-color: #007BFF;
+}
+.compose-email-input::placeholder{
+    color: #999;
+}
+.timetable-row{
+    height: 4rem;
+}

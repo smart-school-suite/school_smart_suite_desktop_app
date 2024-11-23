@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 :root{
     --primary-color:#0ea7e9;
     --primary-color-50:#f0f9ff;
@@ -225,6 +225,15 @@
     height: var(--height-100);
 }
 
+.rotate-90{
+    transform: rotate(90deg);
+}
+.rotate-45{
+    transform: rotate(45deg);
+}
+.rotate-180{
+    transform: rotate(180deg);
+}
 .width-10{
   width: var(--width-10);
 }
@@ -267,4 +276,7 @@ body{
 
 .transition-four-sec{
     transition: all 0.4s;
+}
+.transition-3s{
+    transition: all 0.3s;
 }

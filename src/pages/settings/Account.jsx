@@ -9,7 +9,7 @@ function Account(){
                <div className="white-bg d-flex flex-row py-3 rounded-3 align-items-center w-100 pe-3 ps-3">
                <div className="start-component d-flex flex-row align-items-center gap-3">
                  <div className="protrait">
-                    <img src="./protrait.jpg" alt=""/>
+                    <img src="./images/portrait-six" alt=""/>
                  </div>
                  <div className="vertical-line"></div>
                  <div className="d-block">

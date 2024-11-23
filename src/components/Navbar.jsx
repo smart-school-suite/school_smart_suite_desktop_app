@@ -1,56 +1,56 @@
 import { Icon } from "@iconify/react";
 import { useLocation, useNavigate } from "react-router-dom";
-function Navbar(){
+function Navbar(props){
+  const location = useLocation();
+  const navigate = useNavigate();
     return(
         <>
-        <div className="container-fliud">
-                <nav className="w-100 d-flex flex-row mt-2 gap-3">
-                  <div className="section-one d-flex flex-row justify-content-start">
-                    <div className="school-desc-group d-flex flex-row align-items-center gap-3">
-                      <div className="nav-badge primary-background-100 fs-5 fw-bold color-primary rounded-circle d-flex flex-row align-items-center justify-content-center">
-                        SY
-                      </div>
-                      <div className="d-block font-size-sm text-secondary fw-medium">
-                        <p className="my-0">SIANTO</p>
-                        <p className="my-0">Yaounde</p>
-                      </div>
+                <div>
+            <div className="w-100 d-flex flex-row mt-2 justify-content-between gap-4">
+                <div className="d-flex align-items-center gap-2">
+                    <div className="color-primary d-flex fs-5 primary-background-100  fw-bold flex-row justify-content-center align-items-center" style={{ width:"3.0rem", height:"3.0rem", borderRadius:"3.0rem" }}>
+                       EY
                     </div>
+                    <div className="d-block font-size-sm">
+                        <p className="my-0 fw-semibold">EXHIST</p>
+                        <p className="my-0  fw-semibod">Yaounde</p>
                     </div>
-                    <div className="section-two white-background d-flex flex-row align-items-center justify-content-center gap-2 px-2 py-1 rounded-pill">
-                      <button className="active">
-                        <span>
-                        <Icon icon="mdi:finance" className="fs-4"/>
-                        </span>
-                        <span>Financial Analysis</span>
-                      </button>
-                      <button className="inactive">
-                        <span>
-                        <Icon icon="ic:round-school" className="fs-4"/>
-                        </span>
-                        <span>Academic Analysis</span>
-                      </button>
-                      <button className="inactive">
-                        <span>
-                        <Icon icon="ep:operation" className="fs-4"/>
-                        </span>
-                        <span>Operational Analysis</span>
-                      </button>
+                </div>
+                <div className="d-flex flex-row align-items-center justify-content-between  rounded-pill bg-white" style={{ width:"68%", gap:"4rem", padding:"0.35rem" }}>
+                    {
+                       props.options.route_data.map((items, index) => {
+                           return(
+                            <>
+                              <button 
+                              className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center ${ location.pathname === items.route ? 'primary-background text-white' : "transparent-bg gainsboro-color" }  gap-1 rounded-pill`} style={{ width:"32%", padding:"0.65rem", fontSize:"0.92rem" }}
+                               onClick={() =>{
+                                 navigate(items.route)
+                               }}
+                               key={index * 123912789}
+                              >
+                               <span>{items.icon === null ? <>IC</> : <> <Icon icon={items.icon} className="fs-4"/> </>}</span>
+                        <span>{items.lable}</span>
+                            </button>
+                            </>
+                           )
+                       })
+                    }
+                    
+                </div>
+                <div className="d-flex flex-row align-items-center gap-2">
+                <div className="bg-white gainsboro-color fs-4 d-flex flex-row justify-content-center align-items-center" style={{ width:"3.0rem", height:"3.0rem", borderRadius:"3.0rem" }}>
+                       <Icon icon="ic:outline-search" />
                     </div>
-                    <div className="last-section d-flex flex-row justify-content-end">
-                      <div className="last-section-items gap-2 d-flex flex-row">
-                        <div className="nav-badge white-bg rounded-circle d-flex fs-4  flex-row justify-content-center align-items-center">
-                         <Icon icon="material-symbols:search" style={{ color:"#D5D5D5" }}/>
-                        </div>
-                        <div className="nav-badge white-bg rounded-circle d-flex fs-4 flex-row justify-content-center align-items-center">
-                         <Icon icon="solar:bell-linear" style={{ color:"#D5D5D5" }}/>
-                        </div>
-                        <div className="nav-badge white-bg rounded-circle ">
-                          <img src="./protrait.jpg" alt="" className="nav-top-img"/>
-                        </div>
-                      </div>
-                  </div>
-                </nav>
-              </div>
+                    <div className="bg-white gainsboro-color fs-4 z-0 d-flex position-relative flex-row justify-content-center align-items-center" style={{ width:"3.0rem", height:"3.0rem", borderRadius:"3.0rem" }}>
+                       <Icon icon="solar:bell-linear" className="z-1"/>
+                       <button className="z-3 border-none rounded-circle font-size-xs position-absolute fw-semibold bg-danger text-white px-1" style={{ top:"0px", right:"0px", padding:"0.2rem"}}>32</button>
+                    </div>
+                    <div className="bg-white gainsboro-color fs-5 d-flex flex-row justify-content-center align-items-center" style={{ width:"3.0rem", height:"3.0rem", borderRadius:"3.0rem" }}>
+                        <img src="./images/portrait-five.jpg" alt="" style={{ objectFit:"cover", width:"100%", height:"3.0rem", borderRadius:"3.0rem" }}/>
+                    </div>
+                </div>
+            </div>
+        </div>
         </>
     )
 }

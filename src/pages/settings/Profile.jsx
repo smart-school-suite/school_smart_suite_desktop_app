@@ -9,7 +9,7 @@ function Profile(){
                <div className="top-section rounded-top-4 px-4">
                    <div className="d-flex flex-row profile-picture-group z-5 justify-content-between align-items-center">
                      <div className="profile-img">
-                        <img src="./protrait.jpg" alt="" />
+                        <img src="./images/portrait-three.jpg" alt="" />
                      </div>
                      <div>
                      <Icon icon="mdi:dots-vertical"  className="fs-3 pointer-cursor"/>
