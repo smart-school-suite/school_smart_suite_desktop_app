@@ -1,29 +1,19 @@
 import Navbar from "../components/Navbar";
 import Greenbutton from "../components/Buttons";
+import { GradesConfigurationNavbarOptions } from "../componentConfigurations/navBarConfig";
+import { useFetchLetterGradesQuery } from "../Slices/Asynslices/fetchSlice";
+import Pageloaderspinner from "../components/Spinners";
 function Gradesconfiguration(){
-    const navBarOptions = {
-        route_data: [
-            {
-                lable:"Exams",
-                icon:null,
-                route:"/exams"
-            },
-            {
-               lable:"Exam Analysis",
-               route:"/exam-analysis",
-               icon:null
-            },
-            {
-               lable:"Grades Configuration",
-               icon:null,
-               route:"/grades-configuration"
-            }
-        ],
-    }
+  const { data:letter_grades, isLoading, error  } = useFetchLetterGradesQuery();
+   if(isLoading){
+    return(
+         <Pageloaderspinner />
+    )
+   }
     return(
         <>
         <Navbar 
-           options={navBarOptions}
+           options={GradesConfigurationNavbarOptions}
          />
           <div>
         <div className="d-flex flex-row align-items-center mt-4 w-100 ">
@@ -42,13 +32,16 @@ function Gradesconfiguration(){
             <div className="card px-2  shadow-sm rounded-4 mt-2 py-2">
                 <table>
                     <thead className="score-tablehead-aggregator">
-                        <th>First Semester CA</th>
-                        <th className="text-center">Exam Score</th>
+                        <th>Exam Name</th>
+                        <th className="text-center">Min Score</th>
+                        <th className="text-center">Max Score</th>
                         <th className="text-center">Letter Grade</th>
                         <th className="text-center">Weighted Mark</th>
                     </thead>
-                    <tbody className="score-table-aggregator">
-                        <tr>
+                    <tbody className="score-table-aggregator" style={{ height:"10rem" }}>
+                        {
+                          letter_grades.letter_grades.map((grades) => (
+                            <tr>
                             <td>First Semester CA</td>
                             <td>
                                 <input type="number"
@@ -56,15 +49,6 @@ function Gradesconfiguration(){
                                  placeholder="score"
                                 />
                             </td>
-                            <td className="text-center">
-                                A+
-                            </td>
-                            <td className="text-center">
-                                100
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>First Semester CA</td>
                             <td>
                                 <input type="number"
                                  className="form-control score-input"
@@ -72,132 +56,14 @@ function Gradesconfiguration(){
                                 />
                             </td>
                             <td className="text-center">
-                                A+
+                               {grades.letter_grade}
                             </td>
                             <td className="text-center">
                                 100
                             </td>
                         </tr>
-                        <tr>
-                            <td>First Semester CA</td>
-                            <td>
-                                <input type="number"
-                                 className="form-control score-input"
-                                 placeholder="score"
-                                />
-                            </td>
-                            <td className="text-center">
-                                A+
-                            </td>
-                            <td className="text-center">
-                                100
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>First Semester CA</td>
-                            <td>
-                                <input type="number"
-                                 className="form-control score-input"
-                                 placeholder="score"
-                                />
-                            </td>
-                            <td className="text-center">
-                                A+
-                            </td>
-                            <td className="text-center">
-                                100
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>First Semester CA</td>
-                            <td>
-                                <input type="number"
-                                 className="form-control score-input"
-                                 placeholder="score"
-                                />
-                            </td>
-                            <td className="text-center">
-                                A+
-                            </td>
-                            <td className="text-center">
-                                100
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>First Semester CA</td>
-                            <td>
-                                <input type="number"
-                                 className="form-control score-input"
-                                 placeholder="score"
-                                />
-                            </td>
-                            <td className="text-center">
-                                A+
-                            </td>
-                            <td className="text-center">
-                                100
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>First Semester CA</td>
-                            <td>
-                                <input type="number"
-                                 className="form-control score-input"
-                                 placeholder="score"
-                                />
-                            </td>
-                            <td className="text-center">
-                                A+
-                            </td>
-                            <td className="text-center">
-                                100
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>First Semester CA</td>
-                            <td>
-                                <input type="number"
-                                 className="form-control score-input"
-                                 placeholder="score"
-                                />
-                            </td>
-                            <td className="text-center">
-                                A+
-                            </td>
-                            <td className="text-center">
-                                100
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>First Semester CA</td>
-                            <td>
-                                <input type="number"
-                                 className="form-control score-input"
-                                 placeholder="score"
-                                />
-                            </td>
-                            <td className="text-center">
-                                A+
-                            </td>
-                            <td className="text-center">
-                                100
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>First Semester CA</td>
-                            <td>
-                                <input type="number"
-                                 className="form-control score-input"
-                                 placeholder="score"
-                                />
-                            </td>
-                            <td className="text-center">
-                                A+
-                            </td>
-                            <td className="text-center">
-                                100
-                            </td>
-                        </tr>
+                          ))
+                        }
                     </tbody>
                 </table>
             </div>

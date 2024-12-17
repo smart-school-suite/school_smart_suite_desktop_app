@@ -1,8 +1,10 @@
 import { Icon } from "@iconify/react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 function Navbar(props){
   const location = useLocation();
   const navigate = useNavigate();
+  const key = uuidv4();
     return(
         <>
                 <div>
@@ -26,7 +28,7 @@ function Navbar(props){
                                onClick={() =>{
                                  navigate(items.route)
                                }}
-                               key={index * 123912789}
+                               key={key}
                               >
                                <span>{items.icon === null ? <>IC</> : <> <Icon icon={items.icon} className="fs-4"/> </>}</span>
                         <span>{items.lable}</span>

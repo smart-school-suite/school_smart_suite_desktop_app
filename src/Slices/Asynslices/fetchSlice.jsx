@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import toast from "react-hot-toast";
-const KEY = "29e494f1837c47baa9e19c559";
+const KEY = "0ad263774d0b238f3b9f780fb";
 const tagTypesarray = [
-  "students",
+  "student",
   "teachers",
   "schooladmin",
   "parents",
@@ -39,7 +39,7 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     fetchStudents: builder.query({
       query: () => "api/student/get-students",
-      providesTags: ["students"],
+      providesTags: ["student"],
     }),
     fetchTeachers: builder.query({
       query: () => "api/teacher/get-all-teachers",
@@ -69,6 +69,14 @@ export const apiSlice = createApi({
       query: () => "api/event/school-events",
       providesTags: ["courses"],
     }),
+    fetchExams: builder.query({
+       query: () => "api/exams/getexams",
+       providesTags: ["Exams"]
+    }),
+    fetchStudentBatch: builder.query({
+      query: () => "api/student-batches/student-batches",
+      providesTags: ["studentBatch"]
+    }),
     fetchExamTypes: builder.query({
       query: () => "api/exam-type/exam_types",
       providesTags: ["courses"],
@@ -87,15 +95,19 @@ export const apiSlice = createApi({
     }),
     fetchSchoolAdmins: builder.query({
       query: () => "api/school-admin/get-all-school-admins",
-      providesTags: ["courses"],
+      providesTags: ["schooladmins"],
     }),
     fetchSchoolExpensesCategory: builder.query({
       query: () => "api/school-expenses-category/get-category-expenses",
       providesTags: ["courses"],
     }),
+    fetchStudentResit: builder.query({
+       query: () => "api/student-resit/student_resits",
+       providesTags: ["student_resit"]
+    }),
     fetchSchoolExpenses: builder.query({
       query: () => "api/school-expenses/my-expenses",
-      providesTags: ["courses"],
+      providesTags: ["schoolexpenses"],
     }),
     fetchSemesters: builder.query({
       query: () => "api/semester/semesters",
@@ -105,6 +117,76 @@ export const apiSlice = createApi({
       query: () => "api/student-batches/student-batches",
       providesTags: ["courses"],
     }),
+    fetchSpecialtyTimetable:  builder.query({
+      query: ({ level_id, specialty_id }) => {
+         return `api/time-table/generate-timetable/${level_id}/${specialty_id}`
+      },
+      providesTags: ["timetable"]
+    }),
+    fetchStudentDetails: builder.query({
+        query: ({ student_id }) => {
+           return `api/student/student-details/${student_id} `
+        }
+    }),
+    fetchSchoolAdminDetails: builder.query({
+        query: ({ school_admin_id }) => {
+           return `api/school-admin/school-admin/details/${school_admin_id}`
+        }
+    }),
+    fetchTeacherDetails: builder.query({
+       query: ({ teacher_id }) => {
+             return `api/teacher/teacher-details/${teacher_id}`
+       }
+    }),
+    fetchDepartmentDetails: builder.query({
+      query: ({ department_id }) => {
+         return `api/department/department-details/${department_id}`
+      }
+    }),
+    fetchSpecialtyDetails: builder.query({
+       query: ({ specialty_id }) => {
+          return `api/specialty/specialty-details/${specialty_id}`
+       }
+    }),
+    fetchCourseDetails: builder.query({
+       query: ({ course_id }) => {
+         return `api/course/course-details/${course_id}`
+       }
+    }),
+    fetchParentDetails: builder.query({
+       query: ({ parent_id }) => {
+         return `api/parent/parent-details/${parent_id}`
+       }
+    }),
+    fetchExamDetails: builder.query({
+       query:({ exam_id }) => {
+          return `api/exams/exam-details/${exam_id}`
+       }
+    }),
+    fetchScoreDetails: builder.query({
+       query: ({ mark_id }) => {
+          return `api/marks/score-details/${mark_id}`
+       }
+    }),
+    fetchTimetableDetails: builder.query({
+       query: ({ entry_id }) => {
+         return `api/time-table/timetable-details/${entry_id}`
+       }
+    }),
+    fetchStudentResitDetails: builder.query({
+      query: ({ resit_id }) => {
+         return `api/student-resit/details/${resit_id}`
+      }
+    }),
+    fetchExpensesDetails: builder.query({
+      query: ({ expense_id }) => {
+        return `api/school-expenses/expenses-details/${expense_id}`
+      }
+    }),
+    fetchStudentScores: builder.query({
+      query: () => "api/marks/scores-exam/student",
+      providesTags: ["scores"]
+    })
   }),
 });
 
@@ -115,4 +197,24 @@ export const {
   useFetchParentsQuery,
   useFetchCoursesQuery,
   useFetchSpecialtiesQuery,
+  useFetchStudentBatchQuery,
+  useFetchSchoolAdminsQuery,
+  useFetchSchoolExpensesQuery,
+  useFetchExamsQuery,
+  useFetchStudentResitQuery,
+  useFetchSpecialtyTimetableQuery,
+  useFetchStudentScoresQuery,
+  useFetchStudentDetailsQuery,
+  useFetchSchoolAdminDetailsQuery,
+  useFetchTeacherDetailsQuery,
+  useFetchDepartmentDetailsQuery,
+  useFetchSpecialtyDetailsQuery,
+  useFetchCourseDetailsQuery,
+  useFetchParentDetailsQuery,
+  useFetchExamDetailsQuery,
+  useFetchScoreDetailsQuery,
+  useFetchTimetableDetailsQuery,
+  useFetchStudentResitDetailsQuery,
+  useFetchExpensesDetailsQuery,
+  useFetchLetterGradesQuery
 } = apiSlice;

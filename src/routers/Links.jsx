@@ -4,7 +4,7 @@ import Layout from "../layouts/layout";
 import Pageloaderspinner from "../components/Spinners";
 const SchoolTimeTable = React.lazy(() => import("../pages/schoolTimeTable"));
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
-const Schooladmin = React.lazy(() => import("../pages/Schooladmin"));
+const SchoolAdmin = React.lazy(() => import("../pages/schoolAdmin"));
 const Exams = React.lazy(() => import("../pages/Exams"));
 const Students = React.lazy(() => import("../pages/Students"));
 const Examresits = React.lazy(() => import("../pages/Examsresit"));
@@ -44,46 +44,17 @@ const Socials = React.lazy(() => import("../pages/email/Socials"));
 const Trash = React.lazy(() => import("../pages/email/Trash"));
 const Updates = React.lazy(() => import("../pages/email/Updates"));
 const Composeemail = React.lazy(() => import("../pages/email/Composeemail"));
-const Createannoucement = React.lazy(() =>
-  import("../pages/forms/Createannouncement")
-);
-const Createcourse = React.lazy(() => import("../pages/forms/Createcourse"));
-const Createdepartment = React.lazy(() =>
-  import("../pages/forms/Createdepartment")
-);
-const Createexam = React.lazy(() => import("../pages/forms/Createexam"));
 const Createschooladmin = React.lazy(() =>
   import("../pages/forms/Createschooladmin")
-);
-const Createspecialties = React.lazy(() =>
-  import("../pages/forms/Createspecialties")
 );
 const Createstudent = React.lazy(() => import("../pages/forms/Createstudent"));
 const Createtimetable = React.lazy(() =>
   import("../pages/forms/Createtimetable")
 );
-const Createexpenses = React.lazy(() =>
-  import("../pages/forms/Createexpenses")
-);
-const Parentdetails = React.lazy(() =>
-  import("../pages/details/Parentdetails")
-);
-const Schooladmindetails = React.lazy(() =>
-  import("../pages/details/Schooladmindetails")
-);
 const Createteacher = React.lazy(() => import("../pages/forms/Createteacher"));
-const Studentdetails = React.lazy(() =>
-  import("../pages/details/Studentdetails")
-);
-const Teacherdetails = React.lazy(() =>
-  import("../pages/details/Teacherdetails")
-);
 const Feepayment = React.lazy(() => import("../pages/Feepayment"));
 const Gradesconfiguration = React.lazy(() =>
   import("../pages/Gradesconfiguration")
-);
-const Createfeepayment = React.lazy(() =>
-  import("../pages/forms/Createfeepayment")
 );
 const Parents = React.lazy(() => import("../pages/Parents"));
 const Createstudentscores = React.lazy(() =>
@@ -143,6 +114,9 @@ const TeacherFinancialAnalysis = React.lazy(() =>
   import("../pages/statistics and analysis/Financial/teacherFinancialAnalysis")
 );
 const StudentBatches = React.lazy(() => import("../pages/studentBatches"));
+const ExamTimeTable = React.lazy(() => import("../pages/examTimeTable"));
+const ResitPayments = React.lazy(() => import("../pages/resitPayments"));
+const Createparent = React.lazy(() => import("../pages/forms/Createparent"));
 function Links() {
   return (
     <BrowserRouter>
@@ -254,6 +228,15 @@ function Links() {
             }
           />
           <Route
+           path="/parents"
+           element={
+             <Suspense fallback={<Pageloaderspinner />}>
+              <Parents />
+             </Suspense>
+           }
+          >
+          </Route>
+          <Route
             path="/department/financial-analysis"
             element={
               <Suspense fallback={<Pageloaderspinner />}>
@@ -271,74 +254,17 @@ function Links() {
           />
           {/*stats and analysis routes starts*/}
 
-          {/*details routes starts*/}
-          <Route
-            path="/parent-details/:id"
-            element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <Parentdetails />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/parents"
-            element={
-              <Suspense>
-                <Parents />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/school-admin-details/:id"
-            element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <Schooladmindetails />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/student-details/:id"
-            element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <Studentdetails />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/teacher-details/:id"
-            element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <Teacherdetails />
-              </Suspense>
-            }
-          ></Route>
-          {/*details routes starts*/}
 
           {/*form routes starts*/}
           <Route
-            path="/create-annoucement"
+            path="/create-parent"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <Createannoucement />
-              </Suspense>
+               <Suspense fallback={<Pageloaderspinner />}>
+                <Createparent />
+               </Suspense>
             }
-          ></Route>
-          <Route
-            path="/create-feepayment"
-            element={
-              <Suspense>
-                <Createfeepayment />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/create-course"
-            element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <Createcourse />
-              </Suspense>
-            }
-          ></Route>
+          >
+          </Route>
           <Route
             path="/create-scores"
             element={
@@ -348,34 +274,10 @@ function Links() {
             }
           ></Route>
           <Route
-            path="/create-department"
-            element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <Createdepartment />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/create-exam"
-            element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <Createexam />
-              </Suspense>
-            }
-          ></Route>
-          <Route
             path="/create-school-admin"
             element={
               <Suspense fallback={<Pageloaderspinner />}>
                 <Createschooladmin />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/create-specialty"
-            element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <Createspecialties />
               </Suspense>
             }
           ></Route>
@@ -400,14 +302,6 @@ function Links() {
             element={
               <Suspense fallback={<Pageloaderspinner />}>
                 <Createtimetable />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/create-expense"
-            element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <Createexpenses />
               </Suspense>
             }
           ></Route>
@@ -611,7 +505,7 @@ function Links() {
             path="/school-admins"
             element={
               <Suspense fallback={<Pageloaderspinner />}>
-                <Schooladmin />
+                <SchoolAdmin />
               </Suspense>
             }
           ></Route>
@@ -671,6 +565,20 @@ function Links() {
               </Suspense>
             }
           ></Route>
+          <Route
+           path="/exam-timetable"
+           element={
+             <Suspense
+              fallback={
+                 <Pageloaderspinner />
+              }
+             >
+              <ExamTimeTable />
+             </Suspense>
+           }
+          >
+
+          </Route>
           <Route
             path="/transferred-students"
             element={
@@ -735,6 +643,15 @@ function Links() {
               </Suspense>
             }
           ></Route>
+          <Route
+            path="/resit-payments"
+            element={
+               <Suspense fallback={<Pageloaderspinner />}>
+                <ResitPayments />
+               </Suspense>
+            }
+          >  
+          </Route>
           <Route
             path="/grades-configuration"
             element={

@@ -1,7 +1,60 @@
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
+import { AddressInput, CityInput, CulturalBackgroundInput, EmailInput, FieldOfStudyInput, FullNamesInput, PhoneNumberInput, ReligionInput, SalaryInput, YearsExperienceInput } from "../../components/formComponents";
+import { CustomDropdownTwo } from "../../components/Dropdowns";
+import DatePicker from "../../components/datePicker";
 function Createschooladmin() {
     const navigate = useNavigate();
+    const qualifications = [
+      { code: "BACHELORS", name: "Bachelor's Degree" },
+      { code: "MASTERS", name: "Master's Degree" },
+      { code: "PHD", name: "Doctoral Degree (PhD)" },
+      { code: "ASSOCIATE", name: "Associate Degree" },
+      { code: "DIPLOMA", name: "Diploma" },
+      { code: "CERTIFICATE", name: "Certificate" },
+      { code: "HIGH_SCHOOL", name: "High School Diploma" },
+      { code: "GCSE", name: "General Certificate of Secondary Education (GCSE)" },
+      { code: "A_LEVEL", name: "Advanced Level (A-Level)" },
+      { code: "HND", name: "Higher National Diploma (HND)" },
+      { code: "APR", name:"Apprentiship" }
+    ]
+    const jobTypes = [
+      { code: "FULL_TIME", name: "Full-time" },
+      { code: "PART_TIME", name: "Part-time" },
+      { code: "CONTRACT", name: "Contract" },
+      { code: "TEMPORARY", name: "Temporary" },
+      { code: "FREELANCE", name: "Freelance" },
+      { code: "INTERN", name: "Internship" },
+      { code: "REMOTE", name: "Remote" },
+      { code: "ON_SITE", name: "On-site" },
+      { code: "SHIFT", name: "Shift Work" },
+      { code: "FLEXIBLE", name: "Flexible" },
+      { code: "PER_DIEM", name: "Per Diem" },
+      { code: "COMMISSION", name: "Commission-based" },
+      { code: "SEASONAL", name: "Seasonal" },
+      { code: "VOLUNTEER", name: "Volunteer" },
+      { code: "CASUAL", name: "Casual" },
+      { code: "TEMP_TO_PERM", name: "Temp-to-Perm" },
+      { code: "REMOTE_PART_TIME", name: "Remote Part-time" },
+      { code: "REMOTE_FULL_TIME", name: "Remote Full-time" },
+      { code: "FIXED_TERM", name: "Fixed-term" },
+      { code: "CONSULTANT", name: "Consultant" },
+      { code: "OUTSOURCED", name: "Outsourced" },
+      { code: "JOB_SHARING", name: "Job Sharing" }
+    ];
+    const sexOptions = [
+      { code: "MALE", name: "Male" },
+      { code: "FEMALE", name: "Female" },
+      { code: "NON_BINARY", name: "Non-Binary" },
+      { code: "TRANSGENDER_MALE", name: "Transgender Male" },
+      { code: "TRANSGENDER_FEMALE", name: "Transgender Female" },
+      { code: "GENDER_FLUID", name: "Gender Fluid" },
+      { code: "AGENDER", name: "Agender" },
+      { code: "BIGENDER", name: "Bigender" },
+      { code: "TWO_SPIRIT", name: "Two-Spirit" },
+      { code: "INTERSEX", name: "Intersex" },
+      { code: "PREFER_NOT_TO_SAY", name: "Prefer not to say" }
+    ];
   return (
     <>
       <div className="w-100 d-flex flex-column align-items-center justify-content-center height-100 pt-1 pb-2">
@@ -14,126 +67,99 @@ function Createschooladmin() {
                 </div>
                 <div>
                     <button 
-                    className="border-none rounded-2 font-size-sm p-2 d-flex flex-row gap-4 primary-background text-white"
+                    className="border-none rounded-2 px-4 font-size-sm p-2 d-flex flex-row gap-4 primary-background text-white"
                     onClick={() => {
                          navigate("/school-admins")
                     }}
                     >
-                        <span><Icon icon="ion:arrow-back" className="fs-5"/></span>
                         <span>Back</span>
                     </button>
                 </div>
         </div>
-        <div className="card w-75 rounded-4 py-2 px-3">
+        <div className="card w-100 rounded-4 py-2 px-3">
           <div className="heading my-1">
-            <h4 className="text-center">Create School Admin</h4>
+            <h5 className="text-center">Create School Admin</h5>
           </div>
           <div className="my-1">
-            <label>Full Name</label>
-            <input
-              type="name"
-              className="form-control"
-              placeholder="Enter Fullnames"
-            />
+            <FullNamesInput />
           </div>
           <div className="d-flex flex-row gap-2 w-100">
             <div className="my-1 w-50">
-              <label>Email</label>
-              <input
-                type="email"
-                className="form-control"
-                placeholder="Enter..."
-              />
+             <EmailInput />
             </div>
             <div className="my-1 w-50">
-              <label>Phone Number</label>
-              <input type="tel" 
-               className="form-control"
-               placeholder="Enter your phone number"
-              />
+              <PhoneNumberInput />
             </div>
           </div>
           <div className="d-flex flex-row gap-2 w-100">
-            <div className="my-1 w-100">
-              <label>Salary</label>
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Enter Salary of Worker"
-              />
+            <div className="my-1 w-50">
+              <SalaryInput />
+            </div>
+            <div className="my-1 w-50">
+              <YearsExperienceInput />
             </div>
           </div>
           <div className="d-flex flex-row gap-2 w-100">
           <div className="my-1 w-50">
-            <label>Qualification</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Select Qualification"
-            />
+          <CustomDropdownTwo
+             data={qualifications}
+           displayKey={['name']}
+           valueKey={['name']}
+           onSelect={(selected) => console.log(selected)} 
+           direction="up"
+           lable="Highest Education"
+          />
           </div>
           <div className="my-1 w-50">
-            <label>Specialization (optional)</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter..."
-            />
-          </div>
-          </div>
-          <div className="d-flex flex-row">
-          <div className="my-1 w-100">
-            <label>Role Name</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Select Role"
-            />
+            <FieldOfStudyInput />
           </div>
           </div>
           <div className="d-flex flex-row gap-2">
           <div className="my-1 w-50">
-            <label>Date of Birth</label>
-            <input
-              type="date"
-              className="form-control"
-              placeholder="Enter..."
+            <DatePicker 
+             lable={"Date of Birth"}
             />
           </div>
           <div className="my-1 w-50">
-            <label>Sex</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter Sex"
+            <CustomDropdownTwo 
+              data={sexOptions}
+              displayKey={['name']}
+              valueKey={['name']}
+              lable={"Sex"}
+              direction="up"
             />
           </div>
           </div>
-          <div className="d-flex flex-row">
-          <div className="my-1 w-100">
-            <label>Address</label>
-            <input
-              type="address"
-              className="form-control"
-              placeholder="Enter..."
-            />
+          <div className="d-flex flex-row gap-2 align-items-center">
+            <div className="my-1 w-50">
+              <ReligionInput />
+            </div>
+            <div className="my-1 w-50">
+              <CulturalBackgroundInput />
+            </div>
+          </div>
+          <div className="d-flex flex-row gap-2 align-items-center">
+          <div className="my-1 w-50">
+           <AddressInput />
+          </div>
+          <div className="my-1 w-50">
+            <CityInput />
           </div>
           </div>
           <div className="my-0">
           <div className="d-flex flex-row gap-2">
           <div className="my-1 w-50">
-            <label>Start Date</label>
-            <input
-              type="date"
-              className="form-control"
+            <DatePicker 
+             lable={"Hire Date"}
             />
           </div>
           <div className="my-1 w-50">
-            <label>Job Type</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Full Time Etc"
+            <CustomDropdownTwo 
+              data={jobTypes}
+              displayKey={['name']}
+              valueKey={['name']}
+              lable={"Job Type"}
+              direction="up"
             />
           </div>
           </div>

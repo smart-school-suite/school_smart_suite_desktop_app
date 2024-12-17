@@ -1,78 +1,87 @@
 import Navbar from "../components/Navbar";
 import Greenbutton from "../components/Buttons";
-import { useFetchStudentsQuery } from "../Slices/Asynslices/fetchSlice";
+import { useFetchExpensesDetailsQuery, useFetchSchoolExpensesQuery } from "../Slices/Asynslices/fetchSlice";
 import { useEffect, useState } from "react";
-import CleanArrayData from "../utils/functions";
-import { renameKeys } from "../utils/functions";
+import CleanArrayData, { renameKeys, sumAttribute, formatNumber, formatDate  } from "../utils/functions";
 import Pageloaderspinner from "../components/Spinners";
+import { CSSTransition } from "react-transition-group";
+import { Icon } from "@iconify/react";
 import Table from "../components/Tables";
+import DataComponent from "../components/dataComponent";
+import ActionButtonDropdown from "./actionButton";
 function Schoolexpenses(){
+  const cellStyle = {
+    display: "flex",
+    justifyContent: "start",
+    alignItems: "center",
+    height: "100%",
+    zIndex: "-1",
+  }
   const navBarOptions = {
     route_data: [
         {
             lable:"School Expenses",
-            icon:null,
+            icon:"streamline:payment-cash-out-3",
             route:"/school-expenses"
         },
         {
            lable:"Financial Analysis",
            route:"/financial-analysis",
-           icon:null
+           icon:"fluent-mdl2:financial"
         },
         {
            lable:"Financial Anaysis",
-           icon:null,
+            icon:"fluent-mdl2:financial",
            route:"/school-timetable"
         }
     ],
 }
 const [colDefs, setColDefs] = useState([
-  { field: "Student Name", filter: true, floatingFilter: true },
-  { field: "Level", filter: true, floatingFilter: true },
-  { field: "Specialty", filter: true, floatingFilter: true },
-  { field: "Parent name", filter: true, floatingFilter: true },
-  { field: "First Reachable Number", filter: true, floatingFilter: true },
-  { field: "Second Reachable Number", filter: true, floatingFilter: true },
-  { field: "Gender", filter: true, floatingFilter: true },
-  { field: "Fee status", filter: true, floatingFilter: true },
-  { field: "Fee Debt", filter: true, floatingFilter: true },
+  {
+     field:"id",
+     hide:true
+  },
+  { field: "Title", filter: true, floatingFilter: true,
+    cellRenderer:DataComponent,
+      cellStyle:cellStyle
+   },
+  { field: "Amount", filter: true, floatingFilter: true,
+    cellRenderer:DataComponent,
+      cellStyle:cellStyle
+   },
+  { field: "Category", filter: true, floatingFilter: true,
+    cellRenderer:DataComponent,
+      cellStyle:cellStyle
+   },
+  { field: "Description", filter: true, floatingFilter: true,
+    cellRenderer:DataComponent,
+      cellStyle:cellStyle
+   },
+  { field: "Date", filter: true, floatingFilter: true,
+    cellRenderer:DataComponent,
+      cellStyle:cellStyle
+   },
+  { field: "Action",
+    cellRenderer:DropdownComponent,
+    cellStyle:cellStyle
+   }
 ]);
-const { data: students, error, isLoading } = useFetchStudentsQuery();
+const { data: expenses_data, error, isLoading } = useFetchSchoolExpensesQuery();
 const filter_array_keys = [
-  "specialty.specialty_name",
-  "parents.name",
-  "level.name",
-  "name",
-  "phone_one",
-  "phone_two",
-  "gender",
-  "fee_status",
-  "total_fee_debt",
+  "id",
+  "title",
+  "amount",
+  "schoolexpensescategory.names",
+  "description",
+  "date",
 ];
 const renameMapping = {
-  "specialty.specialty_name": "Specialty",
-  "parents.name": "Parent name",
-  "level.name": "Level",
-  "name": "Student Name",
-  "phone_one": "First Reachable Number",
-  "phone_two": "Second Reachable Number",
-  "fee_status": "Fee status",
-  "total_fee_debt": "Fee Debt",
-  "gender": "Gender",
+  "title": "Title",
+  "amount": "Amount",
+  "schoolexpensescategory.names": "Category",
+  "description": "Description",
+  "date": "Date"
 };
-useEffect(() => {
-  if (students) {
-    console.table(
-      renameKeys(
-        CleanArrayData(students.students, filter_array_keys),
-        renameMapping
-      )
-    );
-  }
-  if (error) {
-    console.error("Error fetching students:", error);
-  }
-}, [students, error]); 
 
 if (isLoading) {
   return <Pageloaderspinner />;
@@ -86,7 +95,7 @@ if (isLoading) {
            <div className="d-flex flex-row align-items-center mt-4 w-100">
                 <div className="d-block">
                   <p className="font-size-xs my-0">Total Spending</p>
-                  <h1 className="fw-bolder my-0">$ 8.2M</h1>
+                  <h1 className="fw-bolder my-0">₣ {formatNumber(sumAttribute(expenses_data.expenses_data, 'amount'))}</h1>
                 </div>
                 <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
                   <Greenbutton 
@@ -100,7 +109,7 @@ if (isLoading) {
                 <Table 
                     colDefs={colDefs}
                     rowData={renameKeys(
-                      CleanArrayData(students.students, filter_array_keys),
+                      CleanArrayData(expenses_data.expenses_data, filter_array_keys),
                       renameMapping
                     )}
                 />
@@ -110,3 +119,192 @@ if (isLoading) {
     )
 }
 export default Schoolexpenses;
+
+function Update(){
+  return(
+    <>
+    </>
+  )
+}
+
+function Delete(){
+  return(
+    <>
+    </>
+  )
+}
+
+function Details({ row_id }){
+  const { data:expenses_details, isLoading, error } = useFetchExpensesDetailsQuery({
+    expense_id: row_id
+  })
+  useEffect(() => {
+    if (expenses_details) {
+      console.table(
+        expenses_details.expenses_details
+      );
+    }
+    if (error) {
+      console.error("Error fetching parents:", error);
+    }
+  }, [expenses_details, error]); 
+  
+  if (isLoading) {
+    return <Pageloaderspinner />;
+  }
+  return(
+    <>
+       <div className="w-100 mt-2">
+      <p className="font-size-sm gainsboro-color my-2">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+        Dolorum id excepturi cumque facere, asperiores
+      </p>
+      <div className="d-flex align-items-center justify-content-between my-1">
+        <button
+          className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
+          style={{
+            width: "2.5rem",
+            height: "2.5rem",
+            borderRadius: "2.5rem",
+          }}
+        >
+          <Icon icon="clarity:email-line" />
+        </button>
+        <div className="border-bottom py-2" style={{ width: "87%" }}>
+          <p className="my-0">{expenses_details.expenses_details[0].title}</p>
+          <p
+            className="my-0 font-size-sm gainsboro-color"
+            onClick={() => {
+              handleShow();
+            }}
+          >
+            Expenses Title
+          </p>
+        </div>
+      </div>
+      <div className="d-flex align-items-center justify-content-between my-1">
+        <button
+          className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
+          style={{
+            width: "2.5rem",
+            height: "2.5rem",
+            borderRadius: "2.5rem",
+          }}
+        >
+          <Icon icon="clarity:email-line" />
+        </button>
+        <div className="border-bottom py-2" style={{ width: "87%" }}>
+          <p className="my-0">{formatNumber(Number(expenses_details.expenses_details[0].amount))}$</p>
+          <p
+            className="my-0 font-size-sm gainsboro-color"
+            onClick={() => {
+              handleShow();
+            }}
+          >
+            Amount
+          </p>
+        </div>
+      </div>
+      <div className="d-flex align-items-center justify-content-between my-1">
+        <button
+          className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
+          style={{
+            width: "2.5rem",
+            height: "2.5rem",
+            borderRadius: "2.5rem",
+          }}
+        >
+          <Icon icon="clarity:email-line" />
+        </button>
+        <div className="border-bottom py-2" style={{ width: "87%" }}>
+          <p className="my-0">{formatDate(expenses_details.expenses_details[0].date)}</p>
+          <p
+            className="my-0 font-size-sm gainsboro-color"
+            onClick={() => {
+              handleShow();
+            }}
+          >
+            Date of spending
+          </p>
+        </div>
+      </div>
+      <div className="d-flex align-items-center justify-content-between my-1">
+        <button
+          className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
+          style={{
+            width: "2.5rem",
+            height: "2.5rem",
+            borderRadius: "2.5rem",
+          }}
+        >
+          <Icon icon="clarity:email-line" />
+        </button>
+        <div className="border-bottom py-2" style={{ width: "87%" }}>
+          <p className="my-0">{expenses_details.expenses_details[0].description}</p>
+          <p
+            className="my-0 font-size-sm gainsboro-color"
+            onClick={() => {
+              handleShow();
+            }}
+          >
+           Descriptions
+          </p>
+        </div>
+      </div>
+      <div className="d-flex align-items-center justify-content-between my-1">
+        <button
+          className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
+          style={{
+            width: "2.5rem",
+            height: "2.5rem",
+            borderRadius: "2.5rem",
+          }}
+        >
+          <Icon icon="clarity:email-line" />
+        </button>
+        <div className="border-bottom py-2" style={{ width: "87%" }}>
+          <p className="my-0">{expenses_details.expenses_details[0].schoolexpensescategory.names}</p>
+          <p
+            className="my-0 font-size-sm gainsboro-color"
+            onClick={() => {
+              handleShow();
+            }}
+          >
+           Descriptions
+          </p>
+        </div>
+      </div>
+      <div className="d-flex flex-row justify-content-end my-2 w-100">
+        <button className="border-none rounded-3  w-25 p-2 text-white primary-background text-white">
+          Close
+        </button>
+      </div>
+      </div>
+    </>
+  )
+}
+export function DropdownComponent(props) {
+  const { id } = props.data;
+  const actions = [
+    {
+     modalTitle: "Update Expenses",
+     actionTitle: "Update",
+     modalContent: Update,
+    },
+    {
+      modalTitle:"Expenses Details",
+      actionTitle:"Details",
+      modalContent:Details
+    },
+    {
+     modalTitle: "Delete Expenses",
+     actionTitle: "Delete",
+     modalContent: Delete,
+    }
+ ]
+  return (
+    <>
+      <ActionButtonDropdown actions={actions} row_id={id}/>
+    </>
+  );
+}
