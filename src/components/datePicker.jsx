@@ -1,12 +1,14 @@
 import  { useState, useRef, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import { CSSTransition } from 'react-transition-group';
-const DatePicker = () => {
+const DatePicker = ({ disabledDays = [], disabledMonths = [], disabledYears = [], lable }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
-  const calendarRef = useRef(null); 
+  const calendarRef = useRef(null);
+
   const handleDateChange = (date) => {
     setSelectedDate(date);
+    setShowCalendar(false); // Close the calendar on date selection
   };
 
   const daysInMonth = (month, year) => {
@@ -18,23 +20,29 @@ const DatePicker = () => {
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  const isDateDisabled = (day, month, year) => {
+    return disabledDays.includes(day) ||
+           disabledMonths.includes(month) ||
+           disabledYears.includes(year);
+  };
+
   const generateCalendarDays = () => {
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth();
     const days = daysInMonth(month, year);
     const firstDay = new Date(year, month, 1).getDay();
-
     const calendarDays = [];
     for (let i = 0; i < firstDay; i++) {
       calendarDays.push(<div className="day empty" key={`empty-start-${i}`}></div>);
     }
 
     for (let day = 1; day <= days; day++) {
+      const isDisabled = isDateDisabled(day, month, year);
       calendarDays.push(
         <div
-          className={`day ${day === selectedDate.getDate() ? 'selected-date' : ''}`}
+          className={`day ${day === selectedDate.getDate() ? 'selected-date' : ''} ${isDisabled ? 'disabled' : ''} font-size-sm`}
           key={day}
-          onClick={() => handleDateChange(new Date(year, month, day))}
+          onClick={() => !isDisabled && handleDateChange(new Date(year, month, day))}
         >
           {day}
         </div>
@@ -47,6 +55,7 @@ const DatePicker = () => {
   const toggleCalendar = () => {
     setShowCalendar(!showCalendar);
   };
+
   const handlePreviousMonth = () => {
     const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1);
     setSelectedDate(newDate);
@@ -56,6 +65,7 @@ const DatePicker = () => {
     const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1);
     setSelectedDate(newDate);
   };
+
   const handleClickOutside = (event) => {
     if (calendarRef.current && !calendarRef.current.contains(event.target)) {
       setShowCalendar(false);
@@ -68,59 +78,58 @@ const DatePicker = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
   return (
     <div className='position-relative' ref={calendarRef}>
-      <div className="p-2 border bg-white d-flex flex-row justify-content-between rounded-3 w-100  align-items-center pointer-cursor z-0"
-       onClick={toggleCalendar}
+     <span>{lable}</span>
+      <div className="p-2 border bg-white d-flex flex-row justify-content-between rounded-3 w-100 align-items-center pointer-cursor z-0"
+           onClick={toggleCalendar}
       >
         <div className="d-flex flex-row gap-3 align-items-center">
-            <span>
+          <span>
             <Icon icon="solar:calendar-linear" />
-            </span>
-            <span>{`${monthNames[selectedDate.getMonth()]} ${selectedDate.getDate()}, ${selectedDate.getFullYear()}`}</span>
+          </span>
+          <span>{`${monthNames[selectedDate.getMonth()]} ${selectedDate.getDate()}, ${selectedDate.getFullYear()}`}</span>
         </div>
         <div>
-            <span><Icon icon="heroicons:chevron-down-20-solid" className={showCalendar ? "rotate-180 transition-3s" : "transition-3s"}/></span>
+          <span><Icon icon="heroicons:chevron-down-20-solid" className={showCalendar ? "rotate-180 transition-3s" : "transition-3s"} /></span>
         </div>
       </div>
-        <CSSTransition 
+
+      <CSSTransition
         in={showCalendar}
         timeout={300}
         classNames="dropdown"
         unmountOnExit
-        >
-        <div className="calendar position-absolute p-2 rounded-3 mt-1 bg-white z-3 w-100">
-          <div className="header  d-flex flex-row mt-1">
+      >
+        <div className="calendar position-absolute p-2 rounded-3 border mb-1 bg-white z-3 w-50" style={{ bottom: '100%' }}>
+          <div className="header d-flex flex-row mt-1">
             <div className="p-1 primary-background-100 rounded-2 w-100 d-flex flex-row align-items-center justify-content-between">
-                    <button className="border-none font-size-sm bg-white color-primary" style={{ width:"1.8rem", height:"1.8rem", borderRadius:"1.8rem" }}
-                      onClick={() => {
-                         handlePreviousMonth();
-                      }}
-                    >
-                     <Icon icon="ion:chevron-back" />
-                    </button>
-                    <div>
-                        <span>{monthNames[selectedDate.getMonth()]}</span>
-                    </div>
-                    <button className="border-none font-size-sm bg-white color-primary" style={{ width:"1.8rem", height:"1.8rem", borderRadius:"1.8rem" }}
-                      onClick={() => {
-                         handleNextMonth();
-                      }}
-                    >
-                    <Icon icon="ion:chevron-forward" />
-                    </button>
+              <button className="border-none font-size-sm bg-white color-primary" style={{ width:"1.8rem", height:"1.8rem", borderRadius:"1.8rem" }}
+                      onClick={handlePreviousMonth}
+              >
+                <Icon icon="ion:chevron-back" />
+              </button>
+              <div>
+                <span style={{ fontSize:"0.9rem" }}>{monthNames[selectedDate.getMonth()]}, {selectedDate.getFullYear()}</span>
+              </div>
+              <button className="border-none font-size-sm bg-white color-primary" style={{ width:"1.8rem", height:"1.8rem", borderRadius:"1.8rem" }}
+                      onClick={handleNextMonth}
+              >
+                <Icon icon="ion:chevron-forward" />
+              </button>
             </div>
           </div>
           <div className="d-flex flex-row justify-content-center px-1 w-100">
-          <div className="days w-100">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
-              <div className="day" key={index}>{day}</div>
-            ))}
-            {generateCalendarDays()}
-          </div>
+            <div className="days w-100 mt-1">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
+                <div className="day font-size-sm" key={index}>{day}</div>
+              ))}
+              {generateCalendarDays()}
+            </div>
           </div>
         </div>
-        </CSSTransition>
+      </CSSTransition>
     </div>
   );
 };

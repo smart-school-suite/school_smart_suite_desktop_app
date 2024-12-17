@@ -5,6 +5,7 @@ import CleanArrayData from "../utils/functions";
 import { renameKeys } from "../utils/functions";
 import Pageloaderspinner from "../components/Spinners";
 import Table from "../components/Tables";
+import { Icon } from "@iconify/react";
 function Transferrequest(){    const [colDefs, setColDefs] = useState([
     { field: "Student Name", filter: true, floatingFilter: true },
     { field: "Level", filter: true, floatingFilter: true },
@@ -39,19 +40,6 @@ function Transferrequest(){    const [colDefs, setColDefs] = useState([
     "total_fee_debt": "Fee Debt",
     "gender": "Gender",
   };
-  useEffect(() => {
-    if (students) {
-      console.table(
-        renameKeys(
-          CleanArrayData(students.students, filter_array_keys),
-          renameMapping
-        )
-      );
-    }
-    if (error) {
-      console.error("Error fetching students:", error);
-    }
-  }, [students, error]); 
   
   if (isLoading) {
     return <Pageloaderspinner />;
@@ -61,7 +49,7 @@ function Transferrequest(){    const [colDefs, setColDefs] = useState([
                        <div className="my-2">
           <div className="d-flex align-items-center gap-2">
           <div className="d-flex justify-content-center align-items-center" style={{ width:"3rem", height:"3rem", borderRadius:"3rem", background:"#fff" }}>
-              IC
+          <Icon icon="si:pull-request-duotone" className="color-primary fs-5"/>
             </div>
             <h4 className="fw-bold my-0">Transfer Request</h4>
           </div>
