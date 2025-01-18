@@ -8,7 +8,9 @@ import ProgressGuage from "../components/ProgressGuage";
 import CardGroup from "../components/Cardgroup";
 import HeatMap from "../components/chartcomponents/heatMap";
 import { DashboardNavabarOptions } from "../componentConfigurations/navBarConfig";
+import { useNavigate } from "react-router-dom";
 function Dashboard(){
+    const navigate = useNavigate();
     return(
         <>
         <Navbar 
@@ -31,7 +33,12 @@ function Dashboard(){
                             </span>
                             <span>+20%</span>
                         </button>
-                        <button className="d-flex flex-row border-none align-items-center rounded-pill primary-background-400 gap-2 primary-color-dark fw-medium px-2 my-0 font-size-sm py-1">
+                        <button 
+                        className="d-flex flex-row border-none align-items-center rounded-pill primary-background-400 gap-2 primary-color-dark fw-medium px-2 my-0 font-size-sm py-1"
+                         onClick={() => {
+                             navigate("/register-school")
+                         }}
+                        >
                             <span>
                             <Icon icon="ic:round-plus" />
                             </span>
