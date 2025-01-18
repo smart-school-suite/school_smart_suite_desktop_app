@@ -1,12 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import toast from "react-hot-toast";
 
-const KEY = "01a3233753e638a7178ddd7c6"; // Your API key here
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://127.0.0.1:8000/",
   prepareHeaders: (headers) => {
-    headers.set("SCHOOL_BRANCH_KEY", KEY);
+    const schoolBranchId = localStorage.getItem('schoolBranchId');
+    if (schoolBranchId) {
+      headers.set("SCHOOL_BRANCH_KEY", schoolBranchId);
+    }
     return headers;
   },
   credentials: "include",

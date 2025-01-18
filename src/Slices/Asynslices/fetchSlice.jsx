@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import toast from "react-hot-toast";
-const KEY = "0ad263774d0b238f3b9f780fb";
 const tagTypesarray = [
   "student",
   "teachers",
@@ -15,7 +14,12 @@ const tagTypesarray = [
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://127.0.0.1:8000/",
   prepareHeaders: (headers) => {
-    headers.set("SCHOOL_BRANCH_KEY", KEY);
+    const schoolBranchId = localStorage.getItem('SCHOOL_BRANCH_KEY');
+    const token = localStorage.getItem("auth_token");
+    if (schoolBranchId) {
+      headers.set("SCHOOL_BRANCH_KEY", schoolBranchId);
+      headers.set("Authorization", `Bearer ${token}`)
+    }
     return headers;
   },
   credentials: "include",
@@ -186,6 +190,14 @@ export const apiSlice = createApi({
     fetchStudentScores: builder.query({
       query: () => "api/marks/scores-exam/student",
       providesTags: ["scores"]
+    }),
+    fetchCountrys: builder.query({
+      query: () => "api/country/countries",
+      providesTags: ["country"],
+    }),
+    fetchPricingRates: builder.query({
+       query: () => "api/subcription/rates",
+       providesTags:['subscription_rates']
     })
   }),
 });
@@ -216,5 +228,7 @@ export const {
   useFetchTimetableDetailsQuery,
   useFetchStudentResitDetailsQuery,
   useFetchExpensesDetailsQuery,
-  useFetchLetterGradesQuery
+  useFetchLetterGradesQuery,
+  useFetchCountrysQuery,
+  useFetchPricingRatesQuery
 } = apiSlice;

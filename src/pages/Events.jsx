@@ -3,6 +3,8 @@ import CustomDropdown from "../components/Dropdowns";
 import { SchoolYearSelector } from "../components/yearPicker";
 import { useState } from "react";
 import { SchoolEventData } from "../data/data";
+import { ModialButton } from "./actionButton";
+import { EventTitleInput } from "../components/formComponents";
 function Events() {
   return (
     <>
@@ -90,14 +92,15 @@ function Events() {
          <div className="rounded-3 p-2 bg-white w-50 border mb-2">
           <input type="text" placeholder="Search for an event" className="border-none search-input"/>
          </div>
-         <button className="border-none px-3 py-2 bg-dark text-white rounded-pill d-flex flex-row align-items-ceneter justify-content-between gap-2"
-         style={{ fontSize:"0.8rem" }}
-        >
-          <span>
+         <ModialButton
+          classname={"border-none px-3 py-2 bg-dark font-size-sm text-white rounded-pill d-flex flex-row align-items-ceneter justify-content-between gap-2"}
+          action={{ modalContent:CreateEvent }}
+         >
+         <span>
           <Icon icon="lucide:circle-plus" />
           </span>
           <span>Create Event</span>
-        </button>
+         </ModialButton>
          </div>
        <div className="scrollable-list px-2">
        <div className="d-block">
@@ -136,7 +139,7 @@ function Events() {
             </div>
             </div>
             <div>
-              <button className="border-none text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
+              <button className="border-none text-white font-size-sm gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
                 <span>Edit</span>
                 <span>
                 <Icon icon="octicon:chevron-down-16" />
@@ -178,94 +181,7 @@ function Events() {
             </div>
             </div>
             <div>
-              <button className="border-none text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
-                <span>Edit</span>
-                <span>
-                <Icon icon="octicon:chevron-down-16" />
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="d-block">
-          <span className="my-1 fw-bold fs-4">March</span>
-          <div className="card w-100 rounded-4 py-3 my-1 px-3 d-flex flex-row align-items-center justify-content-between">
-            <div className="d-flex flex-row gap-4 align-items-center">
-            <div className="d-block text-center color-primary">
-              <p className="my-0">Wed</p>
-              <h1 className="fw-bold my-0">23</h1>
-            </div>
-            <div className="d-flex flex-column gap-3">
-               <div className="d-flex gap-2 flex-row align-items-center gainsboro-color" style={{ fontSize:"0.9rem" }}>
-                <span>
-                <Icon icon="mingcute:time-fill" className="fs-6"/>
-                </span>
-                <span>9:00 pm</span>
-                <span>9:00 pm</span>
-               </div>
-               <div className="d-flex gap-2 flex-row align-items-center gainsboro-color" style={{ fontSize:"0.9rem" }}>
-                <span>
-                <Icon icon="mdi:location" className="fs-6"/>
-                </span>
-                <span>Location</span>
-               </div>
-            </div>
-            <div className="d-flex flex-column gap-3">
-              <div>
-              <span className="my-0 gainsboro-color" style={{ fontSize:"0.9rem" }}>
-                Lorem ipsum dolor sit amet consectetur elit...
-              </span>
-              </div>
-              <div className="d-flex gap-1 flex-row font-size-sm gainsboro-color">
-                <span>You were Invited,</span>
-                <span>Plus 10 Others</span>
-              </div>
-            </div>
-            </div>
-            <div>
-              <button className="border-none text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
-                <span>Edit</span>
-                <span>
-                <Icon icon="octicon:chevron-down-16" />
-                </span>
-              </button>
-            </div>
-          </div>
-          <div className="card w-100 rounded-4 py-3 my-1 px-3 d-flex flex-row align-items-center justify-content-between">
-            <div className="d-flex flex-row gap-4 align-items-center">
-            <div className="d-block text-center color-primary">
-              <p className="my-0">Wed</p>
-              <h1 className="fw-bold my-0">23</h1>
-            </div>
-            <div className="d-flex flex-column gap-3">
-               <div className="d-flex gap-2 flex-row align-items-center gainsboro-color" style={{ fontSize:"0.9rem" }}>
-                <span>
-                <Icon icon="mingcute:time-fill" className="fs-6"/>
-                </span>
-                <span>9:00 pm</span>
-                <span>9:00 pm</span>
-               </div>
-               <div className="d-flex gap-2 flex-row align-items-center gainsboro-color" style={{ fontSize:"0.9rem" }}>
-                <span>
-                <Icon icon="mdi:location" className="fs-6"/>
-                </span>
-                <span>Location</span>
-               </div>
-            </div>
-            <div className="d-flex flex-column gap-3">
-              <div>
-              <span className="my-0 gainsboro-color" style={{ fontSize:"0.9rem" }}>
-                Lorem ipsum dolor sit amet consectetur elit...
-              </span>
-              </div>
-              <div className="d-flex gap-1 flex-row font-size-sm gainsboro-color">
-                <span>You were Invited,</span>
-                <span>Plus 10 Others</span>
-              </div>
-            </div>
-            </div>
-            <div>
-              <button className="border-none text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
+              <button className="border-none font-size-sm text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
                 <span>Edit</span>
                 <span>
                 <Icon icon="octicon:chevron-down-16" />
@@ -310,7 +226,7 @@ function Events() {
             </div>
             </div>
             <div>
-              <button className="border-none text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
+              <button className="border-none font-size-sm text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
                 <span>Edit</span>
                 <span>
                 <Icon icon="octicon:chevron-down-16" />
@@ -352,7 +268,94 @@ function Events() {
             </div>
             </div>
             <div>
-              <button className="border-none text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
+              <button className="border-none font-size-sm text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
+                <span>Edit</span>
+                <span>
+                <Icon icon="octicon:chevron-down-16" />
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="d-block">
+          <span className="my-1 fw-bold fs-4">March</span>
+          <div className="card w-100 rounded-4 py-3 my-1 px-3 d-flex flex-row align-items-center justify-content-between">
+            <div className="d-flex flex-row gap-4 align-items-center">
+            <div className="d-block text-center color-primary">
+              <p className="my-0">Wed</p>
+              <h1 className="fw-bold my-0">23</h1>
+            </div>
+            <div className="d-flex flex-column gap-3">
+               <div className="d-flex gap-2 flex-row align-items-center gainsboro-color" style={{ fontSize:"0.9rem" }}>
+                <span>
+                <Icon icon="mingcute:time-fill" className="fs-6"/>
+                </span>
+                <span>9:00 pm</span>
+                <span>9:00 pm</span>
+               </div>
+               <div className="d-flex gap-2 flex-row align-items-center gainsboro-color" style={{ fontSize:"0.9rem" }}>
+                <span>
+                <Icon icon="mdi:location" className="fs-6"/>
+                </span>
+                <span>Location</span>
+               </div>
+            </div>
+            <div className="d-flex flex-column gap-3">
+              <div>
+              <span className="my-0 gainsboro-color" style={{ fontSize:"0.9rem" }}>
+                Lorem ipsum dolor sit amet consectetur elit...
+              </span>
+              </div>
+              <div className="d-flex gap-1 flex-row font-size-sm gainsboro-color">
+                <span>You were Invited,</span>
+                <span>Plus 10 Others</span>
+              </div>
+            </div>
+            </div>
+            <div>
+              <button className="border-none font-size-sm text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
+                <span>Edit</span>
+                <span>
+                <Icon icon="octicon:chevron-down-16" />
+                </span>
+              </button>
+            </div>
+          </div>
+          <div className="card w-100 rounded-4 py-3 my-1 px-3 d-flex flex-row align-items-center justify-content-between">
+            <div className="d-flex flex-row gap-4 align-items-center">
+            <div className="d-block text-center color-primary">
+              <p className="my-0">Wed</p>
+              <h1 className="fw-bold my-0">23</h1>
+            </div>
+            <div className="d-flex flex-column gap-3">
+               <div className="d-flex gap-2 flex-row align-items-center gainsboro-color" style={{ fontSize:"0.9rem" }}>
+                <span>
+                <Icon icon="mingcute:time-fill" className="fs-6"/>
+                </span>
+                <span>9:00 pm</span>
+                <span>9:00 pm</span>
+               </div>
+               <div className="d-flex gap-2 flex-row align-items-center gainsboro-color" style={{ fontSize:"0.9rem" }}>
+                <span>
+                <Icon icon="mdi:location" className="fs-6"/>
+                </span>
+                <span>Location</span>
+               </div>
+            </div>
+            <div className="d-flex flex-column gap-3">
+              <div>
+              <span className="my-0 gainsboro-color" style={{ fontSize:"0.9rem" }}>
+                Lorem ipsum dolor sit amet consectetur elit...
+              </span>
+              </div>
+              <div className="d-flex gap-1 flex-row font-size-sm gainsboro-color">
+                <span>You were Invited,</span>
+                <span>Plus 10 Others</span>
+              </div>
+            </div>
+            </div>
+            <div>
+              <button className="border-none font-size-sm text-white gap-3 bg-dark rounded-3 px-3 py-2 d-flex flex-row align-items-center justify-content-between">
                 <span>Edit</span>
                 <span>
                 <Icon icon="octicon:chevron-down-16" />
@@ -369,3 +372,31 @@ function Events() {
   );
 }
 export default Events;
+
+function CreateEvent({ handleClose }){
+  return(
+    <div>
+      <div className="d-flex flex-row">
+        <div className="d-block">
+          <h5>Create Event</h5>
+          <p className="gainsboro-color font-size-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste deserun</p>
+        </div>
+      </div>
+        <div className="my-1">
+          <EventTitleInput />
+        </div>
+      <div className="mt-4">
+          <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
+            <button className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
+             onClick={handleClose}
+            >
+              Cancel
+            </button>
+            <button className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50">
+              Create Event
+            </button>
+          </div>
+        </div>
+    </div>
+  )
+}

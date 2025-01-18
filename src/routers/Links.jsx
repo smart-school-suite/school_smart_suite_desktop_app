@@ -117,10 +117,65 @@ const StudentBatches = React.lazy(() => import("../pages/studentBatches"));
 const ExamTimeTable = React.lazy(() => import("../pages/examTimeTable"));
 const ResitPayments = React.lazy(() => import("../pages/resitPayments"));
 const Createparent = React.lazy(() => import("../pages/forms/Createparent"));
+import LoginSchoolAdmin from "../pages/LoginSchoolAdmin";
+import TwoStepVerification from "../pages/twoStepVerification";
+import RegisterSchool from "../pages/signup/registerSchool";
+import RegisterSchoolAdmin from "../pages/signup/registerSchoolAdmin";
+import RegisterSchoolBranch from "../pages/signup/registerSchoolBranch";
+import SubcriptionPlan from "../pages/signup/subcriptionPlans";
 function Links() {
   return (
     <BrowserRouter>
+      {/* auth routes*/}
       <Routes>
+        <Route
+          path="/register-school"
+          element={
+             <RegisterSchool />
+          }
+        >
+        </Route>
+        <Route
+         path="/register/school-admin"
+         element={
+           <RegisterSchoolAdmin />
+         }
+        >
+        </Route>
+        <Route 
+         path="/register/school-branch"
+         element={
+           <RegisterSchoolBranch />
+         }
+        />
+        <Route
+         path="/subcription/plan"
+         element={
+           <SubcriptionPlan />
+         }
+        >
+        </Route>
+      <Route 
+       path="/create-schoolbranch"
+       element={
+         <RegisterSchoolBranch/>
+       }
+      ></Route>
+      <Route
+      path="/login-school-admin"
+       element={
+         <LoginSchoolAdmin />
+       }
+      >
+      </Route>
+      <Route
+       path="/verify-otp"
+       element={
+         <TwoStepVerification />
+       }
+      >
+
+      </Route>
         <Route element={<Layout />}>
           {/*stats and analysis routes starts*/}
           <Route
@@ -496,9 +551,10 @@ function Links() {
           <Route
             index
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Dashboard />
               </Suspense>
+
             }
           />
           <Route

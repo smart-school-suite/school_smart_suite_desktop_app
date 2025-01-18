@@ -1,6 +1,9 @@
 import { Icon } from "@iconify/react";
 import { Navbarsettings } from "../../components/Navbar";
+import { formatNumber } from "../../utils/functions";
 function Profile(){
+    const user_details = JSON.parse(localStorage.getItem("user"));
+    console.table(user_details);
     return(
         <>
         <Navbarsettings />
@@ -18,16 +21,16 @@ function Profile(){
                </div>
                <div className="ms-4 mt-auto">
                 <div className="d-block">
-                    <h5 className="fw-bold">Gilbert Bernhard</h5>
+                    <h5 className="fw-bold">{user_details.name}</h5>
                     <div className="d-flex flex-row my-1 gainsboro-color">
                         <span>Yaounde, Cameroon</span>
                     </div>
                     <div className="d-flex flex-row gap-3 mt-2 align-items-center">
                         <span className="font-size-sm fw-medium">@Gilbert.Bernhard57</span>
                         <div className="divider-pill"></div>
-                        <span className="font-size-sm fw-medium">District Group Officer</span>
+                        <span className="font-size-sm fw-medium">{user_details.role}</span>
                         <div className="divider-pill"></div>
-                        <span className="font-size-sm gainsboro-color">Full Time</span>
+                        <span className="font-size-sm gainsboro-color">{user_details.employment_status}</span>
                     </div>
                 </div>
                </div>
@@ -38,7 +41,7 @@ function Profile(){
                 <div className="d-flex flex-column gap-2 border-right">
                    <div className="d-block">
                     <p className="gainsboro-color font-size-sm my-0">E-mail</p>
-                    <p className="fs-6">Terrance38@yahoo.com</p>
+                    <p className="fs-6">{user_details.email}</p>
                    </div>
                    <div className="d-block">
                     <p className="gainsboro-color font-size-sm my-0">Phone</p>
@@ -52,7 +55,7 @@ function Profile(){
                 <div className="d-flex flex-column gap-2">
                    <div className="d-block">
                     <p className="gainsboro-color font-size-sm my-0">Salary</p>
-                    <p className="fs-6">500,000$</p>
+                    <p className="fs-6">{formatNumber(Number(user_details.salary))} </p>
                    </div>
                    <div className="d-block">
                     <p className="gainsboro-color font-size-sm my-0">State Of Origin</p>
@@ -60,21 +63,21 @@ function Profile(){
                    </div>
                    <div className="d-block">
                     <p className="gainsboro-color font-size-sm my-0">Tribe</p>
-                    <p className="fs-6">Eton</p>
+                    <p className="fs-6">{user_details.cultural_background}</p>
                    </div>
                 </div>
                 <div className="d-flex flex-column gap-2">
                    <div className="d-block">
                     <p className="gainsboro-color font-size-sm my-0">Qualification</p>
-                    <p className="fs-6">Terrance38@yahoo.com</p>
+                    <p className="fs-6">{user_details.highest_qualification}</p>
                    </div>
                    <div className="d-block">
                     <p className="gainsboro-color font-size-sm my-0">Religion</p>
-                    <p className="fs-6">832-832-999</p>
+                    <p className="fs-6">{user_details.religion}</p>
                    </div>
                    <div className="d-block">
                     <p className="gainsboro-color font-size-sm my-0">Address</p>
-                    <p className="fs-6">Female</p>
+                    <p className="fs-6">{user_details.address}</p>
                    </div>
                 </div>
                 </div>

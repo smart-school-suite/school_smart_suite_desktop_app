@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import CustomDropdown from "../components/Dropdowns";
 import { SchoolYearSelector } from "../components/yearPicker";
 import { Icon } from "@iconify/react";
+import { useState } from "react";
 function ExamTimeTable(){
     const navBarOptions = {
         route_data: [
@@ -49,9 +50,6 @@ function ExamTimeTable(){
             </div>
             <div>
               <SchoolYearSelector />
-            </div>
-            <div>
-              <CustomDropdown />
             </div>
           </div>
           <div className="d-flex flex-row align-items-center gap-3">
