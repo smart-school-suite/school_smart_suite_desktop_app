@@ -187,19 +187,7 @@ export const emailValidationSchema = Yup.string()
   .max(6, "Course credit cannot exceed 6")
   .typeError("Course credit must be a valid number");
 
-  export const departmentValidationSchema = Yup.string()
-  .required("Department is required")
-  .min(3, "Department name must be at least 3 characters long")
-  .max(100, "Department name must be less than 100 characters")
-  .matches(
-    /^[A-Za-z\s,.-]+$/,
-    "Department name can only contain letters, spaces, commas, periods, and hyphens"
-  )
-  .trim() 
-  .test("no-double-spaces", "Department name should not contain double spaces", (value) => {
-    return value && !/\s{2,}/.test(value);
-  })
-  .typeError("Department name must be a valid string");
+
 
   export const weightedMarkValidationSchema = Yup.number()
   .required("Weighted mark is required")
@@ -238,6 +226,20 @@ export const emailValidationSchema = Yup.string()
     return value && !/\s{2,}/.test(value);
   })
   .typeError("Specialty must be a valid string");
+
+  export const departmentValidationSchema = Yup.string()
+  .required("Department is required")
+  .min(3, "Department name must be at least 3 characters long")
+  .max(100, "Department name must be less than 100 characters")
+  .matches(
+    /^[A-Za-z\s,.-]+$/,
+    "Department name can only contain letters, spaces, commas, periods, and hyphens"
+  )
+  .trim() 
+  .test("no-double-spaces", "Department name should not contain double spaces", (value) => {
+    return value && !/\s{2,}/.test(value);
+  })
+  .typeError("Department name must be a valid string");
 
  export  const registrationFeeValidationSchema = Yup.number()
   .required("Registration fee is required")

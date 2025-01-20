@@ -39,7 +39,7 @@ const baseQueryWithErrorHandling = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithErrorHandling,
-  tagTypes: tagTypesarray, // Example of tag types for cache management
+  tagTypes: tagTypesarray,
   endpoints: (builder) => ({
     fetchStudents: builder.query({
       query: () => "api/student/get-students",

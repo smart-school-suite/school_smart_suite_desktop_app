@@ -2,8 +2,7 @@ import { Icon } from "@iconify/react";
 import { Navbarsettings } from "../../components/Navbar";
 import { formatNumber } from "../../utils/functions";
 function Profile(){
-    const user_details = JSON.parse(localStorage.getItem("user"));
-    console.table(user_details);
+    const user_details = localStorage.getItem("AUTH_USER_DETAILS");
     return(
         <>
         <Navbarsettings />
