@@ -194,6 +194,14 @@ export const postSlice = createApi({
         body: newTeacher,
       }),
       invalidatesTags: ["teacher"], 
+    }),
+    addStudent: builder.mutation({
+        query: (newStudent) => ({
+            url:"api/student/create-student",
+            method:"POST",
+            body:newStudent
+        }),
+        invalidatesTags: ["student"],   
     })
   }),
 });
@@ -217,5 +225,6 @@ export const {
   useAddStudentScoreMutation,
   useAddTeacherMutation,
   useAddTimeTableMutation,
-  usePromoteStudentMutation
+  usePromoteStudentMutation,
+  useAddStudentMutation
 } = postSlice;

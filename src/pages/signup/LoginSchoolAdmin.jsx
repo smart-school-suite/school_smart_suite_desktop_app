@@ -1,7 +1,6 @@
-import { EmailInput } from "../components/formComponents"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../../context/authContext";
 function LoginSchoolAdmin() {
 
     const [email, setEmail] = useState("");
@@ -49,7 +48,6 @@ function LoginSchoolAdmin() {
                 className="form-control"
               />
             </div>
-        
             <button
               className="w-100 mt-2 border-none rounded-3 p-2 primary-background text-white"
               type="submit"

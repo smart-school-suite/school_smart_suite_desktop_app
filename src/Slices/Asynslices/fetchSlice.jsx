@@ -198,6 +198,10 @@ export const apiSlice = createApi({
     fetchPricingRates: builder.query({
        query: () => "api/subcription/rates",
        providesTags:['subscription_rates']
+    }),
+    fetchSemester: builder.query({
+       query: () => "api/semester/semesters",
+       providesTags:['semester']
     })
   }),
 });
@@ -230,5 +234,7 @@ export const {
   useFetchExpensesDetailsQuery,
   useFetchLetterGradesQuery,
   useFetchCountrysQuery,
-  useFetchPricingRatesQuery
+  useFetchPricingRatesQuery,
+  useFetchEducationLevelsQuery,
+  useFetchSemestersQuery
 } = apiSlice;

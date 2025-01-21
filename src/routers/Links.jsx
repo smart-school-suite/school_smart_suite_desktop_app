@@ -117,12 +117,13 @@ const StudentBatches = React.lazy(() => import("../pages/studentBatches"));
 const ExamTimeTable = React.lazy(() => import("../pages/examTimeTable"));
 const ResitPayments = React.lazy(() => import("../pages/resitPayments"));
 const Createparent = React.lazy(() => import("../pages/forms/Createparent"));
-import LoginSchoolAdmin from "../pages/LoginSchoolAdmin";
+import LoginSchoolAdmin from "../pages/signup/LoginSchoolAdmin";
 import TwoStepVerification from "../pages/twoStepVerification";
 import RegisterSchool from "../pages/signup/registerSchool";
 import RegisterSchoolAdmin from "../pages/signup/registerSchoolAdmin";
 import RegisterSchoolBranch from "../pages/signup/registerSchoolBranch";
 import SubcriptionPlan from "../pages/signup/subcriptionPlans";
+import Hero from "../pages/signup/Hero";
 import  {ProtectedRoute, ProtectedLoginRoute } from "../components/protectedRoutes";
 function Links() {
   return (
@@ -138,6 +139,14 @@ function Links() {
           }
         >
         </Route>
+        <Route
+         path="/hero"
+         element={
+            <ProtectedLoginRoute>
+              <Hero />
+            </ProtectedLoginRoute>
+         }
+        ></Route>
         <Route
          path="/register/school-admin"
          element={

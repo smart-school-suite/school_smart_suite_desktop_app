@@ -86,7 +86,7 @@ function CustomDropdown({
         classNames="dropdown"
         unmountOnExit
       >
-        <div className={`d-flex flex-column bg-white p-2 rounded-3 w-100 border z-3 position-absolute ${direction === "up" ? "drop-up" : "drop-down"}`}>
+        <div className={`d-flex flex-column bg-white p-2 rounded-3 w-100 mt-4 border z-3 position-absolute ${direction === "up" ? "drop-up" : "drop-down"}`}>
           {isLoading && <div className="loading-indicator"></div>}
           {error && <div className="error-message">Error: {error.message}</div>}
           {!isLoading && !error && (

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import * as YupValidationSchema from "../componentConfigurations/YupValidationSchema";
 import { Icon } from "@iconify/react";
 
-export function PhoneNumberInput() {
-  const [phoneNumber, setPhoneNumber] = useState("");
+export function PhoneNumberInput({ onChange, value, onValidationChange }) {
+  const [phoneNumber, setPhoneNumber] = useState( value || "");
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
 
@@ -11,9 +11,10 @@ export function PhoneNumberInput() {
     try {
       await YupValidationSchema.phoneValidationSchema.validate(phone);
       setError("");
+      onValidationChange(true)
     } catch (err) {
       setError(err.message);
-      console.error(err.message);
+      onValidationChange(false);
     }
   };
 
@@ -34,7 +35,7 @@ export function PhoneNumberInput() {
       .trim();
 
     setPhoneNumber(formattedValue);
-
+    onChange(value)
     if (value.length === 0) {
       setError("Phone number is required.");
     } else {
@@ -78,8 +79,8 @@ export function PhoneNumberInput() {
     </div>
   );
 }
-export function EmailInput() {
-  const [email, setEmail] = useState("");
+export function EmailInput({ value, onChange, onValidationChange }) {
+  const [email, setEmail] = useState( value || "");
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
 
@@ -87,14 +88,17 @@ export function EmailInput() {
     try {
       await YupValidationSchema.emailValidationSchema.validate(email);
       setError("");
+      onValidationChange(true);
     } catch (err) {
       setError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleChange = (e) => {
     const { value } = e.target;
     setEmail(value);
+    onChange(value)
     validateEmail(value);
   };
 
@@ -165,29 +169,18 @@ export function FullNamesInput({ value, onChange, onValidationChange }) {
         onChange={handleNameChange}
         onFocus={handleNameFocus}
       />
-      {isNameTouched && nameError && (
-        <div
-          className={
-            isNameTouched && nameError
-              ? "invalid-feedback"
-              : isNameTouched && !nameError && name
-              ? "valid-feedback"
-              : "visually-hidden"
-          }
-        >
-          {isNameTouched && nameError
-            ? nameError
-            : isNameTouched && !nameError && name
-            ? "Looks Good"
-            : null}
-        </div>
+        {isNameTouched && nameError && (
+        <div className="invalid-feedback">{nameError}</div>
+      )}
+      {isNameTouched && !nameError && name && (
+        <div className="valid-feedback">Looks good!</div>
       )}
     </div>
   );
 }
 
-export function FieldOfStudyInput() {
-  const [fieldOfStudy, setFieldOfStudy] = useState("");
+export function FieldOfStudyInput({ value, onChange, onValidationChange }) {
+  const [fieldOfStudy, setFieldOfStudy] = useState( value || "");
   const [fieldOfStudyError, setFieldOfStudyError] = useState("");
   const [isFieldOfStudyTouched, setIsFieldOfStudyTouched] = useState(false);
 
@@ -195,14 +188,17 @@ export function FieldOfStudyInput() {
     try {
       await YupValidationSchema.fieldOfStudyValidationSchema.validate(value);
       setFieldOfStudyError("");
+      onValidationChange(true);
     } catch (err) {
       setFieldOfStudyError(err.message);
+      onValidationChange(false)
     }
   };
 
   const handleFieldOfStudyChange = (e) => {
     const { value } = e.target;
     setFieldOfStudy(value);
+    onChange(value);
     validateFieldOfStudy(value);
   };
 
@@ -395,8 +391,8 @@ export function CityInput() {
   );
 }
 
-export function SalaryInput() {
-  const [salary, setSalary] = useState("");
+export function SalaryInput({ value, onChange, onValidationChange }) {
+  const [salary, setSalary] = useState( value || "");
   const [salaryError, setSalaryError] = useState("");
   const [isSalaryTouched, setIsSalaryTouched] = useState(false);
 
@@ -404,14 +400,17 @@ export function SalaryInput() {
     try {
       await YupValidationSchema.salaryValidationSchema.validate(value);
       setSalaryError("");
+      onValidationChange(true);
     } catch (err) {
       setSalaryError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleSalaryChange = (e) => {
     const { value } = e.target;
     setSalary(value);
+    onChange(value)
     validateSalary(value);
   };
 
@@ -442,8 +441,8 @@ export function SalaryInput() {
   );
 }
 
-export function YearsExperienceInput() {
-  const [experienceYears, setExperienceYears] = useState("");
+export function YearsExperienceInput({ onChange, value, onValidationChange }) {
+  const [experienceYears, setExperienceYears] = useState( value || "");
   const [experienceYearsError, setExperienceYearsError] = useState("");
   const [isExperienceYearsTouched, setIsExperienceYearsTouched] =
     useState(false);
@@ -452,14 +451,17 @@ export function YearsExperienceInput() {
     try {
       await YupValidationSchema.experienceValidationSchema.validate(value);
       setExperienceYearsError("");
+      onValidationChange(true);
     } catch (err) {
       setExperienceYearsError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleExperienceYearsChange = (e) => {
     const { value } = e.target;
     setExperienceYears(value);
+    onChange(value);
     validateExperienceYears(value);
   };
 
@@ -493,8 +495,8 @@ export function YearsExperienceInput() {
   );
 }
 
-export function AddressInput() {
-  const [address, setAddress] = useState("");
+export function AddressInput({ onChange, value, onValidationChange }) {
+  const [address, setAddress] = useState( value || "");
   const [addressError, setAddressError] = useState("");
   const [isAddressTouched, setIsAddressTouched] = useState(false);
 
@@ -502,14 +504,17 @@ export function AddressInput() {
     try {
       await YupValidationSchema.addressValidationSchema.validate(value);
       setAddressError("");
+      onValidationChange(true);
     } catch (err) {
       setAddressError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleAddressChange = (e) => {
     const { value } = e.target;
     setAddress(value);
+    onChange(value)
     validateAddress(value);
   };
 
@@ -539,8 +544,8 @@ export function AddressInput() {
   );
 }
 
-export function CourseCodeInput() {
-  const [courseCode, setCourseCode] = useState("");
+export function CourseCodeInput({ onChange, value, onValidationChange }) {
+  const [courseCode, setCourseCode] = useState( value || "");
   const [courseCodeError, setCourseCodeError] = useState("");
   const [isCourseCodeTouched, setIsCourseCodeTouched] = useState(false);
 
@@ -548,14 +553,17 @@ export function CourseCodeInput() {
     try {
       await YupValidationSchema.courseCodeValidationSchema.validate(value);
       setCourseCodeError("");
+      onValidationChange(true);
     } catch (err) {
       setCourseCodeError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleCourseCodeChange = (e) => {
     const { value } = e.target;
     setCourseCode(value);
+    onChange(value);
     validateCourseCode(value);
   };
 
@@ -589,8 +597,8 @@ export function CourseCodeInput() {
   );
 }
 
-export function CourseTitleInput() {
-  const [courseTitle, setCourseTitle] = useState("");
+export function CourseTitleInput({ value, onChange, onValidationChange}) {
+  const [courseTitle, setCourseTitle] = useState(value || "");
   const [courseTitleError, setCourseTitleError] = useState("");
   const [isCourseTitleTouched, setIsCourseTitleTouched] = useState(false);
 
@@ -598,14 +606,17 @@ export function CourseTitleInput() {
     try {
       await YupValidationSchema.courseTitleValidationSchema.validate(value);
       setCourseTitleError("");
+      onValidationChange(true);
     } catch (err) {
       setCourseTitleError(err.message);
+      onValidationChange(false)
     }
   };
 
   const handleCourseCodeChange = (e) => {
     const { value } = e.target;
     setCourseTitle(value);
+    onChange(value)
     validateCourseTitle(value);
   };
 
@@ -638,8 +649,8 @@ export function CourseTitleInput() {
   );
 }
 
-export function CourseCreditInput() {
-  const [courseCredit, setCourseCredit] = useState("");
+export function CourseCreditInput({ value, onValidationChange, onChange }) {
+  const [courseCredit, setCourseCredit] = useState(value || "");
   const [courseCreditError, setCourseCreditError] = useState("");
   const [isCourseCreditTouched, setIsCourseCreditTouched] = useState(false);
 
@@ -647,7 +658,9 @@ export function CourseCreditInput() {
     try {
       await YupValidationSchema.courseCreditValidationSchema.validate(value);
       setCourseCreditError("");
+      onValidationChange(true);
     } catch (err) {
+      onValidationChange(false);
       setCourseCreditError(err.message);
     }
   };
@@ -655,6 +668,7 @@ export function CourseCreditInput() {
   const handleCourseCreditChange = (e) => {
     const { value } = e.target;
     setCourseCredit(value);
+    onChange(value);
     validateCourseCredit(value);
   };
 
@@ -840,8 +854,8 @@ export function DepartmentNameInput({ onValidationChange, value, onChange }) {
 }
 
 
-export function SpecialtyTitleInput() {
-  const [specailtyName, setSpecailtyName] = useState("");
+export function SpecialtyTitleInput({ value, onChange, onValidationChange }) {
+  const [specailtyName, setSpecailtyName] = useState( value || "");
   const [specailtyNameError, setSpecailtyNameError] = useState("");
   const [isSpecailtyNameTouched, setIsSpecailtyNameTouched] = useState(false);
 
@@ -849,14 +863,17 @@ export function SpecialtyTitleInput() {
     try {
       await YupValidationSchema.specialtyValidationSchema.validate(value);
       setSpecailtyNameError("");
+      onValidationChange(true);
     } catch (err) {
       setSpecailtyNameError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleSpecailtyNameChange = (e) => {
     const { value } = e.target;
     setSpecailtyName(value);
+    onChange(value); 
     validateSpecailtyName(value);
   };
 
@@ -889,8 +906,8 @@ export function SpecialtyTitleInput() {
   );
 }
 
-export function RegistrationFeeInput() {
-  const [registrationFee, setRegistrationFee] = useState("");
+export function RegistrationFeeInput({ onChange, value, onValidationChange }) {
+  const [registrationFee, setRegistrationFee] = useState(value || "");
   const [registrationFeeError, setRegistrationFeeError] = useState("");
   const [isRegistrationFeeTouched, setIsRegistrationTouched] = useState(false);
 
@@ -898,14 +915,17 @@ export function RegistrationFeeInput() {
     try {
       await YupValidationSchema.registrationFeeValidationSchema.validate(value);
       setRegistrationFeeError("");
+      onValidationChange(true);
     } catch (err) {
       setRegistrationFeeError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleRegistrationFeeChange = (e) => {
     const { value } = e.target;
     setRegistrationFee(value);
+    onChange(value);
     validateRegistrationFee(value);
   };
 
@@ -938,8 +958,8 @@ export function RegistrationFeeInput() {
   );
 }
 
-export function SchoolFeeInput() {
-  const [schoolFee, setSchoolFee] = useState("");
+export function SchoolFeeInput({ onChange, onValidationChange, value }) {
+  const [schoolFee, setSchoolFee] = useState( value || "");
   const [schoolFeeError, setSchoolFeeError] = useState("");
   const [isSchoolFeeTouched, setIsSchoolFeeTouched] = useState(false);
 
@@ -947,14 +967,17 @@ export function SchoolFeeInput() {
     try {
       await YupValidationSchema.schoolFeeValidationSchema.validate(value);
       setSchoolFeeError("");
+      onValidationChange(true);
     } catch (err) {
       setSchoolFeeError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleSchoolFeeChange = (e) => {
     const { value } = e.target;
     setSchoolFee(value);
+    onChange(value);
     validateSchoolFee(value);
   };
 
@@ -1073,8 +1096,8 @@ export function Reason() {
   );
 }
 
-export function LastNameInput() {
-  const [lastName, setLastName] = useState("");
+export function LastNameInput({ value, onChange, onValidationChange }) {
+  const [lastName, setLastName] = useState( value || "");
   const [lastNameError, setLastNameError] = useState("");
   const [isLastNameTouched, setIsLastNameTouched] = useState(false);
 
@@ -1082,14 +1105,17 @@ export function LastNameInput() {
     try {
       await YupValidationSchema.lastNameValidationSchema.validate(value);
       setLastNameError("");
+      onValidationChange(true);
     } catch (err) {
       setLastNameError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleLastNameChange = (e) => {
     const { value } = e.target;
     setLastName(value);
+    onChange(value);
     validateLastName(value);
   };
 
@@ -1118,8 +1144,8 @@ export function LastNameInput() {
   );
 }
 
-export function FirstNameInput() {
-  const [firstName, setFirstName] = useState("");
+export function FirstNameInput({value, onChange, onValidationChange }) {
+  const [firstName, setFirstName] = useState( value || "");
   const [firstNameError, setFirstNameError] = useState("");
   const [isFirstNameTouched, setIsFirstNameTouched] = useState(false);
 
@@ -1127,14 +1153,17 @@ export function FirstNameInput() {
     try {
       await YupValidationSchema.firstNameValidationSchema.validate(value);
       setFirstNameError("");
+      onValidationChange(true);
     } catch (err) {
       setFirstNameError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleFirstNameChange = (e) => {
     const { value } = e.target;
     setFirstName(value);
+    onChange(value);
     validateFirstName(value);
   };
 
