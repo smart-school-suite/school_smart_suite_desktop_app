@@ -85,6 +85,14 @@ export const emailValidationSchema = Yup.string()
     return value && !/\s{2,}/.test(value);
   });
 
+  export const createNumberSchema = (maxValue) => {
+    return Yup.number()
+      .typeError('Value must be a number.')
+      .required('Field is required.')
+      .min(0, 'Value must be at least 0.')
+      .max(maxValue, `Value cannot be more than ${maxValue}.`); 
+  };
+
   export const religionValidationSchema = Yup.string()
   .required("Religion is required")
   .min(3, "Religion name must be at least 3 characters long")

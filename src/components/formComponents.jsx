@@ -701,8 +701,8 @@ export function CourseCreditInput({ value, onValidationChange, onChange }) {
   );
 }
 
-export function WeigtedMarkInput() {
-  const [weightedMark, setWeightedMark] = useState("");
+export function WeigtedMarkInput({ onChange, value, onValidationChange }) {
+  const [weightedMark, setWeightedMark] = useState( value ||  "");
   const [weightedMarkError, setWeightedMarkError] = useState("");
   const [isWeightedMarkTouched, setIsWeightedMarkTouched] = useState(false);
 
@@ -710,14 +710,17 @@ export function WeigtedMarkInput() {
     try {
       await YupValidationSchema.weightedMarkValidationSchema.validate(value);
       setWeightedMarkError("");
+      onValidationChange(true)
     } catch (err) {
       setWeightedMarkError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleWeightedMarkChange = (e) => {
     const { value } = e.target;
     setWeightedMark(value);
+    onChange(value);
     validateDepartment(value);
   };
 
@@ -1493,6 +1496,59 @@ export function RelationshipToStudentInput() {
           relationshipToStudent && (
             <div className="valid-feedback">Looks good!</div>
           )}
+      </div>
+    </>
+  );
+}
+
+export function MinimumScoreInput({ maxValue, onChange, value }){
+  const [score, setScore] = useState( value || 0);
+  const [scoreError, setScoreError] = useState("");
+  const [isScoreTouched, setIsScoreTouched] = useState(false);
+
+  const validateScore = async (value) => {
+    try {
+      const numberSchema = YupValidationSchema.createNumberSchema(maxValue);
+      await numberSchema.validate(value);
+      setScoreError("");
+    } catch (err) {
+      setScoreError(err.message);
+    }
+  };
+
+  const handleScoreChange = (e) => {
+    const { value } = e.target;
+    setScore(value);
+    onChange(value)
+    validateScore(value);
+  };
+
+  const handleScoreFocus = () => {
+    setIsScoreTouched(true);
+  };
+
+  return (
+    <>
+      <div>
+        <input
+          type="number"
+          value={score}
+          onChange={handleScoreChange}
+          onFocus={handleScoreFocus}
+          step="0.01"
+          className={`form-control form-control-sm ${
+            isScoreTouched && scoreError ? "is-invalid" : ""
+          } ${
+            isScoreTouched && !scoreError && score ? "is-valid" : ""
+          }`}
+          placeholder="Enter a number (0 to {maxValue})"
+        />
+        {isScoreTouched && scoreError && (
+          <div className="invalid-feedback">{scoreError}</div>
+        )}
+        {isScoreTouched && !scoreError && score && (
+          <div className="valid-feedback">Looks good!</div>
+        )}
       </div>
     </>
   );

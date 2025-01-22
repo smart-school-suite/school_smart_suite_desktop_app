@@ -202,6 +202,15 @@ export const apiSlice = createApi({
     fetchSemester: builder.query({
        query: () => "api/semester/semesters",
        providesTags:['semester']
+    }),
+    fetchExamType: builder.query({
+       query: () => "api/exam-type/exam_types",
+       providesTags:["examtype"]
+    }),
+    fetchAssociateExamGrades: builder.query({
+       query: ({ exam_id }) => {
+          return `api/exams/letter-grades/${exam_id}`
+       }
     })
   }),
 });
@@ -236,5 +245,7 @@ export const {
   useFetchCountrysQuery,
   useFetchPricingRatesQuery,
   useFetchEducationLevelsQuery,
-  useFetchSemestersQuery
+  useFetchSemestersQuery,
+  useFetchExamTypesQuery,
+  useFetchAssociateExamGradesQuery
 } = apiSlice;

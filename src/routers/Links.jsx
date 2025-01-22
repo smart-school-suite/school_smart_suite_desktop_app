@@ -117,6 +117,7 @@ const StudentBatches = React.lazy(() => import("../pages/studentBatches"));
 const ExamTimeTable = React.lazy(() => import("../pages/examTimeTable"));
 const ResitPayments = React.lazy(() => import("../pages/resitPayments"));
 const Createparent = React.lazy(() => import("../pages/forms/Createparent"));
+const ConfigureExamGrades = React.lazy(() => import("../pages/configureExamGrades"));
 import LoginSchoolAdmin from "../pages/signup/LoginSchoolAdmin";
 import TwoStepVerification from "../pages/twoStepVerification";
 import RegisterSchool from "../pages/signup/registerSchool";
@@ -222,6 +223,18 @@ function Links() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/configure-exam-grades/:exam_id"
+            element={
+               <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
+                 <ConfigureExamGrades />
+                </Suspense>
+               </ProtectedRoute>
+            }
+          >
+
+          </Route>
           <Route
             path="/courses/academic-analysis"
             element={

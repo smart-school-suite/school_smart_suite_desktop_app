@@ -83,7 +83,7 @@ function YearPicker({
 }
 export default YearPicker;
 
-export function SchoolYearSelector({ minYear = 2000, maxYear = new Date().getFullYear() + 10,  disabledYears = []  }) {
+export function SchoolYearSelector({ minYear = 2000, maxYear = new Date().getFullYear() + 10,  disabledYears = [], onSelect  }) {
     const [selectedYear, setSelectedYear] = useState(null);
     const [isShowing, setIshowing] = useState(false);
     const schoolYearRef = useRef(null);
@@ -107,6 +107,7 @@ export function SchoolYearSelector({ minYear = 2000, maxYear = new Date().getFul
     const handleYearSelect = (year) => {
         if (!isYearDisabled(year)) {
             setSelectedYear(year);
+            onSelect(year)
         }
     };
     const handleClickOutside = (event) => {
