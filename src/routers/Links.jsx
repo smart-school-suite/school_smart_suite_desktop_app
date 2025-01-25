@@ -126,6 +126,7 @@ import RegisterSchoolBranch from "../pages/signup/registerSchoolBranch";
 import SubcriptionPlan from "../pages/signup/subcriptionPlans";
 import Hero from "../pages/signup/Hero";
 import  {ProtectedRoute, ProtectedLoginRoute } from "../components/protectedRoutes";
+import { CreateExamTimeTable } from "../pages/forms/CreateExamTimeTable";
 function Links() {
   return (
     <BrowserRouter>
@@ -229,6 +230,18 @@ function Links() {
                <ProtectedRoute>
                 <Suspense fallback={<Pageloaderspinner />}>
                  <ConfigureExamGrades />
+                </Suspense>
+               </ProtectedRoute>
+            }
+          >
+
+          </Route>
+          <Route
+            path="/create-examtimtable/:semester_id/:exam_id"
+            element={
+               <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
+                  <CreateExamTimeTable />
                 </Suspense>
                </ProtectedRoute>
             }

@@ -202,6 +202,14 @@ export const postSlice = createApi({
             body:newStudent
         }),
         invalidatesTags: ["student"],   
+    }),
+    addExamTimetable: builder.mutation({
+       query: (newExamTimetable) => ({
+           url:"api/exam-timetable/create-timetable",
+           method:"POST",
+           body:newExamTimetable         
+       }),
+       invalidatesTags: ['examtimetable']
     })
   }),
 });
@@ -226,5 +234,6 @@ export const {
   useAddTeacherMutation,
   useAddTimeTableMutation,
   usePromoteStudentMutation,
-  useAddStudentMutation
+  useAddStudentMutation,
+  useAddExamTimetableMutation
 } = postSlice;

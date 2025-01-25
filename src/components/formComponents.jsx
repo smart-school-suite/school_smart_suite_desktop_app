@@ -1340,8 +1340,8 @@ export function EventTitleInput() {
   );
 }
 
-export function DescriptionInput() {
-  const [description, setDescription] = useState("");
+export function DescriptionInput({ onChange, onValidationChange, value }) {
+  const [description, setDescription] = useState( value || "");
   const [descriptionError, setDescriptionError] = useState("");
   const [isDescriptionTouched, setIsDescriptionTouched] = useState(false);
 
@@ -1349,14 +1349,17 @@ export function DescriptionInput() {
     try {
       await YupValidationSchema.descriptionSchema.validate(value);
       setDescriptionError("");
+      onValidationChange(true)
     } catch (err) {
       setDescriptionError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleDescriptionChange = (e) => {
     const { value } = e.target;
     setDescription(value);
+    onChange(value)
     validateDescription(value);
   };
 

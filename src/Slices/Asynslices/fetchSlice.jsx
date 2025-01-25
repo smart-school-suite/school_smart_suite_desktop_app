@@ -103,7 +103,7 @@ export const apiSlice = createApi({
     }),
     fetchSchoolExpensesCategory: builder.query({
       query: () => "api/school-expenses-category/get-category-expenses",
-      providesTags: ["courses"],
+      providesTags: ["expenses-category"],
     }),
     fetchStudentResit: builder.query({
        query: () => "api/student-resit/student_resits",
@@ -211,7 +211,12 @@ export const apiSlice = createApi({
        query: ({ exam_id }) => {
           return `api/exams/letter-grades/${exam_id}`
        }
-    })
+    }),
+    fetchExamAssociateTimetableCourses: builder.query({
+        query: ({ exam_id }) => {
+            return `api/exam-timetable/course-data/${exam_id}`
+        }
+    }),
   }),
 });
 
@@ -247,5 +252,7 @@ export const {
   useFetchEducationLevelsQuery,
   useFetchSemestersQuery,
   useFetchExamTypesQuery,
-  useFetchAssociateExamGradesQuery
+  useFetchAssociateExamGradesQuery,
+  useFetchExamAssociateTimetableCoursesQuery,
+  useFetchSchoolExpensesCategoryQuery
 } = apiSlice;

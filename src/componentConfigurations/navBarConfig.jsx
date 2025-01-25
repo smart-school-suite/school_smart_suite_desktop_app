@@ -137,3 +137,23 @@ export const SpecailtyNavBarOptions = {
        }
     ],
 }
+
+export const ExamTimeTableNavbarOptions = {
+     route_data: [
+           {
+             lable: "Specialty Timetable",
+             icon: "tabler:category-2",
+             route: "/time-table",
+           },
+           {
+             lable: "Exam Timetable",
+             route: "/exam-timetable",
+             icon: "healthicons:i-exam-multiple-choice-outline",
+           },
+           {
+             lable: "School Timetable",
+             icon: "teenyicons:school-outline",
+             route: "/school-timetable",
+           },
+         ],
+}
