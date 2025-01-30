@@ -1,14 +1,12 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom"; 
-import { useAuth } from "../context/authContext";
-
-const ProtectedRoute = ({ element: Element, ...rest }) => {
-  const { isAuthenticated  } = useAuth(); // Let's assume there's a loading state
-  return isAuthenticated ? (
-    <Element {...rest} />
-  ) : (
-    <Navigate to="/login-school-admin" replace /> 
-  );
+const isAuthenticated = localStorage.getItem("auth_token");
+const ProtectedRoute = ({ children }) => {
+  return isAuthenticated ? children : <Navigate to="/hero" replace />;
 };
 
-export default ProtectedRoute;
+const ProtectedLoginRoute = ({ children }) => {
+  return isAuthenticated ? <Navigate to="/" replace /> : children;
+};
+
+export { ProtectedRoute, ProtectedLoginRoute };

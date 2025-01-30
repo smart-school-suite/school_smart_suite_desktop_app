@@ -117,12 +117,16 @@ const StudentBatches = React.lazy(() => import("../pages/studentBatches"));
 const ExamTimeTable = React.lazy(() => import("../pages/examTimeTable"));
 const ResitPayments = React.lazy(() => import("../pages/resitPayments"));
 const Createparent = React.lazy(() => import("../pages/forms/Createparent"));
-import LoginSchoolAdmin from "../pages/LoginSchoolAdmin";
+const ConfigureExamGrades = React.lazy(() => import("../pages/configureExamGrades"));
+import LoginSchoolAdmin from "../pages/signup/LoginSchoolAdmin";
 import TwoStepVerification from "../pages/twoStepVerification";
 import RegisterSchool from "../pages/signup/registerSchool";
 import RegisterSchoolAdmin from "../pages/signup/registerSchoolAdmin";
 import RegisterSchoolBranch from "../pages/signup/registerSchoolBranch";
 import SubcriptionPlan from "../pages/signup/subcriptionPlans";
+import Hero from "../pages/signup/Hero";
+import  {ProtectedRoute, ProtectedLoginRoute } from "../components/protectedRoutes";
+import { CreateExamTimeTable } from "../pages/forms/CreateExamTimeTable";
 function Links() {
   return (
     <BrowserRouter>
@@ -131,47 +135,69 @@ function Links() {
         <Route
           path="/register-school"
           element={
-             <RegisterSchool />
+             <ProtectedLoginRoute>
+              <RegisterSchool />
+             </ProtectedLoginRoute>
           }
         >
         </Route>
         <Route
+         path="/hero"
+         element={
+            <ProtectedLoginRoute>
+              <Hero />
+            </ProtectedLoginRoute>
+         }
+        ></Route>
+        <Route
          path="/register/school-admin"
          element={
-           <RegisterSchoolAdmin />
+           <ProtectedLoginRoute>
+            <RegisterSchoolAdmin />
+           </ProtectedLoginRoute>
          }
         >
         </Route>
         <Route 
          path="/register/school-branch"
          element={
-           <RegisterSchoolBranch />
+           <ProtectedLoginRoute>
+            <RegisterSchoolBranch />
+           </ProtectedLoginRoute>
          }
         />
         <Route
          path="/subcription/plan"
          element={
-           <SubcriptionPlan />
+           <ProtectedLoginRoute>
+            <SubcriptionPlan />
+           </ProtectedLoginRoute>
          }
         >
         </Route>
       <Route 
        path="/create-schoolbranch"
        element={
-         <RegisterSchoolBranch/>
+         <ProtectedLoginRoute>
+          <RegisterSchoolBranch/>
+         </ProtectedLoginRoute>
        }
       ></Route>
       <Route
       path="/login-school-admin"
        element={
-         <LoginSchoolAdmin />
+         <ProtectedLoginRoute>
+          <LoginSchoolAdmin />
+         </ProtectedLoginRoute>
        }
       >
       </Route>
       <Route
        path="/verify-otp"
        element={
-         <TwoStepVerification />
+         <ProtectedLoginRoute>
+          <TwoStepVerification />
+         </ProtectedLoginRoute>
        }
       >
 
@@ -181,130 +207,186 @@ function Links() {
           <Route
             path="/academic-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
-                <AcademicAnalysis />
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
+                <OperationalAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/operational-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <OperationalAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
+            path="/configure-exam-grades/:exam_id"
+            element={
+               <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
+                 <ConfigureExamGrades />
+                </Suspense>
+               </ProtectedRoute>
+            }
+          >
+
+          </Route>
+          <Route
+            path="/create-examtimtable/:semester_id/:exam_id"
+            element={
+               <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
+                  <CreateExamTimeTable />
+                </Suspense>
+               </ProtectedRoute>
+            }
+          >
+
+          </Route>
+          <Route
             path="/courses/academic-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <CoursesAcademicAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/department/academic-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <DepartmentAcademicAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/exam/academic-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <ExamAcademicAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/specailty/academic-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <SpecialtiesAcademicAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/student/academic-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <StudentAcademicAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/teacher/academic-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <TeachersAcademicAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/teacher/financial-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <TeacherFinancialAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/student/financial-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <StudentFinancialAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/specailty/financial-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <SpecialtiesFinancialAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/school-expenses/financial-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <SchoolExpensesFinancialAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/fee-payment/financial-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <FeePaymentFinancialAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
            path="/parents"
            element={
-             <Suspense fallback={<Pageloaderspinner />}>
+             <ProtectedRoute>
+              <Suspense fallback={<Pageloaderspinner />}>
               <Parents />
              </Suspense>
+             </ProtectedRoute>
            }
           >
           </Route>
           <Route
             path="/department/financial-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <DepartmentFinancialAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/courses/financial-analysis"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <CoursesFinancialAnalysis />
               </Suspense>
+              </ProtectedRoute>
             }
           />
           {/*stats and analysis routes starts*/}
@@ -314,50 +396,62 @@ function Links() {
           <Route
             path="/create-parent"
             element={
-               <Suspense fallback={<Pageloaderspinner />}>
+               <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Createparent />
                </Suspense>
+               </ProtectedRoute>
             }
           >
           </Route>
           <Route
             path="/create-scores"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Createstudentscores />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/create-school-admin"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Createschooladmin />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/create-student"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Createstudent />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/create-teacher"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Createteacher />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/create-timetable"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Createtimetable />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           {/*form routes end */}
@@ -365,272 +459,337 @@ function Links() {
           <Route
             path="/emails/compose-email"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Composeemail />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/fee-payments"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Feepayment />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route 
            path="/student-batches"
            element={
-             <Suspense fallback={<Pageloaderspinner />}>
+             <ProtectedRoute>
+              <Suspense fallback={<Pageloaderspinner />}>
               <StudentBatches />
              </Suspense>
+             </ProtectedRoute>
            }
           >
           </Route>
           <Route
             path="/emails/inbox"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Inbox />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/emails/junk"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Junk />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/emails/archieve"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Archieve />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/emails/draft"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Draft />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/emails/forums"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Forums />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/emails/promotion"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Promotion />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/emails/sent"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Sent />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/emails/shopping"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Shopping />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/emails/socials"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Socials />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/emails/trash"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Trash />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/emails/updates"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Updates />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/settings/account"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Account />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route 
            path="/school-timetable"
            element={
-             <Suspense fallback={<Pageloaderspinner />}>
+             <ProtectedRoute>
+              <Suspense fallback={<Pageloaderspinner />}>
               <SchoolTimeTable />
              </Suspense>
+             </ProtectedRoute>
            }
           >
           </Route>
           <Route
             path="/settings/general-settings"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Generalsettings />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/settings/display"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Display />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/settings/updates"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <New />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/settings/profile"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Profile />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/settings/security"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Security />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/settings/help"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Help />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/customer-support"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Customersupport />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             index
             element={
-                <Suspense fallback={<Pageloaderspinner />}>
+                <ProtectedRoute>
+                  <Suspense fallback={<Pageloaderspinner />}>
                 <Dashboard />
               </Suspense>
-
+                </ProtectedRoute>
             }
           />
           <Route
             path="/school-admins"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <SchoolAdmin />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/exams"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Exams />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/students"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Students />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/exam-resits"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Examresits />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/scores"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Scores />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/time-table"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Timetable />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/school-expenses"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Schoolexpenses />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/transfer-request"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Transferrequest />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
            path="/exam-timetable"
            element={
-             <Suspense
+             <ProtectedRoute>
+               <Suspense
               fallback={
                  <Pageloaderspinner />
               }
              >
               <ExamTimeTable />
              </Suspense>
+             </ProtectedRoute>
            }
           >
 
@@ -638,82 +797,102 @@ function Links() {
           <Route
             path="/transferred-students"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Transferredstudents />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/events"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Events />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/annoucements"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Annoucements />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/messages"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                 <Suspense fallback={<Pageloaderspinner />}>
                 <Messages />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/departments"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Departments />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/specialties"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Specialties />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/teachers"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Teachers />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/courses"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Courses />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
           <Route
             path="/resit-payments"
             element={
-               <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                 <Suspense fallback={<Pageloaderspinner />}>
                 <ResitPayments />
                </Suspense>
+              </ProtectedRoute>
             }
           >  
           </Route>
           <Route
             path="/grades-configuration"
             element={
-              <Suspense fallback={<Pageloaderspinner />}>
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
                 <Gradesconfiguration />
               </Suspense>
+              </ProtectedRoute>
             }
           ></Route>
         </Route>

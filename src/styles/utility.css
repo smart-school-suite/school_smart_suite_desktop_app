@@ -280,3 +280,7 @@ body{
 .transition-3s{
     transition: all 0.3s;
 }
+
+.z-2000{
+    z-index: 5000 !important;
+}

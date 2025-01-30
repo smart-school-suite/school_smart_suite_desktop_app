@@ -39,7 +39,7 @@ const baseQueryWithErrorHandling = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithErrorHandling,
-  tagTypes: tagTypesarray, // Example of tag types for cache management
+  tagTypes: tagTypesarray,
   endpoints: (builder) => ({
     fetchStudents: builder.query({
       query: () => "api/student/get-students",
@@ -103,7 +103,7 @@ export const apiSlice = createApi({
     }),
     fetchSchoolExpensesCategory: builder.query({
       query: () => "api/school-expenses-category/get-category-expenses",
-      providesTags: ["courses"],
+      providesTags: ["expenses-category"],
     }),
     fetchStudentResit: builder.query({
        query: () => "api/student-resit/student_resits",
@@ -198,7 +198,25 @@ export const apiSlice = createApi({
     fetchPricingRates: builder.query({
        query: () => "api/subcription/rates",
        providesTags:['subscription_rates']
-    })
+    }),
+    fetchSemester: builder.query({
+       query: () => "api/semester/semesters",
+       providesTags:['semester']
+    }),
+    fetchExamType: builder.query({
+       query: () => "api/exam-type/exam_types",
+       providesTags:["examtype"]
+    }),
+    fetchAssociateExamGrades: builder.query({
+       query: ({ exam_id }) => {
+          return `api/exams/letter-grades/${exam_id}`
+       }
+    }),
+    fetchExamAssociateTimetableCourses: builder.query({
+        query: ({ exam_id }) => {
+            return `api/exam-timetable/course-data/${exam_id}`
+        }
+    }),
   }),
 });
 
@@ -230,5 +248,11 @@ export const {
   useFetchExpensesDetailsQuery,
   useFetchLetterGradesQuery,
   useFetchCountrysQuery,
-  useFetchPricingRatesQuery
+  useFetchPricingRatesQuery,
+  useFetchEducationLevelsQuery,
+  useFetchSemestersQuery,
+  useFetchExamTypesQuery,
+  useFetchAssociateExamGradesQuery,
+  useFetchExamAssociateTimetableCoursesQuery,
+  useFetchSchoolExpensesCategoryQuery
 } = apiSlice;

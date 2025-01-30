@@ -5,10 +5,14 @@ import toast from "react-hot-toast";
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://127.0.0.1:8000/",
   prepareHeaders: (headers) => {
-    const schoolBranchId = localStorage.getItem('schoolBranchId');
+    const schoolBranchId = localStorage.getItem('SCHOOL_BRANCH_KEY');
+    const token = localStorage.getItem("auth_token");
     if (schoolBranchId) {
       headers.set("SCHOOL_BRANCH_KEY", schoolBranchId);
+      headers.set("Authorization", `Bearer ${token}`);
     }
+    headers.set("Content-Type", "application/json");
+    headers.set("Accept", "application/json");
     return headers;
   },
   credentials: "include",
@@ -39,7 +43,7 @@ export const postSlice = createApi({
       }),
       invalidatesTags: ["course"], 
     }), 
-    addDeparment: builder.mutation({
+    addDepartment: builder.mutation({
       query: (newDeparment) => ({
         url: "api/department/create-department",
         method: "POST",
@@ -48,7 +52,7 @@ export const postSlice = createApi({
       invalidatesTags: ["department"], 
     }),
     addEvent: builder.mutation({
-      query: (newCourse) => ({
+      query: (newEvent) => ({
         url: "api/event/create-event",
         method: "POST",
         body: newEvent,
@@ -56,7 +60,7 @@ export const postSlice = createApi({
       invalidatesTags: ["event"], 
     }),
     addTimetable: builder.mutation({
-      query: (newCourse) => ({
+      query: (newTimetable) => ({
         url: "api/exam-timetable/create-timetable",
         method: "POST",
         body: newTimetable,
@@ -190,13 +194,29 @@ export const postSlice = createApi({
         body: newTeacher,
       }),
       invalidatesTags: ["teacher"], 
+    }),
+    addStudent: builder.mutation({
+        query: (newStudent) => ({
+            url:"api/student/create-student",
+            method:"POST",
+            body:newStudent
+        }),
+        invalidatesTags: ["student"],   
+    }),
+    addExamTimetable: builder.mutation({
+       query: (newExamTimetable) => ({
+           url:"api/exam-timetable/create-timetable",
+           method:"POST",
+           body:newExamTimetable         
+       }),
+       invalidatesTags: ['examtimetable']
     })
   }),
 });
 
 export const {
   useAddCourseMutation,
-  useAddDeparmentMutation,
+  useAddDepartmentMutation,
   useAddEventMutation,
   useAddExamMutation,
   useAddExpensesCategoryMutation,
@@ -213,5 +233,7 @@ export const {
   useAddStudentScoreMutation,
   useAddTeacherMutation,
   useAddTimeTableMutation,
-  usePromoteStudentMutation
+  usePromoteStudentMutation,
+  useAddStudentMutation,
+  useAddExamTimetableMutation
 } = postSlice;

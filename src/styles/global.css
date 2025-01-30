@@ -598,6 +598,7 @@ button.disabled {
     overflow-y: scroll;
     overflow-x: hidden;
     scrollbar-width: smooth;
+    position: relative;
   }
   .scrollable-list{
     height: auto;

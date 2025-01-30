@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-mod
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { AgGridReact } from "@ag-grid-community/react";
 import { themeQuartz } from "@ag-grid-community/theming";
-import { useState, useMemo, useCallback } from "react";
+import {  useMemo, useCallback } from "react";
 
 function Table(props) {
   const defaultColDef = {
@@ -23,20 +23,13 @@ function Table(props) {
     },
   });
 
-
-
-
-
   const onSelectionChanged = useCallback(
     (event) => {
       const rowCount = event.api.getSelectedNodes().length;
       props.handleRowCountFromChild(rowCount);
-      console.log(rowCount)
     },
     [] 
   );
-
-
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
   return (
@@ -53,7 +46,6 @@ function Table(props) {
         onSelectionChanged={onSelectionChanged}
         theme={myTheme}
       />
-      {console.log("I just rendered")}
     </div>
   );
 }

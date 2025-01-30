@@ -1,736 +1,230 @@
 import Navbar from "../components/Navbar";
-import CustomDropdown from "../components/Dropdowns";
 import { SchoolYearSelector } from "../components/yearPicker";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
-function ExamTimeTable(){
-    const navBarOptions = {
-        route_data: [
-            {
-                lable:"Specialty Timetable",
-                icon:"tabler:category-2",
-                route:"/time-table"
-            },
-            {
-               lable:"Exam Timetable",
-               route:"/exam-timetable",
-               icon:"healthicons:i-exam-multiple-choice-outline" 
-            },
-            {
-               lable:"School Timetable",
-               icon:"teenyicons:school-outline",
-               route:"/school-timetable"
-            }
-        ],
-    }
-    const [isSelected, setIselected] = useState("day");
-    return(
-        <>
-         <Navbar 
-          options={navBarOptions}
-         />
-           <div className="d-flex flex-row align-items-center justify-content-between my-2">
-            <div className="d-fl py-2 px-2 d-flex flex-row align-items-center justify-content-center gap-3 rounded-3 align-items-center gap-2">
-                <button className="border-none bg-white d-flex justify-content-center align-items-center" style={{ width:"3rem", height:"3rem", borderRadius:"3rem" }}>
-                <Icon icon="akar-icons:schedule"  className="fs-5 color-primary"/>
-                </button>
-                <h5 className="my-0 fw-semibold">Exam Time Table</h5>
-            </div>
-            <div className="d-flex flex-row gap-2">
-                <button className="border-none green-bg rounded-3 p-2 text-white font-size-sm">
-                    Create Time Table
-                </button>
-            </div>
-         </div>
-         <div className="card py-2 rounded-4 w-100">
-        <div className="d-flex flex-row justify-content-between mx-2">
-          <div className="d-flex flex-row gap-2 align-items-center">
-            <div>
-              <SchoolYearSelector />
-            </div>
-            <div>
-              <SchoolYearSelector />
-            </div>
-          </div>
-          <div className="d-flex flex-row align-items-center gap-3">
-            <button
-              className="border-none d-flex justify-content-center align-items-center timetable-cards color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="material-symbols:download" />
-            </button>
-            <button
-              className="border-none p-2 rounded-3 font-size-sm color-primary bg-white fill-hover"
-              style={{ outline: "1px solid #0285C6" }}
-            >
-              Update Timetable
-            </button>
+import Pageloaderspinner from "../components/Spinners";
+import { CSSTransition } from "react-transition-group";
+import {
+  useFetchExamsQuery,
+  useFetchSemestersQuery,
+} from "../Slices/Asynslices/fetchSlice";
+import CleanArrayData, {
+  renameKeys,
+} from "../utils/functions";
+import DataComponent from "../components/dataComponent";
+import Table from "../components/Tables";
+import { useNavigate } from "react-router-dom";
+function ExamTimeTable() {
+  const { data: exam_data, error:examError, isLoading:isExamLoading } = useFetchExamsQuery();
+
+  const navBarOptions = {
+    route_data: [
+      {
+        lable: "Specialty Timetable",
+        icon: "tabler:category-2",
+        route: "/time-table",
+      },
+      {
+        lable: "Exam Timetable",
+        route: "/exam-timetable",
+        icon: "healthicons:i-exam-multiple-choice-outline",
+      },
+      {
+        lable: "School Timetable",
+        icon: "teenyicons:school-outline",
+        route: "/school-timetable",
+      },
+    ],
+  };
+  const cellStyle = {
+    display: "flex",
+    justifyContent: "start",
+    alignItems: "center",
+    height: "100%",
+    zIndex: "-1",
+  };
+  const [colDefs, setColDefs] = useState([
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "Exam Name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: DataComponent,
+    },
+    {
+      field: "Semeseter",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: DataComponent,
+    },
+    {
+      field: "Specialty",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: DataComponent,
+    },
+    {
+      field: "Level",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: DataComponent,
+    },
+    {
+      field: "Start Date",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: DataComponent,
+    },
+    {
+      field: "End Date",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: DataComponent,
+    },
+    {
+      field: "School Year",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: DataComponent,
+    },
+    {
+      field: "Weighted Mark",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: DataComponent,
+    },
+    { field: "Action", cellRenderer: DropdownComponent },
+  ]);
+  const filter_array_keys = [
+    "id",
+    "examtype.exam_name",
+    "semester.name",
+    "specialty.specialty_name",
+    "specialty.level.name",
+    "start_date",
+    "end_date",
+    "school_year",
+    "weighted_mark",
+  ];
+  const renameMapping = {
+    id: "id",
+    "examtype.exam_name": "Exam Name",
+    "semester.name": "Semeseter",
+    "specialty.specialty_name": "Specialty",
+    "specialty.level.name": "Level",
+    start_date: "Start Date",
+    end_date: "End Date",
+    school_year: "School Year",
+    weighted_mark: "Weighted Mark",
+  };
+  if (isExamLoading) {
+    return <Pageloaderspinner />;
+  }
+  return (
+    <>
+      <Navbar options={navBarOptions} />
+      <div>
+        <div className="d-flex flex-row align-items-center mt-4 w-100">
+          <div className="d-block">
+            <p className="font-size-xs my-0">Total Number of Exams</p>
+            <h1 className="fw-bold my-0">{exam_data.exam_data.length}</h1>
           </div>
         </div>
-        <div className="table-container w-100">
-        <table className="mt-1 custom-table">
-        <thead>
-      <tr>
-        <td className="first-column border-top">
-          <p className="rotate-90 text-center my-0">Days</p>
-        </td>
-        <td className="border-top">
-          <p className="mt-3">Courses</p>
-        </td>
-      </tr>
-      </thead>
-      <tbody className="scrollable-table">
-            <tr >
-            <td className="first-column">
-              <div
-                className="d-flex flex-column justify-content-center"
-                
-              >
-                <p className="my-0 text-end font-size-sm">Monday</p>
-                <p className="my-0 text-end font-size-sm">
-                    <span>12th sept 2024</span>
-                </p>
-              </div>
-            </td>
-            <td>
-              <td>
-              <div className="d-flex flex-row align-items-center justify-content-between"
-               style={{ width:"70vw" }}
-              >
-                <div className="d-flex flex-row align-items-center gap-2 w-100">
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between gap-4 flex-row">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                </div>
-                <div className="d-flex flex-column align-items-center justify-content-between">
-              <button className="border-none transparent-bg fs-5 color-primary" >
-              <Icon icon="akar-icons:circle-chevron-up-fill" />
-              </button>
-              <button className="border-none transparent-bg fs-5 color-primary">
-              <Icon icon="akar-icons:circle-chevron-down-fill" />
-              </button>
-                </div>
-              </div>
-              </td>
-            </td>
-          </tr>
-          <tr >
-            <td className="first-column">
-              <div
-                className="d-flex flex-column justify-content-center"
-                
-              >
-                <p className="my-0 text-end font-size-sm">Monday</p>
-                <p className="my-0 text-end font-size-sm">
-                    <span>12th sept 2024</span>
-                </p>
-              </div>
-            </td>
-            <td>
-              <td>
-              <div className="d-flex flex-row align-items-center justify-content-between"
-               style={{ width:"70vw" }}
-              >
-                <div className="d-flex flex-row align-items-center gap-2 w-100">
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between gap-4 flex-row">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                </div>
-                <div className="d-flex flex-column align-items-center justify-content-between">
-              <button className="border-none transparent-bg fs-5 color-primary" >
-              <Icon icon="akar-icons:circle-chevron-up-fill" />
-              </button>
-              <button className="border-none transparent-bg fs-5 color-primary">
-              <Icon icon="akar-icons:circle-chevron-down-fill" />
-              </button>
-                </div>
-              </div>
-              </td>
-            </td>
-          </tr>
-          <tr >
-            <td className="first-column">
-              <div
-                className="d-flex flex-column justify-content-center"
-                
-              >
-                <p className="my-0 text-end font-size-sm">Monday</p>
-                <p className="my-0 text-end font-size-sm">
-                    <span>12th sept 2024</span>
-                </p>
-              </div>
-            </td>
-            <td>
-              <td>
-              <div className="d-flex flex-row align-items-center justify-content-between"
-               style={{ width:"70vw" }}
-              >
-                <div className="d-flex flex-row align-items-center gap-2 w-100">
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between gap-4 flex-row">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                </div>
-                <div className="d-flex flex-column align-items-center justify-content-between">
-              <button className="border-none transparent-bg fs-5 color-primary" >
-              <Icon icon="akar-icons:circle-chevron-up-fill" />
-              </button>
-              <button className="border-none transparent-bg fs-5 color-primary">
-              <Icon icon="akar-icons:circle-chevron-down-fill" />
-              </button>
-                </div>
-              </div>
-              </td>
-            </td>
-          </tr>
-          <tr >
-            <td className="first-column">
-              <div
-                className="d-flex flex-column justify-content-center"
-                
-              >
-                <p className="my-0 text-end font-size-sm">Monday</p>
-                <p className="my-0 text-end font-size-sm">
-                    <span>12th sept 2024</span>
-                </p>
-              </div>
-            </td>
-            <td>
-              <td>
-              <div className="d-flex flex-row align-items-center justify-content-between"
-               style={{ width:"70vw" }}
-              >
-                <div className="d-flex flex-row align-items-center gap-2 w-100">
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between gap-4 flex-row">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                </div>
-                <div className="d-flex flex-column align-items-center justify-content-between">
-              <button className="border-none transparent-bg fs-5 color-primary" >
-              <Icon icon="akar-icons:circle-chevron-up-fill" />
-              </button>
-              <button className="border-none transparent-bg fs-5 color-primary">
-              <Icon icon="akar-icons:circle-chevron-down-fill" />
-              </button>
-                </div>
-              </div>
-              </td>
-            </td>
-          </tr>
-          <tr >
-            <td className="first-column">
-              <div
-                className="d-flex flex-column justify-content-center"
-                
-              >
-                <p className="my-0 text-end font-size-sm">Monday</p>
-                <p className="my-0 text-end font-size-sm">
-                    <span>12th sept 2024</span>
-                </p>
-              </div>
-            </td>
-            <td>
-              <td>
-              <div className="d-flex flex-row align-items-center justify-content-between"
-               style={{ width:"70vw" }}
-              >
-                <div className="d-flex flex-row align-items-center gap-2 w-100">
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between gap-4 flex-row">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                </div>
-                <div className="d-flex flex-column align-items-center justify-content-between">
-              <button className="border-none transparent-bg fs-5 color-primary" >
-              <Icon icon="akar-icons:circle-chevron-up-fill" />
-              </button>
-              <button className="border-none transparent-bg fs-5 color-primary">
-              <Icon icon="akar-icons:circle-chevron-down-fill" />
-              </button>
-                </div>
-              </div>
-              </td>
-            </td>
-          </tr>
-           <tr >
-            <td className="first-column">
-              <div
-                className="d-flex flex-column justify-content-center"
-                
-              >
-                <p className="my-0 text-end font-size-sm">Monday</p>
-                <p className="my-0 text-end font-size-sm">
-                    <span>12th sept 2024</span>
-                </p>
-              </div>
-            </td>
-            <td>
-              <td>
-              <div className="d-flex flex-row align-items-center justify-content-between"
-               style={{ width:"70vw" }}
-              >
-                <div className="d-flex flex-row align-items-center gap-2 w-100">
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between gap-4 flex-row">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                <div
-                  className=" p-2 primary-background-50 rounded-3 d-flex flex-column w-25 timetable-cards" 
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p className=" my-0 font-size-sm">Engineering Maths</p>
-                    <p className=" my-0 font-size-sm">
-                      <Icon icon="simple-line-icons:options" />
-                    </p>
-                  </div>
-                  <div className="my-2">
-                    <p className="my-0 font-size-sm text-wrap">
-                      Mr.John Doe
-                    </p>
-                  </div>
-                  <div className="mt-auto d-flex flex-row justify-content-between font-size-sm">
-                    <span>10:00</span>
-                    <span>10:30</span>
-                  </div>
-                </div>
-                </div>
-                <div className="d-flex flex-column align-items-center justify-content-between">
-              <button className="border-none transparent-bg fs-5 color-primary" >
-              <Icon icon="akar-icons:circle-chevron-up-fill" />
-              </button>
-              <button className="border-none transparent-bg fs-5 color-primary">
-              <Icon icon="akar-icons:circle-chevron-down-fill" />
-              </button>
-                </div>
-              </div>
-              </td>
-            </td>
-          </tr>
-      </tbody>
-        </table>
-        </div>
+        {exam_data?.exam_data?.length > 0 ? (
+          <Table
+            colDefs={colDefs}
+            rowData={renameKeys(
+              CleanArrayData(exam_data.exam_data, filter_array_keys),
+              renameMapping
+            )}
+          />
+        ) : (
+          <div className="alert alert-warning">
+            Oops, looks like you don't have any teachers.
+          </div>
+        )}
       </div>
-        </>
-    )
+    </>
+  );
 }
 export default ExamTimeTable;
+
+export function DropdownComponent(props) {
+  const { id } = props.data;
+  const {
+    data: semester_data,
+    error: semesterError,
+    isLoading: isSemesterLoading,
+  } = useFetchSemestersQuery();
+  const [isToggled, setIsToggeled] = useState(false);
+  const toggleDropdown = () => {
+    setIsToggeled((prevalue) => !prevalue);
+  };
+  const navigate = useNavigate();
+  return (
+    <>
+      <div className="dropdown-box z-1 position-relative">
+        <div
+          className="selected-box"
+          onClick={toggleDropdown}
+          aria-haspopup="true"
+          aria-expanded={isToggled}
+        >
+          <div
+            className="d-flex flex-row justify-content-between primary-background align-items-center px-2 text-white rounded-3 pointer-cursor"
+            style={{
+              width: "8.2vw",
+              height: "2.2rem",
+            }}
+          >
+            <span className="font-size-sm">Create Timetable</span>
+            <span>
+              <Icon
+                icon="heroicons:chevron-down-20-solid"
+                className={
+                  isToggled ? "rotate-180 transition-3s" : "transition-3s"
+                }
+              />
+            </span>
+          </div>
+        </div>
+        <CSSTransition
+          in={isToggled}
+          timeout={200}
+          classNames="dropdown"
+          unmountOnExit
+        >
+          <div className="d-flex flex-column bg-white p-2 rounded-3 w-100 border mt-1 z-3 position-absolute">
+            <div className=" d-flex flex-column z-3">
+              {
+                 isSemesterLoading ? <span>Loading....</span> : 
+                  semester_data.semester_data.map((items) => {
+                      return(
+                         <>
+                          <span key={items.id}
+                            onClick={() => {
+                               navigate(`/create-examtimtable/${items.id}/${id}`)
+                            }}
+                          >{items.name}</span>
+                         </>
+                      )
+                  })
+              }
+            </div>
+          </div>
+        </CSSTransition>
+      </div>
+    </>
+  );
+}

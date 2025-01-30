@@ -85,6 +85,14 @@ export const emailValidationSchema = Yup.string()
     return value && !/\s{2,}/.test(value);
   });
 
+  export const createNumberSchema = (maxValue) => {
+    return Yup.number()
+      .typeError('Value must be a number.')
+      .required('Field is required.')
+      .min(0, 'Value must be at least 0.')
+      .max(maxValue, `Value cannot be more than ${maxValue}.`); 
+  };
+
   export const religionValidationSchema = Yup.string()
   .required("Religion is required")
   .min(3, "Religion name must be at least 3 characters long")
@@ -187,19 +195,7 @@ export const emailValidationSchema = Yup.string()
   .max(6, "Course credit cannot exceed 6")
   .typeError("Course credit must be a valid number");
 
-  export const departmentValidationSchema = Yup.string()
-  .required("Department is required")
-  .min(3, "Department name must be at least 3 characters long")
-  .max(100, "Department name must be less than 100 characters")
-  .matches(
-    /^[A-Za-z\s,.-]+$/,
-    "Department name can only contain letters, spaces, commas, periods, and hyphens"
-  )
-  .trim() 
-  .test("no-double-spaces", "Department name should not contain double spaces", (value) => {
-    return value && !/\s{2,}/.test(value);
-  })
-  .typeError("Department name must be a valid string");
+
 
   export const weightedMarkValidationSchema = Yup.number()
   .required("Weighted mark is required")
@@ -238,6 +234,20 @@ export const emailValidationSchema = Yup.string()
     return value && !/\s{2,}/.test(value);
   })
   .typeError("Specialty must be a valid string");
+
+  export const departmentValidationSchema = Yup.string()
+  .required("Department is required")
+  .min(3, "Department name must be at least 3 characters long")
+  .max(100, "Department name must be less than 100 characters")
+  .matches(
+    /^[A-Za-z\s,.-]+$/,
+    "Department name can only contain letters, spaces, commas, periods, and hyphens"
+  )
+  .trim() 
+  .test("no-double-spaces", "Department name should not contain double spaces", (value) => {
+    return value && !/\s{2,}/.test(value);
+  })
+  .typeError("Department name must be a valid string");
 
  export  const registrationFeeValidationSchema = Yup.number()
   .required("Registration fee is required")

@@ -2,37 +2,42 @@ import React, { useState } from "react";
 import * as YupValidationSchema from "../componentConfigurations/YupValidationSchema";
 import { Icon } from "@iconify/react";
 
-
-export function PhoneNumberInput() {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [error, setError] = useState('');
+export function PhoneNumberInput({ onChange, value, onValidationChange }) {
+  const [phoneNumber, setPhoneNumber] = useState( value || "");
+  const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
 
   const validatePhoneNumber = async (phone) => {
     try {
       await YupValidationSchema.phoneValidationSchema.validate(phone);
-      setError('');
+      setError("");
+      onValidationChange(true)
     } catch (err) {
       setError(err.message);
-      console.error(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleInputChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '');
+    let value = e.target.value.replace(/\D/g, "");
     if (value.length > 9) {
       value = value.slice(0, 9);
     }
 
     const formattedValue = value
-      .replace(/(\d{3})(\d{1,3})(\d{1,3})?/, (match, p1, p2) => `${p1}${p2 ? '-' + p2 : ''}${value.length > 6 ? '-' + value.slice(6) : ''}`)
+      .replace(
+        /(\d{3})(\d{1,3})(\d{1,3})?/,
+        (match, p1, p2) =>
+          `${p1}${p2 ? "-" + p2 : ""}${
+            value.length > 6 ? "-" + value.slice(6) : ""
+          }`
+      )
       .trim();
 
     setPhoneNumber(formattedValue);
-
-    
+    onChange(value)
     if (value.length === 0) {
-      setError('Phone number is required.');
+      setError("Phone number is required.");
     } else {
       validatePhoneNumber(value);
     }
@@ -49,23 +54,33 @@ export function PhoneNumberInput() {
         </span>
         <input
           type="tel"
-          className={`form-control ${isTouched && error ? 'is-invalid' : ''} ${isTouched && !error && phoneNumber ? 'is-valid' : ''}`}
+          className={`form-control ${isTouched && error ? "is-invalid" : ""} ${
+            isTouched && !error && phoneNumber ? "is-valid" : ""
+          }`}
           placeholder="6XX-XXX-XXX"
           aria-label="tel"
           aria-describedby="basic-addon1"
-          maxLength={12} 
+          maxLength={12}
           value={phoneNumber}
           onChange={handleInputChange}
           onFocus={handleFocus}
         />
       </div>
-      {isTouched && error && <div className="text-danger my-1" style={{ fontSize:"0.9rem" }}>{error}</div>}
-      {isTouched && !error && phoneNumber && <div className="text-success my-1" style={{ fontSize:"0.9rem" }}>Looks good!</div>}
+      {isTouched && error && (
+        <div className="text-danger my-1" style={{ fontSize: "0.9rem" }}>
+          {error}
+        </div>
+      )}
+      {isTouched && !error && phoneNumber && (
+        <div className="text-success my-1" style={{ fontSize: "0.9rem" }}>
+          Looks good!
+        </div>
+      )}
     </div>
   );
 }
-export function EmailInput() {
-  const [email, setEmail] = useState("");
+export function EmailInput({ value, onChange, onValidationChange }) {
+  const [email, setEmail] = useState( value || "");
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
 
@@ -73,14 +88,17 @@ export function EmailInput() {
     try {
       await YupValidationSchema.emailValidationSchema.validate(email);
       setError("");
+      onValidationChange(true);
     } catch (err) {
       setError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleChange = (e) => {
     const { value } = e.target;
     setEmail(value);
+    onChange(value)
     validateEmail(value);
   };
 
@@ -89,30 +107,30 @@ export function EmailInput() {
   return (
     <>
       <div>
-      <label htmlFor="email">Email</label>
-      <input
-        type="text"
-        id="email"
-        className={`form-control ${isTouched && error ? "is-invalid" : ""} ${
-          isTouched && !error && email ? "is-valid" : ""
-        }`}
-        placeholder="example@gmail.com"
-        name="email"
-        value={email}
-        onChange={handleChange}
-        onFocus={handleFocus}
-      />
-      {isTouched && error && <div className="invalid-feedback">{error}</div>}
-      {isTouched && !error && email && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
+        <label htmlFor="email">Email</label>
+        <input
+          type="text"
+          id="email"
+          className={`form-control ${isTouched && error ? "is-invalid" : ""} ${
+            isTouched && !error && email ? "is-valid" : ""
+          }`}
+          placeholder="example@gmail.com"
+          name="email"
+          value={email}
+          onChange={handleChange}
+          onFocus={handleFocus}
+        />
+        {isTouched && error && <div className="invalid-feedback">{error}</div>}
+        {isTouched && !error && email && (
+          <div className="valid-feedback">Looks good!</div>
+        )}
       </div>
     </>
   );
 }
 
-export function FullNamesInput() {
-  const [name, setName] = useState("");
+export function FullNamesInput({ value, onChange, onValidationChange }) {
+  const [name, setName] = useState(value || "");
   const [nameError, setNameError] = useState("");
   const [isNameTouched, setIsNameTouched] = useState(false);
 
@@ -120,14 +138,17 @@ export function FullNamesInput() {
     try {
       await YupValidationSchema.nameValidationSchema.validate(name);
       setNameError("");
+      onValidationChange(true);
     } catch (err) {
       setNameError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleNameChange = (e) => {
     const { value } = e.target;
     setName(value);
+    onChange(value);
     validateName(value);
   };
 
@@ -148,7 +169,7 @@ export function FullNamesInput() {
         onChange={handleNameChange}
         onFocus={handleNameFocus}
       />
-      {isNameTouched && nameError && (
+        {isNameTouched && nameError && (
         <div className="invalid-feedback">{nameError}</div>
       )}
       {isNameTouched && !nameError && name && (
@@ -158,8 +179,8 @@ export function FullNamesInput() {
   );
 }
 
-export function FieldOfStudyInput() {
-  const [fieldOfStudy, setFieldOfStudy] = useState("");
+export function FieldOfStudyInput({ value, onChange, onValidationChange }) {
+  const [fieldOfStudy, setFieldOfStudy] = useState( value || "");
   const [fieldOfStudyError, setFieldOfStudyError] = useState("");
   const [isFieldOfStudyTouched, setIsFieldOfStudyTouched] = useState(false);
 
@@ -167,14 +188,17 @@ export function FieldOfStudyInput() {
     try {
       await YupValidationSchema.fieldOfStudyValidationSchema.validate(value);
       setFieldOfStudyError("");
+      onValidationChange(true);
     } catch (err) {
       setFieldOfStudyError(err.message);
+      onValidationChange(false)
     }
   };
 
   const handleFieldOfStudyChange = (e) => {
     const { value } = e.target;
     setFieldOfStudy(value);
+    onChange(value);
     validateFieldOfStudy(value);
   };
 
@@ -268,7 +292,9 @@ export function CulturalBackgroundInput() {
 
   const validateCulturalBackground = async (value) => {
     try {
-      await YupValidationSchema.culturalBackgroundValidationSchema.validate(value);
+      await YupValidationSchema.culturalBackgroundValidationSchema.validate(
+        value
+      );
       setCulturalBackgroundError("");
     } catch (err) {
       setCulturalBackgroundError(err.message);
@@ -365,8 +391,8 @@ export function CityInput() {
   );
 }
 
-export function SalaryInput() {
-  const [salary, setSalary] = useState("");
+export function SalaryInput({ value, onChange, onValidationChange }) {
+  const [salary, setSalary] = useState( value || "");
   const [salaryError, setSalaryError] = useState("");
   const [isSalaryTouched, setIsSalaryTouched] = useState(false);
 
@@ -374,14 +400,17 @@ export function SalaryInput() {
     try {
       await YupValidationSchema.salaryValidationSchema.validate(value);
       setSalaryError("");
+      onValidationChange(true);
     } catch (err) {
       setSalaryError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleSalaryChange = (e) => {
     const { value } = e.target;
     setSalary(value);
+    onChange(value)
     validateSalary(value);
   };
 
@@ -412,8 +441,8 @@ export function SalaryInput() {
   );
 }
 
-export function YearsExperienceInput() {
-  const [experienceYears, setExperienceYears] = useState("");
+export function YearsExperienceInput({ onChange, value, onValidationChange }) {
+  const [experienceYears, setExperienceYears] = useState( value || "");
   const [experienceYearsError, setExperienceYearsError] = useState("");
   const [isExperienceYearsTouched, setIsExperienceYearsTouched] =
     useState(false);
@@ -422,14 +451,17 @@ export function YearsExperienceInput() {
     try {
       await YupValidationSchema.experienceValidationSchema.validate(value);
       setExperienceYearsError("");
+      onValidationChange(true);
     } catch (err) {
       setExperienceYearsError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleExperienceYearsChange = (e) => {
     const { value } = e.target;
     setExperienceYears(value);
+    onChange(value);
     validateExperienceYears(value);
   };
 
@@ -463,8 +495,8 @@ export function YearsExperienceInput() {
   );
 }
 
-export function AddressInput() {
-  const [address, setAddress] = useState("");
+export function AddressInput({ onChange, value, onValidationChange }) {
+  const [address, setAddress] = useState( value || "");
   const [addressError, setAddressError] = useState("");
   const [isAddressTouched, setIsAddressTouched] = useState(false);
 
@@ -472,14 +504,17 @@ export function AddressInput() {
     try {
       await YupValidationSchema.addressValidationSchema.validate(value);
       setAddressError("");
+      onValidationChange(true);
     } catch (err) {
       setAddressError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleAddressChange = (e) => {
     const { value } = e.target;
     setAddress(value);
+    onChange(value)
     validateAddress(value);
   };
 
@@ -509,8 +544,8 @@ export function AddressInput() {
   );
 }
 
-export function CourseCodeInput(){
-  const [courseCode, setCourseCode] = useState("");
+export function CourseCodeInput({ onChange, value, onValidationChange }) {
+  const [courseCode, setCourseCode] = useState( value || "");
   const [courseCodeError, setCourseCodeError] = useState("");
   const [isCourseCodeTouched, setIsCourseCodeTouched] = useState(false);
 
@@ -518,31 +553,39 @@ export function CourseCodeInput(){
     try {
       await YupValidationSchema.courseCodeValidationSchema.validate(value);
       setCourseCodeError("");
+      onValidationChange(true);
     } catch (err) {
       setCourseCodeError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleCourseCodeChange = (e) => {
     const { value } = e.target;
     setCourseCode(value);
+    onChange(value);
     validateCourseCode(value);
   };
 
   const handleCourseCodeFocus = () => {
     setIsCourseCodeTouched(true);
   };
-   return(
-     <div>
+  return (
+    <div>
       <span>Course Code</span>
-      <input type="text"
-       placeholder="CS101, BIO-305 etc"
-       name="course_code"
-       className={`form-control ${
-        isCourseCodeTouched && courseCodeError ? "is-invalid" : ""
-      } ${isCourseCodeTouched && !courseCodeError && courseCode ? "is-valid" : ""}`}
-       onChange={handleCourseCodeChange}
-       onFocus={handleCourseCodeFocus}
+      <input
+        type="text"
+        placeholder="CS101, BIO-305 etc"
+        name="course_code"
+        className={`form-control ${
+          isCourseCodeTouched && courseCodeError ? "is-invalid" : ""
+        } ${
+          isCourseCodeTouched && !courseCodeError && courseCode
+            ? "is-valid"
+            : ""
+        }`}
+        onChange={handleCourseCodeChange}
+        onFocus={handleCourseCodeFocus}
       />
       {isCourseCodeTouched && courseCodeError && (
         <div className="invalid-feedback">{courseCodeError}</div>
@@ -550,12 +593,12 @@ export function CourseCodeInput(){
       {isCourseCodeTouched && !courseCodeError && courseCode && (
         <div className="valid-feedback">Looks good!</div>
       )}
-     </div>
-   )
+    </div>
+  );
 }
 
-export function CourseTitleInput(){
-  const [courseTitle, setCourseTitle] = useState("");
+export function CourseTitleInput({ value, onChange, onValidationChange}) {
+  const [courseTitle, setCourseTitle] = useState(value || "");
   const [courseTitleError, setCourseTitleError] = useState("");
   const [isCourseTitleTouched, setIsCourseTitleTouched] = useState(false);
 
@@ -563,44 +606,51 @@ export function CourseTitleInput(){
     try {
       await YupValidationSchema.courseTitleValidationSchema.validate(value);
       setCourseTitleError("");
+      onValidationChange(true);
     } catch (err) {
       setCourseTitleError(err.message);
+      onValidationChange(false)
     }
   };
 
   const handleCourseCodeChange = (e) => {
     const { value } = e.target;
     setCourseTitle(value);
+    onChange(value)
     validateCourseTitle(value);
   };
 
   const handleCourseTitleFocus = () => {
     setIsCourseTitleTouched(true);
   };
-   return(
+  return (
     <div>
       <span>Course Title</span>
-      <input 
-       type="text" 
-       className={`form-control ${
-        isCourseTitleTouched && courseTitleError ? "is-invalid" : ""
-      } ${isCourseTitleTouched && !courseTitleError && courseTitle ? "is-valid" : ""}`}
-       placeholder="Mathematics"
-       onChange={handleCourseCodeChange}
-       onFocus={handleCourseTitleFocus}
+      <input
+        type="text"
+        className={`form-control ${
+          isCourseTitleTouched && courseTitleError ? "is-invalid" : ""
+        } ${
+          isCourseTitleTouched && !courseTitleError && courseTitle
+            ? "is-valid"
+            : ""
+        }`}
+        placeholder="Mathematics"
+        onChange={handleCourseCodeChange}
+        onFocus={handleCourseTitleFocus}
       />
-       {isCourseTitleTouched && courseTitleError && (
+      {isCourseTitleTouched && courseTitleError && (
         <div className="invalid-feedback">{courseTitleError}</div>
       )}
       {isCourseTitleTouched && !courseTitleError && courseTitle && (
         <div className="valid-feedback">Looks good!</div>
       )}
     </div>
-   )
+  );
 }
 
-export function CourseCreditInput(){
-  const [courseCredit, setCourseCredit] = useState("");
+export function CourseCreditInput({ value, onValidationChange, onChange }) {
+  const [courseCredit, setCourseCredit] = useState(value || "");
   const [courseCreditError, setCourseCreditError] = useState("");
   const [isCourseCreditTouched, setIsCourseCreditTouched] = useState(false);
 
@@ -608,7 +658,9 @@ export function CourseCreditInput(){
     try {
       await YupValidationSchema.courseCreditValidationSchema.validate(value);
       setCourseCreditError("");
+      onValidationChange(true);
     } catch (err) {
+      onValidationChange(false);
       setCourseCreditError(err.message);
     }
   };
@@ -616,81 +668,41 @@ export function CourseCreditInput(){
   const handleCourseCreditChange = (e) => {
     const { value } = e.target;
     setCourseCredit(value);
+    onChange(value);
     validateCourseCredit(value);
   };
 
   const handleCourseCreditFocus = () => {
     setIsCourseCreditTouched(true);
   };
-  return(
+  return (
     <div>
       <span>Course Credit</span>
-      <input 
-       type="number" 
-       placeholder="1 credit, 2 credit"
-       className={`form-control ${
-        isCourseCreditTouched && courseCreditError ? "is-invalid" : ""
-      } ${isCourseCreditTouched && !courseCreditError && courseCredit ? "is-valid" : ""}`}
-      onChange={handleCourseCreditChange}
-      onFocus={handleCourseCreditFocus}
+      <input
+        type="number"
+        placeholder="1 credit, 2 credit"
+        className={`form-control ${
+          isCourseCreditTouched && courseCreditError ? "is-invalid" : ""
+        } ${
+          isCourseCreditTouched && !courseCreditError && courseCredit
+            ? "is-valid"
+            : ""
+        }`}
+        onChange={handleCourseCreditChange}
+        onFocus={handleCourseCreditFocus}
       />
-       {isCourseCreditTouched && courseCreditError && (
+      {isCourseCreditTouched && courseCreditError && (
         <div className="invalid-feedback">{courseCreditError}</div>
       )}
       {isCourseCreditTouched && !courseCreditError && courseCredit && (
         <div className="valid-feedback">Looks good!</div>
       )}
     </div>
-  )
+  );
 }
 
-export function DepartmentNameInput(){
-  const [department, setDepartment] = useState("");
-  const [departmentError, setDepartmentError] = useState("");
-  const [isDepartmentTouched, setIsDepartmentTouched] = useState(false);
-
-  const validateDepartment = async (value) => {
-    try {
-      await YupValidationSchema.departmentValidationSchema.validate(value);
-      setDepartmentError("");
-    } catch (err) {
-      setDepartmentError(err.message);
-    }
-  };
-
-  const handleDepartmentChange = (e) => {
-    const { value } = e.target;
-    setDepartment(value);
-    validateDepartment(value);
-  };
-
-  const handleCourseCreditFocus = () => {
-    setIsDepartmentTouched(true);
-  };
-   return(
-      <div>
-        <span>Department Name</span>
-        <input 
-         type="text"
-         placeholder="Mathematics Department"
-         onChange={handleDepartmentChange}
-         onFocus={handleCourseCreditFocus}
-         className={`form-control ${
-          isDepartmentTouched && departmentError ? "is-invalid" : ""
-        } ${isDepartmentTouched && !departmentError && department ? "is-valid" : ""}`}
-        />
-         {isDepartmentTouched && departmentError && (
-        <div className="invalid-feedback">{departmentError}</div>
-      )}
-      {isDepartmentTouched && !departmentError && department && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
-      </div>
-   )
-}
-
-export function WeigtedMarkInput(){
-  const [weightedMark, setWeightedMark] = useState("");
+export function WeigtedMarkInput({ onChange, value, onValidationChange }) {
+  const [weightedMark, setWeightedMark] = useState( value ||  "");
   const [weightedMarkError, setWeightedMarkError] = useState("");
   const [isWeightedMarkTouched, setIsWeightedMarkTouched] = useState(false);
 
@@ -698,14 +710,17 @@ export function WeigtedMarkInput(){
     try {
       await YupValidationSchema.weightedMarkValidationSchema.validate(value);
       setWeightedMarkError("");
+      onValidationChange(true)
     } catch (err) {
       setWeightedMarkError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleWeightedMarkChange = (e) => {
     const { value } = e.target;
     setWeightedMark(value);
+    onChange(value);
     validateDepartment(value);
   };
 
@@ -713,30 +728,34 @@ export function WeigtedMarkInput(){
     setIsWeightedMarkTouched(true);
   };
 
-   return(
+  return (
     <div>
       <span>Weighted Mark</span>
-      <input 
-       type="text"
-       className={`form-control ${
-        isWeightedMarkTouched && weightedMarkError ? "is-invalid" : ""
-      } ${isWeightedMarkTouched && !weightedMarkError && weightedMark ? "is-valid" : ""}`}
-         onChange={handleWeightedMarkChange}
-         onFocus={handleWeightedMarkFocus}
-         id="weighted_mark"
-         placeholder="20, 30, 50, 100"
+      <input
+        type="text"
+        className={`form-control ${
+          isWeightedMarkTouched && weightedMarkError ? "is-invalid" : ""
+        } ${
+          isWeightedMarkTouched && !weightedMarkError && weightedMark
+            ? "is-valid"
+            : ""
+        }`}
+        onChange={handleWeightedMarkChange}
+        onFocus={handleWeightedMarkFocus}
+        id="weighted_mark"
+        placeholder="20, 30, 50, 100"
       />
-        {isWeightedMarkTouched && weightedMarkError && (
+      {isWeightedMarkTouched && weightedMarkError && (
         <div className="invalid-feedback">{weightedMarkError}</div>
       )}
       {isWeightedMarkTouched && !weightedMarkError && weightedMark && (
         <div className="valid-feedback">Looks good!</div>
       )}
     </div>
-   )
+  );
 }
 
-export function OccupationInput(){
+export function OccupationInput() {
   const [occupation, setOccupation] = useState("");
   const [occupationError, setOccupationError] = useState("");
   const [isOccupationTouched, setIsOccupationTouched] = useState(false);
@@ -759,17 +778,21 @@ export function OccupationInput(){
   const handleOccupationFocus = () => {
     setIsOccupationTouched(true);
   };
-   return(
-     <div>
+  return (
+    <div>
       <span>Occupation</span>
-      <input 
-       type="text"
-       placeholder="Singer, software Engineer"
-       onChange={handleOccupationChange}
-       onFocus={handleOccupationFocus}
-       className={`form-control ${
-        isOccupationTouched && occupationError ? "is-invalid" : ""
-      } ${isOccupationTouched && !occupationError && occupation ? "is-valid" : ""}`}
+      <input
+        type="text"
+        placeholder="Singer, software Engineer"
+        onChange={handleOccupationChange}
+        onFocus={handleOccupationFocus}
+        className={`form-control ${
+          isOccupationTouched && occupationError ? "is-invalid" : ""
+        } ${
+          isOccupationTouched && !occupationError && occupation
+            ? "is-valid"
+            : ""
+        }`}
       />
       {isOccupationTouched && occupationError && (
         <div className="invalid-feedback">{occupationError}</div>
@@ -777,12 +800,65 @@ export function OccupationInput(){
       {isOccupationTouched && !occupationError && occupation && (
         <div className="valid-feedback">Looks good!</div>
       )}
-     </div>
-   )
+    </div>
+  );
 }
 
-export function SpecialtyTitleInput(){
-  const [specailtyName, setSpecailtyName] = useState("");
+export function DepartmentNameInput({ onValidationChange, value, onChange }) {
+  const [department, setDepartment] = useState(value || "");
+  const [departmentError, setDepartmentError] = useState("");
+  const [isDepartmentTouched, setIsDepartmentTouched] = useState(false);
+
+  const validateDepartment = async (value) => {
+    try {
+      await YupValidationSchema.departmentValidationSchema.validate(value);
+      setDepartmentError("");
+      onValidationChange(true);
+    } catch (err) {
+      setDepartmentError(err.message);
+      onValidationChange(false);
+    }
+  };
+
+  const handleDepartmentChange = (e) => {
+    const { value } = e.target;
+    setDepartment(value);
+    onChange(value); 
+    validateDepartment(value);
+  };
+
+  const handleCourseCreditFocus = () => {
+    setIsDepartmentTouched(true);
+  };
+  return (
+    <div>
+      <span>Department Name</span>
+      <input
+        type="text"
+        placeholder="Mathematics Department"
+        onChange={handleDepartmentChange}
+        onFocus={handleCourseCreditFocus}
+        className={`form-control ${
+          isDepartmentTouched && departmentError ? "is-invalid" : ""
+        } ${
+          isDepartmentTouched && !departmentError && department
+            ? "is-valid"
+            : ""
+        }`}
+      />
+      {isDepartmentTouched && departmentError && (
+        <div className="invalid-feedback">{departmentError}</div>
+      )}
+      {isDepartmentTouched && !departmentError && department && (
+        <div className="valid-feedback">Looks good!</div>
+      )}
+    </div>
+  );
+}
+
+
+export function SpecialtyTitleInput({ value, onChange, onValidationChange }) {
+  const [specailtyName, setSpecailtyName] = useState( value || "");
   const [specailtyNameError, setSpecailtyNameError] = useState("");
   const [isSpecailtyNameTouched, setIsSpecailtyNameTouched] = useState(false);
 
@@ -790,33 +866,36 @@ export function SpecialtyTitleInput(){
     try {
       await YupValidationSchema.specialtyValidationSchema.validate(value);
       setSpecailtyNameError("");
+      onValidationChange(true);
     } catch (err) {
       setSpecailtyNameError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleSpecailtyNameChange = (e) => {
     const { value } = e.target;
     setSpecailtyName(value);
+    onChange(value); 
     validateSpecailtyName(value);
   };
 
   const handleOccupationFocus = () => {
     setIsSpecailtyNameTouched(true);
   };
-   return(
+  return (
     <div>
       <span>Specialty Name</span>
-      <input 
-       type="text"
-       placeholder="Software Engineering"
-       className={`form-control ${
-        isSpecailtyNameTouched && specailtyNameError ? "is-invalid" : ""
-      } ${
-        isSpecailtyNameTouched && !specailtyNameError && specailtyName
-          ? "is-valid"
-          : ""
-      }`}
+      <input
+        type="text"
+        placeholder="Software Engineering"
+        className={`form-control ${
+          isSpecailtyNameTouched && specailtyNameError ? "is-invalid" : ""
+        } ${
+          isSpecailtyNameTouched && !specailtyNameError && specailtyName
+            ? "is-valid"
+            : ""
+        }`}
         onChange={handleSpecailtyNameChange}
         onFocus={handleOccupationFocus}
       />
@@ -827,11 +906,11 @@ export function SpecialtyTitleInput(){
         <div className="valid-feedback">Looks good!</div>
       )}
     </div>
-   )
+  );
 }
 
-export function RegistrationFeeInput(){
-  const [registrationFee, setRegistrationFee] = useState("");
+export function RegistrationFeeInput({ onChange, value, onValidationChange }) {
+  const [registrationFee, setRegistrationFee] = useState(value || "");
   const [registrationFeeError, setRegistrationFeeError] = useState("");
   const [isRegistrationFeeTouched, setIsRegistrationTouched] = useState(false);
 
@@ -839,48 +918,51 @@ export function RegistrationFeeInput(){
     try {
       await YupValidationSchema.registrationFeeValidationSchema.validate(value);
       setRegistrationFeeError("");
+      onValidationChange(true);
     } catch (err) {
       setRegistrationFeeError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleRegistrationFeeChange = (e) => {
     const { value } = e.target;
     setRegistrationFee(value);
+    onChange(value);
     validateRegistrationFee(value);
   };
 
   const handleRegistrationFeeFocus = () => {
     setIsRegistrationTouched(true);
   };
-   return(
-      <div>
-        <span>Registration Fee</span>
-        <input 
-          type="number"
-          placeholder="1000 $, 2000 $ etc"
-          onChange={handleRegistrationFeeChange}
-          onFocus={handleRegistrationFeeFocus}
-          className={`form-control ${
-            isRegistrationFeeTouched && registrationFeeError ? "is-invalid" : ""
-          } ${
-            isRegistrationFeeTouched && !registrationFeeError && registrationFee
-              ? "is-valid"
-              : ""
-          }`}        
-         />
-           {isRegistrationFeeTouched && registrationFeeError && (
+  return (
+    <div>
+      <span>Registration Fee</span>
+      <input
+        type="number"
+        placeholder="1000 $, 2000 $ etc"
+        onChange={handleRegistrationFeeChange}
+        onFocus={handleRegistrationFeeFocus}
+        className={`form-control ${
+          isRegistrationFeeTouched && registrationFeeError ? "is-invalid" : ""
+        } ${
+          isRegistrationFeeTouched && !registrationFeeError && registrationFee
+            ? "is-valid"
+            : ""
+        }`}
+      />
+      {isRegistrationFeeTouched && registrationFeeError && (
         <div className="invalid-feedback">{registrationFeeError}</div>
       )}
       {isRegistrationFeeTouched && !registrationFeeError && registrationFee && (
         <div className="valid-feedback">Looks good!</div>
       )}
-      </div>
-   )
+    </div>
+  );
 }
 
-export function SchoolFeeInput(){
-  const [schoolFee, setSchoolFee] = useState("");
+export function SchoolFeeInput({ onChange, onValidationChange, value }) {
+  const [schoolFee, setSchoolFee] = useState( value || "");
   const [schoolFeeError, setSchoolFeeError] = useState("");
   const [isSchoolFeeTouched, setIsSchoolFeeTouched] = useState(false);
 
@@ -888,35 +970,36 @@ export function SchoolFeeInput(){
     try {
       await YupValidationSchema.schoolFeeValidationSchema.validate(value);
       setSchoolFeeError("");
+      onValidationChange(true);
     } catch (err) {
       setSchoolFeeError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleSchoolFeeChange = (e) => {
     const { value } = e.target;
     setSchoolFee(value);
+    onChange(value);
     validateSchoolFee(value);
   };
 
   const handleSchoolFeeFocus = () => {
     setIsSchoolFeeTouched(true);
   };
-  return(
+  return (
     <div>
       <span>School Fee</span>
-      <input 
-       type="number"
-       onChange={handleSchoolFeeChange}
-       onFocus={handleSchoolFeeFocus}
-       placeholder="10000$ 2000$"
-       className={`form-control ${
-        isSchoolFeeTouched && schoolFeeError ? "is-invalid" : ""
-      } ${
-        isSchoolFeeTouched && !schoolFeeError && schoolFee
-          ? "is-valid"
-          : ""
-      }`}
+      <input
+        type="number"
+        onChange={handleSchoolFeeChange}
+        onFocus={handleSchoolFeeFocus}
+        placeholder="10000$ 2000$"
+        className={`form-control ${
+          isSchoolFeeTouched && schoolFeeError ? "is-invalid" : ""
+        } ${
+          isSchoolFeeTouched && !schoolFeeError && schoolFee ? "is-valid" : ""
+        }`}
       />
       {isSchoolFeeTouched && schoolFeeError && (
         <div className="invalid-feedback">{schoolFeeError}</div>
@@ -925,10 +1008,10 @@ export function SchoolFeeInput(){
         <div className="valid-feedback">Looks good!</div>
       )}
     </div>
-  )
+  );
 }
 
-export function NotesInput(){
+export function NotesInput() {
   const [notes, setNotes] = useState("");
   const [notesError, setNotesError] = useState("");
   const [isNotesTouched, setIsNotesTouched] = useState(false);
@@ -951,21 +1034,17 @@ export function NotesInput(){
   const handleNotesFocus = () => {
     setIsNotesTouched(true);
   };
-  return(
+  return (
     <div>
-     <span>Notes</span>
-     <textarea 
-      placeholder="Write notes Here"
-      className={`form-control ${
-        isNotesTouched && notesError ? "is-invalid" : ""
-      } ${
-        isNotesTouched && !notesError && notes
-          ? "is-valid"
-          : ""
-      }`}
-      onChange={handleNotesChange}
-      onFocus={handleNotesFocus}
-     ></textarea>
+      <span>Notes</span>
+      <textarea
+        placeholder="Write notes Here"
+        className={`form-control ${
+          isNotesTouched && notesError ? "is-invalid" : ""
+        } ${isNotesTouched && !notesError && notes ? "is-valid" : ""}`}
+        onChange={handleNotesChange}
+        onFocus={handleNotesFocus}
+      ></textarea>
       {isNotesTouched && notesError && (
         <div className="invalid-feedback">{notesError}</div>
       )}
@@ -973,10 +1052,10 @@ export function NotesInput(){
         <div className="valid-feedback">Looks good!</div>
       )}
     </div>
-  )
+  );
 }
 
-export function Reason(){
+export function Reason() {
   const [reason, setReason] = useState("");
   const [reasonError, setReasonError] = useState("");
   const [isReasonTouched, setIsReasonTouched] = useState(false);
@@ -999,33 +1078,29 @@ export function Reason(){
   const handleReasonFocus = () => {
     setIsReasonTouched(true);
   };
-   return(
-     <div>
-       <span>Reason</span>
-       <textarea 
+  return (
+    <div>
+      <span>Reason</span>
+      <textarea
         placeholder="Enter reason"
         className={`form-control ${
           isReasonTouched && reasonError ? "is-invalid" : ""
-        } ${
-          isReasonTouched && !reasonError && reason
-            ? "is-valid"
-            : ""
-        }`}
+        } ${isReasonTouched && !reasonError && reason ? "is-valid" : ""}`}
         onChange={handleReasonChange}
         onFocus={handleReasonFocus}
-       ></textarea>
+      ></textarea>
       {isReasonTouched && reasonError && (
         <div className="invalid-feedback">{reasonError}</div>
       )}
       {isReasonTouched && !reasonError && reason && (
         <div className="valid-feedback">Looks good!</div>
       )}
-     </div>
-   )
+    </div>
+  );
 }
 
-export function LastNameInput(){
-  const [lastName, setLastName] = useState("");
+export function LastNameInput({ value, onChange, onValidationChange }) {
+  const [lastName, setLastName] = useState( value || "");
   const [lastNameError, setLastNameError] = useState("");
   const [isLastNameTouched, setIsLastNameTouched] = useState(false);
 
@@ -1033,35 +1108,34 @@ export function LastNameInput(){
     try {
       await YupValidationSchema.lastNameValidationSchema.validate(value);
       setLastNameError("");
+      onValidationChange(true);
     } catch (err) {
       setLastNameError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleLastNameChange = (e) => {
     const { value } = e.target;
     setLastName(value);
+    onChange(value);
     validateLastName(value);
   };
 
   const handleLastNameFocus = () => {
     setIsLastNameTouched(true);
   };
-  return(
+  return (
     <div>
       <span>Last Name </span>
-      <input 
-       type="text"
-       placeholder="Chongong"
-       onChange={handleLastNameChange}
-       onFocus={handleLastNameFocus}
-       className={`form-control ${
-        isLastNameTouched && lastNameError ? "is-invalid" : ""
-       } ${
-        isLastNameTouched && !lastNameError && lastName
-          ? "is-valid"
-          : ""
-      }`}
+      <input
+        type="text"
+        placeholder="Chongong"
+        onChange={handleLastNameChange}
+        onFocus={handleLastNameFocus}
+        className={`form-control ${
+          isLastNameTouched && lastNameError ? "is-invalid" : ""
+        } ${isLastNameTouched && !lastNameError && lastName ? "is-valid" : ""}`}
       />
       {isLastNameTouched && lastNameError && (
         <div className="invalid-feedback">{lastNameError}</div>
@@ -1070,11 +1144,11 @@ export function LastNameInput(){
         <div className="valid-feedback">Looks good!</div>
       )}
     </div>
-  )
+  );
 }
 
-export function FirstNameInput(){
-  const [firstName, setFirstName] = useState("");
+export function FirstNameInput({value, onChange, onValidationChange }) {
+  const [firstName, setFirstName] = useState( value || "");
   const [firstNameError, setFirstNameError] = useState("");
   const [isFirstNameTouched, setIsFirstNameTouched] = useState(false);
 
@@ -1082,35 +1156,36 @@ export function FirstNameInput(){
     try {
       await YupValidationSchema.firstNameValidationSchema.validate(value);
       setFirstNameError("");
+      onValidationChange(true);
     } catch (err) {
       setFirstNameError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleFirstNameChange = (e) => {
     const { value } = e.target;
     setFirstName(value);
+    onChange(value);
     validateFirstName(value);
   };
 
   const handleFirstNameFocus = () => {
     setIsFirstNameTouched(true);
   };
-  return(
+  return (
     <div>
       <span>First Name</span>
-      <input 
-       type="text"
-       placeholder="Gemuh"
-       onChange={handleFirstNameChange}
-       onFocus={handleFirstNameFocus}
-       className={`form-control ${
-        isFirstNameTouched && firstNameError ? "is-invalid" : ""
-       } ${
-        isFirstNameTouched && !firstNameError && firstName
-          ? "is-valid"
-          : ""
-      }`}
+      <input
+        type="text"
+        placeholder="Gemuh"
+        onChange={handleFirstNameChange}
+        onFocus={handleFirstNameFocus}
+        className={`form-control ${
+          isFirstNameTouched && firstNameError ? "is-invalid" : ""
+        } ${
+          isFirstNameTouched && !firstNameError && firstName ? "is-valid" : ""
+        }`}
       />
       {isFirstNameTouched && firstNameError && (
         <div className="invalid-feedback">{firstNameError}</div>
@@ -1119,10 +1194,10 @@ export function FirstNameInput(){
         <div className="valid-feedback">Looks good!</div>
       )}
     </div>
-  )
+  );
 }
 
-export function BatchTitleInput(){
+export function BatchTitleInput() {
   const [batchTitle, setBatchTitle] = useState("");
   const [batchTitleError, setBatchTitleError] = useState("");
   const [isBatchTitleTouched, setIsBatchTitleTouched] = useState(false);
@@ -1145,22 +1220,22 @@ export function BatchTitleInput(){
   const handleFirstNameFocus = () => {
     setIsBatchTitleTouched(true);
   };
-  return(
+  return (
     <div>
-     <span>Batch Title</span>
-     <input 
-      type="text"
-      placeholder="Batch of endurance"
-      onChange={handleBatchTitleChange}
-      onFocus={handleFirstNameFocus}
-      className={`form-control ${
-        isBatchTitleTouched && batchTitleError ? "is-invalid" : ""
-       } ${
-        isBatchTitleTouched && !batchTitleError && batchTitle
-          ? "is-valid"
-          : ""
-      }`}
-     />
+      <span>Batch Title</span>
+      <input
+        type="text"
+        placeholder="Batch of endurance"
+        onChange={handleBatchTitleChange}
+        onFocus={handleFirstNameFocus}
+        className={`form-control ${
+          isBatchTitleTouched && batchTitleError ? "is-invalid" : ""
+        } ${
+          isBatchTitleTouched && !batchTitleError && batchTitle
+            ? "is-valid"
+            : ""
+        }`}
+      />
       {isBatchTitleTouched && batchTitleError && (
         <div className="invalid-feedback">{batchTitleError}</div>
       )}
@@ -1168,10 +1243,10 @@ export function BatchTitleInput(){
         <div className="valid-feedback">Looks good!</div>
       )}
     </div>
-  )
+  );
 }
 
-export function LocationInput(){
+export function LocationInput() {
   const [location, setLocation] = useState("");
   const [locationError, setLocationError] = useState("");
   const [isLocationTouched, setIsLocationTouched] = useState(false);
@@ -1194,22 +1269,18 @@ export function LocationInput(){
   const handleLocationFocus = () => {
     setIsLocationTouched(true);
   };
-  return(
+  return (
     <div>
       <span>Location</span>
-      <input 
+      <input
         type="text"
         className={`form-control ${
           isLocationTouched && locationError ? "is-invalid" : ""
-         } ${
-          isLocationTouched && !locationError && location
-            ? "is-valid"
-            : ""
-        }`}
+        } ${isLocationTouched && !locationError && location ? "is-valid" : ""}`}
         placeholder="Enter location"
         onChange={handleLocationChange}
         onFocus={handleLocationFocus}
-       />
+      />
       {isLocationTouched && locationError && (
         <div className="invalid-feedback">{locationError}</div>
       )}
@@ -1217,10 +1288,10 @@ export function LocationInput(){
         <div className="valid-feedback">Looks good!</div>
       )}
     </div>
-  )
+  );
 }
 
-export function EventTitleInput(){
+export function EventTitleInput() {
   const [eventTitle, setEventTitle] = useState("");
   const [eventTitleError, setEventTitleError] = useState("");
   const [isEventTItleTouched, setIsEventTitleTouched] = useState(false);
@@ -1243,34 +1314,34 @@ export function EventTitleInput(){
   const handleEventTitleFocus = () => {
     setIsEventTitleTouched(true);
   };
-    return(
-      <div>
-        <span>Event Title</span>
-        <input 
-         type="text"
-         onChange={handleEventTitleChange}
-         onFocus={handleEventTitleFocus}
-         className={`form-control ${
+  return (
+    <div>
+      <span>Event Title</span>
+      <input
+        type="text"
+        onChange={handleEventTitleChange}
+        onFocus={handleEventTitleFocus}
+        className={`form-control ${
           isEventTItleTouched && eventTitleError ? "is-invalid" : ""
-         } ${
+        } ${
           isEventTItleTouched && !eventTitleError && eventTitle
             ? "is-valid"
             : ""
         }`}
         placeholder="Enter event title"
-        />
-        {isEventTItleTouched && eventTitleError && (
+      />
+      {isEventTItleTouched && eventTitleError && (
         <div className="invalid-feedback">{eventTitleError}</div>
       )}
       {isEventTItleTouched && !eventTitleError && eventTitle && (
         <div className="valid-feedback">Looks good!</div>
       )}
-      </div>
-    )
+    </div>
+  );
 }
 
-export function DescriptionInput(){
-  const [description, setDescription] = useState("");
+export function DescriptionInput({ onChange, onValidationChange, value }) {
+  const [description, setDescription] = useState( value || "");
   const [descriptionError, setDescriptionError] = useState("");
   const [isDescriptionTouched, setIsDescriptionTouched] = useState(false);
 
@@ -1278,49 +1349,53 @@ export function DescriptionInput(){
     try {
       await YupValidationSchema.descriptionSchema.validate(value);
       setDescriptionError("");
+      onValidationChange(true)
     } catch (err) {
       setDescriptionError(err.message);
+      onValidationChange(false);
     }
   };
 
   const handleDescriptionChange = (e) => {
     const { value } = e.target;
     setDescription(value);
+    onChange(value)
     validateDescription(value);
   };
 
   const handleDescriptionFocus = () => {
     setIsDescriptionTouched(true);
   };
-   return(
+  return (
     <div>
-    <span>Description</span>
-    <textarea 
-     placeholder="Enter Description .........."
-     className={`form-control ${
-       isDescriptionTouched && descriptionError ? "is-invalid" : ""
-     } ${
-       isDescriptionTouched && !descriptionError && description
-         ? "is-valid"
-         : ""
-     }`}
-     onChange={handleDescriptionChange}
-     onFocus={handleDescriptionFocus}
-    ></textarea>
-   {isDescriptionTouched && descriptionError && (
-     <div className="invalid-feedback">{descriptionError}</div>
-   )}
-   {isDescriptionTouched && !descriptionError && description && (
-     <div className="valid-feedback">Looks good!</div>
-   )}
-  </div>
-   )
+      <span>Description</span>
+      <textarea
+        placeholder="Enter Description .........."
+        className={`form-control ${
+          isDescriptionTouched && descriptionError ? "is-invalid" : ""
+        } ${
+          isDescriptionTouched && !descriptionError && description
+            ? "is-valid"
+            : ""
+        }`}
+        onChange={handleDescriptionChange}
+        onFocus={handleDescriptionFocus}
+      ></textarea>
+      {isDescriptionTouched && descriptionError && (
+        <div className="invalid-feedback">{descriptionError}</div>
+      )}
+      {isDescriptionTouched && !descriptionError && description && (
+        <div className="valid-feedback">Looks good!</div>
+      )}
+    </div>
+  );
 }
 
-export function PreferredLanguageInput(){
+export function PreferredLanguageInput() {
   const [preferredLanguage, setPreferredLanguage] = useState("");
   const [preferredLanguageError, setPreferredLanguageError] = useState("");
-  const [isPreferredLanguageTouched, setIsPreferredLanguageTouched] = useState(false);
+  const [isPreferredLanguageTouched, setIsPreferredLanguageTouched] =
+    useState(false);
 
   const validatePreferredLanguage = async (value) => {
     try {
@@ -1340,36 +1415,42 @@ export function PreferredLanguageInput(){
   const handlePreferredLanguageFocus = () => {
     setIsPreferredLanguageTouched(true);
   };
-  return(
+  return (
     <div>
-    <span>Preferred Language of Communication</span>
-    <input 
-     type="text"
-     onChange={handlePreferredLanguageChange}
-     onFocus={handlePreferredLanguageFocus}
-     className={`form-control ${
-      isPreferredLanguageTouched && preferredLanguageError ? "is-invalid" : ""
-     } ${
-      isPreferredLanguageTouched && !preferredLanguageError && preferredLanguage
-        ? "is-valid"
-        : ""
-    }`}
-    placeholder="Pigeon, English, French, Bassa"
-    />
-    {isPreferredLanguageTouched && preferredLanguageError && (
-    <div className="invalid-feedback">{preferredLanguageError}</div>
-  )}
-  {isPreferredLanguageTouched && !preferredLanguageError && preferredLanguage && (
-    <div className="valid-feedback">Looks good!</div>
-  )}
-  </div>
-  )
+      <span>Preferred Language of Communication</span>
+      <input
+        type="text"
+        onChange={handlePreferredLanguageChange}
+        onFocus={handlePreferredLanguageFocus}
+        className={`form-control ${
+          isPreferredLanguageTouched && preferredLanguageError
+            ? "is-invalid"
+            : ""
+        } ${
+          isPreferredLanguageTouched &&
+          !preferredLanguageError &&
+          preferredLanguage
+            ? "is-valid"
+            : ""
+        }`}
+        placeholder="Pigeon, English, French, Bassa"
+      />
+      {isPreferredLanguageTouched && preferredLanguageError && (
+        <div className="invalid-feedback">{preferredLanguageError}</div>
+      )}
+      {isPreferredLanguageTouched &&
+        !preferredLanguageError &&
+        preferredLanguage && <div className="valid-feedback">Looks good!</div>}
+    </div>
+  );
 }
 
-export function RelationshipToStudentInput(){
+export function RelationshipToStudentInput() {
   const [relationshipToStudent, setRelationshipToStudent] = useState("");
-  const [relationshipToStudentError, setRelationshipToStudentError] = useState("");
-  const [isrelationshipToStudentTouched, setIsRelationshipToStudentTouched] = useState(false);
+  const [relationshipToStudentError, setRelationshipToStudentError] =
+    useState("");
+  const [isrelationshipToStudentTouched, setIsRelationshipToStudentTouched] =
+    useState(false);
 
   const validateRelationshipToStudent = async (value) => {
     try {
@@ -1389,30 +1470,89 @@ export function RelationshipToStudentInput(){
   const handleRelationshipToStudentFocus = () => {
     setIsRelationshipToStudentTouched(true);
   };
-    return(
-      <>
-       <div>
+  return (
+    <>
+      <div>
         <span>Relationship To Student</span>
-        <input 
-         type="text"
-         onChange={handleRelationshipToStudentChange}
-         onFocus={handleRelationshipToStudentFocus}
-         className={`form-control ${
-          isrelationshipToStudentTouched && relationshipToStudentError ? "is-invalid" : ""
-         } ${
-          isrelationshipToStudentTouched && !relationshipToStudentError && relationshipToStudent
-            ? "is-valid"
-            : ""
-        }`}
-        placeholder="Mother, Father, Aunt, Uncle"
+        <input
+          type="text"
+          onChange={handleRelationshipToStudentChange}
+          onFocus={handleRelationshipToStudentFocus}
+          className={`form-control ${
+            isrelationshipToStudentTouched && relationshipToStudentError
+              ? "is-invalid"
+              : ""
+          } ${
+            isrelationshipToStudentTouched &&
+            !relationshipToStudentError &&
+            relationshipToStudent
+              ? "is-valid"
+              : ""
+          }`}
+          placeholder="Mother, Father, Aunt, Uncle"
         />
         {isrelationshipToStudentTouched && relationshipToStudentError && (
-        <div className="invalid-feedback">{relationshipToStudentError}</div>
-      )}
-      {isrelationshipToStudentTouched && !relationshipToStudentError && relationshipToStudent && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
+          <div className="invalid-feedback">{relationshipToStudentError}</div>
+        )}
+        {isrelationshipToStudentTouched &&
+          !relationshipToStudentError &&
+          relationshipToStudent && (
+            <div className="valid-feedback">Looks good!</div>
+          )}
       </div>
-      </>
-    )
+    </>
+  );
+}
+
+export function MinimumScoreInput({ maxValue, onChange, value }){
+  const [score, setScore] = useState( value || 0);
+  const [scoreError, setScoreError] = useState("");
+  const [isScoreTouched, setIsScoreTouched] = useState(false);
+
+  const validateScore = async (value) => {
+    try {
+      const numberSchema = YupValidationSchema.createNumberSchema(maxValue);
+      await numberSchema.validate(value);
+      setScoreError("");
+    } catch (err) {
+      setScoreError(err.message);
+    }
+  };
+
+  const handleScoreChange = (e) => {
+    const { value } = e.target;
+    setScore(value);
+    onChange(value)
+    validateScore(value);
+  };
+
+  const handleScoreFocus = () => {
+    setIsScoreTouched(true);
+  };
+
+  return (
+    <>
+      <div>
+        <input
+          type="number"
+          value={score}
+          onChange={handleScoreChange}
+          onFocus={handleScoreFocus}
+          step="0.01"
+          className={`form-control form-control-sm ${
+            isScoreTouched && scoreError ? "is-invalid" : ""
+          } ${
+            isScoreTouched && !scoreError && score ? "is-valid" : ""
+          }`}
+          placeholder="Enter a number (0 to {maxValue})"
+        />
+        {isScoreTouched && scoreError && (
+          <div className="invalid-feedback">{scoreError}</div>
+        )}
+        {isScoreTouched && !scoreError && score && (
+          <div className="valid-feedback">Looks good!</div>
+        )}
+      </div>
+    </>
+  );
 }
