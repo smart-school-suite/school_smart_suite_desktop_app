@@ -18,7 +18,11 @@ function Hero() {
               {" "}
               <Icon icon="mingcute:book-4-fill" /> EduPulse
             </h1>
-            <h4 style={{ fontSize: "3rem", textAlign: "center" }}>
+            <h4 style={{ fontSize: "3rem", textAlign: "center" }}
+             onClick={() => {
+              navigate("/")
+             }}
+            >
               Streamline Your School’s Management with EduPulse
             </h4>
             <p>

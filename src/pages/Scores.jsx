@@ -4,26 +4,13 @@ import { useFetchStudentScoresQuery, useFetchScoreDetailsQuery } from "../Slices
 import CleanArrayData, { renameKeys } from "../utils/functions";
 import Pageloaderspinner from "../components/Spinners";
 import Table from "../components/Tables";
-import { CSSTransition } from "react-transition-group";
 import { Icon } from "@iconify/react";
 import DataComponent from "../components/dataComponent";
 import ActionButtonDropdown from "./actionButton";
 import { useState, useEffect } from "react";
+import { ScoresNavBarOptions } from "../componentConfigurations/navBarConfig";
 function Scores(){
-  const navBarOptions = {
-    route_data: [
-        {
-            lable:"Scores",
-            icon:"ph:exam-bold",
-            route:"/scores"
-        },
-        {
-           lable:"Score Statistics",
-           route:"/scores-analytics",
-           icon:"material-symbols:query-stats"
-        }
-    ],
-}
+
 const [colDefs, setColDefs] = useState([
   {
     field:"id", hide:true
@@ -153,7 +140,7 @@ if (isLoading) {
     return(
         <>
         <Navbar 
-         options={navBarOptions}
+         options={ScoresNavBarOptions}
         />
         <div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">

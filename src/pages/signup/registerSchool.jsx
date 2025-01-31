@@ -10,11 +10,9 @@ function RegisterSchool() {
     address: "",
     city: "",
     state: "",
-    semester: "",
     type: "",
     established_year: "",
     director_name: "",
-    MAX_GPA: "",
     motor: "",
   });
 
@@ -128,30 +126,7 @@ function RegisterSchool() {
                 />
               </div>
             </div>
-            <div className="d-flex flex-row w-100 gap-2">
-              <div className="my-1 w-50">
-                <span>Semesters</span>
-                <input
-                  type="number"
-                  className="form-control w-100"
-                  placeholder="2 semesters, 3 semesters"
-                  name="semester"
-                  value={schoolCredentials.semester}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="my-1 w-50">
-                <span>Max GPA</span>
-                <input
-                  type="number"
-                  className="form-control w-100"
-                  placeholder="2.00, 4.00 etc"
-                  name="MAX_GPA"
-                  value={schoolCredentials.MAX_GPA}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
+            
             <div className="my-1">
               <span>Type</span>
               <input

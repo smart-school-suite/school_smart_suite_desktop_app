@@ -157,3 +157,23 @@ export const ExamTimeTableNavbarOptions = {
            },
          ],
 }
+
+export const ScoresNavBarOptions = {
+  route_data: [
+    {
+        lable:"Scores",
+        icon:"ph:exam-bold",
+        route:"/scores"
+    },
+      {
+          lable:"Accessed Students",
+          icon:"ph:exam-bold",
+          route:"/accessed-students"
+      },
+      {
+         lable:"Score Statistics",
+         route:"/scores-analytics",
+         icon:"material-symbols:query-stats"
+      }
+  ],
+}

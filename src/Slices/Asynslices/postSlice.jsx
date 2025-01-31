@@ -8,7 +8,7 @@ const baseQuery = fetchBaseQuery({
     const schoolBranchId = localStorage.getItem('SCHOOL_BRANCH_KEY');
     const token = localStorage.getItem("auth_token");
     if (schoolBranchId) {
-      headers.set("SCHOOL_BRANCH_KEY", schoolBranchId);
+      headers.set("SCHOOL_BRANCH_KEY", JSON.parse(schoolBranchId));
       headers.set("Authorization", `Bearer ${token}`);
     }
     headers.set("Content-Type", "application/json");
@@ -58,14 +58,6 @@ export const postSlice = createApi({
         body: newEvent,
       }),
       invalidatesTags: ["event"], 
-    }),
-    addTimetable: builder.mutation({
-      query: (newTimetable) => ({
-        url: "api/exam-timetable/create-timetable",
-        method: "POST",
-        body: newTimetable,
-      }),
-      invalidatesTags: ["timetable"], 
     }),
     addExam: builder.mutation({
       query: (newExam) => ({
