@@ -12,6 +12,8 @@ function RegisterSchoolBranch(){
         resit_fee: "",
         email: "",
         website: "",
+        semester_count:0,
+        max_gpa: 0,
         phone_one: "",
         phone_two: "",
         postal_code: "",
@@ -79,6 +81,31 @@ function RegisterSchoolBranch(){
             </div>
             <div className="d-flex flex-row w-100 gap-2">
               <div className="my-1 w-50">
+                <span>Semesters</span>
+                <input
+                  type="number"
+                  className="form-control w-100"
+                  placeholder="2 semesters, 3 semesters"
+                  name="semester_count"
+                  value={schoolCredentials.semester_count}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="my-1 w-50">
+                <span>Max GPA</span>
+                <input
+                  type="number"
+                  className="form-control w-100"
+                  placeholder="2.00, 4.00 etc"
+                  name="max_gpa"
+                  value={schoolCredentials.max_gpa}
+                  onChange={handleChange}
+                  step="0.01"
+                />
+              </div>
+            </div>
+            <div className="d-flex flex-row w-100 gap-2">
+              <div className="my-1 w-50">
                 <span>Postal Code</span>
                 <input
                   type="number"
@@ -105,6 +132,7 @@ function RegisterSchoolBranch(){
                 <input type="email" 
                  className="form-control"
                  name="email"
+                 placeholder="example@gmail.com"
                  value={schoolCredentials.email}
                  onChange={handleChange}
                 />

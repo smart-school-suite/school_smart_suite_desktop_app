@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import ActionButtonDropdown from "./actionButton";
 import { useAddStudentBatchMutation } from "../Slices/Asynslices/postSlice";
 import { formatDate } from "../utils/functions";
+import toast from "react-hot-toast";
 function StudentBatches() {
   const cellStyle = {
     display: "flex",

@@ -39,56 +39,64 @@ function Exams() {
       hide: true,
     },
     {
-      field: "Exam Name",
+      field: "exam_name",
+      headerName:"Exam Name",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "Semeseter",
+      field: "semester_name",
+      headerName:"Semester",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "Specialty",
+      field: "specailty_name",
+      headerName:"Specailty Name",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "Level",
+      field: "level_name",
+      headerName:"Level Name",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "Start Date",
+      field: "start_date",
+      headerName:"Start Date",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "End Date",
+      field: "end_date",
+      headerName:"End Date",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "School Year",
+      field: "school_year",
+      headerName:"Academic Year",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "Weighted Mark",
+      field: "weighted_mark",
+      headerName:"Weighted Mark",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -97,28 +105,6 @@ function Exams() {
     { field: "Action", cellRenderer: DropdownComponent },
   ]);
   const { data: exam_data, error, isLoading } = useFetchExamsQuery();
-  const filter_array_keys = [
-    "id",
-    "examtype.exam_name",
-    "semester.name",
-    "specialty.specialty_name",
-    "specialty.level.name",
-    "start_date",
-    "end_date",
-    "school_year",
-    "weighted_mark",
-  ];
-  const renameMapping = {
-    id: "id",
-    "examtype.exam_name": "Exam Name",
-    "semester.name": "Semeseter",
-    "specialty.specialty_name": "Specialty",
-    "specialty.level.name": "Level",
-    start_date: "Start Date",
-    end_date: "End Date",
-    school_year: "School Year",
-    weighted_mark: "Weighted Mark",
-  };
   if (isLoading) {
     return <Pageloaderspinner />;
   }
@@ -145,10 +131,7 @@ function Exams() {
         {exam_data?.exam_data?.length > 0 ? (
           <Table
             colDefs={colDefs}
-            rowData={renameKeys(
-              CleanArrayData(exam_data.exam_data, filter_array_keys),
-              renameMapping
-            )}
+            rowData={exam_data.exam_data}
           />
         ) : (
           <div className="alert alert-warning">

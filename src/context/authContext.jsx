@@ -132,11 +132,11 @@ export const AuthProvider = ({ children }) => {
         setSchoolBranchId(response.data.schooladmin_user.school_branch_id);
         localStorage.setItem(
           "SCHOOL_BRANCH_KEY",
-          response.data.schooladmin_user.school_branch_id
+          JSON.stringify(response.data.schooladmin_user.school_branch_id)
         );
         localStorage.setItem(
           "AUTH_USER_DETAILS",
-          response.data.schooladmin_user
+          JSON.stringify(response.data.schooladmin_user)
         );
       } catch (error) {
         console.error("Error fetching authenticated user", error);

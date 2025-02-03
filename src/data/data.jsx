@@ -1125,3 +1125,20 @@ export const SchoolEventData = [
         backgroundImage: "http://schoolsite.com/images/new-year-bg.jpg"
     }
 ];
+
+
+export const schoolEventCategories = [
+    { id: 1, name: "Administrative Events" },
+    { id: 2, name: "Academic Events" },
+    { id: 3, name: "Cultural and Social Events" },
+    { id: 4, name: "Athletic and Sports Events" },
+    { id: 5, name: "Arts and Music Events" },
+    { id: 6, name: "Community Service Events" },
+    { id: 7, name: "Professional Development and Training" },
+    { id: 8, name: "Student Governance and Leadership Events" },
+    { id: 9, name: "Family and Parent-Child Events" },
+    { id: 10, name: "School Clubs and Organization Events" },
+    { id: 11, name: "Wellness and Health Events" },
+    { id: 12, name: "Summer School, Extracurricular, and Enrichment Events" },
+    { id: 13, name: "Cultural Festivals" },
+]

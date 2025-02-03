@@ -39,42 +39,48 @@ function Courses() {
       cellRenderer: DataComponent,
     },
     {
-      field: "Course Code",
+      field: "course_code",
+      headerName:"Course Code",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "Course Title",
+      field: "course_title",
+      headerName:"Course Title",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "Credit",
+      field: "course_credit",
+      headerName:"Course Credit",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "Semester",
+      field: "semester_name",
+      headerName:"Semester",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "Specialty Name",
+      field: "specialty_name",
+      headerName:"Specialty Name",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DataComponent,
     },
     {
-      field: "Level",
+      field: "level_name",
+      headerName:"Level Name",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -83,24 +89,6 @@ function Courses() {
     { field: "Action", cellRenderer: DropdownComponent },
   ]);
   const { data: courses, error, isLoading } = useFetchCoursesQuery();
-  const filter_array_keys = [
-    "id",
-    "course_code",
-    "course_title",
-    "specialty.specialty_name",
-    "semester.name",
-    "credit",
-    "level.level",
-  ];
-  const renameMapping = {
-    id: "id",
-    course_code: "Course Code",
-    course_title: "Course Title",
-    credit: "Credit",
-    "semester.name": "Semester",
-    "specialty.specialty_name": "Specialty Name",
-    "level.level": "Level",
-  };
 
   if (isLoading) {
     return <Pageloaderspinner />;
@@ -127,10 +115,7 @@ function Courses() {
         </div>
         <Table
           colDefs={colDefs}
-          rowData={renameKeys(
-            CleanArrayData(courses.courses, filter_array_keys),
-            renameMapping
-          )}
+          rowData={courses.courses}
         />
       </div>
     </>

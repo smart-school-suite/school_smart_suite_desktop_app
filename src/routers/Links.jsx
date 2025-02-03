@@ -127,6 +127,9 @@ import SubcriptionPlan from "../pages/signup/subcriptionPlans";
 import Hero from "../pages/signup/Hero";
 import  {ProtectedRoute, ProtectedLoginRoute } from "../components/protectedRoutes";
 import { CreateExamTimeTable } from "../pages/forms/CreateExamTimeTable";
+const  FeePaymentTransactions  = React.lazy(() => import("../pages/FeePaymentTransactions"));
+const AccessedStudents = React.lazy(() => import("../pages/AccessedStudents"));
+const SpecialtyTimetable  = React.lazy(() => import("../pages/SpecailtyTimeTable"));
 function Links() {
   return (
     <BrowserRouter>
@@ -405,7 +408,7 @@ function Links() {
           >
           </Route>
           <Route
-            path="/create-scores"
+            path="/create-scores/:exam_id/:student_id"
             element={
               <ProtectedRoute>
                 <Suspense fallback={<Pageloaderspinner />}>
@@ -445,7 +448,7 @@ function Links() {
             }
           ></Route>
           <Route
-            path="/create-timetable"
+            path="/create-timetable/:semester_id/:specailty_id"
             element={
               <ProtectedRoute>
                 <Suspense fallback={<Pageloaderspinner />}>
@@ -607,17 +610,27 @@ function Links() {
               </ProtectedRoute>
             }
           ></Route>
-          <Route 
-           path="/school-timetable"
-           element={
-             <ProtectedRoute>
-              <Suspense fallback={<Pageloaderspinner />}>
-              <SchoolTimeTable />
-             </Suspense>
-             </ProtectedRoute>
-           }
+          <Route
+            path="/view-timetable"
+            element={
+               <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
+                   <Timetable />
+                </Suspense>
+               </ProtectedRoute>
+            }
           >
           </Route>
+          <Route
+            path="/time-table"
+            element={
+              <ProtectedRoute>
+                <Suspense fallback={<Pageloaderspinner />}>
+                <SpecialtyTimetable />
+              </Suspense>
+              </ProtectedRoute>
+            }
+          ></Route>
           <Route
             path="/settings/general-settings"
             element={
@@ -749,15 +762,18 @@ function Links() {
             }
           ></Route>
           <Route
-            path="/time-table"
+            path="/accessed-students"
             element={
-              <ProtectedRoute>
-                <Suspense fallback={<Pageloaderspinner />}>
-                <Timetable />
-              </Suspense>
-              </ProtectedRoute>
+               <ProtectedRoute>
+                <Suspense
+                  fallback={<Pageloaderspinner />}
+                >
+                  <AccessedStudents />
+                </Suspense>
+               </ProtectedRoute>
             }
-          ></Route>
+          >
+          </Route>
           <Route
             path="/school-expenses"
             element={
@@ -804,6 +820,18 @@ function Links() {
               </ProtectedRoute>
             }
           ></Route>
+          <Route
+           path="/fee-payment/transactions"
+           element={
+             <ProtectedRoute>
+              <Suspense fallback={<Pageloaderspinner />}>
+               <FeePaymentTransactions />
+              </Suspense>
+             </ProtectedRoute>
+           }
+          >
+
+          </Route>
           <Route
             path="/events"
             element={

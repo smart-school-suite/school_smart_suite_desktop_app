@@ -302,3 +302,51 @@ export function formatDateWithAge(dateString) {
 
     return result;
 }
+
+/**
+ * Formats a duration given hours and minutes into a string.
+ * 
+ * @param {number} hours - The number of hours.
+ * @param {number} minutes - The number of minutes.
+ * @returns {string} - The formatted duration string.
+ */
+export const formatDuration = (hours, minutes) => {
+    let durationString = '';
+
+    // Add hours if present
+    if (hours > 0) {
+        durationString += `${hours} hour${hours > 1 ? 's' : ''}`;
+    }
+
+    // Add minutes only if greater than zero
+    if (minutes > 0) {
+        if (durationString) {
+            durationString += ' '; // Add space if hours were also added
+        }
+        durationString += `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    }
+
+    // Return formatted string or default to "0 minutes"
+    return durationString || '0 minutes';
+};
+
+/**
+ * Formats a date string to return the day of the week (e.g., "Wed").
+ * @param {string} dateStr - The date string (YYYY-MM-DD).
+ * @returns {string} - Formatted day of the week.
+ */
+export const getWeekday = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-US", { weekday: "short" }); // "Wed"
+  };
+  
+  /**
+   * Formats a date string to return the day of the month (e.g., "23").
+   * @param {string} dateStr - The date string (YYYY-MM-DD).
+   * @returns {string} - Formatted day of the month.
+   */
+ export  const getDayOfMonth = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.getDate().toString(); // "23"
+  };
+  

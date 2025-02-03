@@ -157,3 +157,43 @@ export const ExamTimeTableNavbarOptions = {
            },
          ],
 }
+
+export const ScoresNavBarOptions = {
+  route_data: [
+    {
+        lable:"Scores",
+        icon:"ph:exam-bold",
+        route:"/scores"
+    },
+      {
+          lable:"Accessed Students",
+          icon:"ph:exam-bold",
+          route:"/accessed-students"
+      },
+      {
+         lable:"Score Statistics",
+         route:"/scores-analytics",
+         icon:"material-symbols:query-stats"
+      }
+  ],
+}
+
+export const FeePaymentnavBarOptions = {
+  route_data: [
+    {
+      lable: "Fee Payments",
+      icon: "game-icons:cash",
+      route: "/fee-payments",
+    },
+    {
+      lable: "Transactions",
+      icon: "icon-park-outline:transaction",
+      route: "/fee-payment/transactions",
+    },
+    {
+      lable: "Financial Analysis",
+      route: "/financial-analysis",
+      icon: "fluent-mdl2:financial",
+    },
+  ],
+};

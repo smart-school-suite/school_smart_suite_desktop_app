@@ -143,7 +143,8 @@ function ActionButton(props){
    return(
     <>
      <button 
-      className="border-none rounded-2 px-1 font-size-sm py-1 primary-background text-white"
+      className="border-none rounded-2 px-1 font-size-sm primary-background text-white text-center"
+      style={{ width:"12vw"}}
       onClick={() => {
          navigate(`/configure-exam-grades/${id}`);
       }}
