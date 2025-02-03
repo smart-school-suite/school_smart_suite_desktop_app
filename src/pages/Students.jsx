@@ -1,7 +1,7 @@
 import Navbar from "../components/Navbar";
 import { useFetchStudentsQuery, useFetchStudentDetailsQuery } from "../Slices/Asynslices/fetchSlice";
-import { useEffect, useState } from "react";
-import CleanArrayData, { renameKeys, convertToReadableDate, timeSince } from "../utils/functions";
+import {  useState } from "react";
+import { convertToReadableDate, timeSince } from "../utils/functions";
 import Pageloaderspinner from "../components/Spinners";
 import Greenbutton from "../components/Buttons";
 import Table from "../components/Tables";
@@ -69,31 +69,47 @@ function Students() {
     {
       field:"id", hide:true
     },
-    { field: "Student Name", filter: true, floatingFilter: true,
+    {
+       field: "student_name", 
+       headerName:"Student Name",
+      filter: true, 
+      floatingFilter: true,
       cellRenderer:DataComponent,
       cellStyle:cellStyle
      },
-    { field: "Level", filter: true, floatingFilter: true,
+    { field: "level_name", 
+      headerName:"Level",
+      filter: true, floatingFilter: true,
       cellRenderer:DataComponent,
       cellStyle:cellStyle
      },
-    { field: "Specialty", filter: true, floatingFilter: true,
+    { field: "specailty_name",
+      headerName:"Specialty", 
+      filter: true, floatingFilter: true,
       cellRenderer:DataComponent,
       cellStyle:cellStyle
      },
-    { field: "Parent name", filter: true, floatingFilter: true,
+    { field: "guardian_name", 
+      headerName:"Guardian Name",
+      filter: true, floatingFilter: true,
       cellRenderer:DataComponent,
       cellStyle:cellStyle
      },
-    { field: "First Reachable Number", filter: true, floatingFilter: true,
+    { field: "phone_one",
+      headerName:"First Reachable Number",
+       filter: true, floatingFilter: true,
       cellRenderer:DataComponent,
       cellStyle:cellStyle
      },
-    { field: "Gender", filter: true, floatingFilter: true,
+    { field: "gender", 
+      headerName:"Gender",
+      filter: true, floatingFilter: true,
       cellRenderer:DataComponent,
       cellStyle:cellStyle
      },
-     { field: "Student Batch", filter: true, floatingFilter: true,
+     { field: "student_batch",
+      headerName:"Student Batch",
+       filter: true, floatingFilter: true,
       cellRenderer:DataComponent,
       cellStyle:cellStyle
      },
@@ -102,29 +118,6 @@ function Students() {
      },
   ]);
   const { data: students, error, isLoading } = useFetchStudentsQuery();
-  const filter_array_keys = [
-    "id",
-    "specialty.specialty_name",
-    "guardian_one.name",
-    "level.name",
-    "name",
-    "phone_one",
-    "phone_two",
-    "gender",
-    "student_batch.name"
-  ];
-  const renameMapping = {
-    "id":"id",
-    "specialty.specialty_name": "Specialty",
-    "guardian_one.name": "Parent name",
-    "name": "Student Name",
-    "level.name": "Level",
-    "phone_one": "First Reachable Number",
-    "phone_two": "Second Reachable Number",
-    "gender": "Gender",
-    "student_batch.name": "Student Batch",
-  };
-
 
   if (isLoading) {
     return <Pageloaderspinner />;
@@ -151,10 +144,7 @@ function Students() {
       </div>
         <Table
           colDefs={colDefs}
-          rowData={renameKeys(
-            CleanArrayData(students.students, filter_array_keys),
-            renameMapping
-          )}
+          rowData={students.students}
         />
     </>
   );

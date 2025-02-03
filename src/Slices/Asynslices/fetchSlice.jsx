@@ -284,6 +284,10 @@ export const apiSlice = createApi({
        query: ({ event_id }) => {
           return `api/event/school-event/details/${event_id}`
        }
+    }),
+    fetchFeeDebtors: builder.query({
+       query: () => "api/fee-payment/indebted-students",
+       providesTags:["feedebtors"] 
     })
   }),
 });
@@ -328,5 +332,7 @@ export const {
   useFetchAccessedCoursesQuery,
   useFetchSpecialtyAccessedExamsQuery,
   useFetchSchoolEventsQuery,
-  useFetchEventDetailsQuery
+  useFetchEventDetailsQuery,
+  useFetchFeeDebtorsQuery,
+  useFetchPaidFeesQuery
 } = apiSlice;

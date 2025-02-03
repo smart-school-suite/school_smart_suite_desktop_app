@@ -127,6 +127,7 @@ import SubcriptionPlan from "../pages/signup/subcriptionPlans";
 import Hero from "../pages/signup/Hero";
 import  {ProtectedRoute, ProtectedLoginRoute } from "../components/protectedRoutes";
 import { CreateExamTimeTable } from "../pages/forms/CreateExamTimeTable";
+const  FeePaymentTransactions  = React.lazy(() => import("../pages/FeePaymentTransactions"));
 const AccessedStudents = React.lazy(() => import("../pages/AccessedStudents"));
 const SpecialtyTimetable  = React.lazy(() => import("../pages/SpecailtyTimeTable"));
 function Links() {
@@ -819,6 +820,18 @@ function Links() {
               </ProtectedRoute>
             }
           ></Route>
+          <Route
+           path="/fee-payment/transactions"
+           element={
+             <ProtectedRoute>
+              <Suspense fallback={<Pageloaderspinner />}>
+               <FeePaymentTransactions />
+              </Suspense>
+             </ProtectedRoute>
+           }
+          >
+
+          </Route>
           <Route
             path="/events"
             element={

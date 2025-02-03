@@ -177,3 +177,23 @@ export const ScoresNavBarOptions = {
       }
   ],
 }
+
+export const FeePaymentnavBarOptions = {
+  route_data: [
+    {
+      lable: "Fee Payments",
+      icon: "game-icons:cash",
+      route: "/fee-payments",
+    },
+    {
+      lable: "Transactions",
+      icon: "icon-park-outline:transaction",
+      route: "/fee-payment/transactions",
+    },
+    {
+      lable: "Financial Analysis",
+      route: "/financial-analysis",
+      icon: "fluent-mdl2:financial",
+    },
+  ],
+};

@@ -6,7 +6,6 @@ import {
   useFetchDepartmentsQuery,
 } from "../Slices/Asynslices/fetchSlice";
 import { useState } from "react";
-import CleanArrayData, { renameKeys } from "../utils/functions";
 import Pageloaderspinner from "../components/Spinners";
 import Table from "../components/Tables";
 import { Icon } from "@iconify/react";
@@ -29,7 +28,8 @@ function Specialties() {
       hide: true,
     },
     {
-      field: "Specialty Name",
+      field: "specialty_name",
+      headerName:"Specialty Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: DataComponent,
@@ -42,7 +42,8 @@ function Specialties() {
       },
     },
     {
-      field: "Registration Fee",
+      field: "registration_fee",
+      headerName:"Registration Fee",
       filter: true,
       floatingFilter: true,
       cellRenderer: DataComponent,
@@ -55,7 +56,8 @@ function Specialties() {
       },
     },
     {
-      field: "School Fee",
+      field: "school_fee",
+      headerName:"School Fee",
       filter: true,
       floatingFilter: true,
       cellRenderer: DataComponent,
@@ -68,7 +70,8 @@ function Specialties() {
       },
     },
     {
-      field: "Level Name",
+      field: "level_name",
+      headerName:"Level Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: DataComponent,
@@ -81,7 +84,8 @@ function Specialties() {
       },
     },
     {
-      field: "Level",
+      field: "level_number",
+      headerName:"Level Number",
       filter: true,
       floatingFilter: true,
       cellRenderer: DataComponent,
@@ -96,22 +100,6 @@ function Specialties() {
     { field: "Action", cellRenderer: DropdownComponent },
   ]);
   const { data: specialty, error, isLoading } = useFetchSpecialtiesQuery();
-  const filter_array_keys = [
-    "id",
-    "specialty_name",
-    "registration_fee",
-    "level.name",
-    "level.level",
-    "school_fee",
-  ];
-  const renameMapping = {
-    id: "id",
-    specialty_name: "Specialty Name",
-    registration_fee: "Registration Fee",
-    "level.name": "Level Name",
-    "level.level": "Level",
-    school_fee: "School Fee",
-  };
 
   if (isLoading) {
     return <Pageloaderspinner />;
@@ -138,10 +126,7 @@ function Specialties() {
         </div>
         <Table
           colDefs={colDefs}
-          rowData={renameKeys(
-            CleanArrayData(specialty.specialty, filter_array_keys),
-            renameMapping
-          )}
+          rowData={specialty.specialty}
         />
       </div>
     </>

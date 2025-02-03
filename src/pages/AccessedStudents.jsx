@@ -2,7 +2,6 @@ import Navbar from "../components/Navbar";
 import { ScoresNavBarOptions } from "../componentConfigurations/navBarConfig";
 import {
   useFetchStudentsQuery,
-  useFetchExamTypesQuery,
   useFetchSpecialtyAccessedExamsQuery,
 } from "../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
