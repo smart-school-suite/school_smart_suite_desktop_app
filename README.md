@@ -1,3 +1,5 @@
+Edupulse
+(https://github.com/keron484/edumanage_desktop_app/blob/creating_tables/dasboard.png)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
