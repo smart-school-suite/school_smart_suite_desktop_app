@@ -899,7 +899,7 @@ export function DepartmentTableConfig({ DropdownComponent }){
    ];
    return tableConfig;
 }
-export function SchoolAdminTableConfig({ ImageComponent, StatusComponent, ActionButtonGroup }) {
+export function SchoolAdminTableConfig({ ImageComponent, StatusComponent, ActionButtonGroup, CurrencyComponent }) {
    const tableConfig =  [
     {
       field: "Avatar",
@@ -934,7 +934,7 @@ export function SchoolAdminTableConfig({ ImageComponent, StatusComponent, Action
     },
     {
       field: "Salary",
-      cellRenderer: DataComponent,
+      cellRenderer: CurrencyComponent,
       filter: true,
       floatingFilter: true,
     },

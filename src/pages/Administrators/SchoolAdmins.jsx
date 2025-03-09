@@ -3,7 +3,6 @@ import { useFetchSchoolAdminsQuery } from "../../Slices/Asynslices/fetchSlice";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
 import Table from "../../components/Tables";
 import { Icon } from "@iconify/react";
-import ActionButtonDropdown from "../actionButton";
 import Pageloaderspinner from "../../components/Spinners";
 import { SchoolAdminTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
@@ -14,7 +13,9 @@ import SchoolAdminDetails from "../../ModalContent/SchoolAdmin/SchoolAdminDetail
 import SchoolAdminRoles from "../../ModalContent/SchoolAdmin/SchoolAdminRoles";
 import RevokeSchoolAdminPermissions from "../../ModalContent/SchoolAdmin/RevokeSchoolAdminPermissions";
 import SuspendSchoolAdmin from "../../ModalContent/SchoolAdmin/SuspendSchoolAdmin";
-import { CustomDropdown } from "../Dasboard/OperationalStatistics";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import { ImageComponent } from "../../components/DataTableComponents/ImageComponent";
+import CurrencyComponent from "../../components/DataTableComponents/CurrencyComponent";
 function SchoolAdmins() {
   const { data: data, error, isLoading } = useFetchSchoolAdminsQuery();
   const filter_array_keys = [
@@ -81,6 +82,7 @@ function SchoolAdmins() {
               ActionButtonGroup,
               ImageComponent,
               StatusComponent,
+              CurrencyComponent
             })}
             rowData={renameKeys(
               CleanArrayData(data.data, filter_array_keys),
@@ -145,23 +147,7 @@ function ActionButtonGroup(props) {
     </>
   );
 }
-export const ImageComponent = () => {
-  return (
-    <>
-      <div
-        style={{ width: "2.8rem", height: "2.8rem" }}
-        className="rounded-circle"
-      >
-        <img
-          src="./images/protrait-one.jpg"
-          alt=""
-          className="object-fit-cover w-100 h-100"
-          style={{ borderRadius: "2.8rem" }}
-        />
-      </div>
-    </>
-  );
-};
+
 export const StatusComponent = () => {
   return (
     <>

@@ -26,7 +26,7 @@ function Profile() {
               {userData.profile_picture !== null ? (
                 <div className="profile-img">
                   <img
-                    src={`http://127.0.0.1:8000/storage/SchoolAdminAvatars/${userData.profile_picture}`}
+                    src={`http://127.0.0.1:8000/storage/SchoolAdminAvatars/${userData.authSchoolAdmin.profile_picture}`}
                     alt=""
                   />
                 </div>
@@ -121,7 +121,7 @@ function Profile() {
           <div className="ms-4 mt-auto">
             <div className="d-block">
               <h5 className="fw-bold">
-                {userData.name}{" "}
+                {userData.authSchoolAdmin.name}{" "}
                 <span>
                   <Icon
                     icon="lets-icons:check-fill"
@@ -135,7 +135,7 @@ function Profile() {
                   <span>
                     <Icon icon="twemoji:flag-cameroon" className="fs-5" />
                   </span>{" "}
-                  Yaounde, Cameroon{" "}
+                  {userData.schoolDetails.city}, {userData.schoolDetails.school.country.country}
                 </span>
               </div>
               <div className="d-flex flex-row gap-2 mt-2 align-items-center">
@@ -143,10 +143,10 @@ function Profile() {
                   @Gilbert.Bernhard57
                 </span>
                 <div className="divider-pill"></div>
-                <span className="font-size-sm fw-medium">{userData.role}</span>
+                <span className="font-size-sm fw-medium">{userData.authSchoolAdmin.role}</span>
                 <div className="divider-pill"></div>
                 <span className="font-size-sm gainsboro-color">
-                  {userData.employment_status}
+                  {userData.authSchoolAdmin.employment_status}
                 </span>
               </div>
             </div>
@@ -159,7 +159,7 @@ function Profile() {
               <div className="d-flex flex-row align-items-center gap-2">
                 <div className="d-block">
                   <p className="gainsboro-color font-size-sm my-0">E-mail</p>
-                  <p className="fs-6">{userData.email}</p>
+                  <p className="fs-6">{userData.authSchoolAdmin.email}</p>
                 </div>
                 <div>
                   <Icon icon="clarity:email-line" />
@@ -182,15 +182,15 @@ function Profile() {
                 <p className="gainsboro-color font-size-sm my-0">
                   Qualification
                 </p>
-                <p className="fs-6">{userData.highest_qualification}</p>
+                <p className="fs-6">{userData.authSchoolAdmin.highest_qualification}</p>
               </div>
               <div className="d-block">
                 <p className="gainsboro-color font-size-sm my-0">Religion</p>
-                <p className="fs-6">{userData.religion}</p>
+                <p className="fs-6">{userData.authSchoolAdmin.religion}</p>
               </div>
               <div className="d-block">
                 <p className="gainsboro-color font-size-sm my-0">Address</p>
-                <p className="fs-6">{userData.address}</p>
+                <p className="fs-6">{userData.authSchoolAdmin.address}</p>
               </div>
             </div>
           </div>
@@ -199,7 +199,7 @@ function Profile() {
             <div className="d-flex flex-column gap-2 width-35">
               <div className="d-block">
                 <p className="gainsboro-color font-size-sm my-0">Salary</p>
-                <p className="fs-6">{formatNumber(Number(userData.salary))} </p>
+                <p className="fs-6">{formatNumber(Number(userData.authSchoolAdmin.salary))} {userData.schoolDetails.school.country.currency}</p>
               </div>
               <div className="d-block">
                 <p className="gainsboro-color font-size-sm my-0">
@@ -209,7 +209,7 @@ function Profile() {
               </div>
               <div className="d-block">
                 <p className="gainsboro-color font-size-sm my-0">Tribe</p>
-                <p className="fs-6">{userData.cultural_background}</p>
+                <p className="fs-6">{userData.authSchoolAdmin.cultural_background}</p>
               </div>
             </div>
           </div>

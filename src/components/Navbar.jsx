@@ -21,8 +21,8 @@ function Navbar(props) {
               EY
             </div>
             <div className="d-block font-size-sm">
-              <p className="my-0 fw-semibold">EXHIST</p>
-              <p className="my-0  fw-semibod">Yaounde</p>
+              <p className="my-0 fw-semibold">{userData.schoolDetails.abbrevaition}</p>
+              <p className="my-0  fw-semibod">{userData.schoolDetails.city}</p>
             </div>
           </div>
           <div
@@ -100,7 +100,7 @@ function Navbar(props) {
               }}
             >
               <img
-                src={`http://127.0.0.1:8000/storage/SchoolAdminAvatars/${userData.profile_picture}`}
+                src={`http://127.0.0.1:8000/storage/SchoolAdminAvatars/${userData.authSchoolAdmin.profile_picture}`}
                 alt=""
                 style={{
                   objectFit: "cover",
