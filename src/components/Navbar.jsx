@@ -1,10 +1,10 @@
 import { Icon } from "@iconify/react";
+import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
-import { Fragment } from "react";
 function Navbar(props) {
   const location = useLocation();
   const navigate = useNavigate();
+  const userData = useSelector((state) => state.auth.user);
   return (
     <>
       <div>
@@ -100,7 +100,7 @@ function Navbar(props) {
               }}
             >
               <img
-                src="./images/portrait-five.jpg"
+                src={`http://127.0.0.1:8000/storage/SchoolAdminAvatars/${userData.profile_picture}`}
                 alt=""
                 style={{
                   objectFit: "cover",
@@ -136,18 +136,6 @@ export function Navbarsettings() {
           </div>
         </div>
         <div className="setting-nav-top d-flex gap-4 w-100 my-3 bg-white py-1 px-1 rounded-3">
-          <button
-            className={
-              location.pathname === "/settings/account"
-                ? "border-none py-2 px-4 font-size-sm rounded-3 primary-background text-white transition-four-sec"
-                : "gainsboro-color border-none font-size-sm transparent-bg transition-four-sec"
-            }
-            onClick={() => {
-              navigate("/settings/account");
-            }}
-          >
-            Account
-          </button>
           <button
             className={
               location.pathname === "/settings/general-settings"

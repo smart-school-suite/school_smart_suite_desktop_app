@@ -248,7 +248,6 @@ export function isDecimal(value) {
 export function sumAttribute(arr, attribute) {
     return arr.reduce((total, item) => {
         const value = Number(item[attribute]); 
-        console.table(arr);
         return total + (isNaN(value) ? 0 : value); 
     }, 0);
 }
@@ -350,3 +349,11 @@ export const getWeekday = (dateStr) => {
     return date.getDate().toString(); // "23"
   };
   
+  /**
+ * Replaces all dashes in a string with spaces.
+ * @param {string} str - The input string from which to replace dashes.
+ * @returns {string} - The string with dashes replaced by spaces.
+ */
+export function replaceDashesWithSpaces(str) {
+    return str.replace(/-/g, ' ');
+  }

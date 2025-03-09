@@ -1,13 +1,14 @@
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 ChartJS.register(ArcElement, Tooltip, Legend);
-function PieChart(){
+function PieChart({ registrationFee, tuitionFee, additionalFees, resitFees }){
+  console.log(registrationFee,  tuitionFee, additionalFees, resitFees)
     const data = {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: ['Registration Fee', 'Tuition Fee', 'Additional Fees', 'Resit Fees'],
         datasets: [
           {
             label: '',
-            data: [12, 19, 3, 5, 2, 3],
+            data: [ parseInt(registrationFee), parseInt(tuitionFee), parseInt(additionalFees), parseInt(resitFees)],
             backgroundColor: [
               'rgba(255, 99, 132, 0.6)',
               'rgba(54, 162, 235, 0.6)',
@@ -33,10 +34,10 @@ function PieChart(){
 
         plugins: {
             legend: {
-              display: false, // This hides the legend
+              display: false, 
             },
             title: {
-              display: false, // This hides the title
+              display: false, 
             },
           },
       };

@@ -1,5 +1,5 @@
 import Chart from 'react-apexcharts';
-function ProgressGuage(){
+function ProgressGuage({ progress }){
   const chartOptions = {
     chart: {
       type: 'radialBar',
@@ -20,12 +20,15 @@ function ProgressGuage(){
         },
         dataLabels: {
           name: {
-            fontSize: '20px',
+            fontSize: '14px',
             color: undefined,
             offsetY: -10,
           },
           value: {
             fontSize: '16px',
+            formatter: function (val) {
+              return `${progress}%`; // Display percentage
+            },
             color: '#333',
             offsetY: 5,
           },
@@ -34,20 +37,24 @@ function ProgressGuage(){
     },
     fill: {
       type: 'gradient',
+      gradient: {
+        gradientToColors: ['#FF4560'],
+        stops: [0, 100], 
+      },
+      opacity: 1,
     },
     stroke: {
       lineCap: 'round',
     },
-    labels: ['Progress'],
   };   
-  const series = [70];
+  const series = [progress];
     return(
         <>
         <div>
       <Chart options={chartOptions}
         series={series}
         type="radialBar"
-        height={300}
+        height={250}
         width={400}
         />
     </div>

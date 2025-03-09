@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 function RegisterSchoolAdmin() {
-         const school_branch_id = localStorage.getItem("SCHOOL_BRANCH_KEY");
           const [adminCredentials, setAdminCredentails] = useState({
-            school_branch_id: school_branch_id,
             name: "",
             email: "",
             password: "",
@@ -15,13 +14,13 @@ function RegisterSchoolAdmin() {
             position: "",
             salary:""
           });
-        
+          const apiKey = useSelector((state) => state.auth.apiKey);
           const navigate = useNavigate();
           const { handleCreateSuperAdmin, loading, createError } = useAuth(); 
         
           const handleCreateSchoolAdmin = async (e) => {
             e.preventDefault();
-            await handleCreateSuperAdmin(navigate, adminCredentials); 
+            await handleCreateSuperAdmin(navigate, adminCredentials, apiKey); 
           };
         
           const handleChange = (e) => {

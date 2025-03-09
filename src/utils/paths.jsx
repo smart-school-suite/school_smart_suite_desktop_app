@@ -12,8 +12,7 @@ export const Emailpaths = [
     "/emails/updates"
 ];
 
-export const Settingspaths = [
-    "/settings/account",
+export const Settingspaths = [,
     "/settings/general-settings",
     "/settings/display",
     "/settings/updates",

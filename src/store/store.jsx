@@ -1,4 +1,3 @@
-
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { apiSlice } from "../Slices/Asynslices/fetchSlice";
@@ -6,27 +5,51 @@ import { postSlice } from "../Slices/Asynslices/postSlice";
 import { updateSlice } from "../Slices/Asynslices/updateSlice";
 import { deleteSlice } from "../Slices/Asynslices/deleteSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage"; 
+import authReducer from "../Slices/Asynslices/AuthSlice";
 import pricingReducer from "../Slices/Asynslices/subcriptionPricingSlice";
 
+const authPersistConfig = {
+  key: "auth",
+  storage,
+  whitelist: [
+    "isAuthenticated", 
+    "user", 
+    "token", 
+    "otpTokenHeader",
+    "apiKey",
+    "schoolId",
+    "schoolBranchId",
+    "passwordResetOtpToken",
+    "passwordResetToken"
+  ], 
+};
 
 const rootReducer = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer,
   [postSlice.reducerPath]: postSlice.reducer,
   [updateSlice.reducerPath]: updateSlice.reducer,
   [deleteSlice.reducerPath]: deleteSlice.reducer,
-  pricing: pricingReducer, 
+  auth: persistReducer(authPersistConfig, authReducer), 
+  pricing: pricingReducer,
 });
 
 
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }).concat(
       apiSlice.middleware,
       postSlice.middleware,
       updateSlice.middleware,
-      deleteSlice.middleware,
+      deleteSlice.middleware
     ),
 });
 
-setupListeners(store.dispatch); 
+
+export const persistor = persistStore(store);
+
+setupListeners(store.dispatch);

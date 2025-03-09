@@ -1,11 +1,14 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom"; 
-const isAuthenticated = localStorage.getItem("auth_token");
+
 const ProtectedRoute = ({ children }) => {
-  return isAuthenticated ? children : <Navigate to="/" replace />;
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  return isAuthenticated ? children : <Navigate to="/hero" replace />;
 };
 
 const ProtectedLoginRoute = ({ children }) => {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   return isAuthenticated ? <Navigate to="/" replace /> : children;
 };
 

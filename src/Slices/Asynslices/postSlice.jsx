@@ -3,12 +3,13 @@ import toast from "react-hot-toast";
 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000/",
-  prepareHeaders: (headers) => {
-    const schoolBranchId = localStorage.getItem('SCHOOL_BRANCH_KEY');
-    const token = localStorage.getItem("auth_token");
-    if (schoolBranchId) {
-      headers.set("SCHOOL_BRANCH_KEY", JSON.parse(schoolBranchId));
+  baseUrl: "http://127.0.0.1:8000/api/api/v1/",
+  prepareHeaders: (headers, {getState}) => {
+    const state = getState();
+    const apiKey = state.auth?.apiKey;
+    const token = state.auth?.token;
+    if (apiKey) {
+      headers.set("API-KEY", apiKey);
       headers.set("Authorization", `Bearer ${token}`);
     }
     headers.set("Content-Type", "application/json");
@@ -37,7 +38,7 @@ export const postSlice = createApi({
   endpoints: (builder) => ({
     addCourse: builder.mutation({
       query: (newCourse) => ({
-        url: "api/course/create-course",
+        url: "course/create-course",
         method: "POST",
         body: newCourse,
       }),
@@ -45,7 +46,7 @@ export const postSlice = createApi({
     }), 
     addDepartment: builder.mutation({
       query: (newDeparment) => ({
-        url: "api/department/create-department",
+        url: "department/create-department",
         method: "POST",
         body: newDeparment,
       }),
@@ -53,7 +54,7 @@ export const postSlice = createApi({
     }),
     addEvent: builder.mutation({
       query: (newEvent) => ({
-        url: "api/event/create-event",
+        url: "event/create-event",
         method: "POST",
         body: newEvent,
       }),
@@ -61,7 +62,7 @@ export const postSlice = createApi({
     }),
     addExam: builder.mutation({
       query: (newExam) => ({
-        url: "api/exams/create-exam",
+        url: "exams/create-exam",
         method: "POST",
         body: newExam,
       }),
@@ -69,7 +70,7 @@ export const postSlice = createApi({
     }),
     addFeePaymentTransaction: builder.mutation({
       query: (newPayFees) => ({
-        url: "api/fee-payment/pay-fees",
+        url: "fee-payment/pay-fees",
         method: "POST",
         body: newPayFees,
       }),
@@ -77,7 +78,7 @@ export const postSlice = createApi({
     }),
     addGrade: builder.mutation({
       query: (newGrade) => ({
-        url: "api/grades/create-grade",
+        url: "grades/create-grade",
         method: "POST",
         body: newGrade,
       }),
@@ -85,7 +86,7 @@ export const postSlice = createApi({
     }),
     addStudentScore: builder.mutation({
       query: (newStudentScore) => ({
-        url: "api/marks/add-student-mark",
+        url: "marks/add-student-mark",
         method: "POST",
         body: newStudentScore,
       }),
@@ -93,7 +94,7 @@ export const postSlice = createApi({
     }),
     addParent: builder.mutation({
       query: (newParent) => ({
-        url: "api/parent/create-parent",
+        url: "parent/create-parent",
         method: "POST",
         body: newParent,
       }),
@@ -101,7 +102,7 @@ export const postSlice = createApi({
     }),
     addSchoolAdmin: builder.mutation({
       query: (newSchoolAdmin) => ({
-        url: "api/school-admin/create-school-admin",
+        url: "school-admin/create-school-admin",
         method: "POST",
         body: newSchoolAdmin,
       }),
@@ -109,7 +110,7 @@ export const postSlice = createApi({
     }),
     addSchoolBranch: builder.mutation({
       query: (newSchoolBranch) => ({
-        url: "api/school-branch/register",
+        url: "school-branch/register",
         method: "POST",
         body: newSchoolBranch,
       }),
@@ -117,7 +118,7 @@ export const postSlice = createApi({
     }),
     addExpensesCategory: builder.mutation({
       query: (newExpensesCategory) => ({
-        url: "api/school-expenses-category/create-category",
+        url: "school-expenses-category/create-category",
         method: "POST",
         body: newExpensesCategory,
       }),
@@ -125,7 +126,7 @@ export const postSlice = createApi({
     }),
     addSchoolExpenses: builder.mutation({
       query: (newSchoolExpenses) => ({
-        url: "api/school-expenses/create-expenses",
+        url: "school-expenses/create-expenses",
         method: "POST",
         body: newSchoolExpenses,
       }),
@@ -133,7 +134,7 @@ export const postSlice = createApi({
     }),
     addSchool: builder.mutation({
       query: (newSchool) => ({
-        url: "api/school/register",
+        url: "school/register",
         method: "POST",
         body: newSchool,
       }),
@@ -141,7 +142,7 @@ export const postSlice = createApi({
     }),
     addSpecialty: builder.mutation({
       query: (newSpecialty) => ({
-        url: "api/specialty/create-specialty",
+        url: "specialty/create-specialty",
         method: "POST",
         body: newSpecialty,
       }),
@@ -149,7 +150,7 @@ export const postSlice = createApi({
     }),
     addStudentBatch: builder.mutation({
       query: (newStudentBatch) => ({
-        url: "api/student-batches/create-batch",
+        url: "student-batches/create-batch",
         method: "POST",
         body: newStudentBatch,
       }),
@@ -157,7 +158,7 @@ export const postSlice = createApi({
     }),
     addResitTimetable: builder.mutation({
       query: (newResitTimetable) => ({
-        url: "api/student-resit/resit-timetable",
+        url: "student-resit/resit-timetable",
         method: "POST",
         body: newResitTimetable,
       }),
@@ -165,7 +166,7 @@ export const postSlice = createApi({
     }),
     promoteStudent: builder.mutation({
       query: (newStudentPromotion) => ({
-        url: "api/student/promote-student",
+        url: "student/promote-student",
         method: "POST",
         body: newStudentPromotion,
       }),
@@ -173,7 +174,7 @@ export const postSlice = createApi({
     }),
     addTimeTable: builder.mutation({
       query: (newTimeTable) => ({
-        url: "api/time-table/create-timetable",
+        url: "time-table/create-timetable",
         method: "POST",
         body: newTimeTable,
       }),
@@ -181,7 +182,7 @@ export const postSlice = createApi({
     }),
     addTeacher: builder.mutation({
       query: (newTeacher) => ({
-        url: "api/teacher/create-teacher",
+        url: "teacher/create-teacher",
         method: "POST",
         body: newTeacher,
       }),
@@ -189,7 +190,7 @@ export const postSlice = createApi({
     }),
     addStudent: builder.mutation({
         query: (newStudent) => ({
-            url:"api/student/create-student",
+            url:"student/create-student",
             method:"POST",
             body:newStudent
         }),
@@ -197,11 +198,33 @@ export const postSlice = createApi({
     }),
     addExamTimetable: builder.mutation({
        query: (newExamTimetable) => ({
-           url:"api/exam-timetable/create-timetable",
+           url:"exam-timetable/create-timetable",
            method:"POST",
            body:newExamTimetable         
        }),
        invalidatesTags: ['examtimetable']
+    }),
+    assignPermission: builder.mutation({
+       query: ({schoolAdminId, permissions}) => ({
+          url:`permissions/grant-schoolAdmin-permissions/${schoolAdminId}`,
+          method:'POST',
+          body:{permissions}
+       }),
+       invalidatesTags:["permissions"]
+    }),
+    assignRole: builder.mutation({
+       query: ({ schoolAdminId, roles }) => ({
+          url:`roles/assign-role/${schoolAdminId}`,
+          method:'POST',
+          body: { roles }
+       })
+    }),
+    revokePermissions: builder.mutation({
+       query: ({ schoolAdminId, permissions }) => ({
+          url:`permissions/revoke-schoolAdmin-permissions/${schoolAdminId}`,
+          method:'POST',
+          body:{ permissions }
+       })
     })
   }),
 });
@@ -227,5 +250,8 @@ export const {
   useAddTimeTableMutation,
   usePromoteStudentMutation,
   useAddStudentMutation,
-  useAddExamTimetableMutation
+  useAddExamTimetableMutation,
+  useAssignPermissionMutation,
+  useAssignRoleMutation,
+  useRevokePermissionsMutation
 } = postSlice;

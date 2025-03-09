@@ -8,7 +8,7 @@ import Navbar from "../../components/Navbar";
 import { ExamResitNavbarOptions } from "../../componentConfigurations/navBarConfig";
 import toast from "react-hot-toast";
 
-export function CreateExamTimeTable() {
+ function CreateExamTimeTable() {
   const { exam_id } = useParams();
   const navigate = useNavigate();
   const {
@@ -154,6 +154,7 @@ export function CreateExamTimeTable() {
     </>
   );
 }
+export default CreateExamTimeTable;
 
 export function CustomTimeInput({ value, onChange, touched, error }) {
   return (

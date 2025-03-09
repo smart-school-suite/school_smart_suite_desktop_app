@@ -1,11 +1,16 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { createContext, useContext, useState, useCallback } from "react";
 import axios from "../axios/axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  handleSetAuthUser,
+  handleSetChangePassword,
+  handleSetPasswordReset,
+  handleSetSubcription,
+  handleSetTwoFA,
+  handleSetUserLogin,
+  handleSetUserLogout,
+  handleSetValidatePasswordResetOtp,
+} from "../Slices/Asynslices/AuthSlice";
 
 const AuthContext = createContext();
 
@@ -14,47 +19,47 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authError, setAuthError] = useState({ login: null, otp: null });
+  const [authError, setAuthError] = useState({ 
+       login: null,
+       otp: null,
+       changePassword: null,
+       passwordResetError: null,
+       passwordRestOtp: null,
+       changeAuthPassword: null
+    });
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState({
     login: false,
     otp: false,
     createSchool: false,
     createSchoolBranch: false,
     subscribe: false,
-    admin: false
+    admin: false,
+    changeAuthPassword: false,
+    passwordReset: false,
+    passwordResetOtp: false,
+    changePassword: false
   });
+
   const [createError, setCreateError] = useState({
     createSchool: null,
     createSchoolBranch: null,
     subscribe: null,
-    admin:null
+    admin: null,
   });
-  const [schoolBranchId, setSchoolBranchId] = useState(null);
-
-  const getToken = useCallback(() => localStorage.getItem("auth_token"), []);
-  const getOtpHeader = useCallback(() =>
-    localStorage.getItem("OTP_TOKEN_HEADER", [])
-  );
-  useEffect(() => {
-    const token = getToken();
-    if (token) {
-      setIsAuthenticated(true);
-      getAuthenticatedUser(token);
-    }
-  }, [getToken]);
 
   const handleLogin = async (email, password, navigate) => {
     setLoading((prevalue) => ({ ...prevalue, login: true }));
     setAuthError((prevalue) => ({ ...prevalue, login: null }));
     try {
-      const response = await axios.post("api/school-admin/login", {
+      const response = await axios.post("school-admin/login", {
         email,
         password,
       });
-      const otp_token_header = response.data.otp_token_header;
-      localStorage.setItem("OTP_TOKEN_HEADER", otp_token_header);
+      const responseData = response.data.data;
+      dispatch(
+        handleSetUserLogin({ otpTokenHeader: responseData.otp_token_header })
+      );
       navigate("/verify-otp");
     } catch (error) {
       setAuthError((prevalue) => ({
@@ -66,26 +71,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleTwoStepVerification = async (otp, navigate) => {
+  const handleTwoStepVerification = async (otp, navigate, otpTokenHeader) => {
     setLoading((prevalue) => ({ ...prevalue, otp: true }));
     setAuthError((prevalue) => ({ ...prevalue, otp: null }));
-    const OTP_HEADER_TOKEN = getOtpHeader();
     try {
       const response = await axios.post(
-        "api/school-admin/verify-otp",
+        "school-admin/verify-otp",
         {
           otp,
         },
         {
-          headers: { OTP_TOKEN_HEADER: OTP_HEADER_TOKEN },
+          headers: { OTP_TOKEN_HEADER: otpTokenHeader },
         }
       );
-      const token = response.data.token;
-      localStorage.setItem("auth_token", token);
-      setIsAuthenticated(true);
-      localStorage.setItem("AUTH_USER", true);
-      await getAuthenticatedUser(token);
-      localStorage.removeItem("OTP_TOKEN_HEADER");
+      const responseData = response.data.data;
+      await getAuthenticatedUser(responseData.authToken);
+      dispatch(
+        handleSetTwoFA({
+          authToken: responseData.authToken,
+          apiKey: responseData.apiKey,
+        })
+      );
       navigate("/");
     } catch (error) {
       setAuthError((prevalue) => ({
@@ -96,48 +102,34 @@ export const AuthProvider = ({ children }) => {
       setLoading((prevalue) => ({ ...prevalue, otp: false }));
     }
   };
-  const handleAdminLogout = useCallback(
-    async (navigate) => {
-      try {
-        const token = getToken();
-        if (token) {
-          await axios.post("api/school-admin/logout", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          localStorage.removeItem("auth_token");
-          localStorage.removeItem("AUTH_USER_DETAILS");
-          localStorage.removeItem("SCHOOL_BRANCH_KEY");
-          localStorage.removeItem("AUTH_USER");
-          setIsAuthenticated(false);
-          setUser(null);
-          navigate("/login-school-admin");
-        }
-      } catch (error) {
-        console.error("Logout failed", error);
-      }
-    },
-    [getToken]
-  );
+
+  const handleAdminLogout = async (navigate, token) => {
+    try {
+      await axios.post("school-admin/logout", 
+         {
+
+         },
+        {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+       },
+      });
+      dispatch(handleSetUserLogout());
+      navigate("/hero");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
   const getAuthenticatedUser = useCallback(
     async (token) => {
       try {
-        const response = await axios.get("api/school-admin/auth-school-admin", {
+        const response = await axios.get("school-admin/auth-school-admin", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        setUser(response.data.schooladmin_user);
-        setSchoolBranchId(response.data.schooladmin_user.school_branch_id);
-        localStorage.setItem(
-          "SCHOOL_BRANCH_KEY",
-          JSON.stringify(response.data.schooladmin_user.school_branch_id)
-        );
-        localStorage.setItem(
-          "AUTH_USER_DETAILS",
-          JSON.stringify(response.data.schooladmin_user)
-        );
+        dispatch(handleSetAuthUser({ user: response.data.data }));
       } catch (error) {
         console.error("Error fetching authenticated user", error);
         handleAdminLogout();
@@ -150,14 +142,11 @@ export const AuthProvider = ({ children }) => {
     setLoading((prevState) => ({ ...prevState, createSchool: true }));
     setCreateError((prevState) => ({ ...prevState, createSchool: null }));
     try {
-      const response = await axios.post(
-        "/api/school/register",
-        schoolCredentials
-      );
+      const response = await axios.post("school/register", schoolCredentials);
       setLoading((prevState) => ({ ...prevState, createSchool: false }));
       setCreateError((prevState) => ({ ...prevState, createSchool: null }));
-      localStorage.setItem("SCHOOL_KEY", response.data.school_key);
-      navigate("/subcription/plan");
+      dispatch(handleSchoolRegistration({ schoolId: response.data.data }));
+      navigate("/create-schoolbranch");
     } catch (e) {
       setCreateError((prevState) => ({
         ...prevState,
@@ -170,29 +159,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleSubscription = async (navigate, subscriptionCredentials) => {
-    setLoading((prevalue) => ({ ...prevalue, subscribe: true }));
-    setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
-    try {
-      await axios.post(
-        "api/subcription/subscribe",
-        subscriptionCredentials
-      );
-      setLoading((prevalue) => ({ ...prevalue, subscribe: false }));
-      setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
-      navigate("/create-schoolbranch");
-    } catch (e) {
-      setCreateError((prevState) => ({
-        ...prevState,
-        subscribe:
-          e.response?.data?.message ||
-          "Something went wrong trying to create school",
-      }));
-    } finally {
-      setLoading((prevState) => ({ ...prevState, subscribe: false }));
-    }
-  };
-
   const handleSchoolBranchRegistration = async (
     navigate,
     schoolBranchCredentials
@@ -201,17 +167,15 @@ export const AuthProvider = ({ children }) => {
     setCreateError((prevalue) => ({ ...prevalue, createSchoolBranch: null }));
     try {
       const response = await axios.post(
-        "api/school-branch/register",
+        "school-branch/register",
         schoolBranchCredentials
       );
       setLoading((prevalue) => ({ ...prevalue, createSchoolBranch: false }));
       setCreateError((prevalue) => ({ ...prevalue, createSchoolBranch: null }));
-      localStorage.clear("SCHOOL_KEY");
-      localStorage.setItem(
-        "SCHOOL_BRANCH_KEY",
-        response.data.school_branch_key
+      dispatch(
+        handleSchoolBranchRegistration({ schoolBranchId: response.data.data })
       );
-      navigate("/register/school-admin");
+      navigate("/subcription/plan");
     } catch (e) {
       setCreateError((prevState) => ({
         ...prevState,
@@ -224,59 +188,205 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleCreateSuperAdmin = async (navigate, schoolAdminCredentials) => {
-      setLoading((prevalue) => ({...prevalue, admin:true}));
-      setCreateError((prevalue) => ({...prevalue, admin: null}));
+  const handleSubscription = async (navigate, subscriptionCredentials) => {
+    setLoading((prevalue) => ({ ...prevalue, subscribe: true }));
+    setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
+    try {
+      const response = await axios.post(
+        "subcription/subscribe",
+        subscriptionCredentials
+      );
+      setLoading((prevalue) => ({ ...prevalue, subscribe: false }));
+      setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
+      dispatch(handleSetSubcription({ apiKey: response.data.data }));
+      navigate("/register/school-admin");
+    } catch (e) {
+      setCreateError((prevState) => ({
+        ...prevState,
+        subscribe:
+          e.response?.data?.message ||
+          "Something went wrong trying to create school",
+      }));
+    } finally {
+      setLoading((prevState) => ({ ...prevState, subscribe: false }));
+    }
+  };
+
+  const handleCreateSuperAdmin = async (
+    navigate,
+    schoolAdminCredentials,
+    apiKey
+  ) => {
+    setLoading((prevalue) => ({ ...prevalue, admin: true }));
+    setCreateError((prevalue) => ({ ...prevalue, admin: null }));
+    try {
+      await axios.post(
+        "school-admin/register/super-admin",
+        schoolAdminCredentials,
+        {
+          headers: {
+            "API-KEY": apiKey,
+          },
+        }
+      );
+      setLoading((prevalue) => ({ ...prevalue, admin: false }));
+      setCreateError((prevalue) => ({ ...prevalue, admin: false }));
+      dispatch(handleCreateSuperAdmin());
+      navigate("/login-school-admin");
+    } catch (e) {
+      setCreateError((prevState) => ({
+        ...prevState,
+        admin:
+          e.response?.data?.message ||
+          "Something went wrong trying to create school",
+      }));
+    } finally {
+      setLoading((prevState) => ({ ...prevState, admin: false }));
+    }
+  };
+
+  const handlePasswordReset = async (navigate, email) => {
+    setLoading((prevalue) => ({ ...prevalue, passwordReset: true }));
+    setAuthError((prevalue) => ({ ...prevalue, passordResetError: null }));
+    try {
+      const response = await axios.post("school-admin/resetPassword", {
+        email,
+      });
+      const responseData = response.data.data;
+      dispatch(
+        handleSetPasswordReset({
+          resetPasswordOtpToken: responseData.otp_header,
+        })
+      );
+      navigate("/validate-otp");
+    } catch (e) {
+      setAuthError((prevalue) => ({
+        ...prevalue,
+        passordResetError: "Opps Something went wrong try again",
+      }));
+      console.log(e);
+    } finally {
+      setLoading((prevalue) => ({ ...prevalue, passwordReset: false }));
+    }
+  };
+
+  const handleValidatePasswordResetOtp = async (
+    navigate,
+    otp,
+    resetPasswordOtpToken
+  ) => {
+    setLoading((prevalue) => ({ ...prevalue, passwordResetOtp: true }));
+    setAuthError((prevalue) => ({ ...prevalue, passwordRestOtp: null }));
+    try {
+      const response = await axios.post(
+        "school-admin/validatePasswordResetOtp",
+        {
+          otp,
+        },
+        {
+          headers: { OTP_TOKEN_HEADER: resetPasswordOtpToken },
+        }
+      );
+      const responseData = response.data.data;
+      dispatch(handleSetValidatePasswordResetOtp({ passwordResetToken: responseData }));
+      navigate("/change-password");
+    } catch (e) {
+      setAuthError((prevalue) => ({
+        ...prevalue,
+        passwordResetOtp:
+          "Something went wrong trying to validate opt try again",
+      }));
+      console.log(e);
+    } finally {
+      setLoading((prevalue) => ({ ...prevalue, passwordResetOtp: false }));
+    }
+  };
+
+  const handleChangePassword = async (navigate, passwordCredentails, passwordResetToken) => {
+    setLoading((prevalue) => ({ ...prevalue, changePassword:true }));
+    setAuthError((prevalue) => ({ ...prevalue, changePassword:null }))
+    try {
+      await axios.post("school-admin/updatePassword",
+        {
+          new_password:passwordCredentails.new_password,
+          new_password_confirmation:passwordCredentails.new_password_confirmation
+        },
+        {
+          headers:{
+            PASSWORD_RESET_TOKEN:passwordResetToken
+          }
+        }
+      )
+      dispatch(handleSetChangePassword());
+      navigate("/login-school-admin");
+    } catch (e) {
+        setAuthError((prevalue) => ({ ...prevalue,  changePassword:"Something went wrong try again"}));
+        console.log(e);
+    }
+    finally{
+       setLoading((prevalue) => ({ ...prevalue, changePassword:false }))
+    }
+  };
+
+  const handleChangePasswordAuthUser = async (handleClose, authToken, apiKey, passwordCredentails) => {
+      setLoading((prevalue) => ({ ...prevalue, changeAuthPassword:true }))
+      setAuthError((prevalue) => ({ ...prevalue, changeAuthPassword:null }));
       try{
-          await axios.post("api/school-admin/register/super-admin", schoolAdminCredentials);
-          setLoading((prevalue) => ({...prevalue, admin: false}));
-          setCreateError((prevalue) => ({...prevalue, admin: false}));
-          localStorage.clear("SCHOOL_BRANCH_KEY");
-          navigate("/login-school-admin");
+         await axios.post("school-admin/change-password",
+          {
+            current_password:passwordCredentails.current_password,
+            new_password:passwordCredentails.new_password
+          },
+          {
+            headers:{
+                Authorization: `Bearer ${authToken}`,
+                "API-KEY":apiKey   
+            }
+         })
+        handleClose();
       }
       catch(e){
-        setCreateError((prevState) => ({
-          ...prevState,
-          admin:
-            e.response?.data?.message ||
-            "Something went wrong trying to create school",
-        }));
+         setAuthError((prevalue) => ({ ...prevalue, changeAuthPassword:"Somethine went wrong" }));
+         console.log(e)
       }
       finally{
-        setLoading((prevState) => ({ ...prevState, admin: false }));
+        setLoading((prevalue) => ({ ...prevalue, changeAuthPassword:false }))
       }
   }
-
   const contextValue = React.useMemo(
     () => ({
-      user,
-      isAuthenticated,
       authError,
       loading,
-      schoolBranchId,
       createError,
+      handlePasswordReset,
       handleLogin,
       handleAdminLogout,
       handleTwoStepVerification,
       handleSchoolRegistration,
       handleCreateSuperAdmin,
       handleSchoolBranchRegistration,
-      handleSubscription
+      handleSubscription,
+      handleValidatePasswordResetOtp,
+      handleChangePassword,
+      handleChangePasswordAuthUser,
+      getAuthenticatedUser 
     }),
     [
-      user,
-      isAuthenticated,
       authError,
       loading,
       createError,
-      schoolBranchId,
+      handlePasswordReset,
       handleLogin,
       handleAdminLogout,
       handleTwoStepVerification,
       handleSchoolRegistration,
       handleCreateSuperAdmin,
       handleSchoolBranchRegistration,
-      handleSubscription
+      handleSubscription,
+      handleValidatePasswordResetOtp,
+      handleChangePassword,
+      handleChangePasswordAuthUser,
+      getAuthenticatedUser 
     ]
   );
 

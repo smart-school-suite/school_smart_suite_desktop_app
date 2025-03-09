@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 const tagTypesarray = [
   "student",
   "teachers",
@@ -44,15 +45,17 @@ const tagTypesarray = [
   'instructorAvialabilities',
   'specialtyCourses',
   'accessedCourses',
-  'specialtyAccessedExams'
+  'specialtyAccessedExams',
+  'financialStats'
 ];
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000/",
-  prepareHeaders: (headers) => {
-    const schoolBranchId = localStorage.getItem("SCHOOL_BRANCH_KEY");
-    const token = localStorage.getItem("auth_token");
-    if (schoolBranchId) {
-      headers.set("SCHOOL_BRANCH_KEY", JSON.parse(schoolBranchId));
+  baseUrl: "http://127.0.0.1:8000/api/api/v1/",
+  prepareHeaders: (headers, { getState }) => {
+    const state = getState();
+    const apiKey = state.auth?.apiKey;
+    const token = state.auth?.token;
+    if (apiKey) {
+      headers.set("API-KEY", apiKey);
       headers.set("Authorization", `Bearer ${token}`);
     }
     headers.set("Content-Type", "application/json");
@@ -79,215 +82,232 @@ export const apiSlice = createApi({
   tagTypes: tagTypesarray,
   endpoints: (builder) => ({
     fetchStudents: builder.query({
-      query: () => "api/student/get-students",
+      query: () => "student/get-students",
       providesTags: ["student"],
     }),
     fetchTeachers: builder.query({
-      query: () => "api/teacher/get-all-teachers",
+      query: () => "teacher/getallInstructors",
       providesTags: ["teachers"],
     }),
     fetchParents: builder.query({
-      query: () => "api/parent/get-parents-no-relations",
+      query: () => "parent/get-parents",
       providesTags: ["parents"],
     }),
     fetchDepartments: builder.query({
-      query: () => "api/department/my-departments",
+      query: () => "department/my-departments",
       providesTags: ["departments"],
     }),
     fetchSpecialties: builder.query({
-      query: () => "api/specialty/my-specialties",
+      query: () => "specialty/my-specialties",
       providesTags: ["specialties"],
     }),
     fetchCourses: builder.query({
-      query: () => "api/course/my-courses",
+      query: () => "course/my-courses",
       providesTags: ["courses"],
     }),
     fetchPaidFees: builder.query({
-      query: () => "api/fee-payment/paid-fees",
+      query: () => "fee-payment/paid-fees",
       providesTags: ["paidFees"],
     }),
     fetchSchoolEvents: builder.query({
-      query: () => "api/event/school-events",
+      query: () => "event/school-events",
       providesTags: ["schoolEvents"],
     }),
     fetchExams: builder.query({
-      query: () => "api/exams/getexams",
+      query: () => "exams/getexams",
       providesTags: ["schoolExams"],
     }),
     fetchStudentBatch: builder.query({
-      query: () => "api/student-batches/student-batches",
+      query: () => "student-batches/student-batches",
       providesTags: ["studentBatch"],
     }),
     fetchExamTypes: builder.query({
-      query: () => "api/exam-type/exam_types",
+      query: () => "exam-type/exam_types",
       providesTags: ["examTypes"],
     }),
     fetchExamGrades: builder.query({
-      query: () => "api/grades/grades-for-exams",
+      query: () => "grades/grades-for-exams",
       providesTags: ["examGrades"],
     }),
     fetchLetterGrades: builder.query({
-      query: () => "api/letter-grade/get-letter-grades",
+      query: () => "letter-grade/get-letter-grades",
       providesTags: ["letterGrades"],
     }),
     fetchEducationLevels: builder.query({
-      query: () => "api/levels/education-levels",
+      query: () => "levels/education-levels",
       providesTags: ["educationLevels"],
     }),
     fetchSchoolAdmins: builder.query({
-      query: () => "api/school-admin/get-all-school-admins",
+      query: () => "school-admin/get-all-school-admins",
       providesTags: ["schoolAdmins"],
     }),
     fetchSchoolExpensesCategory: builder.query({
-      query: () => "api/school-expenses-category/get-category-expenses",
+      query: () => "school-expenses-category/get-category-expenses",
       providesTags: ["expensesCategory"],
     }),
     fetchStudentResit: builder.query({
-      query: () => "api/student-resit/student_resits",
+      query: () => "student-resit/student_resits",
       providesTags: ["studentResits"],
     }),
     fetchSchoolExpenses: builder.query({
-      query: () => "api/school-expenses/my-expenses",
+      query: () => "school-expenses/my-expenses",
       providesTags: ["schoolExpenses"],
     }),
     fetchSemesters: builder.query({
-      query: () => "api/semester/semesters",
+      query: () => "semester/semesters",
       providesTags: ["semesters"],
     }),
     fetchSpecialtyTimetable: builder.query({
       query: ({ level_id, specialty_id }) => {
-        return `api/time-table/generate-timetable/${level_id}/${specialty_id}`;
+        return `time-table/generate-timetable/${level_id}/${specialty_id}`;
       },
       providesTags: ["specialtyTimeTable"],
     }),
     fetchStudentDetails: builder.query({
       query: ({ student_id }) => {
-        return `api/student/student-details/${student_id} `;
+        return `student/student-details/${student_id} `;
       },
       providesTags: ["studentDetails"],
     }),
     fetchSchoolAdminDetails: builder.query({
       query: ({ school_admin_id }) => {
-        return `api/school-admin/school-admin/details/${school_admin_id}`;
+        return `school-admin/school-admin/details/${school_admin_id}`;
       },
       providesTags: ["schoolAdminDetails"],
     }),
     fetchTeacherDetails: builder.query({
       query: ({ teacher_id }) => {
-        return `api/teacher/teacher-details/${teacher_id}`;
+        return `teacher/teacher-details/${teacher_id}`;
       },
       providesTags: ["teacherDetails"],
     }),
     fetchDepartmentDetails: builder.query({
       query: ({ department_id }) => {
-        return `api/department/department-details/${department_id}`;
+        return `department/department-details/${department_id}`;
       },
       providesTags: ["departmentDetails"],
     }),
     fetchSpecialtyDetails: builder.query({
       query: ({ specialty_id }) => {
-        return `api/specialty/specialty-details/${specialty_id}`;
+        return `specialty/specialty-details/${specialty_id}`;
       },
       providesTags: ["specialtyDetails"],
     }),
     fetchCourseDetails: builder.query({
       query: ({ course_id }) => {
-        return `api/course/course-details/${course_id}`;
+        return `course/course-details/${course_id}`;
       },
       providesTags: ["courseDetails"],
     }),
     fetchParentDetails: builder.query({
       query: ({ parent_id }) => {
-        return `api/parent/parent-details/${parent_id}`;
+        return `parent/parent-details/${parent_id}`;
       },
       providesTags: ["parentDetails"],
     }),
     fetchExamDetails: builder.query({
       query: ({ exam_id }) => {
-        return `api/exams/exam-details/${exam_id}`;
+        return `exams/exam-details/${exam_id}`;
       },
       providesTags: ["examDetails"],
     }),
     fetchScoreDetails: builder.query({
       query: ({ mark_id }) => {
-        return `api/marks/score-details/${mark_id}`;
+        return `marks/score-details/${mark_id}`;
       },
       providesTags: ["scoreDetails"],
     }),
     fetchTimetableDetails: builder.query({
       query: ({ entry_id }) => {
-        return `api/time-table/timetable-details/${entry_id}`;
+        return `time-table/timetable-details/${entry_id}`;
       },
       providesTags: ["timeTableDetails"],
     }),
     fetchStudentResitDetails: builder.query({
       query: ({ resit_id }) => {
-        return `api/student-resit/details/${resit_id}`;
+        return `student-resit/details/${resit_id}`;
       },
       providesTags: ["studentResitDetails"],
     }),
     fetchExpensesDetails: builder.query({
       query: ({ expense_id }) => {
-        return `api/school-expenses/expenses-details/${expense_id}`;
+        return `school-expenses/expenses-details/${expense_id}`;
       },
       providesTags: ["expensesDetails"],
     }),
     fetchStudentScores: builder.query({
-      query: () => "api/marks/scores-exam/student",
+      query: () => "marks/scores-exam/student",
       providesTags: ["studentScores"],
     }),
     fetchCountrys: builder.query({
-      query: () => "api/country/countries",
+      query: () => "country/countries",
       providesTags: ["country"],
     }),
     fetchPricingRates: builder.query({
-      query: () => "api/subcription/rates",
+      query: () => "subcription/rates",
       providesTags: ["subscriptionRates"],
     }),
     fetchAssociateExamGrades: builder.query({
       query: ({ exam_id }) => {
-        return `api/exams/letter-grades/${exam_id}`;
+        return `exams/letter-grades/${exam_id}`;
       },
       providesTags: ["associateExamGrades"],
     }),
     fetchExamAssociateTimetableCourses: builder.query({
       query: ({ exam_id }) => {
-        return `api/exam-timetable/course-data/${exam_id}`;
+        return `exam-timetable/course-data/${exam_id}`;
       },
       providesTags: ["associateExamTimeTableCourses"],
     }),
     fetchInstructorAvailability: builder.query({
       query: ({ semester_id, specialty_id }) => {
-        return `api/time-table/instructor-availability/${semester_id}/${specialty_id}`;
+        return `time-table/instructor-availability/${semester_id}/${specialty_id}`;
       },
       providesTags: ["instructorAvialabilities"],
     }),
     fetchSpecailtyCourses: builder.query({
       query: ({ specialty_id, semester_id }) => {
-        return `api/course/my-courses/${specialty_id}/${semester_id}`;
+        return `course/my-courses/${specialty_id}/${semester_id}`;
       },
       providesTags: ["specialtyCourses"],
     }),
     fetchAccessedCourses: builder.query({
       query: ({ exam_id, student_id }) => {
-        return `api/marks/accessed-courses/${exam_id}/${student_id}`;
+        return `marks/accessed-courses/${exam_id}/${student_id}`;
       },
       providesTags: ["accessedCourses"],
     }),
     fetchSpecialtyAccessedExams: builder.query({
       query: ({ student_id }) => {
-        return `api/exams/accessed_exams/${student_id}`;
+        return `exams/accessed_exams/${student_id}`;
       },
       providesTags: ["specialtyAccessedExams"],
     }),
     fetchEventDetails: builder.query({
        query: ({ event_id }) => {
-          return `api/event/school-event/details/${event_id}`
+          return `event/school-event/details/${event_id}`
        }
     }),
     fetchFeeDebtors: builder.query({
-       query: () => "api/fee-payment/indebted-students",
+       query: () => "fee-payment/indebted-students",
        providesTags:["feedebtors"] 
+    }),
+    fetchFinancialStats: builder.query({
+       query: () => "stats/get/financial-stats",
+       providesTags:['financialStats']
+    }),
+    fetchPermissions: builder.query({
+       query: () => "permissions/get-permissions",
+       providesTags:["permissions"]
+    }),
+    fetchRoles: builder.query({
+       query: () => "roles/get-roles",
+       providesTags:["roles"]
+    }),
+    fetchPermissionsBySchoolAdmin: builder.query({
+       query: ({ schoolAdminId }) => {
+         return `permissions/get-schooladmin/permissions/${schoolAdminId}`
+       }
     })
   }),
 });
@@ -334,5 +354,9 @@ export const {
   useFetchSchoolEventsQuery,
   useFetchEventDetailsQuery,
   useFetchFeeDebtorsQuery,
-  useFetchPaidFeesQuery
+  useFetchPaidFeesQuery,
+  useFetchFinancialStatsQuery,
+  useFetchPermissionsQuery,
+  useFetchRolesQuery,
+  useFetchPermissionsBySchoolAdminQuery
 } = apiSlice;

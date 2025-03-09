@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../context/authContext";
+import { useSelector } from "react-redux";
 function RegisterSchoolBranch(){
-     const school_id = localStorage.getItem("SCHOOL_KEY");
+     const schoolId = useSelector((state) => state.auth.schoolId);
       const [schoolCredentials, setSchoolCredentials] = useState({
-        school_id: school_id,
+        school_id: schoolId,
         branch_name: "",
         address: "",
         city: "",
@@ -146,6 +147,17 @@ function RegisterSchoolBranch(){
                   value={schoolCredentials.website}
                   onChange={handleChange}
                 />
+            </div>
+            <div className="my-1">
+              <span>Abbreviation</span>
+              <input 
+              type="text" 
+              className="form-control"
+              placeholder="Enter Abbreviation"
+              value={schoolCredentials.abbrevaition}
+              name="abbrevaition"
+              onChange={handleChange}
+               />
             </div>
             <div className="my-1">
                 <span>Resit Fee</span>

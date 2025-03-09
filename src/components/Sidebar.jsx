@@ -19,7 +19,7 @@ function Sidebar() {
                   className="color-primary fs-5"
                 />
               </span>
-              <h4 className="my-0 fs-6 fw-bold color-primary">Edumanage</h4>
+              <h4 className="my-0 fs-6 fw-bold color-primary">SmartSchoolSuite</h4>
             </div>
           </div>
           <div className="nav-container mt-3">
@@ -50,8 +50,6 @@ function Sidebar() {
                       ? "nav-item-box-active fw-medium"
                       : location.pathname === "/teachers"
                       ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/courses"
-                      ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -76,8 +74,6 @@ function Sidebar() {
                           ? "rotate-icon nav-dropdown-icon"
                           : location.pathname === "/teachers"
                           ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/courses"
-                          ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
                     />
@@ -92,8 +88,6 @@ function Sidebar() {
                       : location.pathname === "/specialties"
                       ? "subbox-container-nav ps-3"
                       : location.pathname === "/teachers"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/courses"
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -155,21 +149,6 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <NavLink
-                          to="/courses"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
-                          }
-                        >
-                          <p>Courses</p>
-                        </NavLink>
-                      </div>
-                    </div>
                   </div>
                 </div>
 
@@ -183,6 +162,10 @@ function Sidebar() {
                       ? "nav-item-box-active fw-medium"
                       : location.pathname === "/exam-resits"
                       ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/courses"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/semesters"
+                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -210,6 +193,10 @@ function Sidebar() {
                           ? "rotate-icon nav-dropdown-icon"
                           : location.pathname === "/exam-resits"
                           ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/courses"
+                          ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/semesters"
+                          ?  "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
                     />
@@ -225,6 +212,10 @@ function Sidebar() {
                       : location.pathname === "/time-table"
                       ? "subbox-container-nav ps-3"
                       : location.pathname === "/exam-resits"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/courses"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/semesters"
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -261,6 +252,20 @@ function Sidebar() {
                     <div className="box-nav">
                       <div className="subbox-nav">
                         <NavLink
+                          to="/semesters"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Semester</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
                           to="/time-table"
                           className={({ isActive }) =>
                             isActive
@@ -283,6 +288,20 @@ function Sidebar() {
                           }
                         >
                           <p>Exam Resits</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/courses"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Courses</p>
                         </NavLink>
                       </div>
                     </div>
@@ -390,6 +409,10 @@ function Sidebar() {
                       ? "nav-item-box-active fw-medium"
                       : location.pathname === "/fee-payments"
                       ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/registrationFees"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/additionalFees"
+                      ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -412,6 +435,10 @@ function Sidebar() {
                           ? "rotate-icon nav-dropdown-icon"
                           : location.pathname === "/fee-payments"
                           ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/registrationFees"
+                          ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/additionalFees"
+                          ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
                     />
@@ -424,6 +451,10 @@ function Sidebar() {
                       : location.pathname === "/resit-payments"
                       ? "subbox-container-nav ps-3"
                       : location.pathname === "/fee-payments"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/registrationFees"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/additionalFees"
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -453,7 +484,7 @@ function Sidebar() {
                               : "text-decoration-none gainsboro-color"
                           }
                         >
-                          <p>Resit Payments</p>
+                          <p>Resit Fees</p>
                         </NavLink>
                       </div>
                     </div>
@@ -467,79 +498,35 @@ function Sidebar() {
                               : "text-decoration-none gainsboro-color"
                           }
                         >
-                          <p>Fee Payments</p>
-                        </NavLink>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  className={
-                    location.pathname === "/transferred-students" ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/transfer-request"
-                      ? "nav-item-box-active fw-medium"
-                      : "nav-item-box-inactive"
-                  }
-                  onClick={() => {
-                    navigate("/transferred-students");
-                  }}
-                >
-                  <div className="nav-item w-100 d-flex flex-row gap-2">
-                    <span>
-                      <Icon icon="tabler:transfer" />
-                    </span>
-                    <p>Transfers</p>
-                  </div>
-                  <span>
-                    <Icon
-                      icon="octicon:chevron-down-24"
-                      className={
-                        location.pathname === "/transferred-students"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/transfer-request"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : "nav-dropdown-icon"
-                      }
-                    />
-                  </span>
-                </div>
-
-                <div
-                  className={
-                    location.pathname === "/transferred-students"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/transfer-request"
-                      ? "subbox-container-nav ps-3"
-                      : "subbox-container-nav-inactive"
-                  }
-                >
-                  <div className="drop-down-container">
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <NavLink
-                          to="/transferred-students"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
-                          }
-                        >
-                          <p>Transfered Students</p>
+                          <p>Tuition Fees</p>
                         </NavLink>
                       </div>
                     </div>
                     <div className="box-nav">
                       <div className="subbox-nav">
                         <NavLink
-                          to="/transfer-request"
+                          to="/registrationFees"
                           className={({ isActive }) =>
                             isActive
                               ? "text-decoration-none fw-medium color-primary"
                               : "text-decoration-none gainsboro-color"
                           }
                         >
-                          <p>Student Request</p>
+                          <p>Registration Fees</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/additionalFees"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Additional Fees</p>
                         </NavLink>
                       </div>
                     </div>
@@ -561,91 +548,36 @@ function Sidebar() {
                     <p>Events</p>
                   </div>
                 </NavLink>
-
+                <NavLink
+                  to="/schoolElections"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "nav-item-box-active fw-medium text-decoration-none"
+                      : "nav-item-box-inactive text-decoration-none"
+                  }
+                >
+                  <div className="nav-item w-100 d-flex flex-row gap-2">
+                    <span>
+                    <Icon icon="fluent:vote-20-regular" width="20" height="20"  />
+                    </span>
+                    <p>School Elections</p>
+                  </div>
+                </NavLink>
                 <div
                   className={
-                      IsPathInRoutes(Mediapaths) || IsPathInRoutes(Emailpaths)
+                      location.pathname === "/annoucements"
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
-                    navigate("/emails/inbox");
+                    navigate("/annoucements");
                   }}
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
                     <span>
-                      <Icon icon="uil:message" />
+                    <Icon icon="fluent:speaker-0-32-regular" width="20" height="20" />
                     </span>
-                    <p>Media</p>
-                  </div>
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <span className="media-pill font-size-xs bg-danger text-white rounded-pill px-2">
-                      100
-                    </span>
-                    <span>
-                      <Icon
-                        icon="octicon:chevron-down-24"
-                        className={
-                          IsPathInRoutes(Mediapaths) || IsPathInRoutes(Emailpaths)
-                            ? "rotate-icon nav-dropdown-icon"
-                            : "nav-dropdown-icon"
-                        }
-                      />
-                    </span>
-                  </div>
-                </div>
-                <div
-                  className={
-                      IsPathInRoutes(Mediapaths) || IsPathInRoutes(Emailpaths)
-                      ? "subbox-container-nav ps-3"
-                      : "subbox-container-nav-inactive"
-                  }
-                >
-                  <div className="drop-down-container">
-                    
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <div
-                          onClick={() => {
-                             navigate("/emails/inbox")
-                          }}
-                          className={
-                              IsPathInRoutes(Emailpaths) ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                              : "text-decoration-none gainsboro-color pointer-cursor"
-                          }
-                        >
-                          <p>Emails</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <NavLink
-                          to="/messages"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
-                          }
-                        >
-                          <p>Messages</p>
-                        </NavLink>
-                      </div>
-                    </div>
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <NavLink
-                          to="/annoucements"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
-                          }
-                        >
-                          <p>Annoucements</p>
-                        </NavLink>
-                      </div>
-                    </div>
+                    <p>Annoucements</p>
                   </div>
                 </div>
                 <NavLink
@@ -670,7 +602,7 @@ function Sidebar() {
                       : "nav-item-box-inactive text-decoration-none pointer-cursor"
                   }
                   onClick={() => {
-                    navigate("/settings/account");
+                    navigate("/settings/general-settings");
                   }}
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
@@ -713,7 +645,7 @@ function Sidebar() {
             <div className="w-100 pe-3">
               <hr className="bg-primary w-100" />
               <span className="font-size-sm gainsboro-color mb-5">
-                @2024 Edumanage Company
+                @2024 SchoolSmartSuite
               </span>
             </div>
           </div>

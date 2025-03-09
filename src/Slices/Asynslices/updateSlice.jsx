@@ -1,13 +1,19 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000/",
-  prepareHeaders: (headers) => {
-    const schoolBranchId = localStorage.getItem('schoolBranchId');
-    if (schoolBranchId) {
-      headers.set("SCHOOL_BRANCH_KEY", schoolBranchId);
+  baseUrl: "http://127.0.0.1:8000/api/api/v1/",
+  prepareHeaders: (headers, {getState}) => {
+    const state = getState();
+    const apiKey = state.auth?.apiKey;
+    const token = state.auth?.token;
+    if (apiKey) {
+      headers.set("API-KEY", apiKey);
+      headers.set("Authorization", `Bearer ${token}`);
     }
+    headers.set("Content-Type", "application/json");
+    headers.set("Accept", "application/json");
     return headers;
   },
   credentials: "include",
@@ -32,7 +38,7 @@ export const updateSlice = createApi({
   endpoints: (builder) => ({
     updateCourse: builder.mutation({
       query: ({ course_id, updatedData }) => ({
-        url: `api/course/update-course/${course_id}`,
+        url: `course/update-course/${course_id}`,
         method: "PUT",
         body: updatedData, 
       }),
@@ -40,7 +46,7 @@ export const updateSlice = createApi({
     }),
     updateTeacher: builder.mutation({
       query: ({ id, updatedData }) => ({
-        url: `api/teacher/update-teacher/${id}`,
+        url: `teacher/update-teacher/${id}`,
         method: "PUT",
         body: updatedData, 
       }),
@@ -48,7 +54,7 @@ export const updateSlice = createApi({
     }),
     updateTeacher: builder.mutation({
         query: ({ id, updatedData }) => ({
-          url: `api/teacher/update-teacher/${id}`,
+          url: `teacher/update-teacher/${id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -56,7 +62,7 @@ export const updateSlice = createApi({
       }),
       updateDepartment: builder.mutation({
         query: ({ department_id, updatedData }) => ({
-          url: `api/department/update-department/${department_id}`,
+          url: `department/update-department/${department_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -64,7 +70,7 @@ export const updateSlice = createApi({
       }),
       updateEvent: builder.mutation({
         query: ({ event_id, updatedData }) => ({
-          url: `api/event/update-event/${event_id}`,
+          url: `event/update-event/${event_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -72,7 +78,7 @@ export const updateSlice = createApi({
       }),
       updateTimeTable: builder.mutation({
         query: ({ examtimetable_id, updatedData }) => ({
-          url: `api/exam-timetable/update-exam-time-table/${examtimetable_id}`,
+          url: `exam-timetable/update-exam-time-table/${examtimetable_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -80,7 +86,7 @@ export const updateSlice = createApi({
       }),
       updateGrades: builder.mutation({
         query: ({ grade_id, updatedData }) => ({
-          url: `api/grades/update-grade/${grade_id}`,
+          url: `grades/update-grade/${grade_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -88,7 +94,7 @@ export const updateSlice = createApi({
       }),
       updateExam: builder.mutation({
         query: ({ exam_id, updatedData }) => ({
-          url: `api/exams/update-exam/${exam_id}`,
+          url: `exams/update-exam/${exam_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -96,7 +102,7 @@ export const updateSlice = createApi({
       }),
       updateStudentScores: builder.mutation({
         query: ({ mark_id, updatedData }) => ({
-          url: `api/marks/update-student-mark/${mark_id}`,
+          url: `marks/update-student-mark/${mark_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -104,7 +110,7 @@ export const updateSlice = createApi({
       }),
       updateParent: builder.mutation({
         query: ({ parent_id, updatedData }) => ({
-          url: `api/parent/update-parent/${parent_id}`,
+          url: `parent/update-parent/${parent_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -112,7 +118,7 @@ export const updateSlice = createApi({
       }),
       updateSchoolAdmin: builder.mutation({
         query: ({ school_admin_id, updatedData }) => ({
-          url: `api/school-admin/update-school-admin/${school_admin_id}`,
+          url: `school-admin/update-school-admin/${school_admin_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -120,7 +126,7 @@ export const updateSlice = createApi({
       }),
       updateSchoolBranch: builder.mutation({
         query: ({ branch_id, updatedData }) => ({
-          url: `api/school-branch/update-branch/${branch_id}`,
+          url: `school-branch/update-branch/${branch_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -128,7 +134,7 @@ export const updateSlice = createApi({
       }),
       updateSchoolExpenses: builder.mutation({
         query: ({ category_expense_id, updatedData }) => ({
-          url: `api/school-expenses-category/update-category/${category_expense_id}`,
+          url: `school-expenses-category/update-category/${category_expense_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -136,7 +142,7 @@ export const updateSlice = createApi({
       }),
       updateSchoolExpenses: builder.mutation({
         query: ({ expense_id, updatedData }) => ({
-          url: `api/school-expenses/update-expenses/${expense_id}`,
+          url: `school-expenses/update-expenses/${expense_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -144,7 +150,7 @@ export const updateSlice = createApi({
       }),
       updateSchool: builder.mutation({
         query: ({ school_id, updatedData }) => ({
-          url: `api/school/update_school/${school_id}`,
+          url: `school/update_school/${school_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -152,7 +158,7 @@ export const updateSlice = createApi({
       }),
       updateSpecialty: builder.mutation({
         query: ({ specialty_id, updatedData }) => ({
-          url: `api/specialty/update-specialty/${specialty_id}`,
+          url: `specialty/update-specialty/${specialty_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -160,7 +166,7 @@ export const updateSlice = createApi({
       }),
       updateStudentResitPayment: builder.mutation({
         query: ({ resit_id, updatedData }) => ({
-          url: `api/student-resit/pay-for-resit/${resit_id}`,
+          url: `student-resit/pay-for-resit/${resit_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -168,7 +174,7 @@ export const updateSlice = createApi({
       }),
       updateSchool: builder.mutation({
         query: ({ batch_id, updatedData }) => ({
-          url: `api/student-batches/update-batch/${batch_id}`,
+          url: `student-batches/update-batch/${batch_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -176,7 +182,7 @@ export const updateSlice = createApi({
       }),
       updateStudentResitExamStatus: builder.mutation({
         query: ({ resit_id, updatedData }) => ({
-          url: `api/student-resit/update-resit-status/${resit_id}`,
+          url: `student-resit/update-resit-status/${resit_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -184,7 +190,7 @@ export const updateSlice = createApi({
       }),
       updateStudent: builder.mutation({
         query: ({ student_id, updatedData }) => ({
-          url: `api/student/update-student/${student_id}`,
+          url: `student/update-student/${student_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -192,7 +198,7 @@ export const updateSlice = createApi({
       }),
       updateTeacher: builder.mutation({
         query: ({ resit_id, updatedData }) => ({
-          url: `api/teacher/update-teacher/${resit_id}`,
+          url: `teacher/update-teacher/${resit_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -200,7 +206,7 @@ export const updateSlice = createApi({
       }),
       updateTimeTable: builder.mutation({
         query: ({ timetable_id, updatedData }) => ({
-          url: `api/time-table/update-timetable/${timetable_id}`,
+          url: `time-table/update-timetable/${timetable_id}`,
           method: "PUT",
           body: updatedData, 
         }),

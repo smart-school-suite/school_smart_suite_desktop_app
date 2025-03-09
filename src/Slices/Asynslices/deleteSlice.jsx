@@ -3,12 +3,17 @@ import toast from "react-hot-toast";
 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000/",
-  prepareHeaders: (headers) => {
-    const schoolBranchId = localStorage.getItem('schoolBranchId');
-    if (schoolBranchId) {
-      headers.set("SCHOOL_BRANCH_KEY", schoolBranchId);
+  baseUrl: "http://127.0.0.1:8000/api/api/v1/",
+  prepareHeaders: (headers, {getState}) => {
+    const state = getState();
+    const apiKey = state.auth?.apiKey;
+    const token = state.auth?.token;
+    if (apiKey) {
+      headers.set("API-KEY", apiKey);
+      headers.set("Authorization", `Bearer ${token}`);
     }
+    headers.set("Content-Type", "application/json");
+    headers.set("Accept", "application/json");
     return headers;
   },
   credentials: "include",

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 function LoginSchoolAdmin() {
 
@@ -47,6 +47,11 @@ function LoginSchoolAdmin() {
                 placeholder="Enter Your Password"
                 className="form-control"
               />
+            </div>
+            <div className="my-1 d-flex justify-content-end">
+              <Link to="/reset-password">
+                    Password Forgotten? Recover
+                </Link>
             </div>
             <button
               className="w-100 mt-2 border-none rounded-3 p-2 primary-background text-white"

@@ -24,7 +24,7 @@ function RegisterSchool() {
     await handleSchoolRegistration(navigate, schoolCredentials); 
   };
 
-  const { data: country, error, isLoading } = useFetchCountrysQuery();
+  const { data: data, error, isLoading } = useFetchCountrysQuery();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -106,7 +106,7 @@ function RegisterSchool() {
                     value={schoolCredentials.country_id}
                     onChange={handleChange}
                   >
-                    {country?.countries?.map((item) => (
+                    {data?.data?.map((item) => (
                       <option key={item.id} value={item.id}>
                         {item.country}
                       </option>
