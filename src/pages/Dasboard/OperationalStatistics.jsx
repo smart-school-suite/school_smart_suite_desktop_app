@@ -14,30 +14,6 @@ function OperationalStatistics() {
   return (
     <>
       <Navbar options={DashboardNavabarOptions} />
-      <table>
-        <th>lable one</th>
-        <th>lable one</th>
-        <th>lable one</th>
-        <th>lable one</th>
-        <tbody>
-          <tr>
-            <td>askldjaskdj</td>
-            <td>askldjaskdj</td>
-            <td>askldjaskdj</td>
-            <td>
-              <CustomDropdown />
-            </td>
-          </tr>
-          <tr>
-            <td>askldjaskdj</td>
-            <td>askldjaskdj</td>
-            <td>askldjaskdj</td>
-            <td>
-              <CustomDropdown />
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </>
   );
 }

@@ -123,7 +123,7 @@ export function ModalButton({ row_id, action, children, classname }) {
           <button
             className={`${classname}`}
             onClick={() => {
-              handleShow(action.modalTitle, action.modalContent);
+              handleShow(action.modalContent);
             }}
           >
             {children}

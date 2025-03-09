@@ -3,7 +3,7 @@ import { useFetchDepartmentsQuery } from "../../Slices/Asynslices/fetchSlice";
 import CleanArrayData, { renameKeys} from "../../utils/functions";
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
-import ActionButtonDropdown, { ModialButton } from "../actionButton";
+import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import DeleteDepartment from "../../ModalContent/Department/DeleteDepartment";
 import DepartmentDetails from "../../ModalContent/Department/DepartmentDetails";
 import CreateDepartment from "../../ModalContent/Department/CreateDepartment";
@@ -33,12 +33,12 @@ function Departments() {;
             <h1 className="fw-bold my-0">{data.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModialButton 
+            <ModalButton
              action={{ modalContent:CreateDepartment }}
              classname={"border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"}
             >
               <span className="font-size-sm">Create Department</span>
-            </ModialButton>
+            </ModalButton>
           </div>
         </div>
         <div>

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { ModialButton } from "../actionButton";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { useRef } from "react";
 import axios from "../../axios/axios";
 import Pageloaderspinner from "../../components/Spinners";
@@ -52,7 +52,7 @@ function Profile() {
                       className="position-absolute z-3 p-1 border rounded-3"
                       style={{ right: "0rem", width: "15rem" }}
                     >
-                      <ModialButton
+                      <ModalButton
                         classname="border-none bg-transparent w-100 p-0"
                         action={{ modalContent: LogoutUser }}
                       >
@@ -65,7 +65,7 @@ function Profile() {
                             />
                           </span>
                         </div>
-                      </ModialButton>
+                      </ModalButton>
                       <div className="align-items-center justify-content-between red-color d-flex px-2 py-2 profile-actions  font-size-sm">
                         <span>Delete Account</span>
                         <span>
@@ -75,7 +75,7 @@ function Profile() {
                           />
                         </span>
                       </div>
-                      <ModialButton
+                      <ModalButton
                         classname="border-none bg-transparent w-100 p-0"
                         action={{ modalContent: ChangeProfilePicture }}
                       >
@@ -88,7 +88,7 @@ function Profile() {
                             />
                           </span>
                         </div>
-                      </ModialButton>
+                      </ModalButton>
                       <div className="align-items-center justify-content-between red-color d-flex px-2 py-2 profile-actions  font-size-sm">
                         <span>Update Account</span>
                         <span>
@@ -98,7 +98,7 @@ function Profile() {
                           />
                         </span>
                       </div>
-                      <ModialButton
+                      <ModalButton
                         classname="border-none bg-transparent w-100 p-0"
                         action={{ modalContent: MyPermissions }}
                       >
@@ -111,7 +111,7 @@ function Profile() {
                             />
                           </span>
                         </div>
-                      </ModialButton>
+                      </ModalButton>
                     </div>
                   )}
                 </div>
