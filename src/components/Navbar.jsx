@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import NotificationDropdown from "./NotificationDropdown";
 function Navbar(props) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -75,22 +76,7 @@ function Navbar(props) {
             >
               <Icon icon="ic:outline-search" />
             </div>
-            <div
-              className="bg-white gainsboro-color fs-4 z-0 d-flex position-relative flex-row justify-content-center align-items-center"
-              style={{
-                width: "3.0rem",
-                height: "3.0rem",
-                borderRadius: "3.0rem",
-              }}
-            >
-              <Icon icon="solar:bell-linear" className="z-1" />
-              <button
-                className="z-3 border-none rounded-circle font-size-xs position-absolute fw-semibold bg-danger text-white px-1"
-                style={{ top: "0px", right: "0px", padding: "0.2rem" }}
-              >
-                32
-              </button>
-            </div>
+            <NotificationDropdown />
             <div
               className="bg-white gainsboro-color fs-5 d-flex flex-row justify-content-center align-items-center"
               style={{

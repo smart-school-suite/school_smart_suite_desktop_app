@@ -10,10 +10,16 @@ import {
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { CSSTransition } from "react-transition-group";
+import NotificationDropdown from "../../components/NotificationDropdown";
 function OperationalStatistics() {
   return (
     <>
       <Navbar options={DashboardNavabarOptions} />
+      <div className="container pt-4">
+        <div className="d-flex flex-row justify-content-end">
+        <NotificationDropdown />
+        </div>
+      </div>
     </>
   );
 }
@@ -39,10 +45,11 @@ export const CustomDropdown = () => {
     return () => document.removeEventListener("mousedown", handleClickOutSide);
   }, [refs]);
   return (
-    <div className="position-relative d-flex"
-     style={{ 
-        width:"100rem"
-     }}
+    <div
+      className="position-relative d-flex"
+      style={{
+        width: "100rem",
+      }}
     >
       <button
         ref={refs.setReference}

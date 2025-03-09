@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { SchoolYearSelector } from "./yearPicker";
+import { SchoolYearSelector } from "./YearPicker";
 import { useState, useEffect } from "react";
 import DatePicker from "./datePicker";
 import { generateMonthlyWeeks, generateYearlyMonthData } from "../utils/functions";

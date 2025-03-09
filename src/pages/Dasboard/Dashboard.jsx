@@ -4,12 +4,12 @@ import LineChart from "../../components/chartcomponents/Linecharts";
 import { Icon } from "@iconify/react";
 import CustomTooltip from "../../components/Tooltip";
 import ProgressGuage from "../../components/ProgressGuage";
-import CardGroup from "../../components/Cardgroup";
 import HeatMap from "../../components/chartcomponents/heatMap";
 import { DashboardNavabarOptions } from "../../ComponentConfig/navBarConfig";
 import { useFetchFinancialStatsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners";
 import { formatNumber } from "../../utils/functions";
+import CardGroup from "../../components/Cardgroup";
 import Navbar from "../../components/Navbar";
 function Dashboard(){
     const {  data: data, error, isLoading } = useFetchFinancialStatsQuery();

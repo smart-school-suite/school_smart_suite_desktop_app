@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Icon } from "@iconify/react";
 import { CSSTransition } from "react-transition-group";
-import CustomModal from "../modal";
+import CustomModal from "../Modal";
 import {
   useFloating,
   offset,
