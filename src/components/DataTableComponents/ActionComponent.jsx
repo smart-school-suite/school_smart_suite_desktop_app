@@ -10,7 +10,7 @@ import {
   shift,
   autoUpdate,
 } from "@floating-ui/react";
-function ActionButtonDropdown({ actions, row_id }) {
+function ActionButtonDropdown({ actions, row_id, children, style }) {
   const key = uuidv4();
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -26,7 +26,7 @@ function ActionButtonDropdown({ actions, row_id }) {
         !refs.reference.current?.contains(event.target) &&
         !refs.floating.current?.contains(event.target)
       ) {
-        setOpen(false);
+        setIsToggeled(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutSide);
@@ -54,9 +54,9 @@ function ActionButtonDropdown({ actions, row_id }) {
           onClick={() => {
              toggleDropdown();
           }}
-          className="btn btn-primary primary-background font-size-sm"
+          className={style}
         >
-          <span>Edit Admin</span>
+          {children}
         </button>
         <CSSTransition
           in={isToggled}
@@ -81,7 +81,7 @@ function ActionButtonDropdown({ actions, row_id }) {
                     >
                       <span>{items.actionTitle}</span>
                       <span>
-                        <Icon icon="mynaui:logout" className="font-size-md" />
+                        <Icon icon={items.icon} className="font-size-md gainsboro-color" />
                       </span>
                     </div>
                   </>

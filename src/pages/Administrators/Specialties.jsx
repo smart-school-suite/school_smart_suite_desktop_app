@@ -2,7 +2,6 @@ import Navbar from "../../components/Navbar";
 import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
-import ActionButtonDropdown, { ModialButton } from "../actionButton";
 import { SpecialtyTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { SpecailtyNavBarOptions } from "../../ComponentConfig/navBarConfig";
 import CreateSpecialty from "../../ModalContent/Specialty/CreateSpecialty";
@@ -10,7 +9,8 @@ import UpdateSpecialty from "../../ModalContent/Specialty/UpdateSpecialty";
 import SpecialtyDetails from "../../ModalContent/Specialty/SpecialtyDetails";
 import DeleteSpecialty from "../../ModalContent/Specialty/DeleteSpecialty";
 import DeactivateSpecialty from "../../ModalContent/Specialty/DeactivateSpecialty";
-import AssignSpecialty from "../../ModalContent/Specialty/AssignSpecialty";
+import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import CurrencyComponent from "../../components/DataTableComponents/CurrencyComponent";
 function Specialties() {
   const { data: data, error, isLoading } = useFetchSpecialtiesQuery();
   if (isLoading) {
@@ -26,18 +26,18 @@ function Specialties() {
             <h1 className="fw-bold my-0">{data.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModialButton
+            <ModalButton
               action={{ modalContent: CreateSpecialty }}
               classname={
                 "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
               }
             >
               <span>Create Specialty</span>
-            </ModialButton>
+            </ModalButton>
           </div>
         </div>
         <Table
-          colDefs={SpecialtyTableConfig({ DropdownComponent })}
+          colDefs={SpecialtyTableConfig({ DropdownComponent, CurrencyComponent })}
           rowData={data.data}
         />
       </div>
@@ -50,34 +50,33 @@ export function DropdownComponent(props) {
   const { id } = props.data;
   const actions = [
     {
-      modalTitle: "Update Specialty",
       actionTitle: "Update",
+      icon:"mynaui:edit-solid",
       modalContent: UpdateSpecialty,
     },
     {
-      modalTitle: "Specialty Details",
       actionTitle: "Details",
+      icon:"bxs:detail",
       modalContent: SpecialtyDetails,
     },
     {
-      modalTitle: "Delete Specialty",
       actionTitle: "Delete",
+      icon:"fluent:delete-16-filled",
       modalContent: DeleteSpecialty,
     },
     {
-      modalTitle: "Deactivate Specialty",
-      actionTitle: "Deactivate",
+      actionTitle: "Manage Status",
+      icon:"heroicons-outline:status-online",
       modalContent: DeactivateSpecialty,
-    },
-    {
-      modalTitle: "Assign Specialty",
-      actionTitle: "Assign",
-      modalContent: AssignSpecialty,
-    },
+    }
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} />
+      <ActionButtonDropdown actions={actions} row_id={id}
+       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      > 
+      <span>Edit Specialty</span>
+      </ActionButtonDropdown>
     </>
   );
 }

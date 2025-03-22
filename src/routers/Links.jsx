@@ -18,9 +18,12 @@ import FormRoutes from "./Forms/FormRoutes";
 import SettingsRoutes from "./Settings/SettingsRoutes";
 import StudentRoutes from "./Student/StudentRoutes";
 import SchoolElectionRoutes from "./Election/ElectionRoutes";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 function Links() {
   return (
     <BrowserRouter>
+      <TransitionGroup>
+      <CSSTransition key={location.key} classNames="fade" timeout={300}>
       <Routes>
         <Route
           element={
@@ -31,7 +34,6 @@ function Links() {
         >
           {[...AuthRoutes]}
         </Route>
-
         <Route
           element={
             <ProtectedRoute>
@@ -54,6 +56,8 @@ function Links() {
             ]}
         </Route>
       </Routes>
+      </CSSTransition>
+      </TransitionGroup>
     </BrowserRouter>
   );
 }

@@ -1,0 +1,92 @@
+import Pageloaderspinner from "../../components/Spinners";
+import { useFetchHeadOfSpecialtyQuery } from "../../Slices/Asynslices/fetchSlice";
+import { hosTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import { Icon } from "@iconify/react";
+import Table from "../../components/Tables";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import HosDetails from "../../ModalContent/Hos/HosDetails";
+import RemoveHos from "../../ModalContent/Hos/RemoveHos";
+import SendMessage from "../../ModalContent/Hos/SendMessage";
+function HeadOfSpecialty() {
+  const { data: hos, isLoading, error } = useFetchHeadOfSpecialtyQuery();
+  if (isLoading) {
+    return <Pageloaderspinner />;
+  }
+  return (
+    <div className="container pt-2">
+      <div className="my-2">
+        <div className="d-flex align-items-center gap-2">
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{
+              width: "2.5rem",
+              height: "2.5rem",
+              borderRadius: "0.5rem",
+              background: "#fff",
+            }}
+          >
+            <Icon
+              icon="grommet-icons:user-admin"
+              className="fs-5 text-primary"
+            />
+          </div>
+          <h4 className="fw-semibold my-0">Manage Head Of Specialty (HOS)</h4>
+        </div>
+      </div>
+      <div className="d-flex flex-row align-items-end gap-2 mt-3">
+        <div className="d-block">
+          <p className="font-size-xs my-0">Total Number Hos</p>
+          <h1 className="fw-bold my-0">{hos.data.length}</h1>
+        </div>
+      </div>
+      <div>
+        <div>
+          <Table
+            rowData={hos.data}
+            colDefs={hosTableConfig({ ActionButtonGroup })}
+            rowHeight={45}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+export default HeadOfSpecialty;
+function ActionButtonGroup(props) {
+  const { id } = props.data;
+  const actions = [
+    {
+      actionTitle: "Update",
+      icon: "mynaui:edit-solid",
+      modalContent:HosDetails
+    },
+    {
+      actionTitle: "Remove Hos",
+      icon: "fluent:delete-16-filled",
+      modalContent:RemoveHos
+    },
+    {
+      actionTitle: "Details",
+      icon: "bxs:detail",
+      modalContent:HosDetails
+    },
+    {
+      actionTitle: "Send Message",
+      icon: "ic:round-message",
+      modalContent:SendMessage
+    },
+  ];
+  return (
+    <>
+      <ActionButtonDropdown
+        actions={actions}
+        row_id={id}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
+      >
+        <span>Edit Actions</span>
+      </ActionButtonDropdown>
+    </>
+  );
+}

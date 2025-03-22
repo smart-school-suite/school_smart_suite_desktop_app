@@ -2,19 +2,19 @@ import Navbar from "../../components/Navbar";
 import { useFetchTeachersQuery } from "../../Slices/Asynslices/fetchSlice";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
 import Pageloaderspinner from "../../components/Spinners";
-import Greenbutton from "../../components/Buttons";
 import Table from "../../components/Tables";
-import ActionButtonDropdown from "../actionButton";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { TeacherNavBarConfig } from "../../ComponentConfig/navBarConfig";
 import { teacherTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DeactivateTeacher from "../../ModalContent/Teacher/DeactivateTeacher";
 import DeleteTeacher from "../../ModalContent/Teacher/DeleteTeacher";
-import HolidayGrant from "../../ModalContent/Teacher/GrantHoliday";
-import GrantTeacherLift from "../../ModalContent/Teacher/GrantTeacherLift";
-import PromoteTeacher from "../../ModalContent/Teacher/PromoteTeacher";
-import SuspendTeacher from "../../ModalContent/Teacher/SuspendTeacher";
 import TeacherDetails from "../../ModalContent/Teacher/TeacherDetails";
 import UpdateTeacher from "../../ModalContent/Teacher/UpdateTeacher";
+import CurrencyComponent from "../../components/DataTableComponents/CurrencyComponent";
+import AddSpecialtyPreference from "../../ModalContent/Teacher/AddSpecialtyPreference";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import AppointHod from "../../ModalContent/Teacher/AppointHod";
+import AppointHos from "../../ModalContent/Teacher/AppointHos";
 function Teachers() {
   const { data: data, error, isLoading } = useFetchTeachersQuery();
   const filter_array_keys = [
@@ -54,17 +54,22 @@ function Teachers() {
             <h1 className="fw-bold my-0">{data.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <Greenbutton
-              lable="Add Teacher"
-              bg="green-bg"
-              route="/create-teacher"
-            />
+            <ModalButton
+              classname={
+                "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+              }
+            >
+              <span>Create Teacher</span>
+            </ModalButton>
           </div>
         </div>
         <div>
           {data?.data?.length > 0 ? (
             <Table
-              colDefs={teacherTableConfig({ DropdownComponent })}
+              colDefs={teacherTableConfig({
+                DropdownComponent,
+                CurrencyComponent,
+              })}
               rowData={renameKeys(
                 CleanArrayData(data.data, filter_array_keys),
                 renameMapping
@@ -86,49 +91,52 @@ export function DropdownComponent(props) {
   const { id } = props.data;
   const actions = [
     {
-      modalTitle: "Update Teacher",
       actionTitle: "Update",
+      icon:"mynaui:edit-solid",
       modalContent: UpdateTeacher,
     },
     {
-      modalTitle: "Teacher Details",
       actionTitle: "Details",
+      icon:"bxs:detail",
       modalContent: TeacherDetails,
     },
     {
-      modalTitle: "Delete Teacher",
       actionTitle: "Delete",
+      icon:"fluent:delete-16-filled",
       modalContent: DeleteTeacher,
     },
     {
-      modalTitle: "Promote Teacher",
-      actionTitle: "Promote",
-      modalContent: PromoteTeacher,
+      actionTitle:"Add Specialty Preference",
+      modalContent:AddSpecialtyPreference,
+      icon:"material-symbols:star-rounded"    
     },
     {
-      modalTitle: "Suspend Teacher",
-      actionTitle: "suspend",
-      modalContent: SuspendTeacher,
-    },
-    {
-      modalTitle: "Deactivate Teacher Account",
-      actionTitle: "Deactivate",
+      actionTitle: "Account Status",
       modalContent: DeactivateTeacher,
+      icon:"heroicons-outline:status-online",
     },
     {
-      modalTitle: "Grant Teacher Holiday",
-      actionTitle: "Grant Holiday",
-      modalContent: HolidayGrant,
+      actionTitle:"Appoint HOD",
+      icon:"subway:admin-1",
+      modalContent:AppointHod
     },
     {
-      modalTitle: "Grant Teacher Lift",
-      actionTitle: "Grant Lift",
-      modalContent: GrantTeacherLift,
-    },
+      actionTitle:"Appoint HOS",
+      icon:"solar:user-plus-bold",
+      modalContent:AppointHos
+    }
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} />
+      <ActionButtonDropdown
+        actions={actions}
+        row_id={id}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
+      >
+        <span>Edit Action</span>
+      </ActionButtonDropdown>
     </>
   );
 }

@@ -3,7 +3,7 @@ import { useFetchStudentsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners";
 import Greenbutton from "../../components/Buttons";
 import Table from "../../components/Tables";
-import ActionButtonDropdown from "../actionButton";
+import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { StudentnavBarOptions } from "../../ComponentConfig/navBarConfig";
 import { StudentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import AssignStudent from "../../ModalContent/Student/AssignStudent";
@@ -30,11 +30,11 @@ function Students() {
             <h1 className="fw-bold my-0">{data.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <Greenbutton
-              lable="create student"
-              bg="green-bg"
-              route="/create-student"
-            />
+            <ModalButton
+              classname="border-none rounded-3 green-bg text-white px-3 py-2"
+            >
+              <span className="font-size-sm">Create Student</span>
+            </ModalButton>
           </div>
         </div>
       </div>
@@ -97,7 +97,11 @@ export function DropdownComponent(props) {
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} />
+       <ActionButtonDropdown actions={actions} row_id={id} 
+       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      >
+      <span>Edit Actions</span>
+      </ActionButtonDropdown>
     </>
   );
 }

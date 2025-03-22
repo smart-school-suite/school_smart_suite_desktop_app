@@ -1,10 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import toast from "react-hot-toast";
 
-
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://127.0.0.1:8000/api/api/v1/",
-  prepareHeaders: (headers, {getState}) => {
+  prepareHeaders: (headers, { getState }) => {
     const state = getState();
     const apiKey = state.auth?.apiKey;
     const token = state.auth?.token;
@@ -18,7 +17,6 @@ const baseQuery = fetchBaseQuery({
   },
   credentials: "include",
 });
-
 
 const baseQueryWithErrorHandling = async (args, api, extraOptions) => {
   const result = await baseQuery(args, api, extraOptions);
@@ -42,15 +40,15 @@ export const postSlice = createApi({
         method: "POST",
         body: newCourse,
       }),
-      invalidatesTags: ["course"], 
-    }), 
+      invalidatesTags: ["course"],
+    }),
     addDepartment: builder.mutation({
       query: (newDeparment) => ({
         url: "department/create-department",
         method: "POST",
         body: newDeparment,
       }),
-      invalidatesTags: ["department"], 
+      invalidatesTags: ["department"],
     }),
     addEvent: builder.mutation({
       query: (newEvent) => ({
@@ -58,7 +56,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newEvent,
       }),
-      invalidatesTags: ["event"], 
+      invalidatesTags: ["event"],
     }),
     addExam: builder.mutation({
       query: (newExam) => ({
@@ -66,15 +64,15 @@ export const postSlice = createApi({
         method: "POST",
         body: newExam,
       }),
-      invalidatesTags: ["exams"], 
+      invalidatesTags: ["exams"],
     }),
-    addFeePaymentTransaction: builder.mutation({
+    payTuitionFee: builder.mutation({
       query: (newPayFees) => ({
         url: "fee-payment/pay-fees",
         method: "POST",
         body: newPayFees,
       }),
-      invalidatesTags: ["feepayment"], 
+      invalidatesTags: ["feepayment"],
     }),
     addGrade: builder.mutation({
       query: (newGrade) => ({
@@ -82,7 +80,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newGrade,
       }),
-      invalidatesTags: ["grade"], 
+      invalidatesTags: ["grade"],
     }),
     addStudentScore: builder.mutation({
       query: (newStudentScore) => ({
@@ -90,7 +88,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newStudentScore,
       }),
-      invalidatesTags: ["score"], 
+      invalidatesTags: ["score"],
     }),
     addParent: builder.mutation({
       query: (newParent) => ({
@@ -98,7 +96,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newParent,
       }),
-      invalidatesTags: ["parent"], 
+      invalidatesTags: ["parent"],
     }),
     addSchoolAdmin: builder.mutation({
       query: (newSchoolAdmin) => ({
@@ -106,7 +104,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newSchoolAdmin,
       }),
-      invalidatesTags: ["schoolAdmin"], 
+      invalidatesTags: ["schoolAdmin"],
     }),
     addSchoolBranch: builder.mutation({
       query: (newSchoolBranch) => ({
@@ -114,7 +112,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newSchoolBranch,
       }),
-      invalidatesTags: ["schoolBranch"], 
+      invalidatesTags: ["schoolBranch"],
     }),
     addExpensesCategory: builder.mutation({
       query: (newExpensesCategory) => ({
@@ -122,7 +120,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newExpensesCategory,
       }),
-      invalidatesTags: ["expensesCategory"], 
+      invalidatesTags: ["expensesCategory"],
     }),
     addSchoolExpenses: builder.mutation({
       query: (newSchoolExpenses) => ({
@@ -130,7 +128,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newSchoolExpenses,
       }),
-      invalidatesTags: ["schoolExpenses"], 
+      invalidatesTags: ["schoolExpenses"],
     }),
     addSchool: builder.mutation({
       query: (newSchool) => ({
@@ -138,7 +136,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newSchool,
       }),
-      invalidatesTags: ["school"], 
+      invalidatesTags: ["school"],
     }),
     addSpecialty: builder.mutation({
       query: (newSpecialty) => ({
@@ -146,7 +144,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newSpecialty,
       }),
-      invalidatesTags: ["specialty"], 
+      invalidatesTags: ["specialty"],
     }),
     addStudentBatch: builder.mutation({
       query: (newStudentBatch) => ({
@@ -154,7 +152,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newStudentBatch,
       }),
-      invalidatesTags: ["studentBatch"], 
+      invalidatesTags: ["studentBatch"],
     }),
     addResitTimetable: builder.mutation({
       query: (newResitTimetable) => ({
@@ -162,7 +160,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newResitTimetable,
       }),
-      invalidatesTags: ["resitTimeTable"], 
+      invalidatesTags: ["resitTimeTable"],
     }),
     promoteStudent: builder.mutation({
       query: (newStudentPromotion) => ({
@@ -170,7 +168,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newStudentPromotion,
       }),
-      invalidatesTags: ["studentPromotion"], 
+      invalidatesTags: ["studentPromotion"],
     }),
     addTimeTable: builder.mutation({
       query: (newTimeTable) => ({
@@ -178,7 +176,7 @@ export const postSlice = createApi({
         method: "POST",
         body: newTimeTable,
       }),
-      invalidatesTags: ["specialtyTimeTable"], 
+      invalidatesTags: ["specialtyTimeTable"],
     }),
     addTeacher: builder.mutation({
       query: (newTeacher) => ({
@@ -186,44 +184,156 @@ export const postSlice = createApi({
         method: "POST",
         body: newTeacher,
       }),
-      invalidatesTags: ["teacher"], 
+      invalidatesTags: ["teacher"],
     }),
     addStudent: builder.mutation({
-        query: (newStudent) => ({
-            url:"student/create-student",
-            method:"POST",
-            body:newStudent
-        }),
-        invalidatesTags: ["student"],   
+      query: (newStudent) => ({
+        url: "student/create-student",
+        method: "POST",
+        body: newStudent,
+      }),
+      invalidatesTags: ["student"],
     }),
     addExamTimetable: builder.mutation({
-       query: (newExamTimetable) => ({
-           url:"exam-timetable/create-timetable",
-           method:"POST",
-           body:newExamTimetable         
-       }),
-       invalidatesTags: ['examtimetable']
+      query: (newExamTimetable) => ({
+        url: "exam-timetable/create-timetable",
+        method: "POST",
+        body: newExamTimetable,
+      }),
+      invalidatesTags: ["examtimetable"],
     }),
     assignPermission: builder.mutation({
-       query: ({schoolAdminId, permissions}) => ({
-          url:`permissions/grant-schoolAdmin-permissions/${schoolAdminId}`,
-          method:'POST',
-          body:{permissions}
-       }),
-       invalidatesTags:["permissions"]
+      query: ({ schoolAdminId, permissions }) => ({
+        url: `permissions/grant-schoolAdmin-permissions/${schoolAdminId}`,
+        method: "POST",
+        body: { permissions },
+      }),
+      invalidatesTags: ["permissions"],
     }),
     assignRole: builder.mutation({
-       query: ({ schoolAdminId, roles }) => ({
-          url:`roles/assign-role/${schoolAdminId}`,
-          method:'POST',
-          body: { roles }
-       })
+      query: ({ schoolAdminId, roles }) => ({
+        url: `roles/assign-role/${schoolAdminId}`,
+        method: "POST",
+        body: { roles },
+      }),
     }),
     revokePermissions: builder.mutation({
-       query: ({ schoolAdminId, permissions }) => ({
-          url:`permissions/revoke-schoolAdmin-permissions/${schoolAdminId}`,
-          method:'POST',
-          body:{ permissions }
+      query: ({ schoolAdminId, permissions }) => ({
+        url: `permissions/revoke-schoolAdmin-permissions/${schoolAdminId}`,
+        method: "POST",
+        body: { permissions },
+      }),
+    }),
+    payAdditionalFees: builder.mutation({
+      query: (additionalFees) => ({
+        url: "additional-fees/payFee",
+        method: "POST",
+        body: additionalFees,
+      }),
+    }),
+    payRegistrationFees: builder.mutation({
+      query: (registrationFees) => ({
+        url: "fee-payment/payRegistrationFee",
+        method: "POST",
+        body: registrationFees,
+      }),
+    }),
+    payResitFee: builder.mutation({
+      query: (resitFee) => ({
+        url: "student-resit/pay-for-resit",
+        method: "POST",
+        body: resitFee,
+      }),
+    }),
+    createElection: builder.mutation({
+      query: (election) => ({
+        url: "elections/create-election",
+        method: "POST",
+        body: election,
+      }),
+    }),
+    createElectionRole: builder.mutation({
+      query: (electionRole) => ({
+        url: "election-roles/create-role",
+        method: "POST",
+        body: electionRole,
+      }),
+    }),
+    deactiveSchoolAdminAccount: builder.mutation({
+      query: ({ schoolAdminId }) => ({
+        url: `school-admin/deactivateAccount/${schoolAdminId}`,
+        method: "POST",
+        body: {},
+      }),
+    }),
+    activateSchoolAdminAccount: builder.mutation({
+      query: ({ schoolAdminId }) => ({
+        url: `school-admin/activateAccount/${schoolAdminId}`,
+        method: "POST",
+        body: {},
+      }),
+    }),
+    assignHod: builder.mutation({
+      query: (headOfDepartment) => ({
+        url: "department/assign-hod",
+        method: "POST",
+        body: headOfDepartment,
+      }),
+    }),
+    assignHos: builder.mutation({
+      query: (headOfSpecialty) => ({
+        url: "specialty/assign-hos",
+        method: "POST",
+        body: headOfSpecialty,
+      }),
+    }),
+    addTeacherSpecialtyPreference: builder.mutation({
+      query: ({ specialtyPreference, teacherId }) => ({
+        url: `teacher/add-specailty-preference/${teacherId}`,
+        method: "POST",
+        body: { specailties_preference: specialtyPreference },
+      }),
+    }),
+    deactivateDepartment: builder.mutation({
+      query: ({ departmentId }) => ({
+        url: `department/deactivateDepartment/${departmentId}`,
+        method: "POST",
+        body: {},
+      }),
+    }),
+    activateDepartment: builder.mutation({
+      query: ({ departmentId }) => ({
+        url: `department/activateDepartment/${departmentId}`,
+        method: "POST",
+        body: {},
+      }),
+    }),
+    deactivateSpecialty: builder.mutation({
+      query: ({ specialtyId }) => ({
+        url: `specialty/deactivateSpecialty/${specialtyId}`,
+        method: "POST",
+        body: {},
+      }),
+    }),
+    activateSpecialty: builder.mutation({
+      query: ({ specialtyId }) => ({
+        url: `specialty/activateSpecialty/${specialtyId}`,
+        method: "POST",
+        body: {},
+      }),
+    }),
+    activateTeacher: builder.mutation({
+       query: ({ teacherId }) => ({
+           url:`teacher/deactivateAccount/${teacherId}`,
+           method:"POST",
+           body:{}
+       })
+    }),
+    deactivateTeacher: builder.mutation({
+       query: ({ teacherId }) => ({
+         url:`teacher/deactivateAccount/${teacherId}`,
+         method:"POST",
+         body:{}
        })
     })
   }),
@@ -253,5 +363,22 @@ export const {
   useAddExamTimetableMutation,
   useAssignPermissionMutation,
   useAssignRoleMutation,
-  useRevokePermissionsMutation
+  useRevokePermissionsMutation,
+  usePayAdditionalFeesMutation,
+  usePayRegistrationFeesMutation,
+  usePayTuitionFeeMutation,
+  usePayResitFeeMutation,
+  useCreateElectionMutation,
+  useCreateElectionRoleMutation,
+  useDeactiveSchoolAdminAccountMutation,
+  useActivateSchoolAdminAccountMutation,
+  useAssignHodMutation,
+  useAssignHosMutation,
+  useAddTeacherSpecialtyPreferenceMutation,
+  useDeactivateDepartmentMutation,
+  useActivateDepartmentMutation,
+  useActivateSpecialtyMutation,
+  useDeactivateSpecialtyMutation,
+  useActivateTeacherMutation,
+  useDeactivateTeacherMutation
 } = postSlice;

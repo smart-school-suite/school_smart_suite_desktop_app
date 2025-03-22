@@ -45,16 +45,8 @@ export const updateSlice = createApi({
       invalidatesTags: ["course"], 
     }),
     updateTeacher: builder.mutation({
-      query: ({ id, updatedData }) => ({
-        url: `teacher/update-teacher/${id}`,
-        method: "PUT",
-        body: updatedData, 
-      }),
-      invalidatesTags: ["teachers"], 
-    }),
-    updateTeacher: builder.mutation({
-        query: ({ id, updatedData }) => ({
-          url: `teacher/update-teacher/${id}`,
+        query: ({ teacher_id, updatedData }) => ({
+          url: `teacher/update-teacher/${teacher_id}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -196,7 +188,7 @@ export const updateSlice = createApi({
         }),
         invalidatesTags: ["student"], 
       }),
-      updateTeacher: builder.mutation({
+      updateResit: builder.mutation({
         query: ({ resit_id, updatedData }) => ({
           url: `teacher/update-teacher/${resit_id}`,
           method: "PUT",

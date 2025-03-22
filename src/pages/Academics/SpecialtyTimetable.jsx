@@ -3,30 +3,31 @@ import Table from "../../components/Tables";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import Pageloaderspinner from "../../components/Spinners";
-import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { ExamTimeTableNavbarOptions } from "../../ComponentConfig/navBarConfig";
 import { useFetchSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useFetchSchoolSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useNavigate } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
-import { SpecialtyTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import { SpecialtyTimetableTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 function SpecialtyTimetable() {
-  const { data: data, error, isLoading } = useFetchSpecialtiesQuery();
+ const { data, isLoading, error } = useFetchSchoolSemestersQuery();
   const filter_array_keys = [
     "id",
-    "specialty_name",
-    "registration_fee",
-    "level.name",
-    "level.level",
-    "school_fee",
+    "start_date",
+    "end_date",
+    "school_year_start",
+    "specailty.specialty_name",
+    "semester.name",
   ];
   const renameMapping = {
-    id: "id",
-    specialty_name: "Specialty Name",
-    registration_fee: "Registration Fee",
-    "level.name": "Level Name",
-    "level.level": "Level",
-    school_fee: "School Fee",
+    "id": "id",
+    "start_date": "start_date",
+    "school_year_start": "school_year",
+    "end_date": "end_date",
+    "specailty.specialty_name": "specialty_name",
+    "semester.name": "semester_name",
   };
 
   if (isLoading) {
@@ -38,22 +39,37 @@ function SpecialtyTimetable() {
       <div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
-            <p className="font-size-xs my-0">Total Number specialties</p>
+            <p className="font-size-xs my-0">Number of semesters</p>
             <h1 className="fw-bold my-0">{data.data.length}</h1>
           </div>
         </div>
         <Table
-          colDefs={SpecialtyTableConfig({ DropdownComponent })}
+          colDefs={SpecialtyTimetableTableConfig({
+            ActionButton
+          })}
           rowData={renameKeys(
             CleanArrayData(data.data, filter_array_keys),
             renameMapping
           )}
+          rowHeight={55}
         />
       </div>
     </>
   );
 }
 export default SpecialtyTimetable;
+
+function ActionButton(){
+   return(
+    <ModalButton
+    classname={
+      "border-none green-bg font-size-sm rounded-3 px-3 gap-3 d-flex flex-row align-items-center d-flex text-white"
+    }
+    >
+    <span className="font-size-sm">Create Timetable</span>
+    </ModalButton>
+   )
+}
 
 export function DropdownComponent(props) {
   const { id } = props.data;

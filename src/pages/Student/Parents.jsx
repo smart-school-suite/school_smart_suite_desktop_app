@@ -3,7 +3,9 @@ import CleanArrayData, { renameKeys } from "../../utils/functions";
 import Pageloaderspinner from "../../components/Spinners";
 import Greenbutton from "../../components/Buttons";
 import Table from "../../components/Tables";
-import ActionButtonDropdown from "../actionButton";
+import ActionButtonDropdown, {
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
 import { ParentsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DeleteParent from "../../ModalContent/Parent/DeleteParent";
@@ -64,11 +66,9 @@ function Parents() {
             <h1 className="fw-bold my-0">{data.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <Greenbutton
-              lable="Add Parent"
-              bg="green-bg"
-              route="/create-parent"
-            />
+            <ModalButton classname="border-none rounded-3 green-bg text-white px-3 py-2">
+              <span className="font-size-sm">Create Parent</span>
+            </ModalButton>
           </div>
         </div>
       </div>

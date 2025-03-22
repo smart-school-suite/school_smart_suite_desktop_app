@@ -3,9 +3,13 @@ import { useFetchStudentResitQuery } from "../../Slices/Asynslices/fetchSlice";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
-import ActionButtonDropdown from "../actionButton";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { ResitFeeTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { ResitFeeNavBarConfig } from "../../ComponentConfig/navBarConfig";
+import Update from "../../ModalContent/ResitFee/UpdateResitFee";
+import Delete from "../../ModalContent/ResitFee/DeleteResitFee";
+import Details from "../../ModalContent/ResitFee/ResitFeeDetails";
+import MakePayment from "../../ModalContent/ResitFee/MakePayment";
 function ResitFee() {
   const { data: data, error, isLoading } = useFetchStudentResitQuery();
   const filter_array_keys = [
@@ -61,24 +65,29 @@ export function DropdownComponent(props) {
   const { id } = props.data;
   const actions = [
     {
-      modalTitle: "Update Resit Payment",
       actionTitle: "Update",
       modalContent: Update,
     },
     {
-      modalTitle: "Resit Payment Details",
       actionTitle: "Details",
       modalContent: Details,
     },
     {
-      modalTitle: "Delete Resit Payment",
       actionTitle: "Delete",
       modalContent: Delete,
     },
+    {
+      actionTitle:"Make Payment",
+      modalContent: MakePayment
+    }
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} />
+      <ActionButtonDropdown actions={actions} row_id={id} 
+       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      >
+        <span>Edit Resit</span>
+         </ActionButtonDropdown>
     </>
   );
 }

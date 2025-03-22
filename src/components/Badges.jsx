@@ -42,7 +42,7 @@ function BadgeDanger({ icon, lable }) {
   );
 }
 
-function BadgeSuccess({ icon, lable }) {
+function BadgeSuccess( { icon, lable }) {
   return (
     <>
       <span

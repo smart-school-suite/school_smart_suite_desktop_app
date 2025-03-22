@@ -37,151 +37,215 @@ export const deleteSlice = createApi({
   endpoints: (builder) => ({
     deleteCourse: builder.mutation({
       query: (course_id) => ({
-        url: `api/course/delete-course/${course_id}`,
+        url: `course/delete-course/${course_id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["student"],
     }),
     deleteDepartment: builder.mutation({
       query: (department_id) => ({
-        url: `api/department/delete-department/${department_id}`,
+        url: `department/delete-department/${department_id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["department"], 
     }),
     deleteEvent: builder.mutation({
         query: (event_id) => ({
-          url: `api/event/delete-event/${event_id}`,
+          url: `event/delete-event/${event_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["event"],
       }),
       deleteExamTimeTable: builder.mutation({
         query: (examtimetable_id) => ({
-          url: `api/exam-timetable/delete/exam-time-table/${examtimetable_id}`,
+          url: `exam-timetable/delete/exam-time-table/${examtimetable_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["ExamTimeTable"], 
       }),
       deleteExam: builder.mutation({
         query: (exam_id) => ({
-          url: `api/exams/delete-exams/${exam_id}`,
+          url: `exams/delete-exams/${exam_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["exam"],
       }),
       deletePaymentRecord: builder.mutation({
         query: (fee_id) => ({
-          url: `api/fee-payment/delete-payment-record/${fee_id}`,
+          url: `fee-payment/delete-payment-record/${fee_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["PaymentRecord"], 
       }),
       deleteExamGrade: builder.mutation({
         query: (grade_id) => ({
-          url: `api/grades/delete-grade/${grade_id}`,
+          url: `grades/delete-grade/${grade_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["examGrade"],
       }),
       deleteStudentExamScore: builder.mutation({
         query: (mark_id) => ({
-          url: `api/marks/delete-student-mark/${mark_id}`,
+          url: `marks/delete-student-mark/${mark_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["StudentExamScores"], 
       }),
       deleteParent: builder.mutation({
         query: (parent_id) => ({
-          url: `api/parent/delete-parent/${parent_id}`,
+          url: `parent/delete-parent/${parent_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["parent"],
       }),
       deleteSchoolAdmin: builder.mutation({
         query: (school_admin_id) => ({
-          url: `api/school-admin/delete-school-admin/${school_admin_id}`,
+          url: `school-admin/delete-school-admin/${school_admin_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["SchoolAdmin"], 
       }),
       deleteSchoolBranch: builder.mutation({
         query: (branch_id) => ({
-          url: `api/school-branch/delete-branch/${branch_id} `,
+          url: `school-branch/delete-branch/${branch_id} `,
           method: "DELETE",
         }),
         invalidatesTags: ["SchoolBranch"],
       }),
       deleteSchoolExpensesCategory: builder.mutation({
         query: (category_expense_id) => ({
-          url: `api/school-expenses-category/delete-category/${category_expense_id}`,
+          url: `school-expenses-category/delete-category/${category_expense_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["SchoolExpensesCategory"], 
       }),
       deleteDeleteSchoolExpenses: builder.mutation({
         query: (expense_id) => ({
-          url: `api/school-expenses/delete-expenses/${expense_id}`,
+          url: `school-expenses/delete-expenses/${expense_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["SchoolExpenses"],
       }),
       deleteSchool: builder.mutation({
         query: (school_id) => ({
-          url: `api/school/delete-school/${school_id}`,
+          url: `school/delete-school/${school_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["School"], 
       }),
       deleteSpecialty: builder.mutation({
         query: (specialty_id) => ({
-          url: `api/specialty/delete-specialty/${specialty_id}`,
+          url: `specialty/delete-specialty/${specialty_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["Specialty"],
       }),
       deleteStudentBatch: builder.mutation({
         query: (batch_id) => ({
-          url: `api/student-batches/delete-batch/${batch_id}`,
+          url: `student-batches/delete-batch/${batch_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["StudentBatch"], 
       }),
       deleteStudentResit: builder.mutation({
         query: (resit_id) => ({
-          url: `api/student-resit/delete-resit/${resit_id}`,
+          url: `student-resit/delete-resit/${resit_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["StudentResit"],
       }),
       deleteStudentTransferRequest: builder.mutation({
         query: (transfer_id) => ({
-          url: `api/student-transfer/delete-transfer-request/${transfer_id}`,
+          url: `student-transfer/delete-transfer-request/${transfer_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["StudentTransferRequest"], 
       }),
       deleteStudent: builder.mutation({
         query: (student_id) => ({
-          url: `api/student/delete-student/${student_id}`,
+          url: `student/delete-student/${student_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["StudentResit"],
       }),
       deleteTeacher: builder.mutation({
         query: (teacher_id) => ({
-          url: `api/teacher/delete-teacher/${teacher_id}`,
+          url: `teacher/delete-teacher/${teacher_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["Teacher"], 
       }),
       deleteTimeTable: builder.mutation({
         query: (timetable_id) => ({
-          url: `api/time-table/delete-timetable/${timetable_id}`,
+          url: `time-table/delete-timetable/${timetable_id}`,
           method: "DELETE",
         }),
         invalidatesTags: ["TimeTable"], 
       }),
+      deleteAddtionalFee: builder.mutation({
+         query: (additionalFeeId) => ({
+           url:`additional-fees/deleteFee/${additionalFeeId}`,
+           method:"DELETE"
+         }),
+         invalidatesTags: ["addtionalFees"]
+      }),
+      reverseTuitionFeeTransaction: builder.mutation({
+         query: (transactionId) => ({
+           url: `fee-payment/reverseTuitionFeeTransaction/${transactionId}`,
+           method:"DELETE"
+         }),
+         invalidatesTags:["reversedTuitionFee"]
+      }),
+      deleteTuitionFeeTransaction: builder.mutation({
+         query: (transactionId) => ({
+            url:`fee-payment/deleteTransaction/${transactionId}`,
+            method:"DELETE"
+         }),
+         invalidatesTags:["deleteTransaction"]
+      }),
+      reverseRegistrationFeeTransaction: builder.mutation({
+         query: (transactionId) => ({
+            url:`fee-payment/reverseRegistrationFeeTransaction/${transactionId}`,
+            method:"DELETE"
+         }),
+         invalidatesTags:["tuitionfeeTransaction"]
+      }),
+      deleteAdditionalFeeTransaction: builder.mutation({
+         query: (transactionId) => ({
+           url:`additional-fees/deleteTransaction/${transactionId}`,
+           method:"DELETE"
+         })
+      }),
+      reverseAdditionalFeeTransaction: builder.mutation({
+        query: (transactionId) => ({
+            url:`additional-fees/reverseTransaction/${transactionId}`,
+            method:"DELETE"
+        })
+      }),
+      deleteResitFeeTransaction: builder.mutation({
+         query: (transactionId) => ({
+           url:`student-resit/deleteTransaction/${transactionId}`
+         })
+      }),
+      reverseResitFeeTransaction: builder.mutation({
+         query: (transactionId) => ({
+           url:`student-resit/reverseTransaction/${transactionId}`
+         })
+      }),
+      removeHeadOfSpecialty: builder.mutation({
+        query: (hosId) => ({
+          url: `specialty/remove-hos/${hosId}`,
+          method: "DELETE",
+        }),
+        invalidatesTags: ["hos"],
+      }),
+      removeHeadOfDepartment: builder.mutation({
+         query: (hodId) => ({
+           url: `department/delete-hod/${hodId}`,
+           method: "DELETE",
+         }),
+         invalidatesTags: ["hod"],
+      })
   }),
 });
 
@@ -207,5 +271,15 @@ export const {
   useDeleteStudentResitMutation,
   useDeleteStudentTransferRequestMutation,
   useDeleteTeacherMutation,
-  useDeleteTimeTableMutation
+  useDeleteTimeTableMutation,
+  useDeleteAddtionalFeeMutation,
+  useReverseTuitionFeeTransactionMutation,
+  useDeleteTuitionFeeTransactionMutation,
+  useReverseRegistrationFeeTransactionMutation,
+  useDeleteAdditionalFeeTransactionMutation,
+  useDeleteResitFeeTransactionMutation,
+  useReverseResitFeeTransactionMutation,
+  useReverseAdditionalFeeTransactionMutation,
+  useRemoveHeadOfSpecialtyMutation,
+  useRemoveHeadOfDepartmentMutation
 } = deleteSlice;

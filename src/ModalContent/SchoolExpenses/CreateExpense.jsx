@@ -1,3 +1,8 @@
+import { useState } from "react";
+import { useFetchSchoolExpensesCategoryQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useAddSchoolExpensesMutation } from "../../Slices/Asynslices/postSlice";
+import toast from "react-hot-toast";
+import CustomDropdown from "../../components/Dropdowns";
 function CreateExpense({ handleClose }) {
   const [formData, setFormData] = useState({
     date: "",
@@ -6,7 +11,7 @@ function CreateExpense({ handleClose }) {
     description: "",
   });
   const {
-    data: category_expense_data,
+    data: expensesCategory,
     isLoading: isExpensesCategoryLoading,
     error: expensesCategoryError,
   } = useFetchSchoolExpensesCategoryQuery();
@@ -71,7 +76,7 @@ function CreateExpense({ handleClose }) {
             </select>
           ) : (
             <CustomDropdown
-              data={category_expense_data.category_expense_data}
+              data={expensesCategory.data}
               displayKey={["name"]}
               valueKey={["id"]}
               filter_array_keys={["id", "name"]}

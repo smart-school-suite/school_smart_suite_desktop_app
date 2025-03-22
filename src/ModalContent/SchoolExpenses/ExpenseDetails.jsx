@@ -1,19 +1,15 @@
-function ExpenseDetails({ row_id }) {
+import Pageloaderspinner from "../../components/Spinners";
+import { useFetchExpensesDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
+import { formatDate, formatNumber } from "../../utils/functions";
+import { Icon } from "@iconify/react";
+function ExpenseDetails({ row_id, handleClose }) {
   const {
-    data: expenses_details,
+    data: expenseDetail,
     isLoading,
     error,
   } = useFetchExpensesDetailsQuery({
     expense_id: row_id,
   });
-  useEffect(() => {
-    if (expenses_details) {
-      console.table(expenses_details.expenses_details);
-    }
-    if (error) {
-      console.error("Error fetching parents:", error);
-    }
-  }, [expenses_details, error]);
 
   if (isLoading) {
     return <Pageloaderspinner />;
@@ -37,7 +33,7 @@ function ExpenseDetails({ row_id }) {
             <Icon icon="clarity:email-line" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{expenses_details.expenses_details[0].title}</p>
+            <p className="my-0">{expenseDetail.data.title}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
               onClick={() => {
@@ -62,7 +58,7 @@ function ExpenseDetails({ row_id }) {
           <div className="border-bottom py-2" style={{ width: "87%" }}>
             <p className="my-0">
               {formatNumber(
-                Number(expenses_details.expenses_details[0].amount)
+                Number(expenseDetail.data.amount)
               )}
               $
             </p>
@@ -89,7 +85,7 @@ function ExpenseDetails({ row_id }) {
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
             <p className="my-0">
-              {formatDate(expenses_details.expenses_details[0].date)}
+              {formatDate(expenseDetail.data.date)}
             </p>
             <p
               className="my-0 font-size-sm gainsboro-color"
@@ -114,7 +110,7 @@ function ExpenseDetails({ row_id }) {
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
             <p className="my-0">
-              {expenses_details.expenses_details[0].description}
+              {expenseDetail.data.description}
             </p>
             <p
               className="my-0 font-size-sm gainsboro-color"
@@ -140,7 +136,7 @@ function ExpenseDetails({ row_id }) {
           <div className="border-bottom py-2" style={{ width: "87%" }}>
             <p className="my-0">
               {
-                expenses_details.expenses_details[0].schoolexpensescategory
+                expenseDetail.data.schoolexpensescategory
                   .names
               }
             </p>
@@ -155,7 +151,11 @@ function ExpenseDetails({ row_id }) {
           </div>
         </div>
         <div className="d-flex flex-row justify-content-end my-2 w-100">
-          <button className="border-none rounded-3  w-25 p-2 text-white primary-background text-white">
+          <button className="border-none rounded-3  w-25 p-2 text-white primary-background text-white w-100"
+           onClick={() => {
+             handleClose();
+           }}
+          >
             Close
           </button>
         </div>

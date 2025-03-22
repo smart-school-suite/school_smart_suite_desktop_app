@@ -2,9 +2,8 @@ import Navbar from "../../components/Navbar";
 import { useFetchCoursesQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
-import ActionButtonDropdown from "../actionButton";
+import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";
 import { CoursesNavBarOptions } from "../../ComponentConfig/navBarConfig";
-import { ModialButton } from "../actionButton";
 import CourseDetails from "../../ModalContent/Course/CourseDetails";
 import CourseStats from "../../ModalContent/Course/CourseStats";
 import CreateCourse from "../../ModalContent/Course/CreateCourse";
@@ -27,14 +26,14 @@ function Courses() {
             <h1 className="fw-bold my-0">{data.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModialButton
+            <ModalButton
               action={{ modalContent: CreateCourse }}
               classname={
                 "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
               }
             >
               <span className="font-size-sm">Create Course</span>
-            </ModialButton>
+            </ModalButton>
           </div>
         </div>
         <Table

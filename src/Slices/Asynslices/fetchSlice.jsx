@@ -308,7 +308,83 @@ export const apiSlice = createApi({
        query: ({ schoolAdminId }) => {
          return `permissions/get-schooladmin/permissions/${schoolAdminId}`
        }
-    })
+    }),
+    fetchSchoolSemesters: builder.query({
+       query: () => "school-semesters/school-semeters",
+       providesTags:["schoolSemesters"]
+    }),
+    fetchAccessedStudents: builder.query({
+       query: () => "accessed-student/getAccessedStudent",
+       providesTags:["accessedStudents"]
+    }),
+    fetchTuitionFee: builder.query({ 
+        query: () => "fee-payment/getTuitionFees",
+        providesTags:['tuitionFees']
+    }),
+    fetchRegistrationFees: builder.query({
+       query:() => "fee-payment/getRegistrationFees",
+       providesTags:["registrationFees"]
+    }),
+    fetchAdditionalFees: builder.query({
+       query: () => "additional-fees/getAll",
+       providesTags:["additionalFees"]
+    }),
+    fetchAddtionalFeesTransactions: builder.query({
+       query: () => "additional-fees/getTransactions",
+       providesTags:["additionalFeesTransactions"]
+    }),
+    fecthTuitionFeesTransactions: builder.query({
+       query: () => "fee-payment/getTransactions",
+       providesTags:['tuitionFeesTransactions']
+    }),
+    fetchTransactionDetail: builder.query({
+       query: ({transactionId}) =>  `fee-payment/getTuitionFeeTransactionDetails/${transactionId}`,
+       providesTags:["transactionDetials"]
+    }),
+    fetchRegistrationFeeTransactions: builder.query({
+       query: () => "fee-payment/getRegistrationFeeTransactions",
+       providesTags:["registrationFeeTransactions"]
+    }),
+    fetchAdditionalFeesTransactionDetails: builder.query({
+       query: ({ transactionId }) => `additional-fees/getTransactionDetails/${transactionId}`,
+       providesTags:["addtionalFeesTransationDetails"]
+    }),
+    fetchResitFeeTransactions: builder.query({
+       query: () => "student-resit/getTransactions",
+       providesTags:"resitFeeTransactions"
+    }),
+    fetchResitFeeTransactionDetials: builder.query({
+       query:({ transactionId }) => `student-resit/transactionDetails/${transactionId}`,
+       providesTags:["resitFeeTransactionsDetails"]
+    }),
+    fetchElections: builder.query({
+      query: () => "elections/get-elections",
+      providesTags:["schoolElections"]
+    }),
+    fetchElectionApplications: builder.query({
+       query: () => "election-application/getAllApplications",
+       providesTags:["electionApplications"]
+    }),
+    fetchElectionRoles: builder.query({
+       query: () => "election-roles/getAllRoles",
+       providesTags:["electionRoles"]
+    }),
+    fetchHeadOfDepartment: builder.query({
+      query: () => "department/getAllHods",
+      providesTags: ["headOfDepartment"]
+    }),
+    fetchHeadOfSpecialty: builder.query({
+      query: () => "specialty/getAllHos",
+      providesTags: ["headOfSpecialty"]
+    }),
+    fetchHeadOfSpecialtyDetails: builder.query({
+       query: ({ hosId}) => `specialty/getHosDetails/${hosId}`,
+       providesTags: ["headOfSpecialtyDetails"]
+    }),
+    fetchHeadOfDepartmentDetails: builder.query({
+       query: ({ hodId }) => `department/getHodDetails/${hodId}`,
+       providesTags: ["headOfDepartmentDetails"]
+    }),
   }),
 });
 
@@ -358,5 +434,24 @@ export const {
   useFetchFinancialStatsQuery,
   useFetchPermissionsQuery,
   useFetchRolesQuery,
-  useFetchPermissionsBySchoolAdminQuery
+  useFetchPermissionsBySchoolAdminQuery,
+  useFetchSchoolSemestersQuery,
+  useFetchAccessedStudentsQuery,
+  useFetchTuitionFeeQuery,
+  useFetchRegistrationFeesQuery,
+  useFetchAdditionalFeesQuery,
+  useFetchAddtionalFeesTransactionsQuery,
+  useFecthTuitionFeesTransactionsQuery,
+  useFetchTransactionDetailQuery,
+  useFetchRegistrationFeeTransactionsQuery,
+  useFetchAdditionalFeesTransactionDetailsQuery,
+  useFetchResitFeeTransactionsQuery,
+  useFetchResitFeeTransactionDetialsQuery,
+  useFetchElectionsQuery,
+  useFetchElectionApplicationsQuery,
+  useFetchElectionRolesQuery,
+  useFetchHeadOfDepartmentQuery,
+  useFetchHeadOfSpecialtyQuery,
+  useFetchHeadOfSpecialtyDetailsQuery,
+  useFetchHeadOfDepartmentDetailsQuery
 } = apiSlice;

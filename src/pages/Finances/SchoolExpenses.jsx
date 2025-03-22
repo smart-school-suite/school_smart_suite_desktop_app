@@ -7,8 +7,7 @@ import CleanArrayData, {
 } from "../../utils/functions";
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
-import ActionButtonDropdown from "../actionButton";
-import { ModialButton } from "../actionButton";
+import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";
 import { SchoolExpensesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { SchoolExpensesNavBarConfig } from "../../ComponentConfig/navBarConfig";
 import CreateExpense from "../../ModalContent/SchoolExpenses/CreateExpense";
@@ -48,14 +47,14 @@ function SchoolExpenses() {
             </h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModialButton
+            <ModalButton
               action={{ modalContent: CreateExpense }}
               classname={
                 "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
               }
             >
               <span className="font-size-sm">Create Expenses</span>
-            </ModialButton>
+            </ModalButton>
           </div>
         </div>
         <div>
@@ -94,7 +93,10 @@ export function DropdownComponent(props) {
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} />
+      <ActionButtonDropdown actions={actions} row_id={id} 
+      style={'tableActionButton primary-background text-white font-size-sm px-2'} >
+        <span>Edit Expense</span>
+        </ActionButtonDropdown>
     </>
   );
 }

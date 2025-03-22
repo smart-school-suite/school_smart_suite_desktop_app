@@ -4,7 +4,7 @@ function CurrencyComponent(props){
     const currency = useSelector((state) => state.auth.user);
     return(
         <>
-        <span className="text-overflow-elipse overflow-hidden my-0 text-start">{formatNumber(Number(props.value))} {currency.schoolDetails.school.country.currency}</span>
+        <span className="text-overflow-elipse overflow-hidden my-0 text-start">{formatNumber(parseFloat(props.value))} {currency.schoolDetails.school.country.currency}</span>
         </>
     )
 }

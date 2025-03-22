@@ -5,6 +5,7 @@ import "./styles/utility.css";
 import "./styles/global.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./styles/media.css";
+import "./styles/transition.css"
 import { Provider } from "react-redux";
 import { store, persistor } from "./store/store";
 import { PersistGate } from "redux-persist/integration/react";

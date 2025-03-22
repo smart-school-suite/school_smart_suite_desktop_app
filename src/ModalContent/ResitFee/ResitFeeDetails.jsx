@@ -1,6 +1,8 @@
+import Pageloaderspinner from "../../components/Spinners";
+import { useFetchStudentResitDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 function Details({ row_id }) {
     const {
-      data: resit_details,
+      data: resitDetail,
       isLoading,
       error,
     } = useFetchStudentResitDetailsQuery({
@@ -31,7 +33,7 @@ function Details({ row_id }) {
             </button>
             <div className="border-bottom py-2" style={{ width: "87%" }}>
               <p className="my-0">
-                {formatNumber(Number(resit_details.resit_details[0].resit_fee))} ₣
+                {formatNumber(Number(resitDetail.data.resit_fee))} ₣
               </p>
               <p
                 className="my-0 font-size-sm gainsboro-color"
@@ -55,7 +57,7 @@ function Details({ row_id }) {
               <Icon icon="clarity:email-line" />
             </button>
             <div className="border-bottom py-2" style={{ width: "87%" }}>
-              <p className="my-0">{resit_details.resit_details[0].paid_status}</p>
+              <p className="my-0">{resit_details.data.paid_status}</p>
               <p
                 className="my-0 font-size-sm gainsboro-color"
                 onClick={() => {
@@ -80,7 +82,7 @@ function Details({ row_id }) {
             </button>
             <div className="border-bottom py-2" style={{ width: "87%" }}>
               <p className="my-0">
-                {resit_details.resit_details[0].courses.course_title}
+                {resit_details.data.courses.course_title}
               </p>
               <p
                 className="my-0 font-size-sm gainsboro-color"
@@ -106,7 +108,7 @@ function Details({ row_id }) {
             </button>
             <div className="border-bottom py-2" style={{ width: "87%" }}>
               <p className="my-0">
-                {resit_details.resit_details[0].exam.examtype.exam_name}
+                {resit_details.data.exam.examtype.exam_name}
               </p>
               <p
                 className="my-0 font-size-sm gainsboro-color"
@@ -122,3 +124,4 @@ function Details({ row_id }) {
       </>
     );
   }
+  export default Details;

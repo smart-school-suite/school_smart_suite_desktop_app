@@ -1,40 +1,32 @@
 import Navbar from "../../components/Navbar";
-import { ScoresNavBarOptions } from "../../componentConfigurations/navBarConfig";
-import {
-  useFetchStudentsQuery,
-  useFetchSpecialtyAccessedExamsQuery,
-} from "../../Slices/Asynslices/fetchSlice";
-import { Icon } from "@iconify/react";
-import { CSSTransition } from "react-transition-group";
-import { useState } from "react";
 import Table from "../../components/Tables";
-import { useNavigate } from "react-router-dom";
 import Pageloaderspinner from "../../components/Spinners";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
 import { AccessedStudentsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import { useFetchAccessedStudentsQuery } from "../../Slices/Asynslices/fetchSlice";
+import { ScoresNavBarOptions } from "../../ComponentConfig/navBarConfig";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 function AccessedStudents() {
-  const { data: data, error, isLoading } = useFetchStudentsQuery();
+  const { data: data, error, isLoading } = useFetchAccessedStudentsQuery();
   const filter_array_keys = [
     "id",
-    "specialty.specialty_name",
-    "guardian_one.name",
-    "level.name",
-    "name",
-    "phone_one",
-    "phone_two",
-    "gender",
-    "student_batch.name",
+    "student.name",
+    "student.specialty.specialty_name",
+    "student.level.name",
+    "exam.examtype.exam_name",
+    "student.level.level",
+    "student_accessed",
+    "grades_submitted",
   ];
   const renameMapping = {
-    id: "id",
-    "specialty.specialty_name": "Specialty",
-    "guardian_one.name": "Parent name",
-    name: "Student Name",
-    "level.name": "Level",
-    phone_one: "First Reachable Number",
-    phone_two: "Second Reachable Number",
-    gender: "Gender",
-    "student_batch.name": "Student Batch",
+    "id":"id",
+    "student.name":"student_name",
+    "student.specialty.specialty_name":"specialty_name",
+    "student.level.name":"level_name",
+    "student.level.level":"level_number",
+    "exam.examtype.exam_name":"exam_name",
+    "student_accessed":"student_accessed",
+    "grades_submitted":"grades_submitted"
   };
 
   if (isLoading) {
@@ -63,78 +55,35 @@ function AccessedStudents() {
 }
 export default AccessedStudents;
 
-function DropdownComponent(props) {
+export function DropdownComponent(props) {
   const { id } = props.data;
-  const {
-    data: exam_data,
-    isLoading: isExamTypeLoading,
-    error: examTypeError,
-  } = useFetchSpecialtyAccessedExamsQuery({
-     student_id:id
-  });
-  const [isToggled, setIsToggeled] = useState(false);
-  const toggleDropdown = () => {
-    setIsToggeled((prevalue) => !prevalue);
-  };
-  const navigate = useNavigate();
+  const actions = [
+    {
+      actionTitle: "Submit Scores",
+      modalContent: SubmitScores,
+    },
+    {
+      actionTitle: "Delete Accessed Student",
+      modalContent: DeleteAccessedStudent,
+    }
+  ];
   return (
     <>
-      <div className="dropdown-box z-1 position-relative">
-        <div
-          className="selected-box"
-          onClick={toggleDropdown}
-          aria-haspopup="true"
-          aria-expanded={isToggled}
-        >
-          <div
-            className="d-flex flex-row justify-content-between primary-background align-items-center px-2 text-white rounded-3 pointer-cursor"
-            style={{
-              width: "8.2vw",
-              height: "2.2rem",
-            }}
-          >
-            <span className="font-size-sm">Add Scores</span>
-            <span>
-              <Icon
-                icon="heroicons:chevron-down-20-solid"
-                className={
-                  isToggled ? "rotate-180 transition-3s" : "transition-3s"
-                }
-              />
-            </span>
-          </div>
-        </div>
-        <CSSTransition
-          in={isToggled}
-          timeout={200}
-          classNames="dropdown"
-          unmountOnExit
-        >
-          <div className="d-flex flex-column bg-white p-2 rounded-3 w-100 border mt-1 z-3 position-absolute">
-            <div className=" d-flex flex-column z-3">
-              {isExamTypeLoading ? (
-                <span>Loading....</span>
-              ) : (
-                exam_data.exam_data.map((items) => {
-                  return (
-                    <>
-                      <span
-                        key={items.id}
-                        className="text-wrap lh-sm mb-1"
-                        onClick={() => {
-                          navigate(`/create-scores/${items.id}/${id}`);
-                        }}
-                      >
-                        {items.exam_name}
-                      </span>
-                    </>
-                  );
-                })
-              )}
-            </div>
-          </div>
-        </CSSTransition>
-      </div>
+      <ActionButtonDropdown actions={actions} row_id={id} />
     </>
   );
+}
+
+function SubmitScores(){
+  return(
+    <>
+    </>
+  )
+}
+
+function DeleteAccessedStudent(){
+   return(
+    <>
+    </>
+   )
 }

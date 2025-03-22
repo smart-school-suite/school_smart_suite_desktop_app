@@ -253,7 +253,7 @@ export const emailValidationSchema = Yup.string()
   .required("Registration fee is required")
   .positive("Registration fee must be a positive number")
   .min(0, "Registration fee cannot be less than 0")
-  .max(10000, "Registration fee cannot exceed $10,000")
+  .max(10000000, "Registration fee cannot exceed $10,000")
   .typeError("Registration fee must be a valid number")
   .test("valid-currency", "Registration fee must be a valid currency amount", (value) => {
     return /^\d+(\.\d{1,2})?$/.test(value);
@@ -263,7 +263,7 @@ export const emailValidationSchema = Yup.string()
   .required("School fee is required")
   .positive("School fee must be a positive number")
   .min(0, "School fee cannot be less than $0")
-  .max(100000, "School fee cannot exceed $100,000")
+  .max(100000000, "School fee cannot exceed $100,000")
   .typeError("School fee must be a valid number")
   .test("valid-currency", "School fee must be a valid currency amount", (value) => {
     return /^\d+(\.\d{1,2})?$/.test(value);  // Valid currency format

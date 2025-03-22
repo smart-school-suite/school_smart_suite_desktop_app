@@ -1,16 +1,15 @@
-import { useNavigate } from "react-router-dom";
-function Greenbutton(props) {
-  const navigate = useNavigate();
+import { ModalButton } from "./DataTableComponents/ActionComponent";
+function Greenbutton({ style, ModalContent }) {
   return (
     <>
-      <button 
-      className={`action-btn  border-none justify-content-center fw-medium d-flex flex-row rounded-3 align-items-center  text-white font-size-sm ${props.bg}`}
-       onClick={() => {
-         navigate(props.route)
-       }}
+      <ModalButton
+       classname={
+        "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
+      }
+      action={{ modalContent: CreateExam }}
       >
-        {props.lable}
-      </button>
+      
+      </ModalButton>
     </>
   );
 }

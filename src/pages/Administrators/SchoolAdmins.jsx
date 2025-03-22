@@ -16,6 +16,10 @@ import SuspendSchoolAdmin from "../../ModalContent/SchoolAdmin/SuspendSchoolAdmi
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { ImageComponent } from "../../components/DataTableComponents/ImageComponent";
 import CurrencyComponent from "../../components/DataTableComponents/CurrencyComponent";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import AccountStatus from "../../ModalContent/SchoolAdmin/AccountStatus";
+import AppointHod from "../../ModalContent/SchoolAdmin/AppointHod";
+import AppointHos from "../../ModalContent/SchoolAdmin/AppointHos";
 function SchoolAdmins() {
   const { data: data, error, isLoading } = useFetchSchoolAdminsQuery();
   const filter_array_keys = [
@@ -24,6 +28,7 @@ function SchoolAdmins() {
     "email",
     "role",
     "salary",
+    'profile_picture',
     "created_at",
   ];
   const renameMapping = {
@@ -33,6 +38,7 @@ function SchoolAdmins() {
     salary: "Salary",
     created_at: "Created At",
     email: "Email",
+    profile_picture:"profile_picture"
   };
 
   if (isLoading) {
@@ -69,11 +75,15 @@ function SchoolAdmins() {
             </div>
           </div>
           <div className="end-block d-flex flex-row ms-auto justify-content-end gap-3">
-            <Greenbutton
-              lable="Create Admin"
-              bg="green-bg"
-              route="/create-school-admin"
-            />
+          <ModalButton
+              classname={
+                "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
+              }
+              
+            >
+              <Icon icon="icons8:plus"  className="font-size-md"/>
+              <span className="font-size-sm">Create Admin</span>
+            </ModalButton>
           </div>
         </div>
         <div className="pt-3 position-relative z-0">
@@ -101,49 +111,68 @@ function ActionButtonGroup(props) {
   const { id } = props.data;
   const actions = [
     {
-      modalTitle: "Update Admin",
       actionTitle: "Update",
+      icon:"mynaui:edit-solid",
       modalContent: UpdateSchoolAdmin,
     },
     {
-      modalTitle: "Delete Admin",
       actionTitle: "Delete",
+      icon:"fluent:delete-16-filled",
       modalContent: DeleteSchoolAdmin,
     },
     {
-      modalTitle: "Admin Details",
       actionTitle: "Details",
+      icon:"bxs:detail",
       modalContent: SchoolAdminDetails,
     },
     {
-      modalTitle: "Suspend School Admin",
       actionTitle: "Suspend",
+      icon:"lsicon:suspend-filled",
       modalContent: SuspendSchoolAdmin,
     },
     {
-      modalTitle: "School Admin Permissions",
       actionTitle: "Permissions",
+      icon:"icon-park-outline:permissions",
       modalContent: SchoolAdminPermissions,
     },
     {
-      modalTitle: "View Permissions",
       actionTitle: "View Permissions",
+      icon:"icon-park-outline:permissions",
       modalContent: PermissionsBySchoolAdmin,
     },
     {
-      modalTitle: "School Admin Roles",
       actionTitle: "Assign Role",
+      icon:"eos-icons:role-binding",
       modalContent: SchoolAdminRoles,
     },
     {
-      modalTitle: "Revoke Permissions",
       actionTitle: "Revoke Permission",
+      icon:"lets-icons:remove-fill",
       modalContent: RevokeSchoolAdminPermissions,
     },
+    {
+      actionTitle:"Account Status",
+      icon:"heroicons-outline:status-online",
+      modalContent:AccountStatus
+    },
+    {
+      actionTitle:"Appoint HOD",
+      icon:"subway:admin-1",
+      modalContent:AppointHod
+    },
+    {
+      actionTitle:"Appoint HOS",
+      icon:"solar:user-plus-bold",
+      modalContent:AppointHos
+    }
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} />
+      <ActionButtonDropdown actions={actions} row_id={id}
+       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      >
+         <span>Edit Admin</span>
+      </ActionButtonDropdown>
     </>
   );
 }

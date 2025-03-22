@@ -1,4 +1,4 @@
-function Details({ row_id }) {
+function TuitionFeeDetails({ row_id }) {
     const {
       data: student_details,
       isLoading,
@@ -167,3 +167,4 @@ function Details({ row_id }) {
       </>
     );
   }
+  export default TuitionFeeDetails;

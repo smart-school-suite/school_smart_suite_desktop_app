@@ -2,14 +2,14 @@ import Navbar from "../../components/Navbar";
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
 import { useFetchExamsQuery } from "../../Slices/Asynslices/fetchSlice";
-import ActionButtonDropdown from "../actionButton";
+import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";
 import { GradesConfigurationNavbarOptions } from "../../ComponentConfig/navBarConfig";
-import { ModialButton } from "../actionButton";
 import { ExamsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import CreateExam from "../../ModalContent/Exams/CreateExam";
 import DeleteExam from "../../ModalContent/Exams/DeleteExam";
 import ExamDetails from "../../ModalContent/Exams/ExamDetails";
 import UpdateExam from "../../ModalContent/Exams/UpdateExam";
+import { Icon } from "@iconify/react";
 function Exams() {
   const { data: data, error, isLoading } = useFetchExamsQuery();
   if (isLoading) {
@@ -25,14 +25,15 @@ function Exams() {
             <h1 className="fw-bold my-0">{data.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModialButton
+            <ModalButton
               classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+                "border-none green-bg font-size-sm rounded-3 px-3 gap-3 py-2 d-flex flex-row align-items-center d-flex text-white"
               }
               action={{ modalContent: CreateExam }}
             >
+              <Icon icon="icons8:plus"  className="font-size-md"/>
               <span className="font-size-sm">Create Exam</span>
-            </ModialButton>
+            </ModalButton>
           </div>
         </div>
         {data?.data?.length > 0 ? (
@@ -73,7 +74,11 @@ export function DropdownComponent(props) {
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} />
+      <ActionButtonDropdown actions={actions} row_id={id} 
+       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      >
+       <span>Edit Exam</span>
+      </ActionButtonDropdown>
     </>
   );
 }

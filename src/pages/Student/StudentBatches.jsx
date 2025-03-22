@@ -1,12 +1,10 @@
 import Navbar from "../../components/Navbar";
 import { useFetchStudentBatchQuery } from "../../Slices/Asynslices/fetchSlice";
-import CleanArrayData, { renameKeys } from "../../utils/functions";
+import CleanArrayData, { renameKeys, formatDate } from "../../utils/functions";
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
 import { StudentBatchesNavBarOptions } from "../../ComponentConfig/navBarConfig";
-import { ModialButton } from "../actionButton";
-import ActionButtonDropdown from "../actionButton";
-import { formatDate } from "../../utils/functions";
+import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { StudentBatchesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import CreateStudentBatch from "../../ModalContent/StudentBatches/CreateStudentBatch";
 import UpdateStudentBatch from "../../ModalContent/StudentBatches/UpdateStudentBatch";
@@ -38,12 +36,12 @@ function StudentBatches() {
             </h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModialButton
+            <ModalButton
               action={{ modalContent: CreateStudentBatch }}
               classname="border-none rounded-3 green-bg text-white px-3 py-2"
             >
               <span className="font-size-sm">Create Student Batch</span>
-            </ModialButton>
+            </ModalButton>
           </div>
         </div>
         <Table
@@ -90,7 +88,11 @@ export function DropdownComponent(props) {
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} />
+       <ActionButtonDropdown actions={actions} row_id={id} 
+       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      >
+      <span>Edit Actions</span>
+      </ActionButtonDropdown>
     </>
   );
 }

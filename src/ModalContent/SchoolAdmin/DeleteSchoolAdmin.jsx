@@ -1,36 +1,32 @@
 import { useState } from "react";
 import { useDeleteSchoolAdminMutation } from "../../Slices/Asynslices/deleteSlice";
 import { SingleSpinner } from "../../components/Spinners";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import ToastDanger from "../../components/Toast/ToastDanger";
+import toast from "react-hot-toast";
 const DeleteSchoolAdmin = ({ row_id, handleClose }) => {
-  const [feedback, setFeedback] = useState({
-    message: "",
-    type: null,
-    loading: false,
-  });
   const [deleteSchoolAdmin] = useDeleteSchoolAdminMutation();
-
+  const [isDeleting, setIsDeleting] = useState(false);
   const handleDeleteSchoolAdmin = async () => {
-    setFeedback({ message: "", type: null, loading: true });
+    setIsDeleting(true);
     try {
       await deleteSchoolAdmin(row_id).unwrap();
-      setFeedback({
-        message: "School Admin Deleted Successfully",
-        type: "success",
-        loading: false,
-      });
+      setIsDeleting(false);
+      toast.custom(<ToastSuccess 
+        title={"Delete Successfull ✅"}
+        description={"The school administrator has been deleted successfully "}
+      />);
+      handleClose();
     } catch (e) {
-      setFeedback({
-        message: "Oops, Couldn't Delete School Admin",
-        type: "error",
-        loading: false,
-      });
+      setIsDeleting(false);
+      toast.custom(<ToastDanger 
+        title={"Delete Failed ❌"}
+        description={"❌ Something went wrong! The school administrator delete failed due to an error. Please try again later."}
+      />);
     }
   };
   return (
     <>
-      {feedback.loading ? (
-        <SingleSpinner />
-      ) : !feedback.message ? (
         <div className="w-100">
           <h4 className="fw-semibold">Are you absolutely sure?</h4>
           <p className="my-3" style={{ fontSize: "0.85rem" }}>
@@ -50,39 +46,12 @@ const DeleteSchoolAdmin = ({ row_id, handleClose }) => {
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
               onClick={handleDeleteSchoolAdmin}
             >
-              Continue
+              {
+                isDeleting ? <SingleSpinner /> : "Delete"
+              }
             </button>
           </div>
         </div>
-      ) : (
-        <div className="w-100">
-          {feedback.message && (
-            <div
-              className={`alert ${
-                feedback.type === "error" ? "alert-warning" : "alert-success"
-              } font-size-sm`}
-            >
-              {feedback.message}
-            </div>
-          )}
-          <div className="mt-4 d-flex justify-content-end gap-2">
-            <button
-              className="border-none px-3 py-2 text-primary rounded-3 font-size-sm"
-              onClick={handleClose}
-            >
-              Close
-            </button>
-            {feedback.type === "error" && (
-              <button
-                className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
-                onClick={handleDeleteSchoolAdmin}
-              >
-                Try Again
-              </button>
-            )}
-          </div>
-        </div>
-      )}
     </>
   );
 };

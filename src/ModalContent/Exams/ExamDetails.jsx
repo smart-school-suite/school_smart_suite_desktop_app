@@ -1,6 +1,8 @@
-function ExamDetails({ row_id }) {
+import Pageloaderspinner from "../../components/Spinners";
+import { useFetchExamDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
+function ExamDetails({ row_id, handleClose }) {
     const {
-      data: exam_details,
+      data: examDetails,
       isLoading,
       error,
     } = useFetchExamDetailsQuery({
@@ -31,7 +33,7 @@ function ExamDetails({ row_id }) {
               </button>
               <div className="border-bottom py-2" style={{ width: "87%" }}>
                 <p className="my-0">
-                  {exam_details.exam_details[0].examtype.exam_name}
+                  {examDetails.data.examtype.exam_name}
                 </p>
                 <p
                   className="my-0 font-size-sm gainsboro-color"
@@ -56,7 +58,7 @@ function ExamDetails({ row_id }) {
               </button>
               <div className="border-bottom py-2" style={{ width: "87%" }}>
                 <p className="my-0">
-                  {exam_details.exam_details[0].semester.name}
+                  {examDetails.data.semester.name}
                 </p>
                 <p
                   className="my-0 font-size-sm gainsboro-color"
@@ -81,7 +83,7 @@ function ExamDetails({ row_id }) {
               </button>
               <div className="border-bottom py-2" style={{ width: "87%" }}>
                 <p className="my-0">
-                  {exam_details.exam_details[0].specialty.specialty_name}
+                  {examDetails.data.specialty.specialty_name}
                 </p>
                 <p
                   className="my-0 font-size-sm gainsboro-color"
@@ -105,7 +107,7 @@ function ExamDetails({ row_id }) {
                 <Icon icon="clarity:email-line" />
               </button>
               <div className="border-bottom py-2" style={{ width: "87%" }}>
-                <p className="my-0">{exam_details.exam_details[0].level.level}</p>
+                <p className="my-0">{examDetails.data.level.level}</p>
                 <p
                   className="my-0 font-size-sm gainsboro-color"
                   onClick={() => {
@@ -128,7 +130,7 @@ function ExamDetails({ row_id }) {
                 <Icon icon="clarity:email-line" />
               </button>
               <div className="border-bottom py-2" style={{ width: "87%" }}>
-                <p className="my-0">{exam_details.exam_details[0].school_year}</p>
+                <p className="my-0">{examDetails.data.school_year}</p>
                 <p
                   className="my-0 font-size-sm gainsboro-color"
                   onClick={() => {
@@ -152,7 +154,7 @@ function ExamDetails({ row_id }) {
               </button>
               <div className="border-bottom py-2" style={{ width: "87%" }}>
                 <p className="my-0">
-                  {convertToReadableDate(exam_details.exam_details[0].start_date)}
+                  {convertToReadableDate(examDetails.data.start_date)}
                 </p>
                 <p
                   className="my-0 font-size-sm gainsboro-color"
@@ -177,7 +179,7 @@ function ExamDetails({ row_id }) {
               </button>
               <div className="border-bottom py-2" style={{ width: "87%" }}>
                 <p className="my-0">
-                  {convertToReadableDate(exam_details.exam_details[0].end_date)}
+                  {convertToReadableDate(examDetails.data.end_date)}
                 </p>
                 <p
                   className="my-0 font-size-sm gainsboro-color"
@@ -202,7 +204,7 @@ function ExamDetails({ row_id }) {
               </button>
               <div className="border-bottom py-2" style={{ width: "87%" }}>
                 <p className="my-0">
-                  {convertToReadableDate(exam_details.exam_details[0].end_date)}
+                  {convertToReadableDate(examDetails.data.end_date)}
                 </p>
                 <p
                   className="my-0 font-size-sm gainsboro-color"
@@ -227,7 +229,7 @@ function ExamDetails({ row_id }) {
               </button>
               <div className="border-bottom py-2" style={{ width: "87%" }}>
                 <p className="my-0">
-                  {exam_details.exam_details[0].weighted_mark}
+                  {examDetails.data.weighted_mark}
                 </p>
                 <p
                   className="my-0 font-size-sm gainsboro-color"

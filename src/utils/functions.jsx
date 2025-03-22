@@ -357,3 +357,25 @@ export const getWeekday = (dateStr) => {
 export function replaceDashesWithSpaces(str) {
     return str.replace(/-/g, ' ');
   }
+
+ export function formatDateWithSuffix(date) {
+    const daysOfTheWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const monthsOfTheYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    
+    const dayOfWeek = daysOfTheWeek[date.getDay()];
+    const dayOfMonth = date.getDate();
+    const month = monthsOfTheYear[date.getMonth()];
+    const year = date.getFullYear();
+    
+    // Function to get the appropriate suffix for the day of the month
+    function getDaySuffix(n) {
+      const suffixes = ["th", "st", "nd", "rd"];
+      const v = n % 100; 
+      return n + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
+    }
+    
+    const formattedDay = getDaySuffix(dayOfMonth);
+    
+    return `${dayOfWeek} ${formattedDay} ${month} ${year}`;
+  }
+  

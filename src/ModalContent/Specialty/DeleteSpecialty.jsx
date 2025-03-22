@@ -1,4 +1,23 @@
-function DeleteSpecialty({ handleClose }) {
+import { useState } from "react";
+import { useDeleteSpecialtyMutation } from "../../Slices/Asynslices/deleteSlice";
+import toast from "react-hot-toast";
+import { SingleSpinner } from "../../components/Spinners";
+function DeleteSpecialty({ handleClose, row_id:specialtyId }) {
+   const [isDeleting, setIsDeleting ] = useState(false);
+   const [deleteSpecialty] = useDeleteSpecialtyMutation();
+   const handleDeleteSpeccialty = async () => {
+      setIsDeleting(true);
+      try{
+          await deleteSpecialty(specialtyId).unwrap();
+          setIsDeleting(false);
+          toast.success("Specialty  Deleted Successfully")
+          handleClose();
+      }
+      catch(e){
+          toast.error("Failed to Delete Specialty");
+          setIsDeleting(false)
+      }
+   }
     return (
       <>
         <div className="w-100">
@@ -15,8 +34,15 @@ function DeleteSpecialty({ handleClose }) {
               >
                 Cancel
               </button>
-              <button className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white">
-                Continue
+              <button 
+                className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+                 onClick={() => {
+                   handleDeleteSpeccialty();
+                 }}
+                >
+                {
+                   isDeleting ? <SingleSpinner /> : <>Continue</>
+                }
               </button>
             </div>
           </div>

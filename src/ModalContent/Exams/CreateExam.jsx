@@ -1,3 +1,12 @@
+import { useState } from "react";
+import { useFetchEducationLevelsQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useFetchSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useFetchExamTypesQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useAddExamMutation } from "../../Slices/Asynslices/postSlice";
+import { WeigtedMarkInput } from "../../components/FormComponents";
+import CustomDropdown from "../../components/Dropdowns";
+import { SchoolYearSelector } from "../../components/YearPicker";
 function CreateExam({ handleClose }) {
     const [isValid, setIsValid] = useState(false);
     const [formData, setFormData ] = useState({
@@ -120,7 +129,7 @@ function CreateExam({ handleClose }) {
             </select>
           ) : (
             <CustomDropdown
-              data={semester_data.semester_data}
+              data={data.data}
               displayKey={["name"]}
               valueKey={["id"]}
               filter_array_keys={["id", "name"]}
@@ -139,7 +148,7 @@ function CreateExam({ handleClose }) {
             </select>
           ) : (
             <CustomDropdown
-              data={education_level.education_level}
+              data={data.data}
               displayKey={["name"]}
               valueKey={["id"]}
               filter_array_keys={["id", "name"]}
@@ -158,7 +167,7 @@ function CreateExam({ handleClose }) {
             </select>
           ) : (
             <CustomDropdown
-              data={exam_data.exam_data}
+              data={data.data}
               displayKey={["exam_name"]}
               valueKey={["id"]}
               filter_array_keys={["id", "exam_name"]}
@@ -177,7 +186,7 @@ function CreateExam({ handleClose }) {
             </select>
           ) : (
             <CustomDropdown
-              data={specialty.specialty}
+              data={data.data}
               displayKey={["specialty_name"]}
               valueKey={["id"]}
               filter_array_keys={["id", "specialty_name"]}

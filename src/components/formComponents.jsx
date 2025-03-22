@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import * as YupValidationSchema from "../componentConfigurations/YupValidationSchema";
+import * as YupValidationSchema from  "../ComponentConfig/YupValidationSchema";
 import { Icon } from "@iconify/react";
 
 export function PhoneNumberInput({ onChange, value, onValidationChange }) {
@@ -857,7 +857,7 @@ export function DepartmentNameInput({ onValidationChange, value, onChange }) {
 }
 
 
-export function SpecialtyTitleInput({ value, onChange, onValidationChange }) {
+export function SpecialtyTitleInput({ value, onChange, onValidationChange, placeholder }) {
   const [specailtyName, setSpecailtyName] = useState( value || "");
   const [specailtyNameError, setSpecailtyNameError] = useState("");
   const [isSpecailtyNameTouched, setIsSpecailtyNameTouched] = useState(false);
@@ -888,7 +888,7 @@ export function SpecialtyTitleInput({ value, onChange, onValidationChange }) {
       <span>Specialty Name</span>
       <input
         type="text"
-        placeholder="Software Engineering"
+        placeholder={placeholder}
         className={`form-control ${
           isSpecailtyNameTouched && specailtyNameError ? "is-invalid" : ""
         } ${
@@ -909,7 +909,7 @@ export function SpecialtyTitleInput({ value, onChange, onValidationChange }) {
   );
 }
 
-export function RegistrationFeeInput({ onChange, value, onValidationChange }) {
+export function RegistrationFeeInput({ onChange, value, onValidationChange, placeholder }) {
   const [registrationFee, setRegistrationFee] = useState(value || "");
   const [registrationFeeError, setRegistrationFeeError] = useState("");
   const [isRegistrationFeeTouched, setIsRegistrationTouched] = useState(false);
@@ -940,7 +940,7 @@ export function RegistrationFeeInput({ onChange, value, onValidationChange }) {
       <span>Registration Fee</span>
       <input
         type="number"
-        placeholder="1000 $, 2000 $ etc"
+        placeholder={placeholder}
         onChange={handleRegistrationFeeChange}
         onFocus={handleRegistrationFeeFocus}
         className={`form-control ${
@@ -961,7 +961,7 @@ export function RegistrationFeeInput({ onChange, value, onValidationChange }) {
   );
 }
 
-export function SchoolFeeInput({ onChange, onValidationChange, value }) {
+export function SchoolFeeInput({ onChange, onValidationChange, value, placeholder }) {
   const [schoolFee, setSchoolFee] = useState( value || "");
   const [schoolFeeError, setSchoolFeeError] = useState("");
   const [isSchoolFeeTouched, setIsSchoolFeeTouched] = useState(false);
@@ -994,7 +994,7 @@ export function SchoolFeeInput({ onChange, onValidationChange, value }) {
         type="number"
         onChange={handleSchoolFeeChange}
         onFocus={handleSchoolFeeFocus}
-        placeholder="10000$ 2000$"
+        placeholder={placeholder}
         className={`form-control ${
           isSchoolFeeTouched && schoolFeeError ? "is-invalid" : ""
         } ${

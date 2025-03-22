@@ -50,6 +50,10 @@ function Sidebar() {
                       ? "nav-item-box-active fw-medium"
                       : location.pathname === "/teachers"
                       ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/hod"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/hos"
+                      ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -74,6 +78,10 @@ function Sidebar() {
                           ? "rotate-icon nav-dropdown-icon"
                           : location.pathname === "/teachers"
                           ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/hod"
+                          ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/hos"
+                          ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
                     />
@@ -88,6 +96,10 @@ function Sidebar() {
                       : location.pathname === "/specialties"
                       ? "subbox-container-nav ps-3"
                       : location.pathname === "/teachers"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/hod"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/hos"
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -132,6 +144,34 @@ function Sidebar() {
                           }
                         >
                           <p>Specialties</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/hod"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Head of Department</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/hos"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Head of Specialty</p>
                         </NavLink>
                       </div>
                     </div>
@@ -413,6 +453,14 @@ function Sidebar() {
                       ? "nav-item-box-active fw-medium"
                       : location.pathname === "/additionalFees"
                       ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/additionalFeeTransactions"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/registrationFeesTransactions"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/fee-payment/transactions"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/resitFeeTransactions"
+                      ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -439,6 +487,14 @@ function Sidebar() {
                           ? "rotate-icon nav-dropdown-icon"
                           : location.pathname === "/additionalFees"
                           ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/additionalFeeTransactions"
+                          ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/registrationFeesTransactions"
+                          ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/fee-payment/transactions"
+                          ? "rotate-icon nav-dropdown-icon"
+                          : location.pathname === "/resitFeeTransactions"
+                          ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
                     />
@@ -455,6 +511,14 @@ function Sidebar() {
                       : location.pathname === "/registrationFees"
                       ? "subbox-container-nav ps-3"
                       : location.pathname === "/additionalFees"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/additionalFeeTransactions"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/registrationFeesTransactions"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/fee-payment/transactions"
+                      ? "subbox-container-nav ps-3"
+                      : location.pathname === "/resitFeeTransactions"
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -548,13 +612,34 @@ function Sidebar() {
                     <p>Events</p>
                   </div>
                 </NavLink>
-                <NavLink
+                <div
                   to="/schoolElections"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : "nav-item-box-inactive text-decoration-none"
+                  className={
+                     location.pathname === "/schoolElections"
+                     ? "nav-item-box-active fw-medium"
+                     : location.pathname === "/viewElections"
+                     ? "nav-item-box-active fw-medium"
+                     : location.pathname === "/passWinners"
+                     ? "nav-item-box-active fw-medium"
+                     : location.pathname === "/passElection"
+                     ? "nav-item-box-active fw-medium"
+                     : location.pathname === "/electionRoles"
+                     ? "nav-item-box-active fw-medium"
+                     : location.pathname === "/electionApplication"
+                     ? "nav-item-box-active fw-medium"
+                     : location.pathname === "/electionCandidates"
+                     ? "nav-item-box-active fw-medium"
+                     : location.pathname === "/activeElections"
+                     ? "nav-item-box-active fw-medium"
+                     : location.pathname === "/electionResults"
+                     ? "nav-item-box-active fw-medium"
+                     : location.pathname === "/electionSettings"
+                     ? "nav-item-box-active fw-medium"
+                     : "nav-item-box-inactive"
                   }
+                  onClick={() => {
+                     navigate("schoolElections");
+                  }}
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
                     <span>
@@ -562,10 +647,22 @@ function Sidebar() {
                     </span>
                     <p>School Elections</p>
                   </div>
-                </NavLink>
+                </div>
                 <div
                   className={
                       location.pathname === "/annoucements"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/archieveAnnoucement"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/engagementAnalytics"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/expiredAnnoucement"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/scheduledAnnoucement"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/annoucementSettings"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/viewAnnoucement"
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }

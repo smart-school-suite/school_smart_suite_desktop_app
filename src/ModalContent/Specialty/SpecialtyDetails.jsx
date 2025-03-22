@@ -1,184 +1,147 @@
-function SpecialtyDetails({ row_id }) {
-    const {
-      data: specialty_details,
-      isLoading,
-      error,
-    } = useFetchSpecialtyDetailsQuery({
-      specialty_id: row_id,
-    });
-  
-    if (isLoading) {
-      return <Pageloaderspinner />;
-    }
-    return (
-      <>
-        <div className="w-100">
-          <div className="my-2">
-            <p className="font-size-sm gainsboro-color">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla
-              molestias repellendus facere voluptate?
-            </p>
-          </div>
-          <div className="d-flex align-items-center justify-content-between my-3">
-            <button
-              className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="ph:phone" />
-            </button>
-            <div
-              className="border-bottom py-2 d-flex flex-column"
-              style={{ width: "87%" }}
-            >
-              <span className="my-0">
-                {specialty_details.specialty_details[0].specialty_name}
-              </span>
-              <span className="my-0 font-size-sm gainsboro-color">
-                Specailty Name
-              </span>
-            </div>
-          </div>
-  
-          <div className="d-flex align-items-center justify-content-between my-3">
-            <button
-              className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="ph:phone" />
-            </button>
-  
-            <div
-              className="border-bottom py-2 d-flex flex-column"
-              style={{ width: "87%" }}
-            >
-              <span className="my-0">
-                {specialty_details.specialty_details[0].registration_fee}
-              </span>
-              <span className="my-0 font-size-sm gainsboro-color">
-                Registration Fee
-              </span>
-            </div>
-          </div>
-  
-          <div className="d-flex align-items-center justify-content-between my-3">
-            <button
-              className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="ph:phone" />
-            </button>
-  
-            <div
-              className="border-bottom py-2 d-flex flex-column"
-              style={{ width: "87%" }}
-            >
-              <span className="my-0">
-                {specialty_details.specialty_details[0].school_fee}
-              </span>
-              <span className="my-0 font-size-sm gainsboro-color">
-                Tuition Fee
-              </span>
-            </div>
-          </div>
-  
-          <div className="d-flex align-items-center justify-content-between my-3">
-            <button
-              className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="ph:phone" />
-            </button>
-  
-            <div
-              className="border-bottom py-2 d-flex flex-column"
-              style={{ width: "87%" }}
-            >
-              <span className="my-0">
-                {specialty_details.specialty_details[0].level.name}
-              </span>
-              <span className="my-0 font-size-sm gainsboro-color">
-                Level Name
-              </span>
-            </div>
-          </div>
-  
-          <div className="d-flex align-items-center justify-content-between my-3">
-            <button
-              className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="ph:phone" />
-            </button>
-  
-            <div
-              className="border-bottom py-2 d-flex flex-column"
-              style={{ width: "87%" }}
-            >
-              <span className="my-0">
-                {specialty_details.specialty_details[0].level.level}
-              </span>
-              <span className="my-0 font-size-sm gainsboro-color">
-                Level Number
-              </span>
-            </div>
-          </div>
-  
-          <div className="d-flex align-items-center justify-content-between my-3">
-            <button
-              className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="ph:phone" />
-            </button>
-  
-            <div
-              className="border-bottom py-2 d-flex flex-column"
-              style={{ width: "87%" }}
-            >
-              <span className="my-0">
-                {
-                  specialty_details.specialty_details[0].department
-                    .department_name
-                }
-              </span>
-              <span className="my-0 font-size-sm gainsboro-color">
-                Deparment Name
-              </span>
-            </div>
-          </div>
-          <div className="my-2 position-relative">
-            <div className="postion-absolute d-flex flex-row justify-content-end">
-              <button className="px-3 w-25 py-2 font-size-sm text-white border-none rounded-3 primary-background">
-                Close
-              </button>
-            </div>
+import { useFetchSpecialtyDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
+import Pageloaderspinner from "../../components/Spinners";
+import { Icon } from "@iconify/react";
+import { formatNumber } from "../../utils/functions";
+import { useSelector } from "react-redux";
+function SpecialtyDetails({ row_id: specialtyId, handleClose }) {
+  const currency = useSelector((state) => state.auth.user);
+  const {
+    data: specialtyDetails,
+    isLoading,
+    error,
+  } = useFetchSpecialtyDetailsQuery({
+    specialty_id: specialtyId,
+  });
+
+  if (isLoading) {
+    return <Pageloaderspinner />;
+  }
+  return (
+    <>
+      <div>
+        <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+          <h5 className="m-0">Department Details</h5>
+          <span
+            className="m-0"
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            <Icon icon="charm:cross" width="22" height="22" />
+          </span>
+        </div>
+        <div className="my-2">
+          <p className="font-size-sm gainsboro-color">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla
+            molestias repellendus facere voluptate?
+          </p>
+        </div>
+        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+          <div
+            className=" py-2 d-flex flex-column"
+          >
+            <span className="my-0 font-size-sm fw-light">
+              Specialty Name
+            </span>
+            <span className="my-0">{specialtyDetails.data.specialty_name}</span>
           </div>
         </div>
-      </>
-    );
-  }
-  export default SpecialtyDetails;
+        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+          <div
+            className=" py-2 d-flex flex-column"
+          >
+            <span className="my-0 font-size-sm fw-light">
+              Registration Fee
+            </span>
+            <span className="my-0">{formatNumber(parseFloat(specialtyDetails.data.registration_fee))} {currency.schoolDetails.school.country.currency}</span>
+          </div>
+        </div>
+        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+          <div
+            className=" py-2 d-flex flex-column"
+          >
+            <span className="my-0 font-size-sm fw-light">
+              Tuition Fee
+            </span>
+            <span className="my-0">{formatNumber(parseFloat(specialtyDetails.data.school_fee))} {currency.schoolDetails.school.country.currency}</span>
+          </div>
+        </div>
+        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+          <div
+            className=" py-2 d-flex flex-column"
+          >
+            <span className="my-0 font-size-sm fw-light">
+              Status
+            </span>
+            {
+                 specialtyDetails.data.status === "active" ? <span
+                 className=" rounded-1 font-size-sm "
+                 style={{
+                   background: "#e3f5e3",
+                   color: "#2d6830",
+                   width: "auto",
+                   maxWidth: "10rem",
+                   padding: "0.2rem",
+                 }}
+               >
+                 <span>Specailty Active</span>
+               </span> : <span
+                     className=" rounded-1 font-size-sm "
+                     style={{
+                       background: "#fffec1",
+                       color: "#a66a02",
+                       width: "auto",
+                       maxWidth: "12rem",
+                       padding: "0.2rem",
+                     }}
+                   >
+                     <span>Specailty Active</span>
+                   </span> 
+              }           
+          </div>
+        </div>
+        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+          <div
+            className=" py-2 d-flex flex-column"
+          >
+            <span className="my-0 font-size-sm fw-light">
+              Department Name
+            </span>
+            <span className="my-0">{specialtyDetails.data.department.department_name}</span>
+          </div>
+        </div>
+        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+          <div
+            className=" py-2 d-flex flex-column"
+          >
+            <span className="my-0 font-size-sm fw-light">
+              Level Name
+            </span>
+            <span className="my-0">{specialtyDetails.data.level.name}</span>
+          </div>
+        </div>
+        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+          <div
+            className=" py-2 d-flex flex-column"
+          >
+            <span className="my-0 font-size-sm fw-light">
+              Level Number
+            </span>
+            <span className="my-0">{specialtyDetails.data.level.level}</span>
+          </div>
+        </div>
+        <div className="d-flex align-items-center justify-content-between my-2 w-100">
+          <div
+            className=" py-2 d-flex flex-column"
+          >
+            <span className="my-0 font-size-sm fw-light">
+              Description
+            </span>
+            <span className="my-0">{specialtyDetails.data.description}</span>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+export default SpecialtyDetails;

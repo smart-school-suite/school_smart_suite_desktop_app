@@ -1,4 +1,23 @@
-function DeleteTeacher() {
+import { useState } from "react";
+import { useDeleteTeacherMutation } from "../../Slices/Asynslices/deleteSlice";
+import toast from "react-hot-toast";
+import { SingleSpinner } from "../../components/Spinners";
+function DeleteTeacher({ row_id:teacherId, handleClose }) {
+  const [deleteTeacher] = useDeleteTeacherMutation();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const handleDeleteTeacher = async () => {
+    setIsDeleting(true);
+     try{
+         await deleteTeacher(teacherId).unwrap();
+         toast.success("teacher deleted Succesfully");
+         setIsDeleting(false);
+         handleClose();
+     }
+     catch(e){
+        toast.error("Opps Something went wrong trying to delete teacher please try again")
+        setIsDeleting(false);
+     }
+  }
   return (
     <>
       <div className="w-100">
@@ -12,8 +31,15 @@ function DeleteTeacher() {
             <button className="border-none px-3 py-2 text-primary rounded-3 font-size-sm">
               Cancel
             </button>
-            <button className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white">
-              Continue
+            <button 
+               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+                onClick={() => {
+                   handleDeleteTeacher();
+                }}
+               >
+              {
+                 isDeleting ? <SingleSpinner /> : "Continue"
+              }
             </button>
           </div>
         </div>

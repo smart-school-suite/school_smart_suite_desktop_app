@@ -4,7 +4,10 @@ import { Toaster } from "react-hot-toast";
 function Layout(){
     return(
         <>
-        <Toaster></Toaster>
+        <Toaster
+           position="bottom-right"
+           reverseOrder={false}
+        ></Toaster>
         <div className="container">
         <div className="row">
           <Sidebar />

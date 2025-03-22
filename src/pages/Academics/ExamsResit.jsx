@@ -8,11 +8,11 @@ import CleanArrayData, {
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
 import { Icon } from "@iconify/react";
-import ActionButtonDropdown from "../actionButton";
 import { ExamResitNavbarOptions } from "../../ComponentConfig/navBarConfig";
 import { ExamResitsConfig } from "../../ComponentConfig/AgGridTableConfig";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 function ExamResits() {
-  const { data: resits, error, isLoading } = useFetchStudentResitQuery();
+  const { data: data, error, isLoading } = useFetchStudentResitQuery();
   const filter_array_keys = [
     "id",
     "student.name",
@@ -44,14 +44,14 @@ function ExamResits() {
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Number of Resits</p>
-            <h1 className="fw-bold my-0">{resits.resits.length}</h1>
+            <h1 className="fw-bold my-0">{data.data.length}</h1>
           </div>
         </div>
         <div>
           <Table
             colDefs={ExamResitsConfig({ DropdownComponent })}
             rowData={renameKeys(
-              CleanArrayData(resits.resits, filter_array_keys),
+              CleanArrayData(data.data, filter_array_keys),
               renameMapping
             )}
           />
@@ -393,16 +393,13 @@ function Details({ row_id }) {
     </>
   );
 }
-
+function Delete({ row_id }) {
+   
+}
 
 export function DropdownComponent(props) {
   const { id } = props.data;
   const actions = [
-    {
-      modalTitle: "Update Exam Resit",
-      actionTitle: "Update",
-      modalContent: Update,
-    },
     {
       modalTitle: "Exam Resit Detials",
       actionTitle: "Details",

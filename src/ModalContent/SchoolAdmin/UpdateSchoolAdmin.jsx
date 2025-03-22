@@ -1,100 +1,173 @@
 import { SingleSpinner } from "../../components/Spinners";
 import { useUpdateSchoolAdminMutation } from "../../Slices/Asynslices/updateSlice";
-const UpdateSchoolAdmin = ({ row_id, handleClose }) => {
+import { useFetchSchoolAdminDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useState } from "react";
+import { Icon } from "@iconify/react";
+import toast from "react-hot-toast";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import ToastDanger from "../../components/Toast/ToastDanger";
+const UpdateSchoolAdmin = ({ row_id: schoolAdminId, handleClose }) => {
   const [updateSchoolAdmin] = useUpdateSchoolAdminMutation();
-  const [feedback, setFeedback] = useState({
-    message: "",
-    type: null,
-    loading: false,
+  const { data: schoolAdminDetails, isLoading, error,} = useFetchSchoolAdminDetailsQuery({
+    school_admin_id: schoolAdminId,
   });
+  const [formData, setFormData] = useState({
+     name:"",
+     first_name:"",
+     last_name:"",
+     email:"",
+     role:"",
+     employment_status:"",
+     work_location:"",
+     hire_date:""
+  })
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+  const [ isUpdating, setIsUpdating ] = useState(false);
   const handleAdminUpdate = async () => {
-    setFeedback({ message: "", type: null, loading: true });
+     setIsUpdating(true)
     try {
-      await updateSchoolAdmin({ school_admin_id: row_id }).unwrap();
-      setFeedback({
-        message: "School Admin Updated Succefully",
-        type: "success",
-        loading: false,
-      });
+      await updateSchoolAdmin({ school_admin_id: schoolAdminId, updatedData:formData }).unwrap();
+      setIsUpdating(false);
+      handleClose();
+      toast.custom(<ToastSuccess 
+        title="Update Successfull ✅" 
+        description="The school administrator has been updated successfully" />
+      );
     } catch (e) {
-      setFeedback({
-        message: "Something went wrong",
-        type: "error",
-        loading: false,
-      });
+      setIsUpdating(false);
+      toast.custom(<ToastDanger
+        title="Update Failed ❌" 
+        description="❌ Something went wrong! The school administrator update failed due to an error. Please try again later."
+        />);
     }
   };
   return (
     <>
-      {feedback.loading ? (
+      {isLoading ? (
         <SingleSpinner />
       ) : (
-        <>
-          <div className="w-100 mb-4 pe-2 d-flex flex-row justify-content-between align-items-center">
-            <span className="fw-semibold fs-5">Update School Admin</span>
-            <button
-              className="border-none transparent-bg color-primary d-flex flex-row align-items-center"
-              onClick={() => {
-                handleClose();
-              }}
+        <div>
+          <div>
+            <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+            <h5 className="m-0">Update School Admin</h5>
+            <span className="m-0"
+             onClick={() => {
+               handleClose();
+             }}
             >
-              <Icon icon="ic:round-cancel" width="28" height="28" />
+            <Icon icon="charm:cross" width="22" height="22" />
+            </span>
+            </div>
+            <span className="font-size-sm">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Voluptatum sint reprehenderit tempora. Aliquid
+            </span>
+          </div>
+          <div className="d-flex flex-row align-items-center gap-2">
+          <div className="my-2">
+            <label htmlFor="firstname">First Name</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder={schoolAdminDetails.data.first_name}
+              name="first_name"
+              onChange={(e) => handleInputChange("first_name", e.target.value)}
+              value={formData.first_name}
+            />
+          </div>
+          <div className="my-2">
+            <label htmlFor="lastname">Last Name</label>
+            <input
+              type="text"
+              className="form-control"
+              name="last_name"
+              placeholder={schoolAdminDetails.data.last_name}
+              onChange={(e) => handleInputChange("last_name", e.target.value)}
+              value={formData.last_name}
+            />
+          </div>
+          </div>
+          <div className="my-2">
+            <label htmlFor="fullnames">Full Names</label>
+            <input
+              type="text"
+              className="form-control"
+              name="name"
+              placeholder={`${schoolAdminDetails.data.name}`}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              value={formData.name}
+            />
+          </div>
+          <div className="my-2">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              className="form-control"
+              placeholder={`${schoolAdminDetails.data.email}`}
+              name="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange("email", e.target.value)}
+            />
+          </div>
+          <div className="my-2">
+            <label htmlFor="role">Role</label>
+            <input 
+             type="text" 
+             className="form-control"
+             name="role"
+             value={formData.role}
+             placeholder={`${schoolAdminDetails.data.role}`}
+             onChange={(e) => handleInputChange("role", e.target.value)}
+             />
+          </div>
+          <div className="my-2">
+            <label htmlFor="employmentStatus">Employment Status</label>
+            <select className="form-select"
+             name="employment_status"
+             value={formData.employment_status}
+             onChange={(e) => handleInputChange("employment_status", e.target.value)}
+            >
+              <option  selected>{schoolAdminDetails.data.employment_status}</option>
+              <option value="Part-Time">Part Time</option>
+              <option value="Full-Time">Part Time</option>
+              <option value="Contract">Part Time</option>
+            </select>
+          </div>
+          <div className="my-2">
+            <label htmlFor="worklocation">Work Location</label>
+            <select className="form-select"
+             name="work_location"
+             value={formData.work_location}
+             onChange={(e) => handleInputChange("work_location", e.target.value)}
+            >
+              <option selected>{schoolAdminDetails.data.work_location}</option>
+              <option value="onsite">On Site</option>
+              <option value="remote">Remote</option>
+            </select>
+          </div>
+          <div className="my-1">
+            <label htmlFor="hireDate">Hire Date</label>
+            <input 
+              type="date"
+               className="form-control" 
+               name="hire_date"
+               value={formData.hire_date}
+               onChange={(e) => handleInputChange("hire_date", e.target.value)}
+               />
+          </div>
+          <div className="my-1 w-100 mt-3">
+            <button 
+              className="border-none rounded-3 p-2 w-100 primary-background text-white font-size-sm"
+              onClick={() => {
+                 handleAdminUpdate();
+              }}
+              >
+             { isUpdating ? <SingleSpinner /> : <> Update Admin</> }
             </button>
           </div>
-          {feedback.message && (
-            <div
-              className={`alert ${
-                feedback.type === "error" ? "alert-warning" : "alert-success"
-              } font-size-sm`}
-            >
-              {feedback.message}
-            </div>
-          )}
-          <div className="card w-100 border-none">
-            <FullNamesInput />
-            <EmailInput />
-            <div className="my-1">
-              <p className="my-0">Role</p>
-            </div>
-            <div className="my-1 d-flex flex-row align-items-center justify-content-between gap-2">
-              <div className="my-1 w-50">
-                <p className="my-0">Qualification</p>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Software Engineering"
-                  name=""
-                />
-              </div>
-              <div className="my-1 w-50">
-                <FieldOfStudyInput />
-              </div>
-            </div>
-            <div className="d-flex flex-row justify-content-between align-items-center gap-2">
-              <div className="my-1 w-100">
-                <p className="my-0">Work Schedule</p>
-              </div>
-            </div>
-          </div>
-          <div className="mt-4 d-flex justify-content-end gap-2 w-100">
-            <button
-              className="border-none px-3 py-2 text-primary w-50 rounded-3 font-size-sm"
-              onClick={() => {
-                handleClose();
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              className="border-none px-3 py-2 rounded-3 font-size-sm w-50 primary-background text-white"
-              onClick={() => {
-                handleAdminUpdate();
-              }}
-            >
-              Update
-            </button>
-          </div>
-        </>
+        </div>
       )}
     </>
   );

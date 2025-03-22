@@ -10,21 +10,46 @@ import {
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { CSSTransition } from "react-transition-group";
-import NotificationDropdown from "../../components/NotificationDropdown";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import ToastDanger from "../../components/Toast/ToastDanger";
+import toast from "react-hot-toast";
 function OperationalStatistics() {
   return (
     <>
       <Navbar options={DashboardNavabarOptions} />
-      <div className="container pt-4">
-        <div className="d-flex flex-row justify-content-end">
-        <NotificationDropdown />
-        </div>
-      </div>
+       <div className="my-2">
+         <ModalButton
+           action={{ modalContent:createschool }}
+         >
+          <span>Hello World</span>
+         </ModalButton>
+       </div>
+       <button
+        onClick={() => {
+           toast.custom(<ToastDanger />, {
+             duration: 7000,
+           });
+           toast.custom(<ToastSuccess />, {
+            duration:6000
+           })
+           toast.custom(<ToastWarning />, {
+             duration: 5000,});
+        }}
+       >Toast</button>
     </>
   );
 }
 export default OperationalStatistics;
 
+export function createschool(){
+  return(
+    <>
+    <h1>hello world</h1>
+    </>
+  )
+}
 export const CustomDropdown = () => {
   const [open, setOpen] = useState(false);
   const { refs, floatingStyles } = useFloating({

@@ -22,7 +22,7 @@ function NotificationDropdown() {
         !refs.reference.current?.contains(event.target) &&
         !refs.floating.current?.contains(event.target)
       ) {
-        setOpen(false);
+        setIsToggeled(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutSide);
@@ -59,7 +59,7 @@ function NotificationDropdown() {
         classNames="dropdown"
         unmountOnExit
       >
-        <div className="w-50 px-3 py-2 card border-none shadow-sm rounded-3"
+        <div className="w-50 px-3 py-2 card border-none shadow-sm rounded-3 z-3 position-absolute"
           ref={refs.setFloating}
           style={floatingStyles}
         >

@@ -2,16 +2,31 @@ import { useState } from "react";
 import { useFetchRolesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useAssignRoleMutation } from "../../Slices/Asynslices/postSlice";
 import Pageloaderspinner from "../../components/Spinners";
+import toast from "react-hot-toast";
+import ToastDanger from "../../components/Toast/ToastDanger";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function SchoolAdminRoles({ handleClose, row_id: schoolAdminId }) {
     const { data: data, error, isLoading } = useFetchRolesQuery();
     const [roles, setRoles] = useState([]);
     const [assignRole, { isLoading: isAssigning }] = useAssignRoleMutation();
     const handleSaveChanges = async () => {
-      if (roles.length > 0) {
-        await assignRole({ schoolAdminId, roles });
+      if(roles.length <= 0){
+        toast.custom(<ToastWarning 
+          title={"No Role Selected ❌"}
+          description={"⚠️ Please select at least one role to assign."}
+        />)
+      }
+      try{
+        await assignRole({ schoolAdminId, roles }).unwrap();
         handleClose();
-      } else {
-        alert("Please select a role to assign.");
+      }
+      catch(e){
+        toast.custom(
+          <ToastDanger 
+            title={"Role Assignment Failed ❌"}
+            description={"❌ Something went wrong! The role assignment failed due to an error. Please try again later."} 
+          />)
       }
     };
     function handleSelectRole(roleTitle) {
