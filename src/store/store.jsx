@@ -9,7 +9,9 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; 
 import authReducer from "../Slices/Asynslices/AuthSlice";
 import pricingReducer from "../Slices/Asynslices/subcriptionPricingSlice";
-
+import timetableReducer from "../Slices/Asynslices/TimetableSlice";
+import examtimetableReducer from "../Slices/Asynslices/ExamTimetableSlice";
+import studentScoreReducer from "../Slices/Asynslices/StudentScoreSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -33,6 +35,9 @@ const rootReducer = combineReducers({
   [deleteSlice.reducerPath]: deleteSlice.reducer,
   auth: persistReducer(authPersistConfig, authReducer), 
   pricing: pricingReducer,
+  timetable: timetableReducer,
+  examtimetable: examtimetableReducer,
+  studentScore: studentScoreReducer
 });
 
 

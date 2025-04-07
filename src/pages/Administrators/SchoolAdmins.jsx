@@ -1,4 +1,3 @@
-import Greenbutton from "../../components/Buttons";
 import { useFetchSchoolAdminsQuery } from "../../Slices/Asynslices/fetchSlice";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
 import Table from "../../components/Tables";
@@ -171,7 +170,7 @@ function ActionButtonGroup(props) {
       <ActionButtonDropdown actions={actions} row_id={id}
        style={'tableActionButton primary-background text-white font-size-sm px-2'}
       >
-         <span>Edit Admin</span>
+         <span>Edit Actions</span>
       </ActionButtonDropdown>
     </>
   );

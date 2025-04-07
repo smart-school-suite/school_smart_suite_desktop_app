@@ -26,8 +26,8 @@ export const GradesConfigurationNavbarOptions = {
       route: "/exams",
     },
     {
-      lable: "Exam Analysis",
-      route: "/exam-analysis",
+      lable: "Exam Stats",
+      route: "/exam-stats",
       icon: "icon-park-outline:market-analysis",
     },
     {
@@ -41,9 +41,9 @@ export const GradesConfigurationNavbarOptions = {
 export const ExamResitNavbarOptions = {
   route_data: [
     {
-      lable: "Student Resits",
+      lable: "Accessed Students",
       icon: "streamline:ai-redo-spark",
-      route: "/exam-resits",
+      route: "/accessed-resit-students",
     },
     {
       lable: "Resit Courses",
@@ -53,7 +53,7 @@ export const ExamResitNavbarOptions = {
     {
       lable: "Resit Statistics",
       icon: "nimbus:stats",
-      route: "/resit-statistics",
+      route: "/resit-stats",
     },
   ],
 };
@@ -151,9 +151,9 @@ export const ExamTimeTableNavbarOptions = {
       icon: "healthicons:i-exam-multiple-choice-outline",
     },
     {
-      lable: "School Timetable",
+      lable: "Resit Timetable",
       icon: "teenyicons:school-outline",
-      route: "/school-timetable",
+      route: "/resit-timetable",
     },
   ],
 };
@@ -166,14 +166,14 @@ export const ScoresNavBarOptions = {
       route: "/scores",
     },
     {
+      lable: "Score Statistics",
+      route: "/score-stats",
+      icon: "material-symbols:query-stats",
+    },
+    {
       lable: "Accessed Students",
       icon: "ph:exam-bold",
       route: "/accessed-students",
-    },
-    {
-      lable: "Score Statistics",
-      route: "/scores-analytics",
-      icon: "material-symbols:query-stats",
     },
   ],
 };

@@ -412,7 +412,8 @@ aside {
 .score-table-aggregator {
     height: auto;
     max-height: 60dvh;
-    overflow-y: scroll;
+    overflow-y: auto;
+    display: block;
     overflow-x: hidden;
 }
 
@@ -459,17 +460,12 @@ aside {
     font-weight: 500;
 }
 
-.timetable-container {
-    height: auto;
-    max-height: 90dvh;
-    overflow-y: scroll;
-    transition: all 0.4s;
-}
 
 .scrollable-box {
     max-height: 25dvh;
     height: auto;
-    overflow-y: scroll;
+    overflow-y: auto;
+    display: block;
     overflow-x: hidden;
 }
 
@@ -567,7 +563,8 @@ aside {
 .table-container {
     max-height: 73dvh;
     height: auto;
-    overflow-y: scroll;
+    overflow-y: auto;
+    display: block;
     scroll-behavior: smooth;
 }
 
@@ -633,7 +630,8 @@ button.disabled {
     scrollbar-width: 0.2rem;
     scrollbar-gutter: 1rem;
     max-height: 10rem;
-    overflow-y: scroll;
+    overflow-y: auto;
+    display: block;
     overflow-x: hidden;
 }
 
@@ -705,7 +703,8 @@ button.disabled {
 .scrollable-modial-body {
     height: auto;
     max-height: 60dvh;
-    overflow-y: scroll;
+    overflow-y: auto;
+    display: block;
     overflow-x: hidden;
     scrollbar-width: smooth;
     position: relative;
@@ -714,7 +713,8 @@ button.disabled {
 .scrollable-list {
     height: auto;
     max-height: 80dvh;
-    overflow-y: scroll;
+    overflow-y: auto;
+    display: block;
     overflow-x: hidden;
     scroll-behavior: smooth;
     transition: all 0.4s;
@@ -742,13 +742,6 @@ button.disabled {
     transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
 }
 
-.custom-modal .modal-content {
-    border-radius: 0.9rem !important;
-    border: none;
-    outline: none;
-    padding-top: 0.2rem;
-    padding-bottom: 1rem;
-}
 
 .day.disabled {
     color: gray;
@@ -833,7 +826,8 @@ button.disabled {
 .candidate-box {
     height: auto;
     max-height: 85dvh;
-    overflow-y: scroll;
+    overflow-y: auto;
+    display: block;
     overflow-x: hidden;
 }
 
@@ -871,3 +865,122 @@ button.disabled {
     border: 1px solid #9ed89d;
     color: #0e2510;
   }
+
+  .custom-modal .modal-content {
+    border-radius: 0.9rem !important;
+    border: none;
+    outline: none;
+    padding-top: 0.2rem;
+    padding-bottom: 1rem;
+}
+.modal-90w{
+    width: 90%;
+}
+th{
+    font-size: var(--font-size-md);
+    font-weight: 400;
+}
+thead{
+    background-color: var(--acent-color-one) !important;
+}
+.timetable-container{
+    max-height: 75dvh;
+    overflow-y: auto;
+    display: block;
+}
+.timeinput-dropdown{
+    height: auto;
+    max-height: 20dvh;
+    overflow-y: auto;
+}
+.time{
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+}
+.timeinput-dropdown{
+    cursor: pointer;
+}
+.timeinput-dropdown span{
+    text-align: center;
+}
+.timeinput-dropdown span:hover{
+    background-color: var(--primary-color-50);
+}
+.am-input{
+    height: 10.5dvh;
+}
+.am-input span:hover{
+    background-color: var(--primary-color-50);
+}
+.timeinput-dropdown::-webkit-scrollbar {
+    width: 1px;
+}
+
+.timeinput-dropdown::-webkit-scrollbar-thumb {
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.timeinput-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #fff;
+}
+.grades-thead tr td{
+     font-size: 0.9rem;
+}
+.grades-thead tr{
+    height: 6dvh;
+}
+.grades-box{
+  height: auto;
+  max-height: 80dvh;
+  overflow-y: auto;
+}
+
+.grades-box::-webkit-scrollbar-thumb {
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.grades-box::-webkit-scrollbar-thumb:hover {
+    background: #fff;
+}
+
+.grades-box::-webkit-scrollbar {
+    width: 1px;
+}
+
+.modalContainer{
+    height: auto;
+    max-height: 75dvh;
+    overflow-y: auto;
+}
+
+.modalContainer::-webkit-scrollbar-thumb {
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.modalContainer::-webkit-scrollbar-thumb:hover {
+    background: #fff;
+}
+
+.modalContainer::-webkit-scrollbar {
+    width: 1px;
+}
+.examtimetable-body td{
+    width: 20%;
+    position: relative;
+}
+.grades-form td{
+    width: 12.5%;
+}
+.grades-form-box{
+    display: flex;
+    flex-direction: column;
+    height: 85dvh;
+}
+.grades-form-table-box{
+    height: auto;
+    max-height: 83dvh;
+    overflow-y: auto;
+}

@@ -35,3 +35,44 @@ export const Administratorpaths = [
     "/teachers",
     "/courses"
 ];
+
+export const AcademicRoutes = {
+    general:[
+        "/exams",
+        "/scores",
+        "/time-table",
+        "/exam-resits",
+        "/courses",
+        "/semesters",
+        "/grades-configuration",
+        "/exam-timetable",
+        "/resit-timetable",
+        "/course-stats",
+        "/score-stats",
+        "/exam-stats",
+        "/accessed-students",
+        "/accessed-resit-students",
+        "/resit-courses",
+        "/resit-stats"
+    ],
+    timetableRoutes:[
+        "/time-table",
+        "/exam-timetable",
+        "/resit-timetable",
+    ],
+    examRoutes:[
+        "/exams",
+        "/grades-configuration",
+        "/exam-stats"
+    ],
+    scoreRoutes:[
+       "/accessed-students",
+        "/score-stats",
+        "/scores",
+    ],
+    examResits:[
+        "/accessed-resit-students",
+        "/resit-courses",
+        "/resit-stats"
+    ]
+}

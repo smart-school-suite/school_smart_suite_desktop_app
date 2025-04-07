@@ -1,7 +1,9 @@
-
-function CourseDetails({ row_id, handleClose }) {
-    const { data: course_details, isLoading, error } = useFetchCourseDetailsQuery({
-      course_id: row_id,
+import { useFetchCourseDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
+import Pageloaderspinner from "../../components/Spinners";
+import { Icon } from "@iconify/react";
+function CourseDetails({ row_id:courseId, handleClose }) {
+    const { data: courseDetails, isLoading } = useFetchCourseDetailsQuery({
+      course_id: courseId,
     });
     if (isLoading) {
       return <Pageloaderspinner />;
@@ -9,6 +11,17 @@ function CourseDetails({ row_id, handleClose }) {
     return (
       <>
         <div className="w-100">
+        <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+          <h5 className="m-0">Course Details</h5>
+          <span
+            className="m-0"
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            <Icon icon="charm:cross" width="22" height="22" />
+          </span>
+        </div>
           <div className="my-2">
             <p className="font-size-sm gainsboro-color">
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla
@@ -31,7 +44,7 @@ function CourseDetails({ row_id, handleClose }) {
               style={{ width: "87%" }}
             >
               <span className="my-0">
-                {course_details.course_details[0].course_title}
+                {courseDetails.data.course_title}
               </span>
               <span className="my-0 font-size-sm gainsboro-color">
                 Course Title
@@ -56,7 +69,7 @@ function CourseDetails({ row_id, handleClose }) {
               style={{ width: "87%" }}
             >
               <span className="my-0">
-                {course_details.course_details[0].credit} Credit
+                {courseDetails.data.credit} Credit
               </span>
               <span className="my-0 font-size-sm gainsboro-color">
                 Course Credit
@@ -81,7 +94,7 @@ function CourseDetails({ row_id, handleClose }) {
               style={{ width: "87%" }}
             >
               <span className="my-0">
-                {course_details.course_details[0].course_code}
+                {courseDetails.data.course_code}
               </span>
               <span className="my-0 font-size-sm gainsboro-color">
                 Course Code
@@ -106,7 +119,7 @@ function CourseDetails({ row_id, handleClose }) {
               style={{ width: "87%" }}
             >
               <span className="my-0">
-                {course_details.course_details[0].level.name}
+                {courseDetails.data.level.name}
               </span>
               <span className="my-0 font-size-sm gainsboro-color">
                 Level Title
@@ -131,7 +144,7 @@ function CourseDetails({ row_id, handleClose }) {
               style={{ width: "87%" }}
             >
               <span className="my-0">
-                {course_details.course_details[0].level.level}
+                {courseDetails.data.level.level}
               </span>
               <span className="my-0 font-size-sm gainsboro-color">
                 Level Code
@@ -156,7 +169,7 @@ function CourseDetails({ row_id, handleClose }) {
               style={{ width: "87%" }}
             >
               <span className="my-0">
-                {course_details.course_details[0].semester.name}
+                {courseDetails.data.semester.name}
               </span>
               <span className="my-0 font-size-sm gainsboro-color">
                 Semester Name
@@ -177,25 +190,15 @@ function CourseDetails({ row_id, handleClose }) {
             </button>
   
             <div
-              className="border-bottom py-2 d-flex flex-column"
+              className="py-2 d-flex flex-column"
               style={{ width: "87%" }}
             >
               <span className="my-0">
-                {course_details.course_details[0].specialty.specialty_name}
+                {courseDetails.data.specialty.specialty_name}
               </span>
               <span className="my-0 font-size-sm gainsboro-color">
                 Specailty Name
               </span>
-            </div>
-          </div>
-          <div className="my-2 position-relative">
-            <div className="postion-absolute d-flex flex-row justify-content-end">
-              <button 
-              className="px-3 w-25 py-2 font-size-sm text-white border-none rounded-3 primary-background"
-               onClick={handleClose}
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

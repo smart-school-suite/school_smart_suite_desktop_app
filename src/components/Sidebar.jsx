@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { IsPathInRoutes } from "../utils/functions";
-import { Emailpaths, Mediapaths, Settingspaths } from "../utils/paths";
+import { Settingspaths, AcademicRoutes } from "../utils/paths";
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -194,19 +194,8 @@ function Sidebar() {
 
                 <div
                   className={
-                    location.pathname === "/exams"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/scores"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/time-table"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/exam-resits"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/courses"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/semesters"
-                       ? "nav-item-box-active fw-medium"
-                      : "nav-item-box-inactive"
+                    IsPathInRoutes(AcademicRoutes.general) ? 
+                    "nav-item-box-active fw-medium" : "nav-item-box-inactive"
                   }
                   onClick={() => {
                     navigate("/exams");
@@ -225,19 +214,9 @@ function Sidebar() {
                     <Icon
                       icon="octicon:chevron-down-24"
                       className={
-                        location.pathname === "/exams"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/scores"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/time-table"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/exam-resits"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/courses"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/semesters"
-                          ?  "rotate-icon nav-dropdown-icon"
-                          : "nav-dropdown-icon"
+                        IsPathInRoutes(AcademicRoutes.general) ? 
+                         "rotate-icon nav-dropdown-icon" :
+                         "nav-dropdown-icon"
                       }
                     />
                   </span>
@@ -245,48 +224,42 @@ function Sidebar() {
 
                 <div
                   className={
-                    location.pathname === "/exams"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/scores"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/time-table"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/exam-resits"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/courses"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/semesters"
-                      ? "subbox-container-nav ps-3"
-                      : "subbox-container-nav-inactive"
+                    IsPathInRoutes(AcademicRoutes.general) ? 
+                    "subbox-container-nav ps-3" :
+                    "subbox-container-nav-inactive"
                   }
                 >
                   <div className="drop-down-container">
                     <div className="box-nav">
                       <div className="subbox-nav">
-                        <NavLink
-                          to="/exams"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
+                        <p
+                          onClick={() => {
+                             navigate("/exams")
+                          }}
+                          className={
+                            IsPathInRoutes(AcademicRoutes.examRoutes) ? 
+                             "text-decoration-none fw-medium color-primary pointer-cursor"
+                             : "text-decoration-none gainsboro-color pointer-cursor"
                           }
                         >
-                          <p>Exams</p>
-                        </NavLink>
+                          Exams
+                        </p>
                       </div>
                     </div>
                     <div className="box-nav">
                       <div className="subbox-nav">
-                        <NavLink
-                          to="/scores"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
+                        <span
+                          className={
+                             IsPathInRoutes(AcademicRoutes.scoreRoutes) ? 
+                             "text-decoration-none fw-medium color-primary pointer-cursor"
+                             : "text-decoration-none gainsboro-color pointer-cursor"
                           }
+                          onClick={() => {
+                             navigate("/scores")
+                          }}
                         >
-                          <p>Student Scores</p>
-                        </NavLink>
+                          Student Scores
+                        </span>
                       </div>
                     </div>
                     <div className="box-nav">
@@ -305,30 +278,32 @@ function Sidebar() {
                     </div>
                     <div className="box-nav">
                       <div className="subbox-nav">
-                        <NavLink
-                          to="/time-table"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
+                        <span
+                          onClick={() => {
+                             navigate("/time-table")
+                          }}
+                          className={
+                            IsPathInRoutes(AcademicRoutes.timetableRoutes) ? 
+                             "text-decoration-none fw-medium color-primary pointer-cursor"
+                             : "text-decoration-none gainsboro-color pointer-cursor"
                           }
-                        >
-                          <p>Timet Table</p>
-                        </NavLink>
+                        >Time Table</span>
                       </div>
                     </div>
                     <div className="box-nav">
                       <div className="subbox-nav">
-                        <NavLink
-                          to="/exam-resits"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
+                        <span
+                          onClick={() => {
+                             navigate("/accessed-resit-students")
+                          }}
+                          className={
+                             IsPathInRoutes(AcademicRoutes.examResits) ? 
+                             "text-decoration-none fw-medium color-primary pointer-cursor"
+                             : "text-decoration-none gainsboro-color pointer-cursor"
                           }
                         >
-                          <p>Exam Resits</p>
-                        </NavLink>
+                          Exam Resits
+                        </span>
                       </div>
                     </div>
                     <div className="box-nav">
@@ -392,6 +367,8 @@ function Sidebar() {
                       ? "subbox-container-nav ps-3"
                       : location.pathname === "/student-batches" 
                       ? "subbox-container-nav ps-3"
+                      : location.pathname === "/studentDropout"
+                      ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
                 >
@@ -407,6 +384,20 @@ function Sidebar() {
                           }
                         >
                           <p>Students</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/studentDropout"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Student Dropouts</p>
                         </NavLink>
                       </div>
                     </div>

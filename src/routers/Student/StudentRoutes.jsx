@@ -5,12 +5,22 @@ const Students = React.lazy(() => import("../../pages/Student/Students"));
 const StudentBatches = React.lazy(() => import("../../pages/Student/studentBatches"));
 const StudentAcademicStats = React.lazy(() => import("../../pages/Student/Statistics/Academic/StudentAcademicStats"));
 const StudentFinancialStats = React.lazy(() => import("../../pages/Student/Statistics/Financial/StudentFinancialStats"));
+const StudentDropouts = React.lazy(() => import("../../pages/Student/StudentDropouts"));
 const StudentRoutes = [
     <Route key={"parents"} path="/parents" element={
         <Suspense>
             <Parents />
         </Suspense>
     } />,
+    <Route 
+      key={"studentDropout"}
+      path="/studentDropout"
+      element={
+         <Suspense>
+            <StudentDropouts />
+         </Suspense>
+      }
+    />,
     <Route key={"students"} path="/students" element={
         <Suspense>
             <Students />

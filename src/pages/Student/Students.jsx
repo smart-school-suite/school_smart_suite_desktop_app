@@ -1,22 +1,18 @@
 import Navbar from "../../components/Navbar";
 import { useFetchStudentsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners";
-import Greenbutton from "../../components/Buttons";
 import Table from "../../components/Tables";
 import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { StudentnavBarOptions } from "../../ComponentConfig/navBarConfig";
 import { StudentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import AssignStudent from "../../ModalContent/Student/AssignStudent";
 import DeactivateStudent from "../../ModalContent/Student/DeactivateStudent";
 import DeleteStudent from "../../ModalContent/Student/DeleteStudent";
-import SanctionStudent from "../../ModalContent/Student/SanctionStudent";
 import StudentDetails from "../../ModalContent/Student/StudentDetails";
-import StudentPerformance from "../../ModalContent/Student/StudentPerformance";
-import SuspendStudent from "../../ModalContent/Student/SuspendStudent";
 import UpdateStudent from "../../ModalContent/Student/UpdateStudent";
-import DismissStudent from "../../ModalContent/Student/DismissStudent";
+import CreateStudent from "../../ModalContent/Student/CreateStudent";
+import MarkAsDropout from "../../ModalContent/Student/MarkAsDropout";
 function Students() {
-  const { data: data, error, isLoading } = useFetchStudentsQuery();
+  const { data: data, isLoading } = useFetchStudentsQuery();
   if (isLoading) {
     return <Pageloaderspinner />;
   }
@@ -31,7 +27,8 @@ function Students() {
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
-              classname="border-none rounded-3 green-bg text-white px-3 py-2"
+              action={{ modalContent:CreateStudent }}
+              classname="border-none rounded-3 green-bg font-size-sm text-white px-3 py-2"
             >
               <span className="font-size-sm">Create Student</span>
             </ModalButton>
@@ -50,49 +47,24 @@ export function DropdownComponent(props) {
   const { id } = props.data;
   const actions = [
     {
-      modalTitle: "Update Student",
-      actionTitle: "Update",
+      actionTitle: "Update Student",
       modalContent: UpdateStudent,
     },
     {
-      modalTitle: "Student Details",
-      actionTitle: "Details",
+      actionTitle: "Student Details",
       modalContent: StudentDetails,
     },
     {
-      modalTitle: "Delete Student",
-      actionTitle: "Delete",
+      actionTitle: "Delete Student",
       modalContent: DeleteStudent,
     },
     {
-      modalTitle: "Student Performance",
-      actionTitle: "Peformance",
-      modalContent: StudentPerformance,
-    },
-    {
-      modalTitle: "Dismiss Student",
-      actionTitle: "Dimiss",
-      modalContent: DismissStudent,
-    },
-    {
-      modalTitle: "Sanction Student",
-      actionTitle: "Sanction",
-      modalContent: SanctionStudent,
-    },
-    {
-      modalTitle: "Suspend Student",
-      actionTitle: "Suspend",
-      modalContent: SuspendStudent,
-    },
-    {
-      modalTitle: "Deactivate Student",
-      actionTitle: "Deactivate",
+      actionTitle: "Account Status",
       modalContent: DeactivateStudent,
     },
     {
-      modalTitle: "Assign",
-      actionTitle: "Assign",
-      modalContent: AssignStudent,
+      actionTitle: "Mark As Dropout",
+      modalContent: MarkAsDropout,
     },
   ];
   return (

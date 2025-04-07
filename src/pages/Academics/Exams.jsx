@@ -2,16 +2,19 @@ import Navbar from "../../components/Navbar";
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
 import { useFetchExamsQuery } from "../../Slices/Asynslices/fetchSlice";
-import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { GradesConfigurationNavbarOptions } from "../../ComponentConfig/navBarConfig";
 import { ExamsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import CreateExam from "../../ModalContent/Exams/CreateExam";
 import DeleteExam from "../../ModalContent/Exams/DeleteExam";
 import ExamDetails from "../../ModalContent/Exams/ExamDetails";
 import UpdateExam from "../../ModalContent/Exams/UpdateExam";
+import AddExamGrading from "../../ModalContent/Exams/AddExamGrading";
 import { Icon } from "@iconify/react";
 function Exams() {
-  const { data: data, error, isLoading } = useFetchExamsQuery();
+  const { data: data, isLoading } = useFetchExamsQuery();
   if (isLoading) {
     return <Pageloaderspinner />;
   }
@@ -27,11 +30,11 @@ function Exams() {
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
               classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 gap-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+                "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
               }
               action={{ modalContent: CreateExam }}
             >
-              <Icon icon="icons8:plus"  className="font-size-md"/>
+              <Icon icon="icons8:plus" className="font-size-md" />
               <span className="font-size-sm">Create Exam</span>
             </ModalButton>
           </div>
@@ -52,32 +55,36 @@ function Exams() {
 }
 export default Exams;
 
-
 export function DropdownComponent(props) {
   const { id } = props.data;
   const actions = [
     {
-      modalTitle: "Update Parent",
       actionTitle: "Update",
       modalContent: UpdateExam,
     },
     {
-      modalTitle: "Parent Details",
       actionTitle: "Details",
       modalContent: ExamDetails,
     },
     {
-      modalTitle: "Delete Parent",
       actionTitle: "Delete",
-      modalContent: DeleteExam ,
+      modalContent: DeleteExam,
     },
+    {
+      modalContent:AddExamGrading,
+      actionTitle: "Add Grading",
+    }
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} 
-       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      <ActionButtonDropdown
+        actions={actions}
+        row_id={id}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
       >
-       <span>Edit Exam</span>
+        <span>Edit Actions</span>
       </ActionButtonDropdown>
     </>
   );

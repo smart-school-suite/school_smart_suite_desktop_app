@@ -1,0 +1,263 @@
+import { Icon } from "@iconify/react";
+import {
+  useFetchLetterGradesQuery,
+  useFetchGradesCategoryQuery
+} from "../../Slices/Asynslices/fetchSlice";
+import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners";
+import { useEffect, useState } from "react";
+import { useAddGradeMutation } from "../../Slices/Asynslices/postSlice";
+import toast from "react-hot-toast";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import ToastDanger from "../../components/Toast/ToastDanger";
+function ConfigureGrades({ handleClose }) {
+  const [formData, setFormData] = useState([]);
+  const [isCreating, setIsCreating] = useState(false);
+  const [categoryId, setCategoryId] = useState("");
+  const [maxScore, setMaxScore] = useState(0.0);
+  const { data: letterGrades, isLoading: isLetterGradeLoading } =
+    useFetchLetterGradesQuery();
+  const { data: gradesCategory, isLoading: isGradesCategoryLoading } =
+  useFetchGradesCategoryQuery(); 
+   useEffect(() => {
+    if (letterGrades?.data) {
+      const preSetFormData = letterGrades.data.map((item) => ({
+        letter_grade_id: item.id,
+        minimum_score: 0.0,
+        maximum_score: 0.0,
+        determinant: "",
+        grade_status: "",
+        grades_category_id:"",
+        grade_points: 0.0,
+      }));
+      setFormData(preSetFormData);
+    }
+  }, [letterGrades]);
+
+  const handleInputChange = (index, field, value) => {
+    setFormData((prevState) => {
+      const updatedFormData = [...prevState];
+      updatedFormData[index] = {
+        ...prevState[index],
+        [field]: value,
+      };
+      return updatedFormData;
+    });
+  };
+  const [addGrade] = useAddGradeMutation();
+  const handleCreateGrades = async () => {
+    if(!categoryId || categoryId === ""){
+      return
+    }
+    const payload = {
+      grades: formData
+        .filter(
+          (items) => items.determinant !== "" || items.grade_status !== ""
+        )
+        .map((grade) => ({
+          letter_grade_id: grade.letter_grade_id,
+          minimum_score: parseFloat(grade.minimum_score),
+          maximum_score: parseFloat(grade.maximum_score),
+          grade_points: parseFloat(grade.grade_points),
+          determinant: grade.determinant,
+          exam_id: grade.exam_id,
+          grade_status: grade.grade_status,
+          grades_category_id:categoryId,
+          max_score:maxScore
+        })),
+    };
+    setIsCreating(true);
+    try {
+      await addGrade(payload).unwrap();
+      handleClose();
+      setIsCreating(false);
+      toast.custom(
+        <ToastSuccess
+          title={"Creation Successfull ✅"}
+          description={"The Exam Grades has been created successfully "}
+        />
+      );
+    } catch (error) {
+      setIsCreating(false);
+      toast.custom(
+        <ToastDanger
+          title={"Something went wrong ❌"}
+          description={
+            " ❌ Something went wrong! The Grades failed due to an error. Please try again later."
+          }
+        />
+      );
+    }
+  };
+
+  if (isLetterGradeLoading) {
+    return <Pageloaderspinner />;
+  }
+
+  return (
+    <>
+      <div className="w-100">
+        <div className="d-flex flex-row align-items-center">
+          <div className="block w-100">
+            <div className="d-flex flex-row align-items-center justify-content-between w-100 mb-3">
+              <h5 className="m-0">Configure CA grades</h5>
+              <span className="m-0" onClick={handleClose}>
+                <Icon icon="charm:cross" width="22" height="22" />
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="d-flex flex-row justify-content-end gap-2 ">
+        <div className="d-flex flex-row gap-2 align-items-center mb-2">
+          <input 
+           type="number"
+           className="form-control"
+           value={maxScore}
+           step={"0.01"}
+           onChange={(e) => setMaxScore(e.target.value)}  
+         />
+        <select className="form-select"
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+          >
+            {
+              isGradesCategoryLoading ? <option selected>Loading ...........</option> : 
+              gradesCategory.data.map((items) => (
+                <option value={items.id}>{items.title}</option>
+              ))
+            }
+          </select>
+          <button
+            className="py-2 primary-background border-none rounded-2 px-3 font-size-sm text-white"
+            style={{
+               width:"20rem"
+            }}
+            onClick={() => {
+              handleCreateGrades();
+            }}
+          >
+            {isCreating ? <SingleSpinner /> : "Submit Grades"}
+          </button>
+        </div>
+        </div>
+        <div className="card border grades-box">
+          <table className="table table-responsive">
+            <thead className="grades-thead">
+              <tr>
+                <th className="text-center">Letter Grade</th>
+                <th className="text-center">Status</th>
+                <th className="text-center">Determinant</th>
+                <th className="text-center">Grade Points</th>
+                <th className="text-center">Min Score</th>
+                <th className="text-center">Max Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {letterGrades.data.map((item, index) => (
+                <tr key={item.id}>
+                  <td style={{ width: "11%", textAlign: "center" }}>
+                    {item.letter_grade}
+                  </td>
+                  <td>
+                    <select
+                      className="form-select"
+                      name="grade_status"
+                      value={
+                        formData[index] ? formData[index].grade_status : ""
+                      }
+                      onChange={(e) =>
+                        handleInputChange(index, "grade_status", e.target.value)
+                      }
+                    >
+                      <option selected>Open to select status</option>
+                      <option value="pass">Pass</option>
+                      <option value="fail">Failed</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select
+                      className="form-select"
+                      name="determinant"
+                      value={formData[index] ? formData[index].determinant : ""}
+                      onChange={(e) =>
+                        handleInputChange(index, "determinant", e.target.value)
+                      }
+                    >
+                      <option selected>Open to select</option>
+                      <option value="Excellent">Excellent</option>
+                      <option value="Outstanding">Outstanding</option>
+                      <option value="Very Good">Very Good</option>
+                      <option value="Good">Good</option>
+                      <option value="Satisfactory">Satisfactory</option>
+                      <option value="Fair">Fair</option>
+                      <option value="Unsatisfactory">Unsatisfactory</option>
+                      <option value="Poor">Poor</option>
+                      <option value="Inadequate">Inadequate</option>
+                      <option value="Below Average">Below Average</option>
+                      <option value="Marginal">Marginal</option>
+                      <option value="Commendable">Commendable</option>
+                      <option value="Promising">Promising</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      className="form-control"
+                      step="0.01"
+                      name="grade_points"
+                      value={
+                        formData[index] ? formData[index].grade_points : ""
+                      }
+                      placeholder="4.00 - 3.00"
+                      onChange={(e) =>
+                        handleInputChange(index, "grade_points", e.target.value)
+                      }
+                    />
+                  </td>
+                  <td style={{ width: "11%" }}>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={
+                        formData[index] ? formData[index].minimum_score : ""
+                      }
+                      name="minimum_score"
+                      step="0.01"
+                      onChange={(e) =>
+                        handleInputChange(
+                          index,
+                          "minimum_score",
+                          e.target.value
+                        )
+                      }
+                      
+                    />
+                  </td>
+                  <td style={{ width: "11%" }}>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={
+                        formData[index] ? formData[index].maximum_score : ""
+                      }
+                      name="maximum_score"
+                      step="0.01"
+                      onChange={(e) =>
+                        handleInputChange(
+                          index,
+                          "maximum_score",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default ConfigureGrades;

@@ -40,7 +40,7 @@ export const deleteSlice = createApi({
         url: `course/delete-course/${course_id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["student"],
+      invalidatesTags: ["course"],
     }),
     deleteDepartment: builder.mutation({
       query: (department_id) => ({
@@ -56,16 +56,9 @@ export const deleteSlice = createApi({
         }),
         invalidatesTags: ["event"],
       }),
-      deleteExamTimeTable: builder.mutation({
-        query: (examtimetable_id) => ({
-          url: `exam-timetable/delete/exam-time-table/${examtimetable_id}`,
-          method: "DELETE",
-        }),
-        invalidatesTags: ["ExamTimeTable"], 
-      }),
       deleteExam: builder.mutation({
-        query: (exam_id) => ({
-          url: `exams/delete-exams/${exam_id}`,
+        query: (examId) => ({
+          url: `exams/delete-exams/${examId}`,
           method: "DELETE",
         }),
         invalidatesTags: ["exam"],
@@ -78,8 +71,8 @@ export const deleteSlice = createApi({
         invalidatesTags: ["PaymentRecord"], 
       }),
       deleteExamGrade: builder.mutation({
-        query: (grade_id) => ({
-          url: `grades/delete-grade/${grade_id}`,
+        query: (examId) => ({
+          url: `grades/delete-grade/${examId}`,
           method: "DELETE",
         }),
         invalidatesTags: ["examGrade"],
@@ -245,6 +238,30 @@ export const deleteSlice = createApi({
            method: "DELETE",
          }),
          invalidatesTags: ["hod"],
+      }),
+      deleteSchoolSemester: builder.mutation({
+         query: (schoolSemesterId) => ({
+            url:`school-semesters/delete-school-semeter/${schoolSemesterId}`,
+            method:"DELETE"
+         })
+      }),
+      deleteExamTimetableEntry: builder.mutation({
+         query: (timetableEntryId) => ({
+            url:`exam-timetable/deleteTimetableEntry/${timetableEntryId}`,
+            method:"DELETE"
+         })
+      }),
+      deleteExamTimetable: builder.mutation({
+         query: (examId) => ({
+            url:`exam-timetable/deleteTimeTable/${examId}`,
+            method:"DELETE"
+         })
+      }),
+      deleteResitTimetable: builder.mutation({
+         query: (examId) => ({
+            url:`student-resit/deleteResitTimetable/${examId}`,
+            method:'DELTE'
+         })
       })
   }),
 });
@@ -257,7 +274,6 @@ export const {
   useDeleteEventMutation,
   useDeleteExamGradeMutation,
   useDeleteExamMutation,
-  useDeleteExamTimeTableMutation,
   useDeleteParentMutation,
   useDeletePaymentRecordMutation,
   useDeleteSchoolAdminMutation,
@@ -281,5 +297,9 @@ export const {
   useReverseResitFeeTransactionMutation,
   useReverseAdditionalFeeTransactionMutation,
   useRemoveHeadOfSpecialtyMutation,
-  useRemoveHeadOfDepartmentMutation
+  useRemoveHeadOfDepartmentMutation,
+  useDeleteSchoolSemesterMutation,
+  useDeleteExamTimetableEntryMutation,
+  useDeleteExamTimetableMutation,
+  useDeleteResitTimetableMutation
 } = deleteSlice;

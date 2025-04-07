@@ -6,13 +6,17 @@ import { AccessedStudentsTableConfig } from "../../ComponentConfig/AgGridTableCo
 import { useFetchAccessedStudentsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { ScoresNavBarOptions } from "../../ComponentConfig/navBarConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import SummitScores from "../../ModalContent/AccessedStudent/SummitScores";
+import RemoveAccessedStudents from "../../ModalContent/AccessedStudent/RemoveAccessedStudent";
 function AccessedStudents() {
   const { data: data, error, isLoading } = useFetchAccessedStudentsQuery();
   const filter_array_keys = [
     "id",
     "student.name",
+    "student.id",
     "student.specialty.specialty_name",
     "student.level.name",
+    "exam.id",
     "exam.examtype.exam_name",
     "student.level.level",
     "student_accessed",
@@ -24,7 +28,9 @@ function AccessedStudents() {
     "student.specialty.specialty_name":"specialty_name",
     "student.level.name":"level_name",
     "student.level.level":"level_number",
+    "student.id":"student_id",
     "exam.examtype.exam_name":"exam_name",
+     "exam.id" : "exam_id",
     "student_accessed":"student_accessed",
     "grades_submitted":"grades_submitted"
   };
@@ -56,34 +62,30 @@ function AccessedStudents() {
 export default AccessedStudents;
 
 export function DropdownComponent(props) {
-  const { id } = props.data;
+  const { id, student_id, exam_id } = props.data;
   const actions = [
     {
       actionTitle: "Submit Scores",
-      modalContent: SubmitScores,
+      modalContent: SummitScores,
     },
     {
       actionTitle: "Delete Accessed Student",
-      modalContent: DeleteAccessedStudent,
+      modalContent: RemoveAccessedStudents,
     }
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} />
+      <ActionButtonDropdown
+        actions={actions}
+        row_id={id}
+        studentId={student_id}
+        examId={exam_id}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
+      >
+        <span>Edit Actions</span>
+      </ActionButtonDropdown>
     </>
   );
-}
-
-function SubmitScores(){
-  return(
-    <>
-    </>
-  )
-}
-
-function DeleteAccessedStudent(){
-   return(
-    <>
-    </>
-   )
 }

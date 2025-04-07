@@ -10,7 +10,16 @@ import {
   shift,
   autoUpdate,
 } from "@floating-ui/react";
-function ActionButtonDropdown({ actions, row_id, children, style }) {
+function ActionButtonDropdown({
+  actions,
+  row_id,
+  children,
+  style,
+  specialtyId,
+  batchId,
+  examId,
+  studentId,
+}) {
   const key = uuidv4();
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -33,7 +42,16 @@ function ActionButtonDropdown({ actions, row_id, children, style }) {
     return () => document.removeEventListener("mousedown", handleClickOutSide);
   }, [refs]);
   const handleShow = (Component) => {
-    setModalContent(<Component row_id={row_id} handleClose={handleClose} />);
+    setModalContent(
+      <Component
+        row_id={row_id}
+        handleClose={handleClose}
+        specialtyId={specialtyId}
+        batchId={batchId}
+        examId={examId}
+        studentId={studentId}
+      />
+    );
     setShowModal(true);
   };
 
@@ -46,13 +64,11 @@ function ActionButtonDropdown({ actions, row_id, children, style }) {
   };
   return (
     <>
-      <div
-        className="position-relative d-flex w-100"
-      >
+      <div className="position-relative d-flex w-100">
         <button
           ref={refs.setReference}
           onClick={() => {
-             toggleDropdown();
+            toggleDropdown();
           }}
           className={style}
         >
@@ -74,14 +90,14 @@ function ActionButtonDropdown({ actions, row_id, children, style }) {
                 return (
                   <>
                     <div
-                      className="align-items-center justify-content-between d-flex px-1 profile-actions  font-size-sm"
+                      className="align-items-center justify-content-between d-flex px-1 profile-actions  font-size-sm gainsboro-color"
                       onClick={() => {
                         handleShow(items.modalContent);
                       }}
                     >
                       <span>{items.actionTitle}</span>
                       <span>
-                        <Icon icon={items.icon} className="font-size-md gainsboro-color" />
+                        <Icon icon={items.icon} className="font-size-md " />
                       </span>
                     </div>
                   </>
@@ -93,10 +109,7 @@ function ActionButtonDropdown({ actions, row_id, children, style }) {
           </div>
         </CSSTransition>
       </div>
-      <CustomModal
-        show={showModal}
-        handleClose={handleClose}
-      >
+      <CustomModal show={showModal} handleClose={handleClose}>
         {modalContent}
       </CustomModal>
     </>
@@ -105,36 +118,33 @@ function ActionButtonDropdown({ actions, row_id, children, style }) {
 export default ActionButtonDropdown;
 
 export function ModalButton({ row_id, action, children, classname }) {
-    const [showModal, setShowModal] = useState(false);
-    const [modalContent, setModalContent] = useState(null);
-    const handleShow = ( Component) => {
-      setModalContent(<Component row_id={row_id} handleClose={handleClose} />);
-      setShowModal(true);
-    };
-  
-    const handleClose = () => {
-      setShowModal(false);
-      setModalContent(null);
-    };
-  
-    return (
-      <>
-        <div>
-          <button
-            className={`${classname}`}
-            onClick={() => {
-              handleShow(action.modalContent);
-            }}
-          >
-            {children}
-          </button>
-        </div>
-        <CustomModal
-          show={showModal}
-          handleClose={handleClose}
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const handleShow = (Component) => {
+    setModalContent(<Component row_id={row_id} handleClose={handleClose} />);
+    setShowModal(true);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  return (
+    <>
+      <div>
+        <button
+          className={`${classname}`}
+          onClick={() => {
+            handleShow(action.modalContent);
+          }}
         >
-          {modalContent}
-        </CustomModal>
-      </>
-    );
-  }
+          {children}
+        </button>
+      </div>
+      <CustomModal show={showModal} handleClose={handleClose}>
+        {modalContent}
+      </CustomModal>
+    </>
+  );
+}

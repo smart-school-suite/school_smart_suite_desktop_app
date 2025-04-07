@@ -15,7 +15,13 @@ import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import toast from "react-hot-toast";
+import TimeInput from "../../components/TimeInput";
 function OperationalStatistics() {
+  const handleTimeChange = (time) => {
+    console.log("Selected Time:", time);
+    // You could save this data to state or handle it as needed
+  };
+  const [value, onChange] = useState('10:00');
   return (
     <>
       <Navbar options={DashboardNavabarOptions} />
@@ -26,18 +32,21 @@ function OperationalStatistics() {
           <span>Hello World</span>
          </ModalButton>
        </div>
-       <button
-        onClick={() => {
-           toast.custom(<ToastDanger />, {
-             duration: 7000,
-           });
-           toast.custom(<ToastSuccess />, {
-            duration:6000
-           })
-           toast.custom(<ToastWarning />, {
-             duration: 5000,});
-        }}
-       >Toast</button>
+      <div className="position-relative my-1">
+      <TimeInput onTimeChange={handleTimeChange}/>
+      </div>
+      <div className="position-relative my-1">
+      <TimeInput onTimeChange={handleTimeChange}/>
+      </div>
+      <div className="position-relative my-1">
+      <TimeInput onTimeChange={handleTimeChange}/>
+      </div>
+      <div className="position-relative my-1">
+      <TimeInput onTimeChange={handleTimeChange}/>
+      </div>
+      <div className="position-relative my-1">
+      <TimeInput onTimeChange={handleTimeChange}/>
+      </div>
     </>
   );
 }

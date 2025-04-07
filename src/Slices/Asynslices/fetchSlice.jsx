@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
 const tagTypesarray = [
   "student",
   "teachers",
@@ -272,8 +271,8 @@ export const apiSlice = createApi({
       providesTags: ["specialtyCourses"],
     }),
     fetchAccessedCourses: builder.query({
-      query: ({ exam_id, student_id }) => {
-        return `marks/accessed-courses/${exam_id}/${student_id}`;
+      query: ({ examId }) => {
+        return `marks/accessed-courses/${examId}`;
       },
       providesTags: ["accessedCourses"],
     }),
@@ -385,6 +384,58 @@ export const apiSlice = createApi({
        query: ({ hodId }) => `department/getHodDetails/${hodId}`,
        providesTags: ["headOfDepartmentDetails"]
     }),
+    fetchSemesterDetail: builder.query({
+       query: ({semesterId}) => `school-semesters/schoolSemesterDetails/${semesterId}`,
+       providesTags:["schoolSemesterDetails"]
+    }),
+    fetchInstructorAvailabilityBySemester: builder.query({
+       query: ({semester_id, specialty_id}) => `time-table/instructor-availability/${semester_id}/${specialty_id}`,
+       providesTags:["instructorAvailability"]
+    }),
+    fetchSchoolSemesterDetaisl: builder.query({
+       query: ({schoolSemesterId}) => `school-semesters/schoolSemesterDetails/${schoolSemesterId}`,
+       providesTags:["schoolSemesterDetails"]
+    }),
+    fetchGradesByExam: builder.query({
+       query: ({examId }) => `grades/getGradesByExam/${examId}`,
+       providesTags:["gradesByExam"]
+    }),
+    fetchExamConfigData: builder.query({
+       query: ({examId}) => `grades/getExamConfigData/${examId}`,
+       providesTags:['examGradesConfig']
+    }),
+    fetchCoursesBySchoolSemester: builder.query({
+       query: ({ semesterId, specialtyId }) => `course/getCoursesBySchoolSemester/${semesterId}/${specialtyId}`,
+       providesTags:["coursesBySchoolSemester"]
+    }),
+    fetchGradesCategory: builder.query({
+       query: () =>  "grades-category/getGradeCategories",
+       providesTags:["gradesCategory"]
+    }),
+    fetchSchoolGradesConfig: builder.query({
+      query: () => "grades/getSchoolGradesConfig",
+      providesTags:["schoolGradesConfig"]
+    }),
+    fetchStudentResults: builder.query({
+      query: () => "student-results/getAllStudentResults",
+      providesTags: ["studentResults"]
+    }),
+    fetchExamByTypeResit: builder.query({
+       query: () => "exams/getAllResitExams",
+       providesTags:["resitExams"]
+    }),
+    fetchResitCourseByExam: builder.query({
+        query: (examId) => `student-resit/getResitCoursesByExam/${examId}`,
+        providesTags:["resitCourses"]
+    }),
+    fetchResitCandidates: builder.query({
+        query: () => "student-resit/accessedResitStudents",
+        providesTags: ["resitCandidates"]
+    }),
+    fetchDropoutStudentList: builder.query({
+       query: () => "student/getAllStudentDropout",
+       providesTags:["dropoutStudents"]
+    })
   }),
 });
 
@@ -453,5 +504,18 @@ export const {
   useFetchHeadOfDepartmentQuery,
   useFetchHeadOfSpecialtyQuery,
   useFetchHeadOfSpecialtyDetailsQuery,
-  useFetchHeadOfDepartmentDetailsQuery
+  useFetchHeadOfDepartmentDetailsQuery,
+  useFetchSemesterDetailQuery,
+  useFetchInstructorAvailabilityBySemesterQuery,
+  useFetchSchoolSemesterDetaislQuery,
+  useFetchGradesByExamQuery,
+  useFetchExamConfigDataQuery,
+  useFetchCoursesBySchoolSemesterQuery,
+  useFetchGradesCategoryQuery,
+  useFetchSchoolGradesConfigQuery,
+  useFetchStudentResultsQuery,
+  useFetchExamByTypeResitQuery,
+  useFetchResitCourseByExamQuery,
+  useFetchResitCandidatesQuery,
+  useFetchDropoutStudentListQuery
 } = apiSlice;

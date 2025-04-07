@@ -1,36 +1,23 @@
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
+import {
+  useFetchSchoolGradesConfigQuery,
+} from "../../Slices/Asynslices/fetchSlice";
+import Pageloaderspinner from "../../components/Spinners";
 import { GradesConfigurationNavbarOptions } from "../../ComponentConfig/navBarConfig";
-import {  useFetchExamsQuery } from "../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../components/Spinners";
-import CleanArrayData, { renameKeys } from "../utils/functions";
-import { useNavigate } from "react-router-dom";
-import Table from "../components/Tables";
-import { GradesConfigTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-function Gradesconfiguration(){
-  const { data: exam_data, error, isLoading } = useFetchExamsQuery();
-  const filter_array_keys = [
-    "id",
-    "examtype.exam_name",
-    "semester.name",
-    "specialty.specialty_name",
-    "specialty.level.name",
-    "start_date",
-    "end_date",
-    "school_year",
-    "weighted_mark",
-  ];
-  const renameMapping = {
-    id: "id",
-    "examtype.exam_name": "Exam Name",
-    "semester.name": "Semeseter",
-    "specialty.specialty_name": "Specialty",
-    "specialty.level.name": "Level",
-    start_date: "Start Date",
-    end_date: "End Date",
-    school_year: "School Year",
-    weighted_mark: "Weighted Mark",
-  };
-  if (isLoading) {
+import Table from "../../components/Tables";
+import { Icon } from "@iconify/react";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import UpdateGradeConfig from "../../ModalContent/GradesConfig/UpdateGrades";
+import DeleteGradesConfig from "../../ModalContent/GradesConfig/DeleteGrades";
+import ViewGradesConfig from "../../ModalContent/GradesConfig/ViewConfigurations";
+import ConfigureGrades from "../../ModalContent/GradesConfig/ConfigureGrades";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { ExamGradingCongfig } from "../../ComponentConfig/AgGridTableConfig";
+import ConfigureByOtherGrades from "../../ModalContent/GradesConfig/ConfigureByOtherGrades";
+function Gradesconfiguration() {
+  const { data: gradesConfig, isLoading: isGradesConfigLoading } =
+    useFetchSchoolGradesConfigQuery();
+  if (isGradesConfigLoading) {
     return <Pageloaderspinner />;
   }
   return (
@@ -39,17 +26,25 @@ function Gradesconfiguration(){
       <div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
-            <p className="font-size-xs my-0">Total Number of Exams</p>
-            <h1 className="fw-bold my-0">{exam_data.exam_data.length}</h1>
+            <p className="font-size-xs my-0">Total Grades Config</p>
+            <h1 className="fw-bold my-0">{gradesConfig.data.length}</h1>
+          </div>
+          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+            <ModalButton
+              action={{ modalContent: ConfigureGrades }}
+              classname={
+                "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
+              }
+            >
+              <Icon icon="icons8:plus" className="font-size-md" />
+              <span className="font-size-sm">Add Configurations</span>
+            </ModalButton>
           </div>
         </div>
-        {exam_data?.exam_data?.length > 0 ? (
+        {gradesConfig?.data?.length > 0 ? (
           <Table
-            colDefs={GradesConfigTableConfig({ ActionButton })}
-            rowData={renameKeys(
-              CleanArrayData(exam_data.exam_data, filter_array_keys),
-              renameMapping
-            )}
+            colDefs={ExamGradingCongfig({ DropdownComponent })}
+            rowData={gradesConfig.data}
           />
         ) : (
           <div className="alert alert-warning">
@@ -62,20 +57,41 @@ function Gradesconfiguration(){
 }
 export default Gradesconfiguration;
 
-function ActionButton(props){
-  const { id } = props.data
-  const navigate = useNavigate();
-   return(
+function DropdownComponent(props) {
+  const { id } = props.data;
+  const actions = [
+    {
+      actionTitle: "Delete Configured Grades",
+      modalContent: DeleteGradesConfig,
+    },
+    {
+      actionTitle: "Configure Grades",
+      modalContent: ConfigureGrades,
+    },
+    {
+      actionTitle: "View Configured Grades",
+      modalContent: ViewGradesConfig,
+    },
+    {
+      actionTitle: "Update Grades Configuration",
+      modalContent: UpdateGradeConfig,
+    },
+    {
+      actionTitle:"Configure using other grades",
+      modalContent:ConfigureByOtherGrades
+    }
+  ];
+  return (
     <>
-     <button 
-      className="border-none rounded-2 px-1 font-size-sm primary-background text-white text-center"
-      style={{ width:"12vw"}}
-      onClick={() => {
-         navigate(`/configure-exam-grades/${id}`);
-      }}
-     >
-      Configure Grades
-     </button>
+      <ActionButtonDropdown
+        actions={actions}
+        row_id={id}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
+      >
+        <span>Edit Actions</span>
+      </ActionButtonDropdown>
     </>
-   )
+  );
 }

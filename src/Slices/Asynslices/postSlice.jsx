@@ -170,13 +170,21 @@ export const postSlice = createApi({
       }),
       invalidatesTags: ["studentPromotion"],
     }),
-    addTimeTable: builder.mutation({
-      query: (newTimeTable) => ({
-        url: "time-table/create-timetable",
+    createTimetable: builder.mutation({
+      query: ({ scheduleEntries, semesterId }) => ({
+        url: `time-table/createTimetable/${semesterId}`,
         method: "POST",
-        body: newTimeTable,
+        body: scheduleEntries,
       }),
       invalidatesTags: ["specialtyTimeTable"],
+    }),
+    createTimetableByAvialability: builder.mutation({
+        query: ({ scheduleEntries, semesterId }) => ({
+          url: `time-table/createTimetableByAvailability/${semesterId}`,
+          method:"POST",
+          body:scheduleEntries 
+        }),
+        invalidatesTags:["createTimetableByAvialability"]
     }),
     addTeacher: builder.mutation({
       query: (newTeacher) => ({
@@ -195,10 +203,10 @@ export const postSlice = createApi({
       invalidatesTags: ["student"],
     }),
     addExamTimetable: builder.mutation({
-      query: (newExamTimetable) => ({
-        url: "exam-timetable/create-timetable",
+      query: ({ entries, examId }) => ({
+        url: `exam-timetable/create-timetable/${examId}`,
         method: "POST",
-        body: newExamTimetable,
+        body: entries,
       }),
       invalidatesTags: ["examtimetable"],
     }),
@@ -335,6 +343,71 @@ export const postSlice = createApi({
          method:"POST",
          body:{}
        })
+    }),
+    activateCourse: builder.mutation({
+       query: ({ courseId }) => ({
+          url:`course/activateCourse/${courseId}`,
+          method:"POST",
+          body:{}
+       })
+    }),
+    deactivateCourse: builder.mutation({
+       query: ({ courseId }) => ({
+          url:`course/deactivateCourse/${courseId}`,
+          method:"POST",
+          body:{}
+       })
+    }),
+    createSchoolSemester: builder.mutation({
+       query: (schoolSemester) => ({ 
+          url:"school-semesters/create-school-semester",
+          method:"POST",
+          body:schoolSemester
+       }),
+       invalidatesTags: ["createSchoolSemester"],
+    }),
+    addExamGrading: builder.mutation({
+       query: ({examId, gradesConfigId}) => ({
+         url:`exams/addExamGrading/${examId}/${gradesConfigId}`,
+         method:"POST",
+         body:{}
+       })
+    }),
+    configureByOtherGrade: builder.mutation({
+       query: ({ configId, targetConfigId }) => ({
+         url:`grades/createGradeByOtherConfig/${configId}/${targetConfigId}`,
+         method:"POST",
+         body:{}
+       }),
+       invalidatesTags: ["configureByOtherGrades"],
+    }),
+    createResitTimetable: builder.mutation({
+       query: ({examId, entries}) => ({
+          url:`student-resit/createResitTimetable/${examId}`,
+          method:"POST",
+          body:entries
+       })
+    }),
+    activateStudentAccount: builder.mutation({
+       query: (studentId) => ({
+         url:`student/activateAccount/${studentId}`,
+         method:'POST',
+         body:{}
+       })
+    }),
+    deactivateStudentAccount: builder.mutation({
+       query: (studentId) => ({
+          url:`student/deactivateAccount/${studentId}`,
+          method:'POST',
+          body:{}
+       })
+    }),
+    markStudentAsDropOut: builder.mutation({
+       query: ({studentId, formData}) => ({
+          url:`student/markStudentAsDropout/${studentId}`,
+          method:'POST',
+          body:formData
+       })
     })
   }),
 });
@@ -357,7 +430,6 @@ export const {
   useAddStudentBatchMutation,
   useAddStudentScoreMutation,
   useAddTeacherMutation,
-  useAddTimeTableMutation,
   usePromoteStudentMutation,
   useAddStudentMutation,
   useAddExamTimetableMutation,
@@ -380,5 +452,16 @@ export const {
   useActivateSpecialtyMutation,
   useDeactivateSpecialtyMutation,
   useActivateTeacherMutation,
-  useDeactivateTeacherMutation
+  useDeactivateTeacherMutation,
+  useActivateCourseMutation,
+  useDeactivateCourseMutation,
+  useCreateSchoolSemesterMutation,
+  useCreateTimetableByAvialabilityMutation,
+  useCreateTimetableMutation,
+  useAddExamGradingMutation,
+  useConfigureByOtherGradeMutation,
+  useCreateResitTimetableMutation,
+  useActivateStudentAccountMutation,
+  useDeactivateStudentAccountMutation,
+  useMarkStudentAsDropOutMutation
 } = postSlice;

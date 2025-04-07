@@ -20,7 +20,7 @@ function SpecialtyDetails({ row_id: specialtyId, handleClose }) {
     <>
       <div>
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-          <h5 className="m-0">Department Details</h5>
+          <h5 className="m-0">Specialty  Details</h5>
           <span
             className="m-0"
             onClick={() => {

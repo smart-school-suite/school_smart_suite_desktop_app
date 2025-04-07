@@ -1,4 +1,31 @@
-function DeleteCourse({ handleClose }) {
+import { useState } from "react";
+import { useDeleteCourseMutation } from "../../Slices/Asynslices/deleteSlice";
+import toast from "react-hot-toast";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import ToastDanger from "../../components/Toast/ToastDanger";
+import { SingleSpinner } from "../../components/Spinners";
+function DeleteCourse({ handleClose, row_id:courseId}) {
+  const [deleteCourse] = useDeleteCourseMutation();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const handleDeleteCourse = async () => {
+    setIsDeleting(true)
+      try{
+         await deleteCourse(courseId).unwrap();
+         setIsDeleting(false)
+         handleClose();
+        toast.custom(<ToastSuccess 
+          title={"Delete Successfull ✅"}
+          description={"The Course  has been deleted successfully "}
+         />)
+      }
+      catch(e){
+        setIsDeleting(false)
+        toast.custom(<ToastDanger 
+          title={"Delete Failed ❌"}
+        description={"❌ Something went wrong! The Course delete failed due to an error. Please try again later."}
+        />)
+      }
+  }
     return (
       <>
         <div className="w-100">
@@ -15,8 +42,16 @@ function DeleteCourse({ handleClose }) {
               >
                 Cancel
               </button>
-              <button className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white">
-                Delete
+              <button 
+                className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+                 onClick={() => {
+                   handleDeleteCourse()
+                 }}
+                 disabled={isDeleting}
+                >
+                {
+                  isDeleting ? <SingleSpinner /> : "Delete"
+                }
               </button>
             </div>
           </div>

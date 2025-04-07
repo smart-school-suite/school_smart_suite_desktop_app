@@ -378,4 +378,80 @@ export function replaceDashesWithSpaces(str) {
     
     return `${dayOfWeek} ${formattedDay} ${month} ${year}`;
   }
-  
+
+ export  function convertTo24HourFormat(time) {
+    // Use a regular expression to match the time format
+    const regex = /(\d{1,2}):(\d{2})\s*(AM|PM)/i;
+
+    // Check if the input time matches the expected format
+    const match = time.match(regex);
+    if (!match) {
+        throw new Error('Invalid time format. Please use "hh:mm AM/PM" format.');
+    }
+
+    let hours = parseInt(match[1], 10); // Extract the hours
+    const minutes = match[2];            // Extract the minutes
+    const period = match[3].toUpperCase(); // Extract AM/PM
+
+    // Convert to 24-hour format
+    if (period === 'PM' && hours < 12) {
+        hours += 12; // Convert PM hours to 24-hour format
+    } else if (period === 'AM' && hours === 12) {
+        hours = 0;   // Convert 12 AM to 0 hours
+    }
+
+    // Format hours and minutes as two digits
+    const formattedHours = String(hours).padStart(2, '0');
+    const formattedMinutes = String(minutes).padStart(2, '0');
+
+    return `${formattedHours}:${formattedMinutes}`;
+}
+
+export function calculateExamDuration(startTime, endTime) {
+    // Parse the start and end times to Date objects
+    const startDate = new Date(`1970-01-01T${convertTo24Hour(startTime)}`);
+    const endDate = new Date(`1970-01-01T${convertTo24Hour(endTime)}`);
+
+    // Calculate the duration in milliseconds
+    const durationInMillis = endDate - startDate;
+
+    // If the duration is negative, return an error message
+    if (durationInMillis < 0) {
+        return 'End time must be after start time!';
+    }
+
+    // Calculate hours and minutes
+    const totalMinutes = Math.floor(durationInMillis / (1000 * 60));
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    // Create a readable string output
+    let durationString = '';
+    if (hours > 0) {
+        durationString += `${hours} hour${hours > 1 ? 's' : ''}`;
+    }
+    if (minutes > 0) {
+        if (durationString) {
+            durationString += ' ';
+        }
+        durationString += `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    }
+
+    return durationString.trim() || '0 hours'; // In case of zero duration
+}
+
+// Utility function to convert 12-hour time to 24-hour format
+function convertTo24Hour(time) {
+    const [timePart, modifier] = time.split(' '); // Split time from AM/PM
+    let [hours, minutes] = timePart.split(':').map(Number); // Split hours and minutes
+
+    // Adjust hours based on AM/PM
+    if (modifier === 'PM' && hours < 12) {
+        hours += 12;
+    } else if (modifier === 'AM' && hours === 12) {
+        hours = 0;
+    }
+
+    // Format to HH:mm
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}

@@ -5,7 +5,6 @@ import Table from "../../components/Tables";
 import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";
 import { CoursesNavBarOptions } from "../../ComponentConfig/navBarConfig";
 import CourseDetails from "../../ModalContent/Course/CourseDetails";
-import CourseStats from "../../ModalContent/Course/CourseStats";
 import CreateCourse from "../../ModalContent/Course/CreateCourse";
 import DeactivateCourse from "../../ModalContent/Course/DeactivateCourse";
 import DeleteCourse from "../../ModalContent/Course/DeleteCourse";
@@ -69,16 +68,15 @@ export function DropdownComponent(props) {
       modalTitle: "Deactivate Course",
       actionTitle: "Deactivate",
       modalContent: DeactivateCourse,
-    },
-    {
-      modalTitle: "Course Statistics/Performance",
-      actionTitle: "stats",
-      modalContent: CourseStats,
-    },
+    }
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} />
+      <ActionButtonDropdown actions={actions} row_id={id}
+       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      > 
+      <span>Edit Action</span>
+      </ActionButtonDropdown>
     </>
   );
 }

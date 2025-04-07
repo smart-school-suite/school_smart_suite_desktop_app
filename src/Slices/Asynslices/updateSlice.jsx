@@ -68,7 +68,7 @@ export const updateSlice = createApi({
         }),
         invalidatesTags: ["events"], 
       }),
-      updateTimeTable: builder.mutation({
+      updateExamTimetable: builder.mutation({
         query: ({ examtimetable_id, updatedData }) => ({
           url: `exam-timetable/update-exam-time-table/${examtimetable_id}`,
           method: "PUT",
@@ -124,7 +124,7 @@ export const updateSlice = createApi({
         }),
         invalidatesTags: ["schoolBranch"], 
       }),
-      updateSchoolExpenses: builder.mutation({
+      updateSchoolExpensesCategory: builder.mutation({
         query: ({ category_expense_id, updatedData }) => ({
           url: `school-expenses-category/update-category/${category_expense_id}`,
           method: "PUT",
@@ -164,7 +164,7 @@ export const updateSlice = createApi({
         }),
         invalidatesTags: ["resitPayment"], 
       }),
-      updateSchool: builder.mutation({
+      updateStudentBatch: builder.mutation({
         query: ({ batch_id, updatedData }) => ({
           url: `student-batches/update-batch/${batch_id}`,
           method: "PUT",
@@ -181,8 +181,8 @@ export const updateSlice = createApi({
         invalidatesTags: ["resitExamStatus"], 
       }),
       updateStudent: builder.mutation({
-        query: ({ student_id, updatedData }) => ({
-          url: `student/update-student/${student_id}`,
+        query: ({ studentId, updatedData }) => ({
+          url: `student/update-student/${studentId}`,
           method: "PUT",
           body: updatedData, 
         }),
@@ -204,6 +204,13 @@ export const updateSlice = createApi({
         }),
         invalidatesTags: ["timetable"], 
       }),
+      updateSchoolSemester: builder.mutation({
+         query: ({schoolSemesterId, schoolSemesterData}) => ({
+           url:`school-semesters/update-school-semester/${schoolSemesterId}`,
+           method:"PUT",
+           body:schoolSemesterData
+         })
+      })
   }),
 });
 
@@ -225,5 +232,7 @@ export const {
   useUpdateStudentResitPaymentMutation,
   useUpdateStudentScoresMutation,
   useUpdateTeacherMutation,
-  useUpdateTimeTableMutation
+  useUpdateTimeTableMutation,
+  useUpdateStudentBatchMutation,
+  useUpdateSchoolSemesterMutation
 } = updateSlice;

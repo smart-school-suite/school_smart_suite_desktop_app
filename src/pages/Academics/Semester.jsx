@@ -19,6 +19,10 @@ function Semester() {
     "school_year_start",
     "specailty.specialty_name",
     "semester.name",
+    "status",
+    "timetable_published",
+    "specailty.level.level",
+    "specailty.level.name"
   ];
   const renameMapping = {
     "id": "id",
@@ -27,6 +31,9 @@ function Semester() {
     "end_date": "end_date",
     "specailty.specialty_name": "specialty_name",
     "semester.name": "semester_name",
+    "specailty.level.level":"level",
+    "specailty.level.name":"level_name",
+    "timetable_published":"timetable_status"
   };
 
   if (isLoading) {
@@ -63,7 +70,7 @@ function Semester() {
         <div className="end-block d-flex flex-row ms-auto justify-content-end gap-3">
           <ModalButton
             classname={
-              "border-none green-bg font-size-sm rounded-3 px-3 gap-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+              "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
             }
             action={{ modalContent: CreateSemester }}
           >
@@ -109,7 +116,11 @@ function ActionButtonGroup(props) {
     ];
     return (
       <>
-        <ActionButtonDropdown actions={actions} row_id={id} />
+        <ActionButtonDropdown actions={actions} row_id={id} 
+       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      >
+         <span>Edit Actions</span>
+      </ActionButtonDropdown>
       </>
     );
   }
