@@ -85,8 +85,8 @@ export const deleteSlice = createApi({
         invalidatesTags: ["StudentExamScores"], 
       }),
       deleteParent: builder.mutation({
-        query: (parent_id) => ({
-          url: `parent/delete-parent/${parent_id}`,
+        query: (guardianId) => ({
+          url: `parent/delete-parent/${guardianId}`,
           method: "DELETE",
         }),
         invalidatesTags: ["parent"],
@@ -260,7 +260,13 @@ export const deleteSlice = createApi({
       deleteResitTimetable: builder.mutation({
          query: (examId) => ({
             url:`student-resit/deleteResitTimetable/${examId}`,
-            method:'DELTE'
+            method:'DELETE'
+         })
+      }),
+      deleteStudentDropout: builder.mutation({
+         query: (studentDropoutId) => ({
+           url:`student/deleteStudentDropout/${studentDropoutId}`,
+           method:"DELETE"
          })
       })
   }),
@@ -301,5 +307,6 @@ export const {
   useDeleteSchoolSemesterMutation,
   useDeleteExamTimetableEntryMutation,
   useDeleteExamTimetableMutation,
-  useDeleteResitTimetableMutation
+  useDeleteResitTimetableMutation,
+  useDeleteStudentDropoutMutation
 } = deleteSlice;

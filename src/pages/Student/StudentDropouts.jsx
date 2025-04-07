@@ -3,6 +3,9 @@ import Table from "../../components/Tables";
 import { useFetchDropoutStudentListQuery } from "../../Slices/Asynslices/fetchSlice";
 import { StudentDropOutTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import DeleteStudentDropout from "../../ModalContent/StudentDropout/DeleteStudentDropout";
+import ReinistateStudent from "../../ModalContent/StudentDropout/ReinstateStudent";
+import DropoutStudentDetails from "../../ModalContent/StudentDropout/DropoutStudentDetails";
 function StudentDropOuts() {
   const { data: dropoutList, isLoading: isListLoading } =
     useFetchDropoutStudentListQuery();
@@ -48,14 +51,15 @@ export function DropdownComponent(props) {
   const actions = [
     {
       actionTitle: "Reinstate Student",
-      
+      modalContent: ReinistateStudent
     },
     {
       actionTitle: "Delete Student",
-
+      modalContent: DeleteStudentDropout
     },
     {
       actionTitle: "Details",
+      modalContent:DropoutStudentDetails
 
     }
   ];

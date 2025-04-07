@@ -1,40 +1,42 @@
-import { SingleSpinner } from "../../components/Spinners";
-import { useDeleteParentMutation } from "../../Slices/Asynslices/deleteSlice";
+import { useReinstateDropoutStudentMutation } from "../../Slices/Asynslices/postSlice";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { useState } from "react";
-function DeleteParent({ handleClose, row_id: guardianId }) {
-  const [deleteParent] = useDeleteParentMutation();
-  const [isDeleting, setIsDeleting] = useState(false);
-  const handleDeleteParent = async () => {
-    setIsDeleting(true);
+import { SingleSpinner } from "../../components/Spinners";
+function ReinistateStudent({ handleClose, row_id: studentDropoutId }) {
+  const [reinstateDropoutStudent] = useReinstateDropoutStudentMutation();
+  const [isReinstating, setIsReinstating] = useState(false);
+  const handleReinstateStudent = async () => {
+    setIsReinstating(true);
     try {
-      await deleteParent(guardianId).unwrap();
-      setIsDeleting(false);
+      await reinstateDropoutStudent(studentDropoutId).unwrap();
+      setIsReinstating(false);
       handleClose();
       toast.custom(
         <ToastSuccess
-          title={"Delete Successfull"}
-          description={"Parent Deleted Succesfully"}
+          title={"Student Reinstated  "}
+          description={"Student reinstated Successfully"}
         />
       );
     } catch (e) {
-      setIsDeleting(false);
+      setIsReinstating(false);
       toast.custom(
         <ToastDanger
-          title={"Delete Failed"}
-          description={"Failed To Delete Parent"}
+          title={"Failed to reinstate Stundet"}
+          description={
+            "Failed to reinstate student due to an error please try again"
+          }
         />
       );
     }
   };
+
   return (
     <>
       <div className="w-100">
         <h4 className="fw-semibold">Are you Absolutely sure ?</h4>
         <p className="my-3" style={{ fontSize: "0.85rem" }}>
-          <span>{guardianId}</span>
+          <span>{studentDropoutId}</span>
           This action cannot be undone. This will Permanently delete This
           account and remove this account data from our servers
         </p>
@@ -49,10 +51,10 @@ function DeleteParent({ handleClose, row_id: guardianId }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
               onClick={() => {
-                handleDeleteParent();
+                handleReinstateStudent();
               }}
             >
-              {isDeleting ? <SingleSpinner /> : "Yes, Delete"}
+              {isReinstating ? <SingleSpinner /> : "Yes, Reinstate"}
             </button>
           </div>
         </div>
@@ -60,4 +62,4 @@ function DeleteParent({ handleClose, row_id: guardianId }) {
     </>
   );
 }
-export default DeleteParent;
+export default ReinistateStudent;

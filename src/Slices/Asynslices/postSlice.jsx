@@ -408,6 +408,13 @@ export const postSlice = createApi({
           method:'POST',
           body:formData
        })
+    }),
+    reinstateDropoutStudent: builder.mutation({
+       query: (studentDropoutId) => ({
+          url:`student/reinstateDropoutStudent/${studentDropoutId}`,
+          method:"POST",
+          body:{}
+       })
     })
   }),
 });
@@ -418,7 +425,6 @@ export const {
   useAddEventMutation,
   useAddExamMutation,
   useAddExpensesCategoryMutation,
-  useAddFeePaymentTransactionMutation,
   useAddGradeMutation,
   useAddParentMutation,
   useAddResitTimetableMutation,
@@ -463,5 +469,6 @@ export const {
   useCreateResitTimetableMutation,
   useActivateStudentAccountMutation,
   useDeactivateStudentAccountMutation,
-  useMarkStudentAsDropOutMutation
+  useMarkStudentAsDropOutMutation,
+  useReinstateDropoutStudentMutation
 } = postSlice;

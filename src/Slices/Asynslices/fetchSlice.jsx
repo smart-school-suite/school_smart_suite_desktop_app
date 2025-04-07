@@ -435,6 +435,10 @@ export const apiSlice = createApi({
     fetchDropoutStudentList: builder.query({
        query: () => "student/getAllStudentDropout",
        providesTags:["dropoutStudents"]
+    }),
+    fetchStudentDropoutDetails: builder.query({
+       query: (studentDropoutId) => `student/getStudentDropoutDetails/${studentDropoutId}`,
+       providesTags:["studentDropoutDetails"]
     })
   }),
 });
@@ -517,5 +521,6 @@ export const {
   useFetchExamByTypeResitQuery,
   useFetchResitCourseByExamQuery,
   useFetchResitCandidatesQuery,
-  useFetchDropoutStudentListQuery
+  useFetchDropoutStudentListQuery,
+  useFetchStudentDropoutDetailsQuery
 } = apiSlice;
