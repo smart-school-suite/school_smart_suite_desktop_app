@@ -1,21 +1,39 @@
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useAddStudentBatchMutation } from "../../Slices/Asynslices/postSlice";
+import ToastDanger from "../../components/Toast/ToastDanger";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import { SingleSpinner } from "../../components/Spinners";
 function CreateStudentBatch({ handleClose }) {
     const [formData, setFormData] = useState({
       name: "",
-      graduation_date: "",
+      description: "",
     });
-  
     const [addStudentBatch] = useAddStudentBatchMutation();
-  
+    const [isCreating, setIsCreating] = useState(false);
     const handleInputChange = (field, value) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
     };
     const handleSubmit = async () => {
+      setIsCreating(true);
       try {
         await addStudentBatch(formData).unwrap();
-        toast.success("Student Batch  created successfully!");
+        setIsCreating(false);
         handleClose();
+        toast.custom(
+           <ToastSuccess 
+             title={"Student Batch Created"}
+             description={"Student Batch Created Successfully"}
+           />
+        );
       } catch (error) {
-        toast.error("Failed to create Student Batch. Try again.");
+        setIsCreating(false);
+        toast.custom(
+           <ToastDanger 
+             title={"Failed to Create"}
+             description={"Failed to create student batch due to an error please try again"}
+           />
+        );
       }
     };
     return (
@@ -41,32 +59,25 @@ function CreateStudentBatch({ handleClose }) {
         </div>
         <div className="my-1">
           <span>Graduation Date</span>
-          <input
-            type="date"
-            className="form-control"
-            name="graduation_date"
-            value={formData.graduation_date}
-            onChange={(e) => handleInputChange("graduation_date", e.target.value)}
-          />
+          <textarea className="form-control"
+           placeholder="Enter Decription........"
+           name="description"
+           onChange={(e) => handleInputChange("description", e.target.value)}
+           value={formData.description}
+          ></textarea>
         </div>
-        <div className="mt-4">
-          <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
+        <div className="mt-2">
             <button
-              className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
-              onClick={handleClose}
-            >
-              Cancel
-            </button>
-            <button
-              className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
+              className="border-none px-3 py-2 w-100 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
                 handleSubmit();
               }}
             >
-              Create Batch
+              {
+                isCreating ? <SingleSpinner /> : "Create Batch"
+              }
             </button>
           </div>
-        </div>
       </div>
     );
   }

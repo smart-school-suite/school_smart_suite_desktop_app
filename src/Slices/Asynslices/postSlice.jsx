@@ -415,6 +415,27 @@ export const postSlice = createApi({
           method:"POST",
           body:{}
        })
+    }),
+    deactivateStudentBatch: builder.mutation({
+       query: (batchId) => ({
+          url:`student-batches/deactivateStudentBatch/${batchId}`,
+          method:"POST",
+          boyd:{}
+       })
+    }),
+    activateStudentBatch: builder.mutation({
+       query: (batchId) => ({
+          url:`student-batches/activateStudentBatch/${batchId}`,
+          method:"POST",
+          body:{}
+       })
+    }),
+    assignGraduationDatesByBatch: builder.mutation({
+       query: (graduationDates) => ({
+           url:`student-batches/assignGraduationDatesByBatch`,
+           method:"POST",
+           body:graduationDates
+       })
     })
   }),
 });
@@ -470,5 +491,8 @@ export const {
   useActivateStudentAccountMutation,
   useDeactivateStudentAccountMutation,
   useMarkStudentAsDropOutMutation,
-  useReinstateDropoutStudentMutation
+  useReinstateDropoutStudentMutation,
+  useActivateStudentBatchMutation,
+  useDeactivateStudentBatchMutation,
+  useAssignGraduationDatesByBatchMutation
 } = postSlice;
