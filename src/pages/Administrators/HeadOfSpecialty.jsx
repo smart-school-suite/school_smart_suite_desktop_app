@@ -7,8 +7,18 @@ import ActionButtonDropdown from "../../components/DataTableComponents/ActionCom
 import HosDetails from "../../ModalContent/Hos/HosDetails";
 import RemoveHos from "../../ModalContent/Hos/RemoveHos";
 import SendMessage from "../../ModalContent/Hos/SendMessage";
+import { useMemo } from "react";
 function HeadOfSpecialty() {
-  const { data: hos, isLoading, error } = useFetchHeadOfSpecialtyQuery();
+  const { data: hos, isLoading } = useFetchHeadOfSpecialtyQuery();
+    const memoizedColDefs = useMemo(() => {
+      return hosTableConfig({
+        ActionButtonGroup
+      });
+    }, []);
+  
+    const memoizedRowData = useMemo(() => {
+      return hos?.data ?? [];
+    }, [hos]);
   if (isLoading) {
     return <Pageloaderspinner />;
   }
@@ -36,14 +46,14 @@ function HeadOfSpecialty() {
       <div className="d-flex flex-row align-items-end gap-2 mt-3">
         <div className="d-block">
           <p className="font-size-xs my-0">Total Number Hos</p>
-          <h1 className="fw-bold my-0">{hos.data.length}</h1>
+          <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
         </div>
       </div>
       <div>
         <div>
           <Table
-            rowData={hos.data}
-            colDefs={hosTableConfig({ ActionButtonGroup })}
+            rowData={memoizedRowData}
+            colDefs={memoizedColDefs}
             rowHeight={45}
           />
         </div>
@@ -76,10 +86,11 @@ function ActionButtonGroup(props) {
       modalContent:SendMessage
     },
   ];
+   const memoizedActions = useMemo(() => actions, []);
   return (
     <>
       <ActionButtonDropdown
-        actions={actions}
+        actions={memoizedActions}
         row_id={id}
         style={
           "tableActionButton primary-background text-white font-size-sm px-2"

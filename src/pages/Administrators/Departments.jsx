@@ -1,6 +1,5 @@
 import Navbar from "../../components/Navbar";
 import { useFetchDepartmentsQuery } from "../../Slices/Asynslices/fetchSlice";
-import CleanArrayData, { renameKeys } from "../../utils/functions";
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
 import ActionButtonDropdown, {
@@ -13,35 +12,33 @@ import UpdateDepartment from "../../ModalContent/Department/UpdateDepartment";
 import DeactivateDepartment from "../../ModalContent/Department/DeactivateDepartment";
 import { DepartmentNavBarConfig } from "../../ComponentConfig/navBarConfig";
 import { DepartmentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import { useMemo } from "react";
 function Departments() {
-  const { data: data, error, isLoading } = useFetchDepartmentsQuery();
-  const filter_array_keys = [
-    "id",
-    "department_name",
-    "hod_name",
-    "description",
-    "status",
-    "created_at",
-  ];
-  const renameMapping = {
-    id: "id",
-    department_name: "Department Name",
-    hod_name: "hod_name",
-    description: "description",
-    status: "status",
-    created_at: "Date of creation",
-  };
+  const { data: departments, isLoading } = useFetchDepartmentsQuery();
+    const memoizedColDefs = useMemo(() => {
+      return DepartmentTableConfig({
+        DropdownComponent
+      });
+    }, []);
+  
+    const memoizedRowData = useMemo(() => {
+      return departments?.data ?? [];
+    }, [departments]);
+
+    const memoizedNavConfig = useMemo(() => {
+       return DepartmentNavBarConfig
+    }, []);
   if (isLoading) {
     return <Pageloaderspinner />;
   }
   return (
     <>
-      <Navbar options={DepartmentNavBarConfig} />
+      <Navbar options={memoizedNavConfig} />
       <div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Number of Departments</p>
-            <h1 className="fw-bold my-0">{data.data.length}</h1>
+            <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
@@ -56,11 +53,8 @@ function Departments() {
         </div>
         <div>
           <Table
-            colDefs={DepartmentTableConfig({ DropdownComponent })}
-            rowData={renameKeys(
-              CleanArrayData(data.data, filter_array_keys),
-              renameMapping
-            )}
+            colDefs={memoizedColDefs}
+            rowData={memoizedRowData}
           />
         </div>
       </div>
@@ -93,10 +87,11 @@ export function DropdownComponent(props) {
       modalContent: DeactivateDepartment,
     },
   ];
+  const memoizedActions = useMemo(() => actions, []);
   return (
     <>
       <ActionButtonDropdown
-        actions={actions}
+        actions={memoizedActions}
         row_id={id}
         style={
           "tableActionButton primary-background text-white font-size-sm px-2"

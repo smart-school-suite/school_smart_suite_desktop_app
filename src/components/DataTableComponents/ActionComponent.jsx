@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Icon } from "@iconify/react";
 import { CSSTransition } from "react-transition-group";
@@ -94,6 +94,7 @@ function ActionButtonDropdown({
                       onClick={() => {
                         handleShow(items.modalContent);
                       }}
+                      key={key}
                     >
                       <span>{items.actionTitle}</span>
                       <span>

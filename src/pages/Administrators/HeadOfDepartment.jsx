@@ -8,8 +8,19 @@ import RemoveHod from "../../ModalContent/Hod/RemoveHod";
 import HodDetails from "../../ModalContent/Hod/HodDetails";
 import SendMessage from "../../ModalContent/Hod/SendMessage";
 import UpdateHos from "../../ModalContent/Hos/UpdateHos";
+import { useMemo } from "react";
 function HeadOfDepartment() {
-  const { data: hod, isLoading, error } = useFetchHeadOfDepartmentQuery();
+  const { data: hod, isLoading } = useFetchHeadOfDepartmentQuery();
+  const memoizedColDefs = useMemo(() => {
+    return hodTableConfig({
+      ActionButtonGroup,
+    });
+  }, []);
+
+  const memoizedRowData = useMemo(() => {
+    return hod?.data ?? [];
+  }, [hod]);
+
   if (isLoading) {
     return <Pageloaderspinner />;
   }
@@ -37,51 +48,56 @@ function HeadOfDepartment() {
       <div className="d-flex flex-row align-items-end gap-2 mt-3">
         <div className="d-block">
           <p className="font-size-xs my-0">Total Number Hods</p>
-          <h1 className="fw-bold my-0">{hod.data.length}</h1>
+          <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
         </div>
       </div>
       <div>
-        <Table 
-            rowData={hod.data}
-            colDefs={hodTableConfig({ ActionButtonGroup })}
-            rowHeight={45}
-         />
+        <Table
+          rowData={memoizedRowData}
+          colDefs={memoizedColDefs}
+          rowHeight={45}
+        />
       </div>
     </div>
   );
 }
 export default HeadOfDepartment;
 function ActionButtonGroup(props) {
-    const { id } = props.data;
-    const actions = [
-      {
-        actionTitle: "Update",
-        icon:"mynaui:edit-solid",
-        modalContent:UpdateHos
-      },
-      {
-        actionTitle: "Details",
-        icon:"bxs:detail",
-        modalContent:HodDetails
-      },
-      {
-        actionTitle: "Remove Hod",
-        icon:"fluent:delete-16-filled",
-        modalContent:RemoveHod
-      },
-      {
-        actionTitle: "Send Message",
-        icon: "ic:round-message",
-        modalContent:SendMessage
-      },
-    ];
-    return (
-      <>
-        <ActionButtonDropdown actions={actions} row_id={id}
-         style={'tableActionButton primary-background text-white font-size-sm px-2'}
-        >
-           <span>Edit Actions</span>
-        </ActionButtonDropdown>
-      </>
-    );
-  }
+  const { id } = props.data;
+  const actions = [
+    {
+      actionTitle: "Update",
+      icon: "mynaui:edit-solid",
+      modalContent: UpdateHos,
+    },
+    {
+      actionTitle: "Details",
+      icon: "bxs:detail",
+      modalContent: HodDetails,
+    },
+    {
+      actionTitle: "Remove Hod",
+      icon: "fluent:delete-16-filled",
+      modalContent: RemoveHod,
+    },
+    {
+      actionTitle: "Send Message",
+      icon: "ic:round-message",
+      modalContent: SendMessage,
+    },
+  ];
+  const memoizedActions = useMemo(() => actions, []);
+  return (
+    <>
+      <ActionButtonDropdown
+        actions={memoizedActions}
+        row_id={id}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
+      >
+        <span>Edit Actions</span>
+      </ActionButtonDropdown>
+    </>
+  );
+}

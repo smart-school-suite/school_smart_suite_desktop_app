@@ -2,6 +2,7 @@ import { CoursesCellStyle } from "./AgGridTableStyle";
 import TextComponent from "../components/DataTableComponents/TextComponent";
 import DateComponent from "../components/DataTableComponents/DateComponent";
 import CurrencyComponent from "../components/DataTableComponents/CurrencyComponent";
+import React from "react";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -973,10 +974,13 @@ export function DepartmentTableConfig({ DropdownComponent }){
    const tableConfig = [
     {
       field: "id",
-      cellRenderer:TextComponent
+      cellRenderer:TextComponent,
+      filter: true,
+      floatingFilter: true,
     },
     {
-      field: "Department Name",
+      field: "department_name",
+      headerName:"Department Name",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -1006,13 +1010,6 @@ export function DepartmentTableConfig({ DropdownComponent }){
       cellStyle:cellStyle,
       cellRenderer:TextComponent
     },
-    {
-      field: "Date of creation",
-      filter: true,
-      floatingFilter: true,
-      cellStyle: cellStyle,
-      cellRenderer: TextComponent,
-    },
     { 
       field: "Action", 
       cellRenderer: DropdownComponent,
@@ -1021,7 +1018,7 @@ export function DepartmentTableConfig({ DropdownComponent }){
    ];
    return tableConfig;
 }
-export function SchoolAdminTableConfig({ ImageComponent, StatusComponent, ActionButtonGroup, CurrencyComponent }) {
+export function SchoolAdminTableConfig({ ImageComponent, ActionButtonGroup }) {
   const tableConfig =  [
    {
      field: "profile_picture",
@@ -1031,45 +1028,52 @@ export function SchoolAdminTableConfig({ ImageComponent, StatusComponent, Action
      filter: true,
      floatingFilter: true,
    },
+   
    {
-     field: "id",
+     field: "name",
+     headerName:"Full Names",
      cellRenderer: TextComponent,
      filter: true,
      floatingFilter: true,
    },
    {
-     field: "Full Names",
+    field: "first_name",
+    headerName:"First Name",
+    cellRenderer: TextComponent,
+    filter: true,
+    floatingFilter: true,
+  },
+  {
+    field: "last_name",
+    headerName:"Last Name",
+    cellRenderer: TextComponent,
+    filter: true,
+    floatingFilter: true,
+  },
+   {
+     field: "role",
+     headerName:"Role",
      cellRenderer: TextComponent,
      filter: true,
      floatingFilter: true,
    },
    {
-     field: "Role",
+     field: "email",
+     headerName:"E-mail",
      cellRenderer: TextComponent,
      filter: true,
      floatingFilter: true,
    },
    {
-     field: "Email",
-     cellRenderer: TextComponent,
-     filter: true,
-     floatingFilter: true,
-   },
-   {
-     field: "Salary",
+     field: "salary",
+     headerName:"Salary",
      cellRenderer: CurrencyComponent,
      filter: true,
      floatingFilter: true,
    },
    {
-     field: "Status",
-     cellRenderer: StatusComponent,
-     cellStyle: cellStyle,
-   },
-   { field: "Created At", cellRenderer: TextComponent },
-   {
      field: "Action",
-     cellRenderer: ActionButtonGroup,
+     cellRenderer: React.memo(ActionButtonGroup),
      cellStyle: () => ({ width: "20rem" }),
    }
   ];
@@ -1150,49 +1154,56 @@ export function teacherTableConfig({ DropdownComponent, CurrencyComponent  }) {
       hide:true
     },
     {
-      field: "Name",
+      field: "name",
+      headerName:"Full Names",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      field: "Employment Status",
+      field: "employment_status",
+      headerName:"Employment Status",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      field: "Highest qualification",
+      field: "highest_qualification",
+      headerName:"Highest Qualification",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      field: "Field of study",
+      headerName: "Field of study",
+      field:"field_of_study",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      field: "Religion",
+      headerName: "Religion",
+      field:"religion",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      field: "Years experience",
+      headerName: "Years experience",
+      field:"years_experience",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      field: "Salary",
+      field: "salary",
+      headerName:"Salary",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,

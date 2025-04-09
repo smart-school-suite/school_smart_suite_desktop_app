@@ -1,6 +1,5 @@
 import Navbar from "../../components/Navbar";
 import { useFetchTeachersQuery } from "../../Slices/Asynslices/fetchSlice";
-import CleanArrayData, { renameKeys } from "../../utils/functions";
 import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
@@ -15,43 +14,34 @@ import AddSpecialtyPreference from "../../ModalContent/Teacher/AddSpecialtyPrefe
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import AppointHod from "../../ModalContent/Teacher/AppointHod";
 import AppointHos from "../../ModalContent/Teacher/AppointHos";
+import { useMemo } from "react";
 function Teachers() {
-  const { data: data, error, isLoading } = useFetchTeachersQuery();
-  const filter_array_keys = [
-    "id",
-    "name",
-    "email",
-    "employment_status",
-    "hire_date",
-    "highest_qualification",
-    "field_of_study",
-    "religion",
-    "years_experience",
-    "salary",
-  ];
-  const renameMapping = {
-    id: "id",
-    name: "Name",
-    employment_status: "Employment Status",
-    hire_date: "Hire Date",
-    highest_qualification: "Highest qualification",
-    field_of_study: "Field of study",
-    religion: "Religion",
-    years_experience: "Years experience",
-    salary: "Salary",
-  };
-
+  const { data: teachers, isLoading } = useFetchTeachersQuery();
+      const memoizedColDefs = useMemo(() => {
+        return teacherTableConfig({
+          DropdownComponent,
+          CurrencyComponent,
+        });
+      }, []);
+    
+      const memoizedRowData = useMemo(() => {
+        return teachers?.data ?? [];
+      }, [teachers]);
+  
+      const memoizedNavConfig = useMemo(() => {
+         return TeacherNavBarConfig
+      }, []);
   if (isLoading) {
     return <Pageloaderspinner />;
   }
   return (
     <>
-      <Navbar options={TeacherNavBarConfig}></Navbar>
+      <Navbar options={memoizedNavConfig}></Navbar>
       <div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Number Teachers</p>
-            <h1 className="fw-bold my-0">{data.data.length}</h1>
+            <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
@@ -64,16 +54,10 @@ function Teachers() {
           </div>
         </div>
         <div>
-          {data?.data?.length > 0 ? (
+          {teachers?.data?.length > 0 ? (
             <Table
-              colDefs={teacherTableConfig({
-                DropdownComponent,
-                CurrencyComponent,
-              })}
-              rowData={renameKeys(
-                CleanArrayData(data.data, filter_array_keys),
-                renameMapping
-              )}
+              colDefs={memoizedColDefs}
+              rowData={memoizedRowData}
             />
           ) : (
             <div className="alert alert-warning">
@@ -126,10 +110,11 @@ export function DropdownComponent(props) {
       modalContent:AppointHos
     }
   ];
+  const memoizedActions = useMemo(() => actions, []);
   return (
     <>
       <ActionButtonDropdown
-        actions={actions}
+        actions={memoizedActions}
         row_id={id}
         style={
           "tableActionButton primary-background text-white font-size-sm px-2"

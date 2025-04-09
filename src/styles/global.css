@@ -984,3 +984,7 @@ thead{
     max-height: 83dvh;
     overflow-y: auto;
 }
+.table-toast-container{
+    top: -18dvh;
+    position: relative;
+}

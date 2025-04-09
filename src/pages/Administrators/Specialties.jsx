@@ -10,20 +10,33 @@ import SpecialtyDetails from "../../ModalContent/Specialty/SpecialtyDetails";
 import DeleteSpecialty from "../../ModalContent/Specialty/DeleteSpecialty";
 import DeactivateSpecialty from "../../ModalContent/Specialty/DeactivateSpecialty";
 import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import CurrencyComponent from "../../components/DataTableComponents/CurrencyComponent";
+import { useMemo } from "react";
 function Specialties() {
-  const { data: data, error, isLoading } = useFetchSpecialtiesQuery();
+  const { data: specialty,  isLoading } = useFetchSpecialtiesQuery();
+    const memoizedColDefs = useMemo(() => {
+      return SpecialtyTableConfig({
+        DropdownComponent
+      });
+    }, []);
+  
+    const memoizedRowData = useMemo(() => {
+      return specialty?.data ?? [];
+    }, [specialty]);
+
+    const memoizedNavConfig = useMemo(() => {
+       return SpecailtyNavBarOptions
+    }, []);
   if (isLoading) {
     return <Pageloaderspinner />;
   }
   return (
     <>
-      <Navbar options={SpecailtyNavBarOptions} />
+      <Navbar options={memoizedNavConfig} />
       <div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Number specialties</p>
-            <h1 className="fw-bold my-0">{data.data.length}</h1>
+            <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
@@ -37,8 +50,8 @@ function Specialties() {
           </div>
         </div>
         <Table
-          colDefs={SpecialtyTableConfig({ DropdownComponent, CurrencyComponent })}
-          rowData={data.data}
+          colDefs={memoizedColDefs}
+          rowData={memoizedRowData}
         />
       </div>
     </>
@@ -70,9 +83,10 @@ export function DropdownComponent(props) {
       modalContent: DeactivateSpecialty,
     }
   ];
+  const memoizedActions = useMemo(() => actions, []);
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id}
+      <ActionButtonDropdown actions={memoizedActions} row_id={id}
        style={'tableActionButton primary-background text-white font-size-sm px-2'}
       > 
       <span>Edit Specialty</span>
