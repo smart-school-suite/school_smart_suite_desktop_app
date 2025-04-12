@@ -16,6 +16,7 @@ import ToastWarning from "../../components/Toast/ToastWarning";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import toast from "react-hot-toast";
 import TimeInput from "../../components/TimeInput";
+import BulkActionsToast from "../../components/BulkActionsToast";
 function OperationalStatistics() {
   const handleTimeChange = (time) => {
     console.log("Selected Time:", time);
@@ -47,6 +48,7 @@ function OperationalStatistics() {
       <div className="position-relative my-1">
       <TimeInput onTimeChange={handleTimeChange}/>
       </div>
+      <BulkActionsToast ></BulkActionsToast>
     </>
   );
 }

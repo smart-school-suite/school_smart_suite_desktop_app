@@ -8,6 +8,7 @@ import RemoveHod from "../../ModalContent/Hod/RemoveHod";
 import HodDetails from "../../ModalContent/Hod/HodDetails";
 import SendMessage from "../../ModalContent/Hod/SendMessage";
 import UpdateHos from "../../ModalContent/Hos/UpdateHos";
+import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { useMemo } from "react";
 function HeadOfDepartment() {
   const { data: hod, isLoading } = useFetchHeadOfDepartmentQuery();
@@ -22,7 +23,7 @@ function HeadOfDepartment() {
   }, [hod]);
 
   if (isLoading) {
-    return <Pageloaderspinner />;
+    return <DataTablePageLoader button={false} />;
   }
   return (
     <div className="container pt-2">
@@ -42,7 +43,7 @@ function HeadOfDepartment() {
               className="fs-5 text-primary"
             />
           </div>
-          <h4 className="fw-semibold my-0">Manage Head Of Department (HOD)</h4>
+          <h5 className="fw-semibold my-0">Manage Head Of Department (HOD)</h5>
         </div>
       </div>
       <div className="d-flex flex-row align-items-end gap-2 mt-3">

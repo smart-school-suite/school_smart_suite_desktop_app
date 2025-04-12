@@ -1,6 +1,5 @@
 import Navbar from "../../components/Navbar";
 import { useFetchTeachersQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
 import Table from "../../components/Tables";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { TeacherNavBarConfig } from "../../ComponentConfig/navBarConfig";
@@ -15,6 +14,8 @@ import { ModalButton } from "../../components/DataTableComponents/ActionComponen
 import AppointHod from "../../ModalContent/Teacher/AppointHod";
 import AppointHos from "../../ModalContent/Teacher/AppointHos";
 import { useMemo } from "react";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import { Icon } from "@iconify/react";
 function Teachers() {
   const { data: teachers, isLoading } = useFetchTeachersQuery();
       const memoizedColDefs = useMemo(() => {
@@ -32,7 +33,7 @@ function Teachers() {
          return TeacherNavBarConfig
       }, []);
   if (isLoading) {
-    return <Pageloaderspinner />;
+    return <DataTableNavLoader />;
   }
   return (
     <>
@@ -46,15 +47,16 @@ function Teachers() {
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
               classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+                "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
               }
             >
+              <Icon icon="icons8:plus" className="font-size-md" />
               <span>Create Teacher</span>
             </ModalButton>
           </div>
         </div>
         <div>
-          {teachers?.data?.length > 0 ? (
+          {memoizedRowData?.length > 0 ? (
             <Table
               colDefs={memoizedColDefs}
               rowData={memoizedRowData}

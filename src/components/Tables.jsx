@@ -2,9 +2,10 @@ import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-mod
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { AgGridReact } from "@ag-grid-community/react";
 import { themeQuartz } from "@ag-grid-community/theming";
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useRef } from "react";
 
 function Table(props) {
+  const gridRef = useRef();
   const defaultColDef = {
     flex: 3,
   };
@@ -23,11 +24,30 @@ function Table(props) {
     },
   });
 
-  const onSelectionChanged = useCallback((event) => {
-    const rowCount = event.api.getSelectedNodes().length;
-    console.log('Selected row count:', rowCount); // Log the row count to the console
-    props.handleRowCountFromChild(rowCount);
-  }, [props]); // Add props to dependency array
+  const onSelectionChanged = useCallback(
+    (event) => {
+      const selectedNodes = event.api.getSelectedNodes();
+      const selectedData = selectedNodes.map((node) => node.data);
+
+      if (props.handleRowCountFromChild) {
+        props.handleRowCountFromChild(selectedData.length);
+      }
+
+      if (props.handleRowDataFromChild) {
+        props.handleRowDataFromChild(selectedData);
+      }
+    },
+    [props]
+  );
+
+  const onGridReady = useCallback((params) => {
+    gridRef.current = params.api;
+    if (props.provideResetFunctionToParent) {
+      props.provideResetFunctionToParent(() => {
+        params.api.deselectAll(); 
+      });
+    }
+  }, [props]);
 
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -43,6 +63,7 @@ function Table(props) {
         paginationPageSizeSelector={[50, 25, 75]}
         rowSelection={rowSelection}
         onSelectionChanged={onSelectionChanged}
+        onGridReady={onGridReady}
         theme={myTheme}
       />
     </div>

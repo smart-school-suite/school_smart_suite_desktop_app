@@ -13,6 +13,7 @@ import DeactivateDepartment from "../../ModalContent/Department/DeactivateDepart
 import { DepartmentNavBarConfig } from "../../ComponentConfig/navBarConfig";
 import { DepartmentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { useMemo } from "react";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 function Departments() {
   const { data: departments, isLoading } = useFetchDepartmentsQuery();
     const memoizedColDefs = useMemo(() => {
@@ -29,7 +30,7 @@ function Departments() {
        return DepartmentNavBarConfig
     }, []);
   if (isLoading) {
-    return <Pageloaderspinner />;
+    return <DataTableNavLoader />;
   }
   return (
     <>

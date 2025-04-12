@@ -7,6 +7,7 @@ import ActionButtonDropdown from "../../components/DataTableComponents/ActionCom
 import HosDetails from "../../ModalContent/Hos/HosDetails";
 import RemoveHos from "../../ModalContent/Hos/RemoveHos";
 import SendMessage from "../../ModalContent/Hos/SendMessage";
+import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { useMemo } from "react";
 function HeadOfSpecialty() {
   const { data: hos, isLoading } = useFetchHeadOfSpecialtyQuery();
@@ -20,7 +21,7 @@ function HeadOfSpecialty() {
       return hos?.data ?? [];
     }, [hos]);
   if (isLoading) {
-    return <Pageloaderspinner />;
+    return <DataTablePageLoader button={false} />;
   }
   return (
     <div className="container pt-2">
@@ -40,7 +41,7 @@ function HeadOfSpecialty() {
               className="fs-5 text-primary"
             />
           </div>
-          <h4 className="fw-semibold my-0">Manage Head Of Specialty (HOS)</h4>
+          <h5 className="fw-semibold my-0">Manage Head Of Specialty (HOS)</h5>
         </div>
       </div>
       <div className="d-flex flex-row align-items-end gap-2 mt-3">

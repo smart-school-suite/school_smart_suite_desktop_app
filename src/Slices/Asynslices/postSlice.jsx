@@ -436,6 +436,20 @@ export const postSlice = createApi({
            method:"POST",
            body:graduationDates
        })
+    }),
+    bulkDeactivateSchoolAdmin: builder.mutation({
+       query: (schoolAdminIds) =>  ({
+          url:`school-admin/bulkDeactivateSchoolAdmin/${schoolAdminIds} `,
+          method:"POST",
+          body:{}
+       })
+    }),
+    bulkActivateSchoolAdmin: builder.mutation({
+        query: (schoolAdminIds) => ({
+           url:`school-admin/bulkActivateSchoolAdmin/${schoolAdminIds}`,
+           method:'POST',
+           body:{}
+        })
     })
   }),
 });
@@ -494,5 +508,7 @@ export const {
   useReinstateDropoutStudentMutation,
   useActivateStudentBatchMutation,
   useDeactivateStudentBatchMutation,
-  useAssignGraduationDatesByBatchMutation
+  useAssignGraduationDatesByBatchMutation,
+  useBulkActivateSchoolAdminMutation,
+  useBulkDeactivateSchoolAdminMutation
 } = postSlice;

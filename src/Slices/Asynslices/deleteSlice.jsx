@@ -268,6 +268,12 @@ export const deleteSlice = createApi({
            url:`student/deleteStudentDropout/${studentDropoutId}`,
            method:"DELETE"
          })
+      }),
+      bulkDeleteSchoolAdmin: builder.mutation({
+         query: (schoolAdminIds) => ({
+            url: `school-admin/bulkDeleteSchoolAdmin/${schoolAdminIds}`,
+             method:"DELETE"
+         })
       })
   }),
 });
@@ -308,5 +314,6 @@ export const {
   useDeleteExamTimetableEntryMutation,
   useDeleteExamTimetableMutation,
   useDeleteResitTimetableMutation,
-  useDeleteStudentDropoutMutation
+  useDeleteStudentDropoutMutation,
+  useBulkDeleteSchoolAdminMutation
 } = deleteSlice;

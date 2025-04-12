@@ -1,15 +1,15 @@
 import { Icon } from "@iconify/react";
-import { ModialButton } from "../actionButton";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { getWeekday, getDayOfMonth } from "../../utils/functions";
 import { useFetchSchoolEventsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners";
 import { CSSTransition } from "react-transition-group";
 import { useState, useRef, useCallback } from "react";
+import CreateEvent from "../../ModalContent/Events/CreateEvent";
 function Events() {
   const {
     data: data,
     isLoading: isSchoolEventsLoading,
-    error: schoolEventError,
   } = useFetchSchoolEventsQuery();
 
   if (isSchoolEventsLoading) {
@@ -18,26 +18,25 @@ function Events() {
   return (
     <>
       <div className="container">
-        <div className="d-flex flex-row w-100 justify-content-between my-2">
-          <div className="d-flex flex-row align-items-center gap-4">
+        <div className="d-flex flex-row w-100 justify-content-between my-3">
+          <div className="d-flex flex-row align-items-center gap-2">
             <div
               style={{
-                width: "3rem",
-                height: "3rem",
-                borderRadius: "3rem",
+                width: "2rem",
+                height: "2rem",
+                borderRadius: "0.2rem",
               }}
-              className="bg-white d-flex flex-row align-items-center justify-content-center"
+              className="primary-background d-flex flex-row align-items-center justify-content-center"
             >
               <Icon
                 icon="material-symbols:event"
-                className="fs-5 color-primary"
+                className="fs-6 text-white"
               />
             </div>
             <div className="d-block">
-              <h4 className="my-0 fw-semibold">Events</h4>
+              <h5 className="my-0 fw-semibold">Manage School Events</h5>
             </div>
           </div>
-          <div></div>
         </div>
         <div className="row">
           <div className="col-lg-3">
@@ -45,31 +44,31 @@ function Events() {
               <p className="font-size-sm gainsboro-color my-2">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit
               </p>
-              <div className="d-flex flex-row align-items-center p-2 justify-content-between rounded-3 primary-background-50  my-2 color-primary fw-semibold">
+              <div className="d-flex flex-row align-items-center p-2 font-size-sm pointer-cursor justify-content-between rounded-3 primary-background-50  my-2 color-primary fw-semibold">
                 <span className="my-0">Upcoming</span>
                 <span className="my-0">
                   <Icon icon="material-symbols:upcoming" />
                 </span>
               </div>
-              <div className="d-flex flex-row align-items-center p-2 justify-content-between rounded-3 gainsboro-color my-2">
+              <div className="d-flex flex-row align-items-center p-2 font-size-sm pointer-cursor justify-content-between rounded-3 gainsboro-color my-2">
                 <span className="my-0">Pending</span>
                 <span className="my-0">
                   <Icon icon="material-symbols:pending-actions" />
                 </span>
               </div>
-              <div className="d-flex flex-row align-items-center p-2 justify-content-between rounded-3 gainsboro-color my-2">
+              <div className="d-flex flex-row align-items-center p-2 font-size-sm pointer-cursor justify-content-between rounded-3 gainsboro-color my-2">
                 <span className="my-0">Recuring</span>
                 <span className="my-0">
                   <Icon icon="fluent-mdl2:recurring-event" />
                 </span>
               </div>
-              <div className="d-flex flex-row align-items-center p-2 justify-content-between rounded-3 gainsboro-color my-2">
+              <div className="d-flex flex-row align-items-center p-2 font-size-sm pointer-cursor justify-content-between rounded-3 gainsboro-color my-2">
                 <span className="my-0">Past</span>
                 <span className="my-0">
                   <Icon icon="wpf:past" />
                 </span>
               </div>
-              <div className="d-flex flex-row align-items-center p-2 justify-content-between rounded-3 gainsboro-color my-2">
+              <div className="d-flex flex-row align-items-center p-2 font-size-sm pointer-cursor justify-content-between rounded-3 gainsboro-color my-2">
                 <span className="my-0">Cancelled</span>
                 <span className="my-0">
                   <Icon icon="ix:cancelled" />
@@ -78,41 +77,32 @@ function Events() {
               <p className="font-size-sm gainsboro-color my-2">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit
               </p>
-              <div className="d-flex flex-row align-items-center p-2 justify-content-between rounded-3 gainsboro-color my-2">
+              <div className="d-flex flex-row align-items-center p-2 font-size-sm pointer-cursor justify-content-between rounded-3 gainsboro-color my-2">
                 <span className="my-0">Deleted</span>
                 <span className="my-0">
                   <Icon icon="eos-icons:content-deleted" />
                 </span>
               </div>
-              <div className="d-flex flex-row align-items-center p-2 justify-content-between rounded-3 gainsboro-color my-2">
+              <div className="d-flex flex-row align-items-center p-2 font-size-sm pointer-cursor justify-content-between rounded-3 gainsboro-color my-2">
                 <span className="my-0">Favourites</span>
                 <span className="my-0">
                   <Icon icon="mdi:favourite" />
-                </span>
-              </div>
-              <p className="font-size-sm gainsboro-color my-2">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit
-              </p>
-              <div className="d-flex flex-row align-items-center p-2 justify-content-between rounded-3  my-2 gainsboro-color">
-                <span className="my-0">New</span>
-                <span className="my-0">
-                  <Icon icon="clarity:new-solid" width="36" height="36" />
                 </span>
               </div>
             </div>
           </div>
           <div className="col-lg-9">
             <div className="w-100 d-flex flex-row align-items-center justify-content-between">
-              <div className="rounded-3 p-2 bg-white w-50 border mb-2">
-                <input
-                  type="text"
-                  placeholder="Search for an event"
-                  className="border-none search-input"
+              <div className="w-50">
+                <input 
+                 type="search w-50"
+                 className="form-control"
+                 placeholder="Search for An Event"
                 />
               </div>
-              <ModialButton
+              <ModalButton
                 classname={
-                  "border-none px-3 py-2 bg-dark font-size-sm text-white rounded-pill d-flex flex-row align-items-ceneter justify-content-between gap-2"
+                  "border-none px-3 py-2 bg-dark font-size-sm text-white rounded-3 d-flex flex-row align-items-ceneter justify-content-between gap-2"
                 }
                 action={{ modalContent: CreateEvent }}
               >
@@ -120,7 +110,7 @@ function Events() {
                   <Icon icon="lucide:circle-plus" />
                 </span>
                 <span>Create Event</span>
-              </ModialButton>
+              </ModalButton>
             </div>
             <div className="scrollable-list px-2">
               <div className="d-block">
@@ -222,11 +212,11 @@ function Dropdownbutton({ eventId }) {
           unmountOnExit
         >
           <div className="d-flex drop-down flex-column bg-white p-2 rounded-3 w-100 border z-3 position-absolute">
-            <ModialButton
-              action={{ modalContent: EventDetails, row_id: eventId }}
+            <ModalButton
+              
             >
               <span>Details</span>
-            </ModialButton>
+            </ModalButton>
             <span>Plan Event</span>
             <span>Event Calenda</span>
             <span>update event</span>

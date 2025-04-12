@@ -1,9 +1,9 @@
 import Navbar from "../../components/Navbar";
-import { DashboardNavabarOptions } from "../../ComponentConfig/navBarConfig";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 function AcademicStatistics(){
     return(
         <>
-          <Navbar options={DashboardNavabarOptions}/>
+         <DataTableNavLoader />
         </>
     )
 }

@@ -10,6 +10,8 @@ import SpecialtyDetails from "../../ModalContent/Specialty/SpecialtyDetails";
 import DeleteSpecialty from "../../ModalContent/Specialty/DeleteSpecialty";
 import DeactivateSpecialty from "../../ModalContent/Specialty/DeactivateSpecialty";
 import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import { Icon } from "@iconify/react";
 import { useMemo } from "react";
 function Specialties() {
   const { data: specialty,  isLoading } = useFetchSpecialtiesQuery();
@@ -27,7 +29,7 @@ function Specialties() {
        return SpecailtyNavBarOptions
     }, []);
   if (isLoading) {
-    return <Pageloaderspinner />;
+    return <DataTableNavLoader />;
   }
   return (
     <>
@@ -42,9 +44,10 @@ function Specialties() {
             <ModalButton
               action={{ modalContent: CreateSpecialty }}
               classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+                "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
               }
             >
+              <Icon icon="icons8:plus" className="font-size-md" />
               <span>Create Specialty</span>
             </ModalButton>
           </div>

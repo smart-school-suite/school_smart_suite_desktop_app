@@ -72,7 +72,6 @@ function Dashboard() {
           </div>
         </div>
         <section className="mt-2">
-          {console.log(data.data)}
           <CardGroup
             totalExpenses={data.data.total_expenses}
             studentNumber={data.data.total_students}

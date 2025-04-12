@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
 const baseQuery = fetchBaseQuery({
@@ -210,6 +209,13 @@ export const updateSlice = createApi({
            method:"PUT",
            body:schoolSemesterData
          })
+      }),
+      bulkUpdateSchoolAdmin: builder.mutation({
+          query: (schoolAdminData) => ({
+              url:"school-admin/bulkUpdateSchoolAdmin",
+              method:'PUT',
+              body:schoolAdminData
+          })
       })
   }),
 });
@@ -234,5 +240,6 @@ export const {
   useUpdateTeacherMutation,
   useUpdateTimeTableMutation,
   useUpdateStudentBatchMutation,
-  useUpdateSchoolSemesterMutation
+  useUpdateSchoolSemesterMutation,
+  useBulkUpdateSchoolAdminMutation
 } = updateSlice;

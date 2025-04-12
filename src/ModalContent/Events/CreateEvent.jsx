@@ -1,3 +1,10 @@
+import { formatDuration } from "../../utils/functions";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useAddEventMutation } from "../../Slices/Asynslices/postSlice";
+import { SingleSpinner } from "../../components/Spinners";
+import { schoolEventCategories } from "../../data/data";
+import { Icon } from "@iconify/react";
 function CreateEvent({ handleClose }) {
     const [formData, setFormData] = useState({
       title: "",
@@ -10,12 +17,15 @@ function CreateEvent({ handleClose }) {
       duration: "",
       hours: "",
       minutes: "",
+      recipients:""
     });
     const [addEvent] = useAddEventMutation();
+    const [isCreating, setIsCreating] = useState(false);
     const handleInputChange = (field, value) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
     };
     const handleSubmit = async () => {
+      setIsCreating(true);
       try {
         const formattedDuration = formatDuration(
           Number(formData.hours),
@@ -26,25 +36,37 @@ function CreateEvent({ handleClose }) {
           ...formData,
           duration: formattedDuration,
         };
-  
+      
         await addEvent(eventData).unwrap();
+        setIsCreating(false);
         toast.success("Event Created successfully!");
         handleClose();
       } catch (error) {
+        setIsCreating(false);
         toast.error("Failed to create Event. Try again.");
       }
     };
     return (
       <div>
-        <div className="d-flex flex-row">
-          <div className="d-block">
-            <h5>Create Event</h5>
-            <p className="gainsboro-color font-size-sm">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste
-              deserun
-            </p>
-          </div>
-        </div>
+          <div className="d-flex flex-row align-items-center">
+                <div className="block">
+                  <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+                    <h5 className="m-0">Create Event</h5>
+                    <span
+                      className="m-0"
+                      onClick={() => {
+                        handleClose();
+                      }}
+                    >
+                      <Icon icon="charm:cross" width="22" height="22" />
+                    </span>
+                  </div>
+                  <span className="gainsboro-color font-size-sm">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
+                    nesciunt sunt
+                  </span>
+                </div>
+              </div>
         <div className="my-1">
           <span>Event Title</span>
           <input
@@ -136,6 +158,20 @@ function CreateEvent({ handleClose }) {
           </div>
         </div>
         <div className="my-1">
+            <label htmlFor="recipients">Recipients</label>
+            <select 
+             name="recipients"
+             onChange={(e) => handleInputChange("recipients", e.target.value)}
+             value={formData.recipients}
+             className="form-select"
+             >
+              <option selected>Select Recipients</option>
+              <option value="schooladmins">School Admins</option>
+              <option value="teachers">Teachers</option>
+              <option value="students">Students</option>
+             </select>
+        </div>
+        <div className="my-1">
           <span>Description</span>
           <textarea
             name=""
@@ -160,7 +196,9 @@ function CreateEvent({ handleClose }) {
                 handleSubmit();
               }}
             >
-              Create Event
+              {
+                 isCreating ? <SingleSpinner /> :  "Create Event" 
+              }
             </button>
           </div>
         </div>

@@ -118,11 +118,11 @@ function ActionButtonDropdown({
 }
 export default ActionButtonDropdown;
 
-export function ModalButton({ row_id, action, children, classname }) {
+export function ModalButton({ row_id, action, children, classname, data, resetAll }) {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const handleShow = (Component) => {
-    setModalContent(<Component row_id={row_id} handleClose={handleClose} />);
+    setModalContent(<Component row_id={row_id} handleClose={handleClose} data={data} resetAll={resetAll}/>);
     setShowModal(true);
   };
 

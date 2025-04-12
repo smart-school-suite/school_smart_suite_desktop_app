@@ -1,7 +1,6 @@
 import { useFetchSchoolAdminsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Table from "../../components/Tables";
 import { Icon } from "@iconify/react";
-import Pageloaderspinner from "../../components/Spinners";
 import { SchoolAdminTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
 import PermissionsBySchoolAdmin from "../../ModalContent/SchoolAdmin/PermissionsBySchoolAdmin";
@@ -18,12 +17,29 @@ import AccountStatus from "../../ModalContent/SchoolAdmin/AccountStatus";
 import AppointHod from "../../ModalContent/SchoolAdmin/AppointHod";
 import AppointHos from "../../ModalContent/SchoolAdmin/AppointHos";
 import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
+import CreateSchoolAdmin from "../../ModalContent/SchoolAdmin/CreateSchoolAdmin";
 import { useMemo, useCallback, useState } from "react";
+import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import CustomTooltip from "../../components/Tooltip";
-
+import BulkActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkActivate";
+import BulkDeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkDeactivate";
+import BulkUpdate from "../../ModalContent/SchoolAdmin/BulkUpdate";
+import BulkActionsToast from "../../components/BulkActionsToast";
 function SchoolAdmins() {
   const { data: schoolAdmins, isLoading } = useFetchSchoolAdminsQuery();
   const [rowCount, setRowCount] = useState(0);
+  const [selectedAdmins, setSelectedAdmins] = useState([]);
+  const [resetSelection, setResetSelection] = useState(null); 
+  const handleReset = () => {
+    if (resetSelection) {
+      resetSelection();
+      setRowCount(0); 
+      setSelectedAdmins(null)
+    }
+  };
+  const handleRowDataFromChild = useCallback((data) => {
+    setSelectedAdmins(data);
+  }, []);
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
@@ -39,7 +55,7 @@ function SchoolAdmins() {
   }, [schoolAdmins]);
 
   if (isLoading) {
-    return <Pageloaderspinner />;
+    return <DataTablePageLoader />;
   }
 
   return (
@@ -77,6 +93,7 @@ function SchoolAdmins() {
 
           <div className="end-block d-flex flex-row ms-auto justify-content-end gap-3">
             <ModalButton
+              action={{ modalContent: CreateSchoolAdmin }}
               classname={
                 "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center text-white"
               }
@@ -92,61 +109,105 @@ function SchoolAdmins() {
               colDefs={memoizedColDefs}
               rowData={memoizedRowData}
               handleRowCountFromChild={handleRowCountFromChild}
+              handleRowDataFromChild={handleRowDataFromChild}
+              provideResetFunctionToParent={setResetSelection}
               rowHeight={55}
             />
           </div>
-          <div className="z-3 w-100 d-flex flex-row align-items-center justify-content-center table-toast-container">
-            <div className="w-50 p-2 bg-white rounded-3 d-flex flex-row justify-content-between align-item-center table-toast shadow-sm border">
-              <div className="d-flex flex-row align-items-center gap-3">
-                <input type="checkbox" className="form-check-input m-0"  checked/>
-                <span className="font-size-sm fw-medium">
-                  2 Admins Selected
-                </span>
-              </div>
-              <div className="d-flex flex-row gap-3">
-                 <ModalButton
-                  classname={"border-none transparent-bg"}
-                  action={{ modalContent:BulkDelete }}
-                 >
-                <CustomTooltip tooltipText={"Delete All"}>
-                 <span className="pointer-cursor">
-                    <Icon icon="iconamoon:trash-thin" width="24" height="24" />
-                  </span>
-                </CustomTooltip>
-                 </ModalButton>
-                <CustomTooltip tooltipText={"Update All"}>
-                  <span className="pointer-cursor">
-                    <Icon icon="iconamoon:edit-thin" width="24" height="24" />
-                  </span>
-                </CustomTooltip>
-                <CustomTooltip tooltipText={"Menu Actions"}>
-                  <span className="pointer-cursor">
-                    <Icon icon="circum:menu-kebab" width="24" height="24" />
-                  </span>
-                </CustomTooltip>
-                <CustomTooltip tooltipText={"Cancel"}>
-                  <span className="pointer-cursor">
-                    <Icon
-                      icon="material-symbols-light:cancel-outline"
-                      width="24"
-                      height="24"
-                    />
-                  </span>
-                </CustomTooltip>
-              </div>
-            </div>
-          </div>
+          <BulkActionsToast
+            rowCount={rowCount}
+            label={"Selected Admins"}
+            resetAll={handleReset}
+            dropDownItems={<DropdownItems selectedAdmins={selectedAdmins} resetAll={handleReset}/>}
+            actionButton={<ActionButtons selectedAdmins={selectedAdmins} resetAll={handleReset}/>}
+          />
         </div>
       </div>
     </>
   );
 }
-
 export default SchoolAdmins;
+
+function ActionButtons({selectedAdmins, resetAll}) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkDelete }}
+        data={selectedAdmins}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkUpdate }}
+        data={selectedAdmins}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Update All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:edit-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+
+function DropdownItems({selectedAdmins, resetAll}) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent:BulkUpdate }}
+        data={selectedAdmins}
+        resetAll={resetAll}
+      >
+      <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+        <span className="font-size-sm">Update All</span>
+      </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent:BulkDelete }}
+        data={selectedAdmins}
+        resetAll={resetAll}
+      >
+      <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+        <span className="font-size-sm">Delete All</span>
+      </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent:BulkDeactivateSchoolAdmin }}
+        data={selectedAdmins}
+        resetAll={resetAll}
+      >
+      <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+        <span className="font-size-sm">Deactivate All</span>
+      </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent:BulkActivateSchoolAdmin }}
+        data={selectedAdmins}
+        resetAll={resetAll}
+      >
+      <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+        <span className="font-size-sm">Activate All</span>
+      </div>
+      </ModalButton>
+    </>
+  );
+}
 
 function ActionButtonGroup(props) {
   const { id } = props.data;
-
   const actions = [
     {
       actionTitle: "Update",

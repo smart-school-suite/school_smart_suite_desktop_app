@@ -984,7 +984,37 @@ thead{
     max-height: 83dvh;
     overflow-y: auto;
 }
-.table-toast-container{
+.table-toast-container.active {
     top: -18dvh;
     position: relative;
+    transition: top 0.3s ease;
+}
+
+.table-toast-container.inactive {
+    top: 0;
+    transition: top 0.3s ease;
+    opacity: 0;
+}
+.dropdown-content-sm{
+    height: auto;
+    max-height: 15dvh;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+.dropdown-content-sm::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 10px;
+}
+
+.dropdown-content-sm::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+.dropdown-content-sm::-webkit-scrollbar {
+    width: 2px;
+}
+.dropdown-content-item:hover{
+    background: var(--primary-color);
+    color: var(--acent-color-five);
 }
