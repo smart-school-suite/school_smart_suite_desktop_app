@@ -62,7 +62,7 @@ export const DashboardNavabarOptions = {
   route_data: [
     {
       lable: "Financial Analysis",
-      icon: "fluent-mdl2:financial",
+      icon: "healthicons:money-bag-outline",
       route: "/",
     },
     {

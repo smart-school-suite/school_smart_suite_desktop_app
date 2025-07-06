@@ -7,7 +7,7 @@ import {
   useFetchSpecialtiesQuery,
 } from "../Slices/Asynslices/fetchSlice";
 import { useState, useEffect } from "react";
-import Pageloaderspinner from "../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import toast from "react-hot-toast";
 import { ActionButtonDropUp } from "./actionButton";
 import CustomTooltip from "../components/Tooltip";

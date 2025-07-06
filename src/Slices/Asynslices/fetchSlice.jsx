@@ -48,7 +48,7 @@ const tagTypesarray = [
   'financialStats'
 ];
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000/api/api/v1/",
+  baseUrl: "http://127.0.0.1:8000/api/v1/",
   prepareHeaders: (headers, { getState }) => {
     const state = getState();
     const apiKey = state.auth?.apiKey;
@@ -239,11 +239,11 @@ export const apiSlice = createApi({
       providesTags: ["studentScores"],
     }),
     fetchCountrys: builder.query({
-      query: () => "country/countries",
+      query: () => "country",
       providesTags: ["country"],
     }),
     fetchPricingRates: builder.query({
-      query: () => "subcription/rates",
+      query: () => "subscription-rate/rates",
       providesTags: ["subscriptionRates"],
     }),
     fetchAssociateExamGrades: builder.query({
@@ -292,8 +292,16 @@ export const apiSlice = createApi({
        providesTags:["feedebtors"] 
     }),
     fetchFinancialStats: builder.query({
-       query: () => "stats/get/financial-stats",
+       query: ({ year }) => `financial-stats/${year}`,
        providesTags:['financialStats']
+    }),
+    fetchOperationalStats: builder.query({
+       query: ({ year }) => `operational-stats/${year} `,
+       providesTags:['operationalStats']
+    }),
+    fetchAcademicStats: builder.query({
+       query: ({ year }) => `academic-stats/${year}`,
+       providesTags:['academicStats']
     }),
     fetchPermissions: builder.query({
        query: () => "permissions/get-permissions",
@@ -526,5 +534,7 @@ export const {
   useFetchResitCandidatesQuery,
   useFetchDropoutStudentListQuery,
   useFetchStudentDropoutDetailsQuery,
-  useFetchGraduationDatesByBatchQuery
+  useFetchGraduationDatesByBatchQuery,
+  useFetchOperationalStatsQuery,
+  useFetchAcademicStatsQuery
 } = apiSlice;

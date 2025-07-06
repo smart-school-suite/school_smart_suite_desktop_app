@@ -1,8 +1,8 @@
 import { Icon } from "@iconify/react";
-import { SchoolYearSelector } from "./YearPicker";
+import { SchoolYearSelector } from "../FormComponents/YearPicker";
 import { useState, useEffect } from "react";
-import DatePicker from "./datePicker";
-import { generateMonthlyWeeks, generateYearlyMonthData } from "../utils/functions";
+import DatePicker from "../FormComponents/DatePicker";
+import { generateMonthlyWeeks, generateYearlyMonthData } from "../../utils/functions";
 function TimeTableGrid() {
   const [isSelected, setIselected] = useState("day");
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0-11 (January = 0)

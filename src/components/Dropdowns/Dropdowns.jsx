@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { CSSTransition } from "react-transition-group";
 import { Icon } from "@iconify/react";
-import { SingleSpinner } from "./Spinners";
-import CleanArrayData from "../utils/functions";
-import { renameKeys } from "../utils/functions";
+import { SingleSpinner } from "../Spinners/Spinners";
+import CleanArrayData from "../../utils/functions";
+import { renameKeys } from "../../utils/functions";
 function CustomDropdown({
   data,
   displayKey,

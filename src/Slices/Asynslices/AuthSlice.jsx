@@ -9,7 +9,14 @@ const initialState = {
   schoolId:null,
   schoolBranchId:null,
   passwordResetOtpToken:null,
-  passwordResetToken:null
+  passwordResetToken:null,
+  schoolAuthData:{
+     school_name:"",
+     country_id:"",
+     type:"",
+     school_branch_name:"",
+     abbreviation:""
+  }
 };
 
 const authSlice = createSlice({
@@ -59,6 +66,14 @@ const authSlice = createSlice({
     },
     handleSetChangePassword: (state) => {
        state.passwordResetToken = null
+    },
+    setSchoolAuthData: (state, action) => {
+      const { field, value } = action.payload;
+      state.schoolAuthData[field] = value; 
+    },
+    
+    resetSchoolAuthData: (state) => {
+      state.schoolAuthData = initialState.schoolAuthData;
     }
   },
 });
@@ -74,6 +89,7 @@ export const {
   handleSetSubcription,
   handleSetValidatePasswordResetOtp,
   handleSetCreateAdmin,
-  handleSetChangePassword
+  handleSetChangePassword,
+  setSchoolAuthData
 } = authSlice.actions;
 export default authSlice.reducer;

@@ -3,7 +3,7 @@ import Table from "../../components/Tables";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { useFetchSchoolSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { semesterTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import UpdateSemester from "../../ModalContent/Semesters/UpdateSemester";

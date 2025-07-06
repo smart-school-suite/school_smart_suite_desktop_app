@@ -1,7 +1,7 @@
 import Navbar from "../../components/Navbar";
 import { useFetchStudentResitQuery } from "../../Slices/Asynslices/fetchSlice";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { ResitFeeTableConfig } from "../../ComponentConfig/AgGridTableConfig";

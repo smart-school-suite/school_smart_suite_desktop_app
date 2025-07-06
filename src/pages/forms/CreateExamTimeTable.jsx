@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useFetchExamAssociateTimetableCoursesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useAddExamTimetableMutation } from "../../Slices/Asynslices/postSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Navbar from "../../components/Navbar";
 import { ExamResitNavbarOptions } from "../../componentConfigurations/navBarConfig";
 import toast from "react-hot-toast";

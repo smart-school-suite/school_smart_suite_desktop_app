@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import { SingleSpinner } from "../../components/Spinners";
-function BulkDeactivateSchoolAdmin({ handleClose, data }) {
+function BulkDeactivateSchoolAdmin({ handleClose, data, resetAll }) {
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [bulkDeactivateSchoolAdmin] = useBulkDeactivateSchoolAdminMutation();
   const handleDeactivate = async () => {
@@ -14,6 +14,7 @@ function BulkDeactivateSchoolAdmin({ handleClose, data }) {
       await bulkDeactivateSchoolAdmin(schoolAdminIds).unwrap();
       setIsDeactivating(false);
       handleClose();
+      resetAll();
       toast.custom(
         <ToastSuccess
           title={"Deactivation Succesfull"}

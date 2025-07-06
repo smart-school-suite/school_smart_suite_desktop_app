@@ -1,5 +1,5 @@
 import { useFetchParentsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables";
 import ActionButtonDropdown, {
   ModalButton,

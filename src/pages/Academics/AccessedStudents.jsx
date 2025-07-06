@@ -1,6 +1,6 @@
 import Navbar from "../../components/Navbar";
 import Table from "../../components/Tables";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
 import { AccessedStudentsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { useFetchAccessedStudentsQuery } from "../../Slices/Asynslices/fetchSlice";

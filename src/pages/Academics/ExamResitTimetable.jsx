@@ -3,7 +3,7 @@ import { ExamTimeTableNavbarOptions } from "../../ComponentConfig/navBarConfig";
 import { useFetchExamByTypeResitQuery } from "../../Slices/Asynslices/fetchSlice";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import Table from "../../components/Tables";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { ExamsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import UpdateExam from "../../ModalContent/Exams/UpdateExam";

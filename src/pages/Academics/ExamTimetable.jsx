@@ -1,5 +1,5 @@
 import Navbar from "../../components/Navbar";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import {useFetchExamsQuery} from "../../Slices/Asynslices/fetchSlice";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import Table from "../../components/Tables";

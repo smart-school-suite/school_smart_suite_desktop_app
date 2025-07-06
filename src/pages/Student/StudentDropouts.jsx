@@ -1,4 +1,4 @@
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables";
 import { useFetchDropoutStudentListQuery } from "../../Slices/Asynslices/fetchSlice";
 import { StudentDropOutTableConfig } from "../../ComponentConfig/AgGridTableConfig";

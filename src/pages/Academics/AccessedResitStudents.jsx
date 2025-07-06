@@ -2,7 +2,7 @@ import Navbar from "../../components/Navbar";
 import { ExamResitNavbarOptions } from "../../ComponentConfig/navBarConfig";
 import Table from "../../components/Tables";
 import { useFetchResitCandidatesQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import SummitScores from "../../ModalContent/AccessedResitCandidate/SubmitScores";
 import DeleteCandidate from "../../ModalContent/AccessedResitCandidate/DeleteCandidate";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";

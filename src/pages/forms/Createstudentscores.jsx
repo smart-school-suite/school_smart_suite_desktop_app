@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom"; // Added useNavigate
 import { useState, useEffect } from "react";
 import { useFetchAccessedCoursesQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useAddStudentScoreMutation } from "../../Slices/Asynslices/postSlice";
 import { MinimumScoreInput } from "../../components/formComponents";
 import NumberFlow from "@number-flow/react";

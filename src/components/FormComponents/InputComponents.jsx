@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import * as YupValidationSchema from  "../ComponentConfig/YupValidationSchema";
+import * as YupValidationSchema from  "../../ComponentConfig/YupValidationSchema";
 import { Icon } from "@iconify/react";
 
 export function PhoneNumberInput({ onChange, value, onValidationChange }) {

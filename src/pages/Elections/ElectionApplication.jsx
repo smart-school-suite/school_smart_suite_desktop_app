@@ -1,6 +1,6 @@
 import SchoolElectionSideBar from "../../components/SideBar/SchoolElection";
 import { useFetchElectionApplicationsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
 import { electionApplicationTableConfig } from "../../ComponentConfig/AgGridTableConfig";

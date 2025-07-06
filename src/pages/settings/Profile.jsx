@@ -8,7 +8,7 @@ import { useState } from "react";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { useRef } from "react";
 import axios from "../../axios/axios";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useFetchPermissionsBySchoolAdminQuery } from "../../Slices/Asynslices/fetchSlice";
 function Profile() {
   const userData = useSelector((state) => state.auth.user);

@@ -18,7 +18,7 @@ import AppointHod from "../../ModalContent/SchoolAdmin/AppointHod";
 import AppointHos from "../../ModalContent/SchoolAdmin/AppointHos";
 import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
 import CreateSchoolAdmin from "../../ModalContent/SchoolAdmin/CreateSchoolAdmin";
-import { useMemo, useCallback, useState } from "react";
+import { useMemo, useCallback, useState, useRef  } from "react";
 import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import CustomTooltip from "../../components/Tooltip";
 import BulkActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkActivate";
@@ -26,15 +26,16 @@ import BulkDeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkDeacti
 import BulkUpdate from "../../ModalContent/SchoolAdmin/BulkUpdate";
 import BulkActionsToast from "../../components/BulkActionsToast";
 function SchoolAdmins() {
+  const tableRef = useRef();
   const { data: schoolAdmins, isLoading } = useFetchSchoolAdminsQuery();
   const [rowCount, setRowCount] = useState(0);
   const [selectedAdmins, setSelectedAdmins] = useState([]);
-  const [resetSelection, setResetSelection] = useState(null); 
   const handleReset = () => {
-    if (resetSelection) {
-      resetSelection();
-      setRowCount(0); 
-      setSelectedAdmins(null)
+    console.log("Reset triggered, deselecting rows...");
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedAdmins([]);
     }
   };
   const handleRowDataFromChild = useCallback((data) => {
@@ -64,12 +65,11 @@ function SchoolAdmins() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center"
+              className="d-flex justify-content-center align-items-center primary-background text-white"
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
                 borderRadius: "0.5rem",
-                background: "#fff",
               }}
             >
               <Icon
@@ -106,11 +106,11 @@ function SchoolAdmins() {
         <div className="position-relative">
           <div className="pt-3 position-relative z-1">
             <Table
+              ref={tableRef} 
               colDefs={memoizedColDefs}
               rowData={memoizedRowData}
               handleRowCountFromChild={handleRowCountFromChild}
               handleRowDataFromChild={handleRowDataFromChild}
-              provideResetFunctionToParent={setResetSelection}
               rowHeight={55}
             />
           </div>

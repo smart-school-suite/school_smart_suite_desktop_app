@@ -5,7 +5,7 @@ import CleanArrayData, {
   sumAttribute,
   formatNumber,
 } from "../../utils/functions";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables";
 import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";
 import { SchoolExpensesTableConfig } from "../../ComponentConfig/AgGridTableConfig";

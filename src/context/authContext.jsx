@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
     setLoading((prevalue) => ({ ...prevalue, login: true }));
     setAuthError((prevalue) => ({ ...prevalue, login: null }));
     try {
-      const response = await axios.post("school-admin/login", {
+      const response = await axios.post("auth/school-admin/login", {
         email,
         password,
       });
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
     setAuthError((prevalue) => ({ ...prevalue, otp: null }));
     try {
       const response = await axios.post(
-        "school-admin/verify-otp",
+        "auth/school-admin/verify-otp",
         {
           otp,
         },
@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }) => {
 
   const handleAdminLogout = async (navigate, token) => {
     try {
-      await axios.post("school-admin/logout", 
+      await axios.post("auth/school-admin/logout", 
          {
 
          },
@@ -124,7 +124,7 @@ export const AuthProvider = ({ children }) => {
   const getAuthenticatedUser = useCallback(
     async (token) => {
       try {
-        const response = await axios.get("school-admin/auth-school-admin", {
+        const response = await axios.get("auth/school-admin/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -193,12 +193,12 @@ export const AuthProvider = ({ children }) => {
     setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
     try {
       const response = await axios.post(
-        "subcription/subscribe",
+        "school-subscription/school-subscriptions",
         subscriptionCredentials
       );
       setLoading((prevalue) => ({ ...prevalue, subscribe: false }));
       setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
-      dispatch(handleSetSubcription({ apiKey: response.data.data }));
+      dispatch(handleSetSubcription({ apiKey: response.data.data.api_key }));
       navigate("/register/school-admin");
     } catch (e) {
       setCreateError((prevState) => ({
@@ -221,7 +221,7 @@ export const AuthProvider = ({ children }) => {
     setCreateError((prevalue) => ({ ...prevalue, admin: null }));
     try {
       await axios.post(
-        "school-admin/register/super-admin",
+        "auth/school-admin/register/super-admin",
         schoolAdminCredentials,
         {
           headers: {

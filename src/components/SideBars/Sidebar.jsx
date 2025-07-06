@@ -2,27 +2,27 @@ import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { IsPathInRoutes } from "../utils/functions";
-import { Settingspaths, AcademicRoutes } from "../utils/paths";
+import { IsPathInRoutes } from "../../utils/functions";
+import { Settingspaths, AcademicRoutes } from "../../utils/paths";
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   return (
     <>
       <div className="col-lg-2 col-sm-2 col-md-2 pe-0 gx-lg-0">
-        <aside className=" white-bg d-flex flex-column ps-3  pt-2 pb-4">
+        <aside className=" white-bg d-flex flex-column ps-2  pt-2 pb-4">
           <div className="logo-area">
-            <div className="d-flex align-items-center flex-row gap-3">
-              <span>
-                <Icon
-                  icon="basil:book-open-solid"
-                  className="color-primary fs-5"
-                />
-              </span>
-              <h4 className="my-0 fs-6 fw-bold color-primary">SmartSchoolSuite</h4>
+            <div className="d-flex justify-content-start flex-row gap-3">
+               <div className="app-logo">
+              <img
+              src="./logo/blue_logo.png"
+              alt=""
+              className="app-logo"
+             />
+            </div>
             </div>
           </div>
-          <div className="nav-container mt-3">
+          <div className="nav-container mt-1">
             <div className="nav-items">
               <div className="d-flex flex-column gap-1">
                 <NavLink

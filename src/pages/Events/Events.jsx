@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { getWeekday, getDayOfMonth } from "../../utils/functions";
 import { useFetchSchoolEventsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { CSSTransition } from "react-transition-group";
 import { useState, useRef, useCallback } from "react";
 import CreateEvent from "../../ModalContent/Events/CreateEvent";

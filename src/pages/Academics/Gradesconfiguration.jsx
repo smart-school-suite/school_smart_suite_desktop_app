@@ -2,7 +2,7 @@ import Navbar from "../../components/Navbar";
 import {
   useFetchSchoolGradesConfigQuery,
 } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { GradesConfigurationNavbarOptions } from "../../ComponentConfig/navBarConfig";
 import Table from "../../components/Tables";
 import { Icon } from "@iconify/react";

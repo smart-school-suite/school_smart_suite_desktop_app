@@ -3,7 +3,7 @@ import { AdditionalFeesNavBarConfig } from "../../ComponentConfig/navBarConfig";
 import { useFetchAdditionalFeesQuery } from "../../Slices/Asynslices/fetchSlice";
 import Table from "../../components/Tables";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { additionalFeesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import DeleteAdditionalFees from "../../ModalContent/AdditionalFees/DeleteAdditionalFees";

@@ -4,7 +4,7 @@ import Layout from "../layouts/layout";
 import {
   ProtectedRoute,
   ProtectedLoginRoute,
-} from "../components/protectedRoutes";
+} from "../components/RouteComponentHelpers/protectedRoutes";
 import AuthLayout from "../layouts/AuthLayout";
 import AuthRoutes from "./Auth/AuthRoutes";
 import AcademicRoutes from "./Academics/AcademicRoutes";

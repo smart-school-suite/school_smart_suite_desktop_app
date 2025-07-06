@@ -1,6 +1,6 @@
 import Navbar from "../../components/Navbar";
 import { useFetchStudentBatchQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables";
 import { StudentBatchesNavBarOptions } from "../../ComponentConfig/navBarConfig";
 import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";

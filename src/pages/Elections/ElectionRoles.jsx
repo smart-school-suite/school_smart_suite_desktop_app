@@ -1,5 +1,5 @@
 import SchoolElectionSideBar from "../../components/SideBar/SchoolElection";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useFetchElectionRolesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { electionRolesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";

@@ -5,7 +5,7 @@ import CleanArrayData, {
   convertToReadableDate,
   renameKeys,
 } from "../../utils/functions";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables";
 import { Icon } from "@iconify/react";
 import { ExamResitNavbarOptions } from "../../ComponentConfig/navBarConfig";

@@ -7,7 +7,7 @@ import {
   autoUpdate,
 } from "@floating-ui/react";
 import { useState, useEffect } from "react";
-import CustomTooltip from "./Tooltip";
+import CustomTooltip from "../Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
 function BulkActionsToast({rowCount, label, dropDownItems, actionButton, resetAll }) {
   const [isToggled, setIsToggeled] = useState(false);
@@ -73,7 +73,7 @@ function BulkActionsToast({rowCount, label, dropDownItems, actionButton, resetAl
                 </span>
               </div>
              </button>
-            <CustomTooltip tooltipText={"Cancel"}>
+              <button className="border-none transparent-bg">
               <span className="pointer-cursor"
                 onClick={() => {
                      resetAll()
@@ -85,7 +85,7 @@ function BulkActionsToast({rowCount, label, dropDownItems, actionButton, resetAl
                   height="24"
                 />
               </span>
-            </CustomTooltip>
+              </button>
           </div>
         </div>
       </div>

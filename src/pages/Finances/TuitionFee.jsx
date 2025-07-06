@@ -2,7 +2,7 @@ import Navbar from "../../components/Navbar";
 import { TuitionFeeNavbarOptions } from "../../ComponentConfig/navBarConfig";
 import Table from "../../components/Tables";
 import { useFetchTuitionFeeQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { renameKeys } from "../../utils/functions";
 import CleanArrayData from "../../utils/functions";
 import { tuitionFeeTableConfig } from "../../ComponentConfig/AgGridTableConfig";

@@ -1,7 +1,7 @@
 import { useFetchHeadOfDepartmentQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
 import Table from "../../components/Tables";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { hodTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import RemoveHod from "../../ModalContent/Hod/RemoveHod";

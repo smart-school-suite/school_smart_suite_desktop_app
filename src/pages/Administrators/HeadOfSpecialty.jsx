@@ -1,4 +1,4 @@
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useFetchHeadOfSpecialtyQuery } from "../../Slices/Asynslices/fetchSlice";
 import { hosTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { Icon } from "@iconify/react";

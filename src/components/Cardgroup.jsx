@@ -44,7 +44,7 @@ function CardGroup({
                 </div>
                 <div className="mt-auto">
                   <div>
-                    <h4 className="fw-semibold ms-1 dark-slate-gray-color">$ <NumberFlow value={tuitionFeesPaid} /></h4>
+                    <h4 className="fw-semibold ms-1 dark-slate-gray-color">XAF <NumberFlow value={tuitionFeesPaid} /></h4>
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button className="rounded-pill px-2 py-1 d-flex gap-2 border-none font-size-sm"style={{ backgroundColor:"#C6E3F1" }} >
@@ -53,7 +53,7 @@ function CardGroup({
                       </span>
                       <span>20%</span>
                     </button>
-                    <span className="font-size-sm">Than Last Year</span>
+                    <span className="font-size-sm">20% increase</span>
                   </div>
                 </div>
               </div>
@@ -86,7 +86,7 @@ function CardGroup({
                 </div>
                 <div className="mt-auto">
                   <div>
-                    <h4 className="fw-semibold ms-1 dark-slate-gray-color">$ <NumberFlow value={totalExpenses} /></h4>
+                    <h4 className="fw-semibold ms-1 dark-slate-gray-color">XAF <NumberFlow value={totalExpenses} /></h4>
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button className="rounded-pill px-2 py-1 d-flex gap-2 border-none font-size-sm"style={{ backgroundColor:"#FFE4D5" }} >
@@ -124,20 +124,20 @@ function CardGroup({
                   >
                     <Icon icon="game-icons:receive-money" className="dark-slate-gray-color"/>
                   </button>
-                  <span>Total Enrolled Students</span>
+                  <span>Total Additional Fee</span>
                 </div>
                 <div className="mt-auto">
                   <div>
-                    <h4 className="fw-semibold ms-1 dark-slate-gray-color"><NumberFlow value={studentNumber} /></h4>
+                    <h4 className="fw-semibold ms-1 dark-slate-gray-color">XAF <NumberFlow value={studentNumber} /></h4>
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button className="rounded-pill px-2 py-1 d-flex gap-2 border-none font-size-sm"style={{ backgroundColor:"#9DBFDC" }} >
                       <span>
                         <Icon icon="stash:arrow-up-duotone" className="card-icon fs-6"/>
                       </span>
-                      <span>20%</span>
+                      <span>5.5%</span>
                     </button>
-                    <span className="font-size-sm">Than Last Year</span>
+                    <span className="font-size-sm">Increase 5.5%</span>
                   </div>
                 </div>
               </div>

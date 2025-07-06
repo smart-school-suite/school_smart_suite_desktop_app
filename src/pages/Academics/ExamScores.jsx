@@ -1,7 +1,7 @@
 import Navbar from "../../components/Navbar";
 import { ScoresNavBarOptions } from "../../ComponentConfig/navBarConfig";
 import { useFetchStudentResultsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables";
 import { studentResultsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";

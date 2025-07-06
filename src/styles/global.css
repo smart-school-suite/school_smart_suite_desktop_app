@@ -1018,3 +1018,29 @@ thead{
     background: var(--primary-color);
     color: var(--acent-color-five);
 }
+.signup-app-logo{
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.auth-progress{
+    width: 24.75%;
+    height: 0.2rem;
+    place-content: center;
+}
+.auth-progress-bar.active{
+    width: 107%;
+    height: 0.2rem;
+    background-color: var(--primary-color);
+}
+.auth-progress-bar{
+    width: 107%;
+    height: 0.2rem;
+    background-color: #e1e1e1;
+}
+.app-logo{
+    width: 100px;
+    height: 50px;
+    object-fit: contain;
+}

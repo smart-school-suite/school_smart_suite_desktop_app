@@ -3,67 +3,99 @@ import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 function RegisterSchoolAdmin() {
-          const [adminCredentials, setAdminCredentails] = useState({
-            name: "",
-            email: "",
-            password: "",
-            role: "",
-            employment_status: "",
-            hire_date: "",
-            work_location: "",
-            position: "",
-            salary:""
-          });
-          const apiKey = useSelector((state) => state.auth.apiKey);
-          const navigate = useNavigate();
-          const { handleCreateSuperAdmin, loading, createError } = useAuth(); 
-        
-          const handleCreateSchoolAdmin = async (e) => {
-            e.preventDefault();
-            await handleCreateSuperAdmin(navigate, adminCredentials, apiKey); 
-          };
-        
-          const handleChange = (e) => {
-            const { name, value } = e.target;
-            setAdminCredentails((prevState) => ({
-              ...prevState,
-              [name]: value,
-            }));
-          };
+  const [adminCredentials, setAdminCredentails] = useState({
+    name: "",
+    email: "",
+    password: "",
+    first_name:"",
+    last_name:""
+  });
+  const apiKey = useSelector((state) => state.auth.apiKey);
+  const navigate = useNavigate();
+  const { handleCreateSuperAdmin, loading, createError } = useAuth();
+
+  const handleCreateSchoolAdmin = async () => {
+    await handleCreateSuperAdmin(navigate, adminCredentials, apiKey);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setAdminCredentails((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
   return (
     <>
-      <div className="container w-100 height-100 d-flex flex-column justify-content-center">
-        <div className="d-flex flex-row align-items-center justify-content-around w-100 mt-5">
-          <div className="w-50 bg-white rounded-4 px-2 border shadow-sm py-4">
-            <form onSubmit={handleCreateSchoolAdmin}>
+      <div className="container w-100 height-100 d-flex flex-column pb-4">
+        <div className="d-flex flex-row align-items-center w-100 justify-content-between px-3">
+          <div className="signup-app-logo">
+            <img src="/logo/blue_logo.png" alt="" className="signup-app-logo" />
+          </div>
+          <div className="d-flex flex-row gap-4">
+            <button className="border-none rounded-pill px-3 py-2 border bg-white font-size-sm">
+              Save And Exit
+            </button>
+            <button className="border-none rounded-pill px-3 py-2 border bg-white  font-size-sm">
+              Questions?
+            </button>
+          </div>
+        </div>
+        <div className="d-flex flex-row align-items-center justify-content-around w-100 mt-2">
+          <div className="w-50 rounded-4 px-2  py-4">
+            <form>
               <h4 className="text-center">Create School Admin</h4>
               {createError.admin && (
                 <div className="alert alert-danger">{createError.admin}</div>
               )}
               <div className="d-flex flex-row align-items-center w-100 gap-2">
-              <div className="my-1 w-50">
-                <span>Full Names</span>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter Full Name"
-                  name="name"
-                  value={adminCredentials.name}
-                  onChange={handleChange}
-                />
+                <div className="my-1 w-100">
+                  <span>Full Names</span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter Full Name"
+                    name="name"
+                    value={adminCredentials.name}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
-              <div className="my-1 w-50">
-                <span>email</span>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="@example.com"
-                  name="email"
-                  value={adminCredentials.email}
-                  onChange={handleChange}
-                />
+              <div className="w-100 d-flex flex-row align-items-center gap-2">
+                <div className="w-50">
+                  <label htmlFor="firstname">First Name</label>
+                  <input 
+                   type="text" 
+                   className="form-control"
+                   name="first_name"
+                   value={adminCredentials.first_name}
+                   onChange={handleChange}
+                   placeholder="Enter First Name "
+                   />
+                </div>
+                <div className="w-50">
+                  <label htmlFor="lastname">Last Name</label>
+                  <input 
+                    type="text"
+                    className="form-control"
+                    name="last_name"
+                    value={adminCredentials.last_name}
+                    onChange={handleChange}
+                    placeholder="Enter Last Name"  
+                  />
+                </div>
               </div>
-              </div>
+              <div className="my-1 w-100">
+                  <span>email</span>
+                  <input
+                    type="email"
+                    className="form-control"
+                    placeholder="@example.com"
+                    name="email"
+                    value={adminCredentials.email}
+                    onChange={handleChange}
+                  />
+                </div>
               <div className="my-1 w-100">
                 <span>Password</span>
                 <input
@@ -75,78 +107,38 @@ function RegisterSchoolAdmin() {
                   onChange={handleChange}
                 />
               </div>
-              <div className="my-1 w-100">
-                <span>role</span>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="role"
-                  placeholder="School Admin"
-                  value={adminCredentials.role}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="my-1 w-100">
-                <span>Hire Date</span>
-                <input
-                  type="date"
-                  className="form-control"
-                  name="hire_date"
-                  value={adminCredentials.hire_date}
-                  onChange={handleChange}
-                />
-              </div>
-                <div className="my-1 w-100">
-                  <span>Salary</span>
-                  <input
-                    type="number"
-                    className="form-control"
-                    name="salary"
-                    value={adminCredentials.salary}
-                    onChange={handleChange}
-                    placeholder="20,000, 40,0000"
-                  />
-                </div>
-                <div className="my-1 w-100">
-                  <span>Work Location</span>
-                  <input type="text" 
-                   className="form-control"
-                   name="work_location"
-                   value={adminCredentials.work_location}
-                   onChange={handleChange}
-                   placeholder="Home, Main Office, Branch Location"
-                  />
-                </div>
-                <div className="my-1 w-100">
-                  <span>Position</span>
-                  <input type="text" 
-                    className="form-control"
-                    name="position"
-                    onChange={handleChange}
-                    value={adminCredentials.position}
-                    placeholder="Manager, Developer, Coordinator"
-                  />
-                </div>
-                <div className="my-1 w-100">
-                  <span>Employment Status</span>
-                  <input type="text" 
-                   className="form-control" 
-                   name="employment_status"
-                   onChange={handleChange}
-                   value={adminCredentials.employment_status}
-                   placeholder="Full-time, Part-time, Contractor"
-                  />
-                </div>
-              <div className="mt-2">
-                <button
-                  className="primary-background text-white border-none p-2 rounded-3 w-100"
-                  type="submit"
-                  disabled={loading.admin}
-                >
-                  {loading.admin ? "Submitting ....." : "Create School"}
-                </button>
-              </div>
             </form>
+          </div>
+        </div>
+        <div className="mt-auto px-3 w-100">
+          <div className="mb-2">
+            <span className="font-size-sm ">Step 4 of 4 Completed</span>
+          </div>
+          <div className="row w-100 d-flex flex-row align-items-center gap-1 justify-content-between">
+            <div className="auth-progress">
+              <div className="auth-progress-bar active"></div>
+            </div>
+            <div className="auth-progress">
+              <div className="auth-progress-bar active"></div>
+            </div>
+            <div className="auth-progress">
+              <div className="auth-progress-bar active"></div>
+            </div>
+            <div className="auth-progress">
+              <div className="auth-progress-bar active"></div>
+            </div>
+          </div>
+          <div className="d-flex flex-row align-items-center w-100 justify-content-end pe-2 mt-3">
+            <div>
+              <button
+                className="border-none p-2 rounded-2 font-size-sm px-4 primary-background text-white fw-medium"
+                onClick={() => {
+                  handleCreateSchoolAdmin()
+                }}
+              >
+                Finish
+              </button>
+            </div>
           </div>
         </div>
       </div>

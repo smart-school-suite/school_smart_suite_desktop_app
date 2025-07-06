@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { ExamTimeTableNavbarOptions } from "../../componentConfigurations/navBarConfig";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import {
   useFetchInstructorAvailabilityQuery,
   useFetchSpecailtyCoursesQuery,

@@ -1,4 +1,4 @@
-import { ModalButton } from "./DataTableComponents/ActionComponent";
+import { ModalButton } from "../DataTableComponents/ActionComponent";
 function Greenbutton({ style, ModalContent }) {
   return (
     <>

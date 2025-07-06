@@ -1,7 +1,7 @@
 import Navbar from "../../components/Navbar";
 import { RegistrationFeesNavBarCongfig } from "../../ComponentConfig/navBarConfig";
 import { useFetchRegistrationFeesQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
 import { registrationFeeTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import Table from "../../components/Tables";

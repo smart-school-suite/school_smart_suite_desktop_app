@@ -1,4 +1,4 @@
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/Sidebars/Sidebar";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 function Layout() {

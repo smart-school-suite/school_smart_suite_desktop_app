@@ -22,17 +22,18 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-function LineChart(){
+function LineChart({ config }){
     const data = {
-        labels: ['19-20', '20-21', '21-22', '22-23', '23-24', '24-25', '25-26'],
+        labels: config.label,
         datasets: [
           {
             label: 'Sales',
             fill: true,
-            backgroundColor: 'rgba(75,192,192,0.2)',
-            borderColor: 'rgba(75,192,192,1)',
+            backgroundColor: config.bgColor,
+            borderColor: config.borderColor,
             borderWidth: 1,
-            data: [65, 59, 80, 81, 56, 55, 100],
+            data: config.data,
+            tension:0.5,
           },
         ],
       };
@@ -48,14 +49,63 @@ function LineChart(){
               }
           }
       },
-        scales: {
-          x : {
-            grid: {
-                display: false
-            },
-            
-        }
+      scales: {
+      x: {
+        // --- Remove X-axis line/border ---
+        border: {
+          display: false, // Removes the axis line itself
+        },
+        // --- Remove X-axis grid lines ---
+        grid: {
+          display: false, // Removes vertical grid lines
+          drawBorder: false, // Ensures no border is drawn for the grid
+        },
+        // --- Remove X-axis tick marks ---
+        ticks: {
+          display: true, // Keep labels visible
+          color: '#666', // Adjust label color
+          drawTicks: false, // Removes the small tick lines
+          drawOnChartArea: false, // Ensures ticks are not drawn on the chart area
+           font: {
+            family: 'Poppins, sans-serif', // Apply Poppins font to x-axis ticks
+          },
+        },
       },
+      y: {
+        // --- Remove Y-axis line/border ---
+        border: {
+          display: false, // Removes the axis line itself
+        },
+        // --- Remove Y-axis grid lines ---
+        grid: {
+          display: false, // Removes horizontal grid lines
+          drawBorder: false, // Ensures no border is drawn for the grid
+        },
+        // --- Remove Y-axis tick marks ---
+        ticks: {
+          display: true, // Keep labels visible
+          color: '#666', // Adjust label color
+          drawTicks: false, // Removes the small tick lines
+          drawOnChartArea: false, // Ensures ticks are not drawn on the chart area
+          // --- Custom callback for formatting large numbers ---
+          callback: function(value, index, values) {
+            if (value >= 1000000000) {
+              return (value / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+            }
+            if (value >= 1000000) {
+              return (value / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+            }
+            if (value >= 1000) {
+              return (value / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+            }
+            return value;
+          },
+          font: {
+            family: 'Poppins, sans-serif', // Apply Poppins font to x-axis ticks
+          },
+        },
+      },
+    },
       maintainAspectRatio: false
       
       }

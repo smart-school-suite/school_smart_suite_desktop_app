@@ -21,10 +21,9 @@ const authPersistConfig = {
     "token", 
     "otpTokenHeader",
     "apiKey",
-    "schoolId",
-    "schoolBranchId",
     "passwordResetOtpToken",
-    "passwordResetToken"
+    "passwordResetToken",
+    "schoolAuthData"
   ], 
 };
 

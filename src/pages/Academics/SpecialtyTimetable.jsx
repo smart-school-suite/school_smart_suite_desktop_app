@@ -1,6 +1,6 @@
 import Navbar from "../../components/Navbar";
 import Table from "../../components/Tables";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { ExamTimeTableNavbarOptions } from "../../ComponentConfig/navBarConfig";
 import { useFetchSchoolSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
 import CleanArrayData, { renameKeys } from "../../utils/functions";

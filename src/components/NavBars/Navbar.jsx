@@ -1,11 +1,31 @@
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import NotificationDropdown from "./NotificationDropdown";
+import NotificationDropdown from "../Dropdowns/NotificationDropdown";
+import createEcho from "../../echo/echo";
+import { useEffect, useState } from "react";
 function Navbar(props) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState([]);
   const userData = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
+  const userId = userData.id;
+
+  const echo = createEcho(token); // create Echo instance with user token
+
+  useEffect(() => {
+      const channel = echo.private(`App.Models.Schooladmin.${userData.authSchoolAdmin.id}`); // adjust based on guard/model
+
+      channel.notification((notification) => {
+          console.log('Received Notification:', notification);
+          setNotifications((prev) => [notification, ...prev]);
+      });
+
+      return () => {
+          echo.leave(`App.Models.Schooladmin.${userId}`);
+      };
+  }, [userId, echo]);
   return (
     <>
       <div>
