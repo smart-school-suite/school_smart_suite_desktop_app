@@ -7,10 +7,15 @@ import { Icon } from "@iconify/react";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { formatDateWithSuffix } from "../../utils/functions";
 import PieChart from "../../components/ChartComponents/PieChart";
+import { useSelector } from "react-redux";
+import NumberFlow from "@number-flow/react";
 function OperationalStatistics() {
+  const currentYear = new Date().getFullYear();
   const { isLoading, error } = useFetchOperationalStatsQuery({
-    year: 2025,
+    year: currentYear,
   });
+  const schoolData = useSelector((state) => state.auth.user);
+  const currency = schoolData.schoolDetails.school.country.currency;
   if (isLoading) {
     return (
       <>
@@ -31,7 +36,7 @@ function OperationalStatistics() {
             <div className="d-flex flex-row align-items-center gap-2">
               <div>
                 <h2 className="fw-bold my-0 primary-color-dark">
-                  XAF 1000
+                  {currency}
                   <span className="light-skyblue-color">.00</span>
                 </h2>
               </div>
@@ -78,9 +83,9 @@ function OperationalStatistics() {
         </div>
         <section>
           <CardGroup
-            totalExpenses={100}
-            studentNumber={100}
-            tuitionFeesPaid={100}
+            cardOne={<CardOne />}
+            cardTwo={<CardTwo />}
+            cardThree={<CardThree />}
           />
         </section>
         <section className="mt-2">
@@ -468,3 +473,178 @@ function OperationalStatistics() {
   );
 }
 export default OperationalStatistics;
+
+export function CardOne({ data }) {
+  return (
+    <>
+      <div className="rounded-box d-flex flex-row align-items-center justify-content-center light-skyblue-bg">
+        <Icon icon="stash:arrow-up-duotone" className="increase-icon fs-5" />
+      </div>
+      <img
+        src="./images/card-one.png"
+        alt=""
+        className="background-image z-0"
+      />
+      <div className="overlay-content z-3 ps-2">
+        <div className="z-3 position-absolute d-flex flex-column h-100 pb-2 pt-1">
+          <div className="d-flex flex-row align-items-center gap-3 mt-1">
+            <button
+              className="border-none rounded-circle"
+              style={{
+                width: "2rem",
+                height: "2rem",
+                borderRadius: "2rem",
+                backgroundColor: "#C6E3F1",
+              }}
+            >
+              <Icon
+                icon="game-icons:receive-money"
+                className="dark-slate-gray-color"
+              />
+            </button>
+            <span>Tuition Fees Paid</span>
+          </div>
+          <div className="mt-auto">
+            <div>
+              <h4 className="fw-semibold ms-1 dark-slate-gray-color">
+                 <span>{data.currency}</span> <NumberFlow value={data.tuitionFeePaid} />
+              </h4>
+            </div>
+            <div className="d-flex flex-row align-items-center gap-2">
+              <button
+                className="rounded-pill px-2 py-1 d-flex gap-2 border-none font-size-sm fw-semibold"
+                style={{ backgroundColor: "#e5f2f9", color:"#66BB6A" }}
+              >
+                <span>
+                  <Icon
+                    icon="material-symbols:keyboard-double-arrow-up"
+                    className="increase-icon fs-6"
+                  />
+                </span>
+                <span>5.5%</span>
+              </button>
+              <span className="font-size-sm">Than Last Year</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export function CardTwo({data}) {
+  return (
+    <>
+      <div className="rounded-box d-flex flex-row align-items-center justify-content-center light-peach-bg">
+        <Icon icon="stash:arrow-up-duotone" className="increase-icon fs-5" />
+      </div>
+      <img
+        src="./images/card-two.png"
+        alt=""
+        className="background-image z-0"
+      />
+      <div className="overlay-content z-3 ps-2">
+        <div className="z-3 position-absolute d-flex flex-column h-100 pb-2 pt-1">
+          <div className="d-flex flex-row align-items-center gap-3 mt-1">
+            <button
+              className="border-none rounded-circle"
+              style={{
+                width: "2rem",
+                height: "2rem",
+                borderRadius: "2rem",
+                backgroundColor: "#FFE4D5",
+              }}
+            >
+              <Icon
+                icon="game-icons:receive-money"
+                className="dark-slate-gray-color"
+              />
+            </button>
+            <span>Total Expenses</span>
+          </div>
+          <div className="mt-auto">
+            <div>
+              <h4 className="fw-semibold ms-1 dark-slate-gray-color">
+               <span>{data.currency}</span> <NumberFlow value={data.totalExpenses} />
+              </h4>
+            </div>
+            <div className="d-flex flex-row align-items-center gap-2">
+              <button
+                className="rounded-pill px-2 py-1 d-flex gap-2 border-none font-size-sm fw-semibold"
+                style={{ backgroundColor: "#ffe4d5",  color:"#28a745" }}
+              >
+                <span>
+                  <Icon
+                    icon="material-symbols:keyboard-double-arrow-up"
+                    className="increase-icon fs-6"
+                  />
+                </span>
+                <span>100.5%</span>
+              </button>
+              <span className="font-size-sm">Than Last Year</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export function CardThree({data}) {
+  return (
+    <>
+      <div className="rounded-box d-flex flex-row align-items-center justify-content-center cornflower-blue-bg">
+        <Icon icon="stash:arrow-up-duotone" className="increase-icon fs-5" />
+      </div>
+      <img
+        src="./images/card-three.png"
+        alt=""
+        className="background-image z-0"
+      />
+      <div className="overlay-content z-3 ps-2">
+        <div className="z-3 position-absolute d-flex flex-column h-100 pb-2 pt-1">
+          <div className="d-flex flex-row align-items-center gap-3 mt-1">
+            <button
+              className="border-none rounded-circle"
+              style={{
+                width: "2rem",
+                height: "2rem",
+                borderRadius: "2rem",
+                backgroundColor: "#9DBFDC",
+              }}
+            >
+              <Icon
+                icon="game-icons:receive-money"
+                className="dark-slate-gray-color"
+              />
+            </button>
+            <span>Total Additional Fee Paid</span>
+          </div>
+          <div className="mt-auto">
+            <div>
+              <h4 className="fw-semibold ms-1 dark-slate-gray-color">
+               <span>{data.currency}</span> <NumberFlow value={data.additionalFeePaid} />
+              </h4>
+            </div>
+            <div className="d-flex flex-row align-items-center gap-2">
+              <button
+                className="rounded-pill px-2 py-1 d-flex gap-2 border-none font-size-sm fw-semibold"
+                style={{ backgroundColor: "#cadced", color:"#ff2323" }}
+              >
+                <span>
+                  <Icon
+                    icon="material-symbols:keyboard-double-arrow-up"
+                    className="decrease-icon fs-6"
+                  
+                  />
+                </span>
+                <span>5.5%</span>
+              </button>
+              <span className="font-size-sm">Than Last Year</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

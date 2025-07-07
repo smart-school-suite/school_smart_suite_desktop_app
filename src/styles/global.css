@@ -1044,3 +1044,11 @@ thead{
     height: 50px;
     object-fit: contain;
 }
+.decrease-icon{
+    transform: rotate(180deg);
+    transition: all 0.2s;
+}
+.increase-icon{
+    transform: rotate(360deg);
+    transition: all 0.2s;
+}

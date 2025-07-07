@@ -27,7 +27,6 @@ function LineChart({ config }){
         labels: config.label,
         datasets: [
           {
-            label: 'Sales',
             fill: true,
             backgroundColor: config.bgColor,
             borderColor: config.borderColor,
@@ -41,12 +40,7 @@ function LineChart({ config }){
       const options = {
         plugins: {
           legend: {
-              labels: {
-                  font: {
-                      size: 6,
-                      family:"Poppins, sanserif"
-                  }
-              }
+              display:false
           }
       },
       scales: {

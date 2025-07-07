@@ -704,38 +704,7 @@ function Sidebar() {
             </div>
           </div>
           <div className="mt-auto d-flex flex-column justify-content-center align-items-center w-100">
-           <div className="w-100 pe-4">
-           <div className="card border-none primary-background-100 w-100 py-2 rounded-4">
-              <div className="d-flex flex-row align-items-center gap-2 font-size-sm my-1 px-1  ms-2">
-                <p className="my-0">
-                  <Icon
-                    icon="material-symbols:next-plan"
-                    className="fs-6  color-primary "
-                  />
-                </p>
-                <span>Ultimate Plan</span>
-              </div>
-              <div className="d-flex flex-row align-items-center gap-3  my-1 px-2  ms-2 font-size-sm">
-                <span>Payment Type</span>
-                <p className="my-0 color-primary fw-medium">Yearly</p>
-              </div>
-              <div className="d-flex flex-row align-items-center gap-3  my-1 px-2  ms-2 font-size-sm">
-                <span>Expires At</span>
-                <p className="my-0 color-primary fw-medium">12 Jan 2025</p>
-              </div>
-              <div className="d-flex flex-row justify-content-center px-3 my-1">
-                <button className="border-none primary-background rounded-2 text-white font-size-sm fw-medium py-1 w-100 ">
-                  upgrade plan
-                </button>
-              </div>
-            </div>
-           </div>
-            <div className="w-100 pe-3">
-              <hr className="bg-primary w-100" />
-              <span className="font-size-sm gainsboro-color mb-5">
-                @2024 SchoolSmartSuite
-              </span>
-            </div>
+           
           </div>
         </aside>
       </div>

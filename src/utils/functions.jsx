@@ -455,3 +455,42 @@ function convertTo24Hour(time) {
     // Format to HH:mm
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
+
+export function truncateText(text, maxLength) {
+  if (typeof text !== 'string') {
+    console.warn("truncateText: 'text' must be a string.");
+    return { truncatedText: '', isTruncated: false };
+  }
+  if (typeof maxLength !== 'number' || maxLength <= 0) {
+    console.warn("truncateText: 'maxLength' must be a positive number.");
+    return { truncatedText: text, isTruncated: false };
+  }
+
+  // If the text is already shorter than or equal to the max length, no truncation needed
+  if (text.length <= maxLength) {
+    return {
+      truncatedText: text,
+      isTruncated: false,
+    };
+  }
+
+  // Calculate the length for the actual text part, reserving space for "..."
+  const ellipsis = '...';
+  const textPartLength = maxLength - ellipsis.length;
+
+  // Ensure textPartLength is not negative (e.g., if maxLength is very small)
+  if (textPartLength <= 0) {
+    return {
+      truncatedText: ellipsis, // Just return ellipsis if maxLength is too small
+      isTruncated: true,
+    };
+  }
+
+  // Truncate the text and add the ellipsis
+  const truncated = text.substring(0, textPartLength) + ellipsis;
+
+  return {
+    truncatedText: truncated,
+    isTruncated: true,
+  };
+}

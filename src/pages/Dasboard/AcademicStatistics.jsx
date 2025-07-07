@@ -6,6 +6,7 @@ import CardGroup from "../../components/Cardgroup";
 import { Icon } from "@iconify/react";
 import BarChart from "../../components/ChartComponents/BarChart";
 import LineChart from "../../components/chartcomponents/Linecharts";
+import GaugeChart from "../../components/ChartComponents/GaugeChart";
 function AcademicStatistics() {
   const { isLoading, error } = useFetchAcademicStatsQuery({
     year: 2025,
@@ -49,21 +50,64 @@ function AcademicStatistics() {
       </div>
       <div className="d-flex flex-row align-items-center w-100 gap-2 mt-2">
         <div style={{ width: "40%" }}>
-          <div className="d-flex flex-row align-items-center gap-2 w-100">
-            <div className="card w-50 p-1 rounded-3 d-flex flex-row align-items-center">
+          <div>
+            <span className="font-size-sm">Exam Pass And Fail Rates For the current Year</span>
+            <div className="d-flex flex-row align-items-center gap-2 w-100 mt-2 mb-2">
+            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center">
               <div className="w-50 font-size-sm">
-                <span>CA Exam Pass Rate</span>
+                <span>Exam Pass Rate</span>
+              </div>
+              <div className="w-50">
+                <GaugeChart 
+                   size={100}
+                   strokeWidth={5}
+                   color="#4CAF50"
+                />
               </div>
             </div>
-            <div className="card w-50">IC</div>
+            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center">
+                <div className="w-50 font-size-sm">
+                <span>Exam Fail Rate</span>
+              </div>
+              <div className="w-50">
+                <GaugeChart 
+                   size={100}
+                   strokeWidth={5}
+                   color="#e53935"
+                />
+              </div>
+            </div>
           </div>
-          <div className="d-flex flex-row align-items-center my-2 gap-2 w-100">
-            <div className="card w-50 p-1 rounded-3 d-flex flex-row align-items-center">
-              <div className="w-50 font-size-sm">
+          </div>
+          <div>
+            <span className="font-size-sm">CA Exam Pass And Fail Rates For the current Year</span>
+            <div className="d-flex flex-row align-items-center mt-2 gap-2 w-100">
+            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center">
+            <div className="w-50 font-size-sm">
                 <span>CA Exam Pass Rate</span>
               </div>
+              <div className="w-50">
+                <GaugeChart 
+                   size={100}
+                   strokeWidth={5}
+                   color="#4CAF50"
+                />
+              </div>
             </div>
-            <div className="card w-50">IC</div>
+            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center">
+                 <div className="w-50 font-size-sm">
+                <span>CA Exam Fail Rate</span>
+              </div>
+              <div className="w-50">
+                <GaugeChart 
+                   size={100}
+                   strokeWidth={5}
+                   color="#e53935"
+                   value={10}
+                />
+              </div>
+            </div>
+          </div>
           </div>
         </div>
         <div style={{ width: "30%" }} className="d-flex flex-column gap-2">
@@ -109,7 +153,48 @@ function AcademicStatistics() {
             </div>
           </div>
         </div>
-        <div style={{ width: "30%" }}></div>
+        <div style={{ width: "30%" }} className="d-flex flex-column gap-2">
+          <span className="font-size-sm">Ongoing Semesters</span>
+          <div className="card p-2 rounded-4 gap-2 font-size-sm d-flex flex-column">
+            <div className="d-flex flex-column">
+              <span className="font-size-sm fw-semibold">
+                First Semester
+              </span>
+              <span>Software Engineering, Level 100</span>
+            </div>
+            <p className="m-0 gainsboro-color fw-light">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Praesentium quas facilis delectus nobis ratione
+            </p>
+            <div className="d-flex flex-column">
+              <span>
+                {" "}
+                <Icon icon="circum:calendar" width="20" height="20" /> 10 Jan
+                2025 - 20 Jan 2025
+              </span>
+            </div>
+          </div>
+          <div className="card p-2 rounded-4 gap-2 font-size-sm d-flex flex-column">
+            <div className="d-flex flex-column">
+              <span className="font-size-sm fw-semibold">
+                First Semester CA
+              </span>
+              <span>Software Engineering, Level 100</span>
+            </div>
+            <p className="m-0 gainsboro-color fw-light">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Praesentium quas facilis delectus nobis ratione
+            </p>
+            <div className="d-flex flex-column">
+              <span>30 Marks</span>
+              <span>
+                {" "}
+                <Icon icon="circum:calendar" width="20" height="20" /> 10 Jan
+                2025 - 20 Jan 2025
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
       <div className="d-flex flex-row align-items-center gap-2 mt-2">
         <div className="card w-50 rounded-4 p-2">
