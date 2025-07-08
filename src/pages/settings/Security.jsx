@@ -1,74 +1,42 @@
 import { Icon } from "@iconify/react";
-import { Navbarsettings } from "../../components/Navbar";
-import { ModialButton } from "../actionButton";
 import { useSelector } from "react-redux";
 import { useAuth } from "../../context/authContext";
 import { useState } from "react";
 function Security() {
   return (
     <>
-      <Navbarsettings />
-      <div>
-        <h5 className="my-2">Password Management</h5>
-        <div className="card border-none shadow-sm rounded-4 py-2 px-3">
-          <ModialButton
-            classname={"bg-transparent border-none w-100"}
-            action={{ modalContent: ChangePassword }}
-          >
-            <div className="d-flex flex-row align-items-center justify-content-between border-bottom pb-2 my-2 w-100">
-              <div className="d-flex align-items-center flex-row gap-2">
-                <div className="security-badge">
-                  <Icon
-                    icon="material-symbols:lock-outline"
-                    className="color-primary"
-                  />
-                </div>
-                <div className="d-block">
-                  <p className="fs-6 fw-bold my-0 text-start">Change Password</p>
-                  <p className="gainsboro-color font-size-sm my-0">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                    Nihil explicabo soluta harum vitae incidunt, eum repudiandae
-                  </p>
-                </div>
-              </div>
-              <div>
-                <Icon
-                  icon="weui:arrow-filled"
-                  className="fs-4 gainsboro-color"
-                />
-              </div>
-            </div>
-          </ModialButton>
-          <div className="d-flex flex-row align-items-center justify-content-between border-bottom  pb-3 my-2">
+      <div className="pt-3">
+        <span className="my-2 fw-semibold">Password Management</span>
+        <div
+          className="card border-none shadow-sm rounded-4 py-2 px-3 d-flex flex-column gap-2"
+          style={{ fontSize: "0.87rem" }}
+        >
+          <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex align-items-center flex-row gap-2">
-              <div className="security-badge">
-                <Icon
-                  icon="material-symbols:tv-options-input-settings-outline"
-                  className="color-primary"
-                />
-              </div>
-              <div className="d-block">
-                <p className="fs-6 fw-bold my-0">Password Reset Options</p>
-                <p className="gainsboro-color font-size-sm my-0">
+              <div className="d-flex flex-column">
+                <span className=" fw-semibold my-0 text-start">
+                  Change Password
+                </span>
+                <span className="gainsboro-color font-size-sm my-0">
                   Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                   Nihil explicabo soluta harum vitae incidunt, eum repudiandae
-                </p>
+                </span>
               </div>
             </div>
             <div>
-              <Icon icon="weui:arrow-filled" className="fs-4 gainsboro-color" />
+              <Icon
+                icon="weui:arrow-filled"
+                className=" gainsboro-color"
+                width={20}
+                height={20}
+              />
             </div>
           </div>
-          <div className="d-flex flex-row align-items-center justify-content-between  pb-2 my-2">
+          <hr />
+          <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex align-items-center flex-row gap-2">
-              <div className="security-badge">
-                <Icon
-                  icon="material-symbols:lock-outline"
-                  className="color-primary"
-                />
-              </div>
               <div className="d-block">
-                <p className="fs-6 fw-bold my-0">Password Strength Indicator</p>
+                <p className=" fw-semibold my-0">Password Strength</p>
                 <p className="gainsboro-color font-size-sm my-0">
                   Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                   Nihil explicabo soluta harum vitae incidunt, eum repudiandae
@@ -76,49 +44,32 @@ function Security() {
               </div>
             </div>
             <div>
-              <Icon icon="weui:arrow-filled" className="fs-4 gainsboro-color" />
+              <Icon
+                icon="weui:arrow-filled"
+                className=" gainsboro-color"
+                width={20}
+                height={20}
+              />
             </div>
           </div>
-        </div>
-        <h5 className="my-2">Security Questions</h5>
-        <div className="card border-none shadow-sm rounded-4 py-2 px-3">
-          <div className="d-flex flex-row align-items-center justify-content-between border-bottom pb-2 my-2">
+          <hr />
+          <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex align-items-center flex-row gap-2">
-              <div className="security-badge">
-                <Icon
-                  icon="fluent-mdl2:survey-questions"
-                  className="color-primary"
-                />
-              </div>
-              <div className="d-block">
-                <p className="fs-6 fw-bold my-0">View Security Questions</p>
-                <p className="gainsboro-color font-size-sm my-0">
+              <div className="d-flex flex-column">
+                <span className=" fw-semibold my-0">Two Step Verification</span>
+                <span className="gainsboro-color font-size-sm my-0">
                   Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                   Nihil explicabo soluta harum vitae incidunt, eum repudiandae
-                </p>
+                </span>
               </div>
             </div>
             <div>
-              <Icon icon="weui:arrow-filled" className="fs-4 gainsboro-color" />
-            </div>
-          </div>
-          <div className="d-flex flex-row align-items-center justify-content-between  pb-2 my-2">
-            <div className="d-flex align-items-center flex-row gap-2">
-              <div className="security-badge">
-                <Icon icon="mingcute:question-line" className="color-primary" />
-              </div>
-              <div className="d-block">
-                <p className="fs-6 fw-bold my-0">
-                  Set/ Change Security Questions
-                </p>
-                <p className="gainsboro-color font-size-sm my-0">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Nihil explicabo soluta harum vitae incidunt, eum repudiandae
-                </p>
-              </div>
-            </div>
-            <div>
-              <Icon icon="weui:arrow-filled" className="fs-4 gainsboro-color" />
+              <Icon
+                icon="weui:arrow-filled"
+                className=" gainsboro-color"
+                width={20}
+                height={20}
+              />
             </div>
           </div>
         </div>
@@ -138,7 +89,12 @@ function ChangePassword({ handleClose }) {
   });
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleChangePasswordAuthUser(handleClose, authToken, apiKey, passwordCredentails);
+    await handleChangePasswordAuthUser(
+      handleClose,
+      authToken,
+      apiKey,
+      passwordCredentails
+    );
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -160,7 +116,9 @@ function ChangePassword({ handleClose }) {
           </div>
         </div>
         {authError.changeAuthPassword && (
-          <div className="alert alert-danger">{authError.changeAuthPassword}</div>
+          <div className="alert alert-danger">
+            {authError.changeAuthPassword}
+          </div>
         )}
         <div className="mb-3">
           <span>Current Password</span>
@@ -204,5 +162,3 @@ function ChangePassword({ handleClose }) {
     </>
   );
 }
-
-

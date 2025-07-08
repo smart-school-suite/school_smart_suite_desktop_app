@@ -1,15 +1,17 @@
 import React, { Suspense } from "react";
 import { Route } from "react-router-dom";
 const Generalsettings = React.lazy(() =>  import("../../pages/settings/Generalsettings"));
+import SetttingLayout from "../../layouts/SettingLayout";
 const Display = React.lazy(() => import("../../pages/settings/Display"));
-const New  = React.lazy(() => import("../../pages/settings/New"));
 const Profile = React.lazy(() => import("../../pages/settings/Profile"));
 const Security = React.lazy(() => import("../../pages/settings/Security"));
-const Help = React.lazy(() => import("../../pages/settings/Help"));
-
+const School = React.lazy(() => import("../../pages/settings/School"));
+const SchoolBranch = React.lazy(() => import("../../pages/settings/SchoolBranch"))
+const AppSettings = React.lazy(() => import("../../pages/settings/AppSettings"));
+const Subscriptions = React.lazy(() => import("../../pages/settings/Subscriptions"));
 const SettingsRoutes =  [
-  
-  <Route key={"generalSettings"} path="/settings/general-settings" element={
+   <Route key={"settingLayout"}  element={<SetttingLayout />}>
+      <Route key={"generalSettings"} path="/settings/general-settings" element={
     <Suspense>
       <Generalsettings />
     </Suspense>
@@ -19,9 +21,9 @@ const SettingsRoutes =  [
       <Display />
     </Suspense>
   }/>,
-  <Route key={"new"} path="/settings/updates" element={
+  <Route key={"school"} path="/settings/school" element={
     <Suspense>
-      <New />
+      <School />
     </Suspense>
   }/>,
   <Route key={"profile"} path="/settings/profile" element={
@@ -34,10 +36,21 @@ const SettingsRoutes =  [
       <Security />
     </Suspense>
   }></Route>,
-  <Route key={"help"}  path="/settings/help" element={
+  <Route key={"schoolBranch"}  path="/settings/school-branch" element={
     <Suspense>
-      <Help />
+      <SchoolBranch />
     </Suspense>
-  }/>
+  }/>,
+  <Route key={"subscriptions"}  path="/settings/subscription" element={
+    <Suspense>
+      <Subscriptions />
+    </Suspense>
+  }/>,
+  <Route key={"appSettings"} path="/settings/app-settings" element={
+     <Suspense>
+      <AppSettings />
+    </Suspense>
+  }/> 
+   </Route>
 ];
 export default SettingsRoutes;

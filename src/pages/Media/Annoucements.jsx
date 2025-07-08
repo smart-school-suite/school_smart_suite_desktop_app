@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import AnnoucementSideBar from "../../components/SideBars/Sidebar/Annoucement";
+import AnnoucementSideBar from "../../components/SideBars/Annoucement";
 function Annoucements() {
   return (
     <>

@@ -1,126 +1,116 @@
 import { Icon } from "@iconify/react";
-import { Navbarsettings } from "../../components/Navbar";
-function Display(){
-    return(
-        <>
-        <Navbarsettings />
-        <div>
-            <h5 className="my-2 fw-bold fs-6">Theme Selection</h5>
-            <div className="card border-none shadow-sm rounded-4 py-2 px-3">
-              <div className="d-flex flex-row align-items-center justify-content-between border-bottom pb-2 my-2">
-              <div className="d-flex align-items-center flex-row gap-2">
-                <div className="security-badge">
-                <Icon icon="lets-icons:color-mode-light" className="color-primary"/>
+import SettingSideBar from "../../components/SideBars/SetttingSideBar";
+function Display() {
+  return (
+    <>
+     <div className="d-flex flex-column gap-2">
+            <div>
+              <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
+                Theme Selection
+              </span>
+              <div
+                className="card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2"
+                style={{ fontSize: "0.87rem" }}
+              >
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <div className="d-flex flex-column">
+                    <span className="fw-semibold">Dark Mode</span>
+                    <span className="gainsboro-color fw-light">Off</span>
+                  </div>
+                  <div>
+                    <div className="form-check form-switch">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        id="switchCheckDefault"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="d-block">
-                    <p className="fs-6 fw-bold my-0">Light/Dark Mode</p>
-                    <p className="gainsboro-color font-size-sm my-0">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil explicabo soluta harum vitae incidunt,
-                         eum repudiandae
-                    </p>
+                <hr />
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <div className="d-flex flex-column">
+                    <span className="fw-semibold">Light Mode</span>
+                    <span className="gainsboro-color fw-light">On</span>
+                  </div>
+                  <div>
+                    <div className="form-check form-switch">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        id="switchCheckDefault"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div>
-              <Icon icon="weui:arrow-filled" className="fs-4 gainsboro-color"/>
-              </div>
-              </div>
-              <div className="d-flex flex-row align-items-end justify-content-between  pb-3 my-2">
-              <div className="d-flex align-items-center flex-row gap-2">
-                <div className="security-badge">
-                <Icon icon="fluent:dark-theme-20-filled" className="color-primary"/>
+                <hr />
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <div className="d-flex flex-column">
+                    <span className="fw-semibold">Custom Themes</span>
+                    <span className="gainsboro-color fw-light">
+                      Select Custom Theme
+                    </span>
+                  </div>
+                  <div>
+                    <Icon
+                      icon="weui:arrow-filled"
+                      className="fs-4 gainsboro-color me-3"
+                    />
+                  </div>
                 </div>
-                <div className="d-block">
-                    <p className="fs-6 fw-bold my-0">Custom Themes</p>
-                    <p className="gainsboro-color font-size-sm my-0">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil explicabo soluta harum vitae incidunt,
-                         eum repudiandae
-                    </p>
-                </div>
-              </div>
-              <div>
-              <Icon icon="weui:arrow-filled" className="fs-4 gainsboro-color"/>
-              </div>
-              </div>
-
-              
-            </div>
-            <h5 className="mt-3 mb-2 fw-bold fs-6">Font Size And Style</h5>
-            <div className="card border-none shadow-sm rounded-4  py-2 px-3">
-              <div className="d-flex flex-row align-items-center justify-content-between border-bottom pb-2 my-2">
-              <div className="d-flex align-items-center flex-row gap-2">
-                <div className="security-badge">
-                <Icon icon="gravity-ui:font-case" className="color-primary"/>
-                </div>
-                <div className="d-block">
-                    <p className="fs-6 fw-bold my-0">Ajust Font Size</p>
-                    <p className="gainsboro-color font-size-sm my-0">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil explicabo soluta harum vitae incidunt,
-                         eum repudiandae
-                    </p>
-                </div>
-              </div>
-              <div>
-              <Icon icon="weui:arrow-filled" className="fs-4 gainsboro-color"/>
-              </div>
-              </div>
-              <div className="d-flex flex-row align-items-center justify-content-between border-bottom pb-2 my-2">
-              <div className="d-flex align-items-center flex-row gap-2">
-                <div className="security-badge">
-                <Icon icon="radix-icons:font-style" className="color-primary"/>
-                </div>
-                <div className="d-block">
-                    <p className="fs-6 fw-bold my-0">Choose Font Style</p>
-                    <p className="gainsboro-color font-size-sm my-0">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil explicabo soluta harum vitae incidunt,
-                         eum repudiandae
-                    </p>
-                </div>
-              </div>
-              <div>
-              <Icon icon="weui:arrow-filled" className="fs-4 gainsboro-color"/>
-              </div>
               </div>
             </div>
-
-            <h5 className="mt-3 mb-2 fw-bold fs-6">Notification Display</h5>
-            <div className="card border-none shadow-sm rounded-4  py-2 px-3">
-              <div className="d-flex flex-row align-items-center justify-content-between border-bottom pb-2 my-2">
-              <div className="d-flex align-items-center flex-row gap-2">
-                <div className="security-badge">
-                <Icon icon="clarity:language-line" className="color-primary"/>
+            <div>
+              <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
+                Font Settings
+              </span>
+              <div
+                className="card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2"
+                style={{ fontSize: "0.87rem" }}
+              >
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <div className="d-flex align-items-center flex-row gap-2">
+                    <div className="d-flex flex-column">
+                      <span className="fw-semibold my-0">Ajust Font Size</span>
+                      <span className="gainsboro-color font-size-sm my-0">
+                        Lorem ipsum, dolor sit amet consectetur adipisicing
+                        elit. Nihil explicabo soluta harum vitae incidunt, eum
+                        repudiandae
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <Icon
+                      icon="weui:arrow-filled"
+                      className="fs-4 gainsboro-color"
+                    />
+                  </div>
                 </div>
-                <div className="d-block">
-                    <p className="fs-6 fw-bold my-0">Show/hide Notifications</p>
-                    <p className="gainsboro-color font-size-sm my-0">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil explicabo soluta harum vitae incidunt,
-                         eum repudiandae
-                    </p>
+                <hr />
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <div className="d-flex align-items-center flex-row gap-2">
+                    <div className="d-flex flex-column">
+                      <span className="fw-semibold my-0">Font Type</span>
+                      <span className="gainsboro-color font-size-sm my-0">
+                        Lorem ipsum, dolor sit amet consectetur adipisicing
+                        elit. Nihil explicabo soluta harum vitae incidunt, eum
+                        repudiandae
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <Icon
+                      icon="weui:arrow-filled"
+                      className="fs-4 gainsboro-color"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div>
-              <Icon icon="ep:notification" className="fs-4 gainsboro-color"/>
-              </div>
-              </div>
-              <div className="d-flex flex-row align-items-center justify-content-between border-bottom pb-2 my-2">
-              <div className="d-flex align-items-center flex-row gap-2">
-                <div className="security-badge">
-                <Icon icon="fluent:position-to-back-20-filled" className="color-primary"/>
-                </div>
-                <div className="d-block">
-                    <p className="fs-6 fw-bold my-0">Notification Position</p>
-                    <p className="gainsboro-color font-size-sm my-0">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil explicabo soluta harum vitae incidunt,
-                         eum repudiandae
-                    </p>
-                </div>
-              </div>
-              <div>
-              <Icon icon="weui:arrow-filled" className="fs-4 gainsboro-color"/>
-              </div>
               </div>
             </div>
-        </div>
-        </>
-    )
+          </div>
+    </>
+  );
 }
 export default Display;

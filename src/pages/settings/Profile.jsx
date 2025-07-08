@@ -1,5 +1,4 @@
 import { Icon } from "@iconify/react";
-import { Navbarsettings } from "../../components/Navbar";
 import { formatNumber, replaceDashesWithSpaces } from "../../utils/functions";
 import { useSelector } from "react-redux";
 import { useAuth } from "../../context/authContext";
@@ -18,7 +17,6 @@ function Profile() {
   };
   return (
     <>
-      <Navbarsettings />
       <div>
         <div className="card border-none pb-4 shadow-sm rounded-3 profile-section white-bg d-flex flex-column">
           <div className="top-section rounded-top-4 px-4">
@@ -121,20 +119,20 @@ function Profile() {
           <div className="ms-4 mt-auto">
             <div className="d-block">
               <h5 className="fw-bold">
-                {userData.authSchoolAdmin.name}{" "}
+                {userData.authSchoolAdmin.name}
                 <span>
                   <Icon
                     icon="lets-icons:check-fill"
                     className="color-primary fs-5"
                   />
-                </span>{" "}
+                </span>
               </h5>
               <div className="d-flex flex-row my-1 gainsboro-color">
                 <span>
-                  {" "}
+                  
                   <span>
                     <Icon icon="twemoji:flag-cameroon" className="fs-5" />
-                  </span>{" "}
+                  </span>
                   {userData.schoolDetails.city}, {userData.schoolDetails.school.country.country}
                 </span>
               </div>
@@ -150,6 +148,17 @@ function Profile() {
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+        <div>
+          <span>Personal Details</span>
+          <div className="card border-none p-2">
+             <div className="d-flex flex-row align-items-center justify-content-between">
+                <div className="d-flex flex-column">
+                  <span>Full Names</span>
+                  <span></span>
+                </div>
+             </div>
           </div>
         </div>
         <div className="d-flex flex-row gap-3 w-100">
@@ -334,7 +343,7 @@ function ChangeProfilePicture({ handleClose }) {
                   ></div>
                 </div>
                 <span className="gainsboro-color font-size-sm fw-light">
-                  <span>{Math.round(selectedFile.size / 1024)} KB </span> |{" "}
+                  <span>{Math.round(selectedFile.size / 1024)} KB </span> |
                   <span>{uploadProgress}%</span>
                 </span>
               </div>
