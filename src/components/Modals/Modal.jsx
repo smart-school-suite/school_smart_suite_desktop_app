@@ -1,6 +1,6 @@
 import { Modal } from "react-bootstrap";
 import React from "react";
-function CustomModal({ show, handleClose, children, fullscreen=true }) {
+function CustomModal({ show, handleClose, children, fullscreen=false }) {
   return (
     <>
       <Modal

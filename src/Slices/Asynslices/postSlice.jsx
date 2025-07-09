@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import toast from "react-hot-toast";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000/api/api/v1/",
+  baseUrl: "http://127.0.0.1:8000/api/v1/",
   prepareHeaders: (headers, { getState }) => {
     const state = getState();
     const apiKey = state.auth?.apiKey;
@@ -450,6 +450,13 @@ export const postSlice = createApi({
            method:'POST',
            body:{}
         })
+    }),
+    createAnnouncementCategory: builder.mutation({
+       query: (newCategory) => ({
+          url:"announcement-category",
+          method:"POST",
+          body:newCategory
+       })
     })
   }),
 });
@@ -510,5 +517,6 @@ export const {
   useDeactivateStudentBatchMutation,
   useAssignGraduationDatesByBatchMutation,
   useBulkActivateSchoolAdminMutation,
-  useBulkDeactivateSchoolAdminMutation
+  useBulkDeactivateSchoolAdminMutation,
+  useCreateAnnouncementCategoryMutation
 } = postSlice;

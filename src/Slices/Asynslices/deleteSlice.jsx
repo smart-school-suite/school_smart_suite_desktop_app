@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000/api/api/v1/",
+  baseUrl: "http://127.0.0.1:8000/api/v1/",
   prepareHeaders: (headers, {getState}) => {
     const state = getState();
     const apiKey = state.auth?.apiKey;
@@ -274,6 +274,12 @@ export const deleteSlice = createApi({
             url: `school-admin/bulkDeleteSchoolAdmin/${schoolAdminIds}`,
              method:"DELETE"
          })
+      }),
+      deleteAnnoncementCategory: builder.mutation({
+         query: (categoryId) => ({
+           url:`announcement-category/${categoryId}`,
+           method:"DELETE"
+         })
       })
   }),
 });
@@ -315,5 +321,6 @@ export const {
   useDeleteExamTimetableMutation,
   useDeleteResitTimetableMutation,
   useDeleteStudentDropoutMutation,
-  useBulkDeleteSchoolAdminMutation
+  useBulkDeleteSchoolAdminMutation,
+  useDeleteAnnoncementCategoryMutation
 } = deleteSlice;

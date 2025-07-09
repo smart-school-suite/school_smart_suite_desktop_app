@@ -1,6 +1,5 @@
 import Navbar from "../../components/Navbar";
 import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables";
 import { SpecialtyTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { SpecailtyNavBarOptions } from "../../ComponentConfig/navBarConfig";

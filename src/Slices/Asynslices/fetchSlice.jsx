@@ -450,6 +450,18 @@ export const apiSlice = createApi({
     }),
     fetchGraduationDatesByBatch: builder.query({
        query: (batchId) => `student-batches/getStudentGraduationDatesByBatch/${batchId}`
+    }),
+    fetchAnnouncementStats: builder.query({
+      query: ({year}) => `announcement/stat/${year}`,
+      providesTags:["announcementStats"]
+    }),
+    fetchAnnouncementByStatus: builder.query({
+       query: ({ status }) => `announcement/${status}`,
+       providesTags:['announcementStatus']
+    }),
+    fetchAnnouncementCategory: builder.query({
+       query: () => "announcement-category",
+       providesTags:["announcementCategory"]
     })
   }),
 });
@@ -536,5 +548,8 @@ export const {
   useFetchStudentDropoutDetailsQuery,
   useFetchGraduationDatesByBatchQuery,
   useFetchOperationalStatsQuery,
-  useFetchAcademicStatsQuery
+  useFetchAcademicStatsQuery,
+  useFetchAnnouncementStatsQuery,
+  useFetchAnnouncementByStatusQuery,
+  useFetchAnnouncementCategoryQuery
 } = apiSlice;

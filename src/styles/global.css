@@ -1063,6 +1063,18 @@ thead{
     padding-inline: 0.5rem;
     text-align: center;
 }
+.announcement-inactive{
+     height: 5dvh;
+    padding-inline: 0.5rem;
+    text-align: center;
+}
+.announcement-active{
+    background-color: #fff3ed;
+    height: 5dvh;
+    padding-inline: 0.5rem;
+    text-align: center;
+    color: #fd9d74;
+}
 hr{
     margin: 0;
     color: #ccc;
@@ -1080,4 +1092,18 @@ hr{
 }
 .setting-outlet::-webkit-scrollbar {
     width: 0px;
+}
+.announcement-card{
+     display: grid;
+     grid-template-columns: repeat(3, 1fr);
+     gap: 10px;
+}
+.annoucement-stat-card{
+    height: 15dvh;
+}
+
+.announcement-grid-two{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
 }

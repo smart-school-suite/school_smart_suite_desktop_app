@@ -2327,6 +2327,59 @@ export function AccessedResitCandidateTableConfig({ DropdownComponent }){
   return tableConfig;
 }
 
+export function AnnouncementTableConfig({ DropdownComponent }){
+   const tableConfig = [
+       {
+        field: "id",
+        hide: true,
+       },
+        {
+      field: "title",
+      headerName:"Title",
+      filter:true,
+      floatingFilter:true,
+      cellRenderer:TextComponent,
+      cellStyle:cellStyle
+    },
+     {
+      field: "content",
+      headerName:"Content",
+      filter:true,
+      floatingFilter:true,
+      cellRenderer:TextComponent,
+      cellStyle:cellStyle
+    },
+     {
+      field: "status",
+      headerName:"Status",
+      filter:true,
+      floatingFilter:true,
+      cellRenderer:TextComponent,
+      cellStyle:cellStyle
+    },
+     {
+      field: "category_name",
+      headerName:"Category",
+      filter:true,
+      floatingFilter:true,
+      cellRenderer:TextComponent,
+      cellStyle:cellStyle
+    },
+    {
+      field:"label",
+      headerName:"label",
+      filter:true,
+      cellRenderer:TextComponent
+    },
+    { field: "Action",
+       cellRenderer: DropdownComponent,  
+       cellStyle: {
+          width:"20rem"
+         }
+    }
+   ]
+   return tableConfig
+}
 export function StudentDropOutTableConfig({ DropdownComponent }){
   const tableConfig = [
     {
@@ -2379,6 +2432,92 @@ export function StudentDropOutTableConfig({ DropdownComponent }){
       filter:true,
       floatingFilter:true,
       cellRenderer:TextComponent,
+      cellStyle:cellStyle
+    },
+    { field: "Action",
+       cellRenderer: DropdownComponent,  
+       cellStyle: {
+          width:"20rem"
+         }
+    },
+  ];
+  return tableConfig;
+}
+export function AnnouncementCategoryTableConfig({ DropdownComponent }){
+      const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "name",
+      headerName:"Title",
+      filter:true,
+      floatingFilter:true,
+      cellRenderer:TextComponent,
+      cellStyle:cellStyle
+    },
+    {
+      field: "description",
+      headerName:"Description",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle:cellStyle
+    },
+    {
+      field: "created_at",
+      headerName:"Created At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle:cellStyle
+    },
+    {
+      field: "updated_at",
+      headerName:"Updated At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle:cellStyle
+    },
+    { field: "Action",
+       cellRenderer: DropdownComponent,  
+       cellStyle: {
+          width:"20rem"
+         }
+    },
+  ];
+  return tableConfig;
+}
+export function AnnouncementTagTableConfig({DropdownComponent}){
+    const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "name",
+      headerName:"Title",
+      filter:true,
+      floatingFilter:true,
+      cellRenderer:TextComponent,
+      cellStyle:cellStyle
+    },
+    {
+      field: "created_at",
+      headerName:"Created At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle:cellStyle
+    },
+    {
+      field: "updated_at",
+      headerName:"Updated At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
       cellStyle:cellStyle
     },
     { field: "Action",
