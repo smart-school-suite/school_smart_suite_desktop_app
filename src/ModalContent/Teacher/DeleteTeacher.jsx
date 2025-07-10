@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDeleteTeacherMutation } from "../../Slices/Asynslices/deleteSlice";
 import toast from "react-hot-toast";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function DeleteTeacher({ row_id:teacherId, handleClose }) {
   const [deleteTeacher] = useDeleteTeacherMutation();
   const [isDeleting, setIsDeleting] = useState(false);

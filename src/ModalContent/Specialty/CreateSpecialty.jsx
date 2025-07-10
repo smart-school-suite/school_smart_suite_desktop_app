@@ -3,10 +3,10 @@ import { useAddSpecialtyMutation } from "../../Slices/Asynslices/postSlice";
 import { useFetchEducationLevelsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useFetchDepartmentsQuery } from "../../Slices/Asynslices/fetchSlice";
 import toast from "react-hot-toast";
-import { SpecialtyTitleInput } from "../../components/FormComponents";
-import { RegistrationFeeInput } from "../../components/FormComponents";
-import { SchoolFeeInput } from "../../components/FormComponents";
-import CustomDropdown from "../../components/Dropdowns";
+import { SpecialtyTitleInput } from "../../components/FormComponents/InputComponents";
+import { RegistrationFeeInput } from "../../components/FormComponents/InputComponents";
+import { SchoolFeeInput } from "../../components/FormComponents/InputComponents";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
 function CreateSpecialty({ handleClose }) {
   const [isValid, setIsValid] = useState(false);

@@ -8,12 +8,12 @@ import {
 } from "../../Slices/Asynslices/fetchSlice";
 import { useUpdateExamMutation } from "../../Slices/Asynslices/updateSlice";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import CustomDropdown from "../../components/Dropdowns";
-import { WeigtedMarkInput } from "../../components/FormComponents";
-import { SchoolYearSelector } from "../../components/YearPicker";
+import { WeigtedMarkInput } from "../../components/FormComponents/InputComponents";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function UpdateExam({ handleClose, row_id: examId }) {
   const [updateExam] = useUpdateExamMutation();
   const [isUpdating, setIsUpdating] = useState(false);

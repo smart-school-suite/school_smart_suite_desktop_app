@@ -3,7 +3,7 @@ import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { useRemoveHeadOfDepartmentMutation } from "../../Slices/Asynslices/deleteSlice";
 import { useState } from "react";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function RemoveHod({ handleClose, row_id: hodId }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [removeHeadOfDepartment] = useRemoveHeadOfDepartmentMutation();

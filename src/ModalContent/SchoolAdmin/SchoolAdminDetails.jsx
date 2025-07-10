@@ -1,5 +1,5 @@
 import { useFetchSchoolAdminDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { formatNumber, formatDate, formatDateWithAge, formatDateWithSuffix } from "../../utils/functions";
 const SchoolAdminDetails = ({ row_id: schoolAdminId, handleClose }) => {

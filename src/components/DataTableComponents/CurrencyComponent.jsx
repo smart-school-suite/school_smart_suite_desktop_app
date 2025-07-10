@@ -1,11 +1,20 @@
-import { useSelector } from "react-redux";
-import { formatNumber } from "../../utils/functions";
-function CurrencyComponent(props){
-    const currency = useSelector((state) => state.auth.user);
-    return(
+import { useSelector } from 'react-redux';
+import { formatNumber } from '../../utils/functions';
+function CurrencyComponent(props) {
+    const currencyState = useSelector((state) => state.auth.user);
+    const userCurrencySymbol = currencyState?.schoolDetails?.school?.country?.currency || '';
+    const displayValue = props.value == null || props.value === '' ? 0 : parseFloat(props.value);
+    console.log(currencyState)
+    return (
         <>
-        <span className="text-overflow-elipse overflow-hidden my-0 text-start">{formatNumber(parseFloat(props.value))} {currency.schoolDetails.school.country.currency}</span>
+            <span className="text-overflow-elipse overflow-hidden my-0 text-start">
+                {/* Format the numeric value */}
+                {formatNumber(displayValue)}{' '}
+                {/* Display the currency symbol */}
+                {userCurrencySymbol}
+            </span>
         </>
-    )
+    );
 }
+
 export default CurrencyComponent;

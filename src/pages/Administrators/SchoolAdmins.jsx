@@ -1,5 +1,4 @@
 import { useFetchSchoolAdminsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Table from "../../components/Tables";
 import { Icon } from "@iconify/react";
 import { SchoolAdminTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
@@ -20,11 +19,12 @@ import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
 import CreateSchoolAdmin from "../../ModalContent/SchoolAdmin/CreateSchoolAdmin";
 import { useMemo, useCallback, useState, useRef  } from "react";
 import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
-import CustomTooltip from "../../components/Tooltip";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkActivate";
 import BulkDeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkDeactivate";
 import BulkUpdate from "../../ModalContent/SchoolAdmin/BulkUpdate";
-import BulkActionsToast from "../../components/BulkActionsToast";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import Table from "../../components/Tables/Tables";
 function SchoolAdmins() {
   const tableRef = useRef();
   const { data: schoolAdmins, isLoading } = useFetchSchoolAdminsQuery();
@@ -65,7 +65,7 @@ function SchoolAdmins() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background text-white"
+              className="d-flex justify-content-center align-items-center primary-background-100"
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -74,10 +74,10 @@ function SchoolAdmins() {
             >
               <Icon
                 icon="grommet-icons:user-admin"
-                className="fs-5 primary-color"
+                className="font-size-md primary-color"
               />
             </div>
-            <h5 className="my-0">School Administrator</h5>
+            <span className="my-0">School Administrator</span>
           </div>
         </div>
 
@@ -85,7 +85,7 @@ function SchoolAdmins() {
           <div className="d-flex flex-row align-items-end gap-2">
             <div className="d-block">
               <p className="font-size-xs my-0">
-                Total Number administrators {rowCount}
+                Total Number administrators 
               </p>
               <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
             </div>

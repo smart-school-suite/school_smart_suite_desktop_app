@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import Table from "../../components/Tables";
+import Table from "../../components/Tables/Tables";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { useFetchSchoolSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
@@ -22,18 +22,18 @@ function Semester() {
     "status",
     "timetable_published",
     "specailty.level.level",
-    "specailty.level.name"
+    "specailty.level.name",
   ];
   const renameMapping = {
-    "id": "id",
-    "start_date": "start_date",
-    "school_year_start": "school_year",
-    "end_date": "end_date",
+    id: "id",
+    start_date: "start_date",
+    school_year_start: "school_year",
+    end_date: "end_date",
     "specailty.specialty_name": "specialty_name",
     "semester.name": "semester_name",
-    "specailty.level.level":"level",
-    "specailty.level.name":"level_name",
-    "timetable_published":"timetable_status"
+    "specailty.level.level": "level",
+    "specailty.level.name": "level_name",
+    timetable_published: "timetable_status",
   };
 
   if (isLoading) {
@@ -44,20 +44,19 @@ function Semester() {
       <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center"
+            className="d-flex justify-content-center align-items-center primary-background-100"
             style={{
               width: "2.5rem",
               height: "2.5rem",
-              borderRadius: "2.5rem",
-              background: "#fff",
+              borderRadius: "0.5rem",
             }}
           >
             <Icon
               icon="grommet-icons:user-admin"
-              className="fs-5 text-primary"
+              className="font-size-md primary-color"
             />
           </div>
-          <h4 className="fw-bold my-0">Specialty Semester</h4>
+          <span className="my-0 fw-semibold">Semester</span>
         </div>
       </div>
       <div className="d-flex flex-row align-items-center mt-4 w-100">
@@ -82,7 +81,7 @@ function Semester() {
       <div>
         <Table
           colDefs={semesterTableConfig({
-            ActionButtonGroup
+            ActionButtonGroup,
           })}
           rowData={renameKeys(
             CleanArrayData(data.data, filter_array_keys),
@@ -96,31 +95,35 @@ function Semester() {
 }
 export default Semester;
 function ActionButtonGroup(props) {
-    const { id } = props.data;
-    const actions = [
-      {
-        modalTitle: "Delete Semester",
-        actionTitle: "Delete Semester",
-        modalContent: DeleteSemester,
-      },
-      {
-        modalTitle: "Update Semester",
-        actionTitle: "Update Semester",
-        modalContent: UpdateSemester,
-      },
-      {
-        modalTitle: "Semester Details",
-        actionTitle: "Semester Details",
-        modalContent: SemeseterDetails,
-      },
-    ];
-    return (
-      <>
-        <ActionButtonDropdown actions={actions} row_id={id} 
-       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+  const { id } = props.data;
+  const actions = [
+    {
+      modalTitle: "Delete Semester",
+      actionTitle: "Delete Semester",
+      modalContent: DeleteSemester,
+    },
+    {
+      modalTitle: "Update Semester",
+      actionTitle: "Update Semester",
+      modalContent: UpdateSemester,
+    },
+    {
+      modalTitle: "Semester Details",
+      actionTitle: "Semester Details",
+      modalContent: SemeseterDetails,
+    },
+  ];
+  return (
+    <>
+      <ActionButtonDropdown
+        actions={actions}
+        row_id={id}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
       >
-         <span>Edit Actions</span>
+        <span>Edit Actions</span>
       </ActionButtonDropdown>
-      </>
-    );
-  }
+    </>
+  );
+}

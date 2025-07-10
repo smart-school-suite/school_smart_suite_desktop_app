@@ -3,7 +3,7 @@ import {
   useFetchLetterGradesQuery,
   useFetchGradesCategoryQuery
 } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners";
+import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useEffect, useState } from "react";
 import { useAddGradeMutation } from "../../Slices/Asynslices/postSlice";
 import toast from "react-hot-toast";

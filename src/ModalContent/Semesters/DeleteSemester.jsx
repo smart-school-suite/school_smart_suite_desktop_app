@@ -3,7 +3,7 @@ import { useDeleteSchoolSemesterMutation } from "../../Slices/Asynslices/deleteS
 import ToastDanger from "../../components/Toast/ToastDanger";
 import { useState } from "react";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function DeleteSemester({ handleClose, row_id: schoolSemesterId }) {
   const [deleteSchoolSemester] = useDeleteSchoolSemesterMutation();
   const [isDeleting, setIsDeleting] = useState(false);

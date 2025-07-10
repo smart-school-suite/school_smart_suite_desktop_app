@@ -1,5 +1,5 @@
 import { useFetchSpecialtyDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { formatNumber } from "../../utils/functions";
 import { useSelector } from "react-redux";

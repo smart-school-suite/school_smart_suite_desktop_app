@@ -44,7 +44,7 @@ export const postSlice = createApi({
     }),
     addDepartment: builder.mutation({
       query: (newDeparment) => ({
-        url: "department/create-department",
+        url: "department",
         method: "POST",
         body: newDeparment,
       }),
@@ -140,7 +140,7 @@ export const postSlice = createApi({
     }),
     addSpecialty: builder.mutation({
       query: (newSpecialty) => ({
-        url: "specialty/create-specialty",
+        url: "specialty",
         method: "POST",
         body: newSpecialty,
       }),

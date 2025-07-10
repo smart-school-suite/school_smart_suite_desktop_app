@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Pageloaderspinner from "../../components/Spinners";
+import  { useState } from "react";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useFetchSchoolGradesConfigQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useAddExamGradingMutation } from "../../Slices/Asynslices/postSlice";
 import { Icon } from "@iconify/react";

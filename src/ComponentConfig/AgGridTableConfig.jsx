@@ -1079,7 +1079,7 @@ export function SchoolAdminTableConfig({ ImageComponent, ActionButtonGroup }) {
   ];
   return tableConfig;
 }
-export function SpecialtyTableConfig({  DropdownComponent, CurrencyComponent }){
+export function SpecialtyTableConfig({  DropdownComponent }){
    const tableConfig = [
     {
       field: "id",

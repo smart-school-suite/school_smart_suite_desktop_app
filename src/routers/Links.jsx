@@ -18,6 +18,8 @@ import FormRoutes from "./Forms/FormRoutes";
 import SettingsRoutes from "./Settings/SettingsRoutes";
 import StudentRoutes from "./Student/StudentRoutes";
 import SchoolElectionRoutes from "./Election/ElectionRoutes";
+import ExamRoutes from "./Exam/ExamRoutes";
+import ResitRoutes from "./Resit/ResitRoutes";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 function Links() {
   return (
@@ -52,7 +54,9 @@ function Links() {
               ...EventRoutes,
               ...FinancialRoutes,
               ...FormRoutes,
-              ...SchoolElectionRoutes
+              ...SchoolElectionRoutes,
+              ...ExamRoutes,
+              ...ResitRoutes
             ]}
         </Route>
       </Routes>

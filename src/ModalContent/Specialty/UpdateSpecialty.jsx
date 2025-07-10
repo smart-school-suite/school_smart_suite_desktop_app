@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useFetchSpecialtyDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useUpdateSpecialtyMutation } from "../../Slices/Asynslices/updateSlice";
 import { useFetchDepartmentsQuery } from "../../Slices/Asynslices/fetchSlice";
@@ -10,8 +10,8 @@ import {
   SpecialtyTitleInput,
   SchoolFeeInput,
   RegistrationFeeInput
-} from "../../components/FormComponents";
-import CustomDropdown from "../../components/Dropdowns";
+} from "../../components/FormComponents/InputComponents";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 function UpdateSpecialty({ row_id: specialtyId, handleClose }) {
   const {
     data: specialty,

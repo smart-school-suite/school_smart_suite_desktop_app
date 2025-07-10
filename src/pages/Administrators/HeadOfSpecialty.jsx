@@ -1,8 +1,7 @@
-import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useFetchHeadOfSpecialtyQuery } from "../../Slices/Asynslices/fetchSlice";
 import { hosTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { Icon } from "@iconify/react";
-import Table from "../../components/Tables";
+import Table from "../../components/Tables/Tables";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import HosDetails from "../../ModalContent/Hos/HosDetails";
 import RemoveHos from "../../ModalContent/Hos/RemoveHos";
@@ -28,12 +27,11 @@ function HeadOfSpecialty() {
       <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center"
+            className="d-flex justify-content-center align-items-center primary-background-100"
             style={{
               width: "2.5rem",
               height: "2.5rem",
               borderRadius: "0.5rem",
-              background: "#fff",
             }}
           >
             <Icon
@@ -41,7 +39,7 @@ function HeadOfSpecialty() {
               className="fs-5 text-primary"
             />
           </div>
-          <h5 className="fw-semibold my-0">Manage Head Of Specialty (HOS)</h5>
+          <span className="fw-semibold my-0">Manage Head Of Specialty (HOS)</span>
         </div>
       </div>
       <div className="d-flex flex-row align-items-end gap-2 mt-3">

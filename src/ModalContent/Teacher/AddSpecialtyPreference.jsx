@@ -1,5 +1,5 @@
 import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners";
+import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useAddTeacherSpecialtyPreferenceMutation } from "../../Slices/Asynslices/postSlice";
 import toast from "react-hot-toast";

@@ -7,8 +7,7 @@ import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { useEffect, useState } from "react";
-import { SingleSpinner } from "../../components/Spinners";
-import Pageloaderspinner from "../../components/Spinners";
+import  Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 function DeactivateSpecialty({ handleClose, row_id: specialtyId }) {
   const { data: specialtyDetails, isLoading } = useFetchSpecialtyDetailsQuery({

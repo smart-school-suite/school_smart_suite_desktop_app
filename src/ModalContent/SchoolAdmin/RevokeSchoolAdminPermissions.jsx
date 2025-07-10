@@ -1,6 +1,6 @@
 import { useFetchPermissionsBySchoolAdminQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useRevokePermissionsMutation } from "../../Slices/Asynslices/postSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { replaceDashesWithSpaces } from "../../utils/functions";
 import { useState } from "react";
 import ToastDanger from "../../components/Toast/ToastDanger";

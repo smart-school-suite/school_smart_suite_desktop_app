@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useFetchDepartmentsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useAssignHodMutation } from "../../Slices/Asynslices/postSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 

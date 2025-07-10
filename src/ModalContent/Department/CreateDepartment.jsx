@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useAddDepartmentMutation } from "../../Slices/Asynslices/postSlice";
-import { DepartmentNameInput } from "../../components/FormComponents";
+import { DepartmentNameInput } from "../../components/FormComponents/InputComponents";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function CreateDepartment({ handleClose }) {
   const [isValid, setIsValid] = useState(false);
   const [isCreating, setIsCreating] = useState(false);

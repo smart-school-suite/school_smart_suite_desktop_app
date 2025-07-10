@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { IsPathInRoutes } from "../../utils/functions";
-import { Settingspaths, AcademicRoutes } from "../../utils/paths";
+import { Settingspaths, AcademicRoutes, ExamRoutes, ResitRoutes, StudentRoutes } from "../../utils/paths";
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -13,18 +13,16 @@ function Sidebar() {
         <aside className=" white-bg d-flex flex-column ps-2  pt-2 pb-4">
           <div className="logo-area">
             <div className="d-flex justify-content-start flex-row gap-3">
-               <div className="app-logo">
-              <img
-              src="./logo/blue_logo.png"
-              alt=""
-              className="app-logo"
-             />
-            </div>
+              <div className="app-logo">
+                <img src="./logo/blue_logo.png" alt="" className="app-logo" />
+              </div>
             </div>
           </div>
           <div className="nav-container mt-1">
             <div className="nav-items">
-              <div className="d-flex flex-column gap-1">
+              <div className="d-flex flex-column gap-1 px-2">
+
+                {/*Dashoard*/}
                 <NavLink
                   to=""
                   className={({ isActive }) =>
@@ -40,6 +38,9 @@ function Sidebar() {
                     <p>Dashboard</p>
                   </div>
                 </NavLink>
+                {/*Dashoard*/}
+
+                {/*Administrator*/}
                 <div
                   className={
                     location.pathname === "/school-admins"
@@ -191,14 +192,17 @@ function Sidebar() {
                     </div>
                   </div>
                 </div>
+               {/*Administrator*/}
 
+               {/*Academic*/}
                 <div
                   className={
-                    IsPathInRoutes(AcademicRoutes.general) ? 
-                    "nav-item-box-active fw-medium" : "nav-item-box-inactive"
+                    IsPathInRoutes(AcademicRoutes.general)
+                      ? "nav-item-box-active fw-medium"
+                      : "nav-item-box-inactive"
                   }
                   onClick={() => {
-                    navigate("/exams");
+                    navigate("/grades-configuration");
                   }}
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
@@ -214,19 +218,18 @@ function Sidebar() {
                     <Icon
                       icon="octicon:chevron-down-24"
                       className={
-                        IsPathInRoutes(AcademicRoutes.general) ? 
-                         "rotate-icon nav-dropdown-icon" :
-                         "nav-dropdown-icon"
+                        IsPathInRoutes(AcademicRoutes.general)
+                          ? "rotate-icon nav-dropdown-icon"
+                          : "nav-dropdown-icon"
                       }
                     />
                   </span>
                 </div>
-
                 <div
                   className={
-                    IsPathInRoutes(AcademicRoutes.general) ? 
-                    "subbox-container-nav ps-3" :
-                    "subbox-container-nav-inactive"
+                    IsPathInRoutes(AcademicRoutes.general)
+                      ? "subbox-container-nav ps-3"
+                      : "subbox-container-nav-inactive"
                   }
                 >
                   <div className="drop-down-container">
@@ -234,32 +237,16 @@ function Sidebar() {
                       <div className="subbox-nav">
                         <p
                           onClick={() => {
-                             navigate("/exams")
+                            navigate("/grades-configuration");
                           }}
                           className={
-                            IsPathInRoutes(AcademicRoutes.examRoutes) ? 
-                             "text-decoration-none fw-medium color-primary pointer-cursor"
-                             : "text-decoration-none gainsboro-color pointer-cursor"
+                            location.pathname === "/grades-configuration"
+                              ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"
                           }
                         >
-                          Exams
+                          Grades Configuration
                         </p>
-                      </div>
-                    </div>
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <span
-                          className={
-                             IsPathInRoutes(AcademicRoutes.scoreRoutes) ? 
-                             "text-decoration-none fw-medium color-primary pointer-cursor"
-                             : "text-decoration-none gainsboro-color pointer-cursor"
-                          }
-                          onClick={() => {
-                             navigate("/scores")
-                          }}
-                        >
-                          Student Scores
-                        </span>
                       </div>
                     </div>
                     <div className="box-nav">
@@ -278,36 +265,6 @@ function Sidebar() {
                     </div>
                     <div className="box-nav">
                       <div className="subbox-nav">
-                        <span
-                          onClick={() => {
-                             navigate("/time-table")
-                          }}
-                          className={
-                            IsPathInRoutes(AcademicRoutes.timetableRoutes) ? 
-                             "text-decoration-none fw-medium color-primary pointer-cursor"
-                             : "text-decoration-none gainsboro-color pointer-cursor"
-                          }
-                        >Time Table</span>
-                      </div>
-                    </div>
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <span
-                          onClick={() => {
-                             navigate("/accessed-resit-students")
-                          }}
-                          className={
-                             IsPathInRoutes(AcademicRoutes.examResits) ? 
-                             "text-decoration-none fw-medium color-primary pointer-cursor"
-                             : "text-decoration-none gainsboro-color pointer-cursor"
-                          }
-                        >
-                          Exam Resits
-                        </span>
-                      </div>
-                    </div>
-                    <div className="box-nav">
-                      <div className="subbox-nav">
                         <NavLink
                           to="/courses"
                           className={({ isActive }) =>
@@ -320,16 +277,206 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/time-table"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Time-table</p>
+                        </NavLink>
+                      </div>
+                    </div>
                   </div>
                 </div>
-
+               {/*Administrator*/}
+               
+               {/*Exam*/}
                 <div
                   className={
-                    location.pathname === "/students"
+                      IsPathInRoutes(ExamRoutes)
                       ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/parents"
+                      : "nav-item-box-inactive"
+                  }
+                  onClick={() => {
+                    navigate("/time-table");
+                  }}
+                >
+                  <div className="nav-item w-100 d-flex flex-row gap-2">
+                    <span>
+                      <Icon icon="solar:calendar-linear" />
+                    </span>
+                    <p>Manage Exams</p>
+                  </div>
+                  <span>
+                    <Icon
+                      icon="octicon:chevron-down-24"
+                      className={
+                          IsPathInRoutes(ExamRoutes)
+                          ? "rotate-icon nav-dropdown-icon"
+                          : "nav-dropdown-icon"
+                      }
+                    />
+                  </span>
+                </div>
+                <div
+                  className={
+                      IsPathInRoutes(ExamRoutes)
+                      ? "subbox-container-nav ps-3"
+                      : "subbox-container-nav-inactive"
+                  }
+                >
+                  <div className="drop-down-container">
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/exam"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Exam</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/exam-candidate"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Exam Candidate</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/exam-timetable"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Exam Timetable</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {/*Exam*/}
+
+                {/*Resit*/}
+                <div
+                  className={
+                      IsPathInRoutes(ResitRoutes)
                       ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/student-batches"
+                      : "nav-item-box-inactive"
+                  }
+                  onClick={() => {
+                    navigate("/time-table");
+                  }}
+                >
+                  <div className="nav-item w-100 d-flex flex-row gap-2">
+                    <span>
+                      <Icon icon="solar:calendar-linear" />
+                    </span>
+                    <p>Manage Resit</p>
+                  </div>
+                  <span>
+                    <Icon
+                      icon="octicon:chevron-down-24"
+                      className={
+                          IsPathInRoutes(ResitRoutes)
+                          ? "rotate-icon nav-dropdown-icon"
+                          : "nav-dropdown-icon"
+                      }
+                    />
+                  </span>
+                </div>
+                <div
+                  className={
+                      IsPathInRoutes(ResitRoutes)
+                      ? "subbox-container-nav ps-3"
+                      : "subbox-container-nav-inactive"
+                  }
+                >
+                  <div className="drop-down-container">
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/resit-exams"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Resit Exam</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/resit-candidate"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Resit Candidate</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/resit-timetable"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Resit Timetable</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/student-resit"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Student Resit</p>
+                        </NavLink>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/*Resit*/}
+
+                 {/*student*/}
+                <div
+                  className={
+                      IsPathInRoutes(StudentRoutes)
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
@@ -341,33 +488,22 @@ function Sidebar() {
                     <span>
                       <Icon icon="ph:student" />
                     </span>
-                    <p>Student Management</p>
+                    <p>Manage Students</p>
                   </div>
                   <span>
                     <Icon
                       icon="octicon:chevron-down-24"
                       className={
-                        location.pathname === "/students"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/parents"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/student-batches"
+                          IsPathInRoutes(ResitRoutes)
                           ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
                     />
                   </span>
                 </div>
-
                 <div
                   className={
-                    location.pathname === "/students"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/parents"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/student-batches" 
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/studentDropout"
+                      IsPathInRoutes(StudentRoutes)
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -431,7 +567,9 @@ function Sidebar() {
                     </div>
                   </div>
                 </div>
+                 {/*student*/}
 
+                {/*School Expenses*/}
                 <div
                   className={
                     location.pathname === "/school-expenses"
@@ -480,7 +618,8 @@ function Sidebar() {
                           ? "rotate-icon nav-dropdown-icon"
                           : location.pathname === "/additionalFeeTransactions"
                           ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/registrationFeesTransactions"
+                          : location.pathname ===
+                            "/registrationFeesTransactions"
                           ? "rotate-icon nav-dropdown-icon"
                           : location.pathname === "/fee-payment/transactions"
                           ? "rotate-icon nav-dropdown-icon"
@@ -587,7 +726,9 @@ function Sidebar() {
                     </div>
                   </div>
                 </div>
+               {/*School Expenses*/}
 
+                 {/*Events*/}
                 <NavLink
                   to="/events"
                   className={({ isActive }) =>
@@ -603,45 +744,56 @@ function Sidebar() {
                     <p>Events</p>
                   </div>
                 </NavLink>
+                {/*Events*/}
+
+
+                {/*Election*/}
                 <div
                   to="/schoolElections"
                   className={
-                     location.pathname === "/schoolElections"
-                     ? "nav-item-box-active fw-medium"
-                     : location.pathname === "/viewElections"
-                     ? "nav-item-box-active fw-medium"
-                     : location.pathname === "/passWinners"
-                     ? "nav-item-box-active fw-medium"
-                     : location.pathname === "/passElection"
-                     ? "nav-item-box-active fw-medium"
-                     : location.pathname === "/electionRoles"
-                     ? "nav-item-box-active fw-medium"
-                     : location.pathname === "/electionApplication"
-                     ? "nav-item-box-active fw-medium"
-                     : location.pathname === "/electionCandidates"
-                     ? "nav-item-box-active fw-medium"
-                     : location.pathname === "/activeElections"
-                     ? "nav-item-box-active fw-medium"
-                     : location.pathname === "/electionResults"
-                     ? "nav-item-box-active fw-medium"
-                     : location.pathname === "/electionSettings"
-                     ? "nav-item-box-active fw-medium"
-                     : "nav-item-box-inactive"
+                    location.pathname === "/schoolElections"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/viewElections"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/passWinners"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/passElection"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/electionRoles"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/electionApplication"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/electionCandidates"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/activeElections"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/electionResults"
+                      ? "nav-item-box-active fw-medium"
+                      : location.pathname === "/electionSettings"
+                      ? "nav-item-box-active fw-medium"
+                      : "nav-item-box-inactive"
                   }
                   onClick={() => {
-                     navigate("schoolElections");
+                    navigate("schoolElections");
                   }}
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
                     <span>
-                    <Icon icon="fluent:vote-20-regular" width="20" height="20"  />
+                      <Icon
+                        icon="fluent:vote-20-regular"
+                        width="20"
+                        height="20"
+                      />
                     </span>
                     <p>School Elections</p>
                   </div>
                 </div>
+                {/*Election*/}
+
+                {/*Announcement*/}
                 <div
                   className={
-                      location.pathname === "/annoucements"
+                    location.pathname === "/annoucements"
                       ? "nav-item-box-active fw-medium"
                       : location.pathname === "/archieveAnnoucement"
                       ? "nav-item-box-active fw-medium"
@@ -663,48 +815,41 @@ function Sidebar() {
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
                     <span>
-                    <Icon icon="fluent:speaker-0-32-regular" width="20" height="20" />
+                      <Icon
+                        icon="fluent:speaker-0-32-regular"
+                        width="20"
+                        height="20"
+                      />
                     </span>
                     <p>Annoucements</p>
                   </div>
                 </div>
-                <NavLink
-                  to="/customer-support"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : "nav-item-box-inactive text-decoration-none"
-                  }
-                >
-                  <div className="nav-item w-100 d-flex flex-row gap-2">
-                    <span>
-                      <Icon icon="streamline:customer-support-1" />
-                    </span>
-                    <p>Customer Support</p>
-                  </div>
-                </NavLink>
-                <div
-                  className={
-                      IsPathInRoutes(Settingspaths)
-                      ? "nav-item-box-active fw-medium text-decoration-none pointer-cursor"
-                      : "nav-item-box-inactive text-decoration-none pointer-cursor"
-                  }
-                  onClick={() => {
-                    navigate("/settings/general-settings");
-                  }}
-                >
-                  <div className="nav-item w-100 d-flex flex-row gap-2">
-                    <span>
-                      <Icon icon="uil:setting" />
-                    </span>
-                    <p>Settings</p>
-                  </div>
-                </div>
+                {/*Announcement*/}
+
               </div>
             </div>
           </div>
-          <div className="mt-auto d-flex flex-column justify-content-center align-items-center w-100">
-           
+          <div className="mt-auto d-flex gap-4 flex-column justify-content-center align-items-center w-100">
+            <hr />
+            {/*Settings*/}
+                <div className="d-flex flex-row gainsboro-color mb-3 align-items-center w-100 justify-content-between px-2 font-size-sm"
+                  onClick={() => {
+                     navigate("/settings/general-settings");
+                  }}
+                >
+                  <span>Setting</span>
+                  <span style={{ fontSize:"1rem" }}><Icon icon="uil:setting" /></span>
+                </div>
+              {/*Settings*/} 
+          </div>
+          <div
+             className="d-flex flex-row gainsboro-color align-items-center w-100 justify-content-between px-2 font-size-sm"
+                   onClick={() => {
+                     navigate("/settings/general-settings");
+                  }}
+          >
+            <span>Logout</span>
+                  <span style={{ fontSize:"1rem" }}><Icon icon="uil:setting" /></span>
           </div>
         </aside>
       </div>

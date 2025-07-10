@@ -1,11 +1,10 @@
-import Navbar from "../../components/Navbar";
+
 import Pageloaderspinner from "../../components/Spinners/Spinners";
-import Table from "../../components/Tables";
+import Table from "../../components/Tables/Tables";
 import { useFetchExamsQuery } from "../../Slices/Asynslices/fetchSlice";
 import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import { GradesConfigurationNavbarOptions } from "../../ComponentConfig/navBarConfig";
 import { ExamsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import CreateExam from "../../ModalContent/Exams/CreateExam";
 import DeleteExam from "../../ModalContent/Exams/DeleteExam";
@@ -20,8 +19,25 @@ function Exams() {
   }
   return (
     <>
-      <Navbar options={GradesConfigurationNavbarOptions} />
       <div>
+        <div className="my-2">
+                  <div className="d-flex align-items-center gap-2">
+                    <div
+                      className="d-flex justify-content-center align-items-center primary-background-100"
+                      style={{
+                        width: "2.5rem",
+                        height: "2.5rem",
+                        borderRadius: "0.5rem",
+                      }}
+                    >
+                      <Icon
+                        icon="grommet-icons:user-admin"
+                        className="font-size-md primary-color"
+                      />
+                    </div>
+                    <span className="my-0 fw-semibold">Exams</span>
+                  </div>
+                </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Number of Exams</p>
@@ -46,7 +62,7 @@ function Exams() {
           />
         ) : (
           <div className="alert alert-warning">
-            Oops, looks like you don't have any teachers.
+            No Exams Found 
           </div>
         )}
       </div>

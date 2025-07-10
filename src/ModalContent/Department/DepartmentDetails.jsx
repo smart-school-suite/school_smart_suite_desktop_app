@@ -1,5 +1,5 @@
 import { useFetchDepartmentDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner  from "../../components/Spinners/Spinners";
 import { convertToReadableDate } from "../../utils/functions";
 import { Icon } from "@iconify/react";
 function DepartmentDetails({ row_id, handleClose }) {

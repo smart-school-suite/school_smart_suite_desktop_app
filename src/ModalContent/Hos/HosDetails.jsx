@@ -1,5 +1,5 @@
 import { useFetchHeadOfSpecialtyDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 function HosDetails({ handleClose, row_id: hosId }) {
   const { data: hosDetails, isLoading } = useFetchHeadOfSpecialtyDetailsQuery({

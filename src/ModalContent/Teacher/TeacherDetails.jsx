@@ -1,5 +1,5 @@
 import { useFetchTeacherDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { formatNumber } from "../../utils/functions";

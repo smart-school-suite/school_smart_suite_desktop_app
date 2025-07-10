@@ -1,24 +1,42 @@
-import Navbar from "../../components/Navbar";
 import { useFetchCoursesQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
-import Table from "../../components/Tables";
-import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";
-import { CoursesNavBarOptions } from "../../ComponentConfig/navBarConfig";
+import Table from "../../components/Tables/Tables";
+import ActionButtonDropdown, {
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import CourseDetails from "../../ModalContent/Course/CourseDetails";
 import CreateCourse from "../../ModalContent/Course/CreateCourse";
 import DeactivateCourse from "../../ModalContent/Course/DeactivateCourse";
 import DeleteCourse from "../../ModalContent/Course/DeleteCourse";
 import UpdateCourse from "../../ModalContent/Course/UpdateCourse";
 import { CoursesTable } from "../../ComponentConfig/AgGridTableConfig";
+import { Icon } from "@iconify/react";
 function Courses() {
-  const { data: data, error, isLoading } = useFetchCoursesQuery();
+  const { data: data, isLoading } = useFetchCoursesQuery();
   if (isLoading) {
     return <Pageloaderspinner />;
   }
   return (
     <>
-      <Navbar options={CoursesNavBarOptions}></Navbar>
       <div>
+        <div className="my-2">
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className="d-flex justify-content-center align-items-center primary-background-100"
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <Icon
+                icon="grommet-icons:user-admin"
+                className="font-size-md primary-color"
+              />
+            </div>
+            <span className="my-0 fw-semibold">Courses</span>
+          </div>
+        </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Number of Courses</p>
@@ -45,7 +63,6 @@ function Courses() {
 }
 export default Courses;
 
-
 export function DropdownComponent(props) {
   const { id } = props.data;
   const actions = [
@@ -68,14 +85,18 @@ export function DropdownComponent(props) {
       modalTitle: "Deactivate Course",
       actionTitle: "Deactivate",
       modalContent: DeactivateCourse,
-    }
+    },
   ];
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id}
-       style={'tableActionButton primary-background text-white font-size-sm px-2'}
-      > 
-      <span>Edit Action</span>
+      <ActionButtonDropdown
+        actions={actions}
+        row_id={id}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
+      >
+        <span>Edit Action</span>
       </ActionButtonDropdown>
     </>
   );

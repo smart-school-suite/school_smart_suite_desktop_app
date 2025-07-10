@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDeleteSpecialtyMutation } from "../../Slices/Asynslices/deleteSlice";
 import toast from "react-hot-toast";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function DeleteSpecialty({ handleClose, row_id:specialtyId }) {
    const [isDeleting, setIsDeleting ] = useState(false);
    const [deleteSpecialty] = useDeleteSpecialtyMutation();

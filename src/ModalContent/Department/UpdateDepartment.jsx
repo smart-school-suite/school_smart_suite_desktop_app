@@ -1,7 +1,6 @@
-import Pageloaderspinner from "../../components/Spinners";
 import { useFetchDepartmentDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
-import { SingleSpinner } from "../../components/Spinners";
+import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { useUpdateDepartmentMutation } from "../../Slices/Asynslices/updateSlice";
 import toast from "react-hot-toast";

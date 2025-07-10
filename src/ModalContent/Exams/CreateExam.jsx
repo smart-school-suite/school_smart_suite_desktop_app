@@ -4,13 +4,13 @@ import { useFetchSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useFetchExamTypesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useAddExamMutation } from "../../Slices/Asynslices/postSlice";
-import { WeigtedMarkInput } from "../../components/FormComponents";
-import CustomDropdown from "../../components/Dropdowns";
-import { SchoolYearSelector } from "../../components/YearPicker";
+import { WeigtedMarkInput } from "../../components/FormComponents/InputComponents";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 function CreateExam({ handleClose }) {
   const [isValid, setIsValid] = useState(false);

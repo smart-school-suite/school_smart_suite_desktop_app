@@ -138,56 +138,6 @@ export const AuthProvider = ({ children }) => {
     [handleAdminLogout]
   );
 
-  const handleSchoolRegistration = async (navigate, schoolCredentials) => {
-    setLoading((prevState) => ({ ...prevState, createSchool: true }));
-    setCreateError((prevState) => ({ ...prevState, createSchool: null }));
-    try {
-      const response = await axios.post("school/register", schoolCredentials);
-      setLoading((prevState) => ({ ...prevState, createSchool: false }));
-      setCreateError((prevState) => ({ ...prevState, createSchool: null }));
-      dispatch(handleSchoolRegistration({ schoolId: response.data.data }));
-      navigate("/create-schoolbranch");
-    } catch (e) {
-      setCreateError((prevState) => ({
-        ...prevState,
-        createSchool:
-          e.response?.data?.message ||
-          "Something went wrong trying to create school",
-      }));
-    } finally {
-      setLoading((prevState) => ({ ...prevState, createSchool: false }));
-    }
-  };
-
-  const handleSchoolBranchRegistration = async (
-    navigate,
-    schoolBranchCredentials
-  ) => {
-    setLoading((prevalue) => ({ ...prevalue, createSchoolBranch: true }));
-    setCreateError((prevalue) => ({ ...prevalue, createSchoolBranch: null }));
-    try {
-      const response = await axios.post(
-        "school-branch/register",
-        schoolBranchCredentials
-      );
-      setLoading((prevalue) => ({ ...prevalue, createSchoolBranch: false }));
-      setCreateError((prevalue) => ({ ...prevalue, createSchoolBranch: null }));
-      dispatch(
-        handleSchoolBranchRegistration({ schoolBranchId: response.data.data })
-      );
-      navigate("/subcription/plan");
-    } catch (e) {
-      setCreateError((prevState) => ({
-        ...prevState,
-        createSchoolBranch:
-          e.response?.data?.message ||
-          "Something went wrong trying to create school",
-      }));
-    } finally {
-      setLoading((prevState) => ({ ...prevState, createSchoolBranch: false }));
-    }
-  };
-
   const handleSubscription = async (navigate, subscriptionCredentials) => {
     setLoading((prevalue) => ({ ...prevalue, subscribe: true }));
     setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
@@ -231,7 +181,6 @@ export const AuthProvider = ({ children }) => {
       );
       setLoading((prevalue) => ({ ...prevalue, admin: false }));
       setCreateError((prevalue) => ({ ...prevalue, admin: false }));
-      dispatch(handleCreateSuperAdmin());
       navigate("/login-school-admin");
     } catch (e) {
       setCreateError((prevState) => ({
@@ -362,9 +311,7 @@ export const AuthProvider = ({ children }) => {
       handleLogin,
       handleAdminLogout,
       handleTwoStepVerification,
-      handleSchoolRegistration,
       handleCreateSuperAdmin,
-      handleSchoolBranchRegistration,
       handleSubscription,
       handleValidatePasswordResetOtp,
       handleChangePassword,
@@ -379,9 +326,7 @@ export const AuthProvider = ({ children }) => {
       handleLogin,
       handleAdminLogout,
       handleTwoStepVerification,
-      handleSchoolRegistration,
       handleCreateSuperAdmin,
-      handleSchoolBranchRegistration,
       handleSubscription,
       handleValidatePasswordResetOtp,
       handleChangePassword,

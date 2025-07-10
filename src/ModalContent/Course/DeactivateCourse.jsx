@@ -3,13 +3,12 @@ import {
   useDeactivateCourseMutation,
 } from "../../Slices/Asynslices/postSlice";
 import { useFetchCourseDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner, {SingleSpinner} from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { SingleSpinner } from "../../components/Spinners";
 function DeactivateCourse({ handleClose, row_id: courseId }) {
   const { data: courseDetails, isLoading } = useFetchCourseDetailsQuery({
     course_id: courseId,

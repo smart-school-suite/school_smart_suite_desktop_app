@@ -3,10 +3,9 @@ import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useFetchStudentBatchQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useFetchSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useCreateSchoolSemesterMutation } from "../../Slices/Asynslices/postSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import  Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { SingleSpinner } from "../../components/Spinners";
 import { useState } from "react";
 function CreateSemester({ handleClose }) {
   const { data: specailties, isLoading: isFetchingSpecialties } =

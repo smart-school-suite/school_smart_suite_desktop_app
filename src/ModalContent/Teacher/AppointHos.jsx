@@ -1,6 +1,6 @@
 import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useAssignHosMutation } from "../../Slices/Asynslices/postSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";

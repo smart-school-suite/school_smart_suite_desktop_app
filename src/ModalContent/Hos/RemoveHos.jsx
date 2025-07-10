@@ -3,7 +3,7 @@ import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { useRemoveHeadOfSpecialtyMutation } from "../../Slices/Asynslices/deleteSlice";
 import { useState } from "react";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function RemoveHos({ handleClose, row_id: hosId }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [removeHeadOfSpecialty] = useRemoveHeadOfSpecialtyMutation();

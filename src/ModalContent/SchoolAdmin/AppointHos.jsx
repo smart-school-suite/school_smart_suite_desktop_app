@@ -1,11 +1,12 @@
 import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useAssignHosMutation } from "../../Slices/Asynslices/postSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function AppointHos({ handleClose, row_id: schoolAdminId }) {
   const { data: specialty, isLoading, error } = useFetchSpecialtiesQuery();
   const [formData, setFormData] = useState({

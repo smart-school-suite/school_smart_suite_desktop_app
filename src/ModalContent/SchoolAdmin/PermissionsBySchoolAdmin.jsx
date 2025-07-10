@@ -1,4 +1,4 @@
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useFetchPermissionsBySchoolAdminQuery } from "../../Slices/Asynslices/fetchSlice";
 const PermissionsBySchoolAdmin = ({ row_id: schoolAdminId, handleClose }) => {
     const {

@@ -1,4 +1,4 @@
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useUpdateSchoolAdminMutation } from "../../Slices/Asynslices/updateSlice";
 import { useFetchSchoolAdminDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useState } from "react";

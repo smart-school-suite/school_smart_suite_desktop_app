@@ -15,7 +15,12 @@ function RegisterSchoolAdmin() {
   const { handleCreateSuperAdmin, loading, createError } = useAuth();
 
   const handleCreateSchoolAdmin = async () => {
-    await handleCreateSuperAdmin(navigate, adminCredentials, apiKey);
+     try{
+       await handleCreateSuperAdmin(navigate, adminCredentials, apiKey);
+     }
+     catch(e){
+        console.log("an error occured");
+     }
   };
 
   const handleChange = (e) => {
@@ -135,6 +140,7 @@ function RegisterSchoolAdmin() {
                 onClick={() => {
                   handleCreateSchoolAdmin()
                 }}
+                disabled={loading.admin}
               >
                 Finish
               </button>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDeleteSchoolAdminMutation } from "../../Slices/Asynslices/deleteSlice";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import toast from "react-hot-toast";

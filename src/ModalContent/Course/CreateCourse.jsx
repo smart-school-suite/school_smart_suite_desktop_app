@@ -6,7 +6,7 @@ import {
   useFetchSpecialtiesQuery,
   useFetchSemestersQuery,
 } from "../../Slices/Asynslices/fetchSlice";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
@@ -15,8 +15,8 @@ import {
   CourseCodeInput,
   CourseTitleInput,
   CourseCreditInput,
-} from "../../components/FormComponents";
-import CustomDropdown from "../../components/Dropdowns";
+} from "../../components/FormComponents/InputComponents";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 function CreateCourse({ handleClose }) {
   const [isValid, setIsValid] = useState(false);
   const [isCreating, setIsCreating] = useState(false);

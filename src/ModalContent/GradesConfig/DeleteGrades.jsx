@@ -3,7 +3,7 @@ import { useDeleteExamGradeMutation } from "../../Slices/Asynslices/deleteSlice"
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function DeleteGradesConfig({ handleClose, row_id:examId }){
     const [deleteExamGrade] = useDeleteExamGradeMutation();
     const [isDeleting, setIsDeleting] = useState(false);

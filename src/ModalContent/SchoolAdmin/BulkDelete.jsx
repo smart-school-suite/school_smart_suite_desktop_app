@@ -3,7 +3,7 @@ import { useBulkDeleteSchoolAdminMutation } from "../../Slices/Asynslices/delete
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function BulkDelete({ handleClose, data, resetAll }){
     const [isDeleting, setIsDeleting] = useState(false);
     const [bulkDeleteSchoolAdmin] = useBulkDeleteSchoolAdminMutation();

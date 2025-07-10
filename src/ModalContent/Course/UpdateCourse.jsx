@@ -5,7 +5,7 @@ import {
   useFetchSemestersQuery,
   useFetchSpecialtiesQuery,
 } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners";
+import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";

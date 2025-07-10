@@ -1,7 +1,5 @@
-import Navbar from "../../components/Navbar";
 import { useFetchDepartmentsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
-import Table from "../../components/Tables";
+import Table from "../../components/Tables/Tables";
 import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
@@ -10,32 +8,46 @@ import DepartmentDetails from "../../ModalContent/Department/DepartmentDetails";
 import CreateDepartment from "../../ModalContent/Department/CreateDepartment";
 import UpdateDepartment from "../../ModalContent/Department/UpdateDepartment";
 import DeactivateDepartment from "../../ModalContent/Department/DeactivateDepartment";
-import { DepartmentNavBarConfig } from "../../ComponentConfig/navBarConfig";
 import { DepartmentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { useMemo } from "react";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import { Icon } from "@iconify/react";
 function Departments() {
   const { data: departments, isLoading } = useFetchDepartmentsQuery();
-    const memoizedColDefs = useMemo(() => {
-      return DepartmentTableConfig({
-        DropdownComponent
-      });
-    }, []);
-  
-    const memoizedRowData = useMemo(() => {
-      return departments?.data ?? [];
-    }, [departments]);
+  const memoizedColDefs = useMemo(() => {
+    return DepartmentTableConfig({
+      DropdownComponent,
+    });
+  }, []);
 
-    const memoizedNavConfig = useMemo(() => {
-       return DepartmentNavBarConfig
-    }, []);
+  const memoizedRowData = useMemo(() => {
+    return departments?.data ?? [];
+  }, [departments]);
+
   if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
     <>
-      <Navbar options={memoizedNavConfig} />
       <div>
+        <div className="my-2">
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className="d-flex justify-content-center align-items-center primary-background-100"
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <Icon
+                icon="grommet-icons:user-admin"
+                className="font-size-md primary-color"
+              />
+            </div>
+            <span className="my-0 fw-semibold">Departments</span>
+          </div>
+        </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Number of Departments</p>
@@ -53,10 +65,7 @@ function Departments() {
           </div>
         </div>
         <div>
-          <Table
-            colDefs={memoizedColDefs}
-            rowData={memoizedRowData}
-          />
+          <Table colDefs={memoizedColDefs} rowData={memoizedRowData} />
         </div>
       </div>
     </>
@@ -70,21 +79,21 @@ export function DropdownComponent(props) {
     {
       actionTitle: "Update",
       modalContent: UpdateDepartment,
-      icon:"mynaui:edit-solid",
+      icon: "mynaui:edit-solid",
     },
     {
       actionTitle: "Details",
-      icon:"bxs:detail",
+      icon: "bxs:detail",
       modalContent: DepartmentDetails,
     },
     {
       actionTitle: "Delete",
-      icon:"fluent:delete-16-filled",
+      icon: "fluent:delete-16-filled",
       modalContent: DeleteDepartment,
     },
     {
       actionTitle: "Department Status",
-      icon:"heroicons-outline:status-online",
+      icon: "heroicons-outline:status-online",
       modalContent: DeactivateDepartment,
     },
   ];

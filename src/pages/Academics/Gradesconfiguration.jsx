@@ -1,10 +1,6 @@
-import Navbar from "../../components/Navbar";
-import {
-  useFetchSchoolGradesConfigQuery,
-} from "../../Slices/Asynslices/fetchSlice";
+import { useFetchSchoolGradesConfigQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
-import { GradesConfigurationNavbarOptions } from "../../ComponentConfig/navBarConfig";
-import Table from "../../components/Tables";
+import Table from "../../components/Tables/Tables";
 import { Icon } from "@iconify/react";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import UpdateGradeConfig from "../../ModalContent/GradesConfig/UpdateGrades";
@@ -22,8 +18,25 @@ function Gradesconfiguration() {
   }
   return (
     <>
-      <Navbar options={GradesConfigurationNavbarOptions} />
       <div>
+        <div className="my-2">
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className="d-flex justify-content-center align-items-center primary-background-100"
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <Icon
+                icon="grommet-icons:user-admin"
+                className="font-size-md primary-color"
+              />
+            </div>
+            <span className="my-0 fw-semibold">Grades Configurations</span>
+          </div>
+        </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Grades Config</p>
@@ -77,9 +90,9 @@ function DropdownComponent(props) {
       modalContent: UpdateGradeConfig,
     },
     {
-      actionTitle:"Configure using other grades",
-      modalContent:ConfigureByOtherGrades
-    }
+      actionTitle: "Configure using other grades",
+      modalContent: ConfigureByOtherGrades,
+    },
   ];
   return (
     <>

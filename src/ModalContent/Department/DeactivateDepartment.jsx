@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useFetchDepartmentDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners";
+import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState, useEffect } from "react";
 import {
   useDeactivateDepartmentMutation,

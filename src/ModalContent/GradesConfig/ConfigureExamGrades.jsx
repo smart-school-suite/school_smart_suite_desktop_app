@@ -1,12 +1,11 @@
 import { Icon } from "@iconify/react";
 import { useFetchExamConfigDataQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { SingleSpinner } from "../../components/Spinners";
+import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useEffect, useState } from "react";
-import { useAddGradeMutation } from "../../Slices/Asynslices/postSlice";
+import  { useAddGradeMutation } from "../../Slices/Asynslices/postSlice";
 function ConfigureExamGrades({ handleClose, row_id: examId }) {
   const [formData, setFormData] = useState([]);
   const [isCreating, setIsCreating] = useState(false);

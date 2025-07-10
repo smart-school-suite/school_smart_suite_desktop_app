@@ -1,7 +1,7 @@
 import { useFetchPermissionsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useAssignPermissionMutation } from "../../Slices/Asynslices/postSlice";
 import { useState } from "react";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { replaceDashesWithSpaces } from "../../utils/functions"
 function SchoolAdminPermissions({ handleClose, row_id: schoolAdminId }) {
     const { data: data, error, isLoading } = useFetchPermissionsQuery();

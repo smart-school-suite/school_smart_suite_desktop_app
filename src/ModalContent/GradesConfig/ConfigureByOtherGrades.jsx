@@ -1,4 +1,4 @@
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners";
+import Pageloaderspinner, {SingleSpinner } from "../../components/Spinners/Spinners";
 import { useFetchSchoolGradesConfigQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
 import { useState } from "react";

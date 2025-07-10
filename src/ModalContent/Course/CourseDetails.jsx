@@ -1,5 +1,5 @@
 import { useFetchCourseDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 function CourseDetails({ row_id:courseId, handleClose }) {
     const { data: courseDetails, isLoading } = useFetchCourseDetailsQuery({

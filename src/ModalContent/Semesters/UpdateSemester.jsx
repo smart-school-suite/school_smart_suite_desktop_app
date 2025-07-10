@@ -1,4 +1,4 @@
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useFetchSemesterDetailQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useFetchStudentBatchQuery } from "../../Slices/Asynslices/fetchSlice";

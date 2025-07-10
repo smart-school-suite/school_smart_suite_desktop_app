@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useFetchRolesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useAssignRoleMutation } from "../../Slices/Asynslices/postSlice";
-import Pageloaderspinner from "../../components/Spinners";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import ToastWarning from "../../components/Toast/ToastWarning";
 function SchoolAdminRoles({ handleClose, row_id: schoolAdminId }) {
     const { data: data, error, isLoading } = useFetchRolesQuery();

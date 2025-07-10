@@ -3,7 +3,7 @@ import { useBulkDeactivateSchoolAdminMutation } from "../../Slices/Asynslices/po
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function BulkDeactivateSchoolAdmin({ handleClose, data, resetAll }) {
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [bulkDeactivateSchoolAdmin] = useBulkDeactivateSchoolAdminMutation();

@@ -81,11 +81,11 @@ export const apiSlice = createApi({
   tagTypes: tagTypesarray,
   endpoints: (builder) => ({
     fetchStudents: builder.query({
-      query: () => "student/get-students",
+      query: () => "student/students",
       providesTags: ["student"],
     }),
     fetchTeachers: builder.query({
-      query: () => "teacher/getallInstructors",
+      query: () => "teacher/teachers",
       providesTags: ["teachers"],
     }),
     fetchParents: builder.query({
@@ -93,15 +93,15 @@ export const apiSlice = createApi({
       providesTags: ["parents"],
     }),
     fetchDepartments: builder.query({
-      query: () => "department/my-departments",
+      query: () => "department",
       providesTags: ["departments"],
     }),
     fetchSpecialties: builder.query({
-      query: () => "specialty/my-specialties",
+      query: () => "specialty",
       providesTags: ["specialties"],
     }),
     fetchCourses: builder.query({
-      query: () => "course/my-courses",
+      query: () => "course/courses",
       providesTags: ["courses"],
     }),
     fetchPaidFees: builder.query({
@@ -113,7 +113,7 @@ export const apiSlice = createApi({
       providesTags: ["schoolEvents"],
     }),
     fetchExams: builder.query({
-      query: () => "exams/getexams",
+      query: () => "exam",
       providesTags: ["schoolExams"],
     }),
     fetchStudentBatch: builder.query({
@@ -133,11 +133,11 @@ export const apiSlice = createApi({
       providesTags: ["letterGrades"],
     }),
     fetchEducationLevels: builder.query({
-      query: () => "levels/education-levels",
+      query: () => "level",
       providesTags: ["educationLevels"],
     }),
     fetchSchoolAdmins: builder.query({
-      query: () => "school-admin/get-all-school-admins",
+      query: () => "school-admin",
       providesTags: ["schoolAdmins"],
     }),
     fetchSchoolExpensesCategory: builder.query({
@@ -317,7 +317,7 @@ export const apiSlice = createApi({
        }
     }),
     fetchSchoolSemesters: builder.query({
-       query: () => "school-semesters/school-semeters",
+       query: () => "school-semester",
        providesTags:["schoolSemesters"]
     }),
     fetchAccessedStudents: builder.query({
@@ -377,11 +377,11 @@ export const apiSlice = createApi({
        providesTags:["electionRoles"]
     }),
     fetchHeadOfDepartment: builder.query({
-      query: () => "department/getAllHods",
+      query: () => "hod",
       providesTags: ["headOfDepartment"]
     }),
     fetchHeadOfSpecialty: builder.query({
-      query: () => "specialty/getAllHos",
+      query: () => "hos",
       providesTags: ["headOfSpecialty"]
     }),
     fetchHeadOfSpecialtyDetails: builder.query({
@@ -421,11 +421,11 @@ export const apiSlice = createApi({
        providesTags:["gradesCategory"]
     }),
     fetchSchoolGradesConfig: builder.query({
-      query: () => "grades/getSchoolGradesConfig",
+      query: () => "school-grades/school-grade-config",
       providesTags:["schoolGradesConfig"]
     }),
     fetchStudentResults: builder.query({
-      query: () => "student-results/getAllStudentResults",
+      query: () => "exam-results/student-results",
       providesTags: ["studentResults"]
     }),
     fetchExamByTypeResit: builder.query({

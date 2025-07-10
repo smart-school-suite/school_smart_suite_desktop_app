@@ -1,7 +1,6 @@
 import { useFetchHeadOfDepartmentQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
-import Table from "../../components/Tables";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
+import Table from "../../components/Tables/Tables";
 import { hodTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import RemoveHod from "../../ModalContent/Hod/RemoveHod";
@@ -30,12 +29,11 @@ function HeadOfDepartment() {
       <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center"
+            className="d-flex justify-content-center align-items-center primay-background-100"
             style={{
               width: "2.5rem",
               height: "2.5rem",
               borderRadius: "0.5rem",
-              background: "#fff",
             }}
           >
             <Icon

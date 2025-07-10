@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useUpdateTeacherMutation } from "../../Slices/Asynslices/updateSlice";
 import { useFetchTeacherDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import toast from "react-hot-toast";
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners";
+import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 function UpdateTeacher({ handleClose, row_id: teacherId }) {
   const [updateTeacher] = useUpdateTeacherMutation();

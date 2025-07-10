@@ -1,4 +1,4 @@
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useFetchGradesByExamQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
 function ViewGradesConfig({ handleClose, row_id: examId }) {

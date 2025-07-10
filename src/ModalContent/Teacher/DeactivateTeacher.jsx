@@ -3,7 +3,7 @@ import {
   useDeactivateTeacherMutation,
   useActivateTeacherMutation,
 } from "../../Slices/Asynslices/postSlice";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastWarning from "../../components/Toast/ToastWarning";
@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { Icon } from "@iconify/react";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function DeactivateTeacher({ row_id: teacherId, handleClose }) {
   const { data: teacherDetails, isLoading } = useFetchTeacherDetailsQuery({
     teacher_id: teacherId,
