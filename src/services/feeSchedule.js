@@ -16,10 +16,6 @@ export const updateFeeScheduleSlots = async (feeScheduleId, data) => {
   return response.data;
 };
 
-export const getStudentFeeSchedule = async (studentId) => {
-  const response = await axiosInstance.get(`fee-schedule/student/${studentId}`);
-  return response.data;
-};
 
 export const deleteFeeSchedule = async (feeScheduleId) => {
   const response = await axiosInstance.delete(`fee-schedule/${feeScheduleId}`);
