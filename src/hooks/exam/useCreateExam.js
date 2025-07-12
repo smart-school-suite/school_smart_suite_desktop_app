@@ -7,6 +7,7 @@ export const useCreateExam = () => {
          mutationFn:createExam,
          onSuccess:() => {
             queryClient.invalidateQueries({ queryKey:["exams"]})
+            queryClient.invalidateQueries({ queryKey:["examCandidates"] })
          }
     })
 }
