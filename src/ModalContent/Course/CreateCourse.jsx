@@ -17,27 +17,23 @@ import {
   CourseCreditInput,
 } from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { useCreateCourse } from "../../hooks/course/useCreateCourse";
+import { useGetSemester } from "../../hooks/semester/useGetSemesters";
+import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
+import { useGetLevels } from "../../hooks/level/useGetLevels";
 function CreateCourse({ handleClose }) {
   const [isValid, setIsValid] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
     course_code: "",
     course_title: "",
     credit: "",
     specialty_id: "",
-    department_id: "",
-    level_id: "",
     semester_id: "",
   });
-  const [addCourse] = useAddCourseMutation();
-  const { data: specialty, isLoading: isSpecailtyLoading } =
-    useFetchSpecialtiesQuery();
-  const { data: department, isLoading: isDepartmentLoading } =
-    useFetchDepartmentsQuery();
-  const { data: levels, isLoading: isLevelLoading } =
-    useFetchEducationLevelsQuery();
-  const { data: semesters, isLoading: isSemesterLoading } =
-    useFetchSemestersQuery();
+  const { mutate:createCourseMutation, isPending } = useCreateCourse(handleClose);
+  const { data:specialty, isFetching:isSpecailtyLoading  } = useGetSpecialties();
+  const { data: levels, isLoading: isLevelLoading } = useGetLevels();
+  const { data: semesters, isLoading: isSemesterLoading } = useGetSemester();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -45,17 +41,6 @@ function CreateCourse({ handleClose }) {
 
   const handleValidation = (isInputValid) => {
     setIsValid(isInputValid);
-  };
-
-  const handleEducationSelect = (selectedValues) => {
-    setFormData((prevalue) => ({ ...prevalue, level_id: selectedValues.id }));
-  };
-
-  const handleDepartmentSelect = (selectedValues) => {
-    setFormData((prevalue) => ({
-      ...prevalue,
-      department_id: selectedValues.id,
-    }));
   };
 
   const handleSemesterSelect = (selectedValues) => {
@@ -73,28 +58,8 @@ function CreateCourse({ handleClose }) {
   };
   const handleSubmit = async () => {
     if (!isValid) return;
-    setIsCreating(true);
-    try {
-      await addCourse(formData).unwrap();
-      handleClose();
-      setIsCreating(false);
-      toast.custom(
-        <ToastSuccess
-          title={"Creation Successfull ✅"}
-          description={"The Course has been created successfully "}
-        />
-      );
-    } catch (error) {
-      setIsCreating(false);
-      toast.custom(
-        <ToastDanger
-          title={"Something went wrong ❌"}
-          description={
-            "S ❌ Something went wrong! The Course creation failed due to an error. Please try again later."
-          }
-        />
-      );
-    }
+    createCourseMutation(formData)
+    
   };
   return (
     <div className="w-100">
@@ -158,44 +123,6 @@ function CreateCourse({ handleClose }) {
         )}
       </div>
       <div className="my-1">
-        <span>Level</span>
-        {isLevelLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
-          <CustomDropdown
-            data={levels.data}
-            displayKey={["name"]}
-            valueKey={["id"]}
-            filter_array_keys={["id", "name"]}
-            renameMapping={{ id: "id", name: "name" }}
-            isLoading={isLevelLoading}
-            direction="up"
-            onSelect={handleEducationSelect}
-          />
-        )}
-      </div>
-      <div className="my-1">
-        <span>Department</span>
-        {isDepartmentLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
-          <CustomDropdown
-            data={department.data}
-            displayKey={["department_name"]}
-            valueKey={["id"]}
-            filter_array_keys={["id", "department_name"]}
-            renameMapping={{ id: "id", department_name: "department_name" }}
-            isLoading={isDepartmentLoading}
-            direction="up"
-            onSelect={handleDepartmentSelect}
-          />
-        )}
-      </div>
-      <div className="my-1">
         <span>Specialty</span>
         {isSemesterLoading ? (
           <select name="" className="form-select">
@@ -204,10 +131,10 @@ function CreateCourse({ handleClose }) {
         ) : (
           <CustomDropdown
             data={specialty.data}
-            displayKey={["specialty_name"]}
+            displayKey={["specialty_name", "level_name"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "specialty_name"]}
-            renameMapping={{ id: "id", specialty_name: "specialty_name" }}
+            filter_array_keys={["id", "specialty_name", "level_name"]}
+            renameMapping={{ id: "id", specialty_name: "specialty_name", leve_name:"level_name" }}
             isLoading={isSpecailtyLoading}
             direction="up"
             onSelect={handleSpecialtySelect}
@@ -229,7 +156,7 @@ function CreateCourse({ handleClose }) {
               handleSubmit();
             }}
           >
-            {isCreating ? <SingleSpinner /> : "Create Course"}
+            {isPending ? <SingleSpinner /> : "Create Course"}
           </button>
         </div>
       </div>

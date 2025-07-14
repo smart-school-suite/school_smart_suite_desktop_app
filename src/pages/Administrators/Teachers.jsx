@@ -15,8 +15,9 @@ import CreateTeacher from "../../ModalContent/Teacher/CreateTeacher";
 import { useMemo } from "react";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
+import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
 function Teachers() {
-  const { data: teachers, isLoading } = useFetchTeachersQuery();
+  const { data: teachers, isFetching } = useGetTeachers();
   const memoizedColDefs = useMemo(() => {
     return teacherTableConfig({
       DropdownComponent,
@@ -28,7 +29,7 @@ function Teachers() {
     return teachers?.data ?? [];
   }, [teachers]);
 
-  if (isLoading) {
+  if (isFetching) {
     return <DataTableNavLoader />;
   }
   return (

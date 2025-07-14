@@ -1,13 +1,10 @@
 import { useState } from "react";
-import { useAddSchoolAdminMutation } from "../../Slices/Asynslices/postSlice";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
-function CreateSchoolAdmin({ handleClose }) {
-  const [addSchoolAdmin] = useAddSchoolAdminMutation();
-  const [isCreating, setIsCreating] = useState(false);
+import { useCreateSchoolAdmin } from "../../hooks/schoolAdmin/useCreateSchoolAdmin";
+function CreateSchoolAdmin({ handleClose, rowData }) {
+  const { mutate: createSchoolAdminMutation, isPending } =
+    useCreateSchoolAdmin();
   const [formData, setFormData] = useState({
     email: "",
     name: "",
@@ -19,49 +16,30 @@ function CreateSchoolAdmin({ handleClose }) {
   };
 
   const handleCreateSchoolAdmin = async () => {
-    setIsCreating(true);
-    try {
-      await addSchoolAdmin(formData).unwrap();
-      setIsCreating(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Createed Succesfully"}
-          description={"School Admin Created Succesfully"}
-        />
-      );
-    } catch (e) {
-      setIsCreating(false);
-      toast.custom(
-        <ToastDanger
-          title={"Failed To Create"}
-          description={"Failed to create school admin due to an error"}
-        />
-      );
-    }
+    createSchoolAdminMutation(formData);
   };
   return (
     <>
       <div className="w-100">
         <div className="d-flex flex-row align-items-center">
-                <div className="block">
-                  <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-                    <h5 className="m-0">Create School Admin</h5>
-                    <span
-                      className="m-0"
-                      onClick={() => {
-                        handleClose();
-                      }}
-                    >
-                      <Icon icon="charm:cross" width="22" height="22" />
-                    </span>
-                  </div>
-                  <span className="gainsboro-color font-size-sm">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-                    nesciunt sunt
-                  </span>
-                </div>
-              </div>
+          <div className="block">
+            <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+              <h5 className="m-0">Create School Admin</h5>
+              <span
+                className="m-0"
+                onClick={() => {
+                  handleClose();
+                }}
+              >
+                <Icon icon="charm:cross" width="22" height="22" />
+              </span>
+            </div>
+            <span className="gainsboro-color font-size-sm">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem
+              harum nesciunt sunt
+            </span>
+          </div>
+        </div>
         <div className="my-1">
           <label htmlFor="email">E-mail</label>
           <input
@@ -103,11 +81,12 @@ function CreateSchoolAdmin({ handleClose }) {
           />
         </div>
         <div className="mt-2">
-          <button 
+          <button
             className="rounded-3 p-2 text-white border-none primary-background font-size-sm w-100"
             onClick={handleCreateSchoolAdmin}
-            >
-            {isCreating ? <SingleSpinner /> : "Create School Admin"}
+            disabled={isPending}
+          >
+            {isPending ? <SingleSpinner /> : "Create School Admin"}
           </button>
         </div>
       </div>

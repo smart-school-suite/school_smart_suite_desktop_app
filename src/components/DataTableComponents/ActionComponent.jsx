@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { Icon } from "@iconify/react";
 import { CSSTransition } from "react-transition-group";
 import CustomModal from "../Modals/Modal";
 import {
@@ -11,18 +9,10 @@ import {
   autoUpdate,
 } from "@floating-ui/react";
 function ActionButtonDropdown({
-  actions,
-  row_id,
   children,
   style,
-  specialtyId,
-  batchId,
-  examId,
-  studentId,
+  buttonContent
 }) {
-  const key = uuidv4();
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
   const [isToggled, setIsToggeled] = useState(false);
   const { refs, floatingStyles } = useFloating({
     placement: "bottom-end",
@@ -41,24 +31,6 @@ function ActionButtonDropdown({
     document.addEventListener("mousedown", handleClickOutSide);
     return () => document.removeEventListener("mousedown", handleClickOutSide);
   }, [refs]);
-  const handleShow = (Component) => {
-    setModalContent(
-      <Component
-        row_id={row_id}
-        handleClose={handleClose}
-        specialtyId={specialtyId}
-        batchId={batchId}
-        examId={examId}
-        studentId={studentId}
-      />
-    );
-    setShowModal(true);
-  };
-
-  const handleClose = () => {
-    setShowModal(false);
-    setModalContent(null);
-  };
   const toggleDropdown = () => {
     setIsToggeled((prevalue) => !prevalue);
   };
@@ -72,7 +44,7 @@ function ActionButtonDropdown({
           }}
           className={style}
         >
-          {children}
+          {buttonContent}
         </button>
         <CSSTransition
           in={isToggled}
@@ -83,46 +55,22 @@ function ActionButtonDropdown({
           <div
             ref={refs.setFloating}
             style={floatingStyles}
-            className="dropdown-menu show position-absolute shadow-sm border w-100 p-1 rounded-2"
+            className="dropdown-menu show position-absolute shadow-sm border w-100 p-1 rounded-3 d-flex flex-column gap-1"
           >
-            {actions.length > 0 ? (
-              actions.map((items) => {
-                return (
-                  <>
-                    <div
-                      className="align-items-center justify-content-between d-flex px-1 profile-actions  font-size-sm gainsboro-color"
-                      onClick={() => {
-                        handleShow(items.modalContent);
-                      }}
-                      key={key}
-                    >
-                      <span>{items.actionTitle}</span>
-                      <span>
-                        <Icon icon={items.icon} className="font-size-md " />
-                      </span>
-                    </div>
-                  </>
-                );
-              })
-            ) : (
-              <span>No actions found</span>
-            )}
+          {children}
           </div>
         </CSSTransition>
       </div>
-      <CustomModal show={showModal} handleClose={handleClose}>
-        {modalContent}
-      </CustomModal>
     </>
   );
 }
 export default ActionButtonDropdown;
 
-export function ModalButton({ row_id, action, children, classname, data, resetAll }) {
+export function ModalButton({  action, children, classname, rowData, resetAll, size }) {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const handleShow = (Component) => {
-    setModalContent(<Component row_id={row_id} handleClose={handleClose} data={data} resetAll={resetAll}/>);
+    setModalContent(<Component  handleClose={handleClose} rowData={rowData} resetAll={resetAll}/>);
     setShowModal(true);
   };
 
@@ -143,7 +91,7 @@ export function ModalButton({ row_id, action, children, classname, data, resetAl
           {children}
         </button>
       </div>
-      <CustomModal show={showModal} handleClose={handleClose}>
+      <CustomModal show={showModal} handleClose={handleClose} size={size}>
         {modalContent}
       </CustomModal>
     </>

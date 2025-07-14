@@ -52,3 +52,8 @@ export const deactivateSchoolAdminAccount = async (schoolAdminId) => {
   const response = await axiosInstance.post(`school-admin/${schoolAdminId}/deactivate`);
   return response.data;
 };
+
+export const createSchoolAdmin = async (createData) => {
+   const response = await axiosInstance.post("auth/school-admin/register", createData)
+   return response.data;
+}

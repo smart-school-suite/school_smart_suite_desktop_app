@@ -120,4 +120,21 @@ function DataTableBadgeWarning(props) {
   );
 }
 
+function AccountStatus(props) {
+  return(
+      <span
+        className=" rounded-1 font-size-sm fw-semibold"
+        style={{
+          background: "#fffec1",
+          color: "#a66a02",
+          width: "auto",
+          maxWidth: "5rem",
+          padding: "0.4rem",
+        }}
+      >
+        <span>{props.value}</span>
+      </span>
+  )
+}
+
 export { BadgeDanger, BadgeSuccess, BadgeWarning, DataTableBadgeDanger, DataTableBadgeSuccess, DataTableBadgeWarning };

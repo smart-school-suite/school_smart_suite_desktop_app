@@ -4,6 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 export const useGetHods = () => {
     return useQuery({
          queryKey:["hods"],
-         queryFn:getAllHods
+         queryFn:() => getAllHods()
     })
 }

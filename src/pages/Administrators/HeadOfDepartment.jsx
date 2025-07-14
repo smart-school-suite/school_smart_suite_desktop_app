@@ -1,4 +1,3 @@
-import { useFetchHeadOfDepartmentQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
 import Table from "../../components/Tables/Tables";
 import { hodTableConfig } from "../../ComponentConfig/AgGridTableConfig";
@@ -8,9 +7,10 @@ import HodDetails from "../../ModalContent/Hod/HodDetails";
 import SendMessage from "../../ModalContent/Hod/SendMessage";
 import UpdateHos from "../../ModalContent/Hos/UpdateHos";
 import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
+import { useGetHods } from "../../hooks/hod/useGetHods";
 import { useMemo } from "react";
 function HeadOfDepartment() {
-  const { data: hod, isLoading } = useFetchHeadOfDepartmentQuery();
+  const { data: hod, isFetching } = useGetHods();
   const memoizedColDefs = useMemo(() => {
     return hodTableConfig({
       ActionButtonGroup,
@@ -21,7 +21,7 @@ function HeadOfDepartment() {
     return hod?.data ?? [];
   }, [hod]);
 
-  if (isLoading) {
+  if (isFetching) {
     return <DataTablePageLoader button={false} />;
   }
   return (
@@ -41,7 +41,7 @@ function HeadOfDepartment() {
               className="fs-5 text-primary"
             />
           </div>
-          <h5 className="fw-semibold my-0">Manage Head Of Department (HOD)</h5>
+          <span className="fw-semibold my-0">Manage Head Of Department (HOD)</span>
         </div>
       </div>
       <div className="d-flex flex-row align-items-end gap-2 mt-3">

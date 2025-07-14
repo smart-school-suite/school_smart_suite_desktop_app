@@ -1,4 +1,3 @@
-import { useFetchHeadOfSpecialtyQuery } from "../../Slices/Asynslices/fetchSlice";
 import { hosTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { Icon } from "@iconify/react";
 import Table from "../../components/Tables/Tables";
@@ -8,8 +7,9 @@ import RemoveHos from "../../ModalContent/Hos/RemoveHos";
 import SendMessage from "../../ModalContent/Hos/SendMessage";
 import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { useMemo } from "react";
+import { useGetAllHos } from "../../hooks/hos/useGetAllHods";
 function HeadOfSpecialty() {
-  const { data: hos, isLoading } = useFetchHeadOfSpecialtyQuery();
+  const { data: hos, isLoading } = useGetAllHos();
     const memoizedColDefs = useMemo(() => {
       return hosTableConfig({
         ActionButtonGroup

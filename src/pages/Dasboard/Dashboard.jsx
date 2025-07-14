@@ -12,12 +12,10 @@ import { formatDateWithSuffix, formatNumber } from "../../utils/functions";
 import DoughnutChart from "../../components/ChartComponents/DoughnutChart";
 import NumberFlow from "@number-flow/react";
 import { useSelector } from "react-redux";
+import { useGetSchoolFinancialStats } from "../../hooks/financialStat/useGetSchoolFinancialStats";
 function Dashboard() {
   const currentYear = new Date().getFullYear();
-  console.log(currentYear);
-  const { data: data, isLoading } = useFetchFinancialStatsQuery({
-    year: currentYear,
-  });
+  const { data, isLoading, isError, isFetching } = useGetSchoolFinancialStats(currentYear);
   const schoolData = useSelector((state) => state.auth.user);
   const currency = schoolData.schoolDetails.school.country.currency;
   const labelsConfig = {

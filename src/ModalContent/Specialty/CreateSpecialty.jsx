@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { useAddSpecialtyMutation } from "../../Slices/Asynslices/postSlice";
 import { useFetchEducationLevelsQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchDepartmentsQuery } from "../../Slices/Asynslices/fetchSlice";
-import toast from "react-hot-toast";
 import { SpecialtyTitleInput } from "../../components/FormComponents/InputComponents";
 import { RegistrationFeeInput } from "../../components/FormComponents/InputComponents";
 import { SchoolFeeInput } from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
+import {  useCreateSpecialty } from "../../hooks/specialty/useCreateSpecialty";
+import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 function CreateSpecialty({ handleClose }) {
   const [isValid, setIsValid] = useState(false);
   const [formData, setFormData] = useState({
@@ -18,7 +17,7 @@ function CreateSpecialty({ handleClose }) {
     level_id: "",
     description:""
   });
-  const [addSpecialty] = useAddSpecialtyMutation();
+  const { mutate: createSpecialtyMutation, isPending } = useCreateSpecialty(handleClose); 
   const {
     data: educationLevels,
     error: educationError,
@@ -28,8 +27,8 @@ function CreateSpecialty({ handleClose }) {
   const {
     data: departments,
     error: departmentError,
-    isLoading: departmentIsLoading,
-  } = useFetchDepartmentsQuery();
+    isFetching: departmentIsLoading,
+  } = useGetDepartments();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -52,13 +51,7 @@ function CreateSpecialty({ handleClose }) {
 
   const handleSubmit = async () => {
     if (!isValid) return;
-    try {
-      await addSpecialty(formData).unwrap();
-      toast.success("Department created successfully!");
-      handleClose();
-    } catch (error) {
-      toast.error("Failed to create department. Try again.");
-    }
+    createSpecialtyMutation(formData)
   };
   return (
     <div className="w-100">
@@ -161,19 +154,13 @@ function CreateSpecialty({ handleClose }) {
       <div className="mt-4">
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
           <button
-            className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
-            onClick={handleClose}
-          >
-            Cancel
-          </button>
-          <button
-            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
+            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
             disabled={!isValid}
             onClick={() => {
               handleSubmit();
             }}
           >
-            Continue
+            Create Specialty
           </button>
         </div>
       </div>

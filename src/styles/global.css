@@ -1107,3 +1107,42 @@ hr{
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
 }
+.dropdown-item-table:hover{
+    background-color: var(--primary-color-50);
+    color: var(--primary-color);
+    transition: all 0.2s;
+}
+.dropdown-item-table{
+    color: #8a8a8a;
+}
+.remove-button-styles{
+    border: none;
+    width: 100%;
+    background-color: transparent;
+}
+
+.permission-toggle{
+    width: 33%;
+    padding: 0.7rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
+}
+.permission-toggle-inactive{
+    background-color: var(--primary-color-50);
+    color: var(--primary-color);
+    transition: all 0.2s;
+}
+
+.permission-toggle-active{
+    background-color: var(--primary-color);
+    color: var(--acent-color-five);
+    transition: all 0.2s;
+}
+.modal-content-child{
+    height: auto;
+    max-height: 55dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+}

@@ -12,8 +12,9 @@ import { DepartmentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { useMemo } from "react";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
+import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 function Departments() {
-  const { data: departments, isLoading } = useFetchDepartmentsQuery();
+  const { data: departments, isError, isFetching } = useGetDepartments();
   const memoizedColDefs = useMemo(() => {
     return DepartmentTableConfig({
       DropdownComponent,
@@ -24,7 +25,7 @@ function Departments() {
     return departments?.data ?? [];
   }, [departments]);
 
-  if (isLoading) {
+  if (isFetching) {
     return <DataTableNavLoader />;
   }
   return (

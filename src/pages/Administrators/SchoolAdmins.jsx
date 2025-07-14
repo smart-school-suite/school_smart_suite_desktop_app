@@ -1,4 +1,3 @@
-import { useFetchSchoolAdminsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
 import { SchoolAdminTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
@@ -16,8 +15,10 @@ import AccountStatus from "../../ModalContent/SchoolAdmin/AccountStatus";
 import AppointHod from "../../ModalContent/SchoolAdmin/AppointHod";
 import AppointHos from "../../ModalContent/SchoolAdmin/AppointHos";
 import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
+import ManagePermission from "../../ModalContent/SchoolAdmin/ManagePermission";
+import ManageRoles from "../../ModalContent/SchoolAdmin/ManageRole";
 import CreateSchoolAdmin from "../../ModalContent/SchoolAdmin/CreateSchoolAdmin";
-import { useMemo, useCallback, useState, useRef  } from "react";
+import { useMemo, useCallback, useState, useRef } from "react";
 import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkActivate";
@@ -25,13 +26,14 @@ import BulkDeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkDeacti
 import BulkUpdate from "../../ModalContent/SchoolAdmin/BulkUpdate";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import Table from "../../components/Tables/Tables";
+import { useGetSchoolAdmins } from "../../hooks/schoolAdmin/useGetSchoolAdmins";
+import { DeleteIcon, DetailsIcon, HodIcon, HosIcon, PermissionIcon, RoleIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 function SchoolAdmins() {
   const tableRef = useRef();
-  const { data: schoolAdmins, isLoading } = useFetchSchoolAdminsQuery();
+  const { data: schoolAdmins, isFetching } = useGetSchoolAdmins();
   const [rowCount, setRowCount] = useState(0);
   const [selectedAdmins, setSelectedAdmins] = useState([]);
   const handleReset = () => {
-    console.log("Reset triggered, deselecting rows...");
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
@@ -55,7 +57,7 @@ function SchoolAdmins() {
     return schoolAdmins?.data ?? [];
   }, [schoolAdmins]);
 
-  if (isLoading) {
+  if (isFetching) {
     return <DataTablePageLoader />;
   }
 
@@ -84,9 +86,7 @@ function SchoolAdmins() {
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-flex flex-row align-items-end gap-2">
             <div className="d-block">
-              <p className="font-size-xs my-0">
-                Total Number administrators 
-              </p>
+              <p className="font-size-xs my-0">Total Number administrators</p>
               <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
             </div>
           </div>
@@ -106,7 +106,7 @@ function SchoolAdmins() {
         <div className="position-relative">
           <div className="pt-3 position-relative z-1">
             <Table
-              ref={tableRef} 
+              ref={tableRef}
               colDefs={memoizedColDefs}
               rowData={memoizedRowData}
               handleRowCountFromChild={handleRowCountFromChild}
@@ -118,8 +118,18 @@ function SchoolAdmins() {
             rowCount={rowCount}
             label={"Selected Admins"}
             resetAll={handleReset}
-            dropDownItems={<DropdownItems selectedAdmins={selectedAdmins} resetAll={handleReset}/>}
-            actionButton={<ActionButtons selectedAdmins={selectedAdmins} resetAll={handleReset}/>}
+            dropDownItems={
+              <DropdownItems
+                selectedAdmins={selectedAdmins}
+                resetAll={handleReset}
+              />
+            }
+            actionButton={
+              <ActionButtons
+                selectedAdmins={selectedAdmins}
+                resetAll={handleReset}
+              />
+            }
           />
         </div>
       </div>
@@ -128,7 +138,7 @@ function SchoolAdmins() {
 }
 export default SchoolAdmins;
 
-function ActionButtons({selectedAdmins, resetAll}) {
+function ActionButtons({ selectedAdmins, resetAll }) {
   return (
     <>
       <ModalButton
@@ -159,122 +169,169 @@ function ActionButtons({selectedAdmins, resetAll}) {
   );
 }
 
-function DropdownItems({selectedAdmins, resetAll}) {
+function DropdownItems({ selectedAdmins, resetAll }) {
   return (
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent:BulkUpdate }}
+        action={{ modalContent: BulkUpdate }}
         data={selectedAdmins}
         resetAll={resetAll}
       >
-      <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
-        <span className="font-size-sm">Update All</span>
-      </div>
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+          <span className="font-size-sm">Update All</span>
+        </div>
       </ModalButton>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent:BulkDelete }}
+        action={{ modalContent: BulkDelete }}
         data={selectedAdmins}
         resetAll={resetAll}
       >
-      <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
-        <span className="font-size-sm">Delete All</span>
-      </div>
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+          <span className="font-size-sm">Delete All</span>
+        </div>
       </ModalButton>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent:BulkDeactivateSchoolAdmin }}
+        action={{ modalContent: BulkDeactivateSchoolAdmin }}
         data={selectedAdmins}
         resetAll={resetAll}
       >
-      <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
-        <span className="font-size-sm">Deactivate All</span>
-      </div>
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+          <span className="font-size-sm">Deactivate All</span>
+        </div>
       </ModalButton>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent:BulkActivateSchoolAdmin }}
+        action={{ modalContent: BulkActivateSchoolAdmin }}
         data={selectedAdmins}
         resetAll={resetAll}
       >
-      <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
-        <span className="font-size-sm">Activate All</span>
-      </div>
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+          <span className="font-size-sm">Activate All</span>
+        </div>
       </ModalButton>
     </>
   );
 }
 
 function ActionButtonGroup(props) {
-  const { id } = props.data;
-  const actions = [
-    {
-      actionTitle: "Update",
-      icon: "mynaui:edit-solid",
-      modalContent: UpdateSchoolAdmin,
-    },
-    {
-      actionTitle: "Delete",
-      icon: "fluent:delete-16-filled",
-      modalContent: DeleteSchoolAdmin,
-    },
-    {
-      actionTitle: "Details",
-      icon: "bxs:detail",
-      modalContent: SchoolAdminDetails,
-    },
-    {
-      actionTitle: "Suspend",
-      icon: "lsicon:suspend-filled",
-      modalContent: SuspendSchoolAdmin,
-    },
-    {
-      actionTitle: "Permissions",
-      icon: "icon-park-outline:permissions",
-      modalContent: SchoolAdminPermissions,
-    },
-    {
-      actionTitle: "View Permissions",
-      icon: "icon-park-outline:permissions",
-      modalContent: PermissionsBySchoolAdmin,
-    },
-    {
-      actionTitle: "Assign Role",
-      icon: "eos-icons:role-binding",
-      modalContent: SchoolAdminRoles,
-    },
-    {
-      actionTitle: "Revoke Permission",
-      icon: "lets-icons:remove-fill",
-      modalContent: RevokeSchoolAdminPermissions,
-    },
-    {
-      actionTitle: "Account Status",
-      icon: "heroicons-outline:status-online",
-      modalContent: AccountStatus,
-    },
-    {
-      actionTitle: "Appoint HOD",
-      icon: "subway:admin-1",
-      modalContent: AppointHod,
-    },
-    {
-      actionTitle: "Appoint HOS",
-      icon: "solar:user-plus-bold",
-      modalContent: AppointHos,
-    },
-  ];
-  const memoizedActions = useMemo(() => actions, []);
+  const rowData = props.data;
   return (
     <ActionButtonDropdown
-      actions={memoizedActions}
-      row_id={id}
+      buttonContent={"Edit Actions"}
       style={
         "tableActionButton primary-background text-white font-size-sm px-2"
       }
     >
-      <span>Edit Actions</span>
+      <ModalButton
+        classname={
+          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+        }
+        rowData={rowData}
+        action={{ modalContent:ManagePermission }}
+        size={"lg"}
+      >
+        <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Manage Permission</span>
+            <PermissionIcon />
+          </div>
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={
+          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+        }
+        rowData={rowData}
+        action={{ modalContent:ManageRoles }}
+        size={"lg"}
+      >
+        <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Manage Role</span>
+            <RoleIcon />
+          </div>
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={
+          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+        }
+        action={{ modalContent:AppointHod }}
+        rowData={rowData}
+        size={"lg"}
+      >
+        <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Appoint HOD</span>
+            <HodIcon />
+          </div>
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={
+          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+        }
+      >
+        <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Appoint HOS</span>
+            <HosIcon />
+          </div>
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={
+          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor "
+        }
+        
+      >
+        <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
+            <span>Suspend</span>
+            <SuspendIcon />
+          </div>
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={
+          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+        }
+        size={"lg"}
+      >
+        <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Delete</span>
+            <DeleteIcon />
+          </div>
+        </div>
+      </ModalButton>
+      <ModalButton
+       classname={
+          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+        }
+      >
+        <div>
+        <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+          <span>Update</span>
+          <UpdateIcon />
+        </div>
+      </div>
+      </ModalButton>
+      <ModalButton
+        classname={
+          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+        }
+      >
+        <div>
+        <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+          <span>Details</span>
+          <DetailsIcon />
+        </div>
+      </div>
+      </ModalButton>
     </ActionButtonDropdown>
   );
 }

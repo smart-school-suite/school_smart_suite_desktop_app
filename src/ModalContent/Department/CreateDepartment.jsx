@@ -1,20 +1,18 @@
 import { useState } from "react";
-import { useAddDepartmentMutation } from "../../Slices/Asynslices/postSlice";
 import { DepartmentNameInput } from "../../components/FormComponents/InputComponents";
 import { Icon } from "@iconify/react";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useCreateDepartment } from "../../hooks/department/useCreateDepartment";
 function CreateDepartment({ handleClose }) {
   const [isValid, setIsValid] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
     department_name: "",
     description: "",
   });
-  const [addDepartment] = useAddDepartmentMutation();
-
+    const { 
+    mutate: createDepartmentMutation,
+    isPending, 
+  } = useCreateDepartment(handleClose);
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -25,22 +23,7 @@ function CreateDepartment({ handleClose }) {
 
   const handleSubmit = async () => {
     if (!isValid) return;
-    setIsCreating(true);
-    try {
-      await addDepartment(formData).unwrap();
-      handleClose();
-      toast.custom(<ToastSuccess 
-        title={"Creation Successfull ✅"}
-        description={"The department has been created successfully "}
-      />)
-      setIsCreating(false);
-    } catch (error) {
-      toast.custom(<ToastDanger 
-        title={"Something went wrong ❌"}
-        description={"S ❌ Something went wrong! The department creation failed due to an error. Please try again later."}
-      />)
-      setIsCreating(false);
-    }
+    createDepartmentMutation(formData);
   };
   return (
     <div>
@@ -105,7 +88,7 @@ function CreateDepartment({ handleClose }) {
           >
             {
 
-            isCreating ? <SingleSpinner />: "Create Department"
+            isPending ? <SingleSpinner />: "Create Department"
              }
           </button>
         </div>

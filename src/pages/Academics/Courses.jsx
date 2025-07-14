@@ -1,4 +1,3 @@
-import { useFetchCoursesQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables/Tables";
 import ActionButtonDropdown, {
@@ -11,10 +10,12 @@ import DeleteCourse from "../../ModalContent/Course/DeleteCourse";
 import UpdateCourse from "../../ModalContent/Course/UpdateCourse";
 import { CoursesTable } from "../../ComponentConfig/AgGridTableConfig";
 import { Icon } from "@iconify/react";
+import { useGetCourses } from "../../hooks/course/useGetCourses";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 function Courses() {
-  const { data: data, isLoading } = useFetchCoursesQuery();
-  if (isLoading) {
-    return <Pageloaderspinner />;
+  const { data: specialty, isFetching } = useGetCourses();
+  if (isFetching) {
+    return  <DataTableNavLoader />;
   }
   return (
     <>
@@ -40,7 +41,7 @@ function Courses() {
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Number of Courses</p>
-            <h1 className="fw-bold my-0">{data.data.length}</h1>
+            <h1 className="fw-bold my-0">{specialty.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
@@ -55,7 +56,7 @@ function Courses() {
         </div>
         <Table
           colDefs={CoursesTable({ DropdownComponent })}
-          rowData={data.data}
+          rowData={specialty.data}
         />
       </div>
     </>

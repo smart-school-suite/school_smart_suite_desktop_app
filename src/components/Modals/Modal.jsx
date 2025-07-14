@@ -1,17 +1,32 @@
 import { Modal } from "react-bootstrap";
-import React from "react";
-function CustomModal({ show, handleClose, children, fullscreen=false }) {
+function CustomModal({
+  show,
+  handleClose,
+  children,
+  size,
+  centered = true, 
+  scrollable = false,
+  fullscreen = false,
+  dialogClassName,
+  contentClassName,
+  ...props 
+}) {
   return (
     <>
       <Modal
         show={show}
         onHide={handleClose}
-        centered
+        size={size}
+        centered={centered}
+        scrollable={scrollable} 
         fullscreen={fullscreen}
         className="custom-modal"
+        dialogClassName={dialogClassName}
+        contentClassName={contentClassName}
+        {...props}
       >
-        <Modal.Body className="custom-modal">
-          <div>{children}</div>
+        <Modal.Body>
+          {children}
         </Modal.Body>
       </Modal>
     </>

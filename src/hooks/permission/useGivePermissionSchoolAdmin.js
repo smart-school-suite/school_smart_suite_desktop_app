@@ -6,7 +6,7 @@ export const useGivePermissionSchoolAdmin = () => {
      return useMutation({
          mutationFn:(schoolAdminId) => givePermissionToSchoolAdmin(schoolAdminId),
          onSuccess:(schoolAdminId) => {
-             queryClient.removeQueries({ queryKey:["schoolAdminPermission", schoolAdminPermission]})
+             queryClient.removeQueries({ queryKey:["assignablePermissions", schoolAdminPermission]})
          }
      })
 }

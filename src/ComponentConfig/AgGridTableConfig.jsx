@@ -1065,9 +1065,9 @@ export function SchoolAdminTableConfig({ ImageComponent, ActionButtonGroup }) {
      floatingFilter: true,
    },
    {
-     field: "salary",
-     headerName:"Salary",
-     cellRenderer: CurrencyComponent,
+     field: "status",
+     headerName:"account status",
+     cellRenderer: TextComponent,
      filter: true,
      floatingFilter: true,
    },

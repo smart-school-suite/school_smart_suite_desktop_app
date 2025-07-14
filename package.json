@@ -28,6 +28,7 @@
     "@tanstack/react-query": "^5.81.5",
     "@tauri-apps/api": ">=2.0.0",
     "@tauri-apps/plugin-shell": ">=2.0.0",
+    "@welldone-software/why-did-you-render": "^7.0.1",
     "ag-grid-react": "^32.2.2",
     "apexcharts": "^3.54.1",
     "axios": "^1.7.7",

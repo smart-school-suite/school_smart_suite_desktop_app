@@ -849,7 +849,7 @@ function Sidebar() {
                   }}
           >
             <span>Logout</span>
-                  <span style={{ fontSize:"1rem" }}><Icon icon="uil:setting" /></span>
+                  <span style={{ fontSize:"1rem" }}><Icon icon="mynaui:logout"  /></span>
           </div>
         </aside>
       </div>

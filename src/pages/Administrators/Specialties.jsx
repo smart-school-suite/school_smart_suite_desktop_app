@@ -1,7 +1,5 @@
-import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
 import Table from "../../components/Tables/Tables";
 import { SpecialtyTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import { SpecailtyNavBarOptions } from "../../ComponentConfig/navBarConfig";
 import CreateSpecialty from "../../ModalContent/Specialty/CreateSpecialty";
 import UpdateSpecialty from "../../ModalContent/Specialty/UpdateSpecialty";
 import SpecialtyDetails from "../../ModalContent/Specialty/SpecialtyDetails";
@@ -13,8 +11,9 @@ import ActionButtonDropdown, {
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
 import { useMemo } from "react";
+import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 function Specialties() {
-  const { data: specialty, isLoading } = useFetchSpecialtiesQuery();
+  const { data:specialty, isError, isFetching } = useGetSpecialties();
   const memoizedColDefs = useMemo(() => {
     return SpecialtyTableConfig({
       DropdownComponent,
@@ -24,11 +23,7 @@ function Specialties() {
   const memoizedRowData = useMemo(() => {
     return specialty?.data ?? [];
   }, [specialty]);
-
-  const memoizedNavConfig = useMemo(() => {
-    return SpecailtyNavBarOptions;
-  }, []);
-  if (isLoading) {
+  if (isFetching) {
     return <DataTableNavLoader />;
   }
   return (

@@ -108,7 +108,7 @@ function CustomDropdown({
                       onClick={() => handleSelect(item)}
                       onMouseEnter={() => setHighlightedIndex(index)}
                     >
-                      <div className="d-block">
+                      <div className="d-flex flex-column">
                         <p className="my-0">{item[displayKey[0]]}</p>
                         <p className="my-0 font-size-sm gainsboro-color">{item[displayKey[1]]}</p>
                       </div>
