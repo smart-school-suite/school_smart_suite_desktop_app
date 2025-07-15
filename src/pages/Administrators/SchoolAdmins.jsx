@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { SchoolAdminTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import React from "react";
 import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
 import PermissionsBySchoolAdmin from "../../ModalContent/SchoolAdmin/PermissionsBySchoolAdmin";
 import SchoolAdminPermissions from "../../ModalContent/SchoolAdmin/SchoolAdminPermissions";
@@ -27,6 +28,8 @@ import BulkUpdate from "../../ModalContent/SchoolAdmin/BulkUpdate";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import Table from "../../components/Tables/Tables";
 import { useGetSchoolAdmins } from "../../hooks/schoolAdmin/useGetSchoolAdmins";
+import CustomModal from "../../components/Modals/Modal";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon, HodIcon, HosIcon, PermissionIcon, RoleIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 function SchoolAdmins() {
   const tableRef = useRef();
@@ -217,36 +220,47 @@ function DropdownItems({ selectedAdmins, resetAll }) {
 }
 
 function ActionButtonGroup(props) {
-  const rowData = props.data;
+   const rowData = props.data;
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null); 
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(React.createElement(ContentComponent, { rowData, handleClose: handleCloseModal }));
+    setModalSize(size);
+    setShowModal(true);
+  };
+
   return (
+    <>
     <ActionButtonDropdown
       buttonContent={"Edit Actions"}
       style={
         "tableActionButton primary-background text-white font-size-sm px-2"
       }
     >
-      <ModalButton
-        classname={
-          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-        }
-        rowData={rowData}
-        action={{ modalContent:ManagePermission }}
-        size={"lg"}
-      >
-        <div>
+       <DropDownMenuItem
+           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+          onClick={() => handleShowModal(ManagePermission, "lg")}
+       >
+            <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
             <span>Manage Permission</span>
             <PermissionIcon />
           </div>
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={
+       </DropDownMenuItem>
+      <DropDownMenuItem
+        className={
           "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
         }
-        rowData={rowData}
-        action={{ modalContent:ManageRoles }}
-        size={"lg"}
+        onClick={() => handleShowModal(ManageRoles, "lg")}
       >
         <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -254,14 +268,12 @@ function ActionButtonGroup(props) {
             <RoleIcon />
           </div>
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className={
           "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
         }
-        action={{ modalContent:AppointHod }}
-        rowData={rowData}
-        size={"lg"}
+        onClick={() => handleShowModal(AppointHod, "lg")}
       >
         <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -269,7 +281,7 @@ function ActionButtonGroup(props) {
             <HodIcon />
           </div>
         </div>
-      </ModalButton>
+      </DropDownMenuItem>
       <ModalButton
         classname={
           "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -333,5 +345,14 @@ function ActionButtonGroup(props) {
       </div>
       </ModalButton>
     </ActionButtonDropdown>
+          <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
+    </>
   );
 }

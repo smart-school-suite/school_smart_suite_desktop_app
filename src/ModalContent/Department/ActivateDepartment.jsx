@@ -1,9 +1,9 @@
-import { useDeactivateDepartment } from "../../hooks/department/useDeactivateDepartment";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function DeactivateDepartment({ handleClose, rowData }) {
+import { useActivateDepartment } from "../../hooks/department/useActivateDepartment";
+function ActivateDepartment({ handleClose, rowData }) {
   const { mutate: deactivateDepartment, isPending } =
-    useDeactivateDepartment(handleClose);
-  const handleDeactivateDeparment = () => {
+    useActivateDepartment(handleClose);
+  const handleActivateDepartment = () => {
     deactivateDepartment(rowData.id);
   };
   return (
@@ -27,10 +27,10 @@ function DeactivateDepartment({ handleClose, rowData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeactivateDeparment();
+                handleActivateDepartment();
               }}
             >
-              {isPending ? <SingleSpinner /> : <>Yes, Deactivate</>}
+              {isPending ? <SingleSpinner /> : <>Yes, Activate</>}
             </button>
           </div>
         </div>
@@ -38,4 +38,4 @@ function DeactivateDepartment({ handleClose, rowData }) {
     </>
   );
 }
-export default DeactivateDepartment;
+export default ActivateDepartment;

@@ -1,22 +1,10 @@
-import { useState } from "react";
-import { useDeleteSpecialtyMutation } from "../../Slices/Asynslices/deleteSlice";
-import toast from "react-hot-toast";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function DeleteSpecialty({ handleClose, row_id:specialtyId }) {
-   const [isDeleting, setIsDeleting ] = useState(false);
-   const [deleteSpecialty] = useDeleteSpecialtyMutation();
+import { useDeleteSpecialty } from "../../hooks/specialty/useDeleteSpecialty";
+function DeleteSpecialty({ handleClose, rowData }) {
+   const specialtyId = rowData.id;
+   const { mutate:deleteSpecialty, isPending } = useDeleteSpecialty(handleClose);
    const handleDeleteSpeccialty = async () => {
-      setIsDeleting(true);
-      try{
-          await deleteSpecialty(specialtyId).unwrap();
-          setIsDeleting(false);
-          toast.success("Specialty  Deleted Successfully")
-          handleClose();
-      }
-      catch(e){
-          toast.error("Failed to Delete Specialty");
-          setIsDeleting(false)
-      }
+      deleteSpecialty(specialtyId)
    }
     return (
       <>
@@ -29,19 +17,19 @@ function DeleteSpecialty({ handleClose, row_id:specialtyId }) {
           <div className="mt-4">
             <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
               <button
-                className="border-none px-3 py-2 text-primary rounded-3 font-size-sm"
+                className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
                 onClick={handleClose}
               >
                 Cancel
               </button>
               <button 
-                className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+                className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
                  onClick={() => {
                    handleDeleteSpeccialty();
                  }}
                 >
                 {
-                   isDeleting ? <SingleSpinner /> : <>Continue</>
+                   isPending ? <SingleSpinner /> : <>Yes, Delete</>
                 }
               </button>
             </div>

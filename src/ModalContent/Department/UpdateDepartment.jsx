@@ -1,21 +1,17 @@
-import { useFetchDepartmentDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
+import Pageloaderspinner, {
+  SingleSpinner,
+} from "../../components/Spinners/Spinners";
 import { useState } from "react";
-import { useUpdateDepartmentMutation } from "../../Slices/Asynslices/updateSlice";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-function UpdateDepartment({ handleClose, row_id: departmentId }) {
-  const {
-    data: departmentDetails,
-    isLoading,
-    error,
-  } = useFetchDepartmentDetailsQuery({
-    department_id: departmentId,
-  });
-  const [updateDepartment] = useUpdateDepartmentMutation();
-  const [isUpdating, setIsUpdating] = useState(false);
+import { useUpdateDepartment } from "../../hooks/department/useUpdateDepartment";
+import { useGetDepartmentDetails } from "../../hooks/department/useGetDepartmentDetails";
+function UpdateDepartment({ handleClose, rowData }) {
+  const { mutate: updateDepartment, isPending } =
+    useUpdateDepartment(handleClose);
+  const departmentId = rowData.id;
+  const { data: departmentDetails, isFetching } = useGetDepartmentDetails(
+    departmentId
+  );
   const [formData, setFormData] = useState({
     department_name: "",
     description: "",
@@ -24,33 +20,11 @@ function UpdateDepartment({ handleClose, row_id: departmentId }) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const handleDepartmentUpdate = async () => {
-    setIsUpdating(true);
-    try {
-      await updateDepartment({
-        department_id: departmentId,
-        updatedData: formData,
-      }).unwrap();
-      setIsUpdating(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Update Successfull ✅"}
-          description={"The department has been updated successfully "}
-        />
-      );
-    } catch (e) {
-      toast.custom(
-        <ToastDanger
-          title={"Something went wrong ❌"}
-          description={
-            "Something went wrong! The department update failed due to an error. Please try again later"
-          }
-        />
-      );
-      setIsUpdating(false);
-    }
+
+    updateDepartment({departmentId, formData});
+    console.table(formData);
   };
-  if (isLoading) {
+  if (isFetching) {
     return <Pageloaderspinner />;
   }
   return (
@@ -105,7 +79,7 @@ function UpdateDepartment({ handleClose, row_id: departmentId }) {
             className="border-none rounded-3 p-2 w-100 primary-background text-white font-size-sm"
             onClick={handleDepartmentUpdate}
           >
-            {isUpdating ? <SingleSpinner /> : <> Update Department</>}
+            {isPending ? <SingleSpinner /> : <> Update Department</>}
           </button>
         </div>
       </div>

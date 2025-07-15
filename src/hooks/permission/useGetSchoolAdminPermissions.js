@@ -4,6 +4,6 @@ import { getSchoolAdminPermissions } from "../../services/permission";
 export const useGetSchoolAdminPermissions = (schoolAdminId) => {
     return useQuery({
          queryKey:["schoolAdminPermission", schoolAdminId],
-         queryFn:getSchoolAdminPermissions(schoolAdminId)
+         queryFn:() => getSchoolAdminPermissions(schoolAdminId)
     })
 }

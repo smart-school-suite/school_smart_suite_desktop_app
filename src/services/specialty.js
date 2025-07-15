@@ -51,7 +51,7 @@ export const activateSpecialty = async (specialtyId) => {
   return response.data;
 };
 
-export const deactivateSpecialty = async (specialtyId) => {
-  const response = await axiosInstance.post(`specialty/${specialtyId}/deactivate`);
+export const deactivateSpecialty = async (specialtyId, data={}) => {
+  const response = await axiosInstance.post(`specialty/${specialtyId}/deactivate`, data);
   return response.data;
 };

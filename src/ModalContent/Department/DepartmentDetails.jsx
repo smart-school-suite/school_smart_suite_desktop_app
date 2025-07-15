@@ -1,17 +1,9 @@
-import { useFetchDepartmentDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner  from "../../components/Spinners/Spinners";
-import { convertToReadableDate } from "../../utils/functions";
 import { Icon } from "@iconify/react";
-function DepartmentDetails({ row_id, handleClose }) {
-  const {
-    data: data,
-    isLoading,
-    error,
-  } = useFetchDepartmentDetailsQuery({
-    department_id: row_id,
-  });
-
-  if (isLoading) {
+import { useGetDepartmentDetails } from "../../hooks/department/useGetDepartmentDetails";
+function DepartmentDetails({ handleClose, rowData }) {
+  const { data:departmentDetails, isFetching } = useGetDepartmentDetails(rowData.id);
+  if (isFetching) {
     return <Pageloaderspinner />;
   }
   return (
@@ -41,7 +33,7 @@ function DepartmentDetails({ row_id, handleClose }) {
             <span className="my-0 font-size-sm fw-light">
               Department Name
             </span>
-            <span className="my-0">{data.data.department_name}</span>
+            <span className="my-0">{departmentDetails.data.department_name}</span>
           </div>
         </div>
 
@@ -52,21 +44,9 @@ function DepartmentDetails({ row_id, handleClose }) {
             <span className="my-0 font-size-sm fw-light">
               Department Description
             </span>
-            <span className="my-0">{data.data.description}</span>
+            <span className="my-0">{departmentDetails.data.description}</span>
           </div>
         </div>
-
-        <div className="d-flex align-items-center justify-content-between my-3 w-100 border-bottom">
-          <div
-            className=" py-2 d-flex flex-column"
-          >
-            <span className="my-0 font-size-sm fw-light">
-              Head Of Department (HOD)
-            </span>
-            <span className="my-0">{data.data.hods[0].hodable.name}</span>
-          </div>
-        </div>
-
         <div className="d-flex align-items-center justify-content-between my-3 ">
           <div
             className=" py-2 d-flex flex-column"
@@ -76,25 +56,28 @@ function DepartmentDetails({ row_id, handleClose }) {
             </span>
             <span className="my-0">
               {
-                 data.data.status === "active" ? <span
-                 className=" rounded-1 font-size-sm "
+                 departmentDetails.data.status === "active" ? <span
+                 className=" rounded-1"
                  style={{
                    background: "#e3f5e3",
                    color: "#2d6830",
                    width: "auto",
                    maxWidth: "10rem",
                    padding: "0.2rem",
+                   fontSize:"0.65rem"
                  }}
                >
+                 <Icon icon="icon-park-solid:check-one" className="font-size-sm"/>
                  <span>Department Active</span>
                </span> : <span
-                     className=" rounded-1 font-size-sm "
+                     className=" rounded-1"
                      style={{
                        background: "#fffec1",
                        color: "#a66a02",
                        width: "auto",
                        maxWidth: "12rem",
                        padding: "0.2rem",
+                       fontSize:"0.5rem"
                      }}
                    >
                      <span>Department Active</span>

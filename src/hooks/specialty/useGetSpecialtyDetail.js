@@ -4,6 +4,6 @@ import { getSpecialtyDetails } from "../../services/specialty";
 export const useGetSpecialtyDetails = (specialtyId) => {
     return useQuery({
          queryKey:["specialty", specialtyId],
-         queryFn:getSpecialtyDetails(specialtyId)
+         queryFn:() => getSpecialtyDetails(specialtyId)
     })
 }

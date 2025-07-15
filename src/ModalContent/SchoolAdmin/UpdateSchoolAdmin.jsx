@@ -16,10 +16,6 @@ const UpdateSchoolAdmin = ({ row_id: schoolAdminId, handleClose }) => {
      first_name:"",
      last_name:"",
      email:"",
-     role:"",
-     employment_status:"",
-     work_location:"",
-     hire_date:""
   })
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -121,41 +117,6 @@ const UpdateSchoolAdmin = ({ row_id: schoolAdminId, handleClose }) => {
              placeholder={`${schoolAdminDetails.data.role}`}
              onChange={(e) => handleInputChange("role", e.target.value)}
              />
-          </div>
-          <div className="my-2">
-            <label htmlFor="employmentStatus">Employment Status</label>
-            <select className="form-select"
-             name="employment_status"
-             value={formData.employment_status}
-             onChange={(e) => handleInputChange("employment_status", e.target.value)}
-            >
-              <option  selected>{schoolAdminDetails.data.employment_status}</option>
-              <option value="Part-Time">Part Time</option>
-              <option value="Full-Time">Part Time</option>
-              <option value="Contract">Part Time</option>
-            </select>
-          </div>
-          <div className="my-2">
-            <label htmlFor="worklocation">Work Location</label>
-            <select className="form-select"
-             name="work_location"
-             value={formData.work_location}
-             onChange={(e) => handleInputChange("work_location", e.target.value)}
-            >
-              <option selected>{schoolAdminDetails.data.work_location}</option>
-              <option value="onsite">On Site</option>
-              <option value="remote">Remote</option>
-            </select>
-          </div>
-          <div className="my-1">
-            <label htmlFor="hireDate">Hire Date</label>
-            <input 
-              type="date"
-               className="form-control" 
-               name="hire_date"
-               value={formData.hire_date}
-               onChange={(e) => handleInputChange("hire_date", e.target.value)}
-               />
           </div>
           <div className="my-1 w-100 mt-3">
             <button 

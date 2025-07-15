@@ -49,12 +49,12 @@ export const deleteDepartment = async (departmentId) => {
 };
 
 
-export const activateDepartment = async (departmentId) => {
-  const response = await axiosInstance.post(`department/${departmentId}/activate`);
+export const activateDepartment = async (departmentId, data={}) => {
+  const response = await axiosInstance.post(`department/${departmentId}/activate`, data);
   return response.data;
 };
 
-export const deactivateDepartment = async (departmentId) => {
-  const response = await axiosInstance.post(`department/${departmentId}/deactivate`);
+export const deactivateDepartment = async (departmentId, data={}) => {
+  const response = await axiosInstance.post(`department/${departmentId}/deactivate`, data);
   return response.data;
 };

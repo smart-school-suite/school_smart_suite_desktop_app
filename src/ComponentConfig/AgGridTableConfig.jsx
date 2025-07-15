@@ -3,6 +3,8 @@ import TextComponent from "../components/DataTableComponents/TextComponent";
 import DateComponent from "../components/DataTableComponents/DateComponent";
 import CurrencyComponent from "../components/DataTableComponents/CurrencyComponent";
 import React from "react";
+import DepartmentTableBadge from "../components/Badges/DepartmentTableBadge";
+import SpecailtyTableBadge from "../components/Badges/SpecialtyTableBadge";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -1008,7 +1010,7 @@ export function DepartmentTableConfig({ DropdownComponent }){
       filter:true,
       floatingFilter:true,
       cellStyle:cellStyle,
-      cellRenderer:TextComponent
+      cellRenderer:DepartmentTableBadge
     },
     { 
       field: "Action", 
@@ -1138,7 +1140,7 @@ export function SpecialtyTableConfig({  DropdownComponent }){
       headerName:"Status",
       filter:true,
       floatingFilter:true,
-      cellRenderer:TextComponent,
+      cellRenderer:SpecailtyTableBadge,
       cellStyle:cellStyle
     },
     { field: "Action", 

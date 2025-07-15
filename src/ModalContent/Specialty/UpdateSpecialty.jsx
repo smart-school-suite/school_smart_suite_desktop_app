@@ -1,28 +1,21 @@
 import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useFetchSpecialtyDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useUpdateSpecialtyMutation } from "../../Slices/Asynslices/updateSlice";
-import { useFetchDepartmentsQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchEducationLevelsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
-import toast from "react-hot-toast";
 import {
   SpecialtyTitleInput,
   SchoolFeeInput,
-  RegistrationFeeInput
+  RegistrationFeeInput,
 } from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-function UpdateSpecialty({ row_id: specialtyId, handleClose }) {
-  const {
-    data: specialty,
-    isLoading,
-    error,
-  } = useFetchSpecialtyDetailsQuery({
-    specialty_id: specialtyId,
-  });
-  const [updateSpecialty] = useUpdateSpecialtyMutation();
-  const [isUpdating, setIsUpdating] = useState(false);
-   const [isValid, setIsValid] = useState(false);
+import { useUpdateSpecialty } from "../../hooks/specialty/useUpdateSpecialty";
+import { useGetSpecialtyDetails } from "../../hooks/specialty/useGetSpecialtyDetail";
+import { useGetDepartments } from "../../hooks/department/useGetDepartments";
+import { useGetLevels } from "../../hooks/level/useGetLevels";
+function UpdateSpecialty({  handleClose, rowData }) {
+  const specialtyId = rowData.id;
+  const { data: specialty, isFetching:specialtyIsFetching } = useGetSpecialtyDetails(specialtyId);
+  const { mutate: updateSpecialty, isPending } = useUpdateSpecialty(handleClose);
+  const [isValid, setIsValid] = useState(false);
   const [formData, setFormData] = useState({
     specialty_name: "",
     registration_fee: "",
@@ -31,17 +24,11 @@ function UpdateSpecialty({ row_id: specialtyId, handleClose }) {
     level_id: "",
     description: "",
   });
-    const {
-      data: educationLevels,
-      error: educationError,
-      isLoading: educationIsLoading,
-    } = useFetchEducationLevelsQuery();
-  
-    const {
-      data: departments,
-      error: departmentError,
-      isLoading: departmentIsLoading,
-    } = useFetchDepartmentsQuery();
+  const { data: educationLevels, isFetching: educationIsLoading } =
+    useGetLevels();
+
+  const { data: departments, isFetching: departmentIsLoading } =
+    useGetDepartments();
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -62,21 +49,9 @@ function UpdateSpecialty({ row_id: specialtyId, handleClose }) {
   };
   const handleSpecialtyUpdate = async () => {
     if (!isValid) return;
-    setIsUpdating(true);
-    try {
-      await updateSpecialty({
-        specialty_id: specialtyId,
-        updatedData: formData,
-      }).unwrap();
-      toast.success("Specialty Updated Successfully");
-      setIsUpdating(false);
-      handleClose();
-    } catch (e) {
-      toast.error("Something went wrong trying to update Specailty");
-      setIsUpdating(false);
-    }
+    updateSpecialty({ specialtyId, updateData:formData });
   };
-  if (isLoading) {
+  if (specialtyIsFetching) {
     return <SingleSpinner />;
   }
   return (
@@ -106,15 +81,16 @@ function UpdateSpecialty({ row_id: specialtyId, handleClose }) {
             onValidationChange={handleValidation}
             value={formData.specialty_name}
             onChange={(value) => handleInputChange("specialty_name", value)}
-            placeholder={specialty.data.specialty_name}
+            placeholder={specialty.data.specialty_name ?? null}
           />
         </div>
+        <div className="d-flex flex-row align-item-center gap-2">
         <div className="my-1">
           <RegistrationFeeInput
             onValidationChange={handleValidation}
             value={formData.registration_fee}
             onChange={(value) => handleInputChange("registration_fee", value)}
-            placeholder={specialty.data.registration_fee}
+            placeholder={specialty.data.registration_fee ?? null}
           />
         </div>
         <div className="my-1">
@@ -122,10 +98,10 @@ function UpdateSpecialty({ row_id: specialtyId, handleClose }) {
             onValidationChange={handleValidation}
             value={formData.school_fee}
             onChange={(value) => handleInputChange("school_fee", value)}
-            placeholder={specialty.data.school_fee}
+            placeholder={specialty.data.school_fee ?? null}
           />
         </div>
-
+        </div>
         <div className="my-1">
           <span>Department</span>
           {departmentIsLoading ? (
@@ -176,26 +152,22 @@ function UpdateSpecialty({ row_id: specialtyId, handleClose }) {
             value={formData.description}
             onChange={(e) => handleInputChange("description", e.target.value)}
             placeholder={
-               specialty.data.description === null || " " ? formData.specialty_name === null || ""
-                ? "Write A short Description Of the department"
-                : ` Write A short Description Of ${formData.specialty_name}`
-             : specialty.data.description} 
+              specialty.data.description === null || " "
+                ? formData.specialty_name === null || ""
+                  ? "Write A short Description Of the department"
+                  : ` Write A short Description Of ${formData.specialty_name}`
+                : specialty.data.description
+            }
           ></textarea>
         </div>
       </div>
       <div className="mt-4">
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
           <button
-            className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
-            onClick={handleClose}
-          >
-            Cancel
-          </button>
-          <button
-            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
+            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
             onClick={handleSpecialtyUpdate}
           >
-            {isUpdating ? <SingleSpinner /> : <>Update Specialty</>}
+            {isPending ? <SingleSpinner /> : <>Update Specialty</>}
           </button>
         </div>
       </div>

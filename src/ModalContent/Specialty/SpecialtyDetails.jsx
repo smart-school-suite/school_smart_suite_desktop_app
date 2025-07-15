@@ -1,19 +1,17 @@
-import { useFetchSpecialtyDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useGetSpecialtyDetails } from "../../hooks/specialty/useGetSpecialtyDetail";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { formatNumber } from "../../utils/functions";
 import { useSelector } from "react-redux";
-function SpecialtyDetails({ row_id: specialtyId, handleClose }) {
+function SpecialtyDetails({  handleClose, rowData }) {
   const currency = useSelector((state) => state.auth.user);
+  const specialtyId = rowData.id;
   const {
     data: specialtyDetails,
-    isLoading,
-    error,
-  } = useFetchSpecialtyDetailsQuery({
-    specialty_id: specialtyId,
-  });
+    isFetching
+  } = useGetSpecialtyDetails(specialtyId);
 
-  if (isLoading) {
+  if (isFetching) {
     return <Pageloaderspinner />;
   }
   return (

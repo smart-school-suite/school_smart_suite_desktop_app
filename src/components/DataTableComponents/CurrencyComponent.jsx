@@ -4,7 +4,6 @@ function CurrencyComponent(props) {
     const currencyState = useSelector((state) => state.auth.user);
     const userCurrencySymbol = currencyState?.schoolDetails?.school?.country?.currency || '';
     const displayValue = props.value == null || props.value === '' ? 0 : parseFloat(props.value);
-    console.log(currencyState)
     return (
         <>
             <span className="text-overflow-elipse overflow-hidden my-0 text-start">

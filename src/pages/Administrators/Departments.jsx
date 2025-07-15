@@ -1,4 +1,3 @@
-import { useFetchDepartmentsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Table from "../../components/Tables/Tables";
 import ActionButtonDropdown, {
   ModalButton,
@@ -13,8 +12,14 @@ import { useMemo } from "react";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
 import { useGetDepartments } from "../../hooks/department/useGetDepartments";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import ActivateDepartment from "../../ModalContent/Department/ActivateDepartment";
+import React from "react";
+import { useState } from "react";
+import CustomModal from "../../components/Modals/Modal";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 function Departments() {
-  const { data: departments, isError, isFetching } = useGetDepartments();
+  const { data: departments, isFetching } = useGetDepartments();
   const memoizedColDefs = useMemo(() => {
     return DepartmentTableConfig({
       DropdownComponent,
@@ -75,41 +80,111 @@ function Departments() {
 export default Departments;
 
 export function DropdownComponent(props) {
-  const { id } = props.data;
-  const actions = [
-    {
-      actionTitle: "Update",
-      modalContent: UpdateDepartment,
-      icon: "mynaui:edit-solid",
-    },
-    {
-      actionTitle: "Details",
-      icon: "bxs:detail",
-      modalContent: DepartmentDetails,
-    },
-    {
-      actionTitle: "Delete",
-      icon: "fluent:delete-16-filled",
-      modalContent: DeleteDepartment,
-    },
-    {
-      actionTitle: "Department Status",
-      icon: "heroicons-outline:status-online",
-      modalContent: DeactivateDepartment,
-    },
-  ];
-  const memoizedActions = useMemo(() => actions, []);
+  const rowData = props.data;
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("md");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "md") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        rowData,
+        handleClose: handleCloseModal,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
+  //update, details, delete, deactivate, activate
   return (
     <>
       <ActionButtonDropdown
-        actions={memoizedActions}
-        row_id={id}
+        buttonContent={"Edit Actions"}
         style={
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        <span>Edit Actions</span>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(UpdateDepartment, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Update</span>
+              <UpdateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteDepartment, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete</span>
+              <DeleteIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DepartmentDetails, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Details</span>
+              <DetailsIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        {rowData.status == "active" ? (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() => handleShowModal(DeactivateDepartment, "md")}
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Deactivate</span>
+              </div>
+            </div>
+          </DropDownMenuItem>
+        ) : (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() => handleShowModal(ActivateDepartment, "md")}
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Activate</span>
+              </div>
+            </div>
+          </DropDownMenuItem>
+        )}
       </ActionButtonDropdown>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

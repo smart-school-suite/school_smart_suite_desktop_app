@@ -1146,3 +1146,34 @@ hr{
     overflow-y: auto;
 
 }
+.pill-success{
+    background: #e3f5e3;
+    color: #2d6830;
+    width: auto;
+    max-width:10rem;
+    height: 1.2rem;
+    font-size: 0.65rem;
+    padding-inline: 0.4rem;
+    border-radius: 0.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+.pill-warning{
+    background: #fffec1;
+    color: #a66a02;
+    width: auto;
+     max-width:10rem;
+    height: 1.2rem;
+    font-size: 0.65rem;
+    padding-inline: 0.4rem;
+    border-radius: 0.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+.pill-icon{
+   font-size: 0.75rem; 
+}

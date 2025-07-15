@@ -4,9 +4,10 @@ import { revokePermission } from "../../services/permission";
 export const useRevokeSchoolAdminPermissions = () => {
     const queryClient = useQueryClient();
     return useMutation({
-         mutationFn:(schoolAdminId) => revokePermission(schoolAdminId),
+         mutationFn:({schoolAdminId, permission}) => revokePermission(schoolAdminId, {permissions:permission}),
         onSuccess:(schoolAdminId) => {
             queryClient.invalidateQueries({ queryKey:["schoolAdminPermission", schoolAdminId] })
+            queryClient.removeQueries({ queryKey:["assignablePermissions", schoolAdminId]})
         }
     })
 }

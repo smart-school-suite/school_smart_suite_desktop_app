@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { CSSTransition } from "react-transition-group";
 import CustomModal from "../Modals/Modal";
+import React from "react";
 import {
   useFloating,
   offset,
   flip,
   shift,
+  size,
   autoUpdate,
 } from "@floating-ui/react";
 function ActionButtonDropdown({
@@ -16,7 +18,19 @@ function ActionButtonDropdown({
   const [isToggled, setIsToggeled] = useState(false);
   const { refs, floatingStyles } = useFloating({
     placement: "bottom-end",
-    middleware: [offset(5), flip(), shift()],
+    middleware: [
+      offset(5),
+      flip(),
+      shift(),
+      size({
+        apply({ elements }) {
+          // Set the width of the floating element directly
+          Object.assign(elements.floating.style, {
+            width: `20vw`, // Set width to 30% of viewport width
+          });
+        },
+      }),
+    ],
     whileElementsMounted: autoUpdate,
   });
   useEffect(() => {
@@ -55,7 +69,7 @@ function ActionButtonDropdown({
           <div
             ref={refs.setFloating}
             style={floatingStyles}
-            className="dropdown-menu show position-absolute shadow-sm border w-100 p-1 rounded-3 d-flex flex-column gap-1"
+            className="dropdown-menu show position-absolute shadow-sm border p-1 rounded-3 d-flex flex-column gap-1"
           >
           {children}
           </div>
@@ -64,7 +78,7 @@ function ActionButtonDropdown({
     </>
   );
 }
-export default ActionButtonDropdown;
+export default React.memo(ActionButtonDropdown);
 
 export function ModalButton({  action, children, classname, rowData, resetAll, size }) {
   const [showModal, setShowModal] = useState(false);
@@ -95,5 +109,17 @@ export function ModalButton({  action, children, classname, rowData, resetAll, s
         {modalContent}
       </CustomModal>
     </>
+  );
+}
+
+export function DropDownMenuItem({ children, onClick, className, ...props }){
+   return (
+    <button
+      className={className}
+      onClick={onClick}
+      {...props}
+    >
+      {children}
+    </button>
   );
 }
