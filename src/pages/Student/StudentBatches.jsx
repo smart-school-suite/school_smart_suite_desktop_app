@@ -1,33 +1,53 @@
-import Navbar from "../../components/Navbar";
-import { useFetchStudentBatchQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
-import Table from "../../components/Tables";
-import { StudentBatchesNavBarOptions } from "../../ComponentConfig/navBarConfig";
-import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import Table from "../../components/Tables/Tables";
+import { Icon } from "@iconify/react";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import ActionButtonDropdown, {
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { StudentBatchesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import CreateStudentBatch from "../../ModalContent/StudentBatches/CreateStudentBatch";
 import UpdateStudentBatch from "../../ModalContent/StudentBatches/UpdateStudentBatch";
+import ActivateBatch from "../../ModalContent/StudentBatches/ActivateBatch";
+import DeactivateBatch from "../../ModalContent/StudentBatches/DeactivateBatch";
 import DeleteStudentBatch from "../../ModalContent/StudentBatches/DeleteStudentBatch";
 import StudentBatchDetails from "../../ModalContent/StudentBatches/StudentBatchDetails";
-import AssignGraduationDates from "../../ModalContent/StudentBatches/AssignGraduationDate";
-import ViewGraduationDates from "../../ModalContent/StudentBatches/ViewGraduationDates";
+import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
+import React, {useState} from "react";
+import CustomModal from "../../components/Modals/Modal";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { UpdateIcon } from "../../icons/ActionIcons";
 function StudentBatches() {
-  const { data: studentBatches, isLoading } = useFetchStudentBatchQuery();
-  if (isLoading) {
-    return <Pageloaderspinner />;
+  const { data: studentBatches, isFetching } = useGetBatches();
+  if (isFetching) {
+    return <DataTableNavLoader />;
   }
   return (
     <>
       <div>
-        <Navbar options={StudentBatchesNavBarOptions} />
+        <div className="my-2">
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className="d-flex justify-content-center align-items-center primary-background-100"
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <Icon
+                icon="grommet-icons:user-admin"
+                className="font-size-md primary-color"
+              />
+            </div>
+            <span className="my-0 fw-semibold">Student Batches</span>
+          </div>
+        </div>
       </div>
       <div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Number of batches</p>
-            <h1 className="fw-bold my-0">
-              {studentBatches.data.length}
-            </h1>
+            <h1 className="fw-bold my-0">{studentBatches.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
@@ -39,7 +59,7 @@ function StudentBatches() {
           </div>
         </div>
         <Table
-          colDefs={StudentBatchesTableConfig({ DropdownComponent})}
+          colDefs={StudentBatchesTableConfig({ DropdownComponent })}
           rowData={studentBatches.data}
         />
       </div>
@@ -48,38 +68,94 @@ function StudentBatches() {
 }
 export default StudentBatches;
 
-
 export function DropdownComponent(props) {
-  const { id } = props.data;
-  const actions = [
-    {
-      actionTitle: "Update Student Batch",
-      modalContent: UpdateStudentBatch,
-    },
-    {
-      actionTitle: "Student Batch Details",
-      modalContent: StudentBatchDetails,
-    },
-    {
-      actionTitle: "Delete student Batch",
-      modalContent: DeleteStudentBatch,
-    },
-    {
-      actionTitle: "Assign Graduation Dates",
-      modalContent: AssignGraduationDates,
-    }, 
-    {
-      actionTitle: "View Graduation Dates",
-      modalContent: ViewGraduationDates,
-    }, 
-  ];
+    const rowData = props.data;
+    const [showModal, setShowModal] = useState(false);
+    const [modalContent, setModalContent] = useState(null);
+    const [modalSize, setModalSize] = useState("md");
+  
+    const handleCloseModal = () => {
+      setShowModal(false);
+      setModalContent(null);
+    };
+  
+    const handleShowModal = (ContentComponent, size = "md") => {
+      setModalContent(
+        React.createElement(ContentComponent, {
+          rowData,
+          handleClose: handleCloseModal,
+        })
+      );
+      setModalSize(size);
+      setShowModal(true);
+    };
+  
   return (
     <>
-       <ActionButtonDropdown actions={actions} row_id={id} 
-       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      <ActionButtonDropdown
+        buttonContent={"Edit Actions"}
+        style={
+        "tableActionButton primary-background text-white font-size-sm px-2"
+       }
       >
-      <span>Edit Actions</span>
+        <DropDownMenuItem
+           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+          onClick={() => handleShowModal(UpdateStudentBatch)}
+       >
+            <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Update Batch</span>
+            <UpdateIcon />
+          </div>
+        </div>
+       </DropDownMenuItem>
+        <DropDownMenuItem
+           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+          onClick={() => handleShowModal(UpdateStudentBatch)}
+       >
+            <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Delete Batch</span>
+            <UpdateIcon />
+          </div>
+        </div>
+       </DropDownMenuItem>
+                {rowData.status == "active" ? (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() => handleShowModal(DeactivateBatch, "md")}
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Deactivate</span>
+              </div>
+            </div>
+          </DropDownMenuItem>
+        ) : (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() => handleShowModal(ActivateBatch, "md")}
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Activate</span>
+              </div>
+            </div>
+          </DropDownMenuItem>
+        )}
       </ActionButtonDropdown>
+        <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

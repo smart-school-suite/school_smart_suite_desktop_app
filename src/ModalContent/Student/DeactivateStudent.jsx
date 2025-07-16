@@ -1,4 +1,4 @@
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useFetchStudentDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
 import {
@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function DeactivateStudent({ handleClose, row_id: studentId }) {
   const { data: studentDetails, isLoading: isStudentLoading } =
     useFetchStudentDetailsQuery({

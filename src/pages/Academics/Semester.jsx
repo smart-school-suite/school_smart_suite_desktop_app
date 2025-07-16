@@ -1,43 +1,18 @@
 import { Icon } from "@iconify/react";
 import Table from "../../components/Tables/Tables";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { useFetchSchoolSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
-import CleanArrayData, { renameKeys } from "../../utils/functions";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { semesterTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import UpdateSemester from "../../ModalContent/Semesters/UpdateSemester";
 import DeleteSemester from "../../ModalContent/Semesters/DeleteSemester";
 import SemeseterDetails from "../../ModalContent/Semesters/SemesterDetails";
 import CreateSemester from "../../ModalContent/Semesters/CreateSemester";
+import { useGetActiveSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 function Semester() {
-  const { data, isLoading, error } = useFetchSchoolSemestersQuery();
-  const filter_array_keys = [
-    "id",
-    "start_date",
-    "end_date",
-    "school_year_start",
-    "specailty.specialty_name",
-    "semester.name",
-    "status",
-    "timetable_published",
-    "specailty.level.level",
-    "specailty.level.name",
-  ];
-  const renameMapping = {
-    id: "id",
-    start_date: "start_date",
-    school_year_start: "school_year",
-    end_date: "end_date",
-    "specailty.specialty_name": "specialty_name",
-    "semester.name": "semester_name",
-    "specailty.level.level": "level",
-    "specailty.level.name": "level_name",
-    timetable_published: "timetable_status",
-  };
-
-  if (isLoading) {
-    return <Pageloaderspinner />;
+  const { data:schoolSemesters, isFetching } = useGetActiveSchoolSemesters();
+  if (isFetching) {
+    return <DataTableNavLoader />;
   }
   return (
     <>
@@ -63,7 +38,7 @@ function Semester() {
         <div className="d-flex flex-row align-items-end gap-2">
           <div className="d-block">
             <p className="font-size-xs my-0">Created Semesters</p>
-            <h1 className="fw-bold my-0">1000</h1>
+            <h1 className="fw-bold my-0">{schoolSemesters.data.length}</h1>
           </div>
         </div>
         <div className="end-block d-flex flex-row ms-auto justify-content-end gap-3">
@@ -83,10 +58,7 @@ function Semester() {
           colDefs={semesterTableConfig({
             ActionButtonGroup,
           })}
-          rowData={renameKeys(
-            CleanArrayData(data.data, filter_array_keys),
-            renameMapping
-          )}
+          rowData={schoolSemesters.data}
           rowHeight={55}
         />
       </div>

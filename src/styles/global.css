@@ -924,15 +924,20 @@ thead{
 .timeinput-dropdown::-webkit-scrollbar-thumb:hover {
     background: #fff;
 }
-.grades-thead tr td{
-     font-size: 0.9rem;
+.grades-thead tr th{
+     font-size: 0.85rem;
 }
-.grades-thead tr{
-    height: 6dvh;
+
+.rades-trow{
+    height: 20rem !important;
+
+}
+.grades-tr td{
+    height: 4rem;
 }
 .grades-box{
   height: auto;
-  max-height: 80dvh;
+  max-height: 75dvh;
   overflow-y: auto;
 }
 

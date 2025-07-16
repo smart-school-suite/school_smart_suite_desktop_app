@@ -3,7 +3,7 @@ import { useDeleteStudentMutation } from "../../Slices/Asynslices/deleteSlice";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function DeleteStudent({ handleClose, row_id: studentId}){
   const [deleteStudent] = useDeleteStudentMutation();
   const [isDeleting, setIsDeleting] = useState();

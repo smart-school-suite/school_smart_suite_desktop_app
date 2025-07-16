@@ -1,23 +1,15 @@
 import { Icon } from "@iconify/react";
-import {
-  useFetchLetterGradesQuery,
-  useFetchGradesCategoryQuery
-} from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useEffect, useState } from "react";
-import { useAddGradeMutation } from "../../Slices/Asynslices/postSlice";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
-function ConfigureGrades({ handleClose }) {
+import { useCreateExamGrades } from "../../hooks/examGrade/useCreateExamGrades";
+import { useGetLetterGrades } from "../../hooks/letterGrade/useGetLetterGrades";
+function ConfigureGrades({ handleClose, rowData }) {
+  const gradesCategoryId = rowData.grades_category_id;
   const [formData, setFormData] = useState([]);
-  const [isCreating, setIsCreating] = useState(false);
-  const [categoryId, setCategoryId] = useState("");
   const [maxScore, setMaxScore] = useState(0.0);
-  const { data: letterGrades, isLoading: isLetterGradeLoading } =
-    useFetchLetterGradesQuery();
-  const { data: gradesCategory, isLoading: isGradesCategoryLoading } =
-  useFetchGradesCategoryQuery(); 
+  const { data: letterGrades, isFetching: isLetterGradeLoading } =
+    useGetLetterGrades();
+  const { mutate:createGrades, isPending } = useCreateExamGrades();
    useEffect(() => {
     if (letterGrades?.data) {
       const preSetFormData = letterGrades.data.map((item) => ({
@@ -26,7 +18,7 @@ function ConfigureGrades({ handleClose }) {
         maximum_score: 0.0,
         determinant: "",
         grade_status: "",
-        grades_category_id:"",
+        grades_category_id:gradesCategoryId,
         grade_points: 0.0,
       }));
       setFormData(preSetFormData);
@@ -43,11 +35,7 @@ function ConfigureGrades({ handleClose }) {
       return updatedFormData;
     });
   };
-  const [addGrade] = useAddGradeMutation();
-  const handleCreateGrades = async () => {
-    if(!categoryId || categoryId === ""){
-      return
-    }
+  const handleCreateGrades = () => {
     const payload = {
       grades: formData
         .filter(
@@ -61,32 +49,11 @@ function ConfigureGrades({ handleClose }) {
           determinant: grade.determinant,
           exam_id: grade.exam_id,
           grade_status: grade.grade_status,
-          grades_category_id:categoryId,
+          grades_category_id:gradesCategoryId,
           max_score:maxScore
         })),
     };
-    setIsCreating(true);
-    try {
-      await addGrade(payload).unwrap();
-      handleClose();
-      setIsCreating(false);
-      toast.custom(
-        <ToastSuccess
-          title={"Creation Successfull ✅"}
-          description={"The Exam Grades has been created successfully "}
-        />
-      );
-    } catch (error) {
-      setIsCreating(false);
-      toast.custom(
-        <ToastDanger
-          title={"Something went wrong ❌"}
-          description={
-            " ❌ Something went wrong! The Grades failed due to an error. Please try again later."
-          }
-        />
-      );
-    }
+     createGrades(payload);
   };
 
   if (isLetterGradeLoading) {
@@ -99,47 +66,38 @@ function ConfigureGrades({ handleClose }) {
         <div className="d-flex flex-row align-items-center">
           <div className="block w-100">
             <div className="d-flex flex-row align-items-center justify-content-between w-100 mb-3">
-              <h5 className="m-0">Configure CA grades</h5>
-              <span className="m-0" onClick={handleClose}>
+              <span className="m-0">Configure Exam Grades</span>
+              <span
+                onClick={() => {
+                   handleClose();
+                }}
+              >
                 <Icon icon="charm:cross" width="22" height="22" />
               </span>
             </div>
           </div>
         </div>
-        <div className="d-flex flex-row justify-content-end gap-2 ">
-        <div className="d-flex flex-row gap-2 align-items-center mb-2">
-          <input 
+        <div className="d-flex flex-row justify-content-end gap-2 mb-2">
+          <div className="d-flex flex-row gap-2">
+            <input 
            type="number"
-           className="form-control"
+           className="form-control form-control-sm py-1"
            value={maxScore}
            step={"0.01"}
            onChange={(e) => setMaxScore(e.target.value)}  
          />
-        <select className="form-select"
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-          >
-            {
-              isGradesCategoryLoading ? <option selected>Loading ...........</option> : 
-              gradesCategory.data.map((items) => (
-                <option value={items.id}>{items.title}</option>
-              ))
-            }
-          </select>
-          <button
-            className="py-2 primary-background border-none rounded-2 px-3 font-size-sm text-white"
-            style={{
-               width:"20rem"
-            }}
-            onClick={() => {
-              handleCreateGrades();
-            }}
-          >
-            {isCreating ? <SingleSpinner /> : "Submit Grades"}
-          </button>
+         <button className="border-none rounded-2 py-2 px-3 font-size-sm primary-background text-white"
+           onClick={() => {
+             handleCreateGrades();
+           }}
+         >
+          {
+            isPending ? <SingleSpinner /> : "Submit"
+          }
+         </button>
+          </div>
         </div>
-        </div>
-        <div className="card border grades-box">
+        <div className="card border grades-box rounded-3">
           <table className="table table-responsive">
             <thead className="grades-thead">
               <tr>
@@ -153,13 +111,20 @@ function ConfigureGrades({ handleClose }) {
             </thead>
             <tbody>
               {letterGrades.data.map((item, index) => (
-                <tr key={item.id}>
-                  <td style={{ width: "11%", textAlign: "center" }}>
-                    {item.letter_grade}
+                <tr key={item.id} className="grades-tr">
+                  <td style={{ width: "10%" }}>
+                    <div 
+                      className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
+                      style={{ fontSize:"0.85rem" }}
+                      >
+                      {item.letter_grade}
+                    </div>
                   </td>
-                  <td>
-                    <select
-                      className="form-select"
+                  <td style={{ width: "18%" }}>
+                    <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
+                    <div className="d-flex flex-column w-100">
+                        <select
+                      className="form-select form-select-sm w-100"
                       name="grade_status"
                       value={
                         formData[index] ? formData[index].grade_status : ""
@@ -168,21 +133,26 @@ function ConfigureGrades({ handleClose }) {
                         handleInputChange(index, "grade_status", e.target.value)
                       }
                     >
-                      <option selected>Open to select status</option>
+                      <option selected>Passed</option>
                       <option value="pass">Pass</option>
                       <option value="fail">Failed</option>
                     </select>
+                    <span className="font-size-sm m-0" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
+                    </div>
+                    </div>
                   </td>
-                  <td>
-                    <select
-                      className="form-select"
+                  <td style={{ width: "18%" }}>
+                    <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
+                      <div className="d-flex flex-column w-100">
+                        <select
+                      className="form-select form-select-sm w-100"
                       name="determinant"
                       value={formData[index] ? formData[index].determinant : ""}
                       onChange={(e) =>
                         handleInputChange(index, "determinant", e.target.value)
                       }
                     >
-                      <option selected>Open to select</option>
+                      <option selected>Very Good</option>
                       <option value="Excellent">Excellent</option>
                       <option value="Outstanding">Outstanding</option>
                       <option value="Very Good">Very Good</option>
@@ -197,11 +167,16 @@ function ConfigureGrades({ handleClose }) {
                       <option value="Commendable">Commendable</option>
                       <option value="Promising">Promising</option>
                     </select>
+                    <span className="font-size-sm" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
+                      </div>
+                    </div>
                   </td>
-                  <td>
-                    <input
+                  <td style={{ width: "18%" }}>
+                   <div className="h-100 w-100 d-flex flex-row align-item-center align-items-center justify-content-center">
+                     <div className="d-flex flex-column">
+                       <input
                       type="number"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       step="0.01"
                       name="grade_points"
                       value={
@@ -212,11 +187,16 @@ function ConfigureGrades({ handleClose }) {
                         handleInputChange(index, "grade_points", e.target.value)
                       }
                     />
+                    <span className="font-size-sm" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
+                     </div>
+                   </div>
                   </td>
-                  <td style={{ width: "11%" }}>
-                    <input
+                  <td style={{ width: "18%" }}>
+                    <div className="d-flex flex-row align-items-center justify-content-center h-100 w-100">
+                      <div className="d-flex flex-column">
+                         <input
                       type="number"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       value={
                         formData[index] ? formData[index].minimum_score : ""
                       }
@@ -231,11 +211,16 @@ function ConfigureGrades({ handleClose }) {
                       }
                       
                     />
+                    <span className="font-size-sm" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
+                      </div>
+                    </div>
                   </td>
-                  <td style={{ width: "11%" }}>
-                    <input
+                  <td style={{ width: "18%" }}>
+                   <div className="h-100 w-100 d-flex flex-row align-items-center justify-content-center">
+                     <div className="d-flex flex-column">
+                      <input
                       type="number"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       value={
                         formData[index] ? formData[index].maximum_score : ""
                       }
@@ -249,6 +234,9 @@ function ConfigureGrades({ handleClose }) {
                         )
                       }
                     />
+                      <span className="font-size-sm" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
+                     </div>
+                   </div>
                   </td>
                 </tr>
               ))}

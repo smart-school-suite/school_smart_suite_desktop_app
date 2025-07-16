@@ -18,6 +18,7 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import CustomModal from "../../components/Modals/Modal";
 import ActivateTeacher from "../../ModalContent/Teacher/ActivateTeacher";
 import Specialtypreference from "../../ModalContent/Teacher/SpecialtyPreference";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 function Teachers() {
   const { data: teachers, isFetching } = useGetTeachers();
   const memoizedColDefs = useMemo(() => {
@@ -124,6 +125,7 @@ export function DropdownComponent(props) {
             <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
             <span>Update</span>
+            <UpdateIcon />
           </div>
         </div>
        </DropDownMenuItem>
@@ -134,6 +136,7 @@ export function DropdownComponent(props) {
             <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
             <span>Delete</span>
+            <DeleteIcon />
           </div>
         </div>
        </DropDownMenuItem>
@@ -164,6 +167,7 @@ export function DropdownComponent(props) {
             <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
             <span>Details</span>
+            <DetailsIcon />
           </div>
         </div>
        </DropDownMenuItem>

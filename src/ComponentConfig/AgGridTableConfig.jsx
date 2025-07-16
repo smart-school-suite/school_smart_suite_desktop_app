@@ -7,6 +7,8 @@ import DepartmentTableBadge from "../components/Badges/DepartmentTableBadge";
 import SpecailtyTableBadge from "../components/Badges/SpecialtyTableBadge";
 import TeacherTableBadge from "../components/Badges/TeacherTableBadge";
 import { TeacherAvatarComponent } from "../components/DataTableComponents/TeacherTableAvatar";
+import ActiveInactiveBadge from "../components/Badges/ActiveInactive";
+import GradesConfigTableBadge from "../components/Badges/GradesConfigTableBadge";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -273,7 +275,7 @@ export function ExamGradingCongfig({ DropdownComponent }){
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-      cellRenderer: TextComponent,
+      cellRenderer: GradesConfigTableBadge,
     },
     {
       field: "status",
@@ -281,7 +283,7 @@ export function ExamGradingCongfig({ DropdownComponent }){
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-      cellRenderer: TextComponent,
+      cellRenderer: ActiveInactiveBadge,
     },
 
     { 
@@ -746,11 +748,12 @@ export function ParentsTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-export function StudentBatchesTableConfig({ DropdownComponent, DateComponent }) {
+export function StudentBatchesTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
       field: "id",
       floatingFilter: true,
+      hide:true,
       cellRenderer: TextComponent,
     },
     {
@@ -775,7 +778,7 @@ export function StudentBatchesTableConfig({ DropdownComponent, DateComponent }) 
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-      cellRenderer: TextComponent,
+      cellRenderer: ActiveInactiveBadge,
     }, 
     {
       field: "created_at",
@@ -1286,14 +1289,6 @@ export function semesterTableConfig({ ActionButtonGroup }) {
     {
       field:"level_name",
       headerName:"Level Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"timetable_status",
-      headerName:"Timetable Status",
       filter:true,
       floatingFilter:true,
       cellRenderer:TextComponent,

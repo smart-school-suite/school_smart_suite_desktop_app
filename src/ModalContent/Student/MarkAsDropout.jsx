@@ -2,7 +2,7 @@ import { useMarkStudentAsDropOutMutation } from "../../Slices/Asynslices/postSli
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 function MarkAsDropout({ handleClose, row_id: studentId }) {
   const [markStudentAsDropOut] = useMarkStudentAsDropOutMutation();

@@ -1,9 +1,6 @@
-import Navbar from "../../components/Navbar";
-import { useFetchStudentsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
-import Table from "../../components/Tables";
-import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { StudentnavBarOptions } from "../../ComponentConfig/navBarConfig";
+import ActionButtonDropdown, {
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { StudentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DeactivateStudent from "../../ModalContent/Student/DeactivateStudent";
 import DeleteStudent from "../../ModalContent/Student/DeleteStudent";
@@ -11,23 +8,44 @@ import StudentDetails from "../../ModalContent/Student/StudentDetails";
 import UpdateStudent from "../../ModalContent/Student/UpdateStudent";
 import CreateStudent from "../../ModalContent/Student/CreateStudent";
 import MarkAsDropout from "../../ModalContent/Student/MarkAsDropout";
+import { useGetStudents } from "../../hooks/student/useGetStudent";
+import Table from "../../components/Tables/Tables";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import { Icon } from "@iconify/react";
 function Students() {
-  const { data: data, isLoading } = useFetchStudentsQuery();
-  if (isLoading) {
-    return <Pageloaderspinner />;
+  const { data: students, isFetching } = useGetStudents();
+  if (isFetching) {
+    return <DataTableNavLoader />;
   }
   return (
     <>
-      <Navbar options={StudentnavBarOptions} />
       <div>
+        <div className="my-2">
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className="d-flex justify-content-center align-items-center primary-background-100"
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <Icon
+                icon="grommet-icons:user-admin"
+                className="font-size-md primary-color"
+              />
+            </div>
+            <span className="my-0 fw-semibold">Students</span>
+          </div>
+        </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Students</p>
-            <h1 className="fw-bold my-0">{data.data.length}</h1>
+            <h1 className="fw-bold my-0">{students.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
-              action={{ modalContent:CreateStudent }}
+              action={{ modalContent: CreateStudent }}
               classname="border-none rounded-3 green-bg font-size-sm text-white px-3 py-2"
             >
               <span className="font-size-sm">Create Student</span>
@@ -37,7 +55,7 @@ function Students() {
       </div>
       <Table
         colDefs={StudentTableConfig({ DropdownComponent })}
-        rowData={data.data}
+        rowData={students.data}
       />
     </>
   );
@@ -69,10 +87,14 @@ export function DropdownComponent(props) {
   ];
   return (
     <>
-       <ActionButtonDropdown actions={actions} row_id={id} 
-       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      <ActionButtonDropdown
+        actions={actions}
+        row_id={id}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
       >
-      <span>Edit Actions</span>
+        <span>Edit Actions</span>
       </ActionButtonDropdown>
     </>
   );

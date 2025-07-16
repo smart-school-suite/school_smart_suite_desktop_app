@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { useFetchStudentDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners";
 import { convertToReadableDate, timeSince } from "../../utils/functions";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 function StudentDetails({ row_id }){
   const { data: studentDetails, isLoading } = useFetchStudentDetailsQuery({
       student_id:row_id

@@ -1,4 +1,3 @@
-import { useFetchSchoolGradesConfigQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables/Tables";
 import { Icon } from "@iconify/react";
@@ -10,10 +9,14 @@ import ConfigureGrades from "../../ModalContent/GradesConfig/ConfigureGrades";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { ExamGradingCongfig } from "../../ComponentConfig/AgGridTableConfig";
 import ConfigureByOtherGrades from "../../ModalContent/GradesConfig/ConfigureByOtherGrades";
+import CustomModal from "../../components/Modals/Modal";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import React, { useState } from "react";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
 function Gradesconfiguration() {
-  const { data: gradesConfig, isLoading: isGradesConfigLoading } =
-    useFetchSchoolGradesConfigQuery();
-  if (isGradesConfigLoading) {
+  const { data:gradeCategory, isFetching } = useGetSchoolGradeCategories();
+  if (isFetching) {
     return <Pageloaderspinner />;
   }
   return (
@@ -40,7 +43,7 @@ function Gradesconfiguration() {
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Total Grades Config</p>
-            <h1 className="fw-bold my-0">{gradesConfig.data.length}</h1>
+            <h1 className="fw-bold my-0">{gradeCategory.data.length}</h1>
           </div>
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
@@ -54,10 +57,10 @@ function Gradesconfiguration() {
             </ModalButton>
           </div>
         </div>
-        {gradesConfig?.data?.length > 0 ? (
+        {gradeCategory?.data?.length > 0 ? (
           <Table
             colDefs={ExamGradingCongfig({ DropdownComponent })}
-            rowData={gradesConfig.data}
+            rowData={gradeCategory.data}
           />
         ) : (
           <div className="alert alert-warning">
@@ -71,40 +74,108 @@ function Gradesconfiguration() {
 export default Gradesconfiguration;
 
 function DropdownComponent(props) {
-  const { id } = props.data;
-  const actions = [
-    {
-      actionTitle: "Delete Configured Grades",
-      modalContent: DeleteGradesConfig,
-    },
-    {
-      actionTitle: "Configure Grades",
-      modalContent: ConfigureGrades,
-    },
-    {
-      actionTitle: "View Configured Grades",
-      modalContent: ViewGradesConfig,
-    },
-    {
-      actionTitle: "Update Grades Configuration",
-      modalContent: UpdateGradeConfig,
-    },
-    {
-      actionTitle: "Configure using other grades",
-      modalContent: ConfigureByOtherGrades,
-    },
-  ];
+  const rowData = props.data;
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        rowData,
+        handleClose: handleCloseModal,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
+
+  //deleteGradesCongig configureGrades, viewGrades, updateGrades, configureByOtherGrades
   return (
     <>
       <ActionButtonDropdown
-        actions={actions}
-        row_id={id}
+        buttonContent={"Edit Actions"}
         style={
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        <span>Edit Actions</span>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteGradesConfig)}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Grades Config</span>
+              <DeleteIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(UpdateGradeConfig)}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Update Grades Config</span>
+              <UpdateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(ConfigureGrades, 'xl')}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Configure Grade</span>
+              <DetailsIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(ViewGradesConfig)}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>View Grades</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(ConfigureByOtherGrades)}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Configure By Other Grades</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
       </ActionButtonDropdown>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

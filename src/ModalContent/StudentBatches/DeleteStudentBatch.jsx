@@ -3,7 +3,7 @@ import { useDeleteStudentBatchMutation } from "../../Slices/Asynslices/deleteSli
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function DeleteStudentBatch({  handleClose, row_id:studentBatchId }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteStudentBatch] = useDeleteStudentBatchMutation();

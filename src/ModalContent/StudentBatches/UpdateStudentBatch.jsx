@@ -1,42 +1,19 @@
 import { Icon } from "@iconify/react";
-import { useUpdateStudentBatchMutation } from "../../Slices/Asynslices/updateSlice";
 import { useState } from "react";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
-function UpdateStudentBatch({ handleClose, row_id: studentBatchId }) {
-   const [formData, setFormData] = useState({
+import { useUpdateBatch } from "../../hooks/studentBatch/useUpdateBatch";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+function UpdateStudentBatch({ handleClose, rowData }) {
+  const batchId = rowData.id;
+  const { mutate:updateBatch, isPending } = useUpdateBatch();
+  const [formData, setFormData] = useState({
         name: "",
         description: "",
       });
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }; 
-  const [isUpdating, setIsUpating] = useState(false);
-  const [updateStudentBatch] = useUpdateStudentBatchMutation();
   const handleUpdateStudentBatch = async () => {
-      setIsUpating(true);
-      try{
-          await updateStudentBatch().unwrap();
-          setIsUpating(false);
-          handleClose();
-          toast.custom(
-             <ToastSuccess 
-               title={"Update Succesfull"}
-               description={"Student Batch Updated Succesfully"}
-             />
-          )
-
-      }
-      catch(e){
-        setIsUpating(false);
-        toast.custom(
-           <ToastDanger 
-             title={"Update Failed"}
-             description={"Failed to update student batch please try again"}
-           />
-        )
-      }
+     updateBatch({ batchId:batchId, updateData:formData })
   }
   return (
     <>
@@ -78,7 +55,7 @@ function UpdateStudentBatch({ handleClose, row_id: studentBatchId }) {
             handleUpdateStudentBatch();
           }}
         >
-          {isUpdating ? <SingleSpinner /> : "Update Batch"}
+          {isPending ? <SingleSpinner /> : "Update Batch"}
         </button>
       </div>
     </>
