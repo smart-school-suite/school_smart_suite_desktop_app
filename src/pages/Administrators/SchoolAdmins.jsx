@@ -51,8 +51,8 @@ function SchoolAdmins() {
   }, []);
   const memoizedColDefs = useMemo(() => {
     return SchoolAdminTableConfig({
-      ActionButtonGroup,
       ImageComponent,
+      ActionButtonGroup,
     });
   }, []);
 

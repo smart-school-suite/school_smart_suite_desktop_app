@@ -5,6 +5,8 @@ import CurrencyComponent from "../components/DataTableComponents/CurrencyCompone
 import React from "react";
 import DepartmentTableBadge from "../components/Badges/DepartmentTableBadge";
 import SpecailtyTableBadge from "../components/Badges/SpecialtyTableBadge";
+import TeacherTableBadge from "../components/Badges/TeacherTableBadge";
+import { TeacherAvatarComponent } from "../components/DataTableComponents/TeacherTableAvatar";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -1149,12 +1151,20 @@ export function SpecialtyTableConfig({  DropdownComponent }){
    ];
    return tableConfig;
 }
-export function teacherTableConfig({ DropdownComponent, CurrencyComponent  }) {
+export function teacherTableConfig({ DropdownComponent }) {
    const tableConfig = [
     {
       field:"id",
       hide:true
     },
+     {
+     field: "profile_picture",
+     headerName:"Avatar",
+     cellRenderer:  TeacherAvatarComponent,
+     cellStyle: cellStyle,
+     filter: true,
+     floatingFilter: true,
+   },
     {
       field: "name",
       headerName:"Full Names",
@@ -1164,52 +1174,52 @@ export function teacherTableConfig({ DropdownComponent, CurrencyComponent  }) {
       cellRenderer: TextComponent,
     },
     {
-      field: "employment_status",
-      headerName:"Employment Status",
+      field: "first_name",
+      headerName:"First Name",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      field: "highest_qualification",
-      headerName:"Highest Qualification",
+      field: "last_name",
+      headerName:"Last Name",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      headerName: "Field of study",
-      field:"field_of_study",
+      headerName: "Email",
+      field:"email",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      headerName: "Religion",
-      field:"religion",
+      headerName: "Contact One",
+      field:"phone_one",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      headerName: "Years experience",
-      field:"years_experience",
+      headerName: "Gender",
+      field:"gender",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      field: "salary",
-      headerName:"Salary",
+      field: "status",
+      headerName:"Status",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-      cellRenderer: CurrencyComponent,
+      cellRenderer: TeacherTableBadge,
     },
     { 
       field: "Action", 

@@ -25,13 +25,13 @@ export const deleteTeacher = async (teacherId) => {
      return response.data;
 }
 
-export const deactivateTeacher = async (teacherId) => {
-     const response = await axiosInstance.post(`teacher/${teacherId}/activate`);
+export const deactivateTeacher = async (teacherId, data={}) => {
+     const response = await axiosInstance.post(`teacher/${teacherId}/deactivate`, data);
      return response.data;
 }
 
-export const activateTeacher = async (teacherId) => {
-     const response = await axiosInstance.post(`teacher/${teacherId}/deactivate`);
+export const activateTeacher = async (teacherId, data={}) => {
+     const response = await axiosInstance.post(`teacher/${teacherId}/activate`, data);
      return response.data;
 }
 
@@ -56,12 +56,22 @@ export const bulkUpdateTeacher = async (updateData) => {
 }
 
 export const addTeacherSpecialtyPreference = async (preferenceData) => {
-     const response = await axiosInstance.post("teacher/specialty-preference", preferenceData);
+     const response = await axiosInstance.post("teacher/specialty-preference", {specailties_preference: preferenceData});
      return response.data;
 }
 
 export const getTeacherSpecialtyPreference = async (teacherId) => {
      const response = await axiosInstance.get(`teacher-preference/teachers/${teacherId}/specialty-preference`);
+     return response.data;
+}
+
+export const getAvailableSpecialtyPreferences = async (teacherId) => {
+     const response = await axiosInstance.get(`teacher-preference/available-preferences/${teacherId}`);
+     return response.data;
+} 
+
+export const removeSpecialtyPreferences = async (preferenceData) => {
+     const response = await axiosInstance.post("teacher-preference/remove-preference", {specialty_preferences: preferenceData})
      return response.data;
 }
 

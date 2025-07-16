@@ -1,22 +1,10 @@
-import { useState } from "react";
-import { useDeleteTeacherMutation } from "../../Slices/Asynslices/deleteSlice";
-import toast from "react-hot-toast";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function DeleteTeacher({ row_id:teacherId, handleClose }) {
-  const [deleteTeacher] = useDeleteTeacherMutation();
-  const [isDeleting, setIsDeleting] = useState(false);
+import { useDeleteTeacher } from "../../hooks/teacher/useDeleteTeacher";
+function DeleteTeacher({ rowData, handleClose }) {
+  const teacherId = rowData.id;
+  const { mutate:deleteTeacher, isPending } = useDeleteTeacher();
   const handleDeleteTeacher = async () => {
-    setIsDeleting(true);
-     try{
-         await deleteTeacher(teacherId).unwrap();
-         toast.success("teacher deleted Succesfully");
-         setIsDeleting(false);
-         handleClose();
-     }
-     catch(e){
-        toast.error("Opps Something went wrong trying to delete teacher please try again")
-        setIsDeleting(false);
-     }
+    deleteTeacher(teacherId);
   }
   return (
     <>
@@ -28,17 +16,21 @@ function DeleteTeacher({ row_id:teacherId, handleClose }) {
         </p>
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
-            <button className="border-none px-3 py-2 text-primary rounded-3 font-size-sm">
+            <button className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
+              onClick={() => {
+                 handleClose();
+              }}
+            >
               Cancel
             </button>
             <button 
-               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
                 onClick={() => {
                    handleDeleteTeacher();
                 }}
                >
               {
-                 isDeleting ? <SingleSpinner /> : "Continue"
+                 isPending ? <SingleSpinner /> : "Yes, Delete"
               }
             </button>
           </div>

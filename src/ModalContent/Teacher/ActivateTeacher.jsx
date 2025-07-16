@@ -1,14 +1,14 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useDeactivateTeacher } from "../../hooks/teacher/useDeactivateTeacher";
-function DeactivateTeacher({ rowData, handleClose }) {
+import { useActivateTeacher } from "../../hooks/teacher/useActivateTeacher";
+function ActivateTeacher({ rowData, handleClose }) {
   const teacherId = rowData.id;
-  const { mutate:deactivateTeacher, isPending } = useDeactivateTeacher();
-  const handleDeactivateTeacher = () => {
-     deactivateTeacher(teacherId)
+  const { mutate:activateTeacher, isPending } = useActivateTeacher();
+  const handleTeacherActivate = () => {
+    activateTeacher(teacherId);
   }
   return (
     <>
-     <div className="w-100">
+      <div className="w-100">
         <h4 className="fw-semibold">Are you Absolutely sure ?</h4>
         <p className="my-3" style={{ fontSize: "0.85rem" }}>
           This action cannot be undone. This will Permanently delete This
@@ -27,10 +27,10 @@ function DeactivateTeacher({ rowData, handleClose }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeactivateTeacher();
+                handleTeacherActivate();
               }}
             >
-              {isPending ? <SingleSpinner /> : <>Yes, Deactivate</>}
+              {isPending ? <SingleSpinner /> : <>Yes, Activate</>}
             </button>
           </div>
         </div>
@@ -38,4 +38,4 @@ function DeactivateTeacher({ rowData, handleClose }) {
     </>
   );
 }
-export default DeactivateTeacher;
+export default ActivateTeacher;

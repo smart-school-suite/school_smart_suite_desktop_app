@@ -1,48 +1,27 @@
 import { useState } from "react";
-import { useUpdateTeacherMutation } from "../../Slices/Asynslices/updateSlice";
-import { useFetchTeacherDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import toast from "react-hot-toast";
 import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
-function UpdateTeacher({ handleClose, row_id: teacherId }) {
-  const [updateTeacher] = useUpdateTeacherMutation();
-  const {
-    data: teacherDetails,
-    isLoading,
-    error,
-  } = useFetchTeacherDetailsQuery({
-    teacher_id: teacherId,
-  });
-  const [isUpdating, setIsUpdating] = useState(false);
+import { useGetTeacherDetails } from "../../hooks/teacher/useGetTeacherDetails";
+import { useUpdateTeacher } from "../../hooks/teacher/useUpdateTeacher";
+function UpdateTeacher({ handleClose, rowData }) {
+  const teacherId = rowData.id;
+  const { data:teacherDetails, isFetching } = useGetTeacherDetails(teacherId)
+  const { mutate:updateTeacher, isPending } = useUpdateTeacher(handleClose);
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    name: "",
     email: "",
-    hire_date: "",
-    highest_qualification: "",
-    field_of_study: "",
-    years_experience: "",
+    name: "",
+    last_name: "",
+    first_name: "",
+    gender:"",
+    phone_one:""
   });
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const handleTeacherUpdate = async () => {
-    setIsUpdating(true);
-    try {
-      await updateTeacher({
-        teacher_id: teacherId,
-        updatedData: formData,
-      }).unwrap();
-      setIsUpdating(false);
-      toast.success("Teacher Updated Successfully");
-      handleClose();
-    } catch (e) {
-      toast.error("Failed to update teacher please try again");
-      setIsUpdating(false);
-    }
+    updateTeacher({ teacherId, updateData:formData })
   };
-  if (isLoading) {
+  if (isFetching) {
     return <Pageloaderspinner />;
   }
   return (
@@ -63,23 +42,23 @@ function UpdateTeacher({ handleClose, row_id: teacherId }) {
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum
           sint reprehenderit tempora. Aliquid
         </span>
-        <div className="mb-2 d-flex flex-row gap-2">
-          <div>
+        <div className="mb-2 d-flex flex-row gap-2 w-100">
+          <div className="w-50">
             <label htmlFor="firstName">First Name</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control w-100"
               placeholder={teacherDetails.data.first_name}
               name="first_name"
               value={formData.first_name}
               onChange={(e) => handleInputChange("first_name", e.target.value)}
             />
           </div>
-          <div>
+          <div className="w-50">
             <label htmlFor="lastName">Last Name</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control w-100"
               placeholder={teacherDetails.data.last_name}
               name="last_name"
               value={formData.last_name}
@@ -109,58 +88,28 @@ function UpdateTeacher({ handleClose, row_id: teacherId }) {
             onChange={(e) => handleInputChange("email", e.target.value)}
           />
         </div>
-        <div className="mb-2 d-flex flex-row gap-2">
-          <div className="w-50">
-            <label htmlFor="hiredate">Hire Date</label>
-            <input
-              type="date"
-              className="form-control w-100"
-              name="hire_date"
-              value={formData.hire_date}
-              onChange={(e) => handleInputChange("hire_date", e.target.value)}
-            />
-          </div>
-          <div className="w-50">
-            <label htmlFor="lastName">Years of Experience</label>
-            <input
-              type="number"
-              className="form-control w-100"
-              placeholder={teacherDetails.data.years_experience}
-              name="years_experience"
-              value={formData.years_experience}
-              onChange={(e) =>
-                handleInputChange("years_experience", e.target.value)
-              }
-            />
-          </div>
-        </div>
-        <div className="mb-2">
-          <label htmlFor="highestQualification">Highest Qualification</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder={teacherDetails.data.highest_qualification}
-            name="highest_qualification"
-            value={formData.highest_qualification}
-            onChange={(e) =>
-              handleInputChange("highest_qualification", e.target.value)
-            }
-          />
-        </div>
-        <div className="mb-2">
-          <label htmlFor="highestQualification">Field Of Study</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder={teacherDetails.data.field_of_study}
-            name="field_of_study"
-            value={formData.field_of_study}
-            onChange={(e) =>
-              handleInputChange("field_of_study", e.target.value)
-            }
-          />
-        </div>
       </div>
+       <div>
+          <label htmlFor="">gender</label>
+          <input
+            type="text"
+            className="form-control"
+            name="gender"
+            onChange={(e) => handleInputChange("gender", e.target.value)}
+            placeholder={teacherDetails.data.gender}
+          />
+        </div>
+        <div>
+          <label htmlFor="">Phone Number</label>
+          <input
+            type="text"
+            className="form-control"
+            name="phone_one"
+            placeholder={teacherDetails.data.phone}
+            onChange={(e) => handleInputChange("phone_one", e.target.value)}
+            
+          />
+        </div>
       <div className="mt-2">
         <button 
           className="border-none p-2 font-size-sm primary-background rounded-3 w-100 text-white"
@@ -168,7 +117,7 @@ function UpdateTeacher({ handleClose, row_id: teacherId }) {
              handleTeacherUpdate();
            }}
           >
-          {isUpdating ? <SingleSpinner /> : <>Update Teacher</>}
+          {isPending ? <SingleSpinner /> : <>Update Teacher</>}
         </button>
       </div>
     </>
