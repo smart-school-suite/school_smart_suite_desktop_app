@@ -1,6 +1,6 @@
 import { useFetchParentDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
-import Pageloaderspinner from "../../components/Spinners";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 function ParentDetails({ handleClose, row_id: guardianId }) {
   const { data: parentDetails, isLoading } = useFetchParentDetailsQuery({
     parent_id: guardianId,

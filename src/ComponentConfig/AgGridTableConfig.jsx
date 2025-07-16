@@ -9,6 +9,7 @@ import TeacherTableBadge from "../components/Badges/TeacherTableBadge";
 import { TeacherAvatarComponent } from "../components/DataTableComponents/TeacherTableAvatar";
 import ActiveInactiveBadge from "../components/Badges/ActiveInactive";
 import GradesConfigTableBadge from "../components/Badges/GradesConfigTableBadge";
+import { StudentTableAvatarComponent } from "../components/DataTableComponents/StudentTableAvatar";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -731,14 +732,6 @@ export function ParentsTableConfig({ DropdownComponent }) {
       cellStyle: cellStyle,
     },
     {
-      field: "cultural_background",
-      headerName:"Cultural Background",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
       field: "Action",
       filter: true,
       floatingFilter: true,
@@ -810,6 +803,14 @@ export function StudentTableConfig({ DropdownComponent }) {
       field: "id",
       hide: true,
     },
+      {
+     field: "profile_picture",
+     headerName:"Avatar",
+     cellRenderer: StudentTableAvatarComponent,
+     cellStyle: cellStyle,
+     filter: true,
+     floatingFilter: true,
+   },
     {
       field: "student_name",
       headerName: "Student Name",
@@ -835,19 +836,11 @@ export function StudentTableConfig({ DropdownComponent }) {
       cellStyle: cellStyle,
     },
     {
-      field: "guardian_name",
-      headerName: "Guardian Name",
+      field: "status",
+      headerName: "Account Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "student_phone_one",
-      headerName: "First Reachable Number",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ActiveInactiveBadge,
       cellStyle: cellStyle,
     },
     {

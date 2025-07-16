@@ -1,40 +1,16 @@
-import { SingleSpinner } from "../../components/Spinners";
-import { useDeleteParentMutation } from "../../Slices/Asynslices/deleteSlice";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { useState } from "react";
-function DeleteParent({ handleClose, row_id: guardianId }) {
-  const [deleteParent] = useDeleteParentMutation();
-  const [isDeleting, setIsDeleting] = useState(false);
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useDeleteParent } from "../../hooks/parent/useDeleteParent";
+function DeleteParent({ handleClose, rowData}) {
+  const parentId = rowData.id;
+  const {mutate:deleteParent, isPending} = useDeleteParent(handleClose);
   const handleDeleteParent = async () => {
-    setIsDeleting(true);
-    try {
-      await deleteParent(guardianId).unwrap();
-      setIsDeleting(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Delete Successfull"}
-          description={"Parent Deleted Succesfully"}
-        />
-      );
-    } catch (e) {
-      setIsDeleting(false);
-      toast.custom(
-        <ToastDanger
-          title={"Delete Failed"}
-          description={"Failed To Delete Parent"}
-        />
-      );
-    }
+     deleteParent(parentId);  
   };
   return (
     <>
       <div className="w-100">
         <h4 className="fw-semibold">Are you Absolutely sure ?</h4>
         <p className="my-3" style={{ fontSize: "0.85rem" }}>
-          <span>{guardianId}</span>
           This action cannot be undone. This will Permanently delete This
           account and remove this account data from our servers
         </p>
@@ -52,7 +28,7 @@ function DeleteParent({ handleClose, row_id: guardianId }) {
                 handleDeleteParent();
               }}
             >
-              {isDeleting ? <SingleSpinner /> : "Yes, Delete"}
+              {isPending ? <SingleSpinner /> : "Yes, Delete"}
             </button>
           </div>
         </div>

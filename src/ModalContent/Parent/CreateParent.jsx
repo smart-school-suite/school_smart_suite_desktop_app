@@ -1,67 +1,47 @@
 import { Icon } from "@iconify/react";
-import { useAddParentMutation } from "../../Slices/Asynslices/postSlice";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import { useState } from "react";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useCreateParent } from "../../hooks/parent/useCreateParent";
 function CreateParent({ handleClose }) {
-    const [addParent] = useAddParentMutation();
-    const [isCreating, setIsCreating] = useState(false);
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        phone_one: "",
-        address: "",
-        occupation: "",
-        relationship_to_student:"",
-        preferred_language: ""
-    });
+  const { mutate:createParent, isPending } = useCreateParent(handleClose);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone_one: "",
+    address: "",
+    occupation: "",
+    relationship_to_student: "",
+    preferred_language: "",
+  });
 
-    const handleInputChange = (field, value) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-      };
-    const guardianTypes = [
-        "Mother",
-        "Father",
-        "Stepmother",
-        "Stepfather",
-        "Grandmother",
-        "Grandfather",
-        "Aunt",
-        "Uncle",
-        "Older Brother",
-        "Older Sister",
-        "Guardian (non-family)",
-        "Foster Parent",
-        "Adoptive Parent",
-        "Older Cousin",
-        "Legal Guardian",
-        "Sibling (younger brother or sister)",
-        "Family Friend",
-        "Caretaker",
-        "Single Parent",
-        "Godparent"
-    ];
-    const handleCreateGuardian = async () => {
-        setIsCreating(true);
-         try{
-            await addParent(formData).unwrap();
-            setIsCreating(false);
-            handleClose();
-            toast.custom(<ToastSuccess 
-              title={"Process Successful"}
-              description={"Guardian Created Successfully"}
-            />);
-         }
-         catch(e){
-             setIsCreating(false);
-             toast.custom(<ToastDanger 
-                title={"Failed to create guardian"}
-                description={"The process failed due to an error, please try again"}
-             />)
-         }
-    }
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+  const guardianTypes = [
+    "Mother",
+    "Father",
+    "Stepmother",
+    "Stepfather",
+    "Grandmother",
+    "Grandfather",
+    "Aunt",
+    "Uncle",
+    "Older Brother",
+    "Older Sister",
+    "Guardian (non-family)",
+    "Foster Parent",
+    "Adoptive Parent",
+    "Older Cousin",
+    "Legal Guardian",
+    "Sibling (younger brother or sister)",
+    "Family Friend",
+    "Caretaker",
+    "Single Parent",
+    "Godparent",
+  ];
+  const handleCreateGuardian = async () => {
+    createParent(formData)
+  };
   return (
     <>
       <div>
@@ -112,7 +92,7 @@ function CreateParent({ handleClose }) {
             placeholder="+237 6XX XXX XXX"
             name="phone_one"
             value={formData.phone_one}
-            onChange={ (e) => handleInputChange("phone_one", e.target.value) }
+            onChange={(e) => handleInputChange("phone_one", e.target.value)}
           />
         </div>
         <div className="my-1">
@@ -135,7 +115,6 @@ function CreateParent({ handleClose }) {
             placeholder="Teacher, Engineer, etc."
             value={formData.occupation}
             onChange={(e) => handleInputChange("occupation", e.target.value)}
-
           />
         </div>
         <div className="my-1">
@@ -144,40 +123,39 @@ function CreateParent({ handleClose }) {
             name="relationship_to_student"
             className="form-select"
             value={formData.relationship_to_student}
-            onChange={(e) => handleInputChange("relationship_to_student", e.target.value)}
+            onChange={(e) =>
+              handleInputChange("relationship_to_student", e.target.value)
+            }
           >
             <option selected>Open to select relationship</option>
-            {
-                guardianTypes.map((items) => (
-                    <option value={items}>{items}</option>
-                ))
-            }
+            {guardianTypes.map((items) => (
+              <option value={items}>{items}</option>
+            ))}
           </select>
         </div>
         <div className="my-1">
           <label htmlFor="preferredLanguage">
             Preferred Language of Communication
           </label>
-          <select 
+          <select
             name="preferred_language"
             className="form-select"
             value={formData.preferred_language}
-            onChange={(e) => handleInputChange("preferred_language", e.target.value)}
+            onChange={(e) =>
+              handleInputChange("preferred_language", e.target.value)
+            }
           >
-             <option selected>Open to select Language</option>
+            <option selected>Open to select Language</option>
             <option value="english">English</option>
             <option value="french">French</option>
           </select>
         </div>
         <div className="mt-3">
-          <button 
+          <button
             className="border-none rounded-3 primary-background w-100 text-white font-size-sm px-3 py-2"
             onClick={handleCreateGuardian}
-            disabled={isCreating || !formData.name || !formData.email || !formData.phone_one || !formData.address || !formData.occupation || !formData.relationship_to_student || !formData.preferred_language}
-            >
-            {
-                 isCreating ? <SingleSpinner /> : "Create Guardian"
-            }
+          >
+            {isPending ? <SingleSpinner /> : "Create Guardian"}
           </button>
         </div>
       </div>

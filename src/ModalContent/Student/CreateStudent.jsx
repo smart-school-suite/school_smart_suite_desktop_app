@@ -1,29 +1,24 @@
 import { useState } from "react";
-import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchDepartmentsQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchEducationLevelsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useFetchStudentBatchQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchParentsQuery } from "../../Slices/Asynslices/fetchSlice";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import { useAddStudentMutation } from "../../Slices/Asynslices/postSlice";
 import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
+import { useCreateStudent } from "../../hooks/student/useCreateStudent";
+import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
+import { useGetAllParents } from "../../hooks/parent/useGetParents";
+import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 function CreateStudent({ handleClose }) {
-const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     first_name: "",
     last_name: "",
     specialty_id: "",
-    department_id: "",
     student_batch_id: "",
-    guadian_id:"",
+    guardian_id:"",
+    gender:"",
     email: "",
   });
-  const [addStudent] = useAddStudentMutation();
+  const { mutate:createStudent, isPending } = useCreateStudent(handleClose);
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -33,33 +28,13 @@ const [isCreating, setIsCreating] = useState(false);
       [field]: selectedValues.id,
     }));
   };
-  const { data: specialties, isLoading: isSpecialtiesLoading } =
-    useFetchSpecialtiesQuery();
-  const { data: departments, isLoading: isDepartmentLoading } =
-    useFetchDepartmentsQuery();
-  const { data: level, isLoading: isLevelLoading } =
-    useFetchEducationLevelsQuery();
-  const { data: studentBatch, isLoading: isStudentBatchLoading } =
-    useFetchStudentBatchQuery();
-  const { data: parents, isLoading: isParentsLoading } = useFetchParentsQuery();
-  const handleCreateStudent = async () => { 
-      setIsCreating(true);
-       try{
-           await addStudent(formData).unwrap();
-           setIsCreating(false);
-           handleClose();
-           toast.custom(<ToastSuccess 
-             title={"Process Successfull"}
-             description={"Student Created Successfully"}
-           />)
-       }
-       catch(e){
-            setIsCreating(false);
-            toast.custom(<ToastDanger 
-              title={"Failed to create student"}
-              description={"The process failed due to an error please try again"}
-            />)
-       }
+  const { data: specialties, isFetching: isSpecialtiesLoading } =
+    useGetSpecialties();
+  const { data: studentBatch, isFetching: isStudentBatchLoading } =
+    useGetBatches();
+  const { data: parents, isFetching: isParentsLoading } = useGetAllParents();
+  const handleCreateStudent = () => { 
+      createStudent(formData);
   }
   return (
     <>
@@ -130,6 +105,17 @@ const [isCreating, setIsCreating] = useState(false);
             onChange={(e) => handleInputChange("email", e.target.value)}
         />
       </div>
+       <div className="my-1">
+        <label htmlFor="gender">Gender</label>
+        <input
+          type="gender"
+          className="form-control"
+          placeholder="male, female"
+          name="gender"
+            value={formData.gender}
+            onChange={(e) => handleInputChange("gender", e.target.value)}
+        />
+      </div>
       <div className="my-1">
         <span>Student Batch</span>
         {isStudentBatchLoading ? (
@@ -146,44 +132,6 @@ const [isCreating, setIsCreating] = useState(false);
             isLoading={isStudentBatchLoading}
             direction="up"
             onSelect={handleSelect("student_batch_id")}
-          />
-        )}
-      </div>
-      <div className="my-1">
-        <span>Level</span>
-        {isLevelLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
-          <CustomDropdown
-            data={level.data}
-            displayKey={["name"]}
-            valueKey={["id"]}
-            filter_array_keys={["id", "name"]}
-            renameMapping={{ id: "id", name: "name" }}
-            isLoading={isLevelLoading}
-            direction="up"
-            onSelect={handleSelect("level_id")}
-          />
-        )}
-      </div>
-      <div className="my-1">
-        <span>Department</span>
-        {isDepartmentLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
-          <CustomDropdown
-            data={departments.data}
-            displayKey={["department_name"]}
-            valueKey={["id"]}
-            filter_array_keys={["id", "department_name"]}
-            renameMapping={{ id: "id", department_name: "department_name" }}
-            isLoading={isDepartmentLoading}
-            direction="up"
-            onSelect={handleSelect("department_id")}
           />
         )}
       </div>
@@ -215,27 +163,15 @@ const [isCreating, setIsCreating] = useState(false);
         ) : (
           <CustomDropdown
             data={parents.data}
-            displayKey={["name"]}
+            displayKey={["guardian_name"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "name"]}
-            renameMapping={{ id: "id", name: "name" }}
+            filter_array_keys={["id", "guardian_name"]}
+            renameMapping={{ id: "id", name: "guardian_name" }}
             isLoading={isParentsLoading}
             direction="up"
-            onSelect={handleSelect("guadian_id")}
+            onSelect={handleSelect("guardian_id")}
           />
         )}
-      </div>
-      <div className="my-1">
-        <label htmlFor="FeePaymentFormat">Fee Payment Format</label>
-        <select 
-          name="payment_format" 
-          className="form-select"
-          onChange={(e) => handleInputChange("payment_format", e.target.value)}
-          >
-            <option selected>Select Fee Payment Format</option>
-            <option value="installmental">installmental</option>
-            <option value="one time">installmental</option>
-        </select>
       </div>
       <div className="mt-3">
         <button 
@@ -244,7 +180,7 @@ const [isCreating, setIsCreating] = useState(false);
           }}
           className="border-none rounded-3 primary-background w-100 text-white font-size-sm px-3 py-2">
             {
-                isCreating ? <SingleSpinner /> : "Update Student"
+                isPending ? <SingleSpinner /> : "Create Student"
             }
         </button>
       </div>

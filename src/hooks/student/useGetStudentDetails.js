@@ -3,7 +3,7 @@ import { getStudentDetails } from "../../services/Student";
 
 export const useGetStudentById = (studentId) => {
      return useQuery({
-         queryKey: ['students', studentId],
+         queryKey: ['student', studentId],
          queryFn: () => getStudentDetails(studentId),
          enabled: !!studentId,
      });

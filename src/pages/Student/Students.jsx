@@ -12,6 +12,11 @@ import { useGetStudents } from "../../hooks/student/useGetStudent";
 import Table from "../../components/Tables/Tables";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
+import React, {useState} from "react";
+import CustomModal from "../../components/Modals/Modal";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import ActivateStudent from "../../ModalContent/Student/ActivateStudent";
+import { DetailsIcon, UpdateIcon, DeleteIcon } from "../../icons/ActionIcons";
 function Students() {
   const { data: students, isFetching } = useGetStudents();
   if (isFetching) {
@@ -56,46 +61,122 @@ function Students() {
       <Table
         colDefs={StudentTableConfig({ DropdownComponent })}
         rowData={students.data}
+        rowHeight={55}
       />
     </>
   );
 }
 export default Students;
 export function DropdownComponent(props) {
-  const { id } = props.data;
-  const actions = [
-    {
-      actionTitle: "Update Student",
-      modalContent: UpdateStudent,
-    },
-    {
-      actionTitle: "Student Details",
-      modalContent: StudentDetails,
-    },
-    {
-      actionTitle: "Delete Student",
-      modalContent: DeleteStudent,
-    },
-    {
-      actionTitle: "Account Status",
-      modalContent: DeactivateStudent,
-    },
-    {
-      actionTitle: "Mark As Dropout",
-      modalContent: MarkAsDropout,
-    },
-  ];
+    const rowData = props.data;
+    const [showModal, setShowModal] = useState(false);
+    const [modalContent, setModalContent] = useState(null);
+    const [modalSize, setModalSize] = useState("md");
+  
+    const handleCloseModal = () => {
+      setShowModal(false);
+      setModalContent(null);
+    };
+  
+    const handleShowModal = (ContentComponent, size = "md") => {
+      setModalContent(
+        React.createElement(ContentComponent, {
+          rowData,
+          handleClose: handleCloseModal,
+        })
+      );
+      setModalSize(size);
+      setShowModal(true);
+    };
+
   return (
     <>
       <ActionButtonDropdown
-        actions={actions}
-        row_id={id}
+       buttonContent={"Edit Actions"}
         style={
-          "tableActionButton primary-background text-white font-size-sm px-2"
-        }
+        "tableActionButton primary-background text-white font-size-sm px-2"
+       }
       >
-        <span>Edit Actions</span>
+       <DropDownMenuItem
+           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+          onClick={() => handleShowModal(UpdateStudent)}
+       >
+            <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Update Student</span>
+            <UpdateIcon />
+          </div>
+        </div>
+       </DropDownMenuItem>
+       <DropDownMenuItem
+           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+          onClick={() => handleShowModal(DeleteStudent)}
+       >
+            <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Delete Student</span>
+            <DeleteIcon />
+          </div>
+        </div>
+       </DropDownMenuItem>
+       <DropDownMenuItem
+           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+          onClick={() => handleShowModal(StudentDetails)}
+       >
+            <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Student Details</span>
+            <DetailsIcon />
+          </div>
+        </div>
+       </DropDownMenuItem>
+       <DropDownMenuItem
+           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+          onClick={() => handleShowModal(MarkAsDropout)}
+       >
+            <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <span>Mark Student As Drop-out</span>
+            <UpdateIcon />
+          </div>
+        </div>
+       </DropDownMenuItem>
+                {rowData.status == "active" ? (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() => handleShowModal(DeactivateStudent, "md")}
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Deactivate</span>
+              </div>
+            </div>
+          </DropDownMenuItem>
+        ) : (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() => handleShowModal(ActivateStudent, "md")}
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Activate</span>
+              </div>
+            </div>
+          </DropDownMenuItem>
+        )}
       </ActionButtonDropdown>
+       <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

@@ -1,44 +1,51 @@
-import Pageloaderspinner from "../../components/Spinners/Spinners";
-import Table from "../../components/Tables";
-import { useFetchDropoutStudentListQuery } from "../../Slices/Asynslices/fetchSlice";
-import { StudentDropOutTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import Table from "../../components/Tables/Tables";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import DeleteStudentDropout from "../../ModalContent/StudentDropout/DeleteStudentDropout";
 import ReinistateStudent from "../../ModalContent/StudentDropout/ReinstateStudent";
-import DropoutStudentDetails from "../../ModalContent/StudentDropout/DropoutStudentDetails";
+import { useGetDropdoutStudents } from "../../hooks/student/useGetDropoutStudent";
+import React, { useState } from "react";
+import CustomModal from "../../components/Modals/Modal";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import StudentDetails from "../../ModalContent/Student/StudentDetails";
+import DeleteStudent from "../../ModalContent/Student/DeleteStudent";
+import { StudentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import { Icon } from "@iconify/react";
 function StudentDropOuts() {
-  const { data: dropoutList, isLoading: isListLoading } =
-    useFetchDropoutStudentListQuery();
-  if (isListLoading) {
-    return <Pageloaderspinner />;
+  const { data:dropoutStudents, isFetching } = useGetDropdoutStudents();
+  if (isFetching) {
+    return <DataTableNavLoader />;
   }
   return (
     <>
       <main className="pt-2">
-        <div className="d-flex flex-row gap-2 align-items-center mt-2 mb-2">
-          <div
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              border: "1rem",
-              background: "#fff",
-              alignContent: "center",
-              textAlign: "center",
-            }}
-          >
-            IC
+        <div className="my-2">
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className="d-flex justify-content-center align-items-center primary-background-100"
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <Icon
+                icon="grommet-icons:user-admin"
+                className="font-size-md primary-color"
+              />
+            </div>
+            <span className="my-0 fw-semibold">Student Dropout</span>
           </div>
-          <h5>Manage Student Dropout</h5>
         </div>
         <div className="d-block">
-            <p className="font-size-xs my-0">Total Dropouts</p>
-            <h1 className="fw-bold my-0">{dropoutList.data.length}</h1>
-          </div>
+          <p className="font-size-xs my-0">Total Dropouts</p>
+          <h1 className="fw-bold my-0">{dropoutStudents.data.length}</h1>
+        </div>
         <div className="mt-2">
-        <Table
-          colDefs={StudentDropOutTableConfig({ DropdownComponent })}
-          rowData={dropoutList.data}
-        />
+          <Table
+            colDefs={StudentTableConfig({ DropdownComponent })}
+            rowData={dropoutStudents.data}
+            rowHeight={55}
+          />
         </div>
       </main>
     </>
@@ -47,29 +54,80 @@ function StudentDropOuts() {
 export default StudentDropOuts;
 
 export function DropdownComponent(props) {
-  const { id } = props.data;
-  const actions = [
-    {
-      actionTitle: "Reinstate Student",
-      modalContent: ReinistateStudent
-    },
-    {
-      actionTitle: "Delete Student",
-      modalContent: DeleteStudentDropout
-    },
-    {
-      actionTitle: "Details",
-      modalContent:DropoutStudentDetails
+    const rowData = props.data;
+    const [showModal, setShowModal] = useState(false);
+    const [modalContent, setModalContent] = useState(null);
+    const [modalSize, setModalSize] = useState("md");
+  
+    const handleCloseModal = () => {
+      setShowModal(false);
+      setModalContent(null);
+    };
+  
+    const handleShowModal = (ContentComponent, size = "md") => {
+      setModalContent(
+        React.createElement(ContentComponent, {
+          rowData,
+          handleClose: handleCloseModal,
+        })
+      );
+      setModalSize(size);
+      setShowModal(true);
+    };
 
-    }
-  ];
   return (
     <>
-       <ActionButtonDropdown actions={actions} row_id={id} 
-       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      <ActionButtonDropdown
+        buttonContent={"Edit Actions"}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
       >
-      <span>Edit Actions</span>
+       <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(ReinistateStudent)}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Reinstate Student</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteStudent)}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Student</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(StudentDetails)}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Student Details</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
       </ActionButtonDropdown>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

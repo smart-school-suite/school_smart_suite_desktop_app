@@ -4,7 +4,7 @@ function DeactivateBatch({ handleClose, rowData }) {
   const { mutate: deactivateBatch, isPending } =
     useDeactivateBatch(handleClose);
   const handleDeactivateBatch = () => {
-    deactivateBatch(rowData);
+    deactivateBatch(rowData.id);
   };
   return (
     <>

@@ -4,6 +4,6 @@ import { getAllStudents } from '../../services/Student';
 export const useGetStudents = () => {
   return useQuery({
     queryKey: ['students'],
-    queryFn: getAllStudents,
+    queryFn: () => getAllStudents(),
   });
 };
