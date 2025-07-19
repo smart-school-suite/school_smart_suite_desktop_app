@@ -1,59 +1,32 @@
-import Navbar from "../../components/Navbar";
-import { RegistrationFeesNavBarCongfig } from "../../ComponentConfig/navBarConfig";
-import { useFetchRegistrationFeesQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
-import CleanArrayData, { renameKeys } from "../../utils/functions";
 import { registrationFeeTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import Table from "../../components/Tables";
-import UpdateRegistrationFee from "../../ModalContent/RegistrationFees/UpdateRegistrationFees";
+import Table from "../../components/Tables/Tables";
 import RegistrationFeeDetail from "../../ModalContent/RegistrationFees/RegistrationFeeDetails";
-import DeleteAdditionalFees from "../../ModalContent/AdditionalFees/DeleteAdditionalFees";
+import DeleteRegistrationFee from "../../ModalContent/RegistrationFees/DeleteRegistrationFees";
 import PayRegistrationFees from "../../ModalContent/RegistrationFees/PayRegistrationFees";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import { useGetRegistrationFees } from "../../hooks/feePayment/useGetRegistrationFees";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import { DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
+import React from "react";
+import { useState } from "react";
+import CustomModal from "../../components/Modals/Modal";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 function RegistrationFees() {
-  const {
-    data: registrationFees,
-    error,
-    isLoading,
-  } = useFetchRegistrationFeesQuery();
-  const filter_array_keys = [
-    "id",
-    "student.name",
-    "amount",
-    "status",
-    "specialty.specialty_name",
-    "level.level",
-    "level.name",
-  ];
-  const renameMapping = {
-    "student.name": "student_name",
-    "amount": "amount",
-    "status": "status",
-    "specialty.specialty_name": "specialty_name",
-    "level.name": "level_name",
-    "level.level": "level_number",
-  };
-  if (isLoading) {
-    return <Pageloaderspinner />;
+  const { data: registrationFees, isFetching } = useGetRegistrationFees();
+  if (isFetching) {
+    return <DataTableNavLoader />;
   }
 
   return (
     <>
-      <Navbar options={RegistrationFeesNavBarCongfig} />
       <div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number of Resits</p>
-            <h1 className="fw-bold my-0">{registrationFees.data.length}</h1>
-          </div>
+        <div>
+          <span className="font-size-sm">Registration Fees</span>
         </div>
         <div>
           <Table
             colDefs={registrationFeeTableConfig({ DropdownComponent })}
-            rowData={renameKeys(
-              CleanArrayData(registrationFees.data, filter_array_keys),
-              renameMapping
-            )}
+            rowData={registrationFees.data}
           />
         </div>
       </div>
@@ -63,31 +36,82 @@ function RegistrationFees() {
 export default RegistrationFees;
 
 export function DropdownComponent(props) {
-  const { id } = props.data;
-  const actions = [
-    {
-      actionTitle: "Make Payment",
-      modalContent: PayRegistrationFees,
-    },
-    {
-      actionTitle: "Details",
-      modalContent: RegistrationFeeDetail,
-    },
-    {
-      actionTitle:"Update Fee",
-      modalContent:UpdateRegistrationFee
-    },
-    {
-      actionTitle:"Delete Fee",
-      modalContent:DeleteAdditionalFees
-    }
-  ];
+  const rowData = props.data;
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("md");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "md") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        rowData,
+        handleClose: handleCloseModal,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
+
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} 
-      style={'tableActionButton primary-background text-white font-size-sm px-2'} >
-        <span>Edit Fee</span>
-        </ActionButtonDropdown>
+      <ActionButtonDropdown
+        buttonContent={"Edit Actions"}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
+      >
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(PayRegistrationFees, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Pay Fees</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(RegistrationFeeDetail, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span> Fee Details</span>
+              <DetailsIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteRegistrationFee, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Fee</span>
+              <DeleteIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+      </ActionButtonDropdown>
+        <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

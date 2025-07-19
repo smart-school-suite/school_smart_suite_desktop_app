@@ -3,7 +3,7 @@ import {
   useFetchExamAssociateTimetableCoursesQuery,
   useFetchExamDetailsQuery,
 } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners";
+import Pageloaderspinner, {SingleSpinner} from "../../components/Spinners/Spinners";
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { convertTo24HourFormat } from "../../utils/functions";
@@ -16,7 +16,7 @@ import {
   setData,
   updateField,
 } from "../../Slices/Asynslices/ExamTimetableSlice";
-import TimeInput from "../../components/TimeInput";
+import TimeInput from "../../components/FormComponents/TimeInput";
 import { calculateExamDuration } from "../../utils/functions";
 function CreateTimetable({ handleClose, row_id: examId }) {
   const dispatch = useDispatch();

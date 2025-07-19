@@ -1,62 +1,54 @@
-import Navbar from "../../components/Navbar";
-import Table from "../../components/Tables";
+import Table from "../../components/Tables/Tables";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
-import { ExamTimeTableNavbarOptions } from "../../ComponentConfig/navBarConfig";
-import { useFetchSchoolSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
-import CleanArrayData, { renameKeys } from "../../utils/functions";
 import { SpecialtyTimetableTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import CreateTimetable from "../../ModalContent/SpecialtyTimetable/CreateTimetable";
 import ViewTimetable from "../../ModalContent/SpecialtyTimetable/ViewTimetable";
-
+import DeleteTimetable from "../../ModalContent/SpecialtyTimetable/DeleteTimetable";
+import UpdateTimetable from "../../ModalContent/SpecialtyTimetable/UpdateTimetable";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { useGetActiveSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
+import { Icon } from "@iconify/react";
+import React from "react";
+import { useState } from "react";
+import CustomModal from "../../components/Modals/Modal";
 function SpecialtyTimetable() {
- const { data, isLoading, error } = useFetchSchoolSemestersQuery();
-  const filter_array_keys = [
-    "id",
-    "start_date",
-    "end_date",
-    "school_year_start",
-    "specailty.specialty_name",
-    "semester.name",
-    "specailty.id",
-    "status",
-    "student_batch.id",
-    "student_batch.name",
-    "timetable_published",
-  ];
-  const renameMapping = {
-    "id": "id",
-    "start_date": "start_date",
-    "school_year_start": "school_year",
-    "end_date": "end_date",
-    "specailty.specialty_name": "specialty_name",
-    "semester.name": "semester_name",
-    "student_batch.name":"batch_title",
-    "specailty.id":"specialty_id",
-    "student_batch.id":"batch_id"
-  };
-
-  if (isLoading) {
+  const { data:schoolSemesters, isFetching } = useGetActiveSchoolSemesters();
+  if (isFetching) {
     return <Pageloaderspinner />;
   }
   return (
     <>
-      <Navbar options={ExamTimeTableNavbarOptions} />
+    <div className="my-2">
+            <div className="d-flex align-items-center gap-2">
+              <div
+                className="d-flex justify-content-center align-items-center primary-background-100"
+                style={{
+                  width: "2.5rem",
+                  height: "2.5rem",
+                  borderRadius: "0.5rem",
+                }}
+              >
+                <Icon
+                  icon="grommet-icons:user-admin"
+                  className="font-size-md primary-color"
+                />
+              </div>
+              <span className="my-0 fw-semibold">Manage Specialty Timetable</span>
+            </div>
+          </div>
       <div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
           <div className="d-block">
             <p className="font-size-xs my-0">Number of semesters</p>
-            <h1 className="fw-bold my-0">{data.data.length}</h1>
+            <h1 className="fw-bold my-0">{schoolSemesters.data.length}</h1>
           </div>
         </div>
         <Table
           colDefs={SpecialtyTimetableTableConfig({
             ActionButtonGroup
           })}
-          rowData={renameKeys(
-            CleanArrayData(data.data, filter_array_keys),
-            renameMapping
-          )}
+          rowData={schoolSemesters.data}
           rowHeight={55}
         />
       </div>
@@ -67,25 +59,93 @@ export default SpecialtyTimetable;
 
 
 function ActionButtonGroup(props) {
-  const { id, specialty_id, batch_id } = props.data;
-  const actions = [
-    {
-
-      actionTitle: "Create TimeTable",
-      modalContent: CreateTimetable,
-    },
-    {
-      actionTitle: "View TimeTable",
-      modalContent: ViewTimetable,
-    }
-  ];
+   const rowData = props.data;
+ 
+   const [showModal, setShowModal] = useState(false);
+   const [modalContent, setModalContent] = useState(null);
+   const [modalSize, setModalSize] = useState("md");
+ 
+   const handleCloseModal = () => {
+     setShowModal(false);
+     setModalContent(null);
+   };
+ 
+   const handleShowModal = (ContentComponent, size = "md") => {
+     setModalContent(
+       React.createElement(ContentComponent, {
+         rowData,
+         handleClose: handleCloseModal,
+       })
+     );
+     setModalSize(size);
+     setShowModal(true);
+   };
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} specialtyId={specialty_id} batchId={batch_id}
-       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      <ActionButtonDropdown 
+        buttonContent={"Edit Actions"}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
       >
-         <span>Edit Actions</span>
+       <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(CreateTimetable, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Create Timetable</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(UpdateTimetable, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Update Timetable</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteTimetable, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Timetable</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(ViewTimetable, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>View Timetable</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
       </ActionButtonDropdown>
+
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

@@ -1,59 +1,36 @@
 import { useState } from "react";
-import { useFetchEducationLevelsQuery, useFetchStudentBatchQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchExamTypesQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useAddExamMutation } from "../../Slices/Asynslices/postSlice";
 import { WeigtedMarkInput } from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useCreateExam } from "../../hooks/exam/useCreateExam";
 import { Icon } from "@iconify/react";
+import { useGetExamTypes } from "../ExamType/useGetExamType";
+import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
+import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 function CreateExam({ handleClose }) {
-  const [isValid, setIsValid] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
+  const { mutate:createExam, isPending } = useCreateExam(handleClose)
   const [formData, setFormData] = useState({
     start_date: "",
     end_date: "",
     exam_type_id: "",
-    level_id: "",
     weighted_mark: "",
-    semester_id: "",
     specialty_id: "",
     school_year: "",
     student_batch_id:""
   });
 
-  const { data: level, isLoading: isEducationLevelLoading } =
-    useFetchEducationLevelsQuery();
-  const { data: semesters, isLoading: isSemesterLoading } =
-    useFetchSemestersQuery();
   const { data: examType, isLoading: isExamTypeLoading } =
-    useFetchExamTypesQuery();
+    useGetExamTypes();
   const { data: specialty, isLoading: isSpecailtyLoading } =
-    useFetchSpecialtiesQuery();
-  const { data: studentBatches, isLoading: isStudentBatchLoading } = useFetchStudentBatchQuery();
-  const [addExam] = useAddExamMutation();
-  const handleEducationLevelSelect = (selectedValues) => {
-    setFormData((prevalue) => ({
-      ...prevalue,
-      level_id: selectedValues.id,
-    }));
-  };
-
+    useGetSpecialties();
+  const [isValid, setIsValid] = useState();
+  const { data: studentBatches, isLoading: isStudentBatchLoading } = useGetBatches();
+ 
   const handleExamTypeSelect = (selectedValues) => {
     setFormData((prevalue) => ({
       ...prevalue,
       exam_type_id: selectedValues.id,
-    }));
-  };
-  const handleSemesterSelect = (selectedValues) => {
-    setFormData((prevalue) => ({
-      ...prevalue,
-      semester_id: selectedValues.id,
     }));
   };
 
@@ -83,30 +60,9 @@ function CreateExam({ handleClose }) {
     setIsValid(isInputValid);
   };
 
-  const handleSubmit = async () => {
-    if (!isValid) return;
-    setIsCreating(true);
-    try {
-      await addExam(formData).unwrap();
-      setIsCreating(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Creation Successfull ✅"}
-          description={"The Exam has been created successfully "}
-        />
-      );
-    } catch (error) {
-      setIsCreating(false);
-      toast.custom(
-        <ToastDanger
-          title={"Something went wrong ❌"}
-          description={
-            " ❌ Something went wrong! The Exam creation failed due to an error. Please try again later."
-          }
-        />
-      );
-    }
+  const handleSubmit = () => {
+    createExam(formData)
+    
   };
   return (
     <>
@@ -163,44 +119,6 @@ function CreateExam({ handleClose }) {
         <SchoolYearSelector onSelect={handleSchoolYearSelect} />
       </div>
       <div className="my-1">
-        <span>Semester</span>
-        {isSemesterLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
-          <CustomDropdown
-            data={semesters.data}
-            displayKey={["name"]}
-            valueKey={["id"]}
-            filter_array_keys={["id", "name"]}
-            renameMapping={{ id: "id", name: "name" }}
-            isLoading={isSemesterLoading}
-            direction="up"
-            onSelect={handleSemesterSelect}
-          />
-        )}
-      </div>
-      <div className="my-1">
-        <span>Level</span>
-        {isEducationLevelLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
-          <CustomDropdown
-            data={level.data}
-            displayKey={["name"]}
-            valueKey={["id"]}
-            filter_array_keys={["id", "name"]}
-            renameMapping={{ id: "id", name: "name" }}
-            isLoading={isEducationLevelLoading}
-            direction="up"
-            onSelect={handleEducationLevelSelect}
-          />
-        )}
-      </div>
-      <div className="my-1">
         <span>Exam Type</span>
         {isExamTypeLoading ? (
           <select name="" className="form-select">
@@ -228,10 +146,10 @@ function CreateExam({ handleClose }) {
         ) : (
           <CustomDropdown
             data={specialty.data}
-            displayKey={["specialty_name"]}
+            displayKey={["specialty_name", "level"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "specialty_name"]}
-            renameMapping={{ id: "id", specialty_name: "specialty_name" }}
+            filter_array_keys={["id", "specialty_name", "level_name"]}
+            renameMapping={{ id: "id", specialty_name: "specialty_name", level_name:"level" }}
             isLoading={isSpecailtyLoading}
             direction="up"
             onSelect={handleSpecialtySelect}
@@ -260,19 +178,13 @@ function CreateExam({ handleClose }) {
       <div >
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
           <button
-            className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
-            onClick={handleClose}
-          >
-            Cancel
-          </button>
-          <button
             disabled={!isValid}
-            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
+            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
             onClick={() => {
               handleSubmit();
             }}
           >
-            {isCreating ? <SingleSpinner /> : "Create Exam"}
+            {isPending ? <SingleSpinner /> : "Create Exam"}
           </button>
         </div>
       </div>

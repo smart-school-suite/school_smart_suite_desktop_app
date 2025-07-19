@@ -1,187 +1,162 @@
-import { useUpdateCourseMutation } from "../../Slices/Asynslices/updateSlice";
 import {
-  useFetchCourseDetailsQuery,
-  useFetchEducationLevelsQuery,
-  useFetchSemestersQuery,
-  useFetchSpecialtiesQuery,
-} from "../../Slices/Asynslices/fetchSlice";
+  CourseCodeInput,
+  CourseTitleInput,
+  CourseCreditInput,
+} from "../../components/FormComponents/InputComponents";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { useGetSemester } from "../../hooks/semester/useGetSemesters";
+import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import { Icon } from "@iconify/react";
-function UpdateCourse({ handleClose, row_id: courseId }) {
+import { useUpdateCourse } from "../../hooks/course/useUpdateCourse";
+import { useGetCourseDetails } from "../../hooks/course/useGetCourseDetails";
+function UpdateCourse({ handleClose, rowData }) {
+  const [isValid, setIsValid] = useState(false);
+  const courseId = rowData.id;
   const [formData, setFormData] = useState({
     course_code: "",
     course_title: "",
     credit: "",
     specialty_id: "",
-    department_id: "",
-    level_id: "",
     semester_id: "",
   });
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [updateCourse] = useUpdateCourseMutation();
+  const { mutate:updateCourse, isPending } = useUpdateCourse(handleClose, courseId)
+  const { data:courseDetails, isFetching:courseDetailsLoading } = useGetCourseDetails(courseId);
+  const { data:specialty, isFetching:isSpecailtyLoading  } = useGetSpecialties();
+  const { data: semesters, isLoading: isSemesterLoading } = useGetSemester();
+
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-  const { data: courseDetails, isLoading: isCourseDetailsFetching } =
-    useFetchCourseDetailsQuery({
-      course_id: courseId,
-    });
-  const { data: specialty, isLoading: isSpecialtyLoading } =
-    useFetchSpecialtiesQuery();
-  const { data: semester, isLoading: isSemesterLoading } =
-    useFetchSemestersQuery();
-  const { data: level, isLoading: isLevelLoading } =
-    useFetchEducationLevelsQuery();
-  const handleUpdateCourse = async () => {
-    setIsUpdating(true);
-    try {
-      await updateCourse({
-        course_id: courseId,
-        updatedData: formData,
-      }).unwrap();
-      setIsUpdating(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Update Successfull ✅"}
-          description={"Course was updated successfully"}
-        />
-      );
-    } catch (e) {
-      setIsUpdating(false);
-      toast.custom(
-        <ToastDanger
-          title="Update Failed ❌"
-          description="❌ Something went wrong! The Course update failed due to an error. Please try again later."
-        />
-      );
-    }
+
+  const handleValidation = (isInputValid) => {
+    setIsValid(isInputValid);
   };
-  if (
-    isCourseDetailsFetching ||
-    isSpecialtyLoading ||
-    isSemesterLoading ||
-    isLevelLoading
-  ) {
-    return <Pageloaderspinner />;
+
+  const handleSemesterSelect = (selectedValues) => {
+    setFormData((prevalue) => ({
+      ...prevalue,
+      semester_id: selectedValues.id,
+    }));
+  };
+
+  const handleSpecialtySelect = (selectedValues) => {
+    setFormData((prevalue) => ({
+      ...prevalue,
+      specialty_id: selectedValues.id,
+    }));
+  };
+  const handleSubmit = async () => {
+    if (!isValid) return;
+    updateCourse({ courseId, updateData:formData})
+    
+  };
+  if(courseDetailsLoading){
+    return <Pageloaderspinner />
   }
   return (
     <>
-      <div className="card w-100 border-none">
-      <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-          <h5 className="m-0">Update Course</h5>
-          <span
-            className="m-0"
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
+        <div className="w-100">
+          <div className="d-flex flex-row align-items-center">
+            <div className="block">
+              <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+                <h5 className="m-0">Update Course</h5>
+                <span
+                  className="m-0"
+                  onClick={() => {
+                    handleClose();
+                  }}
+                >
+                  <Icon icon="charm:cross" width="22" height="22" />
+                </span>
+              </div>
+              <span className="gainsboro-color font-size-sm">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
+                nesciunt sunt
+              </span>
+            </div>
+          </div>
+          <div className="my-1">
+            <CourseTitleInput
+              onValidationChange={handleValidation}
+              value={formData.course_title}
+              onChange={(value) => handleInputChange("course_title", value)}
+              placeholder={courseDetails.data.course_title}
+            />
+          </div>
+          <div className="my-1">
+            <CourseCreditInput
+              onValidationChange={handleValidation}
+              value={formData.course_code}
+              onChange={(value) => handleInputChange("credit", value)}
+            />
+          </div>
+          <div className="my-1">
+            <CourseCodeInput
+              onValidationChange={handleValidation}
+              value={formData.course_code}
+              onChange={(value) => handleInputChange("course_code", value)}
+            />
+          </div>
+          <div className="my-1">
+            <span>Semester</span>
+            {isSemesterLoading ? (
+              <select name="" className="form-select">
+                <option value="">loading</option>
+              </select>
+            ) : (
+              <CustomDropdown
+                data={semesters.data}
+                displayKey={["name"]}
+                valueKey={["id"]}
+                filter_array_keys={["id", "name"]}
+                renameMapping={{ id: "id", name: "name" }}
+                isLoading={isSemesterLoading}
+                direction="up"
+                onSelect={handleSemesterSelect}
+              />
+            )}
+          </div>
+          <div className="my-1">
+            <span>Specialty</span>
+            {isSemesterLoading ? (
+              <select name="" className="form-select">
+                <option value="">loading</option>
+              </select>
+            ) : (
+              <CustomDropdown
+                data={specialty.data}
+                displayKey={["specialty_name", "level_name"]}
+                valueKey={["id"]}
+                filter_array_keys={["id", "specialty_name", "level_name"]}
+                renameMapping={{ id: "id", specialty_name: "specialty_name", leve_name:"level_name" }}
+                isLoading={isSpecailtyLoading}
+                direction="up"
+                onSelect={handleSpecialtySelect}
+              />
+            )}
+          </div>
+          <div className="mt-4">
+            <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
+              <button
+                className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
+                onClick={handleClose}
+              >
+                Cancel
+              </button>
+              <button
+                className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
+                disabled={!isValid}
+                onClick={() => {
+                  handleSubmit();
+                }}
+              >
+                {isPending ? <SingleSpinner /> : "Update Course"}
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="my-1">
-          <label htmlFor="courseTitle">Course Title</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder={courseDetails.data.course_title}
-            name="course_title"
-            value={formData.course_title}
-            onChange={(e) => handleInputChange("course_title", e.target.value)}
-          />
-        </div>
-        <div className="my-1">
-          <label htmlFor="courseCode">Course Code</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder={courseDetails.data.course_code}
-            name="course_code"
-            value={formData.course_code}
-            onChange={(e) => handleInputChange("course_code", e.target.value)}
-          />
-        </div>
-        <div className="my-1">
-          <label htmlFor="courseTitle">Course Credit</label>
-          <input
-            type="number"
-            className="form-control"
-            placeholder={courseDetails.data.credit}
-            name="credit"
-            value={formData.credit}
-            onChange={(e) => handleInputChange("credit", e.target.value)}
-          />
-        </div>
-        <div className="my-1">
-          <label htmlFor="">Specialty</label>
-          <select
-            name="specialty_id"
-            className="form-select"
-            onChange={(e) => handleInputChange("specialty_id", e.target.value)}
-            value={formData.specialty_id}
-          >
-            <option>Open to select</option>
-            {specialty.data.map((items) => {
-              return (
-                <option value={items.id}>
-                  {items.specialty_name} {items.level_name}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-        <div className="my-1">
-          <label htmlFor="">Semester</label>
-          <select
-            name="semester_id"
-            value={formData.semester_id}
-            onChange={(e) => handleInputChange("semester_id", e.target.value)}
-            className="form-select"
-          >
-            {semester.data.map((items) => {
-              return <option value={items.id}>{items.name}</option>;
-            })}
-          </select>
-        </div>
-        <div className="my-1">
-          <label htmlFor="">Level</label>
-          <select
-            name="level_id"
-            onChange={(e) => handleInputChange("level_id", e.target.value)}
-            value={formData.level_id}
-            className="form-select"
-          >
-            {level.data.map((items) => {
-              return <option value={items.id}>{items.name}</option>;
-            })}
-          </select>
-        </div>
-      </div>
-      <div className="w-100 mt-2 d-flex flex-row gap-2">
-        <button
-          className="border-none px-3 py-2 text-primary w-50 rounded-3 font-size-sm"
-          onClick={() => {
-            handleClose();
-          }}
-        >
-          Cancel
-        </button>
-        <button 
-          className="border-none px-3 py-2 rounded-3 font-size-sm w-50 primary-background text-white"
-           disabled={isUpdating}
-           onClick={() => {
-             handleUpdateCourse();
-           }}
-          >
-          {
-             isUpdating ? <SingleSpinner /> : "Update Course"
-          }
-        </button>
-      </div>
     </>
   );
 }

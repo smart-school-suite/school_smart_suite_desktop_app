@@ -18,6 +18,7 @@ function ConfigureGrades({ handleClose, rowData }) {
         maximum_score: 0.0,
         determinant: "",
         grade_status: "",
+        resit_status:"",
         grades_category_id:gradesCategoryId,
         grade_points: 0.0,
       }));
@@ -48,6 +49,7 @@ function ConfigureGrades({ handleClose, rowData }) {
           grade_points: parseFloat(grade.grade_points),
           determinant: grade.determinant,
           exam_id: grade.exam_id,
+          resit_status: grade.resit_status,
           grade_status: grade.grade_status,
           grades_category_id:gradesCategoryId,
           max_score:maxScore
@@ -103,6 +105,7 @@ function ConfigureGrades({ handleClose, rowData }) {
               <tr>
                 <th className="text-center">Letter Grade</th>
                 <th className="text-center">Status</th>
+                <th className="text-center">Resit Status</th>
                 <th className="text-center">Determinant</th>
                 <th className="text-center">Grade Points</th>
                 <th className="text-center">Min Score</th>
@@ -120,7 +123,7 @@ function ConfigureGrades({ handleClose, rowData }) {
                       {item.letter_grade}
                     </div>
                   </td>
-                  <td style={{ width: "18%" }}>
+                  <td style={{ width: "15%" }}>
                     <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
                     <div className="d-flex flex-column w-100">
                         <select
@@ -134,14 +137,35 @@ function ConfigureGrades({ handleClose, rowData }) {
                       }
                     >
                       <option selected>Passed</option>
-                      <option value="pass">Pass</option>
-                      <option value="fail">Failed</option>
+                      <option value="passed">Pass</option>
+                      <option value="failed">Failed</option>
                     </select>
                     <span className="font-size-sm m-0" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
                     </div>
                     </div>
                   </td>
-                  <td style={{ width: "18%" }}>
+                  <td style={{ width: "15%" }}>
+                    <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
+                    <div className="d-flex flex-column w-100">
+                        <select
+                      className="form-select form-select-sm w-100"
+                      name="resit_status"
+                      value={
+                        formData[index] ? formData[index].resit_status : ""
+                      }
+                      onChange={(e) =>
+                        handleInputChange(index, "resit_status", e.target.value)
+                      }
+                    >
+                      <option selected>Select Resit Status</option>
+                      <option value="high_resit_potential">High Resit Potential</option>
+                      <option value="low_resit_potential">Low Resit Potential</option>
+                    </select>
+                    <span className="font-size-sm m-0" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
+                    </div>
+                    </div>
+                  </td>
+                  <td style={{ width: "15%" }}>
                     <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
                       <div className="d-flex flex-column w-100">
                         <select
@@ -171,7 +195,7 @@ function ConfigureGrades({ handleClose, rowData }) {
                       </div>
                     </div>
                   </td>
-                  <td style={{ width: "18%" }}>
+                  <td style={{ width: "15%" }}>
                    <div className="h-100 w-100 d-flex flex-row align-item-center align-items-center justify-content-center">
                      <div className="d-flex flex-column">
                        <input
@@ -191,7 +215,7 @@ function ConfigureGrades({ handleClose, rowData }) {
                      </div>
                    </div>
                   </td>
-                  <td style={{ width: "18%" }}>
+                  <td style={{ width: "15%" }}>
                     <div className="d-flex flex-row align-items-center justify-content-center h-100 w-100">
                       <div className="d-flex flex-column">
                          <input
@@ -215,7 +239,7 @@ function ConfigureGrades({ handleClose, rowData }) {
                       </div>
                     </div>
                   </td>
-                  <td style={{ width: "18%" }}>
+                  <td style={{ width: "15%" }}>
                    <div className="h-100 w-100 d-flex flex-row align-items-center justify-content-center">
                      <div className="d-flex flex-column">
                       <input

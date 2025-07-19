@@ -4,6 +4,6 @@ import { getRegistrationFeeTransactions } from "../../services/feePayment";
 export const useGetRegistrationFeeTransations = () => {
     return useQuery({
          queryKey:["registrationFeeTransactions"],
-         queryFn:getRegistrationFeeTransactions
+         queryFn:() => getRegistrationFeeTransactions()
     })
 }

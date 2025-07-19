@@ -1,21 +1,23 @@
 import Pageloaderspinner from "../../components/Spinners/Spinners";
-import { useFetchSemesterDetailQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchStudentBatchQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useUpdateSchoolSemesterMutation } from "../../Slices/Asynslices/updateSlice";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-function UpdateSemester({ handleClose, row_id:schoolSemesterId}) {
+import { useUpdateSchoolSemester } from "../../hooks/schoolSemester/useUpdateSchoolSemester";
+import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
+import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
+import { useGetSemester } from "../../hooks/semester/useGetSemesters";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+function UpdateSemester({ handleClose, rowData }) {
+  const semesterId = rowData.id;
   const { data: specailties, isLoading: isFetchingSpecialties } =
-    useFetchSpecialtiesQuery();
+    useGetSpecialties();
   const { data: studentBatches, isLoading: isFetchingStudentBatches } =
-    useFetchStudentBatchQuery();
+    useGetBatches();
   const { data: semesters, isLoading: isFetchingSemesters } =
-    useFetchSemestersQuery();
+    useGetSemester();
+  const { mutate:updateSchoolSemester, isPending } = useUpdateSchoolSemester(handleClose, semesterId);
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
   const [formData, setFormData] = useState({
     start_date: "",
     end_date: "",
@@ -24,43 +26,13 @@ function UpdateSemester({ handleClose, row_id:schoolSemesterId}) {
     specialty_id: "",
     student_batch_id: "",
   });
-  const [isUpdating, setIsUpdating] = useState(false);
-  const { data: semesterDetails, isLoading } = useFetchSemesterDetailQuery({
-    schoolSemesterId: schoolSemesterId,
-  });
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const [updateSchoolSemester] = useUpdateSchoolSemesterMutation();
-  const handleUpdateSchoolSemester = async () => {
-    setIsUpdating(true);
-    try {
-      await updateSchoolSemester({
-        schoolSemesterId: schoolSemesterId,
-        schoolSemesterData: formData,
-      }).unwrap();
-      setIsUpdating(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title="Update Successfull ✅"
-          description="The School Semester has been updated successfully"
-        />
-      );
-    } catch (e) {
-      toast.custom(
-        <ToastDanger
-          title="Update Failed ❌"
-          description="❌ Something went wrong! The school Semester update failed due to an error. Please try again later."
-        />
-      );
-    }
+  const handleUpdateSchoolSemester = () => {
+     updateSchoolSemester({schoolSemesterId:semesterId,  updateData:formData})
   };
   if (
-    isLoading ||
+    isFetchingSemesters ||
     isFetchingSpecialties ||
-    isFetchingStudentBatches ||
-    isFetchingSemesters
+    isFetchingStudentBatches
   ) {
     return <Pageloaderspinner />;
   }
@@ -68,7 +40,7 @@ function UpdateSemester({ handleClose, row_id:schoolSemesterId}) {
     <>
       <div>
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-          <h5 className="m-0">Create Semester</h5>
+          <h5 className="m-0">Update Semester</h5>
           <span
             className="m-0"
             onClick={() => {
@@ -174,12 +146,12 @@ function UpdateSemester({ handleClose, row_id:schoolSemesterId}) {
         </button>
         <button
           className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
-          disabled={isUpdating}
+          disabled={isPending}
           onClick={() => {
             handleUpdateSchoolSemester();
           }}
         >
-          {isUpdating ? <SingleSpinner /> : "Create Semester"}
+          {isPending ? <SingleSpinner /> : "Update Semester"}
         </button>
       </div>
     </>

@@ -1,131 +1,85 @@
-import Pageloaderspinner, {SingleSpinner } from "../../components/Spinners/Spinners";
-import { useFetchSchoolGradesConfigQuery } from "../../Slices/Asynslices/fetchSlice";
+import {
+  SingleSpinner,
+} from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
+import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
+import { useCreateGradesByOtherGrades } from "../../hooks/examGrade/useCreateGradesByOtherGrades";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useState } from "react";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { useConfigureByOtherGradeMutation } from "../../Slices/Asynslices/postSlice";
-function ConfigureByOtherGrades({ handleClose, row_id: configId }) {
-    const [gradeConfig, setGradeConfig] = useState(null);
-    const [isCreating, setIsCreating] = useState(false);
-    const [configureByOtherGrade] = useConfigureByOtherGradeMutation();
-  const { data: schoolGradesConfig, isLoading: SchoolGradesConfigLoading } = useFetchSchoolGradesConfigQuery();
-  const handleSelectGradeConfig = (gradeConfigId) => {
-    setGradeConfig((prevId) =>
-      prevId === gradeConfigId ? null : gradeConfigId
-    );
+function ConfigureByOtherGrades({ handleClose, rowData }) {
+  const targetConfig = rowData.id;
+  const [formData, setFormData] = useState({
+    targetConfigId: "",
+  });
+  const { data: schoolGrades, isFetching } = useGetSchoolGradeCategories();
+  const { mutate: createGrade, isPending } =
+    useCreateGradesByOtherGrades(handleClose);
+  const handleSaveChanges = () => {
+    createGrade({ configId: formData.targetConfigId, targetConfigId:targetConfig  });
   };
-  const handleSaveChanges = async () => {
-     if (gradeConfig === null) {
-          toast.custom(
-            <ToastWarning
-              title={"No Grade Configured Selected ❌"}
-              description={"⚠️ Please select a configuration."}
-            />
-          );
-          return;
-        }
-        setIsCreating(true);
-      try{
-        await configureByOtherGrade({ configId:gradeConfig, targetConfigId:configId }).unwrap();
-        setIsCreating(false);
-        handleClose();
-        toast.custom(
-        <ToastSuccess
-          title={"Added Successfully"}
-          description={"Exam Grades Added Successfully"}
-        />
-      );
-      }
-      catch(e){
-        setIsCreating(false)
-        toast.custom(
-            <ToastDanger
-              title={"Failed to add exam grading ❌"}
-              description={
-                "❌ Something went wrong! Add Exam Grading failed due to an error. Please try again later."
-              }
-            />
-          );
-      }
-  }
-  if (SchoolGradesConfigLoading) {
-    return <Pageloaderspinner />;
-  }
+  const handleSelect = (selectedValues) => {
+    setFormData((prevalue) => ({
+      ...prevalue,
+      targetConfigId: selectedValues.id,
+    }));
+  };
   return (
     <>
-      <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-        <h5 className="m-0">Add Exam Grading</h5>
-        <span className="m-0" onClick={handleClose}>
-          <Icon icon="charm:cross" width="22" height="22" />
-        </span>
-      </div>
-      <span className="font-size-sm gainsboro-color">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum
-        sint reprehenderit tempora. Aliquid
-      </span>
-      <div className="modalContainer">
-        {schoolGradesConfig.data.filter((items) => items.isgrades_configured !== 0).map((item) => {
-          const isChecked = gradeConfig === item.id;
-          return (
-            <div
-              className="d-flex flex-row align-items-center gap-4 py-1"
-              key={item.id}
-            >
-              <div className="w-100 border-bottom">
-                <div className="d-block">
-                  {item.isgrades_configured === 0 ? (
-                    <span
-                      className=" rounded-1 font-size-sm fw-light"
-                      style={{
-                        background: "#ffe3e1",
-                        color: "#e22d20",
-                        width: "auto",
-                        maxWidth: "5rem",
-                        padding: "0.2rem",
-                      }}
-                    >
-                      <span>Grades UnConfigured</span>
-                    </span>
-                  ) : item.isgrades_configured === 1 ? (
-                    <span
-                      className=" rounded-1 font-size-sm fw-light mb-1"
-                      style={{
-                        background: "#e3f5e3",
-                        color: "#2d6830",
-                        width: "auto",
-                        maxWidth: "5rem",
-                        padding: "0.2rem",
-                      }}
-                    >
-                      <span>Grades Configured</span>
-                    </span>
-                  ) : null}
-                  <p className="my-0 fw-light">{item.grade_title}</p>
-                  <span className="fw-semibold">
-                    {item.max_score === null ? 0.0 : item.max_score}
-                  </span>
-                </div>
-              </div>
-              <input
-                type="checkbox"
-                className="form-check-input"
-                checked={isChecked}
-                onChange={() => handleSelectGradeConfig(item.id)}
-              />
+      <div className="w-100">
+        <div className="d-flex flex-row align-items-center">
+          <div className="block w-100">
+            <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+              <h5 className="m-0">Configure Exam Grades</h5>
+              <span
+                className="m-0"
+                onClick={() => {
+                  handleClose();
+                }}
+              >
+                <Icon icon="charm:cross" width="22" height="22" />
+              </span>
             </div>
-          );
-        })}
+            <span className="gainsboro-color font-size-sm">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem
+              harum nesciunt sunt
+            </span>
+          </div>
+        </div>
+        <div className="my-1">
+          <span>Grade Category</span>
+          {isFetching ? (
+            <select name="" className="form-select">
+              <option value="">loading</option>
+            </select>
+          ) : (
+            <CustomDropdown
+              data={schoolGrades.data}
+              displayKey={["grade_title", "max_score"]}
+              valueKey={["id"]}
+              filter_array_keys={["id", "grade_title", "max_score"]}
+              renameMapping={{
+                id: "id",
+                grade_title: "grade_title",
+                max_score: "max_score",
+              }}
+              isLoading={isFetching}
+              direction="up"
+              onSelect={handleSelect}
+            />
+          )}
+        </div>
+        <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
+          <button
+            disabled={isPending}
+            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
+            onClick={() => {
+              handleSaveChanges();
+            }}
+          >
+            {isPending ? <SingleSpinner /> : "Configure Grade"}
+          </button>
+        </div>
       </div>
-      <button
-        className=" w-100 p-2 font-size-sm px-3 primary-background border-none rounded-3 text-white"
-        onClick={handleSaveChanges}
-      >
-        {
-            isCreating ? <SingleSpinner /> : "Save Changes"
-        }
-      </button>
     </>
   );
 }

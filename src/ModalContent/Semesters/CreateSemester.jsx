@@ -1,21 +1,18 @@
 import { Icon } from "@iconify/react";
-import { useFetchSpecialtiesQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchStudentBatchQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useFetchSemestersQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useCreateSchoolSemesterMutation } from "../../Slices/Asynslices/postSlice";
 import  Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { useState } from "react";
+import { useCreateSchoolSemester } from "../../hooks/schoolSemester/useCreateSchoolSemester";
+import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
+import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
+import { useGetSemester } from "../../hooks/semester/useGetSemesters";
 function CreateSemester({ handleClose }) {
   const { data: specailties, isLoading: isFetchingSpecialties } =
-    useFetchSpecialtiesQuery();
+    useGetSpecialties();
   const { data: studentBatches, isLoading: isFetchingStudentBatches } =
-    useFetchStudentBatchQuery();
+    useGetBatches();
   const { data: semesters, isLoading: isFetchingSemesters } =
-    useFetchSemestersQuery();
-  const [createSchoolSemester] = useCreateSchoolSemesterMutation();
-  const [isCreating, setIsCreating] = useState(false);
+    useGetSemester();
+  const { mutate:createSchoolSemester, isPending } = useCreateSchoolSemester(handleClose);
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -27,29 +24,8 @@ function CreateSemester({ handleClose }) {
     specialty_id: "",
     student_batch_id: "",
   });
-  const handleCreateSchoolSemester = async () => {
-    setIsCreating(true);
-    try {
-      await createSchoolSemester(formData).unwrap();
-      setIsCreating(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Creation Successfull ✅"}
-          description={"The Semester has been created successfully "}
-        />
-      );
-    } catch (error) {
-      setIsCreating(false);
-      toast.custom(
-        <ToastDanger
-          title={"Something went wrong ❌"}
-          description={
-            "S ❌ Something went wrong! The semester creation failed due to an error. Please try again later."
-          }
-        />
-      );
-    }
+  const handleCreateSchoolSemester = () => {
+     createSchoolSemester(formData)
   };
   if (
     isFetchingSemesters ||
@@ -153,19 +129,13 @@ function CreateSemester({ handleClose }) {
       </div>
       <div className="d-flex mt-3 flex-row align-items-center justify-content-end gap-2 w-100">
         <button
-          className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
-          onClick={handleClose}
-        >
-          Cancel
-        </button>
-        <button
-          className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
-          disabled={isCreating}
+          className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
+          disabled={isPending}
           onClick={() => {
              handleCreateSchoolSemester();
           }}
         >
-          {isCreating ? <SingleSpinner /> : "Create Semester"}
+          {isPending ? <SingleSpinner /> : "Create Semester"}
         </button>
       </div>
     </>

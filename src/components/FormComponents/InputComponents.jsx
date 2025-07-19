@@ -597,7 +597,7 @@ export function CourseCodeInput({ onChange, value, onValidationChange }) {
   );
 }
 
-export function CourseTitleInput({ value, onChange, onValidationChange}) {
+export function CourseTitleInput({ value, onChange, onValidationChange, placeholder}) {
   const [courseTitle, setCourseTitle] = useState(value || "");
   const [courseTitleError, setCourseTitleError] = useState("");
   const [isCourseTitleTouched, setIsCourseTitleTouched] = useState(false);
@@ -635,7 +635,7 @@ export function CourseTitleInput({ value, onChange, onValidationChange}) {
             ? "is-valid"
             : ""
         }`}
-        placeholder="Mathematics"
+        placeholder={placeholder === null ? "Mathematics" : placeholder}
         onChange={handleCourseCodeChange}
         onFocus={handleCourseTitleFocus}
       />

@@ -1,4 +1,4 @@
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useFetchTransactionDetailQuery } from "../../Slices/Asynslices/fetchSlice";
 function TransactionDetails({ row_id: tansactionId, handleClose }) {
   const {

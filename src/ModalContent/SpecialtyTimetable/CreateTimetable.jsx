@@ -3,7 +3,8 @@ import {
   useFetchInstructorAvailabilityBySemesterQuery,
   useFetchCoursesBySchoolSemesterQuery
 } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners";
+import Pageloaderspinner, {SingleSpinner} from "../../components/Spinners/Spinners";
+import TimeInput from "../../components/FormComponents/TimeInput";
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,7 +17,6 @@ import {
 import { useCreateTimetableByAvialabilityMutation } from "../../Slices/Asynslices/postSlice";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
-import TimeInput from "../../components/TimeInput";
 import { convertTo24HourFormat } from "../../utils/functions";
 function CreateTimetable({
   handleClose,

@@ -1080,6 +1080,18 @@ thead{
     text-align: center;
     color: #fd9d74;
 }
+.schoolexpenses-inactive{
+     height: 5dvh;
+    padding-inline: 0.5rem;
+    text-align: center;
+}
+.schoolexpenses-active{
+    background-color: var(--primary-color-50);
+    height: 5dvh;
+    padding-inline: 0.5rem;
+    text-align: center;
+    color: var(--primary-color);
+}
 hr{
     margin: 0;
     color: #ccc;

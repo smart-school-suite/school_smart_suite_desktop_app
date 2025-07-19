@@ -3,7 +3,7 @@ import { getRegistrationFees } from "../../services/feePayment";
 
 export const useGetRegistrationFees = () => {
     return useQuery({
-         queryKey:["registrationFee"],
-         queryFn:getRegistrationFees
+         queryKey:["registrationFees"],
+         queryFn:() => getRegistrationFees()
     })
 }

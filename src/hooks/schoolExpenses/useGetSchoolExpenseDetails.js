@@ -4,6 +4,6 @@ import { getExpensesDetails } from "../../services/schoolExpenses";
 export const useGetExpenseDetails = (expenseId) => {
      return useQuery({
          queryKey:["expense", expenseId],
-         queryFn:getExpensesDetails(expenseId)
+         queryFn:() => getExpensesDetails(expenseId)
      })
 }

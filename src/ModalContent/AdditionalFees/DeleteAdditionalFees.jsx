@@ -1,6 +1,6 @@
 import { useDeleteAddtionalFeeMutation } from "../../Slices/Asynslices/deleteSlice";
 import { useState } from "react";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function DeleteAdditionalFees({ handleClose, row_id: additionalFeeId }) {
   const [feedback, setFeedback] = useState({
     message: "",

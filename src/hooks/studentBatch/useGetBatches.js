@@ -4,6 +4,6 @@ import { getStudentBatch } from "../../services/studentBatch";
 export const useGetBatches = () => {
     return useQuery({
          queryKey:["studentBatches"],
-         queryFn:getStudentBatch
+         queryFn:() => getStudentBatch()
     })
 }

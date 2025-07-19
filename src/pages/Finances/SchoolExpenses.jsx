@@ -1,52 +1,30 @@
-import Navbar from "../../components/Navbar";
-import { useFetchSchoolExpensesQuery } from "../../Slices/Asynslices/fetchSlice";
-import CleanArrayData, {
-  renameKeys,
-  sumAttribute,
-  formatNumber,
-} from "../../utils/functions";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
-import Table from "../../components/Tables";
-import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";
+import Table from "../../components/Tables/Tables";
+import ActionButtonDropdown, {
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { SchoolExpensesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import { SchoolExpensesNavBarConfig } from "../../ComponentConfig/navBarConfig";
 import CreateExpense from "../../ModalContent/SchoolExpenses/CreateExpense";
 import DeleteExpense from "../../ModalContent/SchoolExpenses/DeleteExpense";
 import ExpenseDetails from "../../ModalContent/SchoolExpenses/ExpenseDetails";
 import UpdateExpense from "../../ModalContent/SchoolExpenses/UpdateExpense";
+import { useGetExpenses } from "../../hooks/schoolExpenses/useGetSchoolExpenses";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import React from "react";
+import { useState } from "react";
+import CustomModal from "../../components/Modals/Modal";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 function SchoolExpenses() {
-  const { data: data, error, isLoading } = useFetchSchoolExpensesQuery();
-  const filter_array_keys = [
-    "id",
-    "title",
-    "amount",
-    "schoolexpensescategory.name",
-    "description",
-    "date",
-  ];
-  const renameMapping = {
-    title: "Title",
-    amount: "Amount",
-    "schoolexpensescategory.name": "Category",
-    description: "Description",
-    date: "Date",
-  };
-
-  if (isLoading) {
-    return <Pageloaderspinner />;
+  const { data: schoolExpenses, isFetching } = useGetExpenses();
+  if (isFetching) {
+    return <DataTableNavLoader />;
   }
   return (
     <>
-      <Navbar options={SchoolExpensesNavBarConfig} />
       <div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Spending</p>
-            <h1 className="fw-bolder my-0">
-              ₣ {formatNumber(sumAttribute(data.data, "amount"))}
-            </h1>
-          </div>
-          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+        <div className="my-2">
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <span className="font-size-sm fw-semibold">School Expenses</span>
             <ModalButton
               action={{ modalContent: CreateExpense }}
               classname={
@@ -57,15 +35,10 @@ function SchoolExpenses() {
             </ModalButton>
           </div>
         </div>
-        <div>
-          <Table
-            colDefs={SchoolExpensesTableConfig({ DropdownComponent })}
-            rowData={renameKeys(
-              CleanArrayData(data.data, filter_array_keys),
-              renameMapping
-            )}
-          />
-        </div>
+        <Table
+          colDefs={SchoolExpensesTableConfig({ DropdownComponent })}
+          rowData={schoolExpenses.data}
+        />
       </div>
     </>
   );
@@ -73,30 +46,83 @@ function SchoolExpenses() {
 export default SchoolExpenses;
 
 export function DropdownComponent(props) {
-  const { id } = props.data;
-  const actions = [
-    {
-      modalTitle: "Update Expenses",
-      actionTitle: "Update",
-      modalContent: UpdateExpense,
-    },
-    {
-      modalTitle: "Expenses Details",
-      actionTitle: "Details",
-      modalContent: ExpenseDetails,
-    },
-    {
-      modalTitle: "Delete Expenses",
-      actionTitle: "Delete",
-      modalContent: DeleteExpense,
-    },
-  ];
+  const rowData = props.data;
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("md");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "md") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        rowData,
+        handleClose: handleCloseModal,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} 
-      style={'tableActionButton primary-background text-white font-size-sm px-2'} >
-        <span>Edit Expense</span>
-        </ActionButtonDropdown>
+      <ActionButtonDropdown
+        buttonContent={"Edit Actions"}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
+      >
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(UpdateExpense, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Update Expense</span>
+              <UpdateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteExpense, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Expense</span>
+              <DeleteIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(ExpenseDetails, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Expense Details</span>
+              <DetailsIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+      </ActionButtonDropdown>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

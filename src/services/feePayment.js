@@ -26,8 +26,8 @@ export const bulkReverseRegistrationFeeTransaction = async (transactionData) => 
   return response.data;
 };
 
-export const reverseRegistrationFeeTransaction = async (transactionId) => {
-  const response = await axiosInstance.delete(`fee-payment/registration-fee-transactions/${transactionId}/reverse`);
+export const reverseRegistrationFeeTransaction = async (transactionId, data={}) => {
+  const response = await axiosInstance.delete(`fee-payment/registration-fee-transactions/${transactionId}/reverse`, data);
   return response.data;
 };
 

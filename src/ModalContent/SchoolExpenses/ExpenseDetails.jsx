@@ -1,7 +1,7 @@
-import Pageloaderspinner from "../../components/Spinners";
 import { useFetchExpensesDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { formatDate, formatNumber } from "../../utils/functions";
 import { Icon } from "@iconify/react";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
 function ExpenseDetails({ row_id, handleClose }) {
   const {
     data: expenseDetail,

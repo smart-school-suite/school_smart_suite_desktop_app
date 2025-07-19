@@ -4,6 +4,8 @@ import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { IsPathInRoutes } from "../../utils/functions";
 import { Settingspaths, AcademicRoutes, ExamRoutes, ResitRoutes, StudentRoutes } from "../../utils/paths";
+import { ModalButton } from "../DataTableComponents/ActionComponent";
+import Logout from "../../ModalContent/Auth/Logout";
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -303,7 +305,7 @@ function Sidebar() {
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
-                    navigate("/time-table");
+                    navigate("/exam");
                   }}
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
@@ -385,7 +387,7 @@ function Sidebar() {
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
-                    navigate("/time-table");
+                    navigate("/resit-exams");
                   }}
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
@@ -832,7 +834,7 @@ function Sidebar() {
           <div className="mt-auto d-flex gap-4 flex-column justify-content-center align-items-center w-100">
             <hr />
             {/*Settings*/}
-                <div className="d-flex flex-row gainsboro-color mb-3 align-items-center w-100 justify-content-between px-2 font-size-sm"
+                <div className="d-flex flex-row gainsboro-color mb-3 align-items-center w-100 justify-content-between px-2 font-size-sm pointer-cursor"
                   onClick={() => {
                      navigate("/settings/general-settings");
                   }}
@@ -842,14 +844,14 @@ function Sidebar() {
                 </div>
               {/*Settings*/} 
           </div>
-          <div
-             className="d-flex flex-row gainsboro-color align-items-center w-100 justify-content-between px-2 font-size-sm"
-                   onClick={() => {
-                     navigate("/settings/general-settings");
-                  }}
-          >
-            <span>Logout</span>
+          <div>
+            <ModalButton
+              action={{ modalContent: Logout }}
+              classname={"border-none w-100 justify-content-between gainsboro-color font-size-sm align-items-center d-flex transparent-bg"}
+             >
+              <span>Logout</span>
                   <span style={{ fontSize:"1rem" }}><Icon icon="mynaui:logout"  /></span>
+            </ModalButton>
           </div>
         </aside>
       </div>

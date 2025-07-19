@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useFetchSchoolExpensesCategoryQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useAddSchoolExpensesMutation } from "../../Slices/Asynslices/postSlice";
-import toast from "react-hot-toast";
-import CustomDropdown from "../../components/Dropdowns";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { useGetExpensesCategories } from "../../hooks/expenseCategory/useGetExpensesCategories";
+import { useCreateSchoolExpense } from "../../hooks/schoolExpenses/useCreateSchoolExpenses";
+import { Icon } from "@iconify/react";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function CreateExpense({ handleClose }) {
   const [formData, setFormData] = useState({
     date: "",
@@ -10,12 +11,9 @@ function CreateExpense({ handleClose }) {
     expenses_category_id: "",
     description: "",
   });
-  const {
-    data: expensesCategory,
-    isLoading: isExpensesCategoryLoading,
-    error: expensesCategoryError,
-  } = useFetchSchoolExpensesCategoryQuery();
-  const [addSchoolExpenses] = useAddSchoolExpensesMutation();
+  const { data: expenseCategory, isFetching } = useGetExpensesCategories();
+  const { mutate: createExpenses, isPending } =
+    useCreateSchoolExpense(handleClose);
   const handleExpensesCategorySelect = (selectedValues) => {
     setFormData((prevalue) => ({
       ...prevalue,
@@ -27,24 +25,23 @@ function CreateExpense({ handleClose }) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async () => {
-    try {
-      await addSchoolExpenses(formData).unwrap();
-      toast.success("Expenses  created successfully!");
-      handleClose();
-    } catch (error) {
-      toast.error("Failed to create expenses. Try again.");
-    }
+  const handleSubmit = () => {
+    createExpenses(formData);
   };
   return (
     <>
       <div className="card w-100 border-none">
-        <div className="d-flex flex-row">
-          <div>
-            <h5>Create Expenses</h5>
-            <p className="gainsboro-color font-size-sm">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.{" "}
-            </p>
+        <div className="block">
+          <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+            <h5 className="m-0">Create Expenses</h5>
+            <span
+              className="m-0"
+              onClick={() => {
+                handleClose();
+              }}
+            >
+              <Icon icon="charm:cross" width="22" height="22" />
+            </span>
           </div>
         </div>
         <div className="my-1">
@@ -70,18 +67,18 @@ function CreateExpense({ handleClose }) {
         </div>
         <div className="my-1">
           <span>Expenses Category</span>
-          {isExpensesCategoryLoading ? (
+          {isFetching ? (
             <select name="" className="form-select">
               <option value="">loading</option>
             </select>
           ) : (
             <CustomDropdown
-              data={expensesCategory.data}
+              data={expenseCategory.data}
               displayKey={["name"]}
               valueKey={["id"]}
               filter_array_keys={["id", "name"]}
               renameMapping={{ id: "id", name: "name" }}
-              isLoading={isExpensesCategoryLoading}
+              isLoading={isFetching}
               direction="up"
               onSelect={handleExpensesCategorySelect}
             />
@@ -98,20 +95,13 @@ function CreateExpense({ handleClose }) {
       </div>
       <div className="w-100 mt-2">
         <button
-          className="border-none px-3 py-2 text-primary w-50 rounded-3 font-size-sm"
-          onClick={() => {
-            handleClose();
-          }}
-        >
-          Cancel
-        </button>
-        <button
-          className="border-none px-3 py-2 rounded-3 font-size-sm w-50 primary-background text-white"
+          className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"
           onClick={() => {
             handleSubmit();
           }}
+          disabled={isPending}
         >
-          Create
+          {isPending ? <SingleSpinner /> : "Create Expense"}
         </button>
       </div>
     </>

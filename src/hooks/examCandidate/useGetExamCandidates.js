@@ -4,6 +4,6 @@ import { getExamCandidates } from "../../services/examCandidate";
 export const useGetExamCandidates = () => {
     return useQuery({
         queryKey:["examCandidates"],
-        queryFn:getExamCandidates
+        queryFn:() => getExamCandidates()
     })
 }

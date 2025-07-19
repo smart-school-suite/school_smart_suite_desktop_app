@@ -1,30 +1,42 @@
-import { usePayRegistrationFeesMutation } from "../../Slices/Asynslices/postSlice";
 import { useState } from "react";
-import toast from "react-hot-toast";
-function PayRegistrationFees({ row_id: registrationFeeId, handleClose }) {
+import { usePayRegistrationFee } from "../../hooks/feePayment/usePayRegistrationFee";
+import  { SingleSpinner } from "../../components/Spinners/Spinners";
+import { Icon } from "@iconify/react";
+function PayRegistrationFees({ handleClose, rowData }) {
+  const registrationFeeId = rowData.id;
   const [formData, setFormData] = useState({
     amount: "",
     payment_method: "",
     registration_fee_id: registrationFeeId,
   });
-  const [payRegistrationFee] = usePayRegistrationFeesMutation();
+  const { mutate:handlePayment, isPending } = usePayRegistrationFee(handleClose);
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
-    try {
-      await payRegistrationFee(formData).unwrap();
-      toast.success("Registration Fees Paid Successfully!");
-      handleClose();
-    } catch (error) {
-      toast.error("Failed to Pay Registration Fees. Try again.");
-    }
+     handlePayment(formData);
   };
   return (
     <>
       <span>
         <div>
-          <h5>Make Additional Fee Payment</h5>
+          <div className="block">
+          <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+            <h5 className="m-0">Make Registration Fee Payment</h5>
+            <span
+              className="m-0"
+              onClick={() => {
+                handleClose();
+              }}
+            >
+              <Icon icon="charm:cross" width="22" height="22" />
+            </span>
+          </div>
+          <span className="gainsboro-color font-size-sm">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
+            nesciunt sunt
+          </span>
+        </div>
           <div className="my-2">
             <span>Amount</span>
             <input
@@ -46,6 +58,7 @@ function PayRegistrationFees({ row_id: registrationFeeId, handleClose }) {
               name="payment_method"
               value={formData.payment_method}
             >
+              <option selected>Select Payment Method</option>
               <option value="cash">Cash Payment</option>
               <option value="cheque">cheque</option>
               <option value="credit_card">Credit card</option>
@@ -55,18 +68,12 @@ function PayRegistrationFees({ row_id: registrationFeeId, handleClose }) {
           </div>
           <div className="mt-3 d-flex gap-2">
             <button
-              className="border-none px-3 py-2 text-primary w-50 rounded-3 font-size-sm"
+              className="border-none px-3 py-2 rounded-3 font-size-sm w-50 primary-background text-white w-100"
               onClick={() => {
-                handleClose();
+                handleSubmit();
               }}
             >
-              Cancel
-            </button>
-            <button
-              className="border-none px-3 py-2 rounded-3 font-size-sm w-50 primary-background text-white"
-              onClick={handleSubmit}
-            >
-              Create
+             { isPending ?  <SingleSpinner /> : "Make Payment"}
             </button>
           </div>
         </div>

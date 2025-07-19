@@ -41,7 +41,7 @@ export const getRelatedExams = async (examId) => {
   return response.data;
 };
 
-export const createGradesByOtherGrades = async (configId, targetConfigId) => {
+export const createGradesByOtherGrades = async (configId, targetConfigId, data={}) => {
   const response = await axiosInstance.post(`grade/grade-configs/${configId}/target-configs/${targetConfigId}/grades`, data);
   return response.data;
 };

@@ -1,15 +1,5 @@
 import { useState } from "react";
-import { useAddCourseMutation } from "../../Slices/Asynslices/postSlice";
-import {
-  useFetchDepartmentsQuery,
-  useFetchEducationLevelsQuery,
-  useFetchSpecialtiesQuery,
-  useFetchSemestersQuery,
-} from "../../Slices/Asynslices/fetchSlice";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import toast from "react-hot-toast";
 import { Icon } from "@iconify/react";
 import {
   CourseCodeInput,
@@ -32,7 +22,6 @@ function CreateCourse({ handleClose }) {
   });
   const { mutate:createCourseMutation, isPending } = useCreateCourse(handleClose);
   const { data:specialty, isFetching:isSpecailtyLoading  } = useGetSpecialties();
-  const { data: levels, isLoading: isLevelLoading } = useGetLevels();
   const { data: semesters, isLoading: isSemesterLoading } = useGetSemester();
 
   const handleInputChange = (field, value) => {

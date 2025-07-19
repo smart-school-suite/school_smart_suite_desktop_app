@@ -10,14 +10,15 @@ import { TeacherAvatarComponent } from "../components/DataTableComponents/Teache
 import ActiveInactiveBadge from "../components/Badges/ActiveInactive";
 import GradesConfigTableBadge from "../components/Badges/GradesConfigTableBadge";
 import { StudentTableAvatarComponent } from "../components/DataTableComponents/StudentTableAvatar";
+import { ExamGradingBadge } from "../components/Badges/ExamGradingBadge";
+import RegistrationFeeTableBadge from "../components/Badges/RegistrationFeeTableBadge";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
     {
       field: "id",
       cellRenderer: TextComponent,
-      hide:true,
-
+      hide: true,
     },
     {
       field: "course_code",
@@ -81,84 +82,75 @@ export function CoursesTable({ DropdownComponent }) {
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-      cellRenderer: TextComponent,
+      cellRenderer: ActiveInactiveBadge,
     },
-    { 
-      field: "Action", 
+    {
+      field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
     },
-  ]
+  ];
   return coursesTableConfig;
 }
-export function AccessedStudentsTableConfig({ DropdownComponent }) {
+export function ExamCandidateTableConfig({ DropdownComponent }) {
   const tableConfig = [
-
-      {
-        field: "id",
-        hide: true,
-      },
-      {
-        field: "student_name",
-        headerName:"Student Name",
-        filter: true,
-        floatingFilter: true,
-        cellRenderer: TextComponent,
-        cellStyle: cellStyle,
-      },
-      {
-        field: "level_name",
-        headerName:"level Name",
-        filter: true,
-        floatingFilter: true,
-        cellRenderer: TextComponent,
-        cellStyle: cellStyle,
-      },
-      {
-        field: "level_number",
-        headerName:"Level",
-        filter: true,
-        floatingFilter: true,
-        cellRenderer: TextComponent,
-        cellStyle: cellStyle,
-      },
-      {
-        field: "specialty_name",
-        headerName:"Specialty Name",
-        filter: true,
-        floatingFilter: true,
-        cellRenderer: TextComponent,
-        cellStyle: cellStyle,
-      },
-      {
-        field: "exam_name",
-        headerName:"Exam Name",
-        filter: true,
-        floatingFilter: true,
-        cellRenderer: TextComponent,
-        cellStyle: cellStyle,
-      },
-      {
-        field: "student_accessed",
-        headerName:"student Accessment",
-        filter: true,
-        floatingFilter: true,
-        cellRenderer: TextComponent,
-        cellStyle: cellStyle,
-      },
-      {
-        field: "grades_submitted",
-        headerName:"Grades Submitted",
-        filter: true,
-        floatingFilter: true,
-        cellRenderer: TextComponent,
-        cellStyle: cellStyle,
-      },
-      { 
-        field: "Actions", 
-        cellRenderer: DropdownComponent,
-        cellStyle: () => ({ width: "20rem" }),
-      },
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "student_name",
+      headerName: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "exam_name",
+      headerName: "Exam Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "student_accessed",
+      headerName: "Accessment Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "grades_submitted",
+      headerName: "Grades Submitted",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Actions",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
   ];
   return tableConfig;
 }
@@ -171,14 +163,6 @@ export function ExamsTableConfig({ DropdownComponent }) {
     {
       field: "exam_name",
       headerName: "Exam Title",
-      filter: true,
-      floatingFilter: true,
-      cellStyle: cellStyle,
-      cellRenderer: TextComponent,
-    },
-    {
-      field: "exam_type",
-      headerName: "Exam Type",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -217,16 +201,8 @@ export function ExamsTableConfig({ DropdownComponent }) {
       cellRenderer: TextComponent,
     },
     {
-      field:"weighted_mark",
-      headerName:"Max Score",
-      filter: true,
-      floatingFilter: true,
-      cellStyle: cellStyle,
-      cellRenderer: TextComponent,
-   },
-    {
-      field: "timetable_published",
-      headerName: "Timetable Added",
+      field: "weighted_mark",
+      headerName: "Max Score",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -234,21 +210,21 @@ export function ExamsTableConfig({ DropdownComponent }) {
     },
     {
       field: "grading_added",
-      headerName: "Grading Added",
+      headerName: "Grading Status",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-      cellRenderer: TextComponent,
+      cellRenderer: ExamGradingBadge,
     },
-    { 
-      field: "Action", 
+    {
+      field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
-    }
+    },
   ];
   return tableConfig;
 }
-export function ExamGradingCongfig({ DropdownComponent }){
+export function ExamGradingCongfig({ DropdownComponent }) {
   const tableConfig = [
     {
       field: "id",
@@ -287,11 +263,11 @@ export function ExamGradingCongfig({ DropdownComponent }){
       cellRenderer: ActiveInactiveBadge,
     },
 
-    { 
-      field: "Action", 
+    {
+      field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
-    }
+    },
   ];
   return tableConfig;
 }
@@ -350,16 +326,8 @@ export function ExamTimetableConfig({ DropdownComponent }) {
       cellRenderer: TextComponent,
     },
     {
-      field:"batch_title",
-      headerName:"Batch Title",
-      filter:true,
-      floatingFilter:true,
-      cellStyle:cellStyle,
-      cellRenderer:TextComponent
-    },
-    {
-      field: "status",
-      headerName: "Exam Status",
+      field: "batch_title",
+      headerName: "Batch Title",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -373,16 +341,16 @@ export function ExamTimetableConfig({ DropdownComponent }) {
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
-    { 
-      field: "Action", 
+    {
+      field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
-    }
+    },
   ];
   return tableConfig;
 }
 export function ExamResitsConfig({ DropdownComponent }) {
-  const tableConfig =  [
+  const tableConfig = [
     {
       field: "id",
       hide: true,
@@ -436,10 +404,10 @@ export function ExamResitsConfig({ DropdownComponent }) {
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
-    { 
-      field: "Action", 
-      cellRenderer: DropdownComponent, 
-      cellStyle: () => ({ width: "20rem" })
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
     },
   ];
   return tableConfig;
@@ -507,8 +475,8 @@ export function GradesConfigTableConfig({ ActionButton }) {
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
-    { 
-      field: "Action", 
+    {
+      field: "Action",
       cellRenderer: ActionButton,
       cellStyle: () => ({ width: "20rem" }),
     },
@@ -626,53 +594,86 @@ export function ResitFeeTableConfig({ DropdownComponent }) {
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
-    { 
-      field: "Action", 
-      cellRenderer: DropdownComponent, 
-      cellStyle: () => ({ width: "20rem" })
-     },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
   ];
   return tableConfig;
 }
 export function SchoolExpensesTableConfig({ DropdownComponent }) {
-  const tableConfig =  [
+  const tableConfig = [
     {
-      field: "id",
+      field: "category_name",
+      headerName: "Category",
       filter: true,
       floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
-      field: "Amount",
+      field: "amount",
+      headerName: "Amount",
       filter: true,
       floatingFilter: true,
       cellRenderer: CurrencyComponent,
       cellStyle: cellStyle,
     },
     {
-      field: "Category",
+      field: "description",
+      headerName: "Description",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
-      field: "Description",
+      field: "date",
+      headerName: "Date",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
-      field: "Date",
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
+export function ExpensesCategoryTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "name",
+      headerName: "Title",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
-    { 
-      field: "Action", 
-      cellRenderer: DropdownComponent, 
-      cellStyle: () => ({ width: "20rem" }), 
+    {
+      field: "created_at",
+      headerName: "Created At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "updated_at",
+      headerName: "Updated At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
     },
   ];
   return tableConfig;
@@ -693,31 +694,31 @@ export function ParentsTableConfig({ DropdownComponent }) {
     },
     {
       field: "address",
-      headerName:"Address",
+      headerName: "Address",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
-      field:"phone_one",
-      headerName:"First Reachable Number",
-      filter:true,
-      floatingFilter:true,
+      field: "phone_one",
+      headerName: "First Reachable Number",
+      filter: true,
+      floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
-      field:"phone_two",
-      headerName:"Second Reachable Number",
-      filter:true,
-      floatingFilter:true,
+      field: "phone_two",
+      headerName: "Second Reachable Number",
+      filter: true,
+      floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
       field: "relationship_to_student",
-      headerName:"Relationship To Student",
+      headerName: "Relationship To Student",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
@@ -746,12 +747,12 @@ export function StudentBatchesTableConfig({ DropdownComponent }) {
     {
       field: "id",
       floatingFilter: true,
-      hide:true,
+      hide: true,
       cellRenderer: TextComponent,
     },
     {
       field: "name",
-      headerName:"Batch Title",
+      headerName: "Batch Title",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -759,7 +760,7 @@ export function StudentBatchesTableConfig({ DropdownComponent }) {
     },
     {
       field: "description",
-      headerName:"Description",
+      headerName: "Description",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -767,15 +768,15 @@ export function StudentBatchesTableConfig({ DropdownComponent }) {
     },
     {
       field: "status",
-      headerName:"Status",
+      headerName: "Status",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: ActiveInactiveBadge,
-    }, 
+    },
     {
       field: "created_at",
-      headerName:"Date of Creation",
+      headerName: "Date of Creation",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -783,17 +784,17 @@ export function StudentBatchesTableConfig({ DropdownComponent }) {
     },
     {
       field: "updated_at",
-      headerName:"Date Updated",
+      headerName: "Date Updated",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
-    { 
-      field: "Action", 
-      cellStyle: () => ({ width: "20rem" }), 
-      cellRenderer: DropdownComponent
-     },
+    {
+      field: "Action",
+      cellStyle: () => ({ width: "20rem" }),
+      cellRenderer: DropdownComponent,
+    },
   ];
   return tableConfig;
 }
@@ -803,14 +804,14 @@ export function StudentTableConfig({ DropdownComponent }) {
       field: "id",
       hide: true,
     },
-      {
-     field: "profile_picture",
-     headerName:"Avatar",
-     cellRenderer: StudentTableAvatarComponent,
-     cellStyle: cellStyle,
-     filter: true,
-     floatingFilter: true,
-   },
+    {
+      field: "profile_picture",
+      headerName: "Avatar",
+      cellRenderer: StudentTableAvatarComponent,
+      cellStyle: cellStyle,
+      filter: true,
+      floatingFilter: true,
+    },
     {
       field: "student_name",
       headerName: "Student Name",
@@ -859,128 +860,156 @@ export function StudentTableConfig({ DropdownComponent }) {
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
-    { 
-      field: "Actions", 
+    {
+      field: "Actions",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
     },
   ];
-  return tableConfig
+  return tableConfig;
 }
-export function StudentScoresTableConfig({ DropdownComponent }){
-   const tableConfig =  [
-      {
-        field:"id", hide:true
-      },
-      { field: "Student Name", filter: true, floatingFilter: true,
-        cellRenderer:TextComponent,
-        cellStyle: {
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          height: "100%",
-          zIndex: "-1",
-        }
-       },
-      { field: "Specialty Name", filter: true, floatingFilter: true,
-        cellRenderer:TextComponent,
-        cellStyle: {
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          height: "100%",
-          zIndex: "-1",
-        }
-       },
-      { field: "Level", filter: true, floatingFilter: true,
-        cellRenderer:TextComponent,
-        cellStyle: {
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          height: "100%",
-          zIndex: "-1",
-        }
-       },
-      { field: "Level Name", filter: true, floatingFilter: true,
-        cellRenderer:TextComponent,
-        cellStyle: {
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          height: "100%",
-          zIndex: "-1",
-        }
-       },
-      { field: "School Year", filter: true, floatingFilter: true,
-        cellRenderer:TextComponent,
-        cellStyle: {
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          height: "100%",
-          zIndex: "-1",
-        }
-       },
-       { field: "Exam Name", filter: true, floatingFilter: true,
-        cellRenderer:TextComponent,
-        cellStyle: {
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          height: "100%",
-          zIndex: "-1",
-        }
-       },
-       { field: "Course Title", filter: true, floatingFilter: true,
-        cellRenderer:TextComponent,
-        cellStyle: {
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          height: "100%",
-          zIndex: "-1",
-        }
-       },
-       { field: "Score", filter: true, floatingFilter: true,
-        cellRenderer:TextComponent,
-        cellStyle: {
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          height: "100%",
-          zIndex: "-1",
-        }
-       },
-       { field: "Grade", filter: true, floatingFilter: true,
-        cellRenderer:TextComponent,
-        cellStyle: {
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          height: "100%",
-          zIndex: "-1",
-        }
-       },
-      { 
-        field: "Action", 
-        cellRenderer: DropdownComponent,
-        cellStyle: () => ({ width: "20rem" }),
-      }
-   ];
-   return tableConfig;
-}
-export function DepartmentTableConfig({ DropdownComponent }){
-   const tableConfig = [
+export function StudentScoresTableConfig({ DropdownComponent }) {
+  const tableConfig = [
     {
       field: "id",
-      cellRenderer:TextComponent,
+      hide: true,
+    },
+    {
+      field: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        height: "100%",
+        zIndex: "-1",
+      },
+    },
+    {
+      field: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        height: "100%",
+        zIndex: "-1",
+      },
+    },
+    {
+      field: "Level",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        height: "100%",
+        zIndex: "-1",
+      },
+    },
+    {
+      field: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        height: "100%",
+        zIndex: "-1",
+      },
+    },
+    {
+      field: "School Year",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        height: "100%",
+        zIndex: "-1",
+      },
+    },
+    {
+      field: "Exam Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        height: "100%",
+        zIndex: "-1",
+      },
+    },
+    {
+      field: "Course Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        height: "100%",
+        zIndex: "-1",
+      },
+    },
+    {
+      field: "Score",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        height: "100%",
+        zIndex: "-1",
+      },
+    },
+    {
+      field: "Grade",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        height: "100%",
+        zIndex: "-1",
+      },
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
+export function DepartmentTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      cellRenderer: TextComponent,
       filter: true,
       floatingFilter: true,
     },
     {
       field: "department_name",
-      headerName:"Department Name",
+      headerName: "Department Name",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -988,222 +1017,15 @@ export function DepartmentTableConfig({ DropdownComponent }){
     },
     {
       field: "hod_name",
-      headerName:"Head of Department",
+      headerName: "Head of Department",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      field:"description",
-      headerName:"Description",
-      filter:true,
-      floatingFilter:true,
-      cellStyle:cellStyle,
-      cellRenderer:TextComponent
-    },
-    {
-      field:"status",
-      headerName:"Department Status",
-      filter:true,
-      floatingFilter:true,
-      cellStyle:cellStyle,
-      cellRenderer:DepartmentTableBadge
-    },
-    { 
-      field: "Action", 
-      cellRenderer: DropdownComponent,
-      cellStyle: () => ({ width: "20rem" }),
-    },
-   ];
-   return tableConfig;
-}
-export function SchoolAdminTableConfig({ ImageComponent, ActionButtonGroup }) {
-  const tableConfig =  [
-   {
-     field: "profile_picture",
-     headerName:"Avatar",
-     cellRenderer: ImageComponent,
-     cellStyle: cellStyle,
-     filter: true,
-     floatingFilter: true,
-   },
-   
-   {
-     field: "name",
-     headerName:"Full Names",
-     cellRenderer: TextComponent,
-     filter: true,
-     floatingFilter: true,
-   },
-   {
-    field: "first_name",
-    headerName:"First Name",
-    cellRenderer: TextComponent,
-    filter: true,
-    floatingFilter: true,
-  },
-  {
-    field: "last_name",
-    headerName:"Last Name",
-    cellRenderer: TextComponent,
-    filter: true,
-    floatingFilter: true,
-  },
-   {
-     field: "role",
-     headerName:"Role",
-     cellRenderer: TextComponent,
-     filter: true,
-     floatingFilter: true,
-   },
-   {
-     field: "email",
-     headerName:"E-mail",
-     cellRenderer: TextComponent,
-     filter: true,
-     floatingFilter: true,
-   },
-   {
-     field: "status",
-     headerName:"account status",
-     cellRenderer: TextComponent,
-     filter: true,
-     floatingFilter: true,
-   },
-   {
-     field: "Action",
-     cellRenderer: React.memo(ActionButtonGroup),
-     cellStyle: () => ({ width: "20rem" }),
-   }
-  ];
-  return tableConfig;
-}
-export function SpecialtyTableConfig({  DropdownComponent }){
-   const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "specialty_name",
-      headerName:"Specialty Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "registration_fee",
-      headerName:"Registration Fee",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "tuition_fee",
-      headerName:"School Fee",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"total",
-      headerName:"Total",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "level_name",
-      headerName:"Level Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "level",
-      headerName:"Level Number",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"status",
-      headerName:"Status",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:SpecailtyTableBadge,
-      cellStyle:cellStyle
-    },
-    { field: "Action", 
-      cellStyle: () => ({ width: "20rem" }),
-      cellRenderer: DropdownComponent },
-   ];
-   return tableConfig;
-}
-export function teacherTableConfig({ DropdownComponent }) {
-   const tableConfig = [
-    {
-      field:"id",
-      hide:true
-    },
-     {
-     field: "profile_picture",
-     headerName:"Avatar",
-     cellRenderer:  TeacherAvatarComponent,
-     cellStyle: cellStyle,
-     filter: true,
-     floatingFilter: true,
-   },
-    {
-      field: "name",
-      headerName:"Full Names",
-      filter: true,
-      floatingFilter: true,
-      cellStyle: cellStyle,
-      cellRenderer: TextComponent,
-    },
-    {
-      field: "first_name",
-      headerName:"First Name",
-      filter: true,
-      floatingFilter: true,
-      cellStyle: cellStyle,
-      cellRenderer: TextComponent,
-    },
-    {
-      field: "last_name",
-      headerName:"Last Name",
-      filter: true,
-      floatingFilter: true,
-      cellStyle: cellStyle,
-      cellRenderer: TextComponent,
-    },
-    {
-      headerName: "Email",
-      field:"email",
-      filter: true,
-      floatingFilter: true,
-      cellStyle: cellStyle,
-      cellRenderer: TextComponent,
-    },
-    {
-      headerName: "Contact One",
-      field:"phone_one",
-      filter: true,
-      floatingFilter: true,
-      cellStyle: cellStyle,
-      cellRenderer: TextComponent,
-    },
-    {
-      headerName: "Gender",
-      field:"gender",
+      field: "description",
+      headerName: "Description",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -1211,19 +1033,228 @@ export function teacherTableConfig({ DropdownComponent }) {
     },
     {
       field: "status",
-      headerName:"Status",
+      headerName: "Department Status",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: DepartmentTableBadge,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
+export function SchoolAdminTableConfig({ ImageComponent, ActionButtonGroup }) {
+  const tableConfig = [
+    {
+      field: "profile_picture",
+      headerName: "Avatar",
+      cellRenderer: ImageComponent,
+      cellStyle: cellStyle,
+      filter: true,
+      floatingFilter: true,
+    },
+
+    {
+      field: "name",
+      headerName: "Full Names",
+      cellRenderer: TextComponent,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "first_name",
+      headerName: "First Name",
+      cellRenderer: TextComponent,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "last_name",
+      headerName: "Last Name",
+      cellRenderer: TextComponent,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "role",
+      headerName: "Role",
+      cellRenderer: TextComponent,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "email",
+      headerName: "E-mail",
+      cellRenderer: TextComponent,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "status",
+      headerName: "account status",
+      cellRenderer: TextComponent,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "Action",
+      cellRenderer: React.memo(ActionButtonGroup),
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
+export function SpecialtyTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "registration_fee",
+      headerName: "Registration Fee",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: CurrencyComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "tuition_fee",
+      headerName: "School Fee",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: CurrencyComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "total",
+      headerName: "Total",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: CurrencyComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level",
+      headerName: "Level Number",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: SpecailtyTableBadge,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellStyle: () => ({ width: "20rem" }),
+      cellRenderer: DropdownComponent,
+    },
+  ];
+  return tableConfig;
+}
+export function teacherTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "profile_picture",
+      headerName: "Avatar",
+      cellRenderer: TeacherAvatarComponent,
+      cellStyle: cellStyle,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "name",
+      headerName: "Full Names",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "first_name",
+      headerName: "First Name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "last_name",
+      headerName: "Last Name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Email",
+      field: "email",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Contact One",
+      field: "phone_one",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Gender",
+      field: "gender",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "status",
+      headerName: "Status",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TeacherTableBadge,
     },
-    { 
-      field: "Action", 
+    {
+      field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
     },
-   ];
-   return tableConfig;
+  ];
+  return tableConfig;
 }
 export function semesterTableConfig({ ActionButtonGroup }) {
   const tableConfig = [
@@ -1233,76 +1264,77 @@ export function semesterTableConfig({ ActionButtonGroup }) {
     },
     {
       field: "specialty_name",
-      headerName:"Specialty Name",
+      headerName: "Specialty Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "semester_name",
-      headerName:"Semester",
+      headerName: "Semester",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "start_date",
-      headerName:"start Date",
+      headerName: "start Date",
       filter: true,
       floatingFilter: true,
       cellRenderer: DateComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "end_date",
-      headerName:"End Date",
+      headerName: "End Date",
       filter: true,
       floatingFilter: true,
       cellRenderer: DateComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
-      field:"status",
-      headerName:"Status",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level",
-      headerName:"Level",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level_name",
-      headerName:"Level Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "school_year",
-      headerName:"School Year",
+      field: "status",
+      headerName: "Status",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
-    { 
-      field: "Action", 
+    {
+      field: "level",
+      headerName: "Level",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "school_year",
+      headerName: "School Year",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
       cellRenderer: ActionButtonGroup,
       cellStyle: () => ({ width: "20rem" }),
     },
-   ];
-   return tableConfig;
+  ];
+  return tableConfig;
 }
+
 export function SpecialtyTimetableTableConfig({ ActionButtonGroup }) {
   const tableConfig = [
     {
@@ -1311,77 +1343,77 @@ export function SpecialtyTimetableTableConfig({ ActionButtonGroup }) {
     },
     {
       field: "specialty_name",
-      headerName:"Specialty Name",
+      headerName: "Specialty Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "semester_name",
-      headerName:"Semester",
+      headerName: "Semester",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "start_date",
-      headerName:"start Date",
+      headerName: "start Date",
       filter: true,
       floatingFilter: true,
       cellRenderer: DateComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "end_date",
-      headerName:"End Date",
+      headerName: "End Date",
       filter: true,
       floatingFilter: true,
       cellRenderer: DateComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "timetable_published",
+      headerName: "Timetable Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
       field: "school_year",
-      headerName:"School Year",
+      headerName: "School Year",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
-      field:"status",
-      headerName:"Status",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"batch_title",
-      headerName:"Batch Title",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"timetable_published",
-      headerName:"Publish Status",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    { 
-      field: "Action", 
+      field: "Action",
       cellRenderer: ActionButtonGroup,
       cellStyle: () => ({ width: "20rem" }),
     },
-   ];
-   return tableConfig;
+  ];
+  return tableConfig;
 }
-export function tuitionFeeTableConfig({ DropdownComponent }){
+export function tuitionFeeTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
       field: "id",
@@ -1389,77 +1421,61 @@ export function tuitionFeeTableConfig({ DropdownComponent }){
     },
     {
       field: "student_name",
-      headerName:"Student Name",
+      headerName: "Student Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "specialty_name",
-      headerName:"Specialty Name",
+      headerName: "Specialty Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "level_name",
-      headerName:"Level Name",
+      headerName: "Level Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "level_number",
-      headerName:"Level",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "amount_paid",
-      headerName:"Amount Paid",
+      headerName: "Amount Paid",
       filter: true,
       floatingFilter: true,
       cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "amount_left",
-      headerName:"Amount Left",
+      headerName: "Amount Left",
       filter: true,
       floatingFilter: true,
       cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "tuition_fee",
-      headerName:"Tuition Fee",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "status",
-      headerName:"Payment Status",
+      headerName: "Payment Status",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
-    { 
-      field: "Action", 
+    {
+      field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
     },
-   ];
-   return tableConfig;
+  ];
+  return tableConfig;
 }
-export function registrationFeeTableConfig({ DropdownComponent }){
+export function registrationFeeTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
       field: "id",
@@ -1467,61 +1483,53 @@ export function registrationFeeTableConfig({ DropdownComponent }){
     },
     {
       field: "student_name",
-      headerName:"Student Name",
+      headerName: "Student Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "specialty_name",
-      headerName:"Specialty Name",
+      headerName: "Specialty Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "level_name",
-      headerName:"Level Name",
+      headerName: "Level Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "level_number",
-      headerName:"Level",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "amount",
-      headerName:"Amount",
+      headerName: "Amount",
       filter: true,
       floatingFilter: true,
       cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "status",
-      headerName:"Payment Status",
+      headerName: "Payment Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellRenderer: RegistrationFeeTableBadge,
+      cellStyle: cellStyle,
     },
-    { 
-      field: "Action", 
+    {
+      field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
     },
-   ];
-   return tableConfig;
+  ];
+  return tableConfig;
 }
-export function additionalFeesTableConfig({ DropdownComponent }){
+export function additionalFeesTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
       field: "id",
@@ -1529,77 +1537,77 @@ export function additionalFeesTableConfig({ DropdownComponent }){
     },
     {
       field: "student_name",
-      headerName:"Student Name",
+      headerName: "Student Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "specialty_name",
-      headerName:"Specialty Name",
+      headerName: "Specialty Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "level_name",
-      headerName:"Level Name",
+      headerName: "Level Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "level_number",
-      headerName:"Level",
+      headerName: "Level",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "amount",
-      headerName:"Amount",
+      headerName: "Amount",
       filter: true,
       floatingFilter: true,
       cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "status",
-      headerName:"Payment Status",
+      headerName: "Payment Status",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "category",
-      headerName:"Category",
+      headerName: "Category",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "reason",
-      headerName:"reason",
+      headerName: "reason",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
-    { 
-      field: "Action", 
+    {
+      field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
     },
-   ];
-   return tableConfig;
+  ];
+  return tableConfig;
 }
-export function additionalFeesTransactionsTableConfig({ DropdownComponent }){
+export function additionalFeesTransactionsTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
       field: "id",
@@ -1607,69 +1615,69 @@ export function additionalFeesTransactionsTableConfig({ DropdownComponent }){
     },
     {
       field: "title",
-      headerName:"Title",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
+      headerName: "Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
       field: "student_name",
-      headerName:"Student Name",
+      headerName: "Student Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "transaction_id",
-      headerName:"Transaction ID",
+      headerName: "Transaction ID",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "amount",
-      headerName:"Amount",
+      headerName: "Amount",
       filter: true,
       floatingFilter: true,
       cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "amount_paid",
-      headerName:"Amount Paid",
+      headerName: "Amount Paid",
       filter: true,
       floatingFilter: true,
       cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "payment_method",
-      headerName:"Payment Method",
+      headerName: "Payment Method",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "status",
-      headerName:"Status",
+      headerName: "Status",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
-    { 
-      field: "Action", 
+    {
+      field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
     },
-   ];
-   return tableConfig;
+  ];
+  return tableConfig;
 }
-export function tuitionFeesTransactionTableConfig({ DropdownComponent }){
+export function tuitionFeesTransactionTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
       field: "id",
@@ -1677,213 +1685,255 @@ export function tuitionFeesTransactionTableConfig({ DropdownComponent }){
     },
     {
       field: "student_name",
-      headerName:"Student Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
+      headerName: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
       field: "specialty_name",
-      headerName:"Specialty Name",
+      headerName: "Specialty Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
-      field:"level_name",
-      headerName:"Level Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level_number",
-      headerName:"Level",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
       field: "transaction_id",
-      headerName:"Transaction ID",
+      headerName: "Transaction ID",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "amount",
-      headerName:"Amount",
+      headerName: "Amount",
       filter: true,
       floatingFilter: true,
       cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "payment_method",
-      headerName:"Payment Method",
+      headerName: "Payment Method",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle,
-    },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
-    },
-   ];
-   return tableConfig;
-}
-export function registrationFeeTransactionTableConfig({ DropdownComponent }){
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
+      cellStyle: cellStyle,
     },
     {
-      field: "student_name",
-      headerName:"Student Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
     },
-    {
-      field: "specialty_name",
-      headerName:"Specialty Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level_name",
-      headerName:"Level Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level_number",
-      headerName:"Level",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "transaction_id",
-      headerName:"Transaction ID",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "amount",
-      headerName:"Amount",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "payment_method",
-      headerName:"Payment Method",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle,
-    },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
-    },
-   ];
-   return tableConfig;
-}
-export function resitFeeTransactionsTableConfig({ DropdownComponent }){
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "student_name",
-      headerName:"Student Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "specialty_name",
-      headerName:"Specialty Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level_name",
-      headerName:"Level Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level_number",
-      headerName:"Level",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "transaction_id",
-      headerName:"Transaction ID",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "amount",
-      headerName:"Amount",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: CurrencyComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "payment_method",
-      headerName:"Payment Method",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle,
-    },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
-    },
-   ];
-   return tableConfig;
+  ];
+  return tableConfig;
 }
 
-export function electionTableConfig({ DropdownComponent }){
+export function tuitionFeeScheduleTableConfig({ DropdownComponent }){
+   const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "config_status",
+      headerName: "Configuration Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "semester",
+      headerName: "Semester",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
+export function registrationFeeTransactionTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "transaction_id",
+      headerName: "Transaction ID",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "student_name",
+      headerName: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "amount",
+      headerName: "Amount",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: CurrencyComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "payment_method",
+      headerName: "Payment Method",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+export function resitFeeTransactionsTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "student_name",
+      headerName: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_number",
+      headerName: "Level",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "transaction_id",
+      headerName: "Transaction ID",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "amount",
+      headerName: "Amount",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: CurrencyComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "payment_method",
+      headerName: "Payment Method",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+
+export function electionTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
       field: "id",
@@ -1891,640 +1941,651 @@ export function electionTableConfig({ DropdownComponent }){
     },
     {
       field: "title",
-      headerName:"Title",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
+      headerName: "Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
       field: "start_date",
-      headerName:"Start Date",
+      headerName: "Start Date",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
-      field:"end_date",
-      headerName:"End Date",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
+      field: "end_date",
+      headerName: "End Date",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
-      field:"start_time",
-      headerName:"Start Time",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
+      field: "start_time",
+      headerName: "Start Time",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
       field: "end_time",
-      headerName:"End Time",
+      headerName: "End Time",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "description",
-      headerName:"Description",
+      headerName: "Description",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
     },
-   ];
-   return tableConfig;
+  ];
+  return tableConfig;
 }
-export function electionApplicationTableConfig({ DropdownComponent }){
-    const tableConfig = [
-      {
-        field: "id",
-        hide: true,
-      },
-      {
-        field: "student_name",
-        headerName:"Student Name",
-        filter:true,
-        floatingFilter:true,
-        cellRenderer:TextComponent,
-        cellStyle:cellStyle
-      },
-      {
-        field: "election_title",
-        headerName:"Election Title",
-        filter: true,
-        floatingFilter: true,
-        cellRenderer: TextComponent,
-        cellStyle:cellStyle
-      },
-      {
-        field:"election_role",
-        headerName:"Role",
-        filter:true,
-        floatingFilter:true,
-        cellRenderer:TextComponent,
-        cellStyle:cellStyle
-      },
-      {
-        field:"status",
-        headerName:"Status",
-        filter:true,
-        floatingFilter:true,
-        cellRenderer:TextComponent,
-        cellStyle:cellStyle
-      },
-      {
-        field: "personal_vision",
-        headerName:"Personal Vision",
-        filter: true,
-        floatingFilter: true,
-        cellRenderer: TextComponent,
-        cellStyle:cellStyle
-      },
-      {
-        field: "commitment_statement",
-        headerName:"Commitment Statement",
-        filter: true,
-        floatingFilter: true,
-        cellRenderer: TextComponent,
-        cellStyle:cellStyle
-      },
-      { field: "Action",
-         cellRenderer: DropdownComponent,  
-         cellStyle: {
-            width:"20rem"
-           }
-      },
-    ]
-    return tableConfig;
-}
-export function electionRolesTableConfig({ DropdownComponent }){
+export function electionApplicationTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
       field: "id",
       hide: true,
     },
     {
-      field: "name",
-      headerName:"Role Title",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
+      field: "student_name",
+      headerName: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
       field: "election_title",
-      headerName:"Election Title",
+      headerName: "Election Title",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
-      field:"status",
-      headerName:"Status",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"description",
-      headerName:"Description",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
-    },
-  ]
-  return tableConfig;
-}
-export function hodTableConfig({ ActionButtonGroup  }){
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "full_names",
-      headerName:"Full Names",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "first_name",
-      headerName:"First Name",
+      field: "election_role",
+      headerName: "Role",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
-      field:"last_name",
-      headerName:"Last Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"department_name",
-      headerName:"Department Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"department_status",
-      headerName:"Department Status",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    { field: "Action",
-       cellRenderer: ActionButtonGroup,  
-       cellStyle: {
-          width:"20rem"
-         }
-    },
-  ];
-  return tableConfig;
-}
-export function hosTableConfig({ ActionButtonGroup }){
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "full_names",
-      headerName:"Full Names",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "first_name",
-      headerName:"First Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"last_name",
-      headerName:"Last Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"specialty_name",
-      headerName:"Specialty Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"specialty_status",
-      headerName:"Specialty Status",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level_name",
-      headerName:"Level Title",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level",
-      headerName:"Level Title",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    { field: "Action",
-       cellRenderer: ActionButtonGroup,  
-       cellStyle: {
-          width:"20rem"
-         }
-    },
-  ];
-  return tableConfig;
-}
-
-export function studentResultsTableConfig({ DropdownComponent }){
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "student_name",
-      headerName:"Student Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "specialty_name",
-      headerName:"Specialty Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level_name",
-      headerName:"Level Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"level_number",
-      headerName:"Level Number",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"exam_name",
-      headerName:"Exam Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"gpa",
-      headerName:"GPA",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
-    },
-  ];
-  return tableConfig;
-}
-
-export function AccessedResitCandidateTableConfig({ DropdownComponent }){
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "student_name",
-      headerName:"Student Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "exam_name",
-      headerName:"Exam Title",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "specialty_name",
-      headerName:"Specialty",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "level_name",
-      headerName:"Level Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "level",
-      headerName:"level",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"grades_submitted",
-      headerName:"Grades Submitted",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"student_accessed",
-      headerName:"Student Accessed",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"weighted_mark",
-      headerName:"Max Score",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
-    },
-  ];
-  return tableConfig;
-}
-
-export function AnnouncementTableConfig({ DropdownComponent }){
-   const tableConfig = [
-       {
-        field: "id",
-        hide: true,
-       },
-        {
-      field: "title",
-      headerName:"Title",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-     {
-      field: "content",
-      headerName:"Content",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-     {
       field: "status",
-      headerName:"Status",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-     {
-      field: "category_name",
-      headerName:"Category",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"label",
-      headerName:"label",
-      filter:true,
-      cellRenderer:TextComponent
-    },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
-    }
-   ]
-   return tableConfig
-}
-export function StudentDropOutTableConfig({ DropdownComponent }){
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "student_name",
-      headerName:"Student Name",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "department_name",
-      headerName:"Department Title",
+      headerName: "Status",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
-      field: "specialty_title",
-      headerName:"Specialty",
+      field: "personal_vision",
+      headerName: "Personal Vision",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
-      field: "level_name",
-      headerName:"Level Name",
+      field: "commitment_statement",
+      headerName: "Commitment Statement",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
-      field: "level",
-      headerName:"level",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field:"reason",
-      headerName:"Reason",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
-    },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
     },
   ];
   return tableConfig;
 }
-export function AnnouncementCategoryTableConfig({ DropdownComponent }){
-      const tableConfig = [
+export function electionRolesTableConfig({ DropdownComponent }) {
+  const tableConfig = [
     {
       field: "id",
       hide: true,
     },
     {
       field: "name",
-      headerName:"Title",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
+      headerName: "Role Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "election_title",
+      headerName: "Election Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
       field: "description",
-      headerName:"Description",
+      headerName: "Description",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
-      field: "created_at",
-      headerName:"Created At",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    {
-      field: "updated_at",
-      headerName:"Updated At",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle:cellStyle
-    },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
     },
   ];
   return tableConfig;
 }
-export function AnnouncementTagTableConfig({DropdownComponent}){
-    const tableConfig = [
+export function hodTableConfig({ ActionButtonGroup }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "full_names",
+      headerName: "Full Names",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "first_name",
+      headerName: "First Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "last_name",
+      headerName: "Last Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "department_name",
+      headerName: "Department Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "department_status",
+      headerName: "Department Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: ActionButtonGroup,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+export function hosTableConfig({ ActionButtonGroup }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "full_names",
+      headerName: "Full Names",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "first_name",
+      headerName: "First Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "last_name",
+      headerName: "Last Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "specialty_status",
+      headerName: "Specialty Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level",
+      headerName: "Level Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: ActionButtonGroup,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+
+export function studentResultsTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "student_name",
+      headerName: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_number",
+      headerName: "Level Number",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "exam_name",
+      headerName: "Exam Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "gpa",
+      headerName: "GPA",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+
+export function AccessedResitCandidateTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "student_name",
+      headerName: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "exam_name",
+      headerName: "Exam Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level",
+      headerName: "level",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "grades_submitted",
+      headerName: "Grades Submitted",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "student_accessed",
+      headerName: "Student Accessed",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "weighted_mark",
+      headerName: "Max Score",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+
+export function AnnouncementTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "title",
+      headerName: "Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "content",
+      headerName: "Content",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "category_name",
+      headerName: "Category",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "label",
+      headerName: "label",
+      filter: true,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+export function StudentDropOutTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "student_name",
+      headerName: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "department_name",
+      headerName: "Department Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "specialty_title",
+      headerName: "Specialty",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level",
+      headerName: "level",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "reason",
+      headerName: "Reason",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+export function AnnouncementCategoryTableConfig({ DropdownComponent }) {
+  const tableConfig = [
     {
       field: "id",
       hide: true,
     },
     {
       field: "name",
-      headerName:"Title",
-      filter:true,
-      floatingFilter:true,
-      cellRenderer:TextComponent,
-      cellStyle:cellStyle
+      headerName: "Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
     },
     {
       field: "created_at",
-      headerName:"Created At",
+      headerName: "Created At",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
     {
       field: "updated_at",
-      headerName:"Updated At",
+      headerName: "Updated At",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
-      cellStyle:cellStyle
+      cellStyle: cellStyle,
     },
-    { field: "Action",
-       cellRenderer: DropdownComponent,  
-       cellStyle: {
-          width:"20rem"
-         }
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+export function AnnouncementTagTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "name",
+      headerName: "Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "created_at",
+      headerName: "Created At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "updated_at",
+      headerName: "Updated At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
     },
   ];
   return tableConfig;
