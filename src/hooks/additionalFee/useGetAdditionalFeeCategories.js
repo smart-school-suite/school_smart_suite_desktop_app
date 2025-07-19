@@ -4,6 +4,6 @@ import { getAdditionalFeeCategory } from "../../services/additionalFee";
 export const useGetAdditionalFeeCategory = () => {
   return useQuery({
     queryKey: ["additionalFeeCategories"],
-    queryFn: getAdditionalFeeCategory,
+    queryFn: () => getAdditionalFeeCategory(),
   });
 };

@@ -1,7 +1,7 @@
 import axiosInstance from "../axios/authAxios";
 
 export const createAdditionalFeeCategory = async (additionalFeeData) => {
-     const response = await axiosInstance.create("additional-fee-category", additionalFeeData);
+     const response = await axiosInstance.post("additional-fee-category", additionalFeeData);
      return response.data;
 }
 

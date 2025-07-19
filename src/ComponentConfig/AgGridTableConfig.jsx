@@ -678,6 +678,42 @@ export function ExpensesCategoryTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
+
+export function AdditionalFeeCategoryTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "title",
+      headerName: "Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "created_at",
+      headerName: "Created At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "updated_at",
+      headerName: "Updated At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
+
 export function ParentsTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {

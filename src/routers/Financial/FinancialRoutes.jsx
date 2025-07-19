@@ -11,9 +11,12 @@ const AdditionalFees = React.lazy(() => import("../../pages/Finances/AdditionalF
 const AdditionalFeeTransactions = React.lazy(() => import("../../pages/Finances/Transactions/AdditionalFeesTransactions"));
 const SchoolExpensesCategory = React.lazy(() => import("../../pages/Finances/SchoolExpensesCategory"));
 const FeeSchedule = React.lazy(() => import("../../pages/Finances/FeeSchedule"));
+const BillStudentAdditionalFee = React.lazy(() => import("../../pages/Finances/BillStudentAdditionalFee"));
+const AdditionalFeeCategory = React.lazy(() => import("../../pages/Finances/AdditionalFeeCategory"));
 import SchoolExpensesLayout from "../../layouts/SchoolExpensesLayout";
 import RegistrationFeeLayout from "../../layouts/RegistrationFeeLayout";
 import TuitionFeeLayout from "../../layouts/TuitionFeeLayout";
+import AdditionalFeeLayout from "../../layouts/AdditionalFeeLayout";
 const FinancialRoutes = [
   <Route key={"resitFee"} path="/resit-payments" element={
     <Suspense>
@@ -52,8 +55,8 @@ const FinancialRoutes = [
     </Suspense>
   }/>
  </Route>,
-  
-  <Route key={"additionalFees"} path="/additionalFees"  element={
+  <Route key={"additionalFeeManagement"} element={<AdditionalFeeLayout />}>
+     <Route key={"additionalFees"} path="/additionalFees"  element={
     <Suspense>
       <AdditionalFees />
     </Suspense>
@@ -63,6 +66,23 @@ const FinancialRoutes = [
       <AdditionalFeeTransactions />
      </Suspense>
   }/>,
+  <Route 
+    key={"billStudentAdditionalFee"} path="/additional-fee/student-billing"
+    element={
+       <Suspense>
+        <BillStudentAdditionalFee />
+       </Suspense>
+    }
+  />,
+  <Route 
+    key={"additionalFeeCategory"} path="/additional-fee/category"
+    element={
+       <Suspense>
+        <AdditionalFeeCategory  />
+       </Suspense>
+    }
+  />
+  </Route>,
    <Route key={"tuitionFeeLayout"} element={<TuitionFeeLayout />}>
     <Route key={"tuitionFees"} path="/fee-payments" element={
     <Suspense>

@@ -4,6 +4,6 @@ import { getStudentAdditionalFees } from "../../services/additionalFee";
 export const useGetAdditionalFees = () => {
     return useQuery({
         queryKey: ["additionalFees"],
-        queryFn:  getStudentAdditionalFees,
+        queryFn:  () => getStudentAdditionalFees(),
       }); 
 }

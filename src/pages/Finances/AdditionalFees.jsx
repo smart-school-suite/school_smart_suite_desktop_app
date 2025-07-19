@@ -1,96 +1,131 @@
-import Navbar from "../../components/Navbar";
-import { AdditionalFeesNavBarConfig } from "../../ComponentConfig/navBarConfig";
-import { useFetchAdditionalFeesQuery } from "../../Slices/Asynslices/fetchSlice";
-import Table from "../../components/Tables";
-import CleanArrayData, { renameKeys } from "../../utils/functions";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
+import Table from "../../components/Tables/Tables";
 import { additionalFeesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import DeleteAdditionalFees from "../../ModalContent/AdditionalFees/DeleteAdditionalFees";
 import PayAdditionalFees from "../../ModalContent/AdditionalFees/PayAdditionalFees";
 import UpdateAdditionalFees from "../../ModalContent/AdditionalFees/UpdateAdditionalFees";
 import AdditionalFeeDetail from "../../ModalContent/AdditionalFees/AdditionalFeesDetails";
-function AdditionalFees(){
-    const { data:data, isLoading, error } = useFetchAdditionalFeesQuery();
-    const filter_array_keys = [
-        "id",
-        "student.name",
-        "amount",
-        "status",
-        "reason",
-        "specialty.specialty_name",
-        "fee_category.title",
-        "level.level",
-        "level.name",
-      ];
-      const renameMapping = {
-        "student.name": "student_name",
-        "amount": "amount",
-        "status": "status",
-        "reason":"reason",
-        "fee_category.title":"category",
-        "specialty.specialty_name": "specialty_name",
-        "level.name": "level_name",
-        "level.level": "level_number",
-      };
-    if(isLoading){
-        return <Pageloaderspinner />
-    }
-    return(
-        <>
-         <Navbar 
-          options={AdditionalFeesNavBarConfig}
-         />
-            <div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number of Resits</p>
-            <h1 className="fw-bold my-0">{data.data.length}</h1>
-          </div>
+import { useGetAdditionalFees } from "../../hooks/additionalFee/useGetAdditionalFees";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import React from "react";
+import { useState } from "react";
+import CustomModal from "../../components/Modals/Modal";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+
+function AdditionalFees() {
+  const { data: additionalFee, isFetching } = useGetAdditionalFees();
+  if (isFetching) {
+    return <DataTableNavLoader />;
+  }
+  return (
+    <>
+      <div>
+        <div className="d-flex flex-row align-items-center mb-2 w-100">
+          <span className="font-size-sm fw-semibold">Addition Fee Payments</span>
         </div>
         <div>
           <Table
             colDefs={additionalFeesTableConfig({ DropdownComponent })}
-            rowData={renameKeys(
-              CleanArrayData(data.data, filter_array_keys),
-              renameMapping
-            )}
+            rowData={additionalFee.data}
           />
         </div>
       </div>
-        </>
-    )
+    </>
+  );
 }
 export default AdditionalFees;
 
 export function DropdownComponent(props) {
-    const { id } = props.data;
-    const actions = [
-      {
-        actionTitle: "Make Payment",
-        modalContent: PayAdditionalFees,
-      },
-      {
-        actionTitle: "Details",
-        modalContent: AdditionalFeeDetail,
-      },
-      {
-        actionTitle:"Update Fee",
-        modalContent:UpdateAdditionalFees
-      },
-      {
-        actionTitle:"Delete Fee",
-        modalContent:DeleteAdditionalFees
-      }
-    ];
-    return (
-      <>
-        <ActionButtonDropdown actions={actions} row_id={id} 
-        style={'tableActionButton primary-background text-white font-size-sm px-2'} >
-          <span>Edit Fee</span>
-          </ActionButtonDropdown>
-      </>
+  const rowData = props.data;
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("md");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "md") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        rowData,
+        handleClose: handleCloseModal,
+      })
     );
-  }
-
-
+    setModalSize(size);
+    setShowModal(true);
+  };
+  //payadditional fee
+  //additional fee details
+  //update additional feee
+  //delete additional fee
+  return (
+    <>
+      <ActionButtonDropdown
+        buttonContent={"Edit Actions"}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
+      >
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(PayAdditionalFees, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Pay Fee</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(AdditionalFeeDetail, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Fee Details</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(UpdateAdditionalFees, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Update Fee</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteAdditionalFees, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Fee</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+      </ActionButtonDropdown>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
+    </>
+  );
+}
