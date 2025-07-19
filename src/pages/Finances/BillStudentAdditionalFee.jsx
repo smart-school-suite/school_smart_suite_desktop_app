@@ -6,6 +6,8 @@ import CustomModal from "../../components/Modals/Modal";
 import ActionButtonDropdown, {DropDownMenuItem} from "../../components/DataTableComponents/ActionComponent";
 import StudentDetails from "../../ModalContent/Student/StudentDetails";
 import { useGetStudents } from "../../hooks/student/useGetStudent";
+import { StudentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import CreateStudentAdditionalFee from "../../ModalContent/AdditionalFees/CreateStudentAdditionalFee";
 function BillStudentAdditionalFee(){
   const { data:students, isFetching } = useGetStudents();
   if(isFetching){
@@ -13,7 +15,18 @@ function BillStudentAdditionalFee(){
   }
     return(
         <>
-        {console.table(students.data)}
+      <div>
+        <div className="d-flex flex-row align-items-center mb-2 w-100">
+          <span className="font-size-sm fw-semibold">Addition Fee Billing</span>
+        </div>
+        <div>
+          <Table
+            colDefs={StudentTableConfig({ DropdownComponent })}
+            rowData={students.data}
+            rowHeight={55}
+          />
+        </div>
+      </div>
         </>
     )
 }
@@ -53,7 +66,7 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(BillStudentAdditionalFee, "md")}
+          onClick={() => handleShowModal(CreateStudentAdditionalFee, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">

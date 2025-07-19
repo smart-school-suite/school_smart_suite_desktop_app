@@ -1,5 +1,5 @@
 import { useDeleteAdditionalFeeTransactionMutation } from "../../Slices/Asynslices/deleteSlice";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 function DeleteTransaction({ row_id: transactionId, handleClose }) {
   const [feedback, setFeedback] = useState({

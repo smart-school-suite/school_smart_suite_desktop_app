@@ -1,5 +1,5 @@
 import { useFetchAdditionalFeesTransactionDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function TransactionDetails({ row_id: transactionId, handleClose }) {
   const {
     data: transactionDetails,

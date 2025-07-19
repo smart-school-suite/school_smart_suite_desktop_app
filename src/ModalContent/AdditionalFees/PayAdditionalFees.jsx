@@ -1,24 +1,19 @@
 import { useState } from "react";
-import { usePayAdditionalFeesMutation } from "../../Slices/Asynslices/postSlice";
-import toast from "react-hot-toast";
-function PayAdditionalFees({ row_id: additionalFeeId, handleClose }) {
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { usePayAdditionalFee } from "../../hooks/additionalFee/usePayAdditionalFee";
+function PayAdditionalFees({ rowData, handleClose }) {
+  const additionalFeeId = rowData.id;
   const [formData, setFormData] = useState({
     amount: "",
     payment_method: "",
     fee_id: additionalFeeId,
   });
-  const [payAdditionalFees] = usePayAdditionalFeesMutation();
+  const { mutate:payAdditionalFee, isPending } = usePayAdditionalFee(handleClose, additionalFeeId);
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
-    try {
-      await payAdditionalFees(formData).unwrap();
-      toast.success("Expenses  created successfully!");
-      handleClose();
-    } catch (error) {
-      toast.error("Failed to create expenses. Try again.");
-    }
+     payAdditionalFee(formData);
   };
   return (
     <span>
@@ -45,6 +40,7 @@ function PayAdditionalFees({ row_id: additionalFeeId, handleClose }) {
             name="payment_method"
             value={formData.payment_method}
           >
+            <option selected>Select Payment Method</option>
             <option value="cash">Cash Payment</option>
             <option value="cheque">cheque</option>
             <option value="credit_card">Credit card</option>
@@ -54,18 +50,14 @@ function PayAdditionalFees({ row_id: additionalFeeId, handleClose }) {
         </div>
         <div className="mt-3 d-flex gap-2">
           <button
-            className="border-none px-3 py-2 text-primary w-50 rounded-3 font-size-sm"
+            className="border-none px-3 py-2 rounded-3 font-size-sm w-50 primary-background text-white w-100"
             onClick={() => {
-              handleClose();
+               handleSubmit();
             }}
           >
-            Cancel
-          </button>
-          <button
-            className="border-none px-3 py-2 rounded-3 font-size-sm w-50 primary-background text-white"
-            onClick={handleSubmit}
-          >
-            Create
+           {
+             isPending ? <SingleSpinner /> : "Pay Additional Fee"
+           }
           </button>
         </div>
       </div>

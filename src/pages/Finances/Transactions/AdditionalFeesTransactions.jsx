@@ -1,90 +1,117 @@
-import Navbar from "../../../components/Navbar";
-import { AdditionalFeesNavBarConfig } from "../../../ComponentConfig/navBarConfig";
-import { useFetchAddtionalFeesTransactionsQuery } from "../../../Slices/Asynslices/fetchSlice";
-import Table from "../../../components/Tables";
-import Pageloaderspinner from "../../../components/Spinners";
-import CleanArrayData, { renameKeys } from "../../../utils/functions";
+import Table from "../../../components/Tables/Tables";
 import ActionButtonDropdown from "../../../components/DataTableComponents/ActionComponent";
 import { additionalFeesTransactionsTableConfig } from "../../../ComponentConfig/AgGridTableConfig";
 import ReverseTransaction from "../../../ModalContent/AdditionalFeesTransactions/ReverseTransaction";
 import DeleteTransaction from "../../../ModalContent/AdditionalFeesTransactions/DeleteTransaction";
 import TransactionDetails from "../../../ModalContent/AdditionalFeesTransactions/TransactionDetails";
-function AdditionalFeeTransactions(){
-    const { data:data, isLoading, error } = useFetchAddtionalFeesTransactionsQuery();
-    const filter_array_keys = [
-        "id",
-        "transaction_id",
-        "payment_method",
-        "addition_fee.student.name",
-        "addition_fee.fee_category.title",
-        "addition_fee.amount",
-        "amount",
-        "addition_fee.status"
-      ];
-      const renameMapping = {
-        "id":"id",
-        "transaction_id":"transaction_id",
-        "payment_method":"payment_method",
-        "addition_fee.student.name":"student_name",
-        "addition_fee.fee_category.title":"title",
-        "addition_fee.amount":"amount",
-        "amount":"amount_paid",
-        "addition_fee.status":"status"
-      };
-    if(isLoading){
-        return <Pageloaderspinner />
-    }
-    return(
-        <>
-        <Navbar 
-          options={AdditionalFeesNavBarConfig}
-         />
+import { useGetAdditionalFeeTransactions } from "../../../hooks/additionalFee/useGetAdditionalFeeTransactions";
+import DataTableNavLoader from "../../../components/PageLoaders/DataTableNavLoader";
+import React from "react";
+import { useState } from "react";
+import CustomModal from "../../../components/Modals/Modal";
+import { DropDownMenuItem } from "../../../components/DataTableComponents/ActionComponent";
+function AdditionalFeeTransactions() {
+  const { data: transactions, isFetching } = useGetAdditionalFeeTransactions();
+  if (isFetching) {
+    return <DataTableNavLoader />;
+  }
+  return (
+    <>
       <div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number of Resits</p>
-            <h1 className="fw-bold my-0">{data.data.length}</h1>
+        <div className="d-flex flex-row align-items-center mb-2 w-100">
+          <div>
+            <span className="font-size-sm fw-semibold">Transactions</span>
           </div>
         </div>
         <div>
           <Table
-            colDefs={additionalFeesTransactionsTableConfig({ DropdownComponent })}
-            rowData={renameKeys(
-              CleanArrayData(data.data, filter_array_keys),
-              renameMapping
-            )}
+            colDefs={additionalFeesTransactionsTableConfig({
+              DropdownComponent,
+            })}
+            rowData={transactions.data}
           />
         </div>
       </div>
-        </>
-    )
+    </>
+  );
 }
 export default AdditionalFeeTransactions;
 
 export function DropdownComponent(props) {
-  const { id } = props.data;
-  const actions = [
-    {
-      actionTitle: "Delete",
-      modalContent: DeleteTransaction,
-    },
-    {
-      actionTitle: "Reverse Transaction",
-      modalContent: ReverseTransaction,
-    },
-    {
-      
-      actionTitle: "Transaction Details",
-      modalContent: TransactionDetails,
-    },
-  ];
+  const rowData = props.data;
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("md");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "md") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        rowData,
+        handleClose: handleCloseModal,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
-      <ActionButtonDropdown actions={actions} row_id={id} 
-       style={'tableActionButton primary-background text-white font-size-sm px-2'}
+      <ActionButtonDropdown
+        buttonContent={"Edit Actions"}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
       >
-        <span>Edit Transaction</span>
-         </ActionButtonDropdown>
+      <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(ReverseTransaction, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Reverse Transaction</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteTransaction, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Transaction</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(TransactionDetails, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Transaction Details</span>
+            </div>
+          </div>
+        </DropDownMenuItem>
+      </ActionButtonDropdown>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }
