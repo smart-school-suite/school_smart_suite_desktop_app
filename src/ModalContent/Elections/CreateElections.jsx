@@ -1,5 +1,5 @@
 import { useCreateElectionMutation } from "../../Slices/Asynslices/postSlice";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import toast from "react-hot-toast";
 function CreateElections(){

@@ -4,27 +4,42 @@ import { useLocation, useNavigate } from "react-router-dom";
 import NotificationDropdown from "../Dropdowns/NotificationDropdown";
 import createEcho from "../../echo/echo";
 import { useEffect, useState } from "react";
-function Navbar(props) {
+import { useDispatch } from "react-redux";
+import { addNotification } from "../../Slices/Asynslices/NotificationSlice";
+function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const userData = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
   const userId = userData.id;
 
-  const echo = createEcho(token); // create Echo instance with user token
+  const echo = createEcho(token);
 
   useEffect(() => {
-      const channel = echo.private(`App.Models.Schooladmin.${userData.authSchoolAdmin.id}`); // adjust based on guard/model
+    const channel = echo.private(
+      `App.Models.Schooladmin.${userData.authSchoolAdmin.id}`
+    );
+    channel.notification((notification) => {
+      dispatch(
+        addNotification({
+          id: notification.id,
+          title: notification.title,
+          body: notification.body,
+          created_at: notification.created_at
+            ? notification.created_at
+            : new Date().toISOString(),
+          isUnread: true,
+          read_at: null,
+        })
+      );
+      setNotifications((prev) => [notification, ...prev]);
+    });
 
-      channel.notification((notification) => {
-          console.log('Received Notification:', notification);
-          setNotifications((prev) => [notification, ...prev]);
-      });
-
-      return () => {
-          echo.leave(`App.Models.Schooladmin.${userId}`);
-      };
+    return () => {
+      echo.leave(`App.Models.Schooladmin.${userId}`);
+    };
   }, [userId, echo]);
   return (
     <>
@@ -42,7 +57,9 @@ function Navbar(props) {
               EY
             </div>
             <div className="d-block font-size-sm">
-              <p className="my-0 fw-semibold">{userData.schoolDetails.abbrevaition}</p>
+              <p className="my-0 fw-semibold">
+                {userData.schoolDetails.abbreviation}
+              </p>
               <p className="my-0  fw-semibod">{userData.schoolDetails.city}</p>
             </div>
           </div>
@@ -50,40 +67,66 @@ function Navbar(props) {
             className="d-flex flex-row align-items-center justify-content-between  rounded-pill bg-white"
             style={{ width: "68%", gap: "4rem", padding: "0.35rem" }}
           >
-            {props.options.route_data.map((items, index) => {
-              return (
-                <>
-                  <button
-                    className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center ${
-                      location.pathname === items.route
-                        ? "primary-background text-white"
-                        : "transparent-bg gainsboro-color"
-                    }  gap-1 rounded-pill`}
-                    style={{
-                      width: "32%",
-                      padding: "0.65rem",
-                      fontSize: "0.92rem",
-                    }}
-                    onClick={() => {
-                      navigate(items.route);
-                    }}
-                    key={index}
-                  >
-                    <span>
-                      {items.icon === null ? (
-                        <>IC</>
-                      ) : (
-                        <>
-                          {" "}
-                          <Icon icon={items.icon} className="fs-4" />{" "}
-                        </>
-                      )}
-                    </span>
-                    <span>{items.lable}</span>
-                  </button>
-                </>
-              );
-            })}
+            <button
+              className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center ${
+                location.pathname === "/"
+                  ? "primary-background-100 color-primary"
+                  : "transparent-bg gainsboro-color"
+              }  gap-1 rounded-pill`}
+              style={{
+                width: "32%",
+                padding: "0.65rem",
+                fontSize: "0.92rem",
+              }}
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              <span>
+                <Icon icon="healthicons:money-bag-outline" className="fs-4" />{" "}
+              </span>
+              <span>Financial Analysis</span>
+            </button>
+            <button
+              className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center ${
+                location.pathname === "/operational-analysis"
+                  ? "primary-background-100 color-primary"
+                  : "transparent-bg gainsboro-color"
+              }  gap-1 rounded-pill`}
+              style={{
+                width: "32%",
+                padding: "0.65rem",
+                fontSize: "0.92rem",
+              }}
+              onClick={() => {
+                navigate("/operational-analysis");
+              }}
+            >
+              <span>
+                <Icon icon="ep:operation" className="fs-4" />{" "}
+              </span>
+              <span>Operational Analysis</span>
+            </button>
+            <button
+              className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center ${
+                location.pathname === "/academic-analysis"
+                  ? "primary-background-100 color-primary"
+                  : "transparent-bg gainsboro-color"
+              }  gap-1 rounded-pill`}
+              style={{
+                width: "32%",
+                padding: "0.65rem",
+                fontSize: "0.92rem",
+              }}
+              onClick={() => {
+                navigate("/academic-analysis");
+              }}
+            >
+              <span>
+                <Icon icon="heroicons:academic-cap" className="fs-4" />{" "}
+              </span>
+              <span>Academic Analysis</span>
+            </button>
           </div>
           <div className="d-flex flex-row align-items-center gap-2">
             <div
@@ -123,4 +166,3 @@ function Navbar(props) {
   );
 }
 export default Navbar;
-

@@ -1,20 +1,10 @@
 import { Icon } from "@iconify/react";
 import { SchoolAdminTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import React from "react";
-import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
-import PermissionsBySchoolAdmin from "../../ModalContent/SchoolAdmin/PermissionsBySchoolAdmin";
-import SchoolAdminPermissions from "../../ModalContent/SchoolAdmin/SchoolAdminPermissions";
-import UpdateSchoolAdmin from "../../ModalContent/SchoolAdmin/UpdateSchoolAdmin";
-import SchoolAdminDetails from "../../ModalContent/SchoolAdmin/SchoolAdminDetails";
-import SchoolAdminRoles from "../../ModalContent/SchoolAdmin/SchoolAdminRoles";
-import RevokeSchoolAdminPermissions from "../../ModalContent/SchoolAdmin/RevokeSchoolAdminPermissions";
-import SuspendSchoolAdmin from "../../ModalContent/SchoolAdmin/SuspendSchoolAdmin";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { ImageComponent } from "../../components/DataTableComponents/ImageComponent";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import AccountStatus from "../../ModalContent/SchoolAdmin/AccountStatus";
 import AppointHod from "../../ModalContent/SchoolAdmin/AppointHod";
-import AppointHos from "../../ModalContent/SchoolAdmin/AppointHos";
 import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
 import ManagePermission from "../../ModalContent/SchoolAdmin/ManagePermission";
 import ManageRoles from "../../ModalContent/SchoolAdmin/ManageRole";
@@ -70,7 +60,7 @@ function SchoolAdmins() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100"
+              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -82,7 +72,7 @@ function SchoolAdmins() {
                 className="font-size-md primary-color"
               />
             </div>
-            <span className="my-0">School Administrator</span>
+            <span className="my-0 fw-semibold">School Administrator</span>
           </div>
         </div>
 

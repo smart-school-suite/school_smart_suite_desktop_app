@@ -63,27 +63,27 @@ export const sideBarData = [
   {
     title: "Overview",
     icon: "mage:dashboard-4-fill",
-    path: "/annoucements",
+    path: "/announcement-overview",
   },
   {
     title: "Active Announcement",
     icon: "f7:speaker-2-fill",
-    path: "/viewAnnoucement",
+    path: "/announcement",
   },
   {
     title: "Schedule Annoucements",
     icon: "material-symbols:schedule-send-rounded",
-    path: "/scheduledAnnoucement",
+    path: "/scheduled-annoucement",
   },
   {
     title: "Draft Announcements",
     icon: "ion:archive",
-    path: "/archieveAnnoucement",
+    path: "/archieve-annoucement",
   },
   {
     title: "Expired Annoucements",
     icon: "pajamas:expire",
-    path: "/expiredAnnoucement",
+    path: "/expired-annoucement",
   },
   {
     title: "Announcement Category",
@@ -94,10 +94,5 @@ export const sideBarData = [
      title:"Announcement Tags",
      icon:"",
      path:"/announcement-tag"
-  },
-  {
-    title: "Settings",
-    icon: "material-symbols:settings-rounded",
-    path: "/annoucementSettings",
-  },
+  }
 ];

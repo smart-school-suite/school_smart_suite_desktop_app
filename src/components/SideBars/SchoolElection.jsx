@@ -1,101 +1,73 @@
-import { ModalButton } from "../DataTableComponents/ActionComponent";
-import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
-import CreateElections from "../../ModalContent/Elections/CreateElections";
 function SchoolElectionSideBar() {
   return (
     <>
-      <div className="col-lg-3">
-        <ModalButton
-          classname="createElectionBtn"
-          action={{ modalContent: CreateElections }}
-        >
-          <span className="annoucementTitle">Create Election</span>
-          <span>
-            <Icon icon="mynaui:plus-solid" />
-          </span>
-        </ModalButton>
-        <div className="card mt-2 py-1 px-3 mt-2 rounded-4 annoucementSideBar">
-          {ElectionSideBarData.map((items) => {
-            return (
-              <ElectionSideBarComponent
-                title={items.title}
-                icon={items.icon}
-                path={items.path}
-              />
-            );
-          })}
-        </div>
+<div
+        className="card border-none width-20 p-2 rounded-3 d-flex flex-column gap-3">
+        {
+            sideBarData.map((item) => (
+                 <SideBarComponent 
+                   title={item.title}
+                   path={item.path}
+                 />
+            ))
+        }
       </div>
     </>
   );
 }
 export default SchoolElectionSideBar;
 
-function ElectionSideBarComponent({ title, icon, path }) {
+function SideBarComponent({ title,  path }) {
   const navigate = useNavigate();
   return (
     <>
       <div
-        className={`
-               d-flex flex-row align-items-center my-3 justify-content-between font-size-md pointer-cursor ${
-                 location.pathname === path ? "color-primary fw-medium " : "gainsboro-color"
-               }
-              `}
-        onClick={() => navigate(path)}
-      >
-        <span className="annoucementTitle ">{title}</span>
-        <span>
-          <Icon icon={icon} />
-        </span>
-      </div>
+            className={
+              location.pathname === path
+                ? " border-none  font-size-sm rounded-3 schoolexpenses-active  transition-four-sec pointer-cursor  d-flex align-items-center gap-3"
+                : "gainsboro-color border-none font-size-sm transparent-bg d-flex align-items-center gap-3 transition-four-sec pointer-cursor schoolexpenses-inactive"
+            }
+            onClick={() => {
+              navigate(path);
+            }}
+          >
+            {title}
+          </div>
     </>
   );
 }
-export const ElectionSideBarData = [
+export const sideBarData = [
   {
     title: "Overview",
-    icon: "mage:dashboard-4-fill",
     path: "/schoolElections",
   },
   {
-    title: "View Elections",
-    icon: "fluent:vote-20-filled",
+    title: "Elections",
     path: "/viewElections",
   },
   {
     title: "Election Roles",
-    icon: "eos-icons:role-binding",
     path: "/electionRoles",
   },
   {
     title: "Election Candidates",
-    icon: "fluent:people-queue-28-filled",
     path: "/electionCandidates",
   },
   {
     title: "Election Applications",
-    icon: "fluent:form-24-filled",
     path: "/electionApplication",
   },
   {
     title: "Election Results",
-    icon: "game-icons:podium-winner",
     path: "/electionResults",
   },
   {
     title: "Past Winners",
-    icon: "material-symbols:chat-paste-go",
     path: "/passWinners",
   },
   {
     title: "Past Elections",
-    icon: "fa-solid:vote-yea",
     path: "/passElection",
-  },
-  {
-    title: "Election Settings",
-    icon: "material-symbols:settings-rounded",
-    path: "/electionSettings",
   },
 ];

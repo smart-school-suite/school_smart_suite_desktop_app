@@ -3,19 +3,16 @@ import BarChart from "../../components/ChartComponents/BarChart";
 import LineChart from "../../components/chartcomponents/Linecharts";
 import { Icon } from "@iconify/react";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { DashboardNavabarOptions } from "../../ComponentConfig/navBarConfig";
-import { useFetchFinancialStatsQuery } from "../../Slices/Asynslices/fetchSlice";
 import CardGroup from "../../components/Cardgroup";
-import Navbar from "../../components/NavBars/Navbar";
-import DashboardPageLoader from "../../components/PageLoaders/DashboardPageLoader";
 import { formatDateWithSuffix, formatNumber } from "../../utils/functions";
 import DoughnutChart from "../../components/ChartComponents/DoughnutChart";
 import NumberFlow from "@number-flow/react";
 import { useSelector } from "react-redux";
 import { useGetSchoolFinancialStats } from "../../hooks/financialStat/useGetSchoolFinancialStats";
+import DashboardPageLoader from "../../components/PageLoaders/DashboardPageLoader";
 function Dashboard() {
   const currentYear = new Date().getFullYear();
-  const { data, isLoading, isError, isFetching } = useGetSchoolFinancialStats(currentYear);
+  const { data, isLoading } = useGetSchoolFinancialStats(currentYear);
   const schoolData = useSelector((state) => state.auth.user);
   const currency = schoolData.schoolDetails.school.country.currency;
   const labelsConfig = {
@@ -44,14 +41,13 @@ function Dashboard() {
   if (isLoading) {
     return (
       <>
-        <Navbar options={DashboardNavabarOptions} />
         <DashboardPageLoader />
       </>
     );
   }
   return (
     <>
-      <Navbar options={DashboardNavabarOptions} />
+      
       <div className="container pb-3">
         <div className="d-flex flex-row justify-content-between align-items-end mt-2">
           <div className="d-block">

@@ -679,6 +679,41 @@ export function ExpensesCategoryTableConfig({ DropdownComponent }) {
   return tableConfig;
 }
 
+export function CategoryTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "name",
+      headerName: "Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
+
 export function AdditionalFeeCategoryTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
@@ -1111,13 +1146,6 @@ export function SchoolAdminTableConfig({ ImageComponent, ActionButtonGroup }) {
     {
       field: "last_name",
       headerName: "Last Name",
-      cellRenderer: TextComponent,
-      filter: true,
-      floatingFilter: true,
-    },
-    {
-      field: "role",
-      headerName: "Role",
       cellRenderer: TextComponent,
       filter: true,
       floatingFilter: true,

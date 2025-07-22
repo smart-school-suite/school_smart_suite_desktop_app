@@ -57,3 +57,13 @@ export const createSchoolAdmin = async (createData) => {
    const response = await axiosInstance.post("auth/school-admin/register", createData)
    return response.data;
 }
+
+export const getAuthSchoolAdmin = async () => {
+   const response = await axiosInstance.get("auth/school-admin/me");
+   return response.data;
+}
+
+export const updateSchoolAdminProfile = async (updateData) => {
+   const response = await axiosInstance.put("school-admin/update-profile", updateData);
+   return response.data;
+}

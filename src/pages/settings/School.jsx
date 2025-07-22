@@ -1,9 +1,20 @@
 import { Icon } from "@iconify/react";
 import SettingSideBar from "../../components/SideBars/SetttingSideBar";
 import { useSelector } from "react-redux";
+import Pageloaderspinner from "../../components/Spinners/Spinners";
+import { useGetSchoolDetails } from "../../hooks/school/useGetSchoolDetails";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import UpdateSchoolName from "../../ModalContent/School/updateSchoolName";
+import UpdateSchoolMotor from "../../ModalContent/School/UpdateSchoolMotor";
+import UploadSchoolLogo from "../../ModalContent/School/UploadSchoolLogo";
+import { formatDate, timeSince } from "../../utils/functions";
+import UpdateEstablishedDate from "../../ModalContent/School/UpdateEstablishedDate";
 function School() {
   const userData = useSelector((state) => state.auth.user);
-  const schoolData = userData.schoolDetails.school;
+  const { data:schoolDetails, isFetching } = useGetSchoolDetails();
+  if(isFetching){
+    return <Pageloaderspinner />
+  }
   return (
     <>
         <div
@@ -30,39 +41,45 @@ function School() {
                 className="card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1"
                 style={{ fontSize: "0.87rem" }}
               >
-                <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
-                  <div className="d-flex flex-column">
-                    <span className="fw-semibold">School Name</span>
+               <ModalButton
+                   classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100"}
+                   action={{ modalContent:UpdateSchoolName }}
+               >
+                <div className="d-flex flex-column">
+                    <span className="fw-semibold text-start">School Name</span>
                     <span className="gainsboro-color fw-light">
-                      {schoolData.name}
+                      {schoolDetails.data.name}
                     </span>
                   </div>
                   <div>
                     <Icon icon="iconamoon:edit-thin" width="24" height="24" />
                   </div>
-                </div>
+               </ModalButton>
                 <hr />
-                <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
-                  <div className="d-flex flex-column">
+                <ModalButton
+                  classname="d-flex flex-row align-items-center justify-content-between pointer-cursor w-100"
+                  action={{ modalContent:UpdateEstablishedDate }}
+                >
+                 <div className="d-flex flex-column text-start">
                     <span className="fw-semibold">Established Year</span>
                     <span className="gainsboro-color fw-light">
-                      {schoolData.established_year === null
+                      {schoolDetails.data.established_year === null
                         ? "Add Established Year"
-                        : schoolData.established_year}
+                        : `${formatDate(schoolDetails.data.established_year)}`}
                     </span>
                   </div>
                   <div>
                     <Icon icon="iconamoon:edit-thin" width="24" height="24" />
                   </div>
-                </div>
+                </ModalButton>
                 <hr />
                 <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
                   <div className="d-flex flex-column">
                     <span className="fw-semibold">School Type</span>
                     <span className="gainsboro-color fw-light">
-                      {schoolData.type === null
+                      {schoolDetails.data.type === null
                         ? "Specify School Type"
-                        : schoolData.type}
+                        : schoolDetails.data.type}
                     </span>
                   </div>
                   <div>
@@ -70,32 +87,40 @@ function School() {
                   </div>
                 </div>
                 <hr />
-                <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
-                  <div className="d-flex flex-column">
+                <ModalButton
+                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100"}
+                  action={{ modalContent:UpdateSchoolMotor }}
+                >
+                  <div className="d-flex flex-column text-start">
                     <span className="fw-semibold">Motor</span>
                     <span className="gainsboro-color fw-light">
-                      {schoolData.motor === null
+                      {schoolDetails.data.motor === null
                         ? "Add School Motor"
-                        : schoolData.motor}
+                        : schoolDetails.data.motor}
                     </span>
                   </div>
                   <div>
                     <Icon icon="iconamoon:edit-thin" width="24" height="24" />
                   </div>
-                </div>
+                </ModalButton>
                 <hr />
-                <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
+                <ModalButton
+                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100"}
+                  action={{ modalContent:UploadSchoolLogo }}
+                >
                   <div className="d-flex flex-row align-item-center">
-                    <div className="d-flex flex-column">
+                    <div className="d-flex flex-column text-start">
                       <span className="fw-semibold">School Logo</span>
                       <span className="gainsboro-color fw-light">
-                        {schoolData.school_logo === null
+                        {schoolDetails.data.school_logo === null
                           ? "Add School Logo"
-                          : schoolData.school_logo}
+                          : "Update School Logo"}
                       </span>
                     </div>
                   </div>
-                  <div
+                  {
+                    schoolDetails.data.school_logo === null ? 
+                    <div
                     style={{
                       width: "3.5rem",
                       height: "3.5rem",
@@ -104,8 +129,14 @@ function School() {
                     className="primary-background-50 rounded-1 color-primary d-flex flex-row align-items-center justify-content-center"
                   >
                     SL
-                  </div>
-                </div>
+                  </div> : 
+                   <img 
+                     className="school-logo"
+                     alt="school-logo"
+                     src={`http://127.0.0.1:8000/storage/SchoolLogo/${schoolDetails.data.school_logo}`}
+                     />
+                  }
+                </ModalButton>
               </div>
             </div>
             <div>
@@ -115,24 +146,27 @@ function School() {
               >
                 School Branches Registered Under this school
               </span>
-              <div
+              {
+                schoolDetails.data.schoolbranches.map((items) => (
+                  <div
                 className="card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1"
                 style={{ fontSize: "0.87rem" }}
+                key={items.id}
               >
                 <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
                   <div className="d-flex flex-column">
                     <span className="fw-semibold">School Branch Name</span>
                     <span className="gainsboro-color fw-light">
-                      {schoolData.name}
+                      {items.name == null ? "N/A" : items.name}
                     </span>
                   </div>
                 </div>
                 <hr />
                 <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
                   <div className="d-flex flex-column">
-                    <span className="fw-semibold">Location</span>
+                    <span className="fw-semibold">Abbrevaition</span>
                     <span className="gainsboro-color fw-light">
-                      {schoolData.name}
+                      {items.abbreviation == null ? "N/A" : items.abbreviation}
                     </span>
                   </div>
                 </div>
@@ -141,11 +175,13 @@ function School() {
                   <div className="d-flex flex-column">
                     <span className="fw-semibold">State</span>
                     <span className="gainsboro-color fw-light">
-                      {schoolData.name}
+                      {items.state == null ? "N/A" : items.state}
                     </span>
                   </div>
                 </div>
               </div>
+                ))
+              }
             </div>
             <div>
               <span
@@ -163,7 +199,7 @@ function School() {
                     <div className="d-flex flex-column text-danger">
                     <span className="fw-semibold">Delete School</span>
                     <span className="fw-light">
-                      {schoolData.name}
+                      {schoolDetails.data.name}
                     </span>
                    </div>
                   <div>
@@ -179,7 +215,7 @@ function School() {
                     <div className="d-flex flex-column">
                     <span className="fw-semibold">Suspend School</span>
                     <span className="gainsboro-color fw-light">
-                      {schoolData.name}
+                      {schoolDetails.data.name}
                     </span>
                   </div>
                   <div>

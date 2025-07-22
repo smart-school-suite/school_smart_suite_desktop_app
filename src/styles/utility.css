@@ -284,3 +284,10 @@ body{
 .z-2000{
     z-index: 5000 !important;
 }
+
+.remove-button-style{
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}

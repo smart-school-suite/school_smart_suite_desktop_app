@@ -1,5 +1,10 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useLogout } from "../../hooks/auth/useLogout";
 function Logout({ handleClose }) {
+  const { mutate:logout, isPending } = useLogout();
+  const handleLogout = () => {
+     logout();
+  }
   return (
     <>
       <div className="w-100">
@@ -16,8 +21,16 @@ function Logout({ handleClose }) {
             >
               Cancel
             </button>
-            <button className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50">
-              Yes, Logout
+            <button 
+             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
+             disabled={isPending}
+             onClick={() => {
+               handleLogout();
+             }}
+             >
+              {
+                isPending ? <SingleSpinner /> : "Yes, Logout"
+              }
             </button>
           </div>
         </div>

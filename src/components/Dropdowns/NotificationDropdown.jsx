@@ -9,13 +9,21 @@ import {
   autoUpdate,
 } from "@floating-ui/react";
 import { useState, useEffect } from "react";
+import TextDisplay from "../TextComponents/TextDisplay";
+import { useDispatch, useSelector } from "react-redux";
+import { markAllNotificationsAsRead } from "../../Slices/Asynslices/NotificationSlice";
 function NotificationDropdown() {
   const [isToggled, setIsToggeled] = useState(false);
+  const dispatch = useDispatch();
+  const notificationCount = useSelector((state => state.notification.unreadNotificationCount));
+  const unreadNotifications = useSelector((state => state.notification.unreadNotifications));
+  const readNotifications = useSelector((state => state.notification.readNotifications));
   const { refs, floatingStyles } = useFloating({
     placement: "bottom-end",
     middleware: [offset(5), flip(), shift()],
     whileElementsMounted: autoUpdate,
   });
+
   useEffect(() => {
     const handleClickOutSide = (event) => {
       if (
@@ -28,9 +36,12 @@ function NotificationDropdown() {
     document.addEventListener("mousedown", handleClickOutSide);
     return () => document.removeEventListener("mousedown", handleClickOutSide);
   }, [refs]);
+
   const toggleDropdown = () => {
     setIsToggeled((prevalue) => !prevalue);
+
   };
+
   return (
     <>
       <div
@@ -41,17 +52,10 @@ function NotificationDropdown() {
           borderRadius: "3.0rem",
         }}
         ref={refs.setReference}
-        onClick={() => {
-          toggleDropdown();
-        }}
+        onClick={toggleDropdown}
       >
         <Icon icon="solar:bell-linear" className="z-1" />
-        <button
-          className="z-3 border-none rounded-circle font-size-xs position-absolute fw-semibold bg-danger text-white px-1"
-          style={{ top: "0px", right: "0px", padding: "0.2rem" }}
-        >
-          32
-        </button>
+        <button className="notification-pill">{notificationCount}</button>
       </div>
       <CSSTransition
         in={isToggled}
@@ -59,74 +63,15 @@ function NotificationDropdown() {
         classNames="dropdown"
         unmountOnExit
       >
-        <div className="w-50 px-3 py-2 card border-none shadow-sm rounded-3 z-3 position-absolute"
+        <div
+          className="px-3 py-2 card border-none shadow-sm rounded-4 position-absolute"
           ref={refs.setFloating}
-          style={floatingStyles}
+          style={{ ...floatingStyles, zIndex: 1000, width: "27%" }}
         >
-          <div className="d-flex flex-row justify-content-between">
-            <span className="fw-semibold">Notifications</span>
-            <span className="font-size-sm">Mark As Read All</span>
-          </div>
-          <span className="my-2">Today</span>
-          <div className="d-flex flex-row gap-3 align-items-center my-1 border-bottom px-2">
-            <span>
-              <Icon
-                icon="icon-park-outline:dot"
-                className="font-size-lg color-primary"
-              />
-            </span>
-            <div>
-              <div className="d-flex flex-row gap-2 justify-content-between">
-                <span className="fw-semibold">Maintainance Update Request</span>
-                <span className="font-size-xs">Just Now</span>
-              </div>
-              <div className="font-size-sm gainsboro-color">
-                <p>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Suscipit voluptate obcaecati aperiam! Pariatur
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="d-flex flex-row gap-3 align-items-center my-1 border-bottom px-2">
-            <span>
-              <Icon
-                icon="icon-park-outline:dot"
-                className="font-size-lg color-primary"
-              />
-            </span>
-            <div>
-              <div className="d-flex flex-row gap-2 justify-content-between">
-                <span className="fw-semibold">Maintainance Update Request</span>
-                <span className="font-size-xs">Just Now</span>
-              </div>
-              <div className="font-size-sm gainsboro-color">
-                <p>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Suscipit voluptate obcaecati aperiam! Pariatur
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="d-flex flex-row gap-3 align-items-center my-1 px-2">
-            <span>
-              <Icon
-                icon="icon-park-outline:dot"
-                className="font-size-lg color-primary"
-              />
-            </span>
-            <div>
-              <div className="d-flex flex-row gap-2 justify-content-between">
-                <span className="fw-semibold">Maintainance Update Request</span>
-                <span className="font-size-xs">Just Now</span>
-              </div>
-              <div className="font-size-sm gainsboro-color">
-                <p>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Suscipit voluptate obcaecati aperiam! Pariatur
-                </p>
-              </div>
-            </div>
+          <span className="font-size-sm my-2 fw-semibold">Notifications</span>
+          <div className="notifcation-container">
+            <UnreadNotifications unreadNotifications={unreadNotifications}/>
+            <ReadNotifications  readNotifications={readNotifications}/>
           </div>
         </div>
       </CSSTransition>
@@ -135,3 +80,53 @@ function NotificationDropdown() {
 }
 
 export default NotificationDropdown;
+
+function ReadNotifications({ readNotifications }) {
+  return (
+    <>
+     {
+       readNotifications.map((items) => (
+         <div className="flex flex-column">
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <span className="font-size-sm fw-semibold">
+              {items.title}
+            </span>
+            <span style={{ fontSize: "0.65rem" }}>{items.created_at}</span>
+          </div>
+          <TextDisplay 
+            content={items.body}
+            maxLength={100}
+            textStyle={"font-size-sm fw-light"}
+            readMeStyle={"font-size-sm fw-semibold"}
+          />
+        </div>
+       ))
+     }
+    </>
+  );
+}
+function UnreadNotifications({ unreadNotifications }) {
+  return (
+    <>
+      {unreadNotifications.map((items) => (
+        <div className="d-flex flex-row align-items-center gap-2 w-100 px-1">
+          <div className="blue-pill"></div>
+          <div className="flex flex-column w-100">
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <span className="font-size-sm fw-semibold">
+              {items.title}
+            </span>
+            <span style={{ fontSize: "0.65rem" }}>{items.created_at}</span>
+          </div>
+          <TextDisplay 
+            content={items.body}
+            maxLength={100}
+            textStyle={"font-size-sm fw-light"}
+            readMeStyle={"font-size-sm fw-semibold"}
+          />
+        </div>
+        </div>
+      ))}
+    </>
+  );
+}

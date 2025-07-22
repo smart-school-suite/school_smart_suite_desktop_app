@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { truncateText } from '../../utils/functions'; 
 
-function TextDisplay({ content, maxLength = 100, onReadMoreClick, textStyle }) {
+function TextDisplay({ content, maxLength = 100, onReadMoreClick, textStyle, readMeStyle }) {
   const [showFullText, setShowFullText] = useState(false);
   const { truncatedText, isTruncated } = truncateText(content, maxLength);
 
@@ -17,18 +17,17 @@ function TextDisplay({ content, maxLength = 100, onReadMoreClick, textStyle }) {
 
   return (
     <div className="text-container">
-      <p className="p-0 m-0">
-        {displayedText}
+       <p className={textStyle} style={{ padding:0, margin:0 }}>{displayedText}
         {isTruncated && (
           <span
             onClick={handleReadMoreToggle}
-            className={textStyle}
+            className={readMeStyle}
             style={{ cursor: 'pointer' }}
           >
             {showFullText ? ' Read Less' : ' Read More'}
           </span>
         )}
-      </p>
+        </p>
     </div>
   );
 }

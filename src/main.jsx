@@ -12,6 +12,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { AuthProvider } from "./context/authContext";
 import Links from "./routers/Links";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import NotificationFetcher from "./components/BackgroundFetchers/BackgroundNotificationFetch";
   //if (import.meta.env.MODE === 'development') {
    // const { default: whyDidYouRender } = await import('@welldone-software/why-did-you-render');
    // whyDidYouRender(React, {
@@ -29,12 +30,14 @@ const queryClient = new QueryClient({
     },
   },
 });
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <AuthProvider>
           <QueryClientProvider client={queryClient}>
+            <NotificationFetcher />
           <Links />
           </QueryClientProvider>
         </AuthProvider>

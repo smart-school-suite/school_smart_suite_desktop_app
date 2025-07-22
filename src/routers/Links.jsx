@@ -9,15 +9,14 @@ import AuthLayout from "../layouts/AuthLayout";
 import AuthRoutes from "./Auth/AuthRoutes";
 import AcademicRoutes from "./Academics/AcademicRoutes";
 import AdministratorsRoutes from "./Administrator/AdminRoutes";
-import AnnoucementsRoutes from "./Annoucements/AnnoucementRoutes";
-import CustomerSupportRoutes from "./CustomerSupport/CustomerSpportRoutes";
+import AnnoucementsRoutes from "./SchoolActivities/AnnoucementRoutes";
+import SchoolElectionRoutes from "./SchoolActivities/ElectionRoutes";
 import DashboardRoutes from "./Dasboard/DashboardRoutes";
-import EventRoutes from "./Events/EventRoutes";
+import EventRoutes from "./SchoolActivities/EventRoutes";
 import FinancialRoutes from "./Financial/FinancialRoutes";
 import FormRoutes from "./Forms/FormRoutes";
 import SettingsRoutes from "./Settings/SettingsRoutes";
 import StudentRoutes from "./Student/StudentRoutes";
-import SchoolElectionRoutes from "./Election/ElectionRoutes";
 import ExamRoutes from "./Exam/ExamRoutes";
 import ResitRoutes from "./Resit/ResitRoutes";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
@@ -49,7 +48,6 @@ function Links() {
               ...AcademicRoutes,
               ...AdministratorsRoutes,
               ...AnnoucementsRoutes,
-              ...CustomerSupportRoutes,
               ...DashboardRoutes,
               ...EventRoutes,
               ...FinancialRoutes,

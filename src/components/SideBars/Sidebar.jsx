@@ -3,7 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { IsPathInRoutes } from "../../utils/functions";
-import { Settingspaths, AcademicRoutes, ExamRoutes, ResitRoutes, StudentRoutes } from "../../utils/paths";
+import {
+  academicRoutes,
+  adminRoutes,
+  announcementRoutes,
+  dashboardRoutes,
+  electionRoutes,
+  eventRoutes,
+  examRoutes,
+  financialRoutes,
+  resitRoutes,
+  schoolActivities,
+  settingRoutes,
+  StudentRoutes,
+} from "../../utils/paths";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import Logout from "../../ModalContent/Auth/Logout";
 function Sidebar() {
@@ -12,7 +25,7 @@ function Sidebar() {
   return (
     <>
       <div className="col-lg-2 col-sm-2 col-md-2 pe-0 gx-lg-0">
-        <aside className=" white-bg d-flex flex-column ps-2  pt-2 pb-4">
+        <aside className=" white-bg d-flex flex-column ps-2  pt-2 pb-2">
           <div className="logo-area">
             <div className="d-flex justify-content-start flex-row gap-3">
               <div className="app-logo">
@@ -23,39 +36,29 @@ function Sidebar() {
           <div className="nav-container mt-1">
             <div className="nav-items">
               <div className="d-flex flex-column gap-1 px-2">
-
                 {/*Dashoard*/}
-                <NavLink
-                  to=""
-                  className={({ isActive }) =>
-                    isActive
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : "nav-item-box-inactive text-decoration-none"
+                <div
+                  className={
+                    IsPathInRoutes(dashboardRoutes)
+                      ? "nav-item-box-active fw-medium text-decoration-none pointer-cursor"
+                      : "nav-item-box-inactive text-decoration-none pointer-cursor"
                   }
+                  onClick={() => navigate("/")}
                 >
-                  <div className="nav-item w-100 d-flex flex-row gap-2">
+                  <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
                     <span>
                       <Icon icon="radix-icons:dashboard" />
                     </span>
-                    <p>Dashboard</p>
+                    <span>Dashboard</span>
                   </div>
-                </NavLink>
+                </div>
                 {/*Dashoard*/}
 
                 {/*Administrator*/}
-                <div
+                 <div>
+                  <div
                   className={
-                    location.pathname === "/school-admins"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/departments"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/specialties"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/teachers"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/hod"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/hos"
+                    IsPathInRoutes(adminRoutes)
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
@@ -73,17 +76,7 @@ function Sidebar() {
                     <Icon
                       icon="octicon:chevron-down-24"
                       className={
-                        location.pathname === "/school-admins"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/departments"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/specialties"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/teachers"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/hod"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/hos"
+                        IsPathInRoutes(adminRoutes)
                           ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
@@ -92,17 +85,7 @@ function Sidebar() {
                 </div>
                 <div
                   className={
-                    location.pathname === "/school-admins"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/departments"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/specialties"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/teachers"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/hod"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/hos"
+                    IsPathInRoutes(adminRoutes)
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -153,34 +136,6 @@ function Sidebar() {
                     <div className="box-nav">
                       <div className="subbox-nav">
                         <NavLink
-                          to="/hod"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
-                          }
-                        >
-                          <p>Head of Department</p>
-                        </NavLink>
-                      </div>
-                    </div>
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <NavLink
-                          to="/hos"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
-                          }
-                        >
-                          <p>Head of Specialty</p>
-                        </NavLink>
-                      </div>
-                    </div>
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <NavLink
                           to="/teachers"
                           className={({ isActive }) =>
                             isActive
@@ -194,12 +149,14 @@ function Sidebar() {
                     </div>
                   </div>
                 </div>
-               {/*Administrator*/}
+                 </div>
+                {/*Administrator*/}
 
-               {/*Academic*/}
-                <div
+                {/*Academic*/}
+                  <div>
+                    <div
                   className={
-                    IsPathInRoutes(AcademicRoutes.general)
+                    IsPathInRoutes(academicRoutes)
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
@@ -220,7 +177,7 @@ function Sidebar() {
                     <Icon
                       icon="octicon:chevron-down-24"
                       className={
-                        IsPathInRoutes(AcademicRoutes.general)
+                        IsPathInRoutes(academicRoutes)
                           ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
@@ -229,7 +186,7 @@ function Sidebar() {
                 </div>
                 <div
                   className={
-                    IsPathInRoutes(AcademicRoutes.general)
+                    IsPathInRoutes(academicRoutes)
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -295,12 +252,14 @@ function Sidebar() {
                     </div>
                   </div>
                 </div>
-               {/*Administrator*/}
-               
-               {/*Exam*/}
-                <div
+                  </div>
+                {/*Administrator*/}
+
+                {/*Exam*/}
+                 <div>
+                  <div
                   className={
-                      IsPathInRoutes(ExamRoutes)
+                    IsPathInRoutes(examRoutes)
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
@@ -310,7 +269,7 @@ function Sidebar() {
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
                     <span>
-                      <Icon icon="solar:calendar-linear" />
+                      <Icon icon="healthicons:i-exam-multiple-choice-outline" />
                     </span>
                     <p>Manage Exams</p>
                   </div>
@@ -318,7 +277,7 @@ function Sidebar() {
                     <Icon
                       icon="octicon:chevron-down-24"
                       className={
-                          IsPathInRoutes(ExamRoutes)
+                        IsPathInRoutes(examRoutes)
                           ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
@@ -327,7 +286,7 @@ function Sidebar() {
                 </div>
                 <div
                   className={
-                      IsPathInRoutes(ExamRoutes)
+                    IsPathInRoutes(examRoutes)
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -377,12 +336,14 @@ function Sidebar() {
                     </div>
                   </div>
                 </div>
-              {/*Exam*/}
+                 </div>
+                {/*Exam*/}
 
                 {/*Resit*/}
-                <div
+                <div>
+                  <div
                   className={
-                      IsPathInRoutes(ResitRoutes)
+                    IsPathInRoutes(resitRoutes)
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
@@ -392,7 +353,7 @@ function Sidebar() {
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
                     <span>
-                      <Icon icon="solar:calendar-linear" />
+                      <Icon icon="material-symbols:repeat-rounded" />
                     </span>
                     <p>Manage Resit</p>
                   </div>
@@ -400,7 +361,7 @@ function Sidebar() {
                     <Icon
                       icon="octicon:chevron-down-24"
                       className={
-                          IsPathInRoutes(ResitRoutes)
+                        IsPathInRoutes(resitRoutes)
                           ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
@@ -409,7 +370,7 @@ function Sidebar() {
                 </div>
                 <div
                   className={
-                      IsPathInRoutes(ResitRoutes)
+                    IsPathInRoutes(resitRoutes)
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -473,12 +434,14 @@ function Sidebar() {
                     </div>
                   </div>
                 </div>
+                </div>
                 {/*Resit*/}
 
-                 {/*student*/}
-                <div
+                {/*student*/}
+                <div>
+                  <div
                   className={
-                      IsPathInRoutes(StudentRoutes)
+                    IsPathInRoutes(StudentRoutes)
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
@@ -496,7 +459,7 @@ function Sidebar() {
                     <Icon
                       icon="octicon:chevron-down-24"
                       className={
-                          IsPathInRoutes(ResitRoutes)
+                        IsPathInRoutes(StudentRoutes)
                           ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
@@ -505,7 +468,7 @@ function Sidebar() {
                 </div>
                 <div
                   className={
-                      IsPathInRoutes(StudentRoutes)
+                    IsPathInRoutes(StudentRoutes)
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -569,28 +532,14 @@ function Sidebar() {
                     </div>
                   </div>
                 </div>
-                 {/*student*/}
+                </div>
+                {/*student*/}
 
                 {/*School Expenses*/}
-                <div
+                <div>
+                  <div
                   className={
-                    location.pathname === "/school-expenses"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/resit-payments"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/fee-payments"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/registrationFees"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/additionalFees"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/additionalFeeTransactions"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/registrationFeesTransactions"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/fee-payment/transactions"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/resitFeeTransactions"
+                    IsPathInRoutes(financialRoutes)
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
@@ -608,24 +557,7 @@ function Sidebar() {
                     <Icon
                       icon="octicon:chevron-down-24"
                       className={
-                        location.pathname === "/school-expenses"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/resit-payments"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/fee-payments"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/registrationFees"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/additionalFees"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/additionalFeeTransactions"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname ===
-                            "/registrationFeesTransactions"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/fee-payment/transactions"
-                          ? "rotate-icon nav-dropdown-icon"
-                          : location.pathname === "/resitFeeTransactions"
+                        IsPathInRoutes(financialRoutes)
                           ? "rotate-icon nav-dropdown-icon"
                           : "nav-dropdown-icon"
                       }
@@ -634,23 +566,7 @@ function Sidebar() {
                 </div>
                 <div
                   className={
-                    location.pathname === "/school-expenses"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/resit-payments"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/fee-payments"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/registrationFees"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/additionalFees"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/additionalFeeTransactions"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/registrationFeesTransactions"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/fee-payment/transactions"
-                      ? "subbox-container-nav ps-3"
-                      : location.pathname === "/resitFeeTransactions"
+                    IsPathInRoutes(financialRoutes)
                       ? "subbox-container-nav ps-3"
                       : "subbox-container-nav-inactive"
                   }
@@ -728,130 +644,123 @@ function Sidebar() {
                     </div>
                   </div>
                 </div>
-               {/*School Expenses*/}
+                </div>
+                {/*School Expenses*/}
 
-                 {/*Events*/}
-                <NavLink
-                  to="/events"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "nav-item-box-active fw-medium text-decoration-none"
-                      : "nav-item-box-inactive text-decoration-none"
-                  }
-                >
-                  <div className="nav-item w-100 d-flex flex-row gap-2">
-                    <span>
-                      <Icon icon="ic:outline-event-available" />
-                    </span>
-                    <p>Events</p>
-                  </div>
-                </NavLink>
-                {/*Events*/}
-
-
-                {/*Election*/}
-                <div
-                  to="/schoolElections"
+                {/*school activities */}
+                 <div>
+                   <div
                   className={
-                    location.pathname === "/schoolElections"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/viewElections"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/passWinners"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/passElection"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/electionRoles"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/electionApplication"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/electionCandidates"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/activeElections"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/electionResults"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/electionSettings"
+                    IsPathInRoutes(schoolActivities)
                       ? "nav-item-box-active fw-medium"
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
-                    navigate("schoolElections");
+                    navigate("/announcement-overview");
                   }}
                 >
                   <div className="nav-item w-100 d-flex flex-row gap-2">
                     <span>
-                      <Icon
-                        icon="fluent:vote-20-regular"
-                        width="20"
-                        height="20"
-                      />
+                      <Icon icon="healthicons:money-bag-outline" />
                     </span>
-                    <p>School Elections</p>
+                    <p>School Activities</p>
                   </div>
+                  <span>
+                    <Icon
+                      icon="octicon:chevron-down-24"
+                      className={
+                        IsPathInRoutes(schoolActivities)
+                          ? "rotate-icon nav-dropdown-icon"
+                          : "nav-dropdown-icon"
+                      }
+                    />
+                  </span>
                 </div>
-                {/*Election*/}
-
-                {/*Announcement*/}
-                <div
+                 <div
                   className={
-                    location.pathname === "/annoucements"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/archieveAnnoucement"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/engagementAnalytics"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/expiredAnnoucement"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/scheduledAnnoucement"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/annoucementSettings"
-                      ? "nav-item-box-active fw-medium"
-                      : location.pathname === "/viewAnnoucement"
-                      ? "nav-item-box-active fw-medium"
-                      : "nav-item-box-inactive"
+                    IsPathInRoutes(schoolActivities)
+                      ? "subbox-container-nav ps-3"
+                      : "subbox-container-nav-inactive"
                   }
-                  onClick={() => {
-                    navigate("/annoucements");
-                  }}
                 >
-                  <div className="nav-item w-100 d-flex flex-row gap-2">
-                    <span>
-                      <Icon
-                        icon="fluent:speaker-0-32-regular"
-                        width="20"
-                        height="20"
-                      />
-                    </span>
-                    <p>Annoucements</p>
+                  <div className="drop-down-container">
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <div
+                           className={IsPathInRoutes(announcementRoutes) ? 
+                             "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"
+                           }
+                           onClick={() => {
+                              navigate("/announcement-overview")
+                           }}
+                        >
+                          <p>Announcement</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <div
+                           className={IsPathInRoutes(eventRoutes) ? 
+                             "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"
+                           }
+                           onClick={() => {
+                              navigate("/events")
+                           }}
+                        >
+                          <p>School Events</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <div
+                           className={IsPathInRoutes(electionRoutes) ? 
+                             "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"
+                           }
+                           onClick={() => {
+                              navigate("/election-overview")
+                           }}
+                        >
+                          <p>Elections</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                {/*Announcement*/}
-
+                 </div>
+                {/* school activities */}
               </div>
             </div>
           </div>
-          <div className="mt-auto d-flex gap-4 flex-column justify-content-center align-items-center w-100">
-            <hr />
+          <div className="mt-auto d-flex gap-2 flex-column justify-content-center align-items-center w-100 px-2">
             {/*Settings*/}
-                <div className="d-flex flex-row gainsboro-color mb-3 align-items-center w-100 justify-content-between px-2 font-size-sm pointer-cursor"
-                  onClick={() => {
-                     navigate("/settings/general-settings");
-                  }}
-                >
-                  <span>Setting</span>
-                  <span style={{ fontSize:"1rem" }}><Icon icon="uil:setting" /></span>
-                </div>
-              {/*Settings*/} 
-          </div>
-          <div>
-            <ModalButton
-              action={{ modalContent: Logout }}
-              classname={"border-none w-100 justify-content-between gainsboro-color font-size-sm align-items-center d-flex transparent-bg"}
-             >
-              <span>Logout</span>
-                  <span style={{ fontSize:"1rem" }}><Icon icon="mynaui:logout"  /></span>
-            </ModalButton>
+            <div
+              className={`${IsPathInRoutes(settingRoutes) ? "sidebar-active" : ""} sidebar-item`}
+              onClick={() => {
+                navigate("/settings/general-settings");
+              }}
+            >
+              <span>Setting</span>
+              <span>
+                <Icon icon="uil:setting" />
+              </span>
+            </div>
+            {/*Settings*/}
+            <div className="w-100">
+              <ModalButton
+                action={{ modalContent: Logout }}
+                classname="sidebar-item"
+              >
+                <span>Logout</span>
+                <span>
+                  <Icon icon="mynaui:logout" />
+                </span>
+              </ModalButton>
+            </div>
           </div>
         </aside>
       </div>

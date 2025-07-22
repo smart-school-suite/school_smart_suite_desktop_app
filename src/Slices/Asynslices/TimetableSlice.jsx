@@ -26,7 +26,7 @@ const TimetableSlice = createSlice({
       state.courseData = courses; 
     },
     addRow: (state, action) => {
-      const index = action.payload.index; // make sure the index is defined or passed correctly
+      const index = action.payload.index;
       const findTimetable = state.formData[index];
       
       if (findTimetable.start_time === "" || findTimetable.end_time === "" || findTimetable.course_id === "") {

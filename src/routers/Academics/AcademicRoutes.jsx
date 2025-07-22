@@ -3,7 +3,6 @@ import { Route } from "react-router-dom";
 const Courses = React.lazy(() => import("../../pages/Academics/Courses"));
 const Gradesconfiguration = React.lazy(() => import("../../pages/Academics/Gradesconfiguration"));
 const SpecialtyTimetable = React.lazy(() => import("../../pages/Academics/SpecialtyTimetable"));
-const Timetable = React.lazy(() => import("../../pages/Academics/Timetable"));
 const Semester = React.lazy(() => import("../../pages/Academics/Semester"));
 const AcademicRoutes = [
     <Route key="courses" path="/courses" element={
@@ -27,11 +26,6 @@ const AcademicRoutes = [
         <Suspense>
             <SpecialtyTimetable />
         </Suspense>
-    }/>,
-    <Route key="timetable" path="/view-timetable" element={
-        <Suspense>
-            <Timetable />
-        </Suspense>
-    } />
+    }/>
 ]
 export default AcademicRoutes
