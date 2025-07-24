@@ -1,6 +1,7 @@
-function DeleteTimetable(){
+function DeleteTimetable({ handleClose, rowData }){
     return(
         <>
+
         </>
     )
 }
