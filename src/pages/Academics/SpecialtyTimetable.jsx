@@ -2,9 +2,9 @@ import Table from "../../components/Tables/Tables";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { SpecialtyTimetableTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import CreateTimetable from "../../ModalContent/SpecialtyTimetable/CreateTimetable";
 import ViewTimetable from "../../ModalContent/SpecialtyTimetable/ViewTimetable";
 import DeleteTimetable from "../../ModalContent/SpecialtyTimetable/DeleteTimetable";
+import CreateTimetable from "../../ModalContent/SpecialtyTimetable/CreateTimetable";
 import UpdateTimetable from "../../ModalContent/SpecialtyTimetable/UpdateTimetable";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { useGetActiveSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
@@ -92,7 +92,7 @@ function ActionButtonGroup(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(CreateTimetable, "md")}
+          onClick={() => handleShowModal(CreateTimetable, "xl")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">

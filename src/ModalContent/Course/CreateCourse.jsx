@@ -20,7 +20,7 @@ function CreateCourse({ handleClose }) {
     specialty_id: "",
     semester_id: "",
   });
-  const { mutate:createCourseMutation, isPending } = useCreateCourse(handleClose);
+  const { mutate:createCourseMutation, isPending } = useCreateCourse(handleClose, formData.specialty_Id, formData.semester_Id);
   const { data:specialty, isFetching:isSpecailtyLoading  } = useGetSpecialties();
   const { data: semesters, isLoading: isSemesterLoading } = useGetSemester();
 

@@ -75,3 +75,8 @@ export const removeSpecialtyPreferences = async (preferenceData) => {
      return response.data;
 }
 
+export const getTeachersBySpecialty = async (specialtyId) => {
+     const response = await axiosInstance.get(`teacher/teachers/specialty/${specialtyId}`);
+     return response.data;
+}
+

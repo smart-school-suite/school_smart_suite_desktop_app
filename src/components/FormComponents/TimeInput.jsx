@@ -1,107 +1,92 @@
-import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import { CSSTransition } from "react-transition-group";
-import { useFloating, offset, flip, shift, autoUpdate } from "@floating-ui/react";
-import { debounce } from "lodash";
 
-function TimeInput({ onTimeChange, value }) {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [time, setTime] = useState({ hour: null, minute: null, period: null });
-  const containerRef = useRef(null);
+function TimeInput({ value = "", onChange }) {
+const [hours, setHours] = useState("");
+  const [minutes, setMinutes] = useState("");
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    if (time.hour !== null && time.minute !== null && time.period !== null) {
-      setShowDropdown(false);
+    if (value) {
+      const [h, m] = value.split(":");
+      setHours(h ?? "");
+      setMinutes(m ?? "");
     }
-  }, [time]);
+  }, [value]);
 
-  const debouncedOnTimeChange = useCallback(
-    debounce((formattedTime) => onTimeChange(formattedTime), 300),
-    [onTimeChange]
-  );
+  const updateParent = useCallback((h, m) => {
+    if (h !== "" && m !== "") {
+      onChange?.(`${h}:${m}`);
+    } else {
+      onChange?.("");
+    }
+  }, [onChange]);
 
-  const { refs, floatingStyles } = useFloating({
-    placement: "bottom-start",
-    middleware: [offset(4), flip(), shift(1)],
-    whileElementsMounted: autoUpdate,
-  });
+  const handleHoursChange = useCallback((e) => {
+    let value = e.target.value;
+    if (value.length > 1 && value.startsWith("0") && value !== "0") {
+      value = value.substring(1);
+    }
+    const numValue = parseInt(value, 10);
+    if (isNaN(numValue) || value === "") {
+      setHours("");
+      updateParent("", minutes);
+    } else if (numValue >= 0 && numValue <= 23) {
+      const formatted = numValue < 10 ? `0${numValue}` : numValue.toString();
+      setHours(formatted);
+      updateParent(formatted, minutes);
+    }
+  }, [minutes, updateParent]);
 
-  const hours = useMemo(() => Array.from({ length: 12 }, (_, i) => i + 1), []);
-  const minutes = useMemo(() => Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0")), []);
+  const handleMinutesChange = useCallback((e) => {
+    let value = e.target.value;
+    if (value.length > 1 && value.startsWith("0") && value !== "0") {
+      value = value.substring(1);
+    }
+    const numValue = parseInt(value, 10);
+    if (isNaN(numValue) || value === "") {
+      setMinutes("");
+      updateParent(hours, "");
+    } else if (numValue >= 0 && numValue <= 59) {
+      const formatted = numValue < 10 ? `0${numValue}` : numValue.toString();
+      setMinutes(formatted);
+      updateParent(hours, formatted);
+    }
+  }, [hours, updateParent]);
 
-  const handleTimeSelect = useCallback((type, value) => {
-    setTime((prevTime) => {
-      const updatedTime = { ...prevTime, [type]: value };
-      if (updatedTime.hour !== null && updatedTime.minute !== null && updatedTime.period !== null) {
-        const formattedTime = `${updatedTime.hour}:${updatedTime.minute} ${updatedTime.period}`;
-        debouncedOnTimeChange(formattedTime);
-      }
-      return updatedTime;
-    });
-  }, [debouncedOnTimeChange]);
-
-  const togglePeriod = useCallback(() => {
-    handleTimeSelect("period", time.period === "AM" ? "PM" : "AM");
-  }, [time.period, handleTimeSelect]);
+  const getPeriod = useCallback(() => {
+    const hourNum = parseInt(hours, 10);
+    return isNaN(hourNum) ? "AM" : hourNum >= 12 ? "PM" : "AM";
+  }, [hours]);
 
   return (
-    <div className="position-relative w-75" ref={containerRef}>
-      <div className="d-flex flex-row align-items-center gap-1 bg-white border rounded-2 px-2" onClick={() => setShowDropdown(!showDropdown)} ref={refs.setReference}>
-        <button className="border-none bg-transparent fw-semibold time">
-          {time.hour !== null ? time.hour.toString().padStart(2, "0") : "00"}
-        </button>
-        <Icon icon="entypo:dots-two-vertical" className="font-size-md" />
-        <button className="border-none bg-transparent fw-semibold time">
-          {time.minute !== null ? time.minute : "00"}
-        </button>
-        <span className="mx-2" onClick={togglePeriod} style={{ cursor: "pointer" }}>
-          {time.period !== null ? time.period : "AM"}
-        </span>
-      </div>
-      <CSSTransition in={showDropdown} timeout={200} classNames="dropdown" unmountOnExit>
-        <div className="position-absolute d-flex flex-row gap-2 z-3 p-2 rounded-3" ref={refs.setFloating} style={floatingStyles}>
-          <div className="card d-flex flex-column px-1 py-1 timeinput-dropdown">
-            {hours.map((hour) => (
-              <span
-                key={hour}
-                className={`w-100 px-3 py-1 rounded-1 ${time.hour === hour ? "primary-background text-white" : ""}`}
-                onClick={() => handleTimeSelect("hour", hour)}
-              >
-                {hour.toString().padStart(2, "0")}
-              </span>
-            ))}
-          </div>
-          <div className="card d-flex flex-column px-1 py-1 timeinput-dropdown">
-            {minutes.map((minute) => (
-              <span
-                key={minute}
-                className={`w-100 px-3 py-1 rounded-1 ${time.minute === minute ? "primary-background text-white" : ""}`}
-                onClick={() => handleTimeSelect("minute", minute)}
-              >
-                {minute}
-              </span>
-            ))}
-          </div>
-          <div className="card d-flex flex-column px-1 py-1 gap-2 am-input">
-            <span className={`w-100 px-3 py-1 rounded-1 pointer-cursor${time.period === "AM" ? "primary-background text-white" : ""}`} onClick={() => handleTimeSelect("period", "AM")}>
-              AM
-            </span>
-            <span className={`w-100 px-3 py-1 rounded-1 pointer-cursor${time.period === "PM" ? "primary-background text-white" : ""}`} onClick={() => handleTimeSelect("period", "PM")}>
-              PM
-            </span>
-          </div>
-        </div>
-      </CSSTransition>
+    <div className="d-flex flex-row align-items-center gap-1">
+      <input
+        type="number"
+        className="form-control form-control-sm"
+        placeholder="00"
+        value={hours}
+        onChange={handleHoursChange}
+        min="0"
+        max="23"
+        aria-label="Hours"
+      />
+
+      <Icon icon="picon:colon" className="fs-1" />
+
+      <input
+        type="number"
+        className="form-control form-control-sm"
+        placeholder="00"
+        value={minutes}
+        onChange={handleMinutesChange}
+        min="0"
+        max="59"
+        aria-label="Minutes"
+      />
+
+      <span style={{ transition:"all 0.3s" }}>
+        {getPeriod()}
+      </span>
     </div>
   );
 }

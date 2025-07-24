@@ -148,7 +148,9 @@ function Navbar() {
                 borderRadius: "3.0rem",
               }}
             >
+              {console.log("userData.authSchoolAdmin.profile_picture", userData.authSchoolAdmin.profile_picture)}
               <img
+              
                 src={`http://127.0.0.1:8000/storage/SchoolAdminAvatars/${userData.authSchoolAdmin.profile_picture}`}
                 alt=""
                 style={{

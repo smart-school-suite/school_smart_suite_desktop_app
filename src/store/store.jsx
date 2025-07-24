@@ -13,7 +13,7 @@ import timetableReducer from "../Slices/Asynslices/TimetableSlice";
 import examtimetableReducer from "../Slices/Asynslices/ExamTimetableSlice";
 import studentScoreReducer from "../Slices/Asynslices/StudentScoreSlice";
 import notificationReducer from "../Slices/Asynslices/NotificationSlice";
-
+import specialtyTimetableReducer from "../Slices/Asynslices/SpecialtyTimetableSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -40,6 +40,7 @@ const rootReducer = combineReducers({
   examtimetable: examtimetableReducer,
   studentScore: studentScoreReducer,
   notification: notificationReducer,
+  specialtyTimetable: specialtyTimetableReducer,
 });
 
 

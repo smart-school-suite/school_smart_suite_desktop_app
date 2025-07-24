@@ -51,11 +51,13 @@ function Courses() {
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
               action={{ modalContent: CreateCourse }}
-              classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
-              }
+            
             >
+              <button   className={
+                "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+              }>
               <span className="font-size-sm">Create Course</span>
+              </button>
             </ModalButton>
           </div>
         </div>
