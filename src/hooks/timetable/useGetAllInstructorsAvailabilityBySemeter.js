@@ -6,9 +6,8 @@ export const useGetAllInstructorAvailabilitiesBySemester = (
   specialtyId
 ) => {
   return useQuery({
-    queryKey: ["instructorAvailabilitiesBySemester", semesterId],
+    queryKey: ["instructorAvailabilitiesBySemester", semesterId, specialtyId],
     queryFn: () =>
       getAllInstructorsAvailabiltiesBySemester(semesterId, specialtyId),
-    enabled: !!semesterId && specialtyId,
   });
 };

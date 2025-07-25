@@ -12,6 +12,7 @@ import { Icon } from "@iconify/react";
 import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
+import CreateTimetableByPreference from "../../ModalContent/SpecialtyTimetable/CreateTimetablePreference";
 function SpecialtyTimetable() {
   const { data:schoolSemesters, isFetching } = useGetActiveSchoolSemesters();
   if (isFetching) {
@@ -64,13 +65,13 @@ function ActionButtonGroup(props) {
    const [showModal, setShowModal] = useState(false);
    const [modalContent, setModalContent] = useState(null);
    const [modalSize, setModalSize] = useState("md");
- 
+   const [fullscreen, setFullscreen] = useState(false);
    const handleCloseModal = () => {
      setShowModal(false);
      setModalContent(null);
    };
  
-   const handleShowModal = (ContentComponent, size = "md") => {
+   const handleShowModal = (ContentComponent, size = "md", fullscreen = false) => {
      setModalContent(
        React.createElement(ContentComponent, {
          rowData,
@@ -79,6 +80,7 @@ function ActionButtonGroup(props) {
      );
      setModalSize(size);
      setShowModal(true);
+     setFullscreen(fullscreen);
    };
   return (
     <>
@@ -92,7 +94,7 @@ function ActionButtonGroup(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(CreateTimetable, "xl")}
+          onClick={() => handleShowModal(CreateTimetableByPreference, null, true)}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -142,6 +144,7 @@ function ActionButtonGroup(props) {
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}
+        fullscreen={fullscreen}
         centered
       >
         {modalContent}

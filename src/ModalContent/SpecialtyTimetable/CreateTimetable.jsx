@@ -15,7 +15,7 @@ import { useCreateTimetable } from "../../hooks/timetable/useCreateTimetable";
 function CreateTimetable({ handleClose, rowData }) {
   const { specialty_id, semester_id, student_batch_id, level_id, id:schoolSemesterId } = rowData;
   const dispatch = useDispatch();
-  const { data: courses, isFetching } = useGetCoursesBySpecialtySemester(
+  const { data: courses, isFetching} = useGetCoursesBySpecialtySemester(
     specialty_id,
     semester_id
   );
@@ -79,7 +79,6 @@ const timeTableData = formData
     const formattedData = {
       scheduleEntries: timeTableData,
     };
-    console.log("timetable data", timeTableData);
     createTimetable(formattedData);
   };
 
