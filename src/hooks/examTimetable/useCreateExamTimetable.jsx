@@ -6,10 +6,10 @@ import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useCreateExamTimetable = (handleClose) => {
     const queryClient = useQueryClient();
     return useMutation({
-         mutationFn:createTimetable,
+         mutationFn:({ examId, timetableData }) => createTimetable(examId, timetableData),
          onSuccess:(examId) => {
             queryClient.removeQueries({ queryKey:["examTimetable", examId]})
-
+            queryClient.invalidateQueries({ queryKey:["exams"] })
             if(handleClose){
                 handleClose();
             }

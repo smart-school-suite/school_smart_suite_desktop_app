@@ -3,7 +3,7 @@ import { prepareExamTimeTableData } from "../../services/examTimetable";
 export const useGetExamTimetableHelperData = (examId) => {
     return useQuery({
         queryKey:["examTimetableHelperData", examId],
-        queryFn:prepareExamTimeTableData(examId),
+        queryFn:() => prepareExamTimeTableData(examId),
         enabled:!!examId
     })
 } 

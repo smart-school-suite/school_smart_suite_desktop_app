@@ -4,7 +4,7 @@ import { generateExamTimetable } from "../../services/examTimetable";
 export const useGetExamTimetable = (examId) => {
     return useQuery({
          queryKey:["examTimetable", examId],
-         queryFn:generateExamTimetable(examId),
+         queryFn:() => generateExamTimetable(examId),
          enabled:!!examId
     })
 }

@@ -62,27 +62,28 @@ function ExamTimetable() {
 export default ExamTimetable;
 
 function DropdownComponent(props){
-  const rowData = props.data;
-
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setModalContent(null);
-  };
-
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      })
-    );
-    setModalSize(size);
-    setShowModal(true);
-  };
+   const rowData = props.data;
+ 
+   const [showModal, setShowModal] = useState(false);
+   const [modalContent, setModalContent] = useState(null);
+   const [modalSize, setModalSize] = useState("md");
+   const [fullscreen, setFullscreen] = useState(false);
+   const handleCloseModal = () => {
+     setShowModal(false);
+     setModalContent(null);
+   };
+ 
+   const handleShowModal = (ContentComponent, size = "md", fullscreen = false) => {
+     setModalContent(
+       React.createElement(ContentComponent, {
+         rowData,
+         handleClose: handleCloseModal,
+       })
+     );
+     setModalSize(size);
+     setShowModal(true);
+     setFullscreen(fullscreen);
+   };
  return(
    <>
     <ActionButtonDropdown
@@ -95,33 +96,7 @@ function DropdownComponent(props){
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(CreateTimetable, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update Timetable</span>
-              <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(UpdateTimetable, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Timetable</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(CreateTimetable, "md")}
+          onClick={() => handleShowModal(CreateTimetable, "xl", false)}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -134,7 +109,33 @@ function DropdownComponent(props){
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ViewTimetable, "md")}
+          onClick={() => handleShowModal(UpdateTimetable, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Update Timetable</span>
+              <UpdateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteTimetable, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Timetable</span>
+              <DeleteIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(ViewTimetable, "xl")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -144,10 +145,11 @@ function DropdownComponent(props){
           </div>
         </DropDownMenuItem>
       </ActionButtonDropdown>
-            <CustomModal
+<CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}
+        fullscreen={fullscreen}
         centered
       >
         {modalContent}

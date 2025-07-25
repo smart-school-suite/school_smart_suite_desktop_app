@@ -106,7 +106,7 @@ function ActionButtonGroup(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateTimetable, "xl")}
+          onClick={() => handleShowModal(UpdateTimetable, "xl", false)}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
