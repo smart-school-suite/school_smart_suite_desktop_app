@@ -37,3 +37,8 @@ export const prepareExamData = async (examId, studentId) => {
   return response.data;
 };
 
+export const getCaEvaluationHelperData = async (examId) => {
+   const response = await axiosInstance.get(`mark/ca-helper-data/${examId}`);
+   return response.data;
+}
+

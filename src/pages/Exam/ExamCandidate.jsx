@@ -10,6 +10,7 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import DeleteExamCandidate from "../../ModalContent/ExamCandidate/DeleteCandidate";
+import AddCaScores from "../../ModalContent/ExamCandidate/AddCaScores";
 function ExamCandidates() {
   const { data: examCandidates, isFetching } = useGetExamCandidates();
   if (isFetching) {
@@ -105,7 +106,7 @@ export function DropdownComponent(props) {
               className={
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
-              
+              onClick={() => handleShowModal(AddCaScores, "xl")}
             >
               <div>
                 <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">

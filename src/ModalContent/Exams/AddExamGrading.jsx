@@ -1,53 +1,18 @@
 import  { useState } from "react";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
+import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useFetchSchoolGradesConfigQuery } from "../../Slices/Asynslices/fetchSlice";
-import { useAddExamGradingMutation } from "../../Slices/Asynslices/postSlice";
 import { Icon } from "@iconify/react";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastWarning from "../../components/Toast/ToastWarning";
-function AddExamGrading({ handleClose, row_id: examId }) {
+import { useAddExamGrading } from "../../hooks/exam/useAddExamGrading";
+function AddExamGrading({ handleClose, rowData }) {
+  const { id:examId } = rowData;
   const { data: schoolGradesConfig, isLoading: SchoolGradesConfigLoading } =
     useFetchSchoolGradesConfigQuery();
   const [gradeConfig, setGradeConfig] = useState(null);
-  const [addExamGrading] = useAddExamGradingMutation();
+  const { mutate:addExamGrading, isPending } = useAddExamGrading(handleClose);
 
-  const handleSaveChanges = async () => {
-    if (gradeConfig === null) {
-      toast.custom(
-        <ToastWarning
-          title={"No Grade Configured Selected ❌"}
-          description={"⚠️ Please select a configuration."}
-        />
-      );
-      return;
-    }
-
-    try {
-      await addExamGrading({
-        examId: examId,
-        gradesConfigId: gradeConfig,
-      }).unwrap();
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Added Successfully"}
-          description={"Exam Grades Added Successfully"}
-        />
-      );
-    } catch (e) {
-      toast.custom(
-        <ToastDanger
-          title={"Failed to add exam grading ❌"}
-          description={
-            "❌ Something went wrong! Add Exam Grading failed due to an error. Please try again later."
-          }
-        />
-      );
-    }
-  };
-
+ const handleSaveChanges = () => {
+  addExamGrading({ examId, gradesConfig: gradeConfig });
+};
   const handleSelectGradeConfig = (gradeConfigId) => {
     setGradeConfig((prevId) =>
       prevId === gradeConfigId ? null : gradeConfigId
@@ -126,7 +91,7 @@ function AddExamGrading({ handleClose, row_id: examId }) {
         className=" w-100 p-2 font-size-sm px-3 primary-background border-none rounded-3 text-white"
         onClick={handleSaveChanges}
       >
-        Save Changes
+        {isPending ? <SingleSpinner /> : "Save Changes"}
       </button>
     </>
   );

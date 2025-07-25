@@ -41,8 +41,8 @@ export const deleteExam = async (examId) => {
   return response.data;
 };
 
-export const addExamGrading = async (examId, gradesConfigId) => {
-  const response = await axiosInstance.post(`exam/${examId}/grading-configs/${gradesConfigId}`);
+export const addExamGrading = async (examId, gradesConfig, data={}) => {
+  const response = await axiosInstance.post(`exam/${examId}/grading-configs/${gradesConfig}`, data);
   return response.data;
 };
 
