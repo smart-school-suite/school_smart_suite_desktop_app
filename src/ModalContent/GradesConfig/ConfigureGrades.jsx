@@ -160,6 +160,8 @@ function ConfigureGrades({ handleClose, rowData }) {
                       <option selected>Select Resit Status</option>
                       <option value="high_resit_potential">High Resit Potential</option>
                       <option value="low_resit_potential">Low Resit Potential</option>
+                      <option value="resit">Resit</option>
+                      <option value="no_resit">No Resit</option>
                     </select>
                     <span className="font-size-sm m-0" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
                     </div>

@@ -6,7 +6,7 @@ import {
   setExamScores,
   setExamGrading,
   setMaxGpa,
-  updateScore, // Import the new single action
+  updateScore, 
 } from "../../Slices/Asynslices/CaScoreSlice";
 import { Icon } from "@iconify/react";
 import NumberFlow from '@number-flow/react';
