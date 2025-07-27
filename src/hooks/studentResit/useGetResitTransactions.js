@@ -4,6 +4,6 @@ import { getResitPaymentTransactions } from "../../services/studentResit";
 export const useGetResitTransactions = () => {
     return useQuery({
         queryKey:["resitTransactions"],
-        queryFn:getResitPaymentTransactions
+        queryFn:() => getResitPaymentTransactions()
     })
 }

@@ -1,30 +1,42 @@
-import { usePayResitFeeMutation } from "../../Slices/Asynslices/postSlice";
 import { useState } from "react";
-import toast from "react-hot-toast";
-function MakePayment({ row_id: resitFeeId, handleClose }) {
+import { usePayResit } from "../../hooks/studentResit/usePayResit";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { Icon } from "@iconify/react";
+function PayStudentResitFee({ rowData, handleClose }) {
+  const { id:resitFeeId } = rowData;
   const [formData, setFormData] = useState({
     amount: "",
     payment_method: "",
     student_resit_id: resitFeeId,
   });
-  const [payResitFee] = usePayResitFeeMutation();
+  const { mutate: payResitFee, isPending } = usePayResit(handleClose);
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
-    try {
-      await payResitFee(formData).unwrap();
-      toast.success("Resit Fee Paid Successfully!");
-      handleClose();
-    } catch (error) {
-      toast.error("Failed to Pay Resit Fees. Try again.");
-    }
+    payResitFee(formData);
   };
   return (
     <>
       <span>
         <div>
-          <h5>Make Additional Fee Payment</h5>
+          <div className="block">
+            <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+              <h5 className="m-0">Make Resit Fee Payment</h5>
+              <span
+                className="m-0"
+                onClick={() => {
+                  handleClose();
+                }}
+              >
+                <Icon icon="charm:cross" width="22" height="22" />
+              </span>
+            </div>
+            <span className="gainsboro-color font-size-sm">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem
+              harum nesciunt sunt
+            </span>
+          </div>
           <div className="my-2">
             <span>Amount</span>
             <input
@@ -46,6 +58,7 @@ function MakePayment({ row_id: resitFeeId, handleClose }) {
               name="payment_method"
               value={formData.payment_method}
             >
+              <option selected>Select Payment</option>
               <option value="cash">Cash Payment</option>
               <option value="cheque">cheque</option>
               <option value="credit_card">Credit card</option>
@@ -55,18 +68,11 @@ function MakePayment({ row_id: resitFeeId, handleClose }) {
           </div>
           <div className="mt-3 d-flex gap-2">
             <button
-              className="border-none px-3 py-2 text-primary w-50 rounded-3 font-size-sm"
-              onClick={() => {
-                handleClose();
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              className="border-none px-3 py-2 rounded-3 font-size-sm w-50 primary-background text-white"
+              className="border-none px-3 py-2 rounded-3 font-size-sm w-100 primary-background text-white"
               onClick={handleSubmit}
+              disabled={isPending}
             >
-              Create
+              {isPending ? <SingleSpinner /> : "Make Payment"}
             </button>
           </div>
         </div>
@@ -74,4 +80,4 @@ function MakePayment({ row_id: resitFeeId, handleClose }) {
     </>
   );
 }
-export default MakePayment;
+export default PayStudentResitFee;

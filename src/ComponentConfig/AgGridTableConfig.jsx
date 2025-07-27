@@ -420,56 +420,43 @@ export function ExamTimetableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-export function ExamResitsConfig({ DropdownComponent }) {
+export function ResitFeeTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "Student Name",
+      field: "student_name",
+      headerName:"Student Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
-      field: "Level",
+      field: "course_name",
+      headerName:"Course Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+     {
+      field: "specialty_name",
+      headerName:"Specialty Name",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
-      field: "Specialty",
+      field: "payment_status",
+      headerName:"Payment Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: RegistrationFeeTableBadge,
       cellStyle: cellStyle,
     },
     {
-      field: "Exam Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Course Title",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Resit Fee",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Exam Status",
+      field: "resit_fee",
+      headerName:"Resit Fee",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
@@ -604,69 +591,6 @@ export function TuitionFeeTableConfig({ DropdownComponent }) {
       field: "Actions",
       filter: true,
       floatingFilter: true,
-      cellRenderer: DropdownComponent,
-      cellStyle: () => ({ width: "20rem" }),
-    },
-  ];
-  return tableConfig;
-}
-export function ResitFeeTableConfig({ DropdownComponent }) {
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "Student Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Level",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Specialty",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Exam Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Course Title",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Resit Fee",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Status",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
     },

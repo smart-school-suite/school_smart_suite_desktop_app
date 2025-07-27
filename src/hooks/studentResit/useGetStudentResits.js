@@ -4,6 +4,6 @@ import { getAllResits } from "../../services/studentResit";
 export const useGetStudentResits = () => {
     return useQuery({
          queryKey:["studentResits"],
-         queryFn:getAllResits
+         queryFn:() => getAllResits()
     })
 }

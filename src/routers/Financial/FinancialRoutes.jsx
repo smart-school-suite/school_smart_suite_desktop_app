@@ -39,10 +39,12 @@ import SchoolExpensesLayout from "../../layouts/SchoolExpensesLayout";
 import RegistrationFeeLayout from "../../layouts/RegistrationFeeLayout";
 import TuitionFeeLayout from "../../layouts/TuitionFeeLayout";
 import AdditionalFeeLayout from "../../layouts/AdditionalFeeLayout";
+import ResitFeeLayout from "../../layouts/ResitFeeLayout";
 const FinancialRoutes = [
-  <Route
+  <Route key={"resitFeeLayout"} element={<ResitFeeLayout />}>
+    <Route
     key={"resitFee"}
-    path="/resit-payment"
+    path="/resit-payments"
     element={
       <Suspense>
         <ResitFee />
@@ -57,7 +59,8 @@ const FinancialRoutes = [
         <ResitFeeTransactions />
       </Suspense>
     }
-  />,
+  />
+  </Route>,
   <Route key={"registrationFeeLayout"} element={<RegistrationFeeLayout />}>
     <Route
       key={"registrationFees"}

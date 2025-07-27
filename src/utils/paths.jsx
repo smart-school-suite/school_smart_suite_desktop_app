@@ -100,7 +100,7 @@ export const tuitionFeeRoutes = [
 ];
 
 export const resitFeeRoutes = [
-    "/resit-payment",
+    "/resit-payments",
      "/resitfee-transaction"
 ];
 
