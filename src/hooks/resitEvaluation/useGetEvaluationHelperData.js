@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { prepareResitData } from "../../services/resitEvaluation";
+import { getResitEvaluationHelperData } from "../../services/resitEvaluation";
 
-export const useGetResitEvaluationHelperData = (examId, studentId) => {
+export const useGetResitEvaluationHelperData = (resitExamId, candidateId) => {
     return useQuery({
          queryKey:["resitEvaluationHelperData"],
-         queryFn:prepareResitData(examId, studentId)
+         queryFn:() => getResitEvaluationHelperData(resitExamId, candidateId)
     })
 } 

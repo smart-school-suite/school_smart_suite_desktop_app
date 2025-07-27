@@ -224,6 +224,77 @@ export function ExamsTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
+
+export function ResitExamTableConfig({ DropdownComponent }){
+    const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "exam_name",
+      headerName: "Exam Title",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "semester_name",
+      headerName: "Semester",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "specailty_name",
+      headerName: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "school_year",
+      headerName: "School Year",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "weighted_mark",
+      headerName: "Max Score",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "grading_added",
+      headerName: "Grading Status",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: ExamGradingBadge,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
 export function ExamGradingCongfig({ DropdownComponent }) {
   const tableConfig = [
     {

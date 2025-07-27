@@ -92,7 +92,7 @@ const FinancialRoutes = [
     />
     <Route
       key={"schoolExpenses"}
-      path="/school-expense"
+      path="/school-expenses"
       element={
         <Suspense>
           <SchoolExpenses />

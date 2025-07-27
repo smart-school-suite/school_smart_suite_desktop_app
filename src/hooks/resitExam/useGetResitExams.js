@@ -4,6 +4,6 @@ import { getAllResitExams } from "../../services/resitExam";
 export const useGetAllResitExams = () => {
     return useQuery({
          queryKey:["resitExams"],
-         queryFn:getAllResitExams
+         queryFn:() => getAllResitExams()
     })
 }

@@ -617,7 +617,7 @@ function Sidebar() {
                     <div className="box-nav">
                       <div className="subbox-nav">
                         <NavLink
-                          to="/registrationFees"
+                          to="/registration-fees"
                           className={({ isActive }) =>
                             isActive
                               ? "text-decoration-none fw-medium color-primary"

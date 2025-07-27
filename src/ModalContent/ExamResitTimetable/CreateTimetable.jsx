@@ -1,298 +1,212 @@
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners";
-import {
-  useFetchResitCourseByExamQuery,
-  useFetchExamDetailsQuery,
-} from "../../Slices/Asynslices/fetchSlice";
-import { useState, useEffect, useCallback } from "react";
+import { useGetResitExamCourse } from "../../hooks/resitExamTimetable/useGetResitExamCourse";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useEffect, useCallback } from "react";
+import { useCreateResitTimetable } from "../../hooks/resitExamTimetable/useCreateResitTimetable";
+import { setData, setExamDateRange, updateField } from "../../Slices/Asynslices/ResitExamTimetableSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { convertTo24HourFormat } from "../../utils/functions";
-import {
-  setExamDateRange,
-  setData,
-  updateField,
-} from "../../Slices/Asynslices/ExamTimetableSlice";
-import TimeInput from "../../components/TimeInput";
 import { Icon } from "@iconify/react";
-import { calculateExamDuration } from "../../utils/functions";
-import { useCreateResitTimetableMutation } from "../../Slices/Asynslices/postSlice";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import toast from "react-hot-toast";
-function CreateTimetable({ handleClose, row_id: examId }) {
-  const formData = useSelector((state) => state.examtimetable.formData);
-  const [isCreating, setIsCreating] = useState(false);
-  const [createResitTimetable] = useCreateResitTimetableMutation();
-  const { data: examDetails, isLoading: isExamDetailsLoading } =
-  useFetchExamDetailsQuery({
-    exam_id: examId,
-  });
-  const { data: resitCourses, isLoading: resitCoursesFetching } =
-    useFetchResitCourseByExamQuery(examId);
+import TimeInput from "../../components/FormComponents/TimeInput";
+import { formatDate } from "../../utils/functions";
+function CreateTimetable({ handleClose, rowData }) {
+  const { id:resitExamId, start_date, end_date, exam_name, } = rowData;
   const dispatch = useDispatch();
- 
+  const { mutate, isPending } =
+    useCreateResitTimetable(handleClose);
+  const formData = useSelector((state) => state.resitExamTimetable.formData);
+  const { data: helperData, isFetching } = useGetResitExamCourse(resitExamId);
   useEffect(() => {
-    if (resitCourses?.data) {
-      const initialData = resitCourses.data.map((items) => ({
-        course_id: items.course_id,
-        examId: examId,
+    if (helperData?.data) {
+      const formatData = helperData.data.resitable_courses.map((items) => ({
+        course_id: items.id,
+        course_name: items.course_title,
+        date:"",
         start_time: "",
         end_time: "",
-        date: "",
-        course_name: items.course_name,
-        specialty_id: examDetails.data.specialty_id,
-        level_id: examDetails.data.level_id,
-        student_batch_id: examDetails.data.student_batch_id,
-        school_year: examDetails.data.school_year,
+        duration: "",
+        levelId: items.level_id,
+        specialtyId: items.specialty_id,
+        examId: resitExamId,
       }));
-      dispatch(setData(initialData));
-      dispatch(
-        setExamDateRange({
-          start_date: examDetails.data.start_date,
-          end_date: examDetails.data.end_date,
-        })
-      );
+      dispatch(setData(formatData));
+      dispatch(setExamDateRange({ start_date, end_date }));
     }
-  }, [resitCourses, examDetails, dispatch]);
-  const handleTimeChange = useCallback((value, index, field) => {
-    console.log(value, index, field);
-    dispatch(updateField({ index, field, value: value }));
-  }, []);
-  const handleCreateTimetable = async () => {
-    const timeTableData = formData
-      .filter(
-        (item) =>
-          item.start_time !== "" || item.end_time !== "" || item.date !== ""
-      )
-      .map((item) => ({
-        school_year: item.school_year,
-        date: item.date,
-        end_time: convertTo24HourFormat(item.end_time),
-        start_time: convertTo24HourFormat(item.start_time),
-        duration: calculateExamDuration(item.start_time, item.end_time),
-        level_id: item.level_id,
-        course_id: item.course_id,
-        exam_id: item.examId,
-        specialty_id: item.specialty_id,
-        student_batch_id: item.student_batch_id,
-      }));
+  }, [helperData?.data, dispatch]);
+
+    const handleChange = useCallback(
+    (index, field, value) => {
+      dispatch(updateField({ index, field, value }));
+    },
+    [dispatch]
+  );
+
+  const handleCreateTimetable = () => {
+        const isEmpty = (value) =>
+  value === null || value === undefined || value.toString().trim() === "";
+
+const timeTableData = formData
+  .filter(
+    (item) =>
+      !isEmpty(item.start_time) &&
+      !isEmpty(item.end_time) &&
+      !isEmpty(item.course_id) 
+  )
+  .map((item) => ({
+    date:item.date,
+    end_time: item.end_time,
+    start_time: item.start_time,
+    course_id: item.course_id,
+    specialty_id: item.specialtyId,
+    level_id: item.levelId,
+    resit_exam_id:item.examId
+  }));
 
     const formattedData = {
       entries: timeTableData,
     };
-    setIsCreating(true);
-    try {
-      await createResitTimetable({
-        entries: formattedData,
-        examId: examId,
-      }).unwrap();
-      setIsCreating(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Time table Created✅"}
-          description={"Exam Timetable Created Successfully"}
-        />
-      );
-    } catch (e) {
-      setIsCreating(false);
-      toast.custom(
-        <ToastDanger
-          title={"Failed create time table ❌"}
-          description={
-            "Time table creation failed due to an error please try againg"
-          }
-        />
-      );
-    }
-  };
-  if (resitCoursesFetching || isExamDetailsLoading) {
-    return <Pageloaderspinner />;
+
+    mutate({ resitExamId:resitExamId, createData:formattedData });
+  }
+  if (isFetching) {
+    return <SingleSpinner />;
   }
   return (
     <>
-      <div className="d-flex flex-row align-items-center justify-content-between mb-4 ">
-        <h5>Create Exam Timetable {examId}</h5>
-        <span
-          onClick={() => {
-            handleClose();
-          }}
-        >
-          <Icon icon="charm:cross" width="22" height="22" />
-        </span>
-      </div>
-      <div className="d-flex flex-row align-items-center justify-content-end gap-2 ">
-        <button className="px-2 py-1 border-none  rounded-2 text-center">
-          <span>
-            <Icon
-              icon="charm:menu-kebab"
-              width="16"
-              height="16"
-              className="color-primary"
-            />
-          </span>
-        </button>
-        <button 
-          className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"
-          onClick={() => {
-             handleCreateTimetable();
-          }}
-          >
-          {
-            isCreating ? <SingleSpinner /> : "Create Timetable"
-          }
-        </button>
-      </div>
-      <span>
-        Exam Date Range <span>{examDetails.data.start_date}</span>{" "}
-        {examDetails.data.end_date}{" "}
-      </span>
-      <div className="w-100 border rounded-3 mt-3 timetable-container">
-        <table className="table table-responsive examtimetable-table">
-          <thead>
-            <tr>
-              <th className="border-end">Course Title</th>
-              <td>Date</td>
-              <th>Start Time</th>
-              <th>End Time</th>
-              <th>Duration</th>
-            </tr>
-          </thead>
-          <tbody className="examtimetable-body">
-            {formData.map((items, index) => (
-              <tr className="align-middle">
-                <td className="border">{items.course_name}</td>
-                <td>
-                  <span
-                    style={{
-                      opacity: "0",
-                    }}
-                  >
-                    {examDetails.data.start_date}
-                  </span>
-                  <input
-                    type="date"
-                    className="form-control"
-                    name="date"
-                    value={formData[index] ? formData[index].date : ""}
-                    onChange={(e) =>
-                      handleTimeChange(e.target.value, index, "date")
-                    }
-                  />
-                  <span
-                    className={`${
-                      items.validation.date
-                        ? "text-danger"
-                        : items.validation.dateValid
-                        ? "text-success"
-                        : null
-                    } font-size-sm`}
-                    style={{
-                      opacity: `${
-                        items.validation.date || items.validation.dateValid
-                          ? "1"
-                          : "0"
-                      } `,
-                      transition: "all 0.2s",
-                    }}
-                  >
-                    {items.validation.date}
-                    {items.validation.dateValid}
-                    {(items.validation.dateValid === null) &
-                    (items.validation.date === null)
-                      ? "testing"
-                      : null}
-                  </span>
-                </td>
-                <td>
-                  <span
-                    style={{
-                      opacity: "0",
-                    }}
-                  >
-                    hello
-                  </span>
-                  <TimeInput
-                    onTimeChange={(time) =>
-                      handleTimeChange(time, index, "start_time")
-                    }
-                    value={formData[index] ? formData[index].start_time : ""}
-                  />
-                  <span
-                    className={`${
-                      items.validation.start_time
-                        ? "text-danger"
-                        : items.validation.timeValid
-                        ? "text-success"
-                        : null
-                    } font-size-sm`}
-                    style={{
-                      opacity: `${
-                        items.validation.start_time ||
-                        items.validation.timeValid
-                          ? "1"
-                          : "0"
-                      } `,
-                      transition: "all 0.2s",
-                    }}
-                  >
-                    {items.validation.start_time}
-                    {items.validation.timeValid}
-                    {(items.validation.timeValid === null) &
-                    (items.validation.start_time === null)
-                      ? "testing"
-                      : null}
-                  </span>
-                </td>
-                <td>
-                  <span
-                    style={{
-                      opacity: "0",
-                    }}
-                  >
-                    hello
-                  </span>
-                  <TimeInput
-                    onTimeChange={(time) =>
-                      handleTimeChange(time, index, "end_time")
-                    }
-                    value={formData[index] ? formData[index].end_time : ""}
-                  />
-                  <span
-                    className={`${
-                      items.validation.end_time
-                        ? "text-danger"
-                        : items.validation.timeValid
-                        ? "text-success"
-                        : null
-                    } font-size-sm`}
-                    style={{
-                      opacity: `${
-                        items.validation.end_time || items.validation.timeValid
-                          ? "1"
-                          : "0"
-                      } `,
-                      transition: "all 0.2s",
-                    }}
-                  >
-                    {items.validation.end_time}
-                    {items.validation.timeValid}
-                    {(items.validation.timeValid === null) &
-                    (items.validation.end_time === null)
-                      ? "testing"
-                      : null}
-                  </span>
-                </td>
-                <td>
-                  {calculateExamDuration(
-                    formData[index].start_time,
-                    formData[index].end_time
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          <div className="d-flex flex-row align-items-center justify-content-between mb-4 ">
+            <span>Create Resit Exam Timetable</span>
+            <span
+              onClick={() => {
+                handleClose();
+              }}
+            >
+
+              <Icon icon="charm:cross" width="22" height="22" />
+            </span>
+          </div>
+          <div className="d-flex flex-row align-items-center justify-content-end gap-2 mb-2">
+            <button 
+              className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"
+              onClick={() => { handleCreateTimetable(); }}
+              >
+              {
+                 isPending ? <SingleSpinner /> : "Create Timetable"
+              }
+            </button>
+          </div>
+          <div className="my-1">
+            <div className="d-flex flex-column gap-2">
+              <div className="d-flex flex-row gap-2 font-size-sm align-items-center">
+              <span>{exam_name}</span>
+            </div>
+              <div className="d-flex flex-row gap-2 font-size-sm align-items-center">
+              <Icon icon="solar:calendar-broken" width="18" height="18" />
+              <span>{formatDate(start_date)}</span>
+              <Icon icon="pajamas:dash" width="12" height="12" />
+              <span>{formatDate(end_date)}</span>
+            </div>
+            
+            </div>
+          </div>
+          <div className="card grades-box rounded-3 border">
+            <table className="table table-responsive font-size-sm">
+              <thead className="grades-thead">
+                <tr>
+                  <th className="text-center">Course</th>
+                  <th className="text-center">Date</th>
+                  <th className="text-center">Start Time</th>
+                  <th className="text-center">End Time</th>
+                  <th className="text-center">Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                {formData.map((items, index) => (
+                  <tr className="grades-tr">
+                    <td style={{ width: "20%" }}>
+                      <div
+                        className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
+                        style={{ fontSize: "0.85rem" }}
+                      >
+                        <div className="d-flex flex-column w-100">
+                          <span>{items.course_name}</span>
+                          <span style={{ fontSize: "0.65rem", opacity: 0 }}>
+                            Error
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ width: "20%" }}>
+                      <div
+                        className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
+                        style={{ fontSize: "0.85rem" }}
+                      >
+                        <div className="d-flex flex-column">
+                          <input
+                            type="date"
+                            className="form-control form-control-sm"
+                            name="date"
+                            onChange={(e) =>
+                              handleChange(index, "date", e.target.value)
+                            }
+                          />
+                          <span style={{ fontSize: "0.65rem", opacity: 0 }}>
+                            Error
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ width: "20%" }}>
+                      <div
+                        className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
+                        style={{ fontSize: "0.85rem" }}
+                      >
+                        <div className="d-flex flex-column">
+                          <TimeInput
+                            value={items.start_time}
+                            onChange={(value) =>
+                              handleChange(index, "start_time", value)
+                            }
+                          />
+                          <span style={{ fontSize: "0.65rem", opacity: 0 }}>
+                            Error
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ width: "20%" }}>
+                      <div
+                        className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
+                        style={{ fontSize: "0.85rem" }}
+                      >
+                        <div className="d-flex flex-column">
+                          <TimeInput
+                            value={items.end_time}
+                            onChange={(value) =>
+                              handleChange(index, "end_time", value)
+                            }
+                          />
+                          <span style={{ fontSize: "0.65rem", opacity: 0 }}>
+                            Error
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ width: "20%" }}>
+                      <div
+                        className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
+                        style={{ fontSize: "0.85rem" }}
+                      >
+                        <div className="d-flex flex-column">
+                          <span>{items.duration || "N/A"}</span>
+                          <span style={{ fontSize: "0.65rem", opacity: 0 }}>
+                            Error
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
     </>
   );
 }

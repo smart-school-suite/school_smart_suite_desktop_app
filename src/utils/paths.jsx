@@ -85,7 +85,7 @@ export const additionalFeeRoutes = [
 
 export const schoolExpenseRoutes = [
   "/school-expense-category",
-  "/school-expense",
+  "/school-expenses",
 ];
 
 export const registrationFeeRoutes = [

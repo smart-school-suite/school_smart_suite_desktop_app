@@ -8,6 +8,7 @@ import { Icon } from "@iconify/react";
 import { useGetExamTypes } from "../ExamType/useGetExamType";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
+
 function CreateExam({ handleClose }) {
   const { mutate:createExam, isPending } = useCreateExam(handleClose)
   const [formData, setFormData] = useState({

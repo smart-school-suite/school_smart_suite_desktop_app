@@ -11,7 +11,7 @@ export const updateResitScores = async (candidateId, studentResitResultId, data)
   return response.data;
 };
 
-export const prepareResitData = async (examId, studentId) => {
-  const response = await axiosInstance.get(`student-resit/student-resits/${examId}/${studentId}/data`);
+export const getResitEvaluationHelperData = async (resitExamId, candidateId) => {
+  const response = await axiosInstance.get(`student-resit/resit-exams/${resitExamId}/candidates/${candidateId}/evaluation-data`);
   return response.data;
 };

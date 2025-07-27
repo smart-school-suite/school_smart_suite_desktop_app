@@ -129,7 +129,6 @@ function SummitScores({
           </div>
         </div>
       </div>
-      {console.table(letterGrades)}
       <div className="border rounded-3 grades-form-box ">
         <div className="grades-form-table-box">
           <table className="table table-responsive">
