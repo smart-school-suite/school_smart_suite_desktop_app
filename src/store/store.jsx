@@ -17,7 +17,8 @@ import specialtyTimetableReducer from "../Slices/Asynslices/SpecialtyTimetableSl
 import createCaScoreReducer from "../Slices/Asynslices/CaScoreSlice";
 import createExamScoreReducer from "../Slices/Asynslices/ExamScoreSlice";
 import resitExamTimetableReducer from "../Slices/Asynslices/ResitExamTimetableSlice";
-import createResitExamScoreReducer from "../Slices/Asynslices/ResitScoreSlice"
+import createResitExamScoreReducer from "../Slices/Asynslices/ResitScoreSlice";
+import announcementReducer from "../Slices/Asynslices/AnnouncementSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -48,7 +49,8 @@ const rootReducer = combineReducers({
   createCaScore:createCaScoreReducer,
   createExamScore:createExamScoreReducer,
   resitExamTimetable:resitExamTimetableReducer,
-  createResitExamScore:createResitExamScoreReducer
+  createResitExamScore:createResitExamScoreReducer,
+  announcement:announcementReducer
 });
 
 

@@ -97,7 +97,7 @@ export function ModalButton({  action, children, classname, rowData, resetAll, s
     <>
       <div>
         <button
-          className={`${classname} remove-button-style`}
+          className={`${classname} `}
           onClick={() => {
             handleShow(action.modalContent);
           }}

@@ -4,6 +4,6 @@ import { getAnnouncementTags } from "../../services/announcement";
 export const useGetAnnouncementTags = () => {
      return useQuery({
          queryKey: ['announcementTags'],
-         queryFn: getAnnouncementTags,
+         queryFn: () => getAnnouncementTags(),
     });
 }

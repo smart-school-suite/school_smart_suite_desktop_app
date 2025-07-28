@@ -1,10 +1,10 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useDeleteAnnouncementCategory } from "../../hooks/announcement/useDeleteAnnouncementCategory";
-function DeleteAnnouncementCategory({ handleClose, rowData }) {
-  const { id:categoryId } = rowData
-  const { mutate:deleteCategory, isPending } = useDeleteAnnouncementCategory();
-  const handleDelete = async () => {
-     deleteCategory(categoryId);
+import { useDeleteAnnouncementTag } from "../../hooks/announcement/useDeleteAnnouncementTag";
+function DeleteAnnouncementTag({ handleClose, rowData }) {
+  const { id: tagId } = rowData;
+  const { mutate: deleteTag, isPending } = useDeleteAnnouncementTag();
+  const handleDeleteTag = () => {
+    deleteTag(tagId);
   };
   return (
     <>
@@ -28,7 +28,7 @@ function DeleteAnnouncementCategory({ handleClose, rowData }) {
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               disabled={isPending}
               onClick={() => {
-                 handleDelete();
+                handleDeleteTag();
               }}
             >
               {isPending ? <SingleSpinner /> : <>Yes, Delete</>}
@@ -39,4 +39,4 @@ function DeleteAnnouncementCategory({ handleClose, rowData }) {
     </>
   );
 }
-export default DeleteAnnouncementCategory;
+export default DeleteAnnouncementTag;
