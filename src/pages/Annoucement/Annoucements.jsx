@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import { useFetchAnnouncementStatsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
+import TextDisplay from "../../components/TextComponents/TextDisplay";
 function Annoucements() {
   const year = new Date().getFullYear();
   const { data, isLoading } = useFetchAnnouncementStatsQuery({
@@ -71,10 +72,12 @@ function Annoucements() {
               </div>
               <div className="my-2 font-size-sm bg-white rounded-4 p-2 d-flex flex-column gap-2">
                 <span className="fw-semibold">Announcement Title</span>
-                <p className="m-0 fw-light gainsboro-color my-1">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Dolorem sapiente laudantium obcaecati similique cumque modi
-                </p>
+                <TextDisplay 
+                 content={"Lorem ipsum dolor sit amet consectetur, adipisicing Lorem ipsum dolor sit amet consectetur, adipisicing elit.Dolorem sapiente laudantium obcaecati similique cumque modi"}
+                 maxLength={150}
+                 textStyle={"gainsboro-color fw-light"}
+                 readMeStyle={'fw-semibold text-dark'}
+                 />
                 <div className="d-flex align-items-center gap-2">
                   <span>
                     <Icon icon="circum:calendar" width="24" height="24" />
@@ -84,10 +87,12 @@ function Annoucements() {
               </div>
               <div className="my-2 font-size-sm bg-white rounded-4 p-2 d-flex flex-column gap-2">
                 <span className="fw-semibold">Announcement Title</span>
-                <p className="m-0 fw-light gainsboro-color my-1">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Dolorem sapiente laudantium obcaecati similique cumque modi
-                </p>
+                <TextDisplay 
+                 content={"Lorem ipsum dolor sit amet consectetur, adipisicing Lorem ipsum dolor sit amet consectetur, adipisicing elit.Dolorem sapiente laudantium obcaecati similique cumque modi"}
+                 maxLength={150}
+                 textStyle={"gainsboro-color fw-light"}
+                 readMeStyle={'fw-semibold text-dark'}
+                 />
                 <div className="d-flex align-items-center gap-2">
                   <span>
                     <Icon icon="circum:calendar" width="24" height="24" />
@@ -97,10 +102,12 @@ function Annoucements() {
               </div>
               <div className="my-2 font-size-sm bg-white rounded-4 p-2 d-flex flex-column gap-2">
                 <span className="fw-semibold">Announcement Title</span>
-                <p className="m-0 fw-light gainsboro-color my-1">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Dolorem sapiente laudantium obcaecati similique cumque modi
-                </p>
+                <TextDisplay 
+                 content={"Lorem ipsum dolor sit amet consectetur, adipisicing Lorem ipsum dolor sit amet consectetur, adipisicing elit.Dolorem sapiente laudantium obcaecati similique cumque modi"}
+                 maxLength={150}
+                 textStyle={"gainsboro-color fw-light"}
+                 readMeStyle={'fw-semibold text-dark'}
+                 />
                 <div className="d-flex align-items-center gap-2">
                   <span>
                     <Icon icon="circum:calendar" width="24" height="24" />
@@ -117,10 +124,12 @@ function Annoucements() {
               </div>
               <div className="my-2 font-size-sm bg-white rounded-4 p-2 d-flex flex-column gap-2">
                 <span className="fw-semibold">Announcement Title</span>
-                <p className="m-0 fw-light gainsboro-color my-1">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Dolorem sapiente laudantium obcaecati similique cumque modi
-                </p>
+                <TextDisplay 
+                 content={"Lorem ipsum dolor sit amet consectetur, adipisicing Lorem ipsum dolor sit amet consectetur, adipisicing elit.Dolorem sapiente laudantium obcaecati similique cumque modi"}
+                 maxLength={150}
+                 textStyle={"gainsboro-color fw-light"}
+                 readMeStyle={'fw-semibold text-dark'}
+                 />
                 <div className="d-flex align-items-center gap-2">
                   <span>
                     <Icon icon="circum:calendar" width="24" height="24" />
@@ -130,10 +139,12 @@ function Annoucements() {
               </div>
               <div className="my-2 font-size-sm bg-white rounded-4 p-2 d-flex flex-column gap-2">
                 <span className="fw-semibold">Announcement Title</span>
-                <p className="m-0 fw-light gainsboro-color my-1">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Dolorem sapiente laudantium obcaecati similique cumque modi
-                </p>
+                <TextDisplay 
+                 content={"Lorem ipsum dolor sit amet consectetur, adipisicing Lorem ipsum dolor sit amet consectetur, adipisicing elit.Dolorem sapiente laudantium obcaecati similique cumque modi"}
+                 maxLength={150}
+                 textStyle={"gainsboro-color fw-light"}
+                 readMeStyle={'fw-semibold text-dark'}
+                 />
                 <div className="d-flex align-items-center gap-2">
                   <span>
                     <Icon icon="circum:calendar" width="24" height="24" />
@@ -143,10 +154,12 @@ function Annoucements() {
               </div>
               <div className="my-2 font-size-sm bg-white rounded-4 p-2 d-flex flex-column gap-2">
                 <span className="fw-semibold">Announcement Title</span>
-                <p className="m-0 fw-light gainsboro-color my-1">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Dolorem sapiente laudantium obcaecati similique cumque modi
-                </p>
+                <TextDisplay 
+                 content={"Lorem ipsum dolor sit amet consectetur, adipisicing Lorem ipsum dolor sit amet consectetur, adipisicing elit.Dolorem sapiente laudantium obcaecati similique cumque modi"}
+                 maxLength={150}
+                 textStyle={"gainsboro-color fw-light"}
+                 readMeStyle={'fw-semibold text-dark'}
+                 />
                 <div className="d-flex align-items-center gap-2">
                   <span>
                     <Icon icon="circum:calendar" width="24" height="24" />
@@ -157,7 +170,7 @@ function Annoucements() {
             </div>
           </div>
         </section>
-        <section className="mt-2">
+        <section className="mt-5">
           <span className="font-size-sm fw-semibold">Announcement Stats By Type</span>
           <div className="announcement-grid-two mt-2">
               <div className="card border-none d-flex flex-row font-size-sm p-2 rounded-2">

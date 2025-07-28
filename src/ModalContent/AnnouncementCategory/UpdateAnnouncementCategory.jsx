@@ -1,12 +1,9 @@
-import { useUpdateAnnouncementCategoryMutation } from "../../Slices/Asynslices/updateSlice";
 import { useState } from "react";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function UpdateAnnouncementCategory({ handleClose, row_id: categoryId }) {
-  const [isupdating, setIsUpdating] = useState(false);
+import { useUpdateAnnouncementCategory } from "../../hooks/announcement/useUpdateAnnouncementCategory";
+function UpdateAnnouncementCategory({ handleClose, rowData }) {
+  const { id:categoryId } = rowData;
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -14,34 +11,9 @@ function UpdateAnnouncementCategory({ handleClose, row_id: categoryId }) {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-  const [UpdateAnnouncementCategory] = useUpdateAnnouncementCategoryMutation();
+  const {mutate:updateCategory, isPending} = useUpdateAnnouncementCategory();
   const handleUpdate = async () => {
-    try {
-      await UpdateAnnouncementCategory({
-        categoryId: categoryId,
-        updateData: formData,
-      }).unwrap();
-      setIsUpdating(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Update Successfull ✅"}
-          description={
-            "The Announcement Category has been updated successfully "
-          }
-        />
-      );
-    } catch (error) {
-      toast.custom(
-        <ToastDanger
-          title={"Something went wrong ❌"}
-          description={
-            "❌ Something went wrong! Announcement Category  failed due to an error. Please try again later."
-          }
-        />
-      );
-      setIsCreating(false);
-    }
+     updateCategory({ categoryId, updateData:formData })
   };
   return (
     <>
@@ -87,12 +59,12 @@ function UpdateAnnouncementCategory({ handleClose, row_id: categoryId }) {
         <div className="mt-2">
           <button
             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
-            disabled={isupdating}
+            disabled={isPending}
             onClick={() => {
               handleUpdate();
             }}
           >
-            {isupdating ? <SingleSpinner /> : "Update Category"}
+            {isPending ? <SingleSpinner /> : "Update Category"}
           </button>
         </div>
       </div>

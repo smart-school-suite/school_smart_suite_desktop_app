@@ -14,7 +14,6 @@ import UpdateSchoolBranchWebsite from "../../ModalContent/SchoolBranch/UpdateBra
 import UpdateSchoolBranchCity from "../../ModalContent/SchoolBranch/UpdateBranchCity";
 function SchoolBranch() {
   const userData = useSelector((state) => state.auth.user);
-  const schoolBranchData = userData.schoolDetails;
   const { data:schoolBranch, isFetching } = useGetSchoolBranchDetails();
   if(isFetching){
     return <Pageloaderspinner />

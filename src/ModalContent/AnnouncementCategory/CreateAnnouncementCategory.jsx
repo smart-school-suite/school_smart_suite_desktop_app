@@ -1,42 +1,19 @@
 import { Icon } from "@iconify/react";
 import { useState } from "react";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { useCreateAnnouncementCategoryMutation } from "../../Slices/Asynslices/postSlice";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useCreateAnnouncementCategory } from "../../hooks/announcement/useCreateAnnouncementCategory";
 function CreateAnnouncementCategory({ handleClose }) {
-  const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
   });
-  const [createAnnouncementCategory] = useCreateAnnouncementCategoryMutation();
+  const {mutate:createCategory, isPending }= useCreateAnnouncementCategory(handleClose);
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
-    setIsCreating(true);
-    try {
-      await createAnnouncementCategory(formData).unwrap();
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Creation Successfull ✅"}
-          description={
-            "The Anouncement Category has been created successfully "
-          }
-        />
-      );
-      setIsCreating(false);
-    } catch (error) {
-        toast.custom(<ToastDanger 
-        title={"Something went wrong ❌"}
-        description={"❌ Something went wrong! The Announcement Category creation failed due to an error. Please try again later."}
-      />)
-      setIsCreating(false);
-    }
+    createCategory(formData);
   };
   return (
     <>
@@ -82,13 +59,13 @@ function CreateAnnouncementCategory({ handleClose }) {
         <div className="mt-2">
           <button 
             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
-              disabled={isCreating}
+              disabled={isPending}
              onClick={() => {
               handleSubmit();
             }}
             >
             {
-              isCreating ? <SingleSpinner />: "Create Category"
+              isPending ? <SingleSpinner />: "Create Category"
             }
           </button>
         </div>

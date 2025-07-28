@@ -4,6 +4,6 @@ import { getAnnouncementCategories } from "../../services/announcement";
 export const useGetAnnouncementCategories = () => {
   return useQuery({
     queryKey: ["announcementCategories"],
-    queryFn: getAnnouncementCategories,
+    queryFn:() =>  getAnnouncementCategories(),
   });
 };

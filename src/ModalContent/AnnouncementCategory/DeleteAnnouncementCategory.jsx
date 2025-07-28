@@ -1,36 +1,10 @@
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useDeleteAnnoncementCategoryMutation } from "../../Slices/Asynslices/deleteSlice";
-import { Icon } from "@iconify/react";
-function DeleteAnnouncementCategory({ handleClose, row_id: categoryId }) {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteAnnoncementCategory] = useDeleteAnnoncementCategoryMutation();
+import { useDeleteAnnouncementCategory } from "../../hooks/announcement/useDeleteAnnouncementCategory";
+function DeleteAnnouncementCategory({ handleClose, rowData }) {
+  const { id:categoryId } = rowData
+  const { mutate:deleteCategory, isPending } = useDeleteAnnouncementCategory();
   const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      await deleteAnnoncementCategory(categoryId).unwrap();
-      setIsDeleting(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Delete Successfull ✅"}
-          description={"The Announcement Category has been deleted successfully "}
-        />
-      );
-    } catch (e) {
-      toast.custom(
-        <ToastDanger
-          title={"Something went wrong ❌"}
-          description={
-            "Something went wrong! The Announcement Category deletion failed due to an error. Please try again later."
-          }
-        />
-      );
-      setIsDeleting(false);
-    }
+     deleteCategory(categoryId);
   };
   return (
     <>
@@ -52,11 +26,12 @@ function DeleteAnnouncementCategory({ handleClose, row_id: categoryId }) {
             </button>
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+              disabled={isPending}
               onClick={() => {
                  handleDelete();
               }}
             >
-              {isDeleting ? <SingleSpinner /> : <>Delete Category</>}
+              {isPending ? <SingleSpinner /> : <>Yes, Delete</>}
             </button>
           </div>
         </div>
