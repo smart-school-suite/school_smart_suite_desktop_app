@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    --primary-color: #0ea7e9;
+    --primary-color-50: #f0f9ff;
+    --primary-color-100: #e0f2fe;
+    --primary-color-200: #bae7fd;
+    --primary-color-300: #7dd4fc;
+    --primary-color-400: #38bff8;
+    --primary-color-dark: #083049;
+
+    /* Accent color */
+    --acent-color-one: #A0D3E8;
+    --acent-color-one-darker: #142E3D;
+    --acent-color-two: #FFCCB3;
+    --acent-color-two-darker: #440706;
+    --acent-color-three: #689CC8;
+    --acent-color-three-darker: #182739;
+    --acent-color-four: #9DBFDC;
+    --acent-color-five: #fff;
+    --acent-color-six: #FAFAFA;
+    --acent-color-seven: #888;
+    --acent-color-eight: transparent;
+
+    /* Topography */
+    --primary-font-family: "poppins, sanserif";
+    --font-size-base: 1rem;
+    /* 16px */
+    --scale-ratio: 1.25;
+    --font-size-xs: calc(var(--font-size-base) / var(--scale-ratio) * 0.75);
+    /* ~12px */
+    --font-size-sm: calc(var(--font-size-base) / var(--scale-ratio));
+    /* ~16px */
+    --font-size-md: var(--font-size-base);
+    /* ~20px */
+    --font-size-lg: calc(var(--font-size-base) * var(--scale-ratio));
+    /* ~25px */
+    --font-size-xl: calc(var(--font-size-base) * var(--scale-ratio) * 1.5);
+    /* ~30px */
+    --font-size-2xl: calc(var(--font-size-base) * var(--scale-ratio) * 2);
+    /* ~40px */
+
+    /* widths */
+    --width-10: 10%;
+    --width-20: 20%;
+    --width-30: 30%;
+    --width-40: 40%;
+    --width-50: 50%;
+    --width-60: 60%;
+    --width-70: 70%;
+    --width-80: 80%;
+    --width-90: 90%;
+    --width-100: 100%;
+
+    /* heights */
+    --height-10: 10dvh;
+    --height-20: 20dvh;
+    --height-30: 30dvh;
+    --height-40: 40dvh;
+    --height-60: 60dvh;
+    --height-70: 70dvh;
+    --height-80: 80dvh;
+    --height-90: 90dvh;
+    --height-100: 100dvh;
+
+    /* break points */
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+}
+
+.dropdown-trigger {
+    padding: 0.5rem;
+    font-size: var(--font-size-sm);
+    border: 0.01rem solid #ddd;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.dropdown-selected-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+    transition: all 0.2s;
+}
+
+.rotate-revert {
+    transform: rotate(0deg);
+    transition: all 0.2s;
+}
+
+.dropdown-menu {
+    position: absolute;
+    width: 100%;
+    height: 35dvh;
+    background-color: var(--acent-color-five);
+    border: 0.4rem;
+    transition: all 0.2s;
+    padding: 0.2rem;
+    display: flex;
+    flex-direction: column;
+    border: 0.01rem solid #ddd;
+    margin-top: 0.4rem;
+}
+
+.dropdown-container {
+    position: relative;
+}
+
+.dropdown-search-input {
+    padding: 0.4rem;
+    border: 0.01rem solid #ddd;
+    border-radius: 0.3rem;
+    font-size: var(--font-size-sm);
+    caret-color: #0ea7e9;
+}
+
+.dropdown-search-input:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+}
+
+.dropdown-search-input::placeholder {
+
+    font-size: var(--font-size-sm);
+    font-weight: 400;
+}
+
+.dropdown-options-container {
+    font-size: var(--font-size-sm);
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 0.4rem;
+}
+
+.dropdown-options-container::-webkit-scrollbar-thumb {
+    background-color: var(--acent-color-seven);
+    border-radius: 10px;
+}
+
+.dropdown-options-container::-webkit-scrollbar-thumb:hover {
+    background: var(--acent-color-seven);
+}
+
+.dropdown-options-container::-webkit-scrollbar {
+    width: 2px;
+}
+
+.dropdown-label {
+    font-size: 0.85rem;
+}
+
+.dropdown-option {
+    cursor: pointer;
+    width: 100%;
+    height: 4.5dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 0.2rem;
+    border-radius: 0.2rem;
+    justify-content: center;
+    align-items: start;
+}
+
+.multi-select-item {
+    cursor: pointer;
+    width: 100%;
+    height: 4.5dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 0.2rem;
+    border-radius: 0.2rem;
+    justify-content: center;
+    align-items: start;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.multi-select-item:hover {
+    background-color: var(--primary-color-50);
+    color: var(--primary-color);
+    transition: all 0.2s;
+}
+
+.dropdown-multi-select-item-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.dropdown-option p {
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown-option-selected {
+    background-color: var(--primary-color-50);
+    color: var(--primary-color);
+}
+
+.dropdown-option:hover {
+    background-color: var(--primary-color-50);
+    color: var(--primary-color);
+    transition: all 0.2s;
+}
+
+.dropdown-multi-select-header {
+    margin: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    border-bottom: 0.01rem solid #f9f9f9;
+    padding-bottom: 0.5rem;
+}
+
+.multi-select-all-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.multi-select-all-label span {
+    font-size: 0.85rem;
+}

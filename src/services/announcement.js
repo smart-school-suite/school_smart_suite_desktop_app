@@ -69,3 +69,8 @@ export const getAnnouncementByStatus = async (status) => {
     const  response = await axiosInstance.get(`announcement/${status}`);
     return response.data;
 }
+
+export const getTargetAudience = async () => {
+     const response = await axiosInstance.get('target-audience');
+     return response.data;
+} 
