@@ -80,11 +80,11 @@ function ActionButtonDropdown({
 }
 export default React.memo(ActionButtonDropdown);
 
-export function ModalButton({  action, children, classname, rowData, resetAll, size }) {
+export function ModalButton({  action, children, classname, rowData, resetAll, size, bulkData }) {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const handleShow = (Component) => {
-    setModalContent(<Component  handleClose={handleClose} rowData={rowData} resetAll={resetAll}/>);
+    setModalContent(<Component  handleClose={handleClose} rowData={rowData} resetAll={resetAll}  bulkData={bulkData} />);
     setShowModal(true);
   };
 

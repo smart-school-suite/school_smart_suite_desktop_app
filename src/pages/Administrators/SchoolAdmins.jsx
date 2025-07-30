@@ -1,29 +1,31 @@
 import { Icon } from "@iconify/react";
 import { SchoolAdminTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import React from "react";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { ImageComponent } from "../../components/DataTableComponents/ImageComponent";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import AppointHod from "../../ModalContent/SchoolAdmin/AppointHod";
+import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
 import ManagePermission from "../../ModalContent/SchoolAdmin/ManagePermission";
 import ManageRoles from "../../ModalContent/SchoolAdmin/ManageRole";
 import CreateSchoolAdmin from "../../ModalContent/SchoolAdmin/CreateSchoolAdmin";
 import { useMemo, useCallback, useState, useRef } from "react";
-import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkActivate";
 import BulkDeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkDeactivate";
-import BulkUpdate from "../../ModalContent/SchoolAdmin/BulkUpdate";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import Table from "../../components/Tables/Tables";
 import { useGetSchoolAdmins } from "../../hooks/schoolAdmin/useGetSchoolAdmins";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { DeleteIcon, DetailsIcon, HodIcon, HosIcon, PermissionIcon, RoleIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon, DetailsIcon, PermissionIcon, RoleIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
+import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
+import DeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Deactivate";
+import ActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Activate";
+import SchoolAdminDetails from "../../ModalContent/SchoolAdmin/SchoolAdminDetails";
+import UpdateSchoolAdmin from "../../ModalContent/SchoolAdmin/UpdateSchoolAdmin";
+import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 function SchoolAdmins() {
   const tableRef = useRef();
-  const { data: schoolAdmins, isFetching } = useGetSchoolAdmins();
+  const { data: schoolAdmins, isLoading } = useGetSchoolAdmins();
   const [rowCount, setRowCount] = useState(0);
   const [selectedAdmins, setSelectedAdmins] = useState([]);
   const handleReset = () => {
@@ -33,8 +35,8 @@ function SchoolAdmins() {
       setSelectedAdmins([]);
     }
   };
-  const handleRowDataFromChild = useCallback((data) => {
-    setSelectedAdmins(data);
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedAdmins(Data);
   }, []);
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
@@ -50,7 +52,7 @@ function SchoolAdmins() {
     return schoolAdmins?.data ?? [];
   }, [schoolAdmins]);
 
-  if (isFetching) {
+  if (isLoading) {
     return <DataTablePageLoader />;
   }
 
@@ -91,7 +93,7 @@ function SchoolAdmins() {
                 "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center text-white"
               }
             >
-              <Icon icon="icons8:plus" className="font-size-md" />
+              <CreateIcon />
               <span className="font-size-sm">Create Admin</span>
             </ModalButton>
           </div>
@@ -137,7 +139,7 @@ function ActionButtons({ selectedAdmins, resetAll }) {
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
         action={{ modalContent: BulkDelete }}
-        data={selectedAdmins}
+        bulkData={selectedAdmins}
         resetAll={resetAll}
       >
         <CustomTooltip tooltipText={"Delete All"}>
@@ -146,39 +148,16 @@ function ActionButtons({ selectedAdmins, resetAll }) {
           </span>
         </CustomTooltip>
       </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkUpdate }}
-        data={selectedAdmins}
-        resetAll={resetAll}
-      >
-        <CustomTooltip tooltipText={"Update All"}>
-          <span className="pointer-cursor">
-            <Icon icon="iconamoon:edit-thin" width="24" height="24" />
-          </span>
-        </CustomTooltip>
-      </ModalButton>
     </>
   );
 }
-
 function DropdownItems({ selectedAdmins, resetAll }) {
   return (
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkUpdate }}
-        data={selectedAdmins}
-        resetAll={resetAll}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
-          <span className="font-size-sm">Update All</span>
-        </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
         action={{ modalContent: BulkDelete }}
-        data={selectedAdmins}
+        bulkData={selectedAdmins}
         resetAll={resetAll}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
@@ -188,7 +167,7 @@ function DropdownItems({ selectedAdmins, resetAll }) {
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
         action={{ modalContent: BulkDeactivateSchoolAdmin }}
-        data={selectedAdmins}
+        bulkData={selectedAdmins}
         resetAll={resetAll}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
@@ -198,7 +177,7 @@ function DropdownItems({ selectedAdmins, resetAll }) {
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
         action={{ modalContent: BulkActivateSchoolAdmin }}
-        data={selectedAdmins}
+        bulkData={selectedAdmins}
         resetAll={resetAll}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
@@ -208,7 +187,6 @@ function DropdownItems({ selectedAdmins, resetAll }) {
     </>
   );
 }
-
 function ActionButtonGroup(props) {
    const rowData = props.data;
 
@@ -259,49 +237,40 @@ function ActionButtonGroup(props) {
           </div>
         </div>
       </DropDownMenuItem>
+      {
+         rowData.status == 'active' ? <DropDownMenuItem
+        className={
+          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor "
+        }
+        onClick={() => handleShowModal(DeactivateSchoolAdmin, 'md')}
+      >
+        <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
+            <span>Deactivate</span>
+            <SuspendIcon />
+          </div>
+        </div>
+      </DropDownMenuItem> : 
+      <DropDownMenuItem
+        className={
+          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor "
+        }
+        onClick={() => handleShowModal(ActivateSchoolAdmin, 'md')}
+      >
+        <div>
+          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
+            <span>Activate</span>
+            <SuspendIcon />
+          </div>
+        </div>
+      </DropDownMenuItem>
+      }
       <DropDownMenuItem
         className={
           "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
         }
-        onClick={() => handleShowModal(AppointHod, "lg")}
-      >
-        <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Appoint HOD</span>
-            <HodIcon />
-          </div>
-        </div>
-      </DropDownMenuItem>
-      <ModalButton
-        classname={
-          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-        }
-      >
-        <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Appoint HOS</span>
-            <HosIcon />
-          </div>
-        </div>
-      </ModalButton>
-      <ModalButton
-        classname={
-          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor "
-        }
-        
-      >
-        <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
-            <span>Suspend</span>
-            <SuspendIcon />
-          </div>
-        </div>
-      </ModalButton>
-      <ModalButton
-        classname={
-          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-        }
         size={"lg"}
+        onClick={() => handleShowModal(DeleteSchoolAdmin, 'md')}
       >
         <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -309,11 +278,12 @@ function ActionButtonGroup(props) {
             <DeleteIcon />
           </div>
         </div>
-      </ModalButton>
-      <ModalButton
-       classname={
+      </DropDownMenuItem>
+      <DropDownMenuItem
+       className={
           "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
         }
+        onClick={() => handleShowModal(UpdateSchoolAdmin, 'md')}
       >
         <div>
         <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -321,11 +291,12 @@ function ActionButtonGroup(props) {
           <UpdateIcon />
         </div>
       </div>
-      </ModalButton>
-      <ModalButton
-        classname={
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className={
           "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
         }
+        onClick={() => handleShowModal(SchoolAdminDetails, 'md')}
       >
         <div>
         <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -333,7 +304,7 @@ function ActionButtonGroup(props) {
           <DetailsIcon />
         </div>
       </div>
-      </ModalButton>
+      </DropDownMenuItem>
     </ActionButtonDropdown>
           <CustomModal
         show={showModal}

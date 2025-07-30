@@ -1,37 +1,10 @@
-import { useState } from "react";
-import { useDeleteSchoolAdminMutation } from "../../Slices/Asynslices/deleteSlice";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import toast from "react-hot-toast";
-const DeleteSchoolAdmin = ({ row_id, handleClose }) => {
-  const [deleteSchoolAdmin] = useDeleteSchoolAdminMutation();
-  const [isDeleting, setIsDeleting] = useState(false);
-  const handleDeleteSchoolAdmin = async () => {
-    setIsDeleting(true);
-    try {
-      await deleteSchoolAdmin(row_id).unwrap();
-      setIsDeleting(false);
-      toast.custom(
-        <ToastSuccess
-          title={"Delete Successfull ✅"}
-          description={
-            "The school administrator has been deleted successfully "
-          }
-        />
-      );
-      handleClose();
-    } catch (e) {
-      setIsDeleting(false);
-      toast.custom(
-        <ToastDanger
-          title={"Delete Failed ❌"}
-          description={
-            "❌ Something went wrong! The school administrator delete failed due to an error. Please try again later."
-          }
-        />
-      );
-    }
+import { useDeleteSchoolAdmin } from "../../hooks/schoolAdmin/useDeleteSchoolAdmin";
+const DeleteSchoolAdmin = ({ rowData, handleClose }) => {
+  const { id:schoolAdminId } = rowData;
+  const { mutate:deleteSchoolAdmin, isPending } = useDeleteSchoolAdmin(handleClose);
+  const handleDeleteSchoolAdmin =  () => {
+       deleteSchoolAdmin(schoolAdminId)
   };
   return (
     <>
@@ -43,18 +16,20 @@ const DeleteSchoolAdmin = ({ row_id, handleClose }) => {
         </p>
         <div className="mt-4 d-flex justify-content-end gap-2">
           <button
-            className="border-none px-3 py-2 text-primary rounded-3 font-size-sm"
+            className="border-none px-3 py-2 color-primary rounded-3 font-size-sm w-50"
             onClick={() => {
               handleClose();
             }}
+            disabled={isPending}
           >
             Cancel
           </button>
           <button
-            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
             onClick={handleDeleteSchoolAdmin}
+            disabled={isPending}
           >
-            {isDeleting ? <SingleSpinner /> : "Delete"}
+            {isPending ? <SingleSpinner /> : "Delete"}
           </button>
         </div>
       </div>

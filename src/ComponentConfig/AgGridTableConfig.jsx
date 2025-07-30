@@ -1155,7 +1155,7 @@ export function SchoolAdminTableConfig({ ImageComponent, ActionButtonGroup }) {
     {
       field: "status",
       headerName: "account status",
-      cellRenderer: TextComponent,
+      cellRenderer: ActiveInactiveBadge,
       filter: true,
       floatingFilter: true,
     },

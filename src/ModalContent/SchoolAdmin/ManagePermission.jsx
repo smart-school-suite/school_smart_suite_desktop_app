@@ -552,7 +552,7 @@ function AssignablePermissions({ schoolAdminId }) {
               permissions: currentlySelectedNames,
             });
           }}
-          disabled={!isPending}
+          disabled={isPending}
         >
           {isPending ? <SingleSpinner /> : "Assign Permission"}
         </button>

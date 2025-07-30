@@ -1293,3 +1293,6 @@ hr{
     border-radius:0.5rem
 }
 
+input{
+    caret-color: var(--primary-color);
+}

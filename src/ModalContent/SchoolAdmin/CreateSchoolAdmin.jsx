@@ -2,9 +2,9 @@ import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useCreateSchoolAdmin } from "../../hooks/schoolAdmin/useCreateSchoolAdmin";
-function CreateSchoolAdmin({ handleClose, rowData }) {
+function CreateSchoolAdmin({ handleClose }) {
   const { mutate: createSchoolAdminMutation, isPending } =
-    useCreateSchoolAdmin();
+    useCreateSchoolAdmin(handleClose);
   const [formData, setFormData] = useState({
     email: "",
     name: "",

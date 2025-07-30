@@ -647,92 +647,6 @@ function Sidebar() {
                 </div>
                 {/*School Expenses*/}
 
-                {/*school activities */}
-                 <div>
-                   <div
-                  className={
-                    IsPathInRoutes(schoolActivities)
-                      ? "nav-item-box-active fw-medium"
-                      : "nav-item-box-inactive"
-                  }
-                  onClick={() => {
-                    navigate("/announcement-overview");
-                  }}
-                >
-                  <div className="nav-item w-100 d-flex flex-row gap-2">
-                    <span>
-                      <Icon icon="healthicons:money-bag-outline" />
-                    </span>
-                    <p>School Activities</p>
-                  </div>
-                  <span>
-                    <Icon
-                      icon="octicon:chevron-down-24"
-                      className={
-                        IsPathInRoutes(schoolActivities)
-                          ? "rotate-icon nav-dropdown-icon"
-                          : "nav-dropdown-icon"
-                      }
-                    />
-                  </span>
-                </div>
-                 <div
-                  className={
-                    IsPathInRoutes(schoolActivities)
-                      ? "subbox-container-nav ps-3"
-                      : "subbox-container-nav-inactive"
-                  }
-                >
-                  <div className="drop-down-container">
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <div
-                           className={IsPathInRoutes(announcementRoutes) ? 
-                             "text-decoration-none fw-medium color-primary pointer-cursor"
-                              : "text-decoration-none gainsboro-color pointer-cursor"
-                           }
-                           onClick={() => {
-                              navigate("/announcement-overview")
-                           }}
-                        >
-                          <p>Announcement</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <div
-                           className={IsPathInRoutes(eventRoutes) ? 
-                             "text-decoration-none fw-medium color-primary pointer-cursor"
-                              : "text-decoration-none gainsboro-color pointer-cursor"
-                           }
-                           onClick={() => {
-                              navigate("/events")
-                           }}
-                        >
-                          <p>School Events</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="box-nav">
-                      <div className="subbox-nav">
-                        <div
-                           className={IsPathInRoutes(electionRoutes) ? 
-                             "text-decoration-none fw-medium color-primary pointer-cursor"
-                              : "text-decoration-none gainsboro-color pointer-cursor"
-                           }
-                           onClick={() => {
-                              navigate("/election-overview")
-                           }}
-                        >
-                          <p>Elections</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                 </div>
-                {/* school activities */}
               </div>
             </div>
           </div>
@@ -753,7 +667,7 @@ function Sidebar() {
             <div className="w-100">
               <ModalButton
                 action={{ modalContent: Logout }}
-                classname="sidebar-item"
+                classname="sidebar-item transparent-bg"
               >
                 <span>Logout</span>
                 <span>

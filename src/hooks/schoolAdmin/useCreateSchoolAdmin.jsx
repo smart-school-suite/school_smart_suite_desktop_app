@@ -21,12 +21,12 @@ export const useCreateSchoolAdmin = (handleClose) => {
       }
     },
     onError: () => {
-        toast.custom(
-            <ToastDanger
-              title={"Failed To Create Admin"}
-              description={"Failed to Create School Admin Due to An Error"}
-            />
-        )
-    }
+      toast.custom(
+        <ToastDanger
+          title={"Failed To Create Admin"}
+          description={"Failed to Create School Admin Due to An Error"}
+        />
+      );
+    },
   });
 };

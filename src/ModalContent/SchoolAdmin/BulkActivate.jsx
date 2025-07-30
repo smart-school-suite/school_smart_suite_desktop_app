@@ -1,42 +1,18 @@
-import { useBulkActivateSchoolAdminMutation } from "../../Slices/Asynslices/postSlice";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useState } from "react";
-function BulkActivateSchoolAdmin({ handleClose, data,  resetAll }) {
-     const [isActivating, setIsActivating] = useState(false);
-     const [bulkActivateSchoolAdmin] = useBulkActivateSchoolAdminMutation();
+import { useBulkActivateSchoolAdmins } from "../../hooks/schoolAdmin/useBulkActivateSchoolAdmin";
+function BulkActivateSchoolAdmin({ handleClose, bulkData,  resetAll }) {
+     const {mutate:activate, isPending} = useBulkActivateSchoolAdmins(handleClose, resetAll);
      const handleActivate = async () => {
-       const schoolAdminIds = data.map(items => items.id);
-       setIsActivating(true);
-       try {
-         await bulkActivateSchoolAdmin(schoolAdminIds).unwrap();
-         setIsActivating(false);
-         handleClose();
-         resetAll();
-         toast.custom(
-           <ToastSuccess
-             title={"Deactivation Succesfull"}
-             d
-             description={"School Admin Activated Successfully"}
-           />
-         );
-       } catch (e) {
-         setIsActivating(false);
-         toast.custom(
-           <ToastDanger
-             title={"Failed to Activate"}
-             description={"Failed to Activate School Admin Due to An Error"}
-           />
-         );
-       }
+       const formattedData = bulkData.map((items) => ({
+          school_admin_id:items.id
+       }));
+       activate({ schoolAdminIds:formattedData })
      };
      return(
         <>
             <div className="w-100">
                 <h4 className="fw-semibold">
-                  Are you absolutely sure about Activating {data.length} admins?
+                  Are you absolutely sure about Activating admins?
                 </h4>
                 <p className="my-3" style={{ fontSize: "0.85rem" }}>
                   This action cannot be undone. This will permanently delete this
@@ -44,7 +20,7 @@ function BulkActivateSchoolAdmin({ handleClose, data,  resetAll }) {
                 </p>
                 <div className="mt-4 d-flex justify-content-end gap-2">
                   <button
-                    className="border-none px-3 py-2 text-primary rounded-3 font-size-sm"
+                    className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
                     onClick={() => {
                       handleClose();
                     }}
@@ -52,10 +28,10 @@ function BulkActivateSchoolAdmin({ handleClose, data,  resetAll }) {
                     Cancel
                   </button>
                   <button
-                    className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+                    className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
                     onClick={handleActivate}
                   >
-                    {isActivating ? <SingleSpinner /> : "Yes, Activate All"}
+                    {isPending ? <SingleSpinner /> : "Yes, Activate All"}
                   </button>
                 </div>
               </div>
