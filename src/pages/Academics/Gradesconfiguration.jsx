@@ -1,4 +1,3 @@
-import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables/Tables";
 import { Icon } from "@iconify/react";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
@@ -12,12 +11,14 @@ import ConfigureByOtherGrades from "../../ModalContent/GradesConfig/ConfigureByO
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import React, { useState } from "react";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { DeleteIcon, DetailsIcon, ReuseIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import { GradeIcon } from "../../icons/Icons";
 function Gradesconfiguration() {
   const { data:gradeCategory, isFetching } = useGetSchoolGradeCategories();
   if (isFetching) {
-    return <Pageloaderspinner />;
+    return <DataTableNavLoader />;
   }
   return (
     <>
@@ -25,19 +26,16 @@ function Gradesconfiguration() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100"
+              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
                 borderRadius: "0.5rem",
               }}
             >
-              <Icon
-                icon="grommet-icons:user-admin"
-                className="font-size-md primary-color"
-              />
+              <GradeIcon />
             </div>
-            <span className="my-0 fw-semibold">Grades Configurations</span>
+            <span className="my-0 fw-semibold">Manage Exam Grading</span>
           </div>
         </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
@@ -108,7 +106,7 @@ function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteGradesConfig)}
+          onClick={() => handleShowModal(DeleteGradesConfig, 'md')}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -121,7 +119,7 @@ function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateGradeConfig)}
+          onClick={() => handleShowModal(UpdateGradeConfig, 'md')}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -152,6 +150,7 @@ function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>View Grades</span>
+              <GradeIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -164,6 +163,7 @@ function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Configure By Other Grades</span>
+              <ReuseIcon />
             </div>
           </div>
         </DropDownMenuItem>

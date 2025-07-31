@@ -61,4 +61,10 @@ const ActivateIcon = ({ iconStyle }) => {
      )
 }
 
-export { UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }
+const ReuseIcon = ({ iconStyle }) => {
+     return (
+        <Icon icon="fluent:recycle-32-regular" style={{...iconStyle, fontSize:"1rem"}} />
+     )
+}
+
+export { ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }

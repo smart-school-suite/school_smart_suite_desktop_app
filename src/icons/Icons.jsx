@@ -33,4 +33,10 @@ const GradeIcon = ({ iconStyle }) => {
    )
 }
 
-export { TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon };
+const TimetableIcon = ({ iconStyle }) => {
+   return(
+    <Icon icon="akar-icons:schedule" style={{ ...iconStyle, fontSize: "1rem" }}  />
+   )
+}
+
+export { TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon };

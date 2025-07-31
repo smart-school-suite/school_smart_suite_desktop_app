@@ -7,7 +7,6 @@ import CreateCourse from "../../ModalContent/Course/CreateCourse";
 import DeactivateCourse from "../../ModalContent/Course/DeactivateCourse";
 import UpdateCourse from "../../ModalContent/Course/UpdateCourse";
 import { CoursesTable } from "../../ComponentConfig/AgGridTableConfig";
-import { Icon } from "@iconify/react";
 import { useGetCourses } from "../../hooks/course/useGetCourses";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import React from "react";

@@ -13,6 +13,7 @@ import { StudentTableAvatarComponent } from "../components/DataTableComponents/S
 import { ExamGradingBadge } from "../components/Badges/ExamGradingBadge";
 import RegistrationFeeTableBadge from "../components/Badges/RegistrationFeeTableBadge";
 import SemesterBadge from "../components/Badges/SemesterBadge";
+import TimetableBadge from "../components/Badges/TimetableBadge";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -1440,7 +1441,7 @@ export function SpecialtyTimetableTableConfig({ ActionButtonGroup }) {
       headerName: "Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: SemesterBadge,
       cellStyle: cellStyle,
     },
     {
@@ -1448,7 +1449,7 @@ export function SpecialtyTimetableTableConfig({ ActionButtonGroup }) {
       headerName: "Timetable Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: TimetableBadge,
       cellStyle: cellStyle,
     },
     {
