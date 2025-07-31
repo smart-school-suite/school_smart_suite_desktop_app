@@ -39,4 +39,15 @@ const TimetableIcon = ({ iconStyle }) => {
    )
 }
 
-export { TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon };
+const ExamIcon = ({ iconStyle }) => {
+   return(
+      <Icon icon="healthicons:i-exam-multiple-choice-outline" style={{ ...iconStyle, fontSize: "1rem" }} />
+   )
+}
+
+const ExamCandidateIcon = ({ iconStyle }) => {
+  return(
+     <Icon icon="ph:users-four-light" style={{ ...iconStyle, fontSize: "1rem" }} />
+  )
+}
+export { TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };

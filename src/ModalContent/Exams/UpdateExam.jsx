@@ -3,14 +3,13 @@ import { WeigtedMarkInput } from "../../components/FormComponents/InputComponent
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useCreateExam } from "../../hooks/exam/useCreateExam";
 import { Icon } from "@iconify/react";
 import { useGetExamTypes } from "../ExamType/useGetExamType";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
-import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
+import { useUpdateExam } from "../../hooks/exam/useUpdateExam";
 function UpdateExam({ handleClose, rowData }) {
     const examId = rowData.id;
-    const { mutate:createExam, isPending } = useCreateExam(handleClose)
+    const { mutate:updateExam, isPending } = useUpdateExam(handleClose)
     const [formData, setFormData] = useState({
       start_date: "",
       end_date: "",
@@ -18,14 +17,12 @@ function UpdateExam({ handleClose, rowData }) {
       weighted_mark: "",
       specialty_id: "",
       school_year: "",
-      student_batch_id:""
     });
   
     const { data: examType, isLoading: isExamTypeLoading } =
       useGetExamTypes();
     const { data: specialty, isLoading: isSpecailtyLoading } =
       useGetSpecialties();
-    const { data: studentBatches, isLoading: isStudentBatchLoading } = useGetBatches();
    
     const handleExamTypeSelect = (selectedValues) => {
       setFormData((prevalue) => ({
@@ -40,12 +37,6 @@ function UpdateExam({ handleClose, rowData }) {
         specialty_id: selectedValues.id,
       }));
     };
-    const handleStudentBatchSelect = (selectedValues) => {
-        setFormData((prevalue) => ({
-            ...prevalue,
-            student_batch_id:selectedValues.id
-        }))
-    }
     const handleSchoolYearSelect = (selectedValues) => {
       setFormData((prevalue) => ({
         ...prevalue,
@@ -61,15 +52,15 @@ function UpdateExam({ handleClose, rowData }) {
     };
   
     const handleSubmit = () => {
-      createExam(formData)
+      updateExam({examId:examId, updateData:formData})
       
     };
   return (
     <>
       <div className="d-flex flex-row align-items-center">
-        <div className="block">
-          <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Update Exam</h5>
+        <div className="w-100">
+          <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+            <span className="m-0">Update Exam</span>
             <span
               className="m-0"
               onClick={() => {
@@ -79,10 +70,6 @@ function UpdateExam({ handleClose, rowData }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
       </div>
       <div className="my-1">
@@ -117,25 +104,6 @@ function UpdateExam({ handleClose, rowData }) {
         <SchoolYearSelector onSelect={handleSchoolYearSelect} />
       </div>
       <div className="my-1">
-        <span>Level</span>
-        {isEducationLevelLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
-          <CustomDropdown
-            data={level.data}
-            displayKey={["name"]}
-            valueKey={["id"]}
-            filter_array_keys={["id", "name"]}
-            renameMapping={{ id: "id", name: "name" }}
-            isLoading={isEducationLevelLoading}
-            direction="up"
-            onSelect={handleEducationLevelSelect}
-          />
-        )}
-      </div>
-      <div className="my-1">
         <span>Exam Type</span>
         {isExamTypeLoading ? (
           <select name="" className="form-select">
@@ -163,10 +131,10 @@ function UpdateExam({ handleClose, rowData }) {
         ) : (
           <CustomDropdown
             data={specialty.data}
-            displayKey={["specialty_name"]}
+            displayKey={["specialty_name", "level"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "specialty_name"]}
-            renameMapping={{ id: "id", specialty_name: "specialty_name" }}
+            filter_array_keys={["id", "specialty_name", "level_name"]}
+            renameMapping={{ id: "id", specialty_name: "specialty_name", level_name:"level" }}
             isLoading={isSpecailtyLoading}
             direction="up"
             onSelect={handleSpecialtySelect}
@@ -178,7 +146,7 @@ function UpdateExam({ handleClose, rowData }) {
           disabled={isPending}
           className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
           onClick={() => {
-            handleExamUpdate();
+            handleSubmit();
           }}
         >
          {

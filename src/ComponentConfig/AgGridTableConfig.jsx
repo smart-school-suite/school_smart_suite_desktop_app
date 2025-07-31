@@ -14,6 +14,8 @@ import { ExamGradingBadge } from "../components/Badges/ExamGradingBadge";
 import RegistrationFeeTableBadge from "../components/Badges/RegistrationFeeTableBadge";
 import SemesterBadge from "../components/Badges/SemesterBadge";
 import TimetableBadge from "../components/Badges/TimetableBadge";
+import AccessmentStatus from "../components/Badges/AccessmentStatus";
+import GradeSubmittedStatus from "../components/Badges/GradeSubmittedStatus";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -137,7 +139,7 @@ export function ExamCandidateTableConfig({ DropdownComponent }) {
       headerName: "Accessment Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: AccessmentStatus,
       cellStyle: cellStyle,
     },
     {
@@ -145,7 +147,7 @@ export function ExamCandidateTableConfig({ DropdownComponent }) {
       headerName: "Grades Submitted",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: GradeSubmittedStatus,
       cellStyle: cellStyle,
     },
     {
@@ -412,7 +414,7 @@ export function ExamTimetableConfig({ DropdownComponent }) {
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-      cellRenderer: TextComponent,
+      cellRenderer: TimetableBadge,
     },
     {
       field: "Action",

@@ -17,9 +17,10 @@ import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { useGetExams } from "../../hooks/exam/useGetExams";
+import { ExamIcon, GradeIcon } from "../../icons/Icons";
 function Exam() {
-  const { data: data, isFetching } = useGetExams();
-  if (isFetching) {
+  const { data: data, isLoading } = useGetExams();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -28,19 +29,17 @@ function Exam() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100"
+              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
                 borderRadius: "0.5rem",
+                
               }}
             >
-              <Icon
-                icon="grommet-icons:user-admin"
-                className="font-size-md primary-color"
-              />
+              <ExamIcon iconStyle={{ fontSize:"2rem" }} />
             </div>
-            <span className="my-0 fw-semibold">Exams</span>
+            <span className="my-0 fw-semibold">Manage Exam</span>
           </div>
         </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
@@ -152,6 +151,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Add Exam Grading</span>
+              <GradeIcon />
             </div>
           </div>
         </DropDownMenuItem>

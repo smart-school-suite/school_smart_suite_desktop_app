@@ -4,7 +4,7 @@ import { getExamDetails } from "../../services/exam";
 export const useGetExamDetails = (examId) => {
     return useQuery({
          queryKey:["exam", examId],
-         queryFn:getExamDetails(examId),
+         queryFn:() => getExamDetails(examId),
          enabled:!!examId
     })
 }

@@ -7,14 +7,15 @@ import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import DeleteExamCandidate from "../../ModalContent/ExamCandidate/DeleteCandidate";
 import AddCaScores from "../../ModalContent/ExamCandidate/AddCaScores";
 import AddExamScores from "../../ModalContent/ExamCandidate/AddExamScores";
+import { ExamCandidateIcon } from "../../icons/Icons";
 function ExamCandidates() {
-  const { data: examCandidates, isFetching } = useGetExamCandidates();
-  if (isFetching) {
+  const { data: examCandidates, isLoading } = useGetExamCandidates();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -22,17 +23,14 @@ function ExamCandidates() {
       <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center primary-background-100"
+            className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
             style={{
               width: "2.5rem",
               height: "2.5rem",
               borderRadius: "0.5rem",
             }}
           >
-            <Icon
-              icon="grommet-icons:user-admin"
-              className="font-size-md primary-color"
-            />
+            <ExamCandidateIcon />
           </div>
           <span className="my-0 fw-semibold">Manage Exam Candidates</span>
         </div>
@@ -40,7 +38,7 @@ function ExamCandidates() {
       <div className="d-flex flex-column my-3">
         <div className="d-block">
           <p className="font-size-xs my-0">Total Number of Candidates</p>
-          <h1 className="fw-bold my-0">{examCandidates.data.length}</h1>
+          <h1 className="fw-bold my-0">{examCandidates?.data?.length}</h1>
         </div>
       </div>
       <div>
@@ -112,7 +110,7 @@ export function DropdownComponent(props) {
               <div>
                 <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                   <span>Add CA Scores</span>
-                  <UpdateIcon />
+                  <CreateIcon />
                 </div>
               </div>
             </DropDownMenuItem>
@@ -141,7 +139,7 @@ export function DropdownComponent(props) {
               <div>
                 <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                   <span>Add Exam Scores</span>
-                  <UpdateIcon />
+                  <CreateIcon />
                 </div>
               </div>
             </DropDownMenuItem>
