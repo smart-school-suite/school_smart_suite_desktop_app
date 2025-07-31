@@ -38,7 +38,7 @@ function CreateSemester({ handleClose }) {
     <>
       <div>
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-          <h5 className="m-0">Create Semester</h5>
+          <span className="m-0">Create Semester</span>
           <span
             className="m-0"
             onClick={() => {

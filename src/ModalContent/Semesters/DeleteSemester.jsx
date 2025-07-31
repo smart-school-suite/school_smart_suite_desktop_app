@@ -1,36 +1,10 @@
-import toast from "react-hot-toast";
-import { useDeleteSchoolSemesterMutation } from "../../Slices/Asynslices/deleteSlice";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import { useState } from "react";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function DeleteSemester({ handleClose, row_id: schoolSemesterId }) {
-  const [deleteSchoolSemester] = useDeleteSchoolSemesterMutation();
-  const [isDeleting, setIsDeleting] = useState(false);
+import { useDeleteSchoolSemester } from "../../hooks/schoolSemester/useDeleteSchoolSemester";
+function DeleteSemester({ handleClose, rowData }) {
+  const { id:semesterId } = rowData;
+  const { mutate:deleteSemester, isPending } = useDeleteSchoolSemester();
   const handleDeleteSchoolSemester = async () => {
-    setIsDeleting(true);
-    try {
-      await deleteSchoolSemester(schoolSemesterId).unwrap();
-      setIsDeleting(false);
-      handleClose();
-      toast.custom(
-        <ToastSuccess
-          title={"Delete Successfull ✅"}
-          description={"The School smeseter has been deleted successfully "}
-        />
-      );
-      handleClose();
-    } catch (e) {
-      setIsDeleting(false);
-      toast.custom(
-        <ToastDanger
-          title={"Delete Failed ❌"}
-          description={
-            "❌ Something went wrong! The School smeseter delete failed due to an error. Please try again later."
-          }
-        />
-      );
-    }
+     deleteSemester(semesterId)
   };
   return (
     <>
@@ -42,7 +16,7 @@ function DeleteSemester({ handleClose, row_id: schoolSemesterId }) {
         </p>
         <div className="mt-4 d-flex justify-content-end gap-2">
           <button
-            className="border-none px-3 py-2 text-primary rounded-3 font-size-sm"
+            className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
             onClick={() => {
               handleClose();
             }}
@@ -50,10 +24,10 @@ function DeleteSemester({ handleClose, row_id: schoolSemesterId }) {
             Cancel
           </button>
           <button
-            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
             onClick={handleDeleteSchoolSemester}
           >
-            {isDeleting ? <SingleSpinner /> : "Delete"}
+            {isPending ? <SingleSpinner /> : "Yes, Delete"}
           </button>
         </div>
       </div>

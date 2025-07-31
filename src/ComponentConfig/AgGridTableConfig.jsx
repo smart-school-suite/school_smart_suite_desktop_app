@@ -12,6 +12,7 @@ import GradesConfigTableBadge from "../components/Badges/GradesConfigTableBadge"
 import { StudentTableAvatarComponent } from "../components/DataTableComponents/StudentTableAvatar";
 import { ExamGradingBadge } from "../components/Badges/ExamGradingBadge";
 import RegistrationFeeTableBadge from "../components/Badges/RegistrationFeeTableBadge";
+import SemesterBadge from "../components/Badges/SemesterBadge";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -1360,7 +1361,7 @@ export function semesterTableConfig({ ActionButtonGroup }) {
       headerName: "Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: SemesterBadge,
       cellStyle: cellStyle,
     },
     {

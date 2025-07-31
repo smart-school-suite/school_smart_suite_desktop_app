@@ -27,4 +27,10 @@ const SemesterIcon = ({ iconStyle }) => {
    )
 }
 
-export { TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon };
+const GradeIcon = ({ iconStyle }) => {
+   return (
+    <Icon icon="ph:exam" style={{ ...iconStyle, fontSize: "1rem" }} />
+   )
+}
+
+export { TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon };

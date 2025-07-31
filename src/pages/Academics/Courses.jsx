@@ -38,7 +38,7 @@ function Courses() {
             >
               <CourseIcon />
             </div>
-            <span className="my-0 fw-semibold">Courses</span>
+            <span className="my-0 fw-semibold">Course Management</span>
           </div>
         </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">

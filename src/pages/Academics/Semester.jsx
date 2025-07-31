@@ -16,8 +16,8 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import { DetailsIcon, UpdateIcon, DeleteIcon } from "../../icons/ActionIcons";
 import { SemesterIcon } from "../../icons/Icons";
 function Semester() {
-  const { data: schoolSemesters, isFetching } = useGetActiveSchoolSemesters();
-  if (isFetching) {
+  const { data: schoolSemesters, isLoading } = useGetActiveSchoolSemesters();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -34,7 +34,7 @@ function Semester() {
           >
           <SemesterIcon />
           </div>
-          <span className="my-0 fw-semibold">Semester</span>
+          <span className="my-0 fw-semibold">Semester Management</span>
         </div>
       </div>
       <div className="d-flex flex-row align-items-center mt-4 w-100">

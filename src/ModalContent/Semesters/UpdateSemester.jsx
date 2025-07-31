@@ -40,7 +40,7 @@ function UpdateSemester({ handleClose, rowData }) {
     <>
       <div>
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-          <h5 className="m-0">Update Semester</h5>
+          <span className="m-0">Update Semester</span>
           <span
             className="m-0"
             onClick={() => {
@@ -49,12 +49,6 @@ function UpdateSemester({ handleClose, rowData }) {
           >
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
-        </div>
-        <div className="my-2">
-          <p className="font-size-sm gainsboro-color">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla
-            molestias repellendus facere voluptate?
-          </p>
         </div>
         <div className="my-2">
           <label htmlFor="startDate">Start Date</label>
@@ -139,13 +133,7 @@ function UpdateSemester({ handleClose, rowData }) {
       </div>
       <div className="d-flex mt-3 flex-row align-items-center justify-content-end gap-2 w-100">
         <button
-          className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
-          onClick={handleClose}
-        >
-          Cancel
-        </button>
-        <button
-          className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
+          className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
           disabled={isPending}
           onClick={() => {
             handleUpdateSchoolSemester();
