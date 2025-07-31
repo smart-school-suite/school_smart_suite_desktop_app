@@ -19,10 +19,8 @@ function UpdateDepartment({ handleClose, rowData }) {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-  const handleDepartmentUpdate = async () => {
-
-    updateDepartment({departmentId, formData});
-    console.table(formData);
+  const handleDepartmentUpdate = () => {
+    updateDepartment({departmentId, updateData:formData});
   };
   if (isFetching) {
     return <Pageloaderspinner />;

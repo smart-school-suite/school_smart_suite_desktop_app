@@ -1,54 +1,112 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-function TwoStepVerification(){
-  const [ otp, setOtp ] = useState("");
+import { Icon } from "@iconify/react";
+import OtpInput from "../../components/FormComponents/StepInput";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
+
+function TwoStepVerification() {
+  const [otp, setOtp] = useState("");
   const { handleTwoStepVerification, loading, authError } = useAuth();
-   const otpTokenHeader = useSelector((state) => state.auth.otpTokenHeader);
+  const otpTokenHeader = useSelector((state) => state.auth.otpTokenHeader);
   const navigate = useNavigate();
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await handleTwoStepVerification(otp, navigate, otpTokenHeader);
-  }
-     return(
-        <>
-                  <div className="container w-100 height-100 d-flex flex-column justify-content-center">
-      <div className="d-flex flex-row align-items-center justify-content-around w-100">
-        <div className="w-50 bg-white rounded-4 px-2 border shadow-sm py-4">
-          <form onSubmit={handleSubmit}>
-            <h4 className="text-center">Login Admin</h4>
-            {
-                 authError.otp && <div className="alert alert-danger">
-                    {
-                        authError.otp
-                    }
-                 </div>
-             }
-            <div className="mb-4">
-              <span>One Time Code</span>
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="enter six digit code"
-                className="form-control"
+  useEffect(() => {
+    if (!otpTokenHeader) {
+      navigate("/login-school-admin", { replace: true });
+    }
+  }, [otpTokenHeader, navigate]);
+
+  const handleOtpComplete = (otpValue) => {
+    setOtp(otpValue);
+     if (otpValue.length === 6 && !loading.otp) {
+       handleSubmit(null, otpValue);
+     }
+  };
+
+  const handleSubmit = async (e, submittedOtp = otp) => {
+    e?.preventDefault();
+
+    if (submittedOtp.length !== 6) {
+      toast.custom(
+        <ToastWarning 
+         title={"OTP Error"}
+         description={"OTP must be atleast 6 digits long"}
+        />
+      );
+      return;
+    }
+
+    await handleTwoStepVerification(submittedOtp, navigate, otpTokenHeader);
+  };
+
+  return (
+    <>
+      <div className="login-container px-4">
+        <div className="login-container-logo-box ps-5">
+          <img src="./logo/blue_logo.png" className="login-logo" alt="Logo" />
+        </div>
+        <div className="login-container-form" style={{ height: "70%" }}>
+          <div className="login-container-form-box-two">
+            <img src="./svg/two-factor-auth.svg" alt="Two Factor Authentication Illustration" />
+          </div>
+          <div className="login-container-form-box-one">
+            <h1 className="fw-bold my-4">Two Factor Verification</h1>
+             {authError.otp && (
+              <div className="alert alert-danger mt-3" role="alert">
+                {authError.otp}
+              </div>
+            )}
+            <div>
+              <span>Enter OTP Code</span>
+              <OtpInput
+                length={6}
+                onComplete={handleOtpComplete}
               />
             </div>
-        
             <button
               className="w-100 mt-2 border-none rounded-3 p-2 primary-background text-white"
               type="submit"
-              disabled={loading.otp}
+              onClick={handleSubmit}
+              disabled={loading.otp || otp.length !== 6}
             >
-               {loading.otp ? 'Submitting...' : 'Submit'}
+              {loading.otp ? <SingleSpinner /> : "Submit"}
             </button>
-          </form>
+            <div
+              className="pointer-cursor font-size-sm mt-4"
+              onClick={() => {
+                navigate("/reset-password");
+              }}
+            >
+              <span>
+                Password Forgotten ?{" "}
+                <span className="color-primary">Reset Password</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="login-container-logo-box mt-auto ps-5">
+          <div
+            className="d-flex flex-row gap-2 align-items-center pointer-cursor"
+            onClick={() => {
+              navigate("/login-school-admin");
+            }}
+          >
+            <span>
+              <Icon
+                icon="material-symbols:arrow-back-rounded"
+                width="24"
+                height="24"
+              />
+            </span>
+            <span className="font-size-sm fw-semibold">Back</span>
+          </div>
         </div>
       </div>
-    </div>
-        </>
-     )
+    </>
+  );
 }
 
 export default TwoStepVerification;

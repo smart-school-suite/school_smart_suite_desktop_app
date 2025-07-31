@@ -6,8 +6,6 @@ import DeleteTeacher from "../../ModalContent/Teacher/DeleteTeacher";
 import TeacherDetails from "../../ModalContent/Teacher/TeacherDetails";
 import UpdateTeacher from "../../ModalContent/Teacher/UpdateTeacher";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import AppointHod from "../../ModalContent/Teacher/AppointHod";
-import AppointHos from "../../ModalContent/Teacher/AppointHos";
 import CreateTeacher from "../../ModalContent/Teacher/CreateTeacher";
 import { useMemo, useState } from "react";
 import React from "react";
@@ -18,9 +16,10 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import CustomModal from "../../components/Modals/Modal";
 import ActivateTeacher from "../../ModalContent/Teacher/ActivateTeacher";
 import Specialtypreference from "../../ModalContent/Teacher/SpecialtyPreference";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { DeleteIcon, DetailsIcon, UpdateIcon, ChoiceIcon, SuspendIcon, ActivateIcon } from "../../icons/ActionIcons";
+import { TeacherIcon } from "../../icons/Icons";
 function Teachers() {
-  const { data: teachers, isFetching } = useGetTeachers();
+  const { data: teachers, isLoading } = useGetTeachers();
   const memoizedColDefs = useMemo(() => {
     return teacherTableConfig({
       DropdownComponent,
@@ -31,7 +30,7 @@ function Teachers() {
     return teachers?.data ?? [];
   }, [teachers]);
 
-  if (isFetching) {
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -40,19 +39,16 @@ function Teachers() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100"
+              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
                 borderRadius: "0.5rem",
               }}
             >
-              <Icon
-                icon="grommet-icons:user-admin"
-                className="font-size-md primary-color"
-              />
+              <TeacherIcon />
             </div>
-            <span className="my-0 fw-semibold">Teachers</span>
+            <span className="my-0 fw-semibold">Teacher Management</span>
           </div>
         </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">
@@ -109,7 +105,6 @@ export function DropdownComponent(props) {
     setShowModal(true);
   };
 
-  //update, delete, details, specialtypreference, deactivate, activate, appointHod, appointHos
   return (
     <>
       <ActionButtonDropdown
@@ -120,7 +115,7 @@ export function DropdownComponent(props) {
       >
        <DropDownMenuItem
            className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
-          onClick={() => handleShowModal(UpdateTeacher)}
+          onClick={() => handleShowModal(UpdateTeacher, 'md')}
        >
             <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -147,16 +142,7 @@ export function DropdownComponent(props) {
             <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
             <span>Specialty Preference</span>
-          </div>
-        </div>
-       </DropDownMenuItem>
-       <DropDownMenuItem
-           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
-          onClick={() => handleShowModal(AppointHod, "lg")}
-       >
-            <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Appoint HOD</span>
+            <ChoiceIcon />
           </div>
         </div>
        </DropDownMenuItem>
@@ -171,16 +157,6 @@ export function DropdownComponent(props) {
           </div>
         </div>
        </DropDownMenuItem>
-       <DropDownMenuItem
-           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
-          onClick={() => handleShowModal(AppointHos, "lg")}
-       >
-            <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Appoint HOS</span>
-          </div>
-        </div>
-       </DropDownMenuItem>
            {rowData.status == "active" ? (
           <DropDownMenuItem
             className={
@@ -191,6 +167,7 @@ export function DropdownComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Deactivate</span>
+                <SuspendIcon />
               </div>
             </div>
           </DropDownMenuItem>
@@ -204,6 +181,7 @@ export function DropdownComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Activate</span>
+                <ActivateIcon />
               </div>
             </div>
           </DropDownMenuItem>

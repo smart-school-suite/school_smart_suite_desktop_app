@@ -49,4 +49,16 @@ const CancelIcon = ({ iconStyle, iconClass }) => {
     )
 }
 
-export { UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon }
+const ChoiceIcon = ({ iconStyle }) => {
+     return (
+        <Icon icon="mingcute:choice-line" style={{...iconStyle, fontSize:"1rem"}} />
+     )
+}
+
+const ActivateIcon = ({ iconStyle }) => {
+     return(
+        <Icon icon="material-symbols-light:notifications-active-outline-rounded" style={{...iconStyle, fontSize:"1rem"}} />
+     )
+}
+
+export { UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }

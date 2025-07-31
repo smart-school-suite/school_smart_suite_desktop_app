@@ -17,9 +17,9 @@ import ActivateDepartment from "../../ModalContent/Department/ActivateDepartment
 import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 function Departments() {
-  const { data: departments, isFetching } = useGetDepartments();
+  const { data: departments, isLoading } = useGetDepartments();
   const memoizedColDefs = useMemo(() => {
     return DepartmentTableConfig({
       DropdownComponent,
@@ -30,7 +30,7 @@ function Departments() {
     return departments?.data ?? [];
   }, [departments]);
 
-  if (isFetching) {
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -39,7 +39,7 @@ function Departments() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100"
+              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -159,6 +159,7 @@ export function DropdownComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Deactivate</span>
+                <SuspendIcon />
               </div>
             </div>
           </DropDownMenuItem>
@@ -172,6 +173,7 @@ export function DropdownComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Activate</span>
+                <ActivateIcon />
               </div>
             </div>
           </DropDownMenuItem>

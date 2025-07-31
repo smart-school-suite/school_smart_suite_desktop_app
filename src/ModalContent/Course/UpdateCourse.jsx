@@ -20,6 +20,7 @@ function UpdateCourse({ handleClose, rowData }) {
     credit: "",
     specialty_id: "",
     semester_id: "",
+    description:""
   });
   const { mutate:updateCourse, isPending } = useUpdateCourse(handleClose, courseId)
   const { data:courseDetails, isFetching:courseDetailsLoading } = useGetCourseDetails(courseId);
@@ -48,7 +49,6 @@ function UpdateCourse({ handleClose, rowData }) {
     }));
   };
   const handleSubmit = async () => {
-    if (!isValid) return;
     updateCourse({ courseId, updateData:formData})
     
   };
@@ -59,9 +59,9 @@ function UpdateCourse({ handleClose, rowData }) {
     <>
         <div className="w-100">
           <div className="d-flex flex-row align-items-center">
-            <div className="block">
-              <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-                <h5 className="m-0">Update Course</h5>
+            <div className="block w-100">
+              <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+                <span className="m-0">Update Course</span>
                 <span
                   className="m-0"
                   onClick={() => {
@@ -71,10 +71,6 @@ function UpdateCourse({ handleClose, rowData }) {
                   <Icon icon="charm:cross" width="22" height="22" />
                 </span>
               </div>
-              <span className="gainsboro-color font-size-sm">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-                nesciunt sunt
-              </span>
             </div>
           </div>
           <div className="my-1">
@@ -137,17 +133,18 @@ function UpdateCourse({ handleClose, rowData }) {
               />
             )}
           </div>
+          <div>
+            <span>Description</span>
+            <textarea name="description" placeholder="Enter Course Descripton"
+              className="form-control"
+              onChange={(e) => handleInputChange('description', e.target.value)}
+            ></textarea>
+          </div>
           <div className="mt-4">
             <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
               <button
-                className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
-                onClick={handleClose}
-              >
-                Cancel
-              </button>
-              <button
-                className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
-                disabled={!isValid}
+                className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
+                disabled={isPending}
                 onClick={() => {
                   handleSubmit();
                 }}

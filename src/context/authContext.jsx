@@ -198,7 +198,7 @@ export const AuthProvider = ({ children }) => {
     setLoading((prevalue) => ({ ...prevalue, passwordReset: true }));
     setAuthError((prevalue) => ({ ...prevalue, passordResetError: null }));
     try {
-      const response = await axios.post("school-admin/resetPassword", {
+      const response = await axios.post("auth/school-admin/password/reset", {
         email,
       });
       const responseData = response.data.data;
@@ -228,7 +228,7 @@ export const AuthProvider = ({ children }) => {
     setAuthError((prevalue) => ({ ...prevalue, passwordRestOtp: null }));
     try {
       const response = await axios.post(
-        "school-admin/validatePasswordResetOtp",
+        "auth/school-admin/password/reset/verify-otp",
         {
           otp,
         },
@@ -255,7 +255,7 @@ export const AuthProvider = ({ children }) => {
     setLoading((prevalue) => ({ ...prevalue, changePassword:true }));
     setAuthError((prevalue) => ({ ...prevalue, changePassword:null }))
     try {
-      await axios.post("school-admin/updatePassword",
+      await axios.post("auth/school-admin/password/reset/update",
         {
           new_password:passwordCredentails.new_password,
           new_password_confirmation:passwordCredentails.new_password_confirmation

@@ -14,6 +14,7 @@ import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DetailsIcon, UpdateIcon, DeleteIcon } from "../../icons/ActionIcons";
+import { SemesterIcon } from "../../icons/Icons";
 function Semester() {
   const { data: schoolSemesters, isFetching } = useGetActiveSchoolSemesters();
   if (isFetching) {
@@ -24,17 +25,14 @@ function Semester() {
       <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center primary-background-100"
+            className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
             style={{
               width: "2.5rem",
               height: "2.5rem",
               borderRadius: "0.5rem",
             }}
           >
-            <Icon
-              icon="grommet-icons:user-admin"
-              className="font-size-md primary-color"
-            />
+          <SemesterIcon />
           </div>
           <span className="my-0 fw-semibold">Semester</span>
         </div>

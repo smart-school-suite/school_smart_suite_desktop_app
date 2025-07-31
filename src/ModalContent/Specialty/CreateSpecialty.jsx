@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useFetchEducationLevelsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { SpecialtyTitleInput } from "../../components/FormComponents/InputComponents";
 import { RegistrationFeeInput } from "../../components/FormComponents/InputComponents";
 import { SchoolFeeInput } from "../../components/FormComponents/InputComponents";
@@ -7,6 +6,8 @@ import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
 import {  useCreateSpecialty } from "../../hooks/specialty/useCreateSpecialty";
 import { useGetDepartments } from "../../hooks/department/useGetDepartments";
+import { useGetLevels } from "../../hooks/level/useGetLevels";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function CreateSpecialty({ handleClose }) {
   const [isValid, setIsValid] = useState(false);
   const [formData, setFormData] = useState({
@@ -20,13 +21,11 @@ function CreateSpecialty({ handleClose }) {
   const { mutate: createSpecialtyMutation, isPending } = useCreateSpecialty(handleClose); 
   const {
     data: educationLevels,
-    error: educationError,
     isLoading: educationIsLoading,
-  } = useFetchEducationLevelsQuery();
+  } = useGetLevels();
 
   const {
     data: departments,
-    error: departmentError,
     isFetching: departmentIsLoading,
   } = useGetDepartments();
 
@@ -155,12 +154,12 @@ function CreateSpecialty({ handleClose }) {
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
           <button
             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
-            disabled={!isValid}
+            disabled={isPending}
             onClick={() => {
               handleSubmit();
             }}
           >
-            Create Specialty
+           { isPending ? <SingleSpinner /> : "Create Specialty" }
           </button>
         </div>
       </div>

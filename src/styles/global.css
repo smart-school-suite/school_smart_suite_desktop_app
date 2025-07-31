@@ -1296,3 +1296,69 @@ hr{
 input{
     caret-color: var(--primary-color);
 }
+.login-logo{
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.login-container{
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+.login-container-logo-box{
+   height: 10%;
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: start;
+}
+.login-container-form{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: 0.75rem;
+    box-sizing: border-box;
+    justify-content: center;
+}
+.login-container-form-box-one{
+    width: 45%;
+}
+.login-container-form-box-two{
+    width: 50%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+}
+.login-container-form-box-two img{
+    width: 50%;
+    height: 50%;
+    object-fit: contain;
+}
+.otp-input-container{
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+.otp-input-container input{
+    padding: 1rem;
+    width: 16%;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: 1px solid #ccc;
+}
+.otp-input-container input:focus{
+     outline: none; /* Remove default outline if desired */
+    background-color: #fff;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+}
+.otp-input-container input::placeholder{
+    text-align: center;
+}

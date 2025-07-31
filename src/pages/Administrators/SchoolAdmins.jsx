@@ -16,13 +16,14 @@ import Table from "../../components/Tables/Tables";
 import { useGetSchoolAdmins } from "../../hooks/schoolAdmin/useGetSchoolAdmins";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { CreateIcon, DeleteIcon, DetailsIcon, PermissionIcon, RoleIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { ActivateIcon, CreateIcon, DeleteIcon, DetailsIcon, PermissionIcon, RoleIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
 import DeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Deactivate";
 import ActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Activate";
 import SchoolAdminDetails from "../../ModalContent/SchoolAdmin/SchoolAdminDetails";
 import UpdateSchoolAdmin from "../../ModalContent/SchoolAdmin/UpdateSchoolAdmin";
 import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
+import { SchoolAdminIcon } from "../../icons/Icons";
 function SchoolAdmins() {
   const tableRef = useRef();
   const { data: schoolAdmins, isLoading } = useGetSchoolAdmins();
@@ -69,10 +70,7 @@ function SchoolAdmins() {
                 borderRadius: "0.5rem",
               }}
             >
-              <Icon
-                icon="grommet-icons:user-admin"
-                className="font-size-md primary-color"
-              />
+              <SchoolAdminIcon />
             </div>
             <span className="my-0 fw-semibold">School Administrator</span>
           </div>
@@ -260,7 +258,7 @@ function ActionButtonGroup(props) {
         <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
             <span>Activate</span>
-            <SuspendIcon />
+            <ActivateIcon />
           </div>
         </div>
       </DropDownMenuItem>

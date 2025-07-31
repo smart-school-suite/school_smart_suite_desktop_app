@@ -11,9 +11,7 @@ function UpdateTeacher({ handleClose, rowData }) {
     email: "",
     name: "",
     last_name: "",
-    first_name: "",
-    gender:"",
-    phone_one:""
+    first_name: ""
   });
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -28,7 +26,7 @@ function UpdateTeacher({ handleClose, rowData }) {
     <>
       <div className="card w-100 border-none">
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-          <h5 className="m-0">Update Teacher</h5>
+          <span className="m-0">Update Teacher</span>
           <span
             className="m-0"
             onClick={() => {
@@ -89,27 +87,6 @@ function UpdateTeacher({ handleClose, rowData }) {
           />
         </div>
       </div>
-       <div>
-          <label htmlFor="">gender</label>
-          <input
-            type="text"
-            className="form-control"
-            name="gender"
-            onChange={(e) => handleInputChange("gender", e.target.value)}
-            placeholder={teacherDetails.data.gender}
-          />
-        </div>
-        <div>
-          <label htmlFor="">Phone Number</label>
-          <input
-            type="text"
-            className="form-control"
-            name="phone_one"
-            placeholder={teacherDetails.data.phone}
-            onChange={(e) => handleInputChange("phone_one", e.target.value)}
-            
-          />
-        </div>
       <div className="mt-2">
         <button 
           className="border-none p-2 font-size-sm primary-background rounded-3 w-100 text-white"

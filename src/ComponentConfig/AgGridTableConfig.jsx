@@ -1068,22 +1068,8 @@ export function StudentScoresTableConfig({ DropdownComponent }) {
 export function DepartmentTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
-      field: "id",
-      cellRenderer: TextComponent,
-      filter: true,
-      floatingFilter: true,
-    },
-    {
       field: "department_name",
       headerName: "Department Name",
-      filter: true,
-      floatingFilter: true,
-      cellStyle: cellStyle,
-      cellRenderer: TextComponent,
-    },
-    {
-      field: "hod_name",
-      headerName: "Head of Department",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -1104,6 +1090,22 @@ export function DepartmentTableConfig({ DropdownComponent }) {
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: DepartmentTableBadge,
+    },
+    {
+      field:"created_at",
+      headerName:"Creation Date",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+       cellRenderer: TextComponent,
+    },
+     {
+      field:"updated_at",
+      headerName:"Update Date",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+       cellRenderer: TextComponent,
     },
     {
       field: "Action",

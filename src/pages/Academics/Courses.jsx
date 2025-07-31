@@ -14,12 +14,13 @@ import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 import ActivateCourse from "../../ModalContent/Course/ActivateCourse";
 import DeleteCourse from "../../ModalContent/Course/DeleteCourse";
+import { CourseIcon } from "../../icons/Icons";
 function Courses() {
-  const { data: specialty, isFetching } = useGetCourses();
-  if (isFetching) {
+  const { data: specialty, isLoading } = useGetCourses();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -28,17 +29,14 @@ function Courses() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100"
+              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
                 borderRadius: "0.5rem",
               }}
             >
-              <Icon
-                icon="grommet-icons:user-admin"
-                className="font-size-md primary-color"
-              />
+              <CourseIcon />
             </div>
             <span className="my-0 fw-semibold">Courses</span>
           </div>
@@ -51,13 +49,11 @@ function Courses() {
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
               action={{ modalContent: CreateCourse }}
-            
-            >
-              <button   className={
+              classname={
                 "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
-              }>
+              }
+            >
               <span className="font-size-sm">Create Course</span>
-              </button>
             </ModalButton>
           </div>
         </div>
@@ -151,6 +147,7 @@ export function DropdownComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Deactivate</span>
+                <SuspendIcon />
               </div>
             </div>
           </DropDownMenuItem>
@@ -164,6 +161,7 @@ export function DropdownComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Activate</span>
+                <ActivateIcon />
               </div>
             </div>
           </DropDownMenuItem>

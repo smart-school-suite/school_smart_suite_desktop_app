@@ -109,14 +109,13 @@ function CustomDropdown({
                       onMouseEnter={() => setHighlightedIndex(index)}
                     >
                       <div className="d-flex flex-column">
-                        <p className="my-0">{item[displayKey[0]]}</p>
-                        <p className="my-0 font-size-sm gainsboro-color">{item[displayKey[1]]}</p>
+                        <span className="my-0 font-size-sm">{item[displayKey[0]]}</span>
+                        <span className="my-0 font-size-sm gainsboro-color fw-light">{item[displayKey[1]]}</span>
                       </div>
-                      {selectedItem === item && <span className="selected-indicator">✓</span>}
                     </div>
                   ))
                 ) : (
-                  <div className="no-results">No results found</div>
+                  <div className="no-results tex-center">No results found</div>
                 )}
               </div>
             </>

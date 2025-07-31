@@ -2,12 +2,15 @@ import { useSelector } from "react-redux";
 import { useAuth } from "../../context/authContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Icon } from "@iconify/react";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function ChangePassword() {
-  const passwordResetToken = useSelector((state) => state.auth.passwordResetToken);
+  const passwordResetToken = useSelector(
+    (state) => state.auth.passwordResetToken
+  );
   const [passwordCredentails, setPasswordCredentails] = useState({
-    new_password:"",
-    new_password_confirmation:"",
+    new_password: "",
+    new_password_confirmation: "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,19 +19,26 @@ function ChangePassword() {
       [name]: value,
     }));
   };
-  const { handleChangePassword, authError, loading  } = useAuth();
+  const { handleChangePassword, authError, loading } = useAuth();
   const navigate = useNavigate();
   const handleSubmit = (e) => {
-      e.preventDefault();
-      handleChangePassword(navigate, passwordCredentails,  passwordResetToken);     
-  }
+    e.preventDefault();
+    handleChangePassword(navigate, passwordCredentails, passwordResetToken);
+  };
   return (
     <>
-      <div className="container w-100 height-100 d-flex flex-column justify-content-center">
-        <div className="d-flex flex-row align-items-center justify-content-around w-100">
-          <div className="w-50 bg-white rounded-4 px-2 border shadow-sm py-4">
+      <div className="login-container px-4">
+        <div className=" login-container-logo-box ps-5">
+          <img src="./logo/blue_logo.png" className="login-logo" />
+        </div>
+
+        <div className="login-container-form" style={{ height: "70%" }}>
+          <div className="login-container-form-box-two">
+            <img src="./svg/change-password.svg" alt="" />
+          </div>
+          <div className="login-container-form-box-one">
+            <h1 className="fw-bold my-4">Change Password</h1>
             <form onSubmit={handleSubmit}>
-              <h4 className="text-center">Change Password</h4>
               {authError.changePassword && (
                 <div className="alert alert-danger">
                   {authError.changePassword}
@@ -61,9 +71,26 @@ function ChangePassword() {
                 type="submit"
                 disabled={loading.changePassword}
               >
-                {loading.changePassword ? "Submitting..." : "Submit"}
+                {loading.changePassword ? <SingleSpinner /> : "Change Password"}
               </button>
             </form>
+          </div>
+        </div>
+        <div className=" login-container-logo-box mt-auto ps-5 visually-hidden">
+          <div
+            className="d-flex flex-row gap-2 align-items-center pointer-cursor"
+            onClick={() => {
+              navigate("/hero");
+            }}
+          >
+            <span>
+              <Icon
+                icon="material-symbols:arrow-back-rounded"
+                width="24"
+                height="24"
+              />
+            </span>
+            <span className="font-size-sm fw-semibold">Back</span>
           </div>
         </div>
       </div>

@@ -10,7 +10,6 @@ import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useCreateCourse } from "../../hooks/course/useCreateCourse";
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
-import { useGetLevels } from "../../hooks/level/useGetLevels";
 function CreateCourse({ handleClose }) {
   const [isValid, setIsValid] = useState(false);
   const [formData, setFormData] = useState({
@@ -19,6 +18,7 @@ function CreateCourse({ handleClose }) {
     credit: "",
     specialty_id: "",
     semester_id: "",
+    description:"",
   });
   const { mutate:createCourseMutation, isPending } = useCreateCourse(handleClose, formData.specialty_Id, formData.semester_Id);
   const { data:specialty, isFetching:isSpecailtyLoading  } = useGetSpecialties();
@@ -53,9 +53,9 @@ function CreateCourse({ handleClose }) {
   return (
     <div className="w-100">
       <div className="d-flex flex-row align-items-center">
-        <div className="block">
-          <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Create Course</h5>
+        <div className="w-100">
+          <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+            <span className="m-0">Create Course</span>
             <span
               className="m-0"
               onClick={() => {
@@ -65,10 +65,6 @@ function CreateCourse({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
       </div>
       <div className="my-1">
@@ -76,6 +72,7 @@ function CreateCourse({ handleClose }) {
           onValidationChange={handleValidation}
           value={formData.course_title}
           onChange={(value) => handleInputChange("course_title", value)}
+          placeholder={"Enter Course Title"}
         />
       </div>
       <div className="my-1">
@@ -130,16 +127,17 @@ function CreateCourse({ handleClose }) {
           />
         )}
       </div>
+       <div>
+            <span>Description</span>
+            <textarea name="description" placeholder="Enter Course Descripton"
+              className="form-control"
+              onChange={(e) => handleInputChange('description', e.target.value)}
+            ></textarea>
+          </div>
       <div className="mt-4">
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
           <button
-            className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
-            onClick={handleClose}
-          >
-            Cancel
-          </button>
-          <button
-            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
+            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
             disabled={!isValid}
             onClick={() => {
               handleSubmit();

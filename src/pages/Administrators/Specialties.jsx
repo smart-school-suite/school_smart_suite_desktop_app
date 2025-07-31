@@ -13,13 +13,13 @@ import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader"
 import { Icon } from "@iconify/react";
 import { useMemo } from "react";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import ActivateSpecialty from "../../ModalContent/Specialty/ActivateSpecialty";
 function Specialties() {
-  const { data: specialty, isFetching } = useGetSpecialties();
+  const { data: specialty, isLoading } = useGetSpecialties();
   const memoizedColDefs = useMemo(() => {
     return SpecialtyTableConfig({
       DropdownComponent,
@@ -29,7 +29,7 @@ function Specialties() {
   const memoizedRowData = useMemo(() => {
     return specialty?.data ?? [];
   }, [specialty]);
-  if (isFetching) {
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -158,6 +158,7 @@ export function DropdownComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Deactivate</span>
+                <SuspendIcon />
               </div>
             </div>
           </DropDownMenuItem>
@@ -171,6 +172,7 @@ export function DropdownComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Activate</span>
+                <ActivateIcon />
               </div>
             </div>
           </DropDownMenuItem>

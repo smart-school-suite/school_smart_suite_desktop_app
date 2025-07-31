@@ -18,7 +18,7 @@ function SpecialtyDetails({  handleClose, rowData }) {
     <>
       <div>
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-          <h5 className="m-0">Specialty  Details</h5>
+          <span className="m-0">Specialty  Details</span>
           <span
             className="m-0"
             onClick={() => {
@@ -34,108 +34,80 @@ function SpecialtyDetails({  handleClose, rowData }) {
             molestias repellendus facere voluptate?
           </p>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
           <div
             className=" py-2 d-flex flex-column"
           >
-            <span className="my-0 font-size-sm fw-light">
+            <span className="my-0 font-size-sm fw-semibold">
               Specialty Name
             </span>
-            <span className="my-0">{specialtyDetails.data.specialty_name}</span>
+            <span className="my-0 gainsboro-color font-size-sm">{specialtyDetails?.data?.specialty_name}</span>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
           <div
             className=" py-2 d-flex flex-column"
           >
-            <span className="my-0 font-size-sm fw-light">
+            <span className="my-0 font-size-sm fw-semibold">
               Registration Fee
             </span>
-            <span className="my-0">{formatNumber(parseFloat(specialtyDetails.data.registration_fee))} {currency.schoolDetails.school.country.currency}</span>
+            <span className="my-0 gainsboro-color font-size-sm">{formatNumber(parseFloat(specialtyDetails?.data?.registration_fee))} {currency.schoolDetails.school.country.currency}</span>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
           <div
             className=" py-2 d-flex flex-column"
           >
-            <span className="my-0 font-size-sm fw-light">
+            <span className="my-0 font-size-sm fw-semibold">
               Tuition Fee
             </span>
-            <span className="my-0">{formatNumber(parseFloat(specialtyDetails.data.school_fee))} {currency.schoolDetails.school.country.currency}</span>
+            <span className="my-0 gainsboro-color font-size-sm">{formatNumber(parseFloat(specialtyDetails?.data?.school_fee))} {currency.schoolDetails.school.country.currency}</span>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
           <div
             className=" py-2 d-flex flex-column"
           >
-            <span className="my-0 font-size-sm fw-light">
-              Status
-            </span>
-            {
-                 specialtyDetails.data.status === "active" ? <span
-                 className=" rounded-1 font-size-sm "
-                 style={{
-                   background: "#e3f5e3",
-                   color: "#2d6830",
-                   width: "auto",
-                   maxWidth: "10rem",
-                   padding: "0.2rem",
-                 }}
-               >
-                 <span>Specailty Active</span>
-               </span> : <span
-                     className=" rounded-1 font-size-sm "
-                     style={{
-                       background: "#fffec1",
-                       color: "#a66a02",
-                       width: "auto",
-                       maxWidth: "12rem",
-                       padding: "0.2rem",
-                     }}
-                   >
-                     <span>Specailty Active</span>
-                   </span> 
-              }           
-          </div>
-        </div>
-        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
-          <div
-            className=" py-2 d-flex flex-column"
-          >
-            <span className="my-0 font-size-sm fw-light">
+            <span className="my-0 font-size-sm fw-semibold">
               Department Name
             </span>
-            <span className="my-0">{specialtyDetails.data.department.department_name}</span>
+            <span className="my-0 gainsboro-color font-size-sm">{specialtyDetails?.data?.department.department_name}</span>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
           <div
             className=" py-2 d-flex flex-column"
           >
-            <span className="my-0 font-size-sm fw-light">
+            <span className="my-0 font-size-sm fw-semibold">
               Level Name
             </span>
-            <span className="my-0">{specialtyDetails.data.level.name}</span>
+            <span className="my-0 gainsboro-color font-size-sm">{specialtyDetails?.data?.level.name}</span>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-2 w-100 border-bottom">
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
           <div
             className=" py-2 d-flex flex-column"
           >
-            <span className="my-0 font-size-sm fw-light">
+            <span className="my-0 font-size-sm fw-semibold">
               Level Number
             </span>
-            <span className="my-0">{specialtyDetails.data.level.level}</span>
+            <span className="my-0 gainsboro-color font-size-sm">{specialtyDetails?.data?.level.level}</span>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-2 w-100">
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
           <div
             className=" py-2 d-flex flex-column"
           >
-            <span className="my-0 font-size-sm fw-light">
+            <span className="my-0 font-size-sm fw-semibold">
               Description
             </span>
-            <span className="my-0">{specialtyDetails.data.description}</span>
+            <span className="my-0 gainsboro-color font-size-sm">{specialtyDetails?.data?.description}</span>
           </div>
         </div>
       </div>
