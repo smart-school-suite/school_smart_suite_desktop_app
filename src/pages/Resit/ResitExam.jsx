@@ -8,12 +8,13 @@ import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { ExamsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import {  UpdateIcon } from "../../icons/ActionIcons";
+import { DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import UpdateResitExam from "../../ModalContent/ResitExam/UpdateResitExam";
 import ResitExamGrading from "../../ModalContent/ResitExam/AddResitExamGrading";
+import { ExamIcon, GradeIcon } from "../../icons/Icons";
 function ResitExam() {
-  const { data: resitExams, isFetching } = useGetAllResitExams();
-  if (isFetching) {
+  const { data: resitExams, isLoading } = useGetAllResitExams();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -21,17 +22,14 @@ function ResitExam() {
       <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center primary-background-100"
+            className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
             style={{
               width: "2.5rem",
               height: "2.5rem",
               borderRadius: "0.5rem",
             }}
           >
-            <Icon
-              icon="grommet-icons:user-admin"
-              className="font-size-md primary-color"
-            />
+            <ExamIcon />
           </div>
           <span className="my-0 fw-semibold">Resit Exam Management</span>
         </div>
@@ -109,6 +107,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Exam Details</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -121,6 +120,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Add Exam Grading</span>
+              <GradeIcon />
             </div>
           </div>
         </DropDownMenuItem>

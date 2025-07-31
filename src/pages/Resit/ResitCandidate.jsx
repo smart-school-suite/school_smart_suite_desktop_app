@@ -7,12 +7,12 @@ import CustomModal from "../../components/Modals/Modal";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import Table from "../../components/Tables/Tables";
 import { ExamCandidateTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import SummitScores from "../../ModalContent/ResitCandidate/SubmitScores";
 function ResitCandidates() {
-  const { data: resitCandidates, isFetching } = useGetResitCandidates();
-  if (isFetching) {
+  const { data: resitCandidates, isLoading } = useGetResitCandidates();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -42,14 +42,10 @@ function ResitCandidates() {
         </div>
       </div>
       <div>
-        {resitCandidates?.data?.length > 0 ? (
           <Table
             colDefs={ExamCandidateTableConfig({ DropdownComponent })}
             rowData={resitCandidates.data}
           />
-        ) : (
-          <div className="alert alert-warning">No Canidates Added Found</div>
-        )}
       </div>
     </>
   );
@@ -96,6 +92,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Add Resit Scores</span>
+              <CreateIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -107,6 +104,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Resit Scores</span>
+              <UpdateIcon />
             </div>
           </div>
         </DropDownMenuItem>

@@ -424,6 +424,77 @@ export function ExamTimetableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
+
+export function ResitTimetableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "exam_name",
+      headerName: "Exam Name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "semester_name",
+      headerName: "Semester",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "specailty_name",
+      headerName: "Specailty Name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "start_date",
+      headerName: "Start Date",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "end_date",
+      headerName: "End Date",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "timetable_published",
+      headerName: "Timetable Status",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TimetableBadge,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
 export function ResitFeeTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
@@ -475,6 +546,56 @@ export function ResitFeeTableConfig({ DropdownComponent }) {
   return tableConfig;
 }
 
+export function StudentResitTableConfig({ DropdownComponent }){
+    const tableConfig = [
+    {
+      field: "student_name",
+      headerName:"Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "course_name",
+      headerName:"Course Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+     {
+      field: "specialty_name",
+      headerName:"Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName:"Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level",
+      headerName:"Level",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
 export function GradesConfigTableConfig({ ActionButton }) {
   const tableConfig = [
     {

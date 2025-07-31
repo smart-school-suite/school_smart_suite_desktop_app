@@ -8,7 +8,7 @@ import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
-import { ExamTimetableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import { ResitTimetableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import CreateTimetable from "../../ModalContent/ExamResitTimetable/CreateTimetable";
 function ResitTimetable() {
   const { data: resitExams, isFetching } = useGetAllResitExams();
@@ -46,7 +46,7 @@ function ResitTimetable() {
       <div>
         {resitExams.data.length > 0 ? (
           <Table
-            colDefs={ExamTimetableConfig({ DropdownComponent })}
+            colDefs={ResitTimetableConfig({ DropdownComponent })}
             rowData={resitExams.data}
           />
         ) : (
