@@ -33,7 +33,7 @@ function StudentDropOuts() {
                 className="font-size-md primary-color"
               />
             </div>
-            <span className="my-0 fw-semibold">Student Dropout</span>
+            <span className="my-0 fw-semibold">Manage Student Dropout</span>
           </div>
         </div>
         <div className="d-block">

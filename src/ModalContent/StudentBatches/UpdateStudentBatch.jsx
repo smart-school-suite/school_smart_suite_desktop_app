@@ -18,7 +18,7 @@ function UpdateStudentBatch({ handleClose, rowData }) {
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between w-100 mb-3">
-        <h5 className="m-0">Update Student Batch</h5>
+        <span className="m-0">Update Student Batch</span>
         <span
           className="m-0"
           onClick={() => {

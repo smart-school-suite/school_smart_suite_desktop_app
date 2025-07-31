@@ -1,4 +1,9 @@
+
 function StudentBatchDetails() {
-    return <></>;
+    return (
+       <>
+       
+       </>
+    );
   }
   export default StudentBatchDetails;

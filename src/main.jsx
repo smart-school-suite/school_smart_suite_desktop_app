@@ -4,7 +4,6 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./styles/utility.css";
 import "./styles/global.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "./styles/media.css";
 import "./styles/transition.css"
 //import "./styles/component.css"
 import { Provider } from "react-redux";

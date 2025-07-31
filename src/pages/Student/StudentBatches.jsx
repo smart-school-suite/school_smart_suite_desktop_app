@@ -15,10 +15,10 @@ import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 import React, {useState} from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { UpdateIcon } from "../../icons/ActionIcons";
+import { ActivateIcon, DeleteIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 function StudentBatches() {
-  const { data: studentBatches, isFetching } = useGetBatches();
-  if (isFetching) {
+  const { data: studentBatches, isLoading } = useGetBatches();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -27,7 +27,7 @@ function StudentBatches() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100"
+              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -39,7 +39,7 @@ function StudentBatches() {
                 className="font-size-md primary-color"
               />
             </div>
-            <span className="my-0 fw-semibold">Student Batches</span>
+            <span className="my-0 fw-semibold">Student Batch Management</span>
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@ export function DropdownComponent(props) {
        >
             <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Update Batch</span>
+            <span>Update</span>
             <UpdateIcon />
           </div>
         </div>
@@ -115,8 +115,8 @@ export function DropdownComponent(props) {
        >
             <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Delete Batch</span>
-            <UpdateIcon />
+            <span>Delete</span>
+            <DeleteIcon />
           </div>
         </div>
        </DropDownMenuItem>
@@ -130,6 +130,7 @@ export function DropdownComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Deactivate</span>
+                <SuspendIcon />
               </div>
             </div>
           </DropDownMenuItem>
@@ -143,6 +144,7 @@ export function DropdownComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Activate</span>
+                <ActivateIcon />
               </div>
             </div>
           </DropDownMenuItem>

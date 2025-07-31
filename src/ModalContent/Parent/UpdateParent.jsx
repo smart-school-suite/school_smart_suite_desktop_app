@@ -51,7 +51,7 @@ function UpdateParent({ handleClose, rowData }) {
     <>
       <div>
         <div className="d-flex flex-row align-items-center justify-content-between w-100 mb-3">
-          <h5 className="m-0">Update Guardian</h5>
+          <span className="m-0">Update Guardian</span>
           <span
             className="m-0"
             onClick={() => {
@@ -61,13 +61,6 @@ function UpdateParent({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <div className="block">
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
-        </div>
-        {console.table(parentData.data[0].name)}
         <div className="my-1">
           <label htmlFor="guardianName">Guardian Name</label>
           <input
