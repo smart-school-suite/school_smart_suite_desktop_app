@@ -94,7 +94,7 @@ function CustomDropdown({
               <input
                 ref={inputRef}
                 type="text"
-                className="p-2 rounded-3 my-2 white-smoke-bg form-control"
+                className="rounded-3 my-2 white-smoke-bg form-control form-control-sm"
                 placeholder="Search for anything"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
