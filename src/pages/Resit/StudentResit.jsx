@@ -8,7 +8,7 @@ import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
+import { DeleteIcon, DetailsIcon, RepeatIcon } from "../../icons/ActionIcons";
 import DeleteStudentResit from "../../ModalContent/StudentResit/DeleteResit";
 import ResitDetails from "../../ModalContent/StudentResit/ResitDetails";
 function StudentResit() {
@@ -28,10 +28,7 @@ function StudentResit() {
               borderRadius: "0.5rem",
             }}
           >
-            <Icon
-              icon="grommet-icons:user-admin"
-              className="font-size-md primary-color"
-            />
+           <RepeatIcon />
           </div>
           <span className="my-0 fw-semibold">Student Resit Management</span>
         </div>

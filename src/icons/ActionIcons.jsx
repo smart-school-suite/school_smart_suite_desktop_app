@@ -72,4 +72,10 @@ const ReverseIcon = ({ iconStyle }) => {
         <Icon icon="system-uicons:reverse" style={{...iconStyle, fontSize:"1rem"}} />
      )
 }
-export { ReverseIcon, ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }
+
+const RepeatIcon = ({ iconStyle }) => {
+     return (
+        <Icon icon="material-symbols:repeat-rounded" style={{...iconStyle, fontSize:"1rem"}} />
+     )
+}
+export { RepeatIcon, ReverseIcon, ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }

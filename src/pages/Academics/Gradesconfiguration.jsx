@@ -43,17 +43,6 @@ function Gradesconfiguration() {
             <p className="font-size-xs my-0">Total Grades Config</p>
             <h1 className="fw-bold my-0">{gradeCategory.data.length}</h1>
           </div>
-          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModalButton
-              action={{ modalContent: ConfigureGrades }}
-              classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
-              }
-            >
-              <Icon icon="icons8:plus" className="font-size-md" />
-              <span className="font-size-sm">Add Configurations</span>
-            </ModalButton>
-          </div>
         </div>
         {gradeCategory?.data?.length > 0 ? (
           <Table
@@ -62,7 +51,7 @@ function Gradesconfiguration() {
           />
         ) : (
           <div className="alert alert-warning">
-            Oops, looks like you don't have any teachers.
+            No Grades Found
           </div>
         )}
       </div>

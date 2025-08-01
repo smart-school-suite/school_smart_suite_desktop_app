@@ -16,6 +16,7 @@ import React, {useState} from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { ActivateIcon, DeleteIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { BatchIcon } from "../../icons/Icons";
 function StudentBatches() {
   const { data: studentBatches, isLoading } = useGetBatches();
   if (isLoading) {
@@ -34,10 +35,7 @@ function StudentBatches() {
                 borderRadius: "0.5rem",
               }}
             >
-              <Icon
-                icon="grommet-icons:user-admin"
-                className="font-size-md primary-color"
-              />
+             <BatchIcon />
             </div>
             <span className="my-0 fw-semibold">Student Batch Management</span>
           </div>

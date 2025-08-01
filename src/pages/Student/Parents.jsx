@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { ParentIcon } from "../../icons/Icons";
 function Parents() {
   const { data: guardians, isFetching } = useGetAllParents();
   if (isFetching) {
@@ -32,10 +33,7 @@ function Parents() {
                 borderRadius: "0.5rem",
               }}
             >
-              <Icon
-                icon="grommet-icons:user-admin"
-                className="font-size-md primary-color"
-              />
+              <ParentIcon />
             </div>
             <span className="my-0 fw-semibold">Manage Parents</span>
           </div>

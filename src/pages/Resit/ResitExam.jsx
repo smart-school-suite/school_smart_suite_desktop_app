@@ -98,7 +98,7 @@ export function DropdownComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        <DropDownMenuItem
+        {/*<DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -110,7 +110,7 @@ export function DropdownComponent(props) {
               <DetailsIcon />
             </div>
           </div>
-        </DropDownMenuItem>
+        </DropDownMenuItem> */}
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"

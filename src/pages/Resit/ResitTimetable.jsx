@@ -10,6 +10,7 @@ import ActionButtonDropdown from "../../components/DataTableComponents/ActionCom
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { ResitTimetableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import CreateTimetable from "../../ModalContent/ExamResitTimetable/CreateTimetable";
+import { TimetableIcon } from "../../icons/Icons";
 function ResitTimetable() {
   const { data: resitExams, isFetching } = useGetAllResitExams();
   if (isFetching) {
@@ -20,17 +21,14 @@ function ResitTimetable() {
       <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center primary-background-100"
+            className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
             style={{
               width: "2.5rem",
               height: "2.5rem",
               borderRadius: "0.5rem",
             }}
           >
-            <Icon
-              icon="grommet-icons:user-admin"
-              className="font-size-md primary-color"
-            />
+          <TimetableIcon />
           </div>
           <span className="my-0 fw-semibold">
             Resit Exam Timetable Management
@@ -106,7 +104,8 @@ function DropdownComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        <DropDownMenuItem
+        {/*
+                 <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -142,6 +141,7 @@ function DropdownComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
+        */}
       </ActionButtonDropdown>
       <CustomModal
         show={showModal}

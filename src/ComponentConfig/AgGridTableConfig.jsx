@@ -338,6 +338,22 @@ export function ExamGradingCongfig({ DropdownComponent }) {
       cellRenderer: ActiveInactiveBadge,
     },
     {
+      field: "created_at",
+      headerName: "Created At",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: ISODateComponent,
+    },
+    {
+      field: "updated_at",
+      headerName: "Updated At",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: ISODateComponent,
+    },
+    {
       field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),

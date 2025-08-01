@@ -10,7 +10,7 @@ import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
 function TuitionFees() {
   const { data: tuitionFees, isLoading } = useGetTuitionFees();
   if (isLoading) {
@@ -73,10 +73,11 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Pay Tuition Fee</span>
+              <CreateIcon />
             </div>
           </div>
         </DropDownMenuItem>
-         <DropDownMenuItem
+         {/*  <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -88,7 +89,7 @@ export function DropdownComponent(props) {
               <DetailsIcon />
             </div>
           </div>
-        </DropDownMenuItem>
+        </DropDownMenuItem>*/}
          <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"

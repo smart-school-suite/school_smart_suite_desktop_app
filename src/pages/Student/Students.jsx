@@ -16,7 +16,8 @@ import React, {useState} from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import ActivateStudent from "../../ModalContent/Student/ActivateStudent";
-import { DetailsIcon, UpdateIcon, DeleteIcon, SuspendIcon, ActivateIcon } from "../../icons/ActionIcons";
+import { DetailsIcon, UpdateIcon, DeleteIcon, SuspendIcon, ActivateIcon,  } from "../../icons/ActionIcons";
+import { StudentIcon } from "../../icons/Icons";
 function Students() {
   const { data: students, isFetching } = useGetStudents();
   if (isFetching) {
@@ -35,10 +36,7 @@ function Students() {
                 borderRadius: "0.5rem",
               }}
             >
-              <Icon
-                icon="grommet-icons:user-admin"
-                className="font-size-md primary-color"
-              />
+              <StudentIcon />
             </div>
             <span className="my-0 fw-semibold">Manage Students</span>
           </div>

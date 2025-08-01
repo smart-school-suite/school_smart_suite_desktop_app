@@ -50,4 +50,28 @@ const ExamCandidateIcon = ({ iconStyle }) => {
      <Icon icon="ph:users-four-light" style={{ ...iconStyle, fontSize: "1rem" }} />
   )
 }
-export { TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };
+
+const StudentIcon = ({ iconStyle }) => {
+   return(
+    <Icon icon="ph:student-light" style={{ ...iconStyle, fontSize: "1rem" }} />
+   )
+}
+
+const ParentIcon = ({ iconStyle }) => {
+   return (
+    <Icon icon="ri:parent-line" style={{ ...iconStyle, fontSize: "1rem" }}/>
+   )
+}
+
+const BatchIcon = ({ iconStyle }) => {
+   return(
+    <Icon icon="fluent:group-24-regular" style={{ ...iconStyle, fontSize: "1rem" }} />
+   )
+}
+
+const MoneyIcon = ({ iconStyle }) => {
+   return (
+    <Icon icon="solar:hand-money-linear" style={{ ...iconStyle, fontSize: "1rem" }} />
+   )
+}
+export { MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };

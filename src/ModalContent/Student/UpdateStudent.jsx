@@ -8,7 +8,8 @@ import { useUpdateStudent } from "../../hooks/student/useUpdateStudent";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetAllParents } from "../../hooks/parent/useGetParents";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
-import { useGetStudentById } from "../../hooks/student/useGetStudentDetails";
+import { useGetStudentDetails } from "../../hooks/student/useGetStudentDetails";
+
 function UpdateStudent({ handleClose, rowData }) {
   const studentId = rowData.id;
   const [formData, setFormData] = useState({
@@ -26,7 +27,7 @@ function UpdateStudent({ handleClose, rowData }) {
     studentId
   );
   const { data: studentDetails, isFetching: isStudentDetailsLoading } =
-    useGetStudentById(studentId);
+    useGetStudentDetails(studentId);
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };

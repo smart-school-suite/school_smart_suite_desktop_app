@@ -102,7 +102,7 @@ function ActionButtonGroup(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        <DropDownMenuItem
+        {/* <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -114,7 +114,7 @@ function ActionButtonGroup(props) {
               <UpdateIcon />
             </div>
           </div>
-        </DropDownMenuItem>
+        </DropDownMenuItem>*/}
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"

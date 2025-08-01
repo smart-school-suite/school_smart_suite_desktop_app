@@ -10,6 +10,7 @@ import { ExamCandidateTableConfig } from "../../ComponentConfig/AgGridTableConfi
 import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import SummitScores from "../../ModalContent/ResitCandidate/SubmitScores";
+import { ExamCandidateIcon } from "../../icons/Icons";
 function ResitCandidates() {
   const { data: resitCandidates, isLoading } = useGetResitCandidates();
   if (isLoading) {
@@ -20,17 +21,14 @@ function ResitCandidates() {
       <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center primary-background-100"
+            className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
             style={{
               width: "2.5rem",
               height: "2.5rem",
               borderRadius: "0.5rem",
             }}
           >
-            <Icon
-              icon="grommet-icons:user-admin"
-              className="font-size-md primary-color"
-            />
+            <ExamCandidateIcon />
           </div>
           <span className="my-0 fw-semibold">Resit Candidate Management</span>
         </div>
@@ -96,7 +94,7 @@ export function DropdownComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        <DropDownMenuItem
+       {/*  <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -119,7 +117,7 @@ export function DropdownComponent(props) {
               <DeleteIcon />
             </div>
           </div>
-        </DropDownMenuItem>
+        </DropDownMenuItem>*/}
       </ActionButtonDropdown>
       <CustomModal
         show={showModal}

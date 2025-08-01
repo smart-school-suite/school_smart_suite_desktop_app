@@ -1,6 +1,4 @@
 import { Icon } from "@iconify/react";
-import { useFetchStudentDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-import { convertToReadableDate, timeSince } from "../../utils/functions";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useGetStudentDetails } from "../../hooks/student/useGetStudentDetails";
 function StudentDetails({ handleClose, rowData }){
