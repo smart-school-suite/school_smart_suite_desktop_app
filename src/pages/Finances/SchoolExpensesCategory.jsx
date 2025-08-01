@@ -12,8 +12,8 @@ import { DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
 import UpdateCategory from "../../ModalContent/ExpenseCategory/UpdateCategory";
 import DeleteCategory from "../../ModalContent/ExpenseCategory/DeleteCategory";
 function SchoolExpensesCategory() {
-  const { data:expenseCategories, isFetching } = useGetExpensesCategories();
-  if(isFetching){
+  const { data:expenseCategories, isLoading } = useGetExpensesCategories();
+  if(isLoading){
     return <DataTableNavLoader />
   }
   return (

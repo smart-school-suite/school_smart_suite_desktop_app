@@ -15,8 +15,8 @@ import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 function SchoolExpenses() {
-  const { data: schoolExpenses, isFetching } = useGetExpenses();
-  if (isFetching) {
+  const { data: schoolExpenses, isLoading } = useGetExpenses();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (

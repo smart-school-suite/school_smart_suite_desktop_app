@@ -30,10 +30,6 @@ function UpdateCategory({ handleClose, rowData }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
         <div className="my-1">
           <span>Category Name</span>

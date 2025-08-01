@@ -16,6 +16,7 @@ import SemesterBadge from "../components/Badges/SemesterBadge";
 import TimetableBadge from "../components/Badges/TimetableBadge";
 import AccessmentStatus from "../components/Badges/AccessmentStatus";
 import GradeSubmittedStatus from "../components/Badges/GradeSubmittedStatus";
+import ISODateComponent from "../components/DataTableComponents/ISODateComponent"
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -228,7 +229,6 @@ export function ExamsTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
 export function ResitExamTableConfig({ DropdownComponent }){
     const tableConfig = [
     {
@@ -337,7 +337,6 @@ export function ExamGradingCongfig({ DropdownComponent }) {
       cellStyle: cellStyle,
       cellRenderer: ActiveInactiveBadge,
     },
-
     {
       field: "Action",
       cellRenderer: DropdownComponent,
@@ -424,7 +423,6 @@ export function ExamTimetableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
 export function ResitTimetableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
@@ -534,7 +532,7 @@ export function ResitFeeTableConfig({ DropdownComponent }) {
       headerName:"Resit Fee",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: CurrencyComponent,
       cellStyle: cellStyle,
     },
     {
@@ -545,7 +543,6 @@ export function ResitFeeTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
 export function StudentResitTableConfig({ DropdownComponent }){
     const tableConfig = [
     {
@@ -779,7 +776,7 @@ export function ExpensesCategoryTableConfig({ DropdownComponent }) {
       headerName: "Created At",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ISODateComponent,
       cellStyle: cellStyle,
     },
     {
@@ -787,7 +784,7 @@ export function ExpensesCategoryTableConfig({ DropdownComponent }) {
       headerName: "Updated At",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ISODateComponent,
       cellStyle: cellStyle,
     },
     {
@@ -798,7 +795,6 @@ export function ExpensesCategoryTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
 export function CategoryTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
@@ -833,7 +829,6 @@ export function CategoryTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
 export function AdditionalFeeCategoryTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
@@ -849,7 +844,7 @@ export function AdditionalFeeCategoryTableConfig({ DropdownComponent }) {
       headerName: "Created At",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ISODateComponent,
       cellStyle: cellStyle,
     },
     {
@@ -857,7 +852,7 @@ export function AdditionalFeeCategoryTableConfig({ DropdownComponent }) {
       headerName: "Updated At",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ISODateComponent,
       cellStyle: cellStyle,
     },
     {
@@ -868,7 +863,6 @@ export function AdditionalFeeCategoryTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
 export function ParentsTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
@@ -971,7 +965,7 @@ export function StudentBatchesTableConfig({ DropdownComponent }) {
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-      cellRenderer: TextComponent,
+      cellRenderer: ISODateComponent,
     },
     {
       field: "updated_at",
@@ -979,7 +973,7 @@ export function StudentBatchesTableConfig({ DropdownComponent }) {
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-      cellRenderer: TextComponent,
+      cellRenderer: ISODateComponent,
     },
     {
       field: "Action",
@@ -1222,7 +1216,7 @@ export function DepartmentTableConfig({ DropdownComponent }) {
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-       cellRenderer: TextComponent,
+       cellRenderer: ISODateComponent,
     },
      {
       field:"updated_at",
@@ -1230,7 +1224,7 @@ export function DepartmentTableConfig({ DropdownComponent }) {
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
-       cellRenderer: TextComponent,
+       cellRenderer:ISODateComponent,
     },
     {
       field: "Action",
@@ -1520,7 +1514,6 @@ export function semesterTableConfig({ ActionButtonGroup }) {
   ];
   return tableConfig;
 }
-
 export function SpecialtyTimetableTableConfig({ ActionButtonGroup }) {
   const tableConfig = [
     {
@@ -1758,7 +1751,7 @@ export function additionalFeesTableConfig({ DropdownComponent }) {
       headerName: "Payment Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: RegistrationFeeTableBadge,
       cellStyle: cellStyle,
     },
     {
@@ -1895,7 +1888,6 @@ export function tuitionFeesTransactionTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
 export function tuitionFeeScheduleTableConfig({ DropdownComponent }){
    const tableConfig = [
     {
@@ -2086,7 +2078,6 @@ export function resitFeeTransactionsTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
 export function electionTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
@@ -2391,7 +2382,6 @@ export function hosTableConfig({ ActionButtonGroup }) {
   ];
   return tableConfig;
 }
-
 export function studentResultsTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
@@ -2456,7 +2446,6 @@ export function studentResultsTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
 export function AccessedResitCandidateTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
@@ -2537,7 +2526,6 @@ export function AccessedResitCandidateTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
 export function AnnouncementTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {

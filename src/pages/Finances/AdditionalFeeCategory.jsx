@@ -14,8 +14,8 @@ import ActionButtonDropdown, {
 import { AdditionalFeeCategoryTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { Icon } from "@iconify/react";
 function AdditionalFeeCategory() {
-  const { data: categories, isFetching } = useGetAdditionalFeeCategory();
-  if (isFetching) {
+  const { data: categories, isLoading } = useGetAdditionalFeeCategory();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (

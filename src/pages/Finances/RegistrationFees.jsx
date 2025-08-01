@@ -6,14 +6,14 @@ import PayRegistrationFees from "../../ModalContent/RegistrationFees/PayRegistra
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { useGetRegistrationFees } from "../../hooks/feePayment/useGetRegistrationFees";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
-import { DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
 import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 function RegistrationFees() {
-  const { data: registrationFees, isFetching } = useGetRegistrationFees();
-  if (isFetching) {
+  const { data: registrationFees, isLoading } = useGetRegistrationFees();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
 
@@ -74,6 +74,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Pay Fees</span>
+              <CreateIcon />
             </div>
           </div>
         </DropDownMenuItem>

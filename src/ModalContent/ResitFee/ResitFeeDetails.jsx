@@ -1,127 +1,154 @@
-import Pageloaderspinner from "../../components/Spinners";
-import { useFetchStudentResitDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
-function Details({ row_id }) {
-    const {
-      data: resitDetail,
-      isLoading,
-      error,
-    } = useFetchStudentResitDetailsQuery({
-      resit_id: row_id,
-    });
-  
-    if (isLoading) {
-      return <Pageloaderspinner />;
-    }
-    return (
-      <>
-        <div className="w-100 mt-2">
-          <p className="font-size-sm gainsboro-color my-2">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum id
-            excepturi cumque facere, asperiores
-          </p>
-          <span>Financial Detials</span>
-          <div className="d-flex align-items-center justify-content-between my-1">
-            <button
-              className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="clarity:email-line" />
-            </button>
-            <div className="border-bottom py-2" style={{ width: "87%" }}>
-              <p className="my-0">
-                {formatNumber(Number(resitDetail.data.resit_fee))} ₣
-              </p>
-              <p
-                className="my-0 font-size-sm gainsboro-color"
-                onClick={() => {
-                  handleShow();
-                }}
-              >
-                Resit Cost
-              </p>
+import Pageloaderspinner from "../../components/Spinners/Spinners";
+import { useGetResitDetails } from "../../hooks/studentResit/useGetResitDetails";
+import { Icon } from "@iconify/react";
+import { formatNumber } from "../../utils/functions";
+function ResitFeeDetails({ rowData, handleClose }) {
+  const { id: resitId } = rowData;
+  const { data: resitDetails, isLoading } = useGetResitDetails(resitId);
+  if (isLoading) {
+    return <Pageloaderspinner />;
+  }
+  return (
+    <>
+      <div>
+        <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+          <span className="m-0">Resit Fee Details</span>
+          <span
+            className="m-0"
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            <Icon icon="charm:cross" width="22" height="22" />
+          </span>
+        </div>
+        <div className="modal-content-container">
+          <div className="d-flex flex-column gap-1">
+            <span className="font-size-md fw-semibold">Course Details</span>
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
+                  Course Title
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {resitDetails?.data?.courses.course_name}
+                </span>
+              </div>
             </div>
-          </div>
-          <div className="d-flex align-items-center justify-content-between my-1">
-            <button
-              className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="clarity:email-line" />
-            </button>
-            <div className="border-bottom py-2" style={{ width: "87%" }}>
-              <p className="my-0">{resit_details.data.paid_status}</p>
-              <p
-                className="my-0 font-size-sm gainsboro-color"
-                onClick={() => {
-                  handleShow();
-                }}
-              >
+            <hr />
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
+                  Course Code
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {resitDetails?.data?.courses.course_code}
+                </span>
+              </div>
+            </div>
+            <hr />
+             <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
+                  Course Credit
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {resitDetails?.data?.courses.credit}
+                </span>
+              </div>
+            </div>
+            <span className="font-size-md fw-semibold">Exam Details</span>
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
+                 Exam Name
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {resitDetails?.data?.exam.examtype.exam_name}
+                </span>
+              </div>
+            </div>
+            <hr />
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
+                 Weighted Mark
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {resitDetails?.data?.exam.weighted_mark}
+                </span>
+              </div>
+            </div>
+            <span className="font-size-md fw-semibold">Student Details</span>
+             <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
+                Student Name
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {resitDetails?.data?.student.name}
+                </span>
+              </div>
+            </div>
+            <hr />
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
+                 Gender
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {resitDetails?.data?.student.gender}
+                </span>
+              </div>
+            </div>
+            <hr />
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
+                 Specialty Name
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {resitDetails?.data?.specialty.specialty_name}
+                </span>
+              </div>
+            </div>
+            <hr />
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
+                 Level Name
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {resitDetails?.data?.level.name}
+                </span>
+              </div>
+            </div>
+            <span className="font-size-md fw-semibold">Resit Details</span>
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
+                Resit Fee
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {formatNumber(resitDetails?.data?.resit_fee)}
+                </span>
+              </div>
+            </div>
+            <hr />
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="py-2 d-flex flex-column">
+                <span className="my-0 font-size-sm">
                 Payment Status
-              </p>
-            </div>
-          </div>
-          <span>Course Details</span>
-          <div className="d-flex align-items-center justify-content-between my-1">
-            <button
-              className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="clarity:email-line" />
-            </button>
-            <div className="border-bottom py-2" style={{ width: "87%" }}>
-              <p className="my-0">
-                {resit_details.data.courses.course_title}
-              </p>
-              <p
-                className="my-0 font-size-sm gainsboro-color"
-                onClick={() => {
-                  handleShow();
-                }}
-              >
-                Course Title
-              </p>
-            </div>
-          </div>
-          <span>Exam Details</span>
-          <div className="d-flex align-items-center justify-content-between my-1">
-            <button
-              className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "2.5rem",
-              }}
-            >
-              <Icon icon="clarity:email-line" />
-            </button>
-            <div className="border-bottom py-2" style={{ width: "87%" }}>
-              <p className="my-0">
-                {resit_details.data.exam.examtype.exam_name}
-              </p>
-              <p
-                className="my-0 font-size-sm gainsboro-color"
-                onClick={() => {
-                  handleShow();
-                }}
-              >
-                Exam Name
-              </p>
+                </span>
+                <span className="my-0 font-size-sm gainsboro-color">
+                  {resitDetails?.data?.paid_status}
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </>
-    );
-  }
-  export default Details;
+      </div>
+    </>
+  );
+}
+export default ResitFeeDetails;

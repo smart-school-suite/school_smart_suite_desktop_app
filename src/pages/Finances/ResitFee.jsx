@@ -8,9 +8,11 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import Table from "../../components/Tables/Tables";
 import PayStudentResitFee from "../../ModalContent/ResitFee/PayResitFee";
+import { CreateIcon, DetailsIcon } from "../../icons/ActionIcons";
+import ResitFeeDetails from "../../ModalContent/ResitFee/ResitFeeDetails";
 function ResitFee() {
-  const { data: studentResit, isFetching } = useGetStudentResits();
-  if (isFetching) {
+  const { data: studentResit, isLoading } = useGetStudentResits();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -70,6 +72,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Pay Fee</span>
+              <CreateIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -77,21 +80,12 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
+          onClick={() => handleShowModal(ResitFeeDetails, 'md')}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Fee Details</span>
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Fee</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>

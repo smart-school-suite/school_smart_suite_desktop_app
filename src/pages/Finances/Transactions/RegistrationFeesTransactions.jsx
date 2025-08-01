@@ -11,8 +11,8 @@ import { DropDownMenuItem } from "../../../components/DataTableComponents/Action
 import DeleteTransaction from "../../../ModalContent/RegistrationFees/DeleteTransaction";
 import TransactionDetails from "../../../ModalContent/RegistrationFees/TransactionDetails";
 function RegistrationFeeTransactions() {
-  const { data:transactions, isFetching } = useGetRegistrationFeeTransations();
-  if (isFetching) {
+  const { data:transactions, isLoading } = useGetRegistrationFeeTransations();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (

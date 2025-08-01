@@ -11,10 +11,11 @@ import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { CreateIcon, DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 
 function AdditionalFees() {
-  const { data: additionalFee, isFetching } = useGetAdditionalFees();
-  if (isFetching) {
+  const { data: additionalFee, isLoading } = useGetAdditionalFees();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -57,10 +58,6 @@ export function DropdownComponent(props) {
     setModalSize(size);
     setShowModal(true);
   };
-  //payadditional fee
-  //additional fee details
-  //update additional feee
-  //delete additional fee
   return (
     <>
       <ActionButtonDropdown
@@ -78,6 +75,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Pay Fee</span>
+              <CreateIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -90,6 +88,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Fee Details</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -102,6 +101,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Fee</span>
+              <UpdateIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -114,6 +114,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Fee</span>
+              <DeleteIcon />
             </div>
           </div>
         </DropDownMenuItem>

@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import { IsPathInRoutes } from "../../utils/functions";
 import {
   academicRoutes,
+  additionalFeeRoutes,
   adminRoutes,
   announcementRoutes,
   dashboardRoutes,
@@ -12,10 +13,14 @@ import {
   eventRoutes,
   examRoutes,
   financialRoutes,
+  registrationFeeRoutes,
+  resitFeeRoutes,
   resitRoutes,
   schoolActivities,
+  schoolExpenseRoutes,
   settingRoutes,
   StudentRoutes,
+  tuitionFeeRoutes,
 } from "../../utils/paths";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import Logout from "../../ModalContent/Auth/Logout";
@@ -574,72 +579,74 @@ function Sidebar() {
                   <div className="drop-down-container">
                     <div className="box-nav">
                       <div className="subbox-nav">
-                        <NavLink
-                          to="/school-expenses"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
+                        <div
+                          onClick={() => {
+                             navigate("/school-expenses")
+                          }}
+                          className={IsPathInRoutes(schoolExpenseRoutes)
+                            ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"
                           }
                         >
                           <p>School Expenses</p>
-                        </NavLink>
+                        </div>
                       </div>
                     </div>
                     <div className="box-nav">
                       <div className="subbox-nav">
-                        <NavLink
-                          to="/resit-payments"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
+                        <div
+                          onClick={() => {
+                             navigate("/resit-payments")
+                          }}
+                          className={IsPathInRoutes(resitFeeRoutes) 
+                            ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"
                           }
                         >
                           <p>Resit Fees</p>
-                        </NavLink>
+                        </div>
                       </div>
                     </div>
                     <div className="box-nav">
                       <div className="subbox-nav">
-                        <NavLink
-                          to="/fee-payments"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
-                          }
+                        <div
+                          onClick={() => {
+                             navigate("/fee-payments")
+                          }}
+                          className={IsPathInRoutes(tuitionFeeRoutes) ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"}
                         >
                           <p>Tuition Fees</p>
-                        </NavLink>
+                        </div>
                       </div>
                     </div>
                     <div className="box-nav">
                       <div className="subbox-nav">
-                        <NavLink
-                          to="/registration-fees"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
+                        <div
+                          onClick={() => {
+                             navigate("/registration-fees")
+                          }}
+                          className={IsPathInRoutes(registrationFeeRoutes)
+                             ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"
                           }
                         >
                           <p>Registration Fees</p>
-                        </NavLink>
+                        </div>
                       </div>
                     </div>
                     <div className="box-nav">
                       <div className="subbox-nav">
-                        <NavLink
-                          to="/additionalFees"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "text-decoration-none fw-medium color-primary"
-                              : "text-decoration-none gainsboro-color"
-                          }
+                        <div
+                          onClick={() => {
+                             navigate("/additional-fees")
+                          }}
+                          className={IsPathInRoutes(additionalFeeRoutes)
+                              ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"}
                         >
                           <p>Additional Fees</p>
-                        </NavLink>
+                        </div>
                       </div>
                     </div>
                   </div>

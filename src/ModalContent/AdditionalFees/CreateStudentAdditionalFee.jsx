@@ -43,7 +43,8 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
             </span>
           </div>
         </div>
-        <div className="my-1">
+       <div className="modal-content-container">
+         <div className="my-1">
           <span>Amount</span>
           <input
             type="number"
@@ -93,6 +94,7 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
           {isPending ? <SingleSpinner /> : "Create Additional Fee"}
         </button>
       </div>
+       </div>
     </>
   );
 }

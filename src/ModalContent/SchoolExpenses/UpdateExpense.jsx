@@ -2,6 +2,7 @@ import { useState } from "react";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
 import { useUpdateExpense } from "../../hooks/schoolExpenses/useUpdateSchoolExpense";
+import { useGetExpensesCategories } from "../../hooks/expenseCategory/useGetExpensesCategories";
 function UpdateExpense({ handleClose, rowData }) {
     const [formData, setFormData] = useState({
     date: "",
@@ -11,6 +12,7 @@ function UpdateExpense({ handleClose, rowData }) {
   });
   const expenseId = rowData.id;
   const { mutate:updateExpense, isPending } = useUpdateExpense(handleClose);
+  const { data:expenseCategory, isFetching } = useGetExpensesCategories();
     const handleExpensesCategorySelect = (selectedValues) => {
     setFormData((prevalue) => ({
       ...prevalue,
@@ -56,7 +58,7 @@ function UpdateExpense({ handleClose, rowData }) {
               <input
                 type="number"
                 className="form-control"
-                placeholder="enter the cost"
+                placeholder="Enter Amount"
                 name="amount"
                 onChange={(e) => handleInputChange("amount", e.target.value)}
                 step="0.01"
@@ -86,6 +88,7 @@ function UpdateExpense({ handleClose, rowData }) {
               <textarea
                 name="description"
                 className="form-control"
+                placeholder="Enter Reason for the Expenses"
                 onChange={(e) => handleInputChange("description", e.target.value)}
               ></textarea>
             </div>

@@ -12,8 +12,8 @@ import CustomModal from "../../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon } from "../../../icons/ActionIcons";
 function TuitionFeeTransactions() {
-  const { data: tuitionFees, isFetching } = useGetTuitionFeeTransactions();
-  if (isFetching) {
+  const { data: tuitionFees, isLoading } = useGetTuitionFeeTransactions();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -21,7 +21,7 @@ function TuitionFeeTransactions() {
       <div>
         <div className="d-flex flex-row align-items-center mb-2 w-100">
           <div>
-            <span className="font-size-sm">Tuition Fee Transactions</span>
+            <span className="font-size-sm fw-semibold">Tuition Fee Transactions</span>
           </div>
         </div>
         <div>

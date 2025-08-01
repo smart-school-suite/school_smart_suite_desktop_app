@@ -1,165 +1,96 @@
-import { useFetchExpensesDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { formatDate, formatNumber } from "../../utils/functions";
 import { Icon } from "@iconify/react";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
-function ExpenseDetails({ row_id, handleClose }) {
-  const {
-    data: expenseDetail,
-    isLoading,
-    error,
-  } = useFetchExpensesDetailsQuery({
-    expense_id: row_id,
-  });
-
-  if (isLoading) {
+import { useGetExpenseDetails } from "../../hooks/schoolExpenses/useGetSchoolExpenseDetails";
+function ExpenseDetails({ rowData, handleClose }) {
+  const { id:expenseId } = rowData;
+  const { data:expenseDetails, isFetching } = useGetExpenseDetails(expenseId);
+  if (isFetching) {
     return <Pageloaderspinner />;
   }
   return (
     <>
-      <div className="w-100 mt-2">
-        <p className="font-size-sm gainsboro-color my-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum id
-          excepturi cumque facere, asperiores
-        </p>
-        <div className="d-flex align-items-center justify-content-between my-1">
-          <button
-            className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "2.5rem",
+      <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+          <span className="m-0">Expense Details</span>
+          <span
+            className="m-0"
+            onClick={() => {
+              handleClose();
             }}
           >
-            <Icon icon="clarity:email-line" />
-          </button>
-          <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{expenseDetail.data.title}</p>
-            <p
-              className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
-            >
-              Expenses Title
-            </p>
+            <Icon icon="charm:cross" width="22" height="22" />
+          </span>
+        </div>
+        <div className="modal-content-container">
+          <div className="d-flex flex-column gap-1">
+          <div className="d-flex align-items-center justify-content-between">
+          <div className="py-2 d-flex flex-column">
+            <span className="my-0 font-size-sm gainsboro-color">
+              Expense Title
+            </span>
+            <span className="my-0 font-size-sm">
+              {expenseDetails.data.schoolexpensescategory.name}
+            </span>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-1">
-          <button
-            className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "2.5rem",
-            }}
-          >
-            <Icon icon="clarity:email-line" />
-          </button>
-          <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">
-              {formatNumber(
-                Number(expenseDetail.data.amount)
-              )}
-              $
-            </p>
-            <p
-              className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
-            >
+        <hr />
+        <div className="d-flex align-items-center justify-content-between">
+          <div className="py-2 d-flex flex-column">
+            <span className="my-0 font-size-sm gainsboro-color">
+              Reason
+            </span>
+            <span className="my-0 font-size-sm">
+              {expenseDetails.data.description}
+            </span>
+          </div>
+        </div>
+         <hr />
+        <div className="d-flex align-items-center justify-content-between">
+          <div className="py-2 d-flex flex-column">
+            <span className="my-0 font-size-sm gainsboro-color">
               Amount
-            </p>
+            </span>
+            <span className="my-0 font-size-sm">
+              {formatNumber(expenseDetails.data.amount)}
+            </span>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-1">
-          <button
-            className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "2.5rem",
-            }}
-          >
-            <Icon icon="clarity:email-line" />
-          </button>
-          <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">
-              {formatDate(expenseDetail.data.date)}
-            </p>
-            <p
-              className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
-            >
-              Date of spending
-            </p>
+        <hr />
+        <div className="d-flex align-items-center justify-content-between">
+          <div className="py-2 d-flex flex-column">
+            <span className="my-0 font-size-sm gainsboro-color">
+             Date of Expenditure
+            </span>
+            <span className="my-0 font-size-sm">
+              {formatDate(expenseDetails.data.date)}
+            </span>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-1">
-          <button
-            className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "2.5rem",
-            }}
-          >
-            <Icon icon="clarity:email-line" />
-          </button>
-          <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">
-              {expenseDetail.data.description}
-            </p>
-            <p
-              className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
-            >
-              Descriptions
-            </p>
+        <hr />
+        <span>System Expenditure Info</span>
+        <div className="d-flex align-items-center justify-content-between">
+          <div className="py-2 d-flex flex-column">
+            <span className="my-0 font-size-sm gainsboro-color">
+             Created At
+            </span>
+            <span className="my-0 font-size-sm">
+              {formatDate(expenseDetails.data.created_at)}
+            </span>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-between my-1">
-          <button
-            className="border-none d-flex flex-row align-items-center fs-5 justify-content-center color-primary"
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "2.5rem",
-            }}
-          >
-            <Icon icon="clarity:email-line" />
-          </button>
-          <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">
-              {
-                expenseDetail.data.schoolexpensescategory
-                  .names
-              }
-            </p>
-            <p
-              className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
-            >
-              Descriptions
-            </p>
+        <hr />
+        <div className="d-flex align-items-center justify-content-between">
+          <div className="py-2 d-flex flex-column">
+            <span className="my-0 font-size-sm gainsboro-color">
+             Updated At
+            </span>
+            <span className="my-0 font-size-sm">
+              {formatDate(expenseDetails.data.created_at)}
+            </span>
           </div>
         </div>
-        <div className="d-flex flex-row justify-content-end my-2 w-100">
-          <button className="border-none rounded-3  w-25 p-2 text-white primary-background text-white w-100"
-           onClick={() => {
-             handleClose();
-           }}
-          >
-            Close
-          </button>
         </div>
-      </div>
+        </div>
     </>
   );
 }

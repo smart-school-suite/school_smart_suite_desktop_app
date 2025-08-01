@@ -10,9 +10,10 @@ import React from "react";
 import { useState } from "react";
 import CustomModal from "../../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../../components/DataTableComponents/ActionComponent";
+import { DeleteIcon, DetailsIcon, ReverseIcon } from "../../../icons/ActionIcons";
 function AdditionalFeeTransactions() {
-  const { data: transactions, isFetching } = useGetAdditionalFeeTransactions();
-  if (isFetching) {
+  const { data: transactions, isLoading } = useGetAdditionalFeeTransactions();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -76,6 +77,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Reverse Transaction</span>
+              <ReverseIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -87,7 +89,8 @@ export function DropdownComponent(props) {
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Transaction</span>
+              <span>Delete</span>
+              <DeleteIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -100,6 +103,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Transaction Details</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>

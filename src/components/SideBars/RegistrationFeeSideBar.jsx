@@ -34,7 +34,7 @@ function SideBarComponent({ title, path }) {
 export const sideBarData = [
   {
     title: "Registration Fees",
-    path: "/registrationFees",
+    path: "/registration-fees",
   },
   {
     title: "Transactions",

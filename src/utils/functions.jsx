@@ -214,7 +214,6 @@ export function timeSince(date) {
     return "just now";
 }
 
-
 export function formatNumber(value, decimalPlaces = 0) {
    // Check if the input is a number
    if (isNaN(value)) {
@@ -235,7 +234,6 @@ export function formatNumber(value, decimalPlaces = 0) {
    // Return the formatted number
    return formattedWholePart + decimalPart;
 }
-
 
 export  function isInteger(value) {
     return typeof value === 'number' && Number.isInteger(value);
@@ -493,4 +491,66 @@ export function truncateText(text, maxLength) {
     truncatedText: truncated,
     isTruncated: true,
   };
+}
+
+
+export function formatISODate(isoString, formatType) {
+  try {
+    const date = new Date(isoString);
+
+    // Check if the date is valid.
+    if (isNaN(date.getTime())) {
+      return "Invalid Date";
+    }
+
+    switch (formatType) {
+      case 'locale':
+        // Use Intl.DateTimeFormat for a robust, locale-aware format.
+        const localeFormatter = new Intl.DateTimeFormat('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          timeZoneName: 'short',
+        });
+        return localeFormatter.format(date);
+
+      case 'specific':
+        // Helper function to add a leading zero if the number is less than 10.
+        const pad = (num) => (num < 10 ? '0' : '') + num;
+
+        const year = date.getFullYear();
+        const month = pad(date.getMonth() + 1); // getMonth() is 0-indexed
+        const day = pad(date.getDate());
+        const hours = pad(date.getHours());
+        const minutes = pad(date.getMinutes());
+        const seconds = pad(date.getSeconds());
+        return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+
+      case 'custom':
+      default: // Fallback to 'custom' format if formatType is invalid or not provided.
+        const monthNames = [
+          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+
+        const customDay = date.getDate();
+        const customMonth = monthNames[date.getMonth()];
+        const customYear = date.getFullYear();
+
+        let customHours = date.getHours();
+        const customMinutes = date.getMinutes();
+        const ampm = customHours >= 12 ? 'PM' : 'AM';
+        customHours = customHours % 12;
+        customHours = customHours ? customHours : 12; // The hour '0' should be '12'
+        const minutesPadded = customMinutes < 10 ? '0' + customMinutes : customMinutes;
+
+        return `${customDay} ${customMonth} ${customYear}, ${customHours}:${minutesPadded} ${ampm}`;
+    }
+  } catch (error) {
+    // Return a generic error message for any parsing issues.
+    return `Error: ${error.message}`;
+  }
 }

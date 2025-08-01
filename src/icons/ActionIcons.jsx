@@ -67,4 +67,9 @@ const ReuseIcon = ({ iconStyle }) => {
      )
 }
 
-export { ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }
+const ReverseIcon = ({ iconStyle }) => {
+     return (
+        <Icon icon="system-uicons:reverse" style={{...iconStyle, fontSize:"1rem"}} />
+     )
+}
+export { ReverseIcon, ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }

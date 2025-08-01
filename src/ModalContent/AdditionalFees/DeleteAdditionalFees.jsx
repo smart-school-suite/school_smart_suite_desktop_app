@@ -1,37 +1,14 @@
-import { useDeleteAddtionalFeeMutation } from "../../Slices/Asynslices/deleteSlice";
-import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function DeleteAdditionalFees({ handleClose, row_id: additionalFeeId }) {
-  const [feedback, setFeedback] = useState({
-    message: "",
-    type: null,
-    loading: false,
-  });
-  const [deleteAddtionalFee] = useDeleteAddtionalFeeMutation();
-
-  const handleDeleteAddtionalFees = async () => {
-    setFeedback({ message: "", type: null, loading: true });
-    try {
-      await deleteAddtionalFee(additionalFeeId).unwrap();
-      setFeedback({
-        message: "Addtional Fee  Deleted Successfully",
-        type: "success",
-        loading: false,
-      });
-    } catch (e) {
-      setFeedback({
-        message: "Oops, Couldn't Delete School Admin",
-        type: "error",
-        loading: false,
-      });
-    }
+import { useDeleteAdditionalFee } from "../../hooks/additionalFee/useDeleteAdditionalFee";
+function DeleteAdditionalFees({ handleClose, rowData }) {
+  const { id:additionalFeeId } = rowData;
+  const { mutate:deleteAdditionalFee, isPending } = useDeleteAdditionalFee(handleClose, additionalFeeId)
+  const handleDeleteAddtionalFees =  () => {
+    deleteAdditionalFee(additionalFeeId)
   };
   return (
     <>
-      {feedback.loading ? (
-        <SingleSpinner />
-      ) : !feedback.message ? (
-        <div className="w-100">
+     <div className="w-100">
           <h4 className="fw-semibold">Are you absolutely sure?</h4>
           <p className="my-3" style={{ fontSize: "0.85rem" }}>
             This action cannot be undone. This will permanently delete this
@@ -40,7 +17,7 @@ function DeleteAdditionalFees({ handleClose, row_id: additionalFeeId }) {
           </p>
           <div className="mt-4 d-flex justify-content-end gap-2">
             <button
-              className="border-none px-3 py-2 text-primary rounded-3 font-size-sm"
+              className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
               onClick={() => {
                 handleClose();
               }}
@@ -48,42 +25,14 @@ function DeleteAdditionalFees({ handleClose, row_id: additionalFeeId }) {
               Cancel
             </button>
             <button
-              className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+              className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={handleDeleteAddtionalFees}
+              disabled={isPending}
             >
-              Continue
+              {isPending ? <SingleSpinner /> : "Yes, Delete"}
             </button>
           </div>
         </div>
-      ) : (
-        <div className="w-100">
-          {feedback.message && (
-            <div
-              className={`alert ${
-                feedback.type === "error" ? "alert-warning" : "alert-success"
-              } font-size-sm`}
-            >
-              {feedback.message}
-            </div>
-          )}
-          <div className="mt-4 d-flex justify-content-end gap-2">
-            <button
-              className="border-none px-3 py-2 text-primary rounded-3 font-size-sm"
-              onClick={handleClose}
-            >
-              Close
-            </button>
-            {feedback.type === "error" && (
-              <button
-                className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
-                onClick={handleDeleteAddtionalFees}
-              >
-                Try Again
-              </button>
-            )}
-          </div>
-        </div>
-      )}
     </>
   );
 }

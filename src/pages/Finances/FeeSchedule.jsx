@@ -12,8 +12,8 @@ import UpdateFeeScheduleSlot from "../../ModalContent/FeeSchedule/UpdateFeeSched
 import CreateFeeScheduleSlots from "../../ModalContent/FeeSchedule/CreateFeeSchedule";
 import FeeScheduleSlots from "../../ModalContent/FeeSchedule/FeeScheduleSlots";
 function FeeSchedule(){
-    const  { data:feeSchedule, isFetching } = useGetFeeSchedule();
-    if(isFetching){
+    const  { data:feeSchedule, isLoading } = useGetFeeSchedule();
+    if(isLoading){
         return <DataTableNavLoader />
     }
     return(

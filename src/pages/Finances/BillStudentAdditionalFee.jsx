@@ -9,8 +9,8 @@ import { useGetStudents } from "../../hooks/student/useGetStudent";
 import { StudentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import CreateStudentAdditionalFee from "../../ModalContent/AdditionalFees/CreateStudentAdditionalFee";
 function BillStudentAdditionalFee(){
-  const { data:students, isFetching } = useGetStudents();
-  if(isFetching){
+  const { data:students, isLoading } = useGetStudents();
+  if(isLoading){
     return <DataTableNavLoader />
   }
     return(

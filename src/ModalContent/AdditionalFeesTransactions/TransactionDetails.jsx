@@ -1,44 +1,44 @@
-import { useFetchAdditionalFeesTransactionDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function TransactionDetails({ row_id: transactionId, handleClose }) {
-  const {
-    data: transactionDetails,
-    isLoading,
-    error,
-  } = useFetchAdditionalFeesTransactionDetailsQuery({
-    transactionId: transactionId,
-  });
+import { Icon } from "@iconify/react";
+import { useGetAdditionalFeeTransactionDetails } from "../../hooks/additionalFee/useGetAdditionalFeeTransactionDetails";
+import { formatNumber } from "../../utils/functions";
+function TransactionDetails({ rowData, handleClose }) {
+  const { id: transactionId } = rowData;
+  const { data: transactionDetails, isLoading } =
+    useGetAdditionalFeeTransactionDetails(transactionId);
   if (isLoading) {
     return <SingleSpinner />;
   }
   return (
     <>
-      <div className="d-flex flex-row align-items-center justify-content-between mb-3 px-2">
-        <h5 className="fw-semibold">Transation Details</h5>
-        <button
-          className="border-none text-white primary-background"
+      <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+        <span className="m-0">Transaction Details</span>
+        <span
+          className="m-0"
           onClick={() => {
             handleClose();
           }}
-          style={{
-            width: "2rem",
-            height: "2rem",
-            borderRadius: "2rem",
-            fontSize: "0.75rem",
-          }}
         >
-          <span>IC</span>
-        </button>
+          <Icon icon="charm:cross" width="22" height="22" />
+        </span>
       </div>
-      <div className="d-flex flex-row align-items-center gap-4">
-        <div className="w-100 border-bottom">
-          <div className="d-block">
-            <p className="my-0">{transactionDetails.data.amount}</p>
-            <span className="font-size-sm gainsboro-color">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aperiam,
-              iure facilis. Officiis placea
+      <div className="modal-content-container">
+        <div className="d-flex flex-column">
+          <div className="my-2 d-flex flex-row align-items-center justify-content-between">
+            <span className="font-size-sm gainsboro-color">TransactionID</span>
+            <span className="fw-semibold font-size-sm">
+              #{transactionDetails?.data?.transaction_id}
             </span>
           </div>
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="py-2 d-flex flex-column">
+              <span className="my-0 font-size-sm gainsboro-color">Amount</span>
+              <span className="my-0 font-size-sm">
+                {formatNumber(transactionDetails?.data?.amount)}
+              </span>
+            </div>
+          </div>
+          <hr />
         </div>
       </div>
     </>

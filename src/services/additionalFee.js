@@ -91,6 +91,6 @@ export const deleteAdditionalFee = async (feeId) => {
 }
 
 export const getAdditionalFeeDetails = async (feeId) => {
-     const response = await axiosInstance.delete(`additional-fees/${feeId}`);
+     const response = await axiosInstance.get(`additional-fees/details/${feeId}`);
      return response.data;
 }

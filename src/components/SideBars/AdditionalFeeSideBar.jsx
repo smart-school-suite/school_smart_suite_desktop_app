@@ -35,11 +35,11 @@ function SideBarComponent({ title, path }) {
 export const sideBarData = [
   {
     title: "Fee Payment",
-    path: "/additionalFees",
+    path: "/additional-fees",
   },
   {
     title: "Transactions",
-    path: "/additionalFeeTransactions",
+    path: "/additionalfee-transactions",
   },
   {
     title: "Bill Student",
