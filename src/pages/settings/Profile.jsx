@@ -13,9 +13,9 @@ import UpdateContactOne from "../../ModalContent/Profile/UpdateContactOne";
 import UpdateContactTwo from "../../ModalContent/Profile/UpdateContactTwo";
 import UpdateAddress from "../../ModalContent/Profile/UpdateAddress";
 function Profile() {
-  const { data:schoolAdmin, isFetching } = useGetAuthSchoolAdmin();
+  const { data:schoolAdmin, isLoading } = useGetAuthSchoolAdmin();
   const userData = useSelector((state) => state.auth.user);
-  if(isFetching){
+  if(isLoading){
      return <Pageloaderspinner />
   }
   return (

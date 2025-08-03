@@ -222,7 +222,7 @@ function Dashboard() {
         <section className="mt-2">
           <div className="d-flex flex-row gap-3 w-100 justify-content-between">
             <div
-              className="card p-2 rounded-4"
+              className="card p-2 rounded-4 border-none"
               style={{ width: "50%", height: "40dvh" }}
             >
               <div>
@@ -244,7 +244,7 @@ function Dashboard() {
               />
             </div>
             <div
-              className="card p-2 rounded-4"
+              className="card p-2 rounded-4 border-none"
               style={{ width: "50%", height: "40dvh" }}
             >
               <p className="text-start font-size-sm my-0">

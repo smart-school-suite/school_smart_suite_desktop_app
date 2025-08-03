@@ -1468,3 +1468,19 @@ input {
 .otp-input-container input::placeholder {
     text-align: center;
 }
+
+.hero-icon-box{
+    width: 3rem !important;
+    height: 3rem !important;
+    border-radius: 0.25rem;
+    display:grid;
+    place-items: center;
+}
+.hero-large-text{
+     font-weight: bold; /* Optional */
+  background: linear-gradient(90deg, #4A90E2, #1E3C72);
+  -webkit-background-clip: text; /* Chrome, Safari, Opera */
+  background-clip: text; /* Other browsers */
+  color: transparent; /* Make text fill transparent to show background */
+  -webkit-text-fill-color: transparent;
+}

@@ -231,6 +231,12 @@
 .rotate-45{
     transform: rotate(45deg);
 }
+.rotate-5{
+    transform: rotate(5deg);
+}
+.rotate-reverse-5{
+   transform: rotate(-5deg); 
+}
 .rotate-180{
     transform: rotate(180deg);
 }

@@ -237,7 +237,7 @@ export const AuthProvider = ({ children }) => {
         }
       );
       const responseData = response.data.data;
-      dispatch(handleSetValidatePasswordResetOtp({ passwordResetToken: responseData }));
+      dispatch(handleSetValidatePasswordResetOtp({ passwordResetToken: responseData.password_reset_token }));
       navigate("/change-password");
     } catch (e) {
       setAuthError((prevalue) => ({
@@ -262,7 +262,7 @@ export const AuthProvider = ({ children }) => {
         },
         {
           headers:{
-            PASSWORD_RESET_TOKEN:passwordResetToken
+            "password-reset-token":passwordResetToken
           }
         }
       )

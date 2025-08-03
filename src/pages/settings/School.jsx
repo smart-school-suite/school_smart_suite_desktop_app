@@ -11,8 +11,8 @@ import { formatDate, timeSince } from "../../utils/functions";
 import UpdateEstablishedDate from "../../ModalContent/School/UpdateEstablishedDate";
 function School() {
   const userData = useSelector((state) => state.auth.user);
-  const { data:schoolDetails, isFetching } = useGetSchoolDetails();
-  if(isFetching){
+  const { data:schoolDetails, isLoading } = useGetSchoolDetails();
+  if(isLoading){
     return <Pageloaderspinner />
   }
   return (
