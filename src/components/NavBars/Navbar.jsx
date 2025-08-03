@@ -87,7 +87,7 @@ function Navbar() {
               <span>Financial Analysis</span>
             </button>
             <button
-              className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center ${
+              className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center disable-cursor ${
                 location.pathname === "/operational-analysis"
                   ? "primary-background-100 color-primary"
                   : "transparent-bg gainsboro-color"
@@ -97,9 +97,9 @@ function Navbar() {
                 padding: "0.65rem",
                 fontSize: "0.92rem",
               }}
-              onClick={() => {
-                navigate("/operational-analysis");
-              }}
+             // onClick={() => {
+                //navigate("/operational-analysis");
+             // }}
             >
               <span>
                 <Icon icon="ep:operation" className="fs-4" />{" "}
@@ -107,7 +107,7 @@ function Navbar() {
               <span>Operational Analysis</span>
             </button>
             <button
-              className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center ${
+              className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center disable-cursor ${
                 location.pathname === "/academic-analysis"
                   ? "primary-background-100 color-primary"
                   : "transparent-bg gainsboro-color"
@@ -117,9 +117,9 @@ function Navbar() {
                 padding: "0.65rem",
                 fontSize: "0.92rem",
               }}
-              onClick={() => {
-                navigate("/academic-analysis");
-              }}
+             // onClick={() => {
+                //navigate("/academic-analysis");
+             // }}
             >
               <span>
                 <Icon icon="heroicons:academic-cap" className="fs-4" />{" "}

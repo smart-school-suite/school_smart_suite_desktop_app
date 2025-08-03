@@ -291,3 +291,8 @@ body{
     border: none;
     background-color: transparent;
 }
+
+.disable-cursor{
+    cursor: not-allowed;
+    pointer-events: none;
+}

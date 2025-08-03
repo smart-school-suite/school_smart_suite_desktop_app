@@ -15,7 +15,7 @@ import { useMarkAllNotificationsAsRead } from "../../hooks/notification/useMarkA
 import { formatISOTimeSince } from "../../utils/functions";
 function NotificationDropdown() {
   const [isToggled, setIsToggeled] = useState(false);
-  const { data:notifications, isLoading } = useGetNotifications();
+  const { data: notifications, isLoading } = useGetNotifications();
   const { refs, floatingStyles } = useFloating({
     placement: "bottom-end",
     middleware: [offset(5), flip(), shift()],
@@ -37,7 +37,6 @@ function NotificationDropdown() {
 
   const toggleDropdown = () => {
     setIsToggeled((prevalue) => !prevalue);
-
   };
 
   return (
@@ -53,7 +52,11 @@ function NotificationDropdown() {
         onClick={toggleDropdown}
       >
         <Icon icon="solar:bell-linear" className="z-1" />
-        <button className="notification-pill">{isLoading ? 0 : notifications?.data?.unread?.length }</button>
+        {notifications?.data?.unread.length > 0 ? (
+          <button className="notification-pill">
+            {isLoading ? null : notifications?.data?.unread?.length}
+          </button>
+        ) : null}
       </div>
       <CSSTransition
         in={isToggled}
@@ -68,7 +71,10 @@ function NotificationDropdown() {
         >
           <span className="font-size-lg my-2 fw-bold">Notifications</span>
           <div className="notifcation-container">
-            <Notifications  isLoading={isLoading}  unreadNotifications={notifications?.data?.unread}/>
+            <Notifications
+              isLoading={isLoading}
+              notificationData={notifications?.data}
+            />
           </div>
         </div>
       </CSSTransition>
@@ -78,31 +84,70 @@ function NotificationDropdown() {
 
 export default NotificationDropdown;
 
-
-function Notifications({ unreadNotifications, isLoading }) {
+function Notifications({ notificationData, isLoading }) {
+  const { mutate: markAllNotificationAsRead } = useMarkAllNotificationsAsRead();
+  useEffect(() => {
+    if (notificationData.unread.length > 0) {
+      markAllNotificationAsRead();
+    }
+  }, [notificationData?.unread]);
   return (
     <>
-      {
-        isLoading ? null : unreadNotifications?.map((items) => (
-        <div className="d-flex flex-row align-items-center gap-2 w-100 px-1">
-          <div className="blue-pill"></div>
-          <div className="flex flex-column w-100">
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <span className="font-size-sm fw-semibold">
-              {items.data.title}
-            </span>
-            <span style={{ fontSize: "0.65rem" }}>{formatISOTimeSince(items.created_at)}</span>
-          </div>
-          <TextDisplay 
-            content={items.data.body}
-            maxLength={100}
-            textStyle={"font-size-sm fw-light"}
-            readMeStyle={"font-size-sm fw-semibold"}
-          />
-        </div>
-        </div>
-      ))
-      }
+      {isLoading ? null : (
+        <>
+          {notificationData?.unread.map((items) => (
+            <>
+              <div className="d-flex flex-row align-items-center gap-2 w-100 px-1">
+                <div className="blue-pill"></div>
+                <div className="flex flex-column w-100 gap-1">
+                  <div className="d-flex flex-row align-items-center justify-content-between">
+                    <span className="font-size-sm fw-semibold">
+                      {items.data.title}
+                    </span>
+                    <span style={{ fontSize: "0.65rem" }}>
+                      {formatISOTimeSince(items.created_at)}
+                    </span>
+                  </div>
+                  <TextDisplay
+                    content={items.data.body || items.data.message}
+                    maxLength={100}
+                    textStyle={"font-size-sm fw-light gainsboro-color"}
+                    readMeStyle={"font-size-sm fw-semibold"}
+                  />
+                </div>
+              </div>
+              <div className="px-3">
+                <hr />
+              </div>
+            </>
+          ))}
+          {notificationData?.read.map((items) => (
+            <>
+              <div className="d-flex flex-row align-items-center gap-2 w-100 px-1">
+                <div className="flex flex-column w-100 gap-1">
+                  <div className="d-flex flex-row align-items-center justify-content-between">
+                    <span className="font-size-sm fw-semibold">
+                      {items.data.title}
+                    </span>
+                    <span style={{ fontSize: "0.65rem" }}>
+                      {formatISOTimeSince(items.created_at)}
+                    </span>
+                  </div>
+                  <TextDisplay
+                    content={items.data.body || items.data.message}
+                    maxLength={100}
+                    textStyle={"font-size-sm fw-light gainsboro-color"}
+                    readMeStyle={"font-size-sm fw-semibold"}
+                  />
+                </div>
+              </div>
+              <div className="px-3">
+                <hr />
+              </div>
+            </>
+          ))}
+        </>
+      )}
     </>
   );
 }
