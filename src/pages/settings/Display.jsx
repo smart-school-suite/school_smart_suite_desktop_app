@@ -63,7 +63,7 @@ function Display() {
               </div>
             </div>
             <div>
-              <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
+             {/* <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
                 Font Settings
               </span>
               <div
@@ -107,7 +107,7 @@ function Display() {
                     />
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
     </>

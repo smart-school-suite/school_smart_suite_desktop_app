@@ -13,13 +13,6 @@ import { AuthProvider } from "./context/authContext";
 import Links from "./routers/Links";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import NotificationFetcher from "./components/BackgroundFetchers/BackgroundNotificationFetch";
-  //if (import.meta.env.MODE === 'development') {
-   // const { default: whyDidYouRender } = await import('@welldone-software/why-did-you-render');
-   // whyDidYouRender(React, {
-      //trackAllPureComponents: true,
-      //trackHooks: true,
-    //});
- // }
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

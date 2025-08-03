@@ -10,6 +10,7 @@ import NumberFlow from "@number-flow/react";
 import { useSelector } from "react-redux";
 import { useGetSchoolFinancialStats } from "../../hooks/financialStat/useGetSchoolFinancialStats";
 import DashboardPageLoader from "../../components/PageLoaders/DashboardPageLoader";
+import { formatMonthlyChartData } from "../../utils/chartUtils";
 function Dashboard() {
   const currentYear = new Date().getFullYear();
   const { data, isLoading } = useGetSchoolFinancialStats(currentYear);
@@ -48,8 +49,9 @@ function Dashboard() {
   return (
     <>
       
-      <div className="container pb-3">
-        <div className="d-flex flex-row justify-content-between align-items-end mt-2">
+      <div>
+       <div className="dashboard-content-box px-2">
+         <div className="d-flex flex-row justify-content-between align-items-end mt-2">
           <div className="d-block">
             <div>
               <p className="my-0">Revenue</p>
@@ -57,7 +59,7 @@ function Dashboard() {
             <div className="d-flex flex-row align-items-center gap-2">
               <div>
                 <h2 className="fw-bold my-0 primary-color-dark">
-                  {currency} {formatNumber(data.data.revenue_progress.total_revenue)}
+                  {currency} <NumberFlow value={data.data.revenue_progress.total_revenue} />
                   <span className="light-skyblue-color">.00</span>
                 </h2>
               </div>
@@ -73,7 +75,7 @@ function Dashboard() {
                     icon="material-symbols:keyboard-double-arrow-up"
                     className="increase-icon fs-6"
                   />
-                  <span>+20%</span>
+                  <span>{<NumberFlow value={(data.data.revenue_progress.revenue_increase_stat.percentage).toFixed(1)}/>} %</span>
                 </button>
                 <button
                   className="d-flex flex-row border-none align-items-center rounded-pill gap-1 primary-color-dark fw-medium my-0 font-size-sm"
@@ -83,7 +85,7 @@ function Dashboard() {
                   }}
                 >
                   <Icon icon="ic:round-plus" />
-                  <span>500,000 {currency}</span>
+                  <span><NumberFlow value={data.data.revenue_progress.revenue_increase_stat.value}/> {currency}</span>
                 </button>
               </div>
             </div>
@@ -105,18 +107,18 @@ function Dashboard() {
         <section className="mt-2">
           <CardGroup
             cardOne={<CardOne data={{
-              tuitionFeePaid:0,
+              tuitionFeePaid:data.data.total_tuition_fees_paid,
               currency
             }}/>}
             cardTwo={<CardTwo 
               data={{
-                 totalExpenses:0,
+                 totalExpenses:data.data.total_school_expenses,
                  currency
               }}
             />}
             cardThree={<CardThree 
               data={{
-                 additionalFeePaid:0,
+                 additionalFeePaid:data.data.additional_fee_total_amount_paids,
                  currency
               }}
             />}
@@ -149,10 +151,8 @@ function Dashboard() {
                 config={{
                   backgroundColor: "#ffe4d5",
                   borderColor: "#fd9d74",
-                  labels: labelsConfig.months,
-                  data: [
-                    100, 300, 400, 500, 600, 200, 400, 599, 389, 309, 209, 176,
-                  ],
+                  labels: formatMonthlyChartData(data.data.school_expenses_over_time).labels,
+                  data: formatMonthlyChartData(data.data.school_expenses_over_time).data,
                 }}
               />
             </div>
@@ -188,10 +188,10 @@ function Dashboard() {
               </div>
               <div className="w-100 d-flex flex-row justify-content-center h-75 mt-3">
                 <PieChart
-                  resitFees={100}
-                  tuitionFee={150}
-                  registrationFee={200}
-                  additionalFees={250}
+                  resitFees={data.data.school_revenue_source.resit_fees}
+                  tuitionFee={data.data.school_revenue_source.tuition_fees}
+                  registrationFee={data.data.school_revenue_source.registration_fees}
+                  additionalFees={data.data.school_revenue_source.additional_fees}
                 />
               </div>
             </div>
@@ -209,13 +209,10 @@ function Dashboard() {
               <div className="w-100" style={{ height: "98%" }}>
                 <LineChart
                   config={{
-                    label:labelsConfig.months,
+                    label:formatMonthlyChartData(data.data.total_tuition_fees_paid_over_time).labels,
                     bgColor:"#e5f2f9",
                     borderColor:"#5bb4d5",
-                    data: [
-                      1000, 950, 450, 550, 590, 849, 483, 389, 324, 103, 400,
-                      394, 490,
-                    ],
+                    data:formatMonthlyChartData(data.data.total_tuition_fees_paid_over_time).data,
                   }}
                 />
               </div>
@@ -241,8 +238,8 @@ function Dashboard() {
                 config={{
                   backgroundColor: "#ffe3e1",
                   borderColor: "#ffa7a1",
-                  labels: labelsConfig.schoolYears,
-                  data: [100, 300, 400, 500, 150],
+                  labels: data.data.total_registration_fee_over_years.map((items) => items.year),
+                  data: data.data.total_registration_fee_over_years.map((items) => items.total_amount),
                 }}
               />
             </div>
@@ -253,7 +250,7 @@ function Dashboard() {
               <p className="text-start font-size-sm my-0">
                 Enrollment Numbers over Past Five Years
               </p>
-              <h5 className="fw-bold">5000</h5>
+              <h5 className="fw-bold">{data.data.total_student_registration}</h5>
               <LineChart
                 config={{
                   borderColor:"#38bff8",
@@ -265,6 +262,7 @@ function Dashboard() {
             </div>
           </div>
         </section>
+       </div>
       </div>
     </>
   );
@@ -307,7 +305,7 @@ export function CardOne({ data }) {
                  <span>{data.currency}</span> <NumberFlow value={data.tuitionFeePaid} />
               </h4>
             </div>
-            <div className="d-flex flex-row align-items-center gap-2">
+            {/*<div className="d-flex flex-row align-items-center gap-2">
               <button
                 className="rounded-pill px-2 py-1 d-flex gap-2 border-none font-size-sm fw-semibold"
                 style={{ backgroundColor: "#e5f2f9", color:"#66BB6A" }}
@@ -321,7 +319,7 @@ export function CardOne({ data }) {
                 <span>5.5%</span>
               </button>
               <span className="font-size-sm">Than Last Year</span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -365,7 +363,7 @@ export function CardTwo({data}) {
                <span>{data.currency}</span> <NumberFlow value={data.totalExpenses} />
               </h4>
             </div>
-            <div className="d-flex flex-row align-items-center gap-2">
+           {/* <div className="d-flex flex-row align-items-center gap-2">
               <button
                 className="rounded-pill px-2 py-1 d-flex gap-2 border-none font-size-sm fw-semibold"
                 style={{ backgroundColor: "#ffe4d5",  color:"#28a745" }}
@@ -379,7 +377,7 @@ export function CardTwo({data}) {
                 <span>100.5%</span>
               </button>
               <span className="font-size-sm">Than Last Year</span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -423,7 +421,7 @@ export function CardThree({data}) {
                <span>{data.currency}</span> <NumberFlow value={data.additionalFeePaid} />
               </h4>
             </div>
-            <div className="d-flex flex-row align-items-center gap-2">
+            {/*<div className="d-flex flex-row align-items-center gap-2">
               <button
                 className="rounded-pill px-2 py-1 d-flex gap-2 border-none font-size-sm fw-semibold"
                 style={{ backgroundColor: "#cadced", color:"#ff2323" }}
@@ -438,7 +436,7 @@ export function CardThree({data}) {
                 <span>5.5%</span>
               </button>
               <span className="font-size-sm">Than Last Year</span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

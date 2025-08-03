@@ -6,6 +6,10 @@ export const settingRoutes = [
   "/settings/profile",
   "/settings/security",
   "/settings/help",
+  "/settings/app-settings",
+  "/settings/subscription",
+  "/settings/school-branch",
+  "/settings/school"
 ];
 
 

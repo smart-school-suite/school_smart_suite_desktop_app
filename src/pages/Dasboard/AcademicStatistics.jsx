@@ -1,6 +1,5 @@
 import Navbar from "../../components/NavBars/Navbar";
 import DashboardPageLoader from "../../components/PageLoaders/DashboardPageLoader";
-import { DashboardNavabarOptions } from "../../ComponentConfig/navBarConfig";
 import { useFetchAcademicStatsQuery } from "../../Slices/Asynslices/fetchSlice";
 import CardGroup from "../../components/Cardgroup";
 import { Icon } from "@iconify/react";
@@ -8,7 +7,7 @@ import BarChart from "../../components/ChartComponents/BarChart";
 import LineChart from "../../components/chartcomponents/Linecharts";
 import GaugeChart from "../../components/ChartComponents/GaugeChart";
 function AcademicStatistics() {
-  const { isLoading, error } = useFetchAcademicStatsQuery({
+  const { data:data, isLoading} = useFetchAcademicStatsQuery({
     year: 2025,
   });
   const labelsConfig = {
@@ -37,43 +36,43 @@ function AcademicStatistics() {
   if (isLoading) {
     return (
       <>
-        <Navbar options={DashboardNavabarOptions} />
         <DashboardPageLoader />
       </>
     );
   }
   return (
     <>
-      <Navbar options={DashboardNavabarOptions} />
       <div className="mt-4">
         <CardGroup />
       </div>
-      <div className="d-flex flex-row align-items-center w-100 gap-2 mt-2">
+      <div className="d-flex flex-row align-items-center w-100 gap-1 mt-2">
         <div style={{ width: "40%" }}>
           <div>
             <span className="font-size-sm">Exam Pass And Fail Rates For the current Year</span>
-            <div className="d-flex flex-row align-items-center gap-2 w-100 mt-2 mb-2">
-            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center">
+            <div className="d-flex flex-row align-items-center gap-2 w-100">
+            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center border-none">
               <div className="w-50 font-size-sm">
                 <span>Exam Pass Rate</span>
               </div>
               <div className="w-50">
                 <GaugeChart 
-                   size={100}
+                   size={90}
                    strokeWidth={5}
                    color="#4CAF50"
+                   value={data.data.ca_exam_pass_fail_rates_current_year.exam_pass_rate}
                 />
               </div>
             </div>
-            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center">
+            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center border-none">
                 <div className="w-50 font-size-sm">
                 <span>Exam Fail Rate</span>
               </div>
               <div className="w-50">
                 <GaugeChart 
-                   size={100}
+                   size={90}
                    strokeWidth={5}
                    color="#e53935"
+                   value={data.data.ca_exam_pass_fail_rates_current_year.exam_fail_rate}
                 />
               </div>
             </div>
@@ -81,29 +80,30 @@ function AcademicStatistics() {
           </div>
           <div>
             <span className="font-size-sm">CA Exam Pass And Fail Rates For the current Year</span>
-            <div className="d-flex flex-row align-items-center mt-2 gap-2 w-100">
-            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center">
+            <div className="d-flex flex-row align-items-center gap-2 w-100">
+            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center border-none">
             <div className="w-50 font-size-sm">
                 <span>CA Exam Pass Rate</span>
               </div>
               <div className="w-50">
                 <GaugeChart 
-                   size={100}
+                   size={90}
                    strokeWidth={5}
                    color="#4CAF50"
+                   value={data.data.ca_exam_pass_fail_rates_current_year.ca_pass_rate}
                 />
               </div>
             </div>
-            <div className="card w-50 py-3 px-1 rounded-4 d-flex flex-row align-items-center">
+            <div className="card w-50 py-3 px-1 rounded-4 gap-2 d-flex flex-row align-items-center border-none">
                  <div className="w-50 font-size-sm">
                 <span>CA Exam Fail Rate</span>
               </div>
               <div className="w-50">
                 <GaugeChart 
-                   size={100}
+                   size={90}
                    strokeWidth={5}
                    color="#e53935"
-                   value={10}
+                   value={data.data.ca_exam_pass_fail_rates_current_year.ca_fail_rate}
                 />
               </div>
             </div>
@@ -112,7 +112,7 @@ function AcademicStatistics() {
         </div>
         <div style={{ width: "30%" }} className="d-flex flex-column gap-2">
           <span className="font-size-sm">Upcoming Exams</span>
-          <div className="card p-2 rounded-4 gap-2 font-size-sm d-flex flex-column">
+          <div className="card p-2 rounded-4 gap-2 font-size-sm d-flex flex-column border-none">
             <div className="d-flex flex-column">
               <span className="font-size-sm fw-semibold">
                 First Semester CA
@@ -124,7 +124,6 @@ function AcademicStatistics() {
               Praesentium quas facilis delectus nobis ratione
             </p>
             <div className="d-flex flex-column">
-              <span>30 Marks</span>
               <span>
                 {" "}
                 <Icon icon="circum:calendar" width="20" height="20" /> 10 Jan
@@ -132,7 +131,7 @@ function AcademicStatistics() {
               </span>
             </div>
           </div>
-          <div className="card p-2 rounded-4 gap-2 font-size-sm d-flex flex-column">
+          <div className="card p-2 rounded-4 gap-2 font-size-sm d-flex flex-column border-none">
             <div className="d-flex flex-column">
               <span className="font-size-sm fw-semibold">
                 First Semester CA
@@ -144,7 +143,6 @@ function AcademicStatistics() {
               Praesentium quas facilis delectus nobis ratione
             </p>
             <div className="d-flex flex-column">
-              <span>30 Marks</span>
               <span>
                 {" "}
                 <Icon icon="circum:calendar" width="20" height="20" /> 10 Jan
@@ -155,7 +153,7 @@ function AcademicStatistics() {
         </div>
         <div style={{ width: "30%" }} className="d-flex flex-column gap-2">
           <span className="font-size-sm">Ongoing Semesters</span>
-          <div className="card p-2 rounded-4 gap-2 font-size-sm d-flex flex-column">
+          <div className="card p-2 rounded-4 gap-2 font-size-sm d-flex flex-column border-none">
             <div className="d-flex flex-column">
               <span className="font-size-sm fw-semibold">
                 First Semester
@@ -174,7 +172,7 @@ function AcademicStatistics() {
               </span>
             </div>
           </div>
-          <div className="card p-2 rounded-4 gap-2 font-size-sm d-flex flex-column">
+          <div className="card p-2 rounded-4 gap-2 font-size-sm d-flex flex-column border-none">
             <div className="d-flex flex-column">
               <span className="font-size-sm fw-semibold">
                 First Semester CA
@@ -186,7 +184,6 @@ function AcademicStatistics() {
               Praesentium quas facilis delectus nobis ratione
             </p>
             <div className="d-flex flex-column">
-              <span>30 Marks</span>
               <span>
                 {" "}
                 <Icon icon="circum:calendar" width="20" height="20" /> 10 Jan
@@ -197,7 +194,7 @@ function AcademicStatistics() {
         </div>
       </div>
       <div className="d-flex flex-row align-items-center gap-2 mt-2">
-        <div className="card w-50 rounded-4 p-2">
+        <div className="card w-50 rounded-4 p-2 border-none">
           <div className="font-size-sm d-flex flex-column mb-4">
             <span className="fw-semibold font-size-sm">
               Pass Rate Over 5 years
@@ -213,7 +210,7 @@ function AcademicStatistics() {
             }}
           />
         </div>
-         <div className="card w-50 rounded-4 p-2">
+         <div className="card w-50 rounded-4 p-2 border-none">
           <div className="font-size-sm d-flex flex-column mb-4">
             <span className="fw-semibold font-size-sm">
               Fail Rate Over 5 years

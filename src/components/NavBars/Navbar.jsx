@@ -3,16 +3,27 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import NotificationDropdown from "../Dropdowns/NotificationDropdown";
 import createEcho from "../../echo/echo";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { addNotification } from "../../Slices/Asynslices/NotificationSlice";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  isPermissionGranted,
+  requestPermission,
+  sendNotification,
+} from '@tauri-apps/plugin-notification';
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState([]);
   const userData = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const handleNotification = async () => {
+      try{
+         let permissionGranted = await isPermissionGranted();
+      }
+      catch(e){
+        console.log(e)
+      }
+  }
   const userId = userData.id;
 
   const echo = createEcho(token);
@@ -22,19 +33,7 @@ function Navbar() {
       `App.Models.Schooladmin.${userData.authSchoolAdmin.id}`
     );
     channel.notification((notification) => {
-      dispatch(
-        addNotification({
-          id: notification.id,
-          title: notification.title,
-          body: notification.body,
-          created_at: notification.created_at
-            ? notification.created_at
-            : new Date().toISOString(),
-          isUnread: true,
-          read_at: null,
-        })
-      );
-      setNotifications((prev) => [notification, ...prev]);
+       queryClient.invalidateQueries({ queryKey:['notifications'] })
     });
 
     return () => {
@@ -148,7 +147,6 @@ function Navbar() {
                 borderRadius: "3.0rem",
               }}
             >
-              {console.log("userData.authSchoolAdmin.profile_picture", userData.authSchoolAdmin.profile_picture)}
               <img
               
                 src={`http://127.0.0.1:8000/storage/SchoolAdminAvatars/${userData.authSchoolAdmin.profile_picture}`}

@@ -10,14 +10,12 @@ import {
 } from "@floating-ui/react";
 import { useState, useEffect } from "react";
 import TextDisplay from "../TextComponents/TextDisplay";
-import { useDispatch, useSelector } from "react-redux";
-import { markAllNotificationsAsRead } from "../../Slices/Asynslices/NotificationSlice";
+import { useGetNotifications } from "../../hooks/notification/useGetNotification";
+import { useMarkAllNotificationsAsRead } from "../../hooks/notification/useMarkAllNotifcationAsRead";
+import { formatISOTimeSince } from "../../utils/functions";
 function NotificationDropdown() {
   const [isToggled, setIsToggeled] = useState(false);
-  const dispatch = useDispatch();
-  const notificationCount = useSelector((state => state.notification.unreadNotificationCount));
-  const unreadNotifications = useSelector((state => state.notification.unreadNotifications));
-  const readNotifications = useSelector((state => state.notification.readNotifications));
+  const { data:notifications, isLoading } = useGetNotifications();
   const { refs, floatingStyles } = useFloating({
     placement: "bottom-end",
     middleware: [offset(5), flip(), shift()],
@@ -55,7 +53,7 @@ function NotificationDropdown() {
         onClick={toggleDropdown}
       >
         <Icon icon="solar:bell-linear" className="z-1" />
-        <button className="notification-pill">{notificationCount}</button>
+        <button className="notification-pill">{isLoading ? 0 : notifications?.data?.unread?.length }</button>
       </div>
       <CSSTransition
         in={isToggled}
@@ -68,10 +66,9 @@ function NotificationDropdown() {
           ref={refs.setFloating}
           style={{ ...floatingStyles, zIndex: 1000, width: "27%" }}
         >
-          <span className="font-size-sm my-2 fw-semibold">Notifications</span>
+          <span className="font-size-lg my-2 fw-bold">Notifications</span>
           <div className="notifcation-container">
-            <UnreadNotifications unreadNotifications={unreadNotifications}/>
-            <ReadNotifications  readNotifications={readNotifications}/>
+            <Notifications  isLoading={isLoading}  unreadNotifications={notifications?.data?.unread}/>
           </div>
         </div>
       </CSSTransition>
@@ -81,52 +78,31 @@ function NotificationDropdown() {
 
 export default NotificationDropdown;
 
-function ReadNotifications({ readNotifications }) {
+
+function Notifications({ unreadNotifications, isLoading }) {
   return (
     <>
-     {
-       readNotifications.map((items) => (
-         <div className="flex flex-column">
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <span className="font-size-sm fw-semibold">
-              {items.title}
-            </span>
-            <span style={{ fontSize: "0.65rem" }}>{items.created_at}</span>
-          </div>
-          <TextDisplay 
-            content={items.body}
-            maxLength={100}
-            textStyle={"font-size-sm fw-light"}
-            readMeStyle={"font-size-sm fw-semibold"}
-          />
-        </div>
-       ))
-     }
-    </>
-  );
-}
-function UnreadNotifications({ unreadNotifications }) {
-  return (
-    <>
-      {unreadNotifications.map((items) => (
+      {
+        isLoading ? null : unreadNotifications?.map((items) => (
         <div className="d-flex flex-row align-items-center gap-2 w-100 px-1">
           <div className="blue-pill"></div>
           <div className="flex flex-column w-100">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <span className="font-size-sm fw-semibold">
-              {items.title}
+              {items.data.title}
             </span>
-            <span style={{ fontSize: "0.65rem" }}>{items.created_at}</span>
+            <span style={{ fontSize: "0.65rem" }}>{formatISOTimeSince(items.created_at)}</span>
           </div>
           <TextDisplay 
-            content={items.body}
+            content={items.data.body}
             maxLength={100}
             textStyle={"font-size-sm fw-light"}
             readMeStyle={"font-size-sm fw-semibold"}
           />
         </div>
         </div>
-      ))}
+      ))
+      }
     </>
   );
 }

@@ -56,7 +56,7 @@ function Profile() {
           <span className="font-size-sm my-1">Personal Details</span>
           <div className="card border-none p-2">
               <ModalButton 
-                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100"}
+                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
                 action={{ modalContent:UpdateFullNames }}
               >
                 <div className="d-flex flex-column text-start">
@@ -74,7 +74,7 @@ function Profile() {
               </ModalButton>
             <hr />
               <ModalButton
-               classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100"}
+               classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
               >
                 <div className="d-flex flex-column text-start">
                 <span className="fw-semibold">First Name</span>
@@ -91,7 +91,7 @@ function Profile() {
               </ModalButton>
             <hr />
               <ModalButton
-               classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100"}
+               classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
                action={{ modalContent:UpdateLastName }}
               >
                 <div className="d-flex flex-column text-start">
@@ -109,7 +109,7 @@ function Profile() {
               </ModalButton>
              <hr />
              <ModalButton
-              classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100"}
+              classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
               action={{ modalContent:UpdateDOB }}
              >
               <div className="d-flex flex-column text-start">
@@ -127,7 +127,7 @@ function Profile() {
              </ModalButton>
             <hr />
               <ModalButton
-                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100"}
+                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
                 action={{ modalContent:UpdateCulturalBackground }}
               >
                 <div className="d-flex flex-column text-start">
@@ -149,7 +149,7 @@ function Profile() {
           <span className="font-size-sm my-1">Contact Details</span>
           <div className="card border-none p-2">
             <ModalButton
-                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100"}
+                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
                 action={{ modalContent:UpdateEmail }}
               >
                  <div className="d-flex flex-column text-start">
@@ -168,7 +168,7 @@ function Profile() {
             <hr />
             <ModalButton
                 action={{ modalContent:UpdateContactOne }}
-                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100"}
+                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
               >
                 <div className="d-flex flex-column text-start">
                 <span className="fw-semibold">Contact One</span>
@@ -185,7 +185,7 @@ function Profile() {
               </ModalButton>
             <hr />
             <ModalButton
-              classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100"}
+              classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
               action={{ modalContent:UpdateContactTwo }}
             >
               <div className="d-flex flex-column text-start">
@@ -207,7 +207,7 @@ function Profile() {
           <span className="font-size-sm my-1">Location Details</span>
           <div className="card border-none p-2">
               <ModalButton
-                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100"}
+                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
                 action={{ modalContent:UpdateAddress }}
               >
                  <div className="d-flex flex-column text-start">

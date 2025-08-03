@@ -19,8 +19,8 @@ import ActivateStudent from "../../ModalContent/Student/ActivateStudent";
 import { DetailsIcon, UpdateIcon, DeleteIcon, SuspendIcon, ActivateIcon,  } from "../../icons/ActionIcons";
 import { StudentIcon } from "../../icons/Icons";
 function Students() {
-  const { data: students, isFetching } = useGetStudents();
-  if (isFetching) {
+  const { data: students, isLoading } = useGetStudents();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (

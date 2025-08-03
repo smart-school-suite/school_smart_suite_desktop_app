@@ -16,8 +16,8 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { ParentIcon } from "../../icons/Icons";
 function Parents() {
-  const { data: guardians, isFetching } = useGetAllParents();
-  if (isFetching) {
+  const { data: guardians, isLoading } = useGetAllParents();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (

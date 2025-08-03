@@ -34,7 +34,6 @@
     ]
   },
    "plugins": {
-    "notification": true,
     "shell": {
       "open": true
     }

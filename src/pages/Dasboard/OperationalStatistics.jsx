@@ -1,8 +1,5 @@
-import Navbar from "../../components/NavBars/Navbar";
-import { DashboardNavabarOptions } from "../../ComponentConfig/navBarConfig";
 import { useFetchOperationalStatsQuery } from "../../Slices/Asynslices/fetchSlice";
 import DashboardPageLoader from "../../components/PageLoaders/DashboardPageLoader";
-import CardGroup from "../../components/Cardgroup";
 import { Icon } from "@iconify/react";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { formatDateWithSuffix } from "../../utils/functions";
@@ -19,7 +16,6 @@ function OperationalStatistics() {
   if (isLoading) {
     return (
       <>
-        <Navbar options={DashboardNavabarOptions} />
         <DashboardPageLoader />
       </>
     );
@@ -27,7 +23,6 @@ function OperationalStatistics() {
   return (
     <>
       <div className="container pb-3 pt-2">
-        <Navbar options={DashboardNavabarOptions} />
         <div className="d-flex flex-row justify-content-between align-items-end my-3">
           <div className="d-block">
             <div>
@@ -82,11 +77,7 @@ function OperationalStatistics() {
           </div>
         </div>
         <section>
-          <CardGroup
-            cardOne={<CardOne />}
-            cardTwo={<CardTwo />}
-            cardThree={<CardThree />}
-          />
+          
         </section>
         <section className="mt-2">
           <div className="d-flex flex-row gap-3 w-100 justify-content-between">

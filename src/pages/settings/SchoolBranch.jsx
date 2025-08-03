@@ -34,7 +34,7 @@ function SchoolBranch() {
                 style={{ fontSize: "0.87rem" }}
               >
                 <ModalButton
-                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100"}
+                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
                   action={{ modalContent:UpdateSchoolBranchName }}
                 >
                  <div className="d-flex flex-column text-start">
@@ -51,7 +51,7 @@ function SchoolBranch() {
                 <div >
                   <ModalButton
                     action={{ modalContent:UpdateSchoolBranchAbbreviation }}
-                    classname={"d-flex flex-row w-100 align-items-center justify-content-between w-100"}
+                    classname={"d-flex flex-row w-100 align-items-center justify-content-between w-100 remove-button-style"}
                    >
                     <div className="d-flex flex-column text-start">
                     <span className="fw-semibold">School Branch Abbreviation</span>
@@ -78,7 +78,7 @@ function SchoolBranch() {
                 style={{ fontSize: "0.87rem" }}
               >
                 <ModalButton
-                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100"}
+                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
                   action={{
                      modalContent:UpdateSchoolBranchAddress
                   }}
@@ -97,7 +97,7 @@ function SchoolBranch() {
                 </ModalButton>
                 <hr />
                 <ModalButton
-                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100"}
+                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
                   action={{ modalContent:UpdateSchoolBranchState }}
                 >
                   <div className="d-flex flex-column text-start">
@@ -114,7 +114,7 @@ function SchoolBranch() {
                 </ModalButton>
                 <hr />
                 <ModalButton
-                 classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100"}
+                 classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
                  action={{ modalContent:UpdateSchoolBranchCity }}
                 >
                   <div className="d-flex flex-column text-start">
@@ -157,7 +157,7 @@ function SchoolBranch() {
                 style={{ fontSize: "0.87rem" }}
               >
                   <ModalButton
-                    classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100"}
+                    classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
                     action={{ modalContent:UpdateSchoolBranchContactOne }}
                   >
                     <div className="d-flex flex-column text-start">
@@ -176,7 +176,7 @@ function SchoolBranch() {
                   </ModalButton>
                 <hr />
                 <ModalButton
-                  classname="w-100 d-flex flex-row align-items-center justify-content-between w-100"
+                  classname="w-100 d-flex flex-row align-items-center justify-content-between w-100 remove-button-style"
                   action={{ modalContent:UpdateSchoolBranchContactTwo }}
                 >
                   <div className="d-flex flex-column text-start">
@@ -196,7 +196,7 @@ function SchoolBranch() {
                 <hr />
                 <div >
                   <ModalButton
-                    classname="d-flex flex-row align-items-center justify-content-between pointer-cursor w-100"
+                    classname="d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"
                     action={{ modalContent:UpdateSchoolBranchEmail }}
                   >
                     <div className="d-flex flex-column text-start">
@@ -215,7 +215,7 @@ function SchoolBranch() {
                 <hr />
                 <div >
                   <ModalButton
-                   classname="d-flex flex-row align-item-center justify-content-between pointer-cursor w-100"
+                   classname="d-flex flex-row align-item-center justify-content-between pointer-cursor w-100 remove-button-style"
                    action={{ modalContent:UpdateSchoolBranchWebsite }}
                   >
                     <div className="d-flex flex-column text-start">

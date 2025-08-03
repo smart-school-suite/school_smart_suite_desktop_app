@@ -4,6 +4,9 @@ import { markAllNotificationAsRead } from "../../services/notification";
 export const useMarkAllNotificationsAsRead = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: markAllNotificationAsRead,      
+        mutationFn: markAllNotificationAsRead,
+        onSuccess:() => {
+             queryClient.invalidateQueries({ queryKey:['notifications'] })
+        }      
     });
 }
