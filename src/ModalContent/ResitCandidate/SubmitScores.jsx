@@ -2,7 +2,7 @@ import { useGetResitEvaluationHelperData } from "../../hooks/resitEvaluation/use
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useEffect } from "react";
-import { setExamScores, setExamGrading, updateScore } from "../../Slices/Asynslices/ResitScoreSlice";
+import { setExamScores, setExamGrading, updateScore, resetResitScoreState } from "../../Slices/Asynslices/ResitScoreSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateResitScore } from "../../hooks/resitEvaluation/useCreateResitScores";
 import NumberFlow from "@number-flow/react";
@@ -96,6 +96,7 @@ function SummitScores({ handleClose, rowData }){
                   className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"
                   onClick={() => {
                        handleCreateExamScores();
+                       dispatch(resetResitScoreState());
                       }}
                   >
                   { isPending ? <SingleSpinner /> : "Submit Score"}

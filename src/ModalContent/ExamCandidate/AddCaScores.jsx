@@ -6,7 +6,8 @@ import {
   setExamScores,
   setExamGrading,
   setMaxGpa,
-  updateScore, 
+  updateScore,
+  resetCaScoreState, 
 } from "../../Slices/Asynslices/CaScoreSlice";
 import { Icon } from "@iconify/react";
 import NumberFlow from '@number-flow/react';
@@ -101,6 +102,7 @@ const scoresData = formData
           className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"
           onClick={() => {
              handleCreateCaScores();
+             dispatch(resetCaScoreState());
           }}
           >
           { isPending ? <SingleSpinner /> : "Submit Score" }

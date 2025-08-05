@@ -8,6 +8,7 @@ import {
   setExamGrading,
   setMaxGpa,
   updateScore,
+  resetExamScoreState,
 } from "../../Slices/Asynslices/ExamScoreSlice";
 import NumberFlow from "@number-flow/react";
 import { Icon } from "@iconify/react";
@@ -106,6 +107,7 @@ function AddExamScores({ handleClose, rowData }) {
           className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"
           onClick={() => {
              handleCreateExamScores();
+             dispatch(resetExamScoreState());
           }}
           >
           { isPending ? <SingleSpinner /> : "Submit Score"}

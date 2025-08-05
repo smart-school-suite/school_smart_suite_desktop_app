@@ -90,6 +90,9 @@ const CaScoreSlice = createSlice({
       state.resultSummary.examStatus = examStatus;
       state.resultSummary.gpa = gpa; // Assign the calculated simple average GPA
     },
+    resetCaScoreState: (state) => {
+       return CaScoreSlice.initialState;
+    }
   },
 });
 
@@ -97,7 +100,8 @@ export const {
   setExamScores,
   setExamGrading,
   setMaxGpa,
-  updateScore, // Export the new action for score updates
+  updateScore,
+  resetCaScoreState
 } = CaScoreSlice.actions;
 
 export default CaScoreSlice.reducer;

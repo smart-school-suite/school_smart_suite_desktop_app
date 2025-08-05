@@ -94,10 +94,13 @@ const ExamScoreSlice = createSlice({
       state.resultSummary.examStatus = examStatus;
       state.resultSummary.gpa = gpa; // Assign the calculated simple average GPA
     },
+    resetExamScoreState: () => {
+      return ExamScoreSlice.initialState;
+    },
   },
 });
 
-export const { setExamScores, setExamGrading, setMaxGpa, updateScore } =
+export const { setExamScores, setExamGrading, setMaxGpa, updateScore, resetExamScoreState } =
   ExamScoreSlice.actions;
 
 export default ExamScoreSlice.reducer;

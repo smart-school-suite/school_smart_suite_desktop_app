@@ -3,8 +3,11 @@ import { createCaMark } from "../../services/evaluateStudent";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import { useDispatch } from "react-redux";
+import { resetCaScoreState } from "../../Slices/Asynslices/CaScoreSlice";
 export const useCreateCaMark = (handleClose) => {
     const queryClient = useQueryClient();
+    const dispatch = useDispatch();
     return useMutation({
          mutationFn:createCaMark,
          onSuccess:() => {
@@ -18,6 +21,7 @@ export const useCreateCaMark = (handleClose) => {
                   description={"Student CA Scores Submitted Successfully"}
                 />
              )
+             dispatch(resetCaScoreState());
          },
          onError:() =>{
              toast.custom(

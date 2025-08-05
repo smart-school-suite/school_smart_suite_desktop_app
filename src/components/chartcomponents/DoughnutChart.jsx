@@ -10,13 +10,13 @@ import {
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
-const DoughnutChart = () => {
+const DoughnutChart = ({ labels, compData, label }) => {
   const data = {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    labels: labels,
     datasets: [
       {
-        label: 'My Dataset',
-        data: [12, 19, 8, 10, 11, 19],
+        label: label,
+        data:compData,
         backgroundColor: [
           'rgba(255, 99, 132, 0.8)',   
           'rgba(54, 162, 235, 0.8)',   
@@ -35,7 +35,7 @@ const DoughnutChart = () => {
         ],
         borderWidth: 2,
         borderRadius: 2, 
-        spacing: 5
+        spacing: 2
       }
     ]
   };

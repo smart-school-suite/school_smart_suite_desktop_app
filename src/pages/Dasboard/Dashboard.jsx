@@ -143,7 +143,11 @@ function Dashboard() {
                   A visual breakdown of spending across different categories.
                 </p>
               </div>
-              <DoughnutChart />
+              <DoughnutChart 
+               compData={data.data.school_expenses_by_category.map((items) => items.total_amount)}
+               labels={data.data.school_expenses_by_category.map((items) => items.category)}
+               label={"School Expenses By Category"}
+               />
             </div>
           </div>
         </section>
@@ -230,8 +234,8 @@ function Dashboard() {
                 config={{
                   borderColor:"#38bff8",
                   bgColor:"#e0f2fe",
-                  label: ["2021", "2022", "2023", "2024", "2025"],
-                  data: [100, 20, 323, 40, 50],
+                  label: data.data.total_student_registration_over_years.map((items) => items.year),
+                  data: data.data.total_student_registration_over_years.map((items) => items.total_student),
                 }}
               />
             </div>

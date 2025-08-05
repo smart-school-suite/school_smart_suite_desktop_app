@@ -5,6 +5,7 @@ import NotificationDropdown from "../Dropdowns/NotificationDropdown";
 import createEcho from "../../echo/echo";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGetSchoolBranchDetails } from "../../hooks/schoolBranch/useGetSchoolBranchDetail";
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();

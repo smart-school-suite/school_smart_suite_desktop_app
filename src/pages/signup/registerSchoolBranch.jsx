@@ -43,7 +43,7 @@ function RegisterSchoolBranch() {
                 placeholder="Enter School Branch Name"
                 value={schoolCredentials.school_branch_name}
                 onChange={(value) => handleChange("school_branch_name", value)} 
-                className="form-control p-2"
+                className="form-control p-2 "
               />
             </div>
             <div className="my-3">

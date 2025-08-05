@@ -86,10 +86,13 @@ const ResitExamScoreSlice = createSlice({
       state.resultSummary.coursesFailed = coursesFailed;
       state.resultSummary.examStatus = examStatus;
     },
+    resetResitScoreState: (state) => {
+       return ResitExamScoreSlice.initialState;
+    }
   },
 });
 
-export const { setExamScores, setExamGrading,  updateScore } =
+export const { setExamScores, setExamGrading,  updateScore, resetResitScoreState } =
   ResitExamScoreSlice.actions;
 
 export default ResitExamScoreSlice.reducer;

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { resetSchoolAuthData } from "../../Slices/Asynslices/AuthSlice";
 function RegisterSchoolAdmin() {
   const [adminCredentials, setAdminCredentails] = useState({
     name: "",
@@ -12,11 +13,13 @@ function RegisterSchoolAdmin() {
   });
   const apiKey = useSelector((state) => state.auth.apiKey);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { handleCreateSuperAdmin, loading, createError } = useAuth();
 
   const handleCreateSchoolAdmin = async () => {
      try{
        await handleCreateSuperAdmin(navigate, adminCredentials, apiKey);
+       dispatch(resetSchoolAuthData());
      }
      catch(e){
         console.log("an error occured");

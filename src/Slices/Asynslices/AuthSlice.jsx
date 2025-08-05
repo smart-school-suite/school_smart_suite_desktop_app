@@ -90,6 +90,7 @@ export const {
   handleSetValidatePasswordResetOtp,
   handleSetCreateAdmin,
   handleSetChangePassword,
-  setSchoolAuthData
+  setSchoolAuthData,
+  resetSchoolAuthData
 } = authSlice.actions;
 export default authSlice.reducer;
