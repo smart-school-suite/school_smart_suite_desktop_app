@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useFetchElectionsQuery } from "../../Slices/Asynslices/fetchSlice";
 import toast from "react-hot-toast";
 import { useCreateElectionRoleMutation } from "../../Slices/Asynslices/postSlice";
-import { SingleSpinner } from "../../components/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function CreateElectionRole({ handleClose }) {
   const { data: electionRoles, isLoading, error } = useFetchElectionsQuery();
   const [formData, setFormData] = useState({

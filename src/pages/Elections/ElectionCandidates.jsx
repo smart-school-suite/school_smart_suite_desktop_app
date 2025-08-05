@@ -1,11 +1,9 @@
-import SchoolElectionSideBar from "../../components/SideBar/SchoolElection";
 import { Icon } from "@iconify/react";
 function ElectionCandidate() {
   return (
     <>
       <div className="container pt-2">
         <div className="row">
-          <SchoolElectionSideBar />
           <div className="col-lg-9 pt-4">
             <div className="d-flex flex-row justify-content-between w-100 mt-5">
               <span>Election Candidates</span>

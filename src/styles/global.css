@@ -1469,18 +1469,46 @@ input {
     text-align: center;
 }
 
-.hero-icon-box{
-    width: 3rem !important;
-    height: 3rem !important;
+.hero-large-text{
+     font-weight: bold;
+  background: linear-gradient(90deg, #4A90E2, #1E3C72);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent; 
+  -webkit-text-fill-color: transparent;
+  font-size: 4.5rem;
+  text-transform: uppercase;
+}
+
+.hero-caption-text{
+    font-size: 1.4rem;
+}
+
+.hero-footer-card{
+   width: 20%;
+}
+
+.hero-footer-icon-box{
+    width: 22.5% !important;
+    height: 6dvh !important;
     border-radius: 0.25rem;
     display:grid;
     place-items: center;
+    font-size: 2rem;
 }
-.hero-large-text{
-     font-weight: bold; /* Optional */
-  background: linear-gradient(90deg, #4A90E2, #1E3C72);
-  -webkit-background-clip: text; /* Chrome, Safari, Opera */
-  background-clip: text; /* Other browsers */
-  color: transparent; /* Make text fill transparent to show background */
-  -webkit-text-fill-color: transparent;
+
+.hero-caption-text-container{
+    width: 50%;
+    text-align: center;
+}
+.hero-feat-pill{
+    height: 4dvh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.feat-pill-child-container-two{
+    width: 100%;
 }

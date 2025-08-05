@@ -4,6 +4,6 @@ import { getCountries } from '../../services/country';
 export const useGetCountries = () => {
   return useQuery({
     queryKey: ['countries'],
-    queryFn: getCountries,
+    queryFn: () => getCountries(),
   });
 };

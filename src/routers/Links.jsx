@@ -14,7 +14,6 @@ import SchoolElectionRoutes from "./SchoolActivities/ElectionRoutes";
 import DashboardRoutes from "./Dasboard/DashboardRoutes";
 import EventRoutes from "./SchoolActivities/EventRoutes";
 import FinancialRoutes from "./Financial/FinancialRoutes";
-import FormRoutes from "./Forms/FormRoutes";
 import SettingsRoutes from "./Settings/SettingsRoutes";
 import StudentRoutes from "./Student/StudentRoutes";
 import ExamRoutes from "./Exam/ExamRoutes";
@@ -51,7 +50,6 @@ function Links() {
               ...DashboardRoutes,
               ...EventRoutes,
               ...FinancialRoutes,
-              ...FormRoutes,
               ...SchoolElectionRoutes,
               ...ExamRoutes,
               ...ResitRoutes

@@ -1,10 +1,9 @@
-import SchoolElectionSideBar from "../../components/SideBar/SchoolElection";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useFetchElectionRolesQuery } from "../../Slices/Asynslices/fetchSlice";
 import { electionRolesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
-import Table from "../../components/Tables";
+import Table from "../../components/Tables/Tables";
 import CreateElectionRole from "../../ModalContent/ElectionRoles/CreateElectionRole";
 import DeactivateRole from "../../ModalContent/ElectionRoles/DeactivateRole";
 import DeleteElection from "../../ModalContent/ElectionRoles/DeleteElection";
@@ -34,7 +33,6 @@ function ElectionRoles() {
     <>
       <div className="container pt-2">
         <div className="row">
-          <SchoolElectionSideBar />
           <div className="col-lg-9 pt-4">
             <div className="d-flex flex-row justify-content-between w-100 mt-5">
               <span>Election Roles</span>

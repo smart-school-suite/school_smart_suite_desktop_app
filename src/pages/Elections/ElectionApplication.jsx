@@ -1,7 +1,6 @@
-import SchoolElectionSideBar from "../../components/SideBar/SchoolElection";
 import { useFetchElectionApplicationsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
-import Table from "../../components/Tables";
+import Table from "../../components/Tables/Tables";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
 import { electionApplicationTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
@@ -33,7 +32,6 @@ function ElectionApplication() {
     <>
       <div className="container pt-2">
         <div className="row">
-          <SchoolElectionSideBar />
           <div className="col-lg-9 pt-4">
             <div className="d-flex flex-row justify-content-between w-100 mt-5">
               <span>Election Applications</span>

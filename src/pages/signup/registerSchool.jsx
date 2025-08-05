@@ -1,10 +1,10 @@
 import { useNavigate, Link } from "react-router-dom";
-import { useFetchCountrysQuery } from "../../Slices/Asynslices/fetchSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
 import { setSchoolAuthData } from "../../Slices/Asynslices/AuthSlice";
+import { useGetCountries } from "../../hooks/country/useGetCountry";
 function RegisterSchool() {
-  const { data: country, isLoading } = useFetchCountrysQuery();
+  const { data: country, isPending:isLoading } = useGetCountries();
   const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
   const navigate = useNavigate();
   const dispatch = useDispatch();

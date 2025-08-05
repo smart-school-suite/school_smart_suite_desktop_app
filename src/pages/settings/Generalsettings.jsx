@@ -38,6 +38,18 @@ function Generalsettings() {
                   <span>Version</span>
                   <span className="gainsboro-color fw-light">1.23.10</span>
                </div>
+               <hr />
+               <div className="d-flex flex-row align-items-center justify-content-between">
+                  <div className="d-flex flex-column">
+                  <span>Push Notifications</span>
+                  <span className="gainsboro-color fw-light">Enabled</span>
+               </div>
+               <div>
+                 <div class="form-check form-switch">
+                <input className="form-check-input py-2 px-3" type="checkbox" role="switch" id="switchCheckDefault" />
+                </div>
+               </div>
+               </div>
             </div>
            </div>
           </div>
