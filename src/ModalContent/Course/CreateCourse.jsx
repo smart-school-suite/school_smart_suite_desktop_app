@@ -67,7 +67,8 @@ function CreateCourse({ handleClose }) {
           </div>
         </div>
       </div>
-      <div className="my-1">
+      <div className="modal-content-container">
+         <div className="my-1">
         <CourseTitleInput
           onValidationChange={handleValidation}
           value={formData.course_title}
@@ -133,7 +134,8 @@ function CreateCourse({ handleClose }) {
               className="form-control"
               onChange={(e) => handleInputChange('description', e.target.value)}
             ></textarea>
-          </div>
+      </div>
+      </div>
       <div className="mt-4">
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
           <button

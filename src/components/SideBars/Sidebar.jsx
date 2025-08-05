@@ -31,11 +31,12 @@ function Sidebar() {
     <>
       <div className="col-lg-2 col-sm-2 col-md-2 pe-0 gx-lg-0">
         <aside className=" white-bg d-flex flex-column ps-2  pt-2 pb-2">
-          <div className="logo-area">
-            <div className="d-flex justify-content-start flex-row gap-3">
+          <div className="logo-area mb-3">
+            <div className="d-flex justify-content-start flex-row gap-2 ps-2 align-items-center">
               <div className="app-logo">
-                <img src="./logo/blue_logo.png" alt="" className="app-logo" />
+                <img src="./logo/sss-logo-rounded.png" alt="" className="app-logo" />
               </div>
+              <span className="font-size-sm fw-semibold color-primary">SMART SCHOOL SUITE</span>
             </div>
           </div>
           <div className="nav-container mt-1">

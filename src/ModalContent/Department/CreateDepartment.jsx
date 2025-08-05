@@ -40,13 +40,10 @@ function CreateDepartment({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
       </div>
-      <div className="my-1">
+      <div className="modal-content-container">
+        <div className="my-1">
         <DepartmentNameInput
           onValidationChange={handleValidation}
           value={formData.department_name}
@@ -70,6 +67,7 @@ function CreateDepartment({ handleClose }) {
               : ` Write A short Description Of ${formData.department_name}`
           }
         ></textarea>
+      </div>
       </div>
       <div className="mt-4">
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">

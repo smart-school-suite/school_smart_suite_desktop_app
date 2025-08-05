@@ -18,6 +18,7 @@ import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { DepartmentIcon } from "../../icons/Icons";
 function Departments() {
   const { data: departments, isLoading } = useGetDepartments();
   const memoizedColDefs = useMemo(() => {
@@ -46,12 +47,9 @@ function Departments() {
                 borderRadius: "0.5rem",
               }}
             >
-              <Icon
-                icon="grommet-icons:user-admin"
-                className="font-size-md primary-color"
-              />
+              <DepartmentIcon />
             </div>
-            <span className="my-0 fw-semibold">Departments</span>
+            <span className="my-0 fw-semibold">Manage Departments</span>
           </div>
         </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">

@@ -11,34 +11,12 @@ import { useSelector } from "react-redux";
 import { useGetSchoolFinancialStats } from "../../hooks/financialStat/useGetSchoolFinancialStats";
 import DashboardPageLoader from "../../components/PageLoaders/DashboardPageLoader";
 import { formatMonthlyChartData } from "../../utils/chartUtils";
+import { AdditionalFeeIcon, ExpensesIcon, TuitionFeeIcon } from "../../icons/Icons";
 function Dashboard() {
   const currentYear = new Date().getFullYear();
   const { data, isLoading } = useGetSchoolFinancialStats(currentYear);
   const schoolData = useSelector((state) => state.auth.user);
   const currency = schoolData.schoolDetails.school.country.currency;
-  const labelsConfig = {
-    months: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sept",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-    schoolYears: [
-      "2021-2022",
-      "2022-2023",
-      "2023-2024",
-      "2024-2025",
-      "2025-2026",
-    ],
-  };
   if (isLoading) {
     return (
       <>
@@ -54,16 +32,13 @@ function Dashboard() {
          <div className="d-flex flex-row justify-content-between align-items-end mt-2">
           <div className="d-block">
             <div>
-              <p className="my-0">Revenue</p>
+              <p className="my-0 fs-6">Revenue</p>
             </div>
             <div className="d-flex flex-row align-items-center gap-2">
               <div>
-                <h2 className="fw-bold my-0 primary-color-dark">
-                  {currency} <NumberFlow value={data.data.revenue_progress.total_revenue} />
-                  <span className="light-skyblue-color">.00</span>
-                </h2>
+                <FormattedCurrency value={data.data.revenue_progress.total_revenue} currency={currency}/>
               </div>
-              <div className="d-flex flex-row gap-2">
+              {/* <div className="d-flex flex-row gap-2">
                 <button
                   className="d-flex flex-row border-none align-items-center rounded-pill primary-background-400 primary-color-dark fw-medium px-2 my-0 font-size-sm py-1"
                   style={{
@@ -73,7 +48,7 @@ function Dashboard() {
                 >
                   <Icon
                     icon="material-symbols:keyboard-double-arrow-up"
-                    className="increase-icon fs-6"
+                    className="rotate-45 fs-6"
                   />
                   <span>{<NumberFlow value={(data.data.revenue_progress.revenue_increase_stat.percentage).toFixed(1)}/>} %</span>
                 </button>
@@ -87,7 +62,7 @@ function Dashboard() {
                   <Icon icon="ic:round-plus" />
                   <span><NumberFlow value={data.data.revenue_progress.revenue_increase_stat.value}/> {currency}</span>
                 </button>
-              </div>
+              </div>*/}
             </div>
           </div>
           <div className="d-flex flex-row gap-2 align-items-end">
@@ -273,7 +248,7 @@ export function CardOne({ data }) {
   return (
     <>
       <div className="rounded-box d-flex flex-row align-items-center justify-content-center light-skyblue-bg">
-        <Icon icon="stash:arrow-up-duotone" className="increase-icon fs-5" />
+        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" />
       </div>
       <img
         src="./images/card-one.png"
@@ -290,14 +265,12 @@ export function CardOne({ data }) {
                 height: "2rem",
                 borderRadius: "2rem",
                 backgroundColor: "#C6E3F1",
+                color:"#1f6385"
               }}
             >
-              <Icon
-                icon="game-icons:receive-money"
-                className="dark-slate-gray-color"
-              />
+              <TuitionFeeIcon />
             </button>
-            <span>Tuition Fees Paid</span>
+            <span >Tuition Fees Paid</span>
           </div>
           <div className="mt-auto">
             <div>
@@ -313,7 +286,7 @@ export function CardOne({ data }) {
                 <span>
                   <Icon
                     icon="material-symbols:keyboard-double-arrow-up"
-                    className="increase-icon fs-6"
+                    className="rotate-45 fs-6"
                   />
                 </span>
                 <span>5.5%</span>
@@ -331,7 +304,7 @@ export function CardTwo({data}) {
   return (
     <>
       <div className="rounded-box d-flex flex-row align-items-center justify-content-center light-peach-bg">
-        <Icon icon="stash:arrow-up-duotone" className="increase-icon fs-5" />
+        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" />
       </div>
       <img
         src="./images/card-two.png"
@@ -348,12 +321,10 @@ export function CardTwo({data}) {
                 height: "2rem",
                 borderRadius: "2rem",
                 backgroundColor: "#FFE4D5",
+                color:"#fd9d74"
               }}
             >
-              <Icon
-                icon="game-icons:receive-money"
-                className="dark-slate-gray-color"
-              />
+              <ExpensesIcon />
             </button>
             <span>Total Expenses</span>
           </div>
@@ -371,7 +342,7 @@ export function CardTwo({data}) {
                 <span>
                   <Icon
                     icon="material-symbols:keyboard-double-arrow-up"
-                    className="increase-icon fs-6"
+                    className="rotate-45 fs-6"
                   />
                 </span>
                 <span>100.5%</span>
@@ -389,7 +360,7 @@ export function CardThree({data}) {
   return (
     <>
       <div className="rounded-box d-flex flex-row align-items-center justify-content-center cornflower-blue-bg">
-        <Icon icon="stash:arrow-up-duotone" className="increase-icon fs-5" />
+        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" />
       </div>
       <img
         src="./images/card-three.png"
@@ -406,12 +377,10 @@ export function CardThree({data}) {
                 height: "2rem",
                 borderRadius: "2rem",
                 backgroundColor: "#9DBFDC",
+                color:"#4d6ba8"
               }}
             >
-              <Icon
-                icon="game-icons:receive-money"
-                className="dark-slate-gray-color"
-              />
+             <AdditionalFeeIcon />
             </button>
             <span>Total Additional Fee Paid</span>
           </div>
@@ -443,3 +412,22 @@ export function CardThree({data}) {
     </>
   );
 }
+
+
+const FormattedCurrency = ({ value, currency, className = '' }) => {
+  const parsedValue = parseFloat(value);
+
+  const formattedValue = !isNaN(parsedValue) ? parsedValue.toFixed(2) : '0.00';
+  
+  const [integerPart, decimalPart] = formattedValue.split('.');
+  
+  return (
+    <h2 className={`fw-bold my-0 primary-color-dark ${className}`}>
+      <span className="me-2">{currency}</span>
+      <span className="primary-color-dark">
+        <NumberFlow value={integerPart} />
+      </span>
+      <span className="light-skyblue-color">.{<NumberFlow value={decimalPart}/>}</span>
+    </h2>
+  );
+};

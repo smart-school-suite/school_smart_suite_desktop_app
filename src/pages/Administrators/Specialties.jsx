@@ -18,6 +18,7 @@ import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import ActivateSpecialty from "../../ModalContent/Specialty/ActivateSpecialty";
+import { SpecialtyIcon } from "../../icons/Icons";
 function Specialties() {
   const { data: specialty, isLoading } = useGetSpecialties();
   const memoizedColDefs = useMemo(() => {
@@ -38,19 +39,16 @@ function Specialties() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100"
+              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
                 borderRadius: "0.5rem",
               }}
             >
-              <Icon
-                icon="grommet-icons:user-admin"
-                className="font-size-md primary-color"
-              />
+              <SpecialtyIcon />
             </div>
-            <span className="my-0 fw-semibold">Specialty</span>
+            <span className="my-0 fw-semibold">Manage Specialties</span>
           </div>
         </div>
         <div className="d-flex flex-row align-items-center mt-4 w-100">

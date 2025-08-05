@@ -20,13 +20,8 @@ function DepartmentDetails({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <div className="my-2">
-          <p className="font-size-sm gainsboro-color">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla
-            molestias repellendus facere voluptate?
-          </p>
-        </div>
-        <div className="d-flex align-items-center justify-content-between my-2 w-100">
+        <div className="modal-content-container">
+          <div className="d-flex align-items-center justify-content-between my-2 w-100">
           <div
             className=" py-2 d-flex flex-column"
           >
@@ -46,6 +41,7 @@ function DepartmentDetails({ handleClose, rowData }) {
             </span>
             <span className="my-0  gainsboro-color font-size-sm">{departmentDetails.data.description}</span>
           </div>
+        </div>
         </div>
         <div className="postion-absolute d-flex flex-row justify-content-end w-100">
             <button

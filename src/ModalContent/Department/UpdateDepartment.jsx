@@ -39,11 +39,8 @@ function UpdateDepartment({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <span className="font-size-sm gainsboro-color">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum
-          sint reprehenderit tempora. Aliquid
-        </span>
-        <div className="my-2">
+        <div className="modal-content-container">
+          <div className="my-2">
           <p className="my-0">Department Name</p>
           <input
             type="text"
@@ -69,6 +66,7 @@ function UpdateDepartment({ handleClose, rowData }) {
             onChange={(e) => handleInputChange("description", e.target.value)}
             placeholder={departmentDetails.data.description}
           ></textarea>
+        </div>
         </div>
       </div>
       <div className="w-100  position-relative mt-2 py-2">

@@ -20,7 +20,7 @@ function UpdateCategory({ handleClose, rowData }) {
       <div>
         <div className="block">
           <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Update Additional Category</h5>
+            <span className="m-0">Update Additional Category</span>
             <span
               className="m-0"
               onClick={() => {
@@ -31,7 +31,8 @@ function UpdateCategory({ handleClose, rowData }) {
             </span>
           </div>
         </div>
-        <div className="my-1">
+        <div className="modal-content-container">
+          <div className="my-1">
           <span>Category Name</span>
           <input
             type="text"
@@ -44,6 +45,7 @@ function UpdateCategory({ handleClose, rowData }) {
         <div className="my-1">
           <span>Description</span>
           <textarea name="" id="" className="form-control"></textarea>
+        </div>
         </div>
         <button
           className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"

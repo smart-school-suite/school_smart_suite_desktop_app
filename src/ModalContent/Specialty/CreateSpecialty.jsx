@@ -55,9 +55,8 @@ function CreateSpecialty({ handleClose }) {
   return (
     <div className="w-100">
       <div className="d-flex flex-row align-items-center">
-        <div className="block">
-          <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Create Specialty</h5>
+       <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+            <span className="m-0">Create Specialty</span>
             <span
               className="m-0"
               onClick={() => {
@@ -67,17 +66,13 @@ function CreateSpecialty({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
-        </div>
       </div>
       <div className="my-1">
         <SpecialtyTitleInput
           onValidationChange={handleValidation}
           value={formData.specialty_name}
           onChange={(value) => handleInputChange("specialty_name", value)}
+          placeholder={"Software Engineering"}
         />
       </div>
       <div className="my-1">
@@ -85,6 +80,7 @@ function CreateSpecialty({ handleClose }) {
           onValidationChange={handleValidation}
           value={formData.registration_fee}
           onChange={(value) => handleInputChange("registration_fee", value)}
+          placeholder={"50000"}
         />
       </div>
       <div className="my-1">
@@ -92,6 +88,7 @@ function CreateSpecialty({ handleClose }) {
           onValidationChange={handleValidation}
           value={formData.school_fee}
           onChange={(value) => handleInputChange("school_fee", value)}
+          placeholder={"350000"}
         />
       </div>
       <div className="my-1">

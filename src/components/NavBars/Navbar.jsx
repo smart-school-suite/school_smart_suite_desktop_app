@@ -5,27 +5,13 @@ import NotificationDropdown from "../Dropdowns/NotificationDropdown";
 import createEcho from "../../echo/echo";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  isPermissionGranted,
-  requestPermission,
-  sendNotification,
-} from '@tauri-apps/plugin-notification';
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
   const queryClient = useQueryClient();
-  const handleNotification = async () => {
-      try{
-         let permissionGranted = await isPermissionGranted();
-      }
-      catch(e){
-        console.log(e)
-      }
-  }
   const userId = userData.id;
-
   const echo = createEcho(token);
 
   useEffect(() => {

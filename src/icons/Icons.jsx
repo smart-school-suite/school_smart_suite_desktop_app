@@ -74,4 +74,34 @@ const MoneyIcon = ({ iconStyle }) => {
     <Icon icon="solar:hand-money-linear" style={{ ...iconStyle, fontSize: "1rem" }} />
    )
 }
-export { MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };
+
+const ExpensesIcon = ({ iconStyle }) => {
+    return(
+      <Icon icon="fluent:money-hand-24-regular" style={{ ...iconStyle, fontSize: "1rem" }} />
+    )
+}
+
+const AdditionalFeeIcon = ({ iconStyle }) => {
+    return (
+      <Icon icon="fluent:person-money-24-regular" style={{ ...iconStyle, fontSize: "1rem" }} />
+    )
+}
+
+const TuitionFeeIcon = ({ iconStyle }) => {
+    return (
+      <Icon icon="solar:money-bag-outline" style={{ ...iconStyle, fontSize: "1rem" }} />
+    )
+}
+
+const SpecialtyIcon = ({ iconStyle }) => {
+    return (
+      <Icon icon="streamline:ecology-science-dna-biology-experiment-lab-science" style={{ ...iconStyle, fontSize: "1rem" }} />
+    )
+}
+
+const DepartmentIcon = ({ iconStyle }) => {
+    return (
+      <Icon icon="la:university"  style={{ ...iconStyle, fontSize: "1rem" }} />
+    )
+}
+export { DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };

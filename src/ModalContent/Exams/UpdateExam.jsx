@@ -72,7 +72,8 @@ function UpdateExam({ handleClose, rowData }) {
           </div>
         </div>
       </div>
-      <div className="my-1">
+      <div className="modal-content-container">
+        <div className="my-1">
         <span>Start Date</span>
         <input
           type="date"
@@ -140,6 +141,7 @@ function UpdateExam({ handleClose, rowData }) {
             onSelect={handleSpecialtySelect}
           />
         )}
+      </div>
       </div>
       <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
         <button

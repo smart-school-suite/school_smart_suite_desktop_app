@@ -22,7 +22,8 @@ function CourseDetails({ rowData, handleClose }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <div className="d-flex align-items-center justify-content-between">
+       <div className="modal-content-container">
+          <div className="d-flex align-items-center justify-content-between">
           <div className="py-2 d-flex flex-column">
             <span className="my-0 font-size-sm gainsboro-color">
               Course Title
@@ -115,6 +116,7 @@ function CourseDetails({ rowData, handleClose }) {
           </div>
         </>
         )}
+       </div>
       </div>
     </>
   );

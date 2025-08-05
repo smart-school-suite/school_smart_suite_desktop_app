@@ -80,13 +80,10 @@ function CreateExam({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
       </div>
-      <div className="d-flex flex-row align-items-center gap-2">
+      <div className="modal-content-container">
+        <div className="d-flex flex-row align-items-center gap-2">
       <div className="my-1 w-50">
         <span>Start Date</span>
         <input
@@ -175,6 +172,7 @@ function CreateExam({ handleClose }) {
             onSelect={handleStudentBatchSelect}
           />
         )}
+      </div>
       </div>
       <div >
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
