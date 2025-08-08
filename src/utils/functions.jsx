@@ -587,3 +587,25 @@ export const formatISOTimeSince = (dateString) => {
     return 'Invalid date';
   }
 };
+
+export const areAllFieldsFilled = (obj) => {
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (value === null || value === undefined) {
+        return false;
+      }
+
+      if (typeof value === 'string') {
+        if (value.trim() === '') {
+          return false;
+        }
+      } else if (Array.isArray(value)) {
+        if (value.length === 0) {
+          return false;
+        }
+      }
+    }
+  }
+  return true; 
+};

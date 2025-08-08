@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import * as YupValidationSchema from  "../../ComponentConfig/YupValidationSchema";
+import React, { useState, useEffect } from "react";
+import * as YupValidationSchema from "../../ComponentConfig/YupValidationSchema";
 import { Icon } from "@iconify/react";
-
 export function PhoneNumberInput({ onChange, value, onValidationChange }) {
-  const [phoneNumber, setPhoneNumber] = useState( value || "");
+  const [phoneNumber, setPhoneNumber] = useState(value || "");
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
 
@@ -11,7 +10,7 @@ export function PhoneNumberInput({ onChange, value, onValidationChange }) {
     try {
       await YupValidationSchema.phoneValidationSchema.validate(phone);
       setError("");
-      onValidationChange(true)
+      onValidationChange(true);
     } catch (err) {
       setError(err.message);
       onValidationChange(false);
@@ -35,7 +34,7 @@ export function PhoneNumberInput({ onChange, value, onValidationChange }) {
       .trim();
 
     setPhoneNumber(formattedValue);
-    onChange(value)
+    onChange(value);
     if (value.length === 0) {
       setError("Phone number is required.");
     } else {
@@ -80,7 +79,7 @@ export function PhoneNumberInput({ onChange, value, onValidationChange }) {
   );
 }
 export function EmailInput({ value, onChange, onValidationChange }) {
-  const [email, setEmail] = useState( value || "");
+  const [email, setEmail] = useState(value || "");
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
 
@@ -98,7 +97,7 @@ export function EmailInput({ value, onChange, onValidationChange }) {
   const handleChange = (e) => {
     const { value } = e.target;
     setEmail(value);
-    onChange(value)
+    onChange(value);
     validateEmail(value);
   };
 
@@ -169,7 +168,7 @@ export function FullNamesInput({ value, onChange, onValidationChange }) {
         onChange={handleNameChange}
         onFocus={handleNameFocus}
       />
-        {isNameTouched && nameError && (
+      {isNameTouched && nameError && (
         <div className="invalid-feedback">{nameError}</div>
       )}
       {isNameTouched && !nameError && name && (
@@ -180,7 +179,7 @@ export function FullNamesInput({ value, onChange, onValidationChange }) {
 }
 
 export function FieldOfStudyInput({ value, onChange, onValidationChange }) {
-  const [fieldOfStudy, setFieldOfStudy] = useState( value || "");
+  const [fieldOfStudy, setFieldOfStudy] = useState(value || "");
   const [fieldOfStudyError, setFieldOfStudyError] = useState("");
   const [isFieldOfStudyTouched, setIsFieldOfStudyTouched] = useState(false);
 
@@ -191,7 +190,7 @@ export function FieldOfStudyInput({ value, onChange, onValidationChange }) {
       onValidationChange(true);
     } catch (err) {
       setFieldOfStudyError(err.message);
-      onValidationChange(false)
+      onValidationChange(false);
     }
   };
 
@@ -392,7 +391,7 @@ export function CityInput() {
 }
 
 export function SalaryInput({ value, onChange, onValidationChange }) {
-  const [salary, setSalary] = useState( value || "");
+  const [salary, setSalary] = useState(value || "");
   const [salaryError, setSalaryError] = useState("");
   const [isSalaryTouched, setIsSalaryTouched] = useState(false);
 
@@ -410,7 +409,7 @@ export function SalaryInput({ value, onChange, onValidationChange }) {
   const handleSalaryChange = (e) => {
     const { value } = e.target;
     setSalary(value);
-    onChange(value)
+    onChange(value);
     validateSalary(value);
   };
 
@@ -442,7 +441,7 @@ export function SalaryInput({ value, onChange, onValidationChange }) {
 }
 
 export function YearsExperienceInput({ onChange, value, onValidationChange }) {
-  const [experienceYears, setExperienceYears] = useState( value || "");
+  const [experienceYears, setExperienceYears] = useState(value || "");
   const [experienceYearsError, setExperienceYearsError] = useState("");
   const [isExperienceYearsTouched, setIsExperienceYearsTouched] =
     useState(false);
@@ -496,7 +495,7 @@ export function YearsExperienceInput({ onChange, value, onValidationChange }) {
 }
 
 export function AddressInput({ onChange, value, onValidationChange }) {
-  const [address, setAddress] = useState( value || "");
+  const [address, setAddress] = useState(value || "");
   const [addressError, setAddressError] = useState("");
   const [isAddressTouched, setIsAddressTouched] = useState(false);
 
@@ -514,7 +513,7 @@ export function AddressInput({ onChange, value, onValidationChange }) {
   const handleAddressChange = (e) => {
     const { value } = e.target;
     setAddress(value);
-    onChange(value)
+    onChange(value);
     validateAddress(value);
   };
 
@@ -545,7 +544,7 @@ export function AddressInput({ onChange, value, onValidationChange }) {
 }
 
 export function CourseCodeInput({ onChange, value, onValidationChange }) {
-  const [courseCode, setCourseCode] = useState( value || "");
+  const [courseCode, setCourseCode] = useState(value || "");
   const [courseCodeError, setCourseCodeError] = useState("");
   const [isCourseCodeTouched, setIsCourseCodeTouched] = useState(false);
 
@@ -597,7 +596,12 @@ export function CourseCodeInput({ onChange, value, onValidationChange }) {
   );
 }
 
-export function CourseTitleInput({ value, onChange, onValidationChange, placeholder}) {
+export function CourseTitleInput({
+  value,
+  onChange,
+  onValidationChange,
+  placeholder,
+}) {
   const [courseTitle, setCourseTitle] = useState(value || "");
   const [courseTitleError, setCourseTitleError] = useState("");
   const [isCourseTitleTouched, setIsCourseTitleTouched] = useState(false);
@@ -609,14 +613,14 @@ export function CourseTitleInput({ value, onChange, onValidationChange, placehol
       onValidationChange(true);
     } catch (err) {
       setCourseTitleError(err.message);
-      onValidationChange(false)
+      onValidationChange(false);
     }
   };
 
   const handleCourseCodeChange = (e) => {
     const { value } = e.target;
     setCourseTitle(value);
-    onChange(value)
+    onChange(value);
     validateCourseTitle(value);
   };
 
@@ -702,7 +706,7 @@ export function CourseCreditInput({ value, onValidationChange, onChange }) {
 }
 
 export function WeigtedMarkInput({ onChange, value, onValidationChange }) {
-  const [weightedMark, setWeightedMark] = useState( value ||  "");
+  const [weightedMark, setWeightedMark] = useState(value || "");
   const [weightedMarkError, setWeightedMarkError] = useState("");
   const [isWeightedMarkTouched, setIsWeightedMarkTouched] = useState(false);
 
@@ -710,7 +714,7 @@ export function WeigtedMarkInput({ onChange, value, onValidationChange }) {
     try {
       await YupValidationSchema.weightedMarkValidationSchema.validate(value);
       setWeightedMarkError("");
-      onValidationChange(true)
+      onValidationChange(true);
     } catch (err) {
       setWeightedMarkError(err.message);
       onValidationChange(false);
@@ -751,6 +755,92 @@ export function WeigtedMarkInput({ onChange, value, onValidationChange }) {
       {isWeightedMarkTouched && !weightedMarkError && weightedMark && (
         <div className="valid-feedback">Looks good!</div>
       )}
+    </div>
+  );
+}
+
+export function TextInputField({
+  onChange,
+  onValidationChange,
+  value,
+  placeholder,
+  validationSchema,
+  label,
+  onErrorChange,
+}) {
+  const [inputValue, setInputValue] = useState(value || "");
+  const [inputError, setInputError] = useState("");
+  const [isTouched, setIsTouched] = useState(false);
+
+  useEffect(() => {
+    if (isTouched || inputValue) { 
+      validateInput(inputValue);
+    }
+  }, [inputValue, validationSchema, isTouched]);
+
+  const validateInput = async (currentValue) => {
+    try {
+      await validationSchema.validate(currentValue);
+      setInputError("");
+      onValidationChange(true);
+      onErrorChange("");
+    } catch (err) {
+      setInputError(err.message);
+      onValidationChange(false);
+      onErrorChange(err.message);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { value: newValue } = e.target;
+    setInputValue(newValue);
+    onChange(newValue);
+  };
+
+  const handleBlur = () => {
+    if (!isTouched) {
+      setIsTouched(true);
+    }
+    validateInput(inputValue);
+  };
+
+  const feedbackContent = isTouched && inputError
+    ? inputError
+    : (isTouched && !inputError && inputValue
+      ? 'Looks Good!'
+      : '');
+
+  const feedbackClasses = [
+    'transition-all font-size-sm',
+    isTouched && inputError
+      ? 'invalid-feedback transition-all'
+      : (isTouched && !inputError && inputValue
+        ? 'valid-feedback transition-all'
+        : null),
+    isTouched && (inputError || (!inputError && inputValue))
+      ? 'opacity-100 transition-all'
+      : 'opacity-0 transition-all',
+  ].filter(Boolean).join(' ');
+
+  return (
+    <div>
+      {label && <span>{label}</span>}
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleChange}
+        placeholder={placeholder}
+        className={`form-control ${
+          isTouched && inputError ? "is-invalid" : ""
+        } ${
+          isTouched && !inputError && inputValue
+            ? "is-valid"
+            : ""
+        }`}
+      />
+      <div className={feedbackClasses}>
+        {feedbackContent}
+      </div>
     </div>
   );
 }
@@ -823,7 +913,7 @@ export function DepartmentNameInput({ onValidationChange, value, onChange }) {
   const handleDepartmentChange = (e) => {
     const { value } = e.target;
     setDepartment(value);
-    onChange(value); 
+    onChange(value);
     validateDepartment(value);
   };
 
@@ -856,9 +946,13 @@ export function DepartmentNameInput({ onValidationChange, value, onChange }) {
   );
 }
 
-
-export function SpecialtyTitleInput({ value, onChange, onValidationChange, placeholder }) {
-  const [specailtyName, setSpecailtyName] = useState( value || "");
+export function SpecialtyTitleInput({
+  value,
+  onChange,
+  onValidationChange,
+  placeholder,
+}) {
+  const [specailtyName, setSpecailtyName] = useState(value || "");
   const [specailtyNameError, setSpecailtyNameError] = useState("");
   const [isSpecailtyNameTouched, setIsSpecailtyNameTouched] = useState(false);
 
@@ -876,7 +970,7 @@ export function SpecialtyTitleInput({ value, onChange, onValidationChange, place
   const handleSpecailtyNameChange = (e) => {
     const { value } = e.target;
     setSpecailtyName(value);
-    onChange(value); 
+    onChange(value);
     validateSpecailtyName(value);
   };
 
@@ -884,7 +978,7 @@ export function SpecialtyTitleInput({ value, onChange, onValidationChange, place
     setIsSpecailtyNameTouched(true);
   };
   return (
-    <div>
+    <div style={{ height:"10dvh" }}>
       <span>Specialty Name</span>
       <input
         type="text"
@@ -909,7 +1003,12 @@ export function SpecialtyTitleInput({ value, onChange, onValidationChange, place
   );
 }
 
-export function RegistrationFeeInput({ onChange, value, onValidationChange, placeholder }) {
+export function RegistrationFeeInput({
+  onChange,
+  value,
+  onValidationChange,
+  placeholder,
+}) {
   const [registrationFee, setRegistrationFee] = useState(value || "");
   const [registrationFeeError, setRegistrationFeeError] = useState("");
   const [isRegistrationFeeTouched, setIsRegistrationTouched] = useState(false);
@@ -961,14 +1060,19 @@ export function RegistrationFeeInput({ onChange, value, onValidationChange, plac
   );
 }
 
-export function SchoolFeeInput({ onChange, onValidationChange, value, placeholder }) {
-  const [schoolFee, setSchoolFee] = useState( value || "");
+export function SchoolFeeInput({
+  onChange,
+  onValidationChange,
+  value,
+  placeholder,
+}) {
+  const [schoolFee, setSchoolFee] = useState(value || "");
   const [schoolFeeError, setSchoolFeeError] = useState("");
   const [isSchoolFeeTouched, setIsSchoolFeeTouched] = useState(false);
 
-  const validateSchoolFee = async (value) => {
+  const validateSchoolFee = async (inputValue) => {
     try {
-      await YupValidationSchema.schoolFeeValidationSchema.validate(value);
+      await YupValidationSchema.schoolFeeValidationSchema.validate(inputValue);
       setSchoolFeeError("");
       onValidationChange(true);
     } catch (err) {
@@ -978,35 +1082,52 @@ export function SchoolFeeInput({ onChange, onValidationChange, value, placeholde
   };
 
   const handleSchoolFeeChange = (e) => {
-    const { value } = e.target;
-    setSchoolFee(value);
-    onChange(value);
-    validateSchoolFee(value);
+    const { value: newValue } = e.target;
+    setSchoolFee(newValue);
+    onChange(newValue);
+    validateSchoolFee(newValue);
   };
 
   const handleSchoolFeeFocus = () => {
     setIsSchoolFeeTouched(true);
   };
+
+  const feedbackContent = isSchoolFeeTouched && schoolFeeError
+    ? schoolFeeError
+    : (isSchoolFeeTouched && !schoolFeeError && schoolFee ? 'Looks Good!' : 'text-here');
+
+  const feedbackClasses = [
+    'transition-all font-size-sm',
+    isSchoolFeeTouched && schoolFeeError
+      ? 'invalid-feedback transition-all'
+      : (isSchoolFeeTouched && !schoolFeeError && schoolFee
+          ? 'valid-feedback transition-all'
+          : null), 
+    isSchoolFeeTouched && (schoolFeeError || (!schoolFeeError && schoolFee))
+      ? 'opacity-100 transition-all'
+      : 'opacity-0 transition-all',
+  ].filter(Boolean).join(' ');
+
   return (
     <div>
       <span>School Fee</span>
       <input
         type="number"
+        value={schoolFee}
         onChange={handleSchoolFeeChange}
         onFocus={handleSchoolFeeFocus}
         placeholder={placeholder}
         className={`form-control ${
           isSchoolFeeTouched && schoolFeeError ? "is-invalid" : ""
         } ${
-          isSchoolFeeTouched && !schoolFeeError && schoolFee ? "is-valid" : ""
+          isSchoolFeeTouched && !schoolFeeError && schoolFee
+            ? "is-valid"
+            : ""
         }`}
       />
-      {isSchoolFeeTouched && schoolFeeError && (
-        <div className="invalid-feedback">{schoolFeeError}</div>
-      )}
-      {isSchoolFeeTouched && !schoolFeeError && schoolFee && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
+      <div className={feedbackClasses}>
+        {feedbackContent}
+      </div>
     </div>
   );
 }
@@ -1100,7 +1221,7 @@ export function Reason() {
 }
 
 export function LastNameInput({ value, onChange, onValidationChange }) {
-  const [lastName, setLastName] = useState( value || "");
+  const [lastName, setLastName] = useState(value || "");
   const [lastNameError, setLastNameError] = useState("");
   const [isLastNameTouched, setIsLastNameTouched] = useState(false);
 
@@ -1147,8 +1268,8 @@ export function LastNameInput({ value, onChange, onValidationChange }) {
   );
 }
 
-export function FirstNameInput({value, onChange, onValidationChange }) {
-  const [firstName, setFirstName] = useState( value || "");
+export function FirstNameInput({ value, onChange, onValidationChange }) {
+  const [firstName, setFirstName] = useState(value || "");
   const [firstNameError, setFirstNameError] = useState("");
   const [isFirstNameTouched, setIsFirstNameTouched] = useState(false);
 
@@ -1341,7 +1462,7 @@ export function EventTitleInput() {
 }
 
 export function DescriptionInput({ onChange, onValidationChange, value }) {
-  const [description, setDescription] = useState( value || "");
+  const [description, setDescription] = useState(value || "");
   const [descriptionError, setDescriptionError] = useState("");
   const [isDescriptionTouched, setIsDescriptionTouched] = useState(false);
 
@@ -1349,7 +1470,7 @@ export function DescriptionInput({ onChange, onValidationChange, value }) {
     try {
       await YupValidationSchema.descriptionSchema.validate(value);
       setDescriptionError("");
-      onValidationChange(true)
+      onValidationChange(true);
     } catch (err) {
       setDescriptionError(err.message);
       onValidationChange(false);
@@ -1359,7 +1480,7 @@ export function DescriptionInput({ onChange, onValidationChange, value }) {
   const handleDescriptionChange = (e) => {
     const { value } = e.target;
     setDescription(value);
-    onChange(value)
+    onChange(value);
     validateDescription(value);
   };
 
@@ -1504,8 +1625,8 @@ export function RelationshipToStudentInput() {
   );
 }
 
-export function MinimumScoreInput({ maxValue, onChange, value }){
-  const [score, setScore] = useState( value || 0);
+export function MinimumScoreInput({ maxValue, onChange, value }) {
+  const [score, setScore] = useState(value || 0);
   const [scoreError, setScoreError] = useState("");
   const [isScoreTouched, setIsScoreTouched] = useState(false);
 
@@ -1522,7 +1643,7 @@ export function MinimumScoreInput({ maxValue, onChange, value }){
   const handleScoreChange = (e) => {
     const { value } = e.target;
     setScore(value);
-    onChange(value)
+    onChange(value);
     validateScore(value);
   };
 
@@ -1541,9 +1662,7 @@ export function MinimumScoreInput({ maxValue, onChange, value }){
           step="0.01"
           className={`form-control form-control-sm ${
             isScoreTouched && scoreError ? "is-invalid" : ""
-          } ${
-            isScoreTouched && !scoreError && score ? "is-valid" : ""
-          }`}
+          } ${isScoreTouched && !scoreError && score ? "is-valid" : ""}`}
           placeholder="Enter a number (0 to {maxValue})"
         />
         {isScoreTouched && scoreError && (

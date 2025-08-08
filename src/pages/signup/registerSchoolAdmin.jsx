@@ -3,6 +3,8 @@ import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { resetSchoolAuthData } from "../../Slices/Asynslices/AuthSlice";
+import { motion, AnimatePresence } from "framer-motion";
+import { Icon } from "@iconify/react";
 function RegisterSchoolAdmin() {
   const [adminCredentials, setAdminCredentails] = useState({
     name: "",
@@ -14,7 +16,7 @@ function RegisterSchoolAdmin() {
   const apiKey = useSelector((state) => state.auth.apiKey);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { handleCreateSuperAdmin, loading, createError } = useAuth();
+  const { handleCreateSuperAdmin, loading } = useAuth();
 
   const handleCreateSchoolAdmin = async () => {
      try{
@@ -33,6 +35,27 @@ function RegisterSchoolAdmin() {
       [name]: value,
     }));
   };
+
+    const name = adminCredentials.name
+    ? adminCredentials.name.trim()
+    : "";
+  const firstName = adminCredentials.first_name
+    ? adminCredentials.first_name.trim()
+    : "";
+    const lastName = adminCredentials.last_name
+    ? adminCredentials.last_name.trim()
+    : "";
+    const email = adminCredentials.email
+    ? adminCredentials.email.trim()
+    : "";
+    const password = adminCredentials.password
+    ? adminCredentials.password.trim()
+    : "";
+  const totalSteps = 5;
+  const fieldsFilled = [name, firstName, lastName, email, password].filter(Boolean).length;
+
+  const progressPercentage = (fieldsFilled / totalSteps) * 100;
+  const isStepComplete = fieldsFilled === totalSteps;
   return (
     <>
       <div className="container w-100 height-100 d-flex flex-column pb-4">
@@ -53,9 +76,6 @@ function RegisterSchoolAdmin() {
           <div className="w-50 rounded-4 px-2  py-4">
             <form>
               <h4 className="text-center">Create School Admin</h4>
-              {createError.admin && (
-                <div className="alert alert-danger">{createError.admin}</div>
-              )}
               <div className="d-flex flex-row align-items-center w-100 gap-2">
                 <div className="my-1 w-100">
                   <span>Full Names</span>
@@ -118,38 +138,94 @@ function RegisterSchoolAdmin() {
             </form>
           </div>
         </div>
-        <div className="mt-auto px-3 w-100">
-          <div className="mb-2">
-            <span className="font-size-sm ">Step 4 of 4 Completed</span>
-          </div>
-          <div className="row w-100 d-flex flex-row align-items-center gap-1 justify-content-between">
-            <div className="auth-progress">
-              <div className="auth-progress-bar active"></div>
-            </div>
-            <div className="auth-progress">
-              <div className="auth-progress-bar active"></div>
-            </div>
-            <div className="auth-progress">
-              <div className="auth-progress-bar active"></div>
-            </div>
-            <div className="auth-progress">
-              <div className="auth-progress-bar active"></div>
-            </div>
-          </div>
-          <div className="d-flex flex-row align-items-center w-100 justify-content-end pe-2 mt-3">
-            <div>
-              <button
-                className="border-none p-2 rounded-2 font-size-sm px-4 primary-background text-white fw-medium"
-                onClick={() => {
-                  handleCreateSchoolAdmin()
-                }}
-                disabled={loading.admin}
-              >
-                Finish
-              </button>
-            </div>
-          </div>
-        </div>
+        <div className="mt-auto w-100 px-3">
+                <div className="mb-2">
+                  <div className="d-flex flex-row align-items-center gap-2">
+                    <AnimatePresence mode="wait">
+                      {isStepComplete ? (
+                        <div className="d-flex flex-row align-items-center gap-2">
+                          <motion.span
+                          key="completed"
+                          className="font-size-sm"
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 5 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          Step 4 of 4 Completed
+                        </motion.span>
+                        <Icon
+                      icon="icon-park-solid:check-one"
+                      className={`font-size-md ${isStepComplete ? "green-color" : ""}`}
+                    />
+                        </div>
+                      ) : (
+                        <motion.span
+                          key="incomplete"
+                          className="font-size-sm"
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 5 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          Step 4 of 4 Incomplete
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+        
+                <div className="d-flex flex-row justify-content-center w-100">
+                  <div className="w-100 d-flex flex-row align-items-center gap-2">
+                    <div className="auth-progress-bar">
+                      <motion.div
+                        className="primary-background h-100"
+                        initial={{ width: 0 }}
+                        animate={{ width: `100%` }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      />
+                    </div>
+                    <div className="auth-progress-bar">
+                      <motion.div
+                        className="primary-background h-100"
+                        initial={{ width: 0 }}
+                        animate={{ width: `100%` }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      />
+                    </div>
+                    <div className="auth-progress-bar">
+                      <motion.div
+                        className="primary-background h-100"
+                        initial={{ width: 0 }}
+                        animate={{ width: `100%` }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      />
+                    </div>
+                    <div className="auth-progress-bar">
+                      <motion.div
+                        className="primary-background h-100"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progressPercentage}%` }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+        
+                <div className="d-flex flex-row align-items-center w-100 justify-content-end mt-3 font-size-sm">
+                  <div>
+                    <button
+                      className="border-none p-2 rounded-2 font-size-sm px-4 primary-background text-white"
+                      onClick={() => {
+                         handleCreateSchoolAdmin();
+                      }}
+                      disabled={!isStepComplete || loading.admin}
+                    >
+                      Finish
+                    </button>
+                  </div>
+                </div>
+              </div>
       </div>
     </>
   );

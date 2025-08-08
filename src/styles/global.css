@@ -309,9 +309,7 @@ aside {
 
 .subbox-container-nav {
     max-height: 40dvh;
-    /* Set a maximum height for the parent */
     height: auto;
-    /* Allows it to grow if needed */
     margin-bottom: 0.9rem;
     transition: all 0.3s;
 }
@@ -319,11 +317,8 @@ aside {
 .subbox-container-nav-inactive {
     height: auto;
     max-height: 0;
-    /* Initially hidden */
     opacity: 0;
-    /* Initially hidden */
     overflow: hidden;
-    /* Prevent content overflow while hidden */
     border-left: 2.5px solid #f9f9f9;
     margin-bottom: 0.2rem;
     transition: max-height 0.3s ease-out, opacity 0.4s ease-out;
@@ -331,9 +326,7 @@ aside {
 
 .drop-down-container {
     height: auto;
-    /* Allow to grow based on content */
     max-height: 80%;
-    /* Set to grow up to 80% of parent */
     border-left: 2.5px solid #f9f9f9;
     transition: all 0.3s;
 }
@@ -1162,11 +1155,6 @@ thead {
     object-fit: cover;
 }
 
-.auth-progress {
-    width: 24.75%;
-    height: 0.2rem;
-    place-content: center;
-}
 
 .auth-progress-bar.active {
     width: 107%;
@@ -1175,8 +1163,8 @@ thead {
 }
 
 .auth-progress-bar {
-    width: 107%;
-    height: 0.2rem;
+    width:25%;
+    height:0.3dvh;
     background-color: #e1e1e1;
 }
 

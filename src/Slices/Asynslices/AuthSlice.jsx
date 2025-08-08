@@ -6,17 +6,39 @@ const initialState = {
   token: null,
   otpTokenHeader: null,
   apiKey: null,
-  schoolId:null,
-  schoolBranchId:null,
-  passwordResetOtpToken:null,
-  passwordResetToken:null,
-  schoolAuthData:{
-     school_name:"",
-     country_id:"",
-     type:"",
-     school_branch_name:"",
-     abbreviation:""
-  }
+  schoolId: null,
+  schoolBranchId: null,
+  passwordResetOtpToken: null,
+  passwordResetToken: null,
+  schoolAuthData: {
+    school_name: "",
+    country_id: "",
+    type: "",
+    school_branch_name: "",
+    abbreviation: "",
+  },
+  schoolAuthError: {
+    school_name: {
+      isValid: null,
+      error: null,
+    },
+    country_id: {
+      isValid: null,
+      error: null,
+    },
+    type: {
+      isValid: null,
+      error: null,
+    },
+    school_branch_name: {
+      isValid: null,
+      error: null,
+    },
+    abbreviation: {
+      isValid: null,
+      error: null,
+    },
+  },
 };
 
 const authSlice = createSlice({
@@ -44,37 +66,44 @@ const authSlice = createSlice({
       state.apiKey = null;
     },
     handleSetSchoolRegistration: (state, action) => {
-       state.schoolId = action.payload.schoolId;
+      state.schoolId = action.payload.schoolId;
     },
     handleSetSchoolBranchRegistration: (state, action) => {
-       state.schoolBranchId = action.payload.schoolBranchId;
-       state.schoolId = null;
+      state.schoolBranchId = action.payload.schoolBranchId;
+      state.schoolId = null;
     },
     handleSetSubcription: (state, action) => {
-       state.apiKey = action.payload.apiKey;
-       state.schoolBranchId = null
+      state.apiKey = action.payload.apiKey;
+      state.schoolBranchId = null;
     },
     handleSetCreateAdmin: (state) => {
-       state.apiKey = null;
+      state.apiKey = null;
     },
     handleSetPasswordReset: (state, action) => {
-       state.passwordResetOtpToken = action.payload.resetPasswordOtpToken
+      state.passwordResetOtpToken = action.payload.resetPasswordOtpToken;
     },
     handleSetValidatePasswordResetOtp: (state, action) => {
-       state.passwordResetOtpToken = null
-       state.passwordResetToken = action.payload.passwordResetToken
+      state.passwordResetOtpToken = null;
+      state.passwordResetToken = action.payload.passwordResetToken;
     },
     handleSetChangePassword: (state) => {
-       state.passwordResetToken = null
+      state.passwordResetToken = null;
     },
     setSchoolAuthData: (state, action) => {
       const { field, value } = action.payload;
-      state.schoolAuthData[field] = value; 
+      state.schoolAuthData[field] = value;
     },
-    
+    setSchoolAuthError: (state, action) => {
+      const { field, key, value } = action.payload;
+
+      if (state.schoolAuthError[field]) {
+        state.schoolAuthError[field][key] = value;
+      }
+    },
     resetSchoolAuthData: (state) => {
       state.schoolAuthData = initialState.schoolAuthData;
-    }
+      state.schoolAuthError = initialState.schoolAuthError;
+    },
   },
 });
 
@@ -91,6 +120,7 @@ export const {
   handleSetCreateAdmin,
   handleSetChangePassword,
   setSchoolAuthData,
-  resetSchoolAuthData
+  resetSchoolAuthData,
+  setSchoolAuthError,
 } = authSlice.actions;
 export default authSlice.reducer;

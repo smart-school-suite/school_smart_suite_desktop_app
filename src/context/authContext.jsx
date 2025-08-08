@@ -11,9 +11,11 @@ import {
   handleSetUserLogout,
   handleSetValidatePasswordResetOtp,
 } from "../Slices/Asynslices/AuthSlice";
-
 const AuthContext = createContext();
-
+import toast from "react-hot-toast";
+import ToastWarning from "../components/Toast/ToastWarning";
+import ToastDanger from "../components/Toast/ToastDanger";
+import ToastSuccess from "../components/Toast/ToastSuccess";
 export const useAuth = () => {
   return useContext(AuthContext);
 };
@@ -66,6 +68,12 @@ export const AuthProvider = ({ children }) => {
         ...prevalue,
         login: "Login failed. Please check your credentials.",
       }));
+      toast.custom(
+        <ToastDanger 
+          title={"Login Failed"}
+          description={"Login Failed Due to an error please check your credential and try again"}
+        />
+      )
     } finally {
       setLoading((prevalue) => ({ ...prevalue, login: false }));
     }
@@ -98,6 +106,12 @@ export const AuthProvider = ({ children }) => {
         ...prevalue,
         otp: "Two step verification failed Please check credentials and try again",
       }));
+      toast.custom(
+        <ToastDanger 
+           title={"OTP Verfication Failed"}
+           description={"OTP Verification Failed Due to an error please check credentails and try again"}
+        />
+      )
     } finally {
       setLoading((prevalue) => ({ ...prevalue, otp: false }));
     }
@@ -157,6 +171,12 @@ export const AuthProvider = ({ children }) => {
           e.response?.data?.message ||
           "Something went wrong trying to create school",
       }));
+      toast.custom(
+        <ToastDanger 
+          title={"Failed To Subcribe"}
+          description={"Failed to subscribe due to an internal error please try again"}
+        />
+      )
     } finally {
       setLoading((prevState) => ({ ...prevState, subscribe: false }));
     }
@@ -189,6 +209,12 @@ export const AuthProvider = ({ children }) => {
           e.response?.data?.message ||
           "Something went wrong trying to create school",
       }));
+      toast.custom(
+        <ToastDanger 
+          title={"Failed To Create School Admin"}
+          description={"Failed to create school admin due to an error please try again later"}
+        />
+      )
     } finally {
       setLoading((prevState) => ({ ...prevState, admin: false }));
     }
@@ -213,7 +239,12 @@ export const AuthProvider = ({ children }) => {
         ...prevalue,
         passordResetError: "Opps Something went wrong try again",
       }));
-      console.log(e);
+      toast.custom(
+        <ToastDanger 
+           title={"Password Reset Failed"}
+           description={"Password Reset Failed Due to an error please try again"}
+        />
+      )
     } finally {
       setLoading((prevalue) => ({ ...prevalue, passwordReset: false }));
     }
@@ -245,7 +276,12 @@ export const AuthProvider = ({ children }) => {
         passwordResetOtp:
           "Something went wrong trying to validate opt try again",
       }));
-      console.log(e);
+      toast.custom(
+        <ToastDanger 
+          title={"OTP Validation Failed"}
+          description={"OTP Token Expired Or OTP Token Invalid Please Check Credentials And Try Again"}
+        />
+      )
     } finally {
       setLoading((prevalue) => ({ ...prevalue, passwordResetOtp: false }));
     }
@@ -268,9 +304,20 @@ export const AuthProvider = ({ children }) => {
       )
       dispatch(handleSetChangePassword());
       navigate("/login-school-admin");
+      toast.success(
+        <ToastSuccess 
+          title={"Password Change Successfully"}
+          description={"You've successfully Reset Your Password, You Can Now Login With the new Password"}
+        />
+      )
     } catch (e) {
         setAuthError((prevalue) => ({ ...prevalue,  changePassword:"Something went wrong try again"}));
-        console.log(e);
+        toast.custom(
+          <ToastDanger 
+            title={"Failed To Change Password"}
+            description={"Failed to change Password, new Password and old password do not match, please try again"}
+          />
+        )
     }
     finally{
        setLoading((prevalue) => ({ ...prevalue, changePassword:false }))
@@ -296,7 +343,6 @@ export const AuthProvider = ({ children }) => {
       }
       catch(e){
          setAuthError((prevalue) => ({ ...prevalue, changeAuthPassword:"Somethine went wrong" }));
-         console.log(e)
       }
       finally{
         setLoading((prevalue) => ({ ...prevalue, changeAuthPassword:false }))

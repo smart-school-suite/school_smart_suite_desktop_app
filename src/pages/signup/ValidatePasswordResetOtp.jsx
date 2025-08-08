@@ -48,13 +48,6 @@ function ValidatePasswordResetOtp() {
           </div>
           <div className="login-container-form-box-one">
             <h1 className="fw-bold my-4">Verify OTP</h1>
-
-            {authError.passwordRestOtp && (
-              <div className="alert alert-danger mt-3" role="alert">
-                {authError.passwordRestOtp}
-              </div>
-            )}
-
             <div>
               <span>Enter OTP Code</span>
               <OtpInput
@@ -75,7 +68,7 @@ function ValidatePasswordResetOtp() {
         </div>
         <div className="login-container-logo-box mt-auto ps-5">
           <div
-            className="d-flex flex-row gap-2 align-items-center pointer-cursor"
+            className="d-flex flex-row gap-2 align-items-center pointer-cursor color-primary"
             onClick={() => {
               navigate("/reset-password");
             }}
@@ -83,8 +76,8 @@ function ValidatePasswordResetOtp() {
             <span>
               <Icon
                 icon="material-symbols:arrow-back-rounded"
-                width="24"
-                height="24"
+                width="18"
+                height="18"
               />
             </span>
             <span className="font-size-sm fw-semibold">Back to Password Reset</span>

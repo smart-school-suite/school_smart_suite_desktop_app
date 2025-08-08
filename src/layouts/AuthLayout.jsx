@@ -3,7 +3,7 @@ import { Toaster } from "react-hot-toast";
 function AuthLayout(){
     return(
         <>
-        <Toaster></Toaster>
+        <Toaster position="bottom-right" reverseOrder={false}></Toaster>
         <Outlet />
         </>
     )

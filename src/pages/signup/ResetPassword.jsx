@@ -25,11 +25,6 @@ function ResetPassword() {
           <div className="login-container-form-box-one">
             <h1 className="fw-bold my-4">Reset Password</h1>
             <form onSubmit={handleSubmit}>
-              {authError.passwordResetError && (
-                <div className="alert alert-danger">
-                  {authError.passwordResetError}
-                </div>
-              )}
               <div className="mb-4">
                 <span>Email</span>
                 <input
@@ -59,7 +54,7 @@ function ResetPassword() {
         </div>
         <div className=" login-container-logo-box mt-auto ps-5">
           <div
-            className="d-flex flex-row gap-2 align-items-center pointer-cursor"
+            className="d-flex flex-row gap-2 align-items-center pointer-cursor color-primary"
             onClick={() => {
               navigate("/hero");
             }}
@@ -67,8 +62,8 @@ function ResetPassword() {
             <span>
               <Icon
                 icon="material-symbols:arrow-back-rounded"
-                width="24"
-                height="24"
+                width="18"
+                height="18"
               />
             </span>
             <span className="font-size-sm fw-semibold">Back To Login</span>

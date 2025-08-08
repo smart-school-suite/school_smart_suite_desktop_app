@@ -132,6 +132,36 @@ export const emailValidationSchema = Yup.string()
     return value && !/\s{2,}/.test(value); 
   });
 
+  export const schoolNameValidationSchema = Yup.string()
+  .required("School name is required")
+  .trim("Leading and trailing spaces are not allowed")
+  .min(2, "School name must be at least 2 characters")
+  .max(100, "School name must be less than 100 characters")
+  .matches(
+    /^[a-zA-Z0-9\s-'.&()]+$/,
+    "School name can only contain letters, numbers, spaces, and the following symbols: -'.&()"
+  );
+
+  export const schoolBranchNameValidationSchema = Yup.string()
+  .required("School branch name is required")
+  .trim("Leading and trailing spaces are not allowed")
+  .min(2, "School branch name must be at least 2 characters")
+  .max(100, "School branch name must be less than 100 characters")
+  .matches(
+    /^[a-zA-Z0-9\s-'.&()]+$/,
+    "School branch name can only contain letters, numbers, spaces, and the following symbols: -'.&()"
+  );
+
+  export const schoolNameAbbreviationValidationSchema = Yup.string()
+  .required("School abbreviation is required")
+  .trim("Leading and trailing spaces are not allowed")
+  .min(2, "School abbreviation must be at least 2 characters")
+  .max(10, "School abbreviation must be less than 10 characters")
+  .uppercase("School abbreviation must be in uppercase")
+  .matches(
+    /^[A-Z0-9]+$/,
+    "School abbreviation can only contain uppercase letters and numbers"
+  );
 
   export const salaryValidationSchema = Yup.number()
   .required("Salary is required")

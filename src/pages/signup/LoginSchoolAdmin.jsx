@@ -27,9 +27,6 @@ function LoginSchoolAdmin() {
           <div className="login-container-form-box-one">
             <h1 className="fw-bold my-4">Login School Admin</h1>
           <form onSubmit={handleSubmit}>
-              {authError.login && (
-                <div className="alert alert-danger">{authError.login}</div>
-              )}
               <div className="mb-4">
                 <span>Email</span>
                 <input
@@ -71,13 +68,13 @@ function LoginSchoolAdmin() {
          
         </div>
         <div className=" login-container-logo-box mt-auto ps-5">
-           <div className="d-flex flex-row gap-2 align-items-center pointer-cursor"
+           <div className="d-flex flex-row gap-2 align-items-center pointer-cursor font-size-sm color-primary"
              onClick={() => {
                navigate('/hero')
              }}
            >
-            <span><Icon icon="material-symbols:arrow-back-rounded" width="24" height="24" /></span>
-            <span className="font-size-sm fw-semibold">Back</span>
+            <span><Icon icon="material-symbols:arrow-back-rounded" width="18" height="18" /></span>
+            <span>Back</span>
            </div>
         </div>
      </div>

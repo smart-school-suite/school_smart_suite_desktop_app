@@ -39,11 +39,6 @@ function ChangePassword() {
           <div className="login-container-form-box-one">
             <h1 className="fw-bold my-4">Change Password</h1>
             <form onSubmit={handleSubmit}>
-              {authError.changePassword && (
-                <div className="alert alert-danger">
-                  {authError.changePassword}
-                </div>
-              )}
               <div className="mb-4">
                 <span>New Password</span>
                 <input

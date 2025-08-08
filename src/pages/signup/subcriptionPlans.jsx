@@ -1,8 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useFetchPricingRatesQuery } from "../../Slices/Asynslices/fetchSlice";
 import {
   setUserInput,
   setRates,
@@ -12,6 +10,8 @@ import NumberFlow from "@number-flow/react";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useGetSubscriptonRates } from "../../hooks/subscription/useGetSubscriptionRate";
+import { motion, AnimatePresence } from "framer-motion";
 function SubcriptionPlan() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,8 +19,8 @@ function SubcriptionPlan() {
   const { userInput, calculatedCost, ranges } = useSelector(
     (state) => state.pricing
   );
-  const { handleSubscription, loading, createError } = useAuth();
-  const { data: data, isLoading, isError, error } = useFetchPricingRatesQuery();
+  const { handleSubscription, loading } = useAuth();
+  const { data: data, isLoading, isError, error } = useGetSubscriptonRates();
 
   const handleSubcription = async (billing_type) => {
     await handleSubscription(navigate, {
@@ -40,6 +40,8 @@ function SubcriptionPlan() {
     }
   }, [data, dispatch]);
 
+  const isStepComplete = userInput.students > 0;
+  const progressPercentage = isStepComplete ? 100 : 0;
   if (isLoading) return <Pageloaderspinner />;
   if (isError)
     return (
@@ -77,16 +79,13 @@ function SubcriptionPlan() {
               placeholder="10, 20, 30"
               min={ranges[0]?.min || 0}
               max={ranges[ranges.length - 1]?.max || 100}
-              value={userInput.students}
+              value={userInput.students < 0 ? null : userInput.students}
               onChange={(e) =>
                 dispatch(setUserInput({ students: +e.target.value }))
               }
             />
           </div>
         </div>
-        {createError.subscribe && (
-          <div className="alert alert-danger">{createError.subscribe}</div>
-        )}
         <div className="d-flex gap-3  flex-row justify-content-center">
           <div className=" card  rounded-4 d-flex flex-column p-2" style={{ width: "25%", height:"60dvh" }}>
               <div className="d-flex flex-row justify-content-between align-items-center mt-2">
@@ -146,7 +145,7 @@ function SubcriptionPlan() {
                 onClick={() => {
                   handleSubcription("yearly");
                 }}
-                disabled={loading.subscribe}
+                disabled={loading.subscribe || !isStepComplete}
               >
                 {loading.subscribe ? <SingleSpinner /> : "Pick Plan"}
               </button>
@@ -210,7 +209,7 @@ function SubcriptionPlan() {
                 onClick={() => {
                   handleSubcription("monthly");
                 }}
-                disabled={loading.subscribe}
+                disabled={loading.subscribe || !isStepComplete}
               >
                 {loading.subscribe ? <SingleSpinner /> : "Pick Plan"}
               </button>
@@ -262,25 +261,75 @@ function SubcriptionPlan() {
             </div>
           </div>
         </div>
-          <div className="mt-auto px-3 w-100">
-          <div className="mb-2">
-            <span className="font-size-sm ">Step 3 of 4 Completed</span>
-          </div>
-          <div className="row w-100 d-flex flex-row align-items-center gap-1 justify-content-between">
-            <div className="auth-progress">
-              <div className="auth-progress-bar active"></div>
-            </div>
-            <div className="auth-progress">
-              <div className="auth-progress-bar active"></div>
-            </div>
-            <div className="auth-progress">
-              <div className="auth-progress-bar active"></div>
-            </div>
-            <div className="auth-progress">
-              <div className="auth-progress-bar"></div>
-            </div>
-          </div>
-        </div>
+         <div className="mt-auto w-100 px-3">
+                  <div className="mb-2">
+                    <div className="d-flex flex-row align-items-center gap-2">
+                      <AnimatePresence mode="wait">
+                        {isStepComplete ? (
+                          <div className="d-flex flex-row align-items-center gap-2">
+                            <motion.span
+                              key="completed"
+                              className="font-size-sm"
+                              initial={{ opacity: 0, y: -5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 5 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              Step 3 of 4 Completed
+                            </motion.span>
+                            <Icon
+                              icon="icon-park-solid:check-one"
+                              className={`font-size-md ${
+                                isStepComplete ? "green-color" : ""
+                              }`}
+                            />
+                          </div>
+                        ) : (
+                          <motion.span
+                            key="incomplete"
+                            className="font-size-sm"
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 5 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            Step 3 of 4 Incomplete
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+        
+                  <div className="d-flex flex-row justify-content-center w-100">
+                    <div className="w-100 d-flex flex-row align-items-center gap-2">
+                      <div className="auth-progress-bar">
+                        <motion.div
+                          className="primary-background h-100"
+                          initial={{ width: 0 }}
+                          animate={{ width: "100%" }}
+                          transition={{ duration: 0.5, ease: "easeInOut" }}
+                        />
+                      </div>
+                      <div className="auth-progress-bar">
+                        <motion.div
+                          className="primary-background h-100"
+                          initial={{ width: 0 }}
+                          animate={{ width:"100%" }}
+                          transition={{ duration: 0.5, ease: "easeInOut" }}
+                        />
+                      </div>
+                      <div className="auth-progress-bar">
+                       <motion.div
+                          className="primary-background h-100"
+                          initial={{ width: 0 }}
+                          animate={{ width:`${progressPercentage}%` }}
+                          transition={{ duration: 0.5, ease: "easeInOut" }}
+                        />   
+                      </div>
+                      <div className="auth-progress-bar" />
+                    </div>
+                  </div>
+                </div>
       </div>
     </>
   );
