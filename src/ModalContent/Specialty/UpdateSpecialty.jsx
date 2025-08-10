@@ -1,21 +1,16 @@
 import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
-import {
-  SpecialtyTitleInput,
-  SchoolFeeInput,
-  RegistrationFeeInput,
-} from "../../components/FormComponents/InputComponents";
+import { NumberInput, TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useUpdateSpecialty } from "../../hooks/specialty/useUpdateSpecialty";
-import { useGetSpecialtyDetails } from "../../hooks/specialty/useGetSpecialtyDetail";
 import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 import { useGetLevels } from "../../hooks/level/useGetLevels";
+import { registrationFeeValidationSchema, schoolFeeValidationSchema, specialtyDescriptionSchema, specialtyValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import { formatNumber } from "../../utils/functions";
 function UpdateSpecialty({  handleClose, rowData }) {
-  const specialtyId = rowData.id;
-  const { data: specialty, isFetching:specialtyIsFetching } = useGetSpecialtyDetails(specialtyId);
+  const { id:specialtyId, specialty_name, registration_fee, tuition_fee, description } = rowData;
   const { mutate: updateSpecialty, isPending } = useUpdateSpecialty(handleClose);
-  const [isValid, setIsValid] = useState(false);
   const [formData, setFormData] = useState({
     specialty_name: "",
     registration_fee: "",
@@ -23,6 +18,14 @@ function UpdateSpecialty({  handleClose, rowData }) {
     department_id: "",
     level_id: "",
     description: "",
+  });
+  const [isFieldValid, setIsFieldValid] = useState({
+    specialty_name: "",
+    registration_fee: "",
+    school_fee: "",
+    department_id: "",
+    level_id: "",
+    description:""
   });
   const { data: educationLevels, isFetching: educationIsLoading } =
     useGetLevels();
@@ -32,35 +35,17 @@ function UpdateSpecialty({  handleClose, rowData }) {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-
-  const handleValidation = (isInputValid) => {
-    setIsValid(isInputValid);
-  };
-
-  const handleEducationSelect = (selectedValues) => {
-    setFormData((prevalue) => ({ ...prevalue, level_id: selectedValues.id }));
-  };
-
-  const handleDepartmentSelect = (selectedValues) => {
-    setFormData((prevalue) => ({
-      ...prevalue,
-      department_id: selectedValues.id,
-    }));
+   const handleFieldValid = (field, value) => {
+    setIsFieldValid((prev) => ({ ...prev, [field]: value }));
   };
   const handleSpecialtyUpdate = async () => {
-    if (!isValid) return;
     updateSpecialty({ specialtyId, updateData:formData });
   };
-  if (specialtyIsFetching) {
-    return <SingleSpinner />;
-  }
   return (
     <>
       <div className="card w-100 border-none">
-        <div className="d-flex flex-row align-items-center">
-          <div className="block">
-            <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-              <h5 className="m-0">Update Specialty</h5>
+         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+              <span className="m-0">Update Specialty</span>
               <span
                 className="m-0"
                 onClick={() => {
@@ -70,40 +55,37 @@ function UpdateSpecialty({  handleClose, rowData }) {
                 <Icon icon="charm:cross" width="22" height="22" />
               </span>
             </div>
-            <span className="gainsboro-color font-size-sm">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem
-              harum nesciunt sunt
-            </span>
-          </div>
-        </div>
-        <div className="my-1">
-          <SpecialtyTitleInput
-            onValidationChange={handleValidation}
-            value={formData.specialty_name}
-            onChange={(value) => handleInputChange("specialty_name", value)}
-            placeholder={specialty.data.specialty_name ?? null}
-          />
-        </div>
-        <div className="d-flex flex-row align-item-center gap-2">
-        <div className="my-1">
-          <RegistrationFeeInput
-            onValidationChange={handleValidation}
-            value={formData.registration_fee}
-            onChange={(value) => handleInputChange("registration_fee", value)}
-            placeholder={specialty.data.registration_fee ?? null}
-          />
-        </div>
-        <div className="my-1">
-          <SchoolFeeInput
-            onValidationChange={handleValidation}
-            value={formData.school_fee}
-            onChange={(value) => handleInputChange("school_fee", value)}
-            placeholder={specialty.data.school_fee ?? null}
-          />
-        </div>
-        </div>
-        <div className="my-1">
-          <span>Department</span>
+              <div>
+                <label htmlFor="specialtyName" className="font-size-sm">Specialty Name</label>
+               <TextInput 
+                placeholder={specialty_name}
+                onChange={(value) =>  handleInputChange('specialty_name', value)}
+                onValidationChange={(value) => handleFieldValid('specialty_name', value)}
+                validationSchema={specialtyValidationSchema}
+               />
+              </div>
+              <div>
+                <label htmlFor="registrationFees" className="font-size-sm">Registration Fees</label>
+                <NumberInput 
+                 placeholder={formatNumber(registration_fee)}
+                 onChange={(value) => handleInputChange('registration_fee', value)}
+                 onValidationChange={(value) => handleFieldValid('registration_fee', value)}
+                 step="0.01"
+                 validationSchema={registrationFeeValidationSchema}
+                />
+              </div>
+              <div>
+                <label htmlFor="schoolFees" className="font-size-sm">School Fees</label>
+                <NumberInput 
+                 placeholder={formatNumber(tuition_fee)}
+                 onChange={(value) => handleInputChange('school_fee', value)}
+                 onValidationChange={(value) => handleFieldValid('school_fee', value)}
+                 step="0.01"
+                 validationSchema={schoolFeeValidationSchema}
+                />
+              </div>
+        <div>
+          <label htmlFor="departmentName" className="font-size-sm">Department Name</label>
           {departmentIsLoading ? (
             <select name="" className="form-select">
               <option value="">loading</option>
@@ -115,14 +97,13 @@ function UpdateSpecialty({  handleClose, rowData }) {
               valueKey={["id"]}
               filter_array_keys={["id", "department_name"]}
               renameMapping={{ id: "id", department_name: "department_name" }}
-              isLoading={departmentIsLoading}
               direction="up"
-              onSelect={handleDepartmentSelect}
+              onSelect={(value) => handleInputChange('department_id', value)}
             />
           )}
         </div>
-        <div className="my-1">
-          <span>Level</span>
+        <div>
+          <label htmlFor="level" className="font-size-sm">Level</label>
           {educationIsLoading ? (
             <select name="" className="form-select">
               <option value="">loading</option>
@@ -134,32 +115,20 @@ function UpdateSpecialty({  handleClose, rowData }) {
               valueKey={["id"]}
               filter_array_keys={["id", "name", "level"]}
               renameMapping={{ id: "id", name: "name", level: "level" }}
-              isLoading={educationIsLoading}
               direction="up"
-              onSelect={handleEducationSelect}
+              onSelect={(value) => handleInputChange('level_id', value)}
             />
           )}
         </div>
-        <div class="my-2">
-          <label for="exampleFormControlTextarea1" className="form-label">
-            Specialty Description
-          </label>
-          <textarea
-            className="form-control"
-            id="exampleFormControlTextarea1"
-            rows="5"
-            name="description"
-            value={formData.description}
-            onChange={(e) => handleInputChange("description", e.target.value)}
-            placeholder={
-              specialty.data.description === null || " "
-                ? formData.specialty_name === null || ""
-                  ? "Write A short Description Of the department"
-                  : ` Write A short Description Of ${formData.specialty_name}`
-                : specialty.data.description
-            }
-          ></textarea>
-        </div>
+        <div>
+        <label htmlFor="specialtyDescription" className="font-size-sm">Specialty Description</label>
+        <TextAreaInput 
+           onValidationChange={(value) =>  handleFieldValid('description', value)}
+           onChange={(value) => handleInputChange('description', value)}
+           placeholder={description}
+          validationSchema={specialtyDescriptionSchema}
+        />
+      </div>
       </div>
       <div className="mt-4">
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">

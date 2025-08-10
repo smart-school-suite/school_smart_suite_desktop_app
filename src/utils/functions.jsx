@@ -609,3 +609,77 @@ export const areAllFieldsFilled = (obj) => {
   }
   return true; 
 };
+
+
+export function objectHasEmpty(obj, strict = false) {
+  return Object.values(obj).some(value => {
+    // null / undefined
+    if (value == null) return true;
+
+    // String
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      return trimmed === "" || (strict && trimmed === "0");
+    }
+
+    // Number
+    if (typeof value === "number") {
+      return strict ? value === 0 : false;
+    }
+
+    // Boolean
+    if (typeof value === "boolean") {
+      return strict ? value === false : false;
+    }
+
+    // BigInt
+    if (typeof value === "bigint") {
+      return strict ? value === 0n : false;
+    }
+
+    // Symbol — never considered "empty" unless strict mode and it's a specific placeholder
+    if (typeof value === "symbol") {
+      return false;
+    }
+
+    // Function — never considered empty unless strict mode and explicitly checking
+    if (typeof value === "function") {
+      return false;
+    }
+
+    // Array
+    if (Array.isArray(value)) {
+      return value.length === 0;
+    }
+
+    // Plain object
+    if (typeof value === "object") {
+      return Object.keys(value).length === 0;
+    }
+
+    // Fallback
+    return false;
+  });
+}
+
+export function objectHasErrors(obj) {
+  return Object.values(obj).some(value => {
+    if (value == null) return false; // null/undefined = no error
+
+    // String: non-empty (after trim) = error
+    if (typeof value === "string") return value.trim().length > 0;
+
+    // Array: non-empty array = error
+    if (Array.isArray(value)) return value.length > 0;
+
+    // Object: non-empty object = error
+    if (typeof value === "object") return Object.keys(value).length > 0;
+
+    // Numbers, booleans, bigint: any truthy value = error
+    return Boolean(value);
+  });
+}
+
+export function allFieldsValid(obj) {
+  return Object.values(obj).every(value => value === true);
+}

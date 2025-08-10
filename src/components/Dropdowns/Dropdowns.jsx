@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { CSSTransition } from "react-transition-group";
 import { Icon } from "@iconify/react";
-import { SingleSpinner } from "../Spinners/Spinners";
 import CleanArrayData from "../../utils/functions";
 import { renameKeys } from "../../utils/functions";
 function CustomDropdown({
@@ -61,15 +60,16 @@ function CustomDropdown({
   }, [onSelect, valueKey]);
 
   return (
-    <div className="dropdown-box z-1 position-relative">
+    <div className="input-container">
+      <div className="dropdown-box z-1 position-relative">
       <div
         className="selected-box"
         onClick={toggleDropdown}
         aria-haspopup="true"
         aria-expanded={isToggled}
       >
-        <div className="d-flex border flex-row justify-content-between bg-white p-2 my-1 rounded-3 pointer-cursor">
-          <span className="text-overflow-elipse overflow-hidden my-0 text-start">
+        <div className="d-flex border flex-row justify-content-between bg-white  rounded-2 pointer-cursor align-items-center" style={{ padding:"0.35rem" }}>
+          <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm">
             {selectedItem ? selectedItem[displayKey[0]] : "Select option"}
           </span>
           <span>
@@ -94,10 +94,11 @@ function CustomDropdown({
               <input
                 ref={inputRef}
                 type="text"
-                className="rounded-3 my-2 white-smoke-bg form-control form-control-sm"
+                className="rounded-2 my-2 white-smoke-bg form-control font-size-sm"
                 placeholder="Search for anything"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ padding:"0.5rem" }}
               />
               <div className="scrollable-box d-flex flex-column z-3">
                 {filteredData.length > 0 ? (
@@ -122,6 +123,7 @@ function CustomDropdown({
           )}
         </div>
       </CSSTransition>
+    </div>
     </div>
   );
 }

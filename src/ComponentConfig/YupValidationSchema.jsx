@@ -25,6 +25,41 @@ export const preferredLanguageSchema = Yup.string()
       .matches(/^[a-zA-Z\s]+$/, 'Relationship must only contain letters and spaces.')
       .strict()
   });
+
+export const firstNameSchema = Yup.string()
+  .trim()
+  .min(2, "First name must be at least 2 characters long.")
+  .max(50, "First name cannot exceed 50 characters.")
+  .matches(
+    /^[a-zA-Z\u00C0-\u017F\s'-.]+$/,
+    "First name can only contain letters, spaces, hyphens, apostrophes, and periods."
+  )
+  .required("First name is required.");
+
+export const lastNameSchema = Yup.string()
+  .trim()
+  .min(2, "Last name must be at least 2 characters long.")
+  .max(50, "Last name cannot exceed 50 characters.")
+  .matches(
+    /^[a-zA-Z\u00C0-\u017F\s'-.]+$/,
+    "Last name can only contain letters, spaces, hyphens, apostrophes, and periods."
+  )
+  .required("Last name is required.");
+
+export const fullNameSchema = Yup.string()
+  .trim()
+  .min(3, "Full name must be at least 3 characters long.")
+  .max(100, "Full name cannot exceed 100 characters.")
+  .matches(
+    /^[a-zA-Z\u00C0-\u017F\s'-.]+$/,
+    "Full name can only contain letters, spaces, hyphens, apostrophes, and periods."
+  )
+  .test('has-multiple-parts', 'Please provide at least a first name and a last name for the full name.', (value) => {
+    if (!value) return false;
+    return value.trim().split(/\s+/).length >= 2;
+  })
+  .required("Full name is required.");
+
 export const descriptionSchema = Yup.string()
   .trim()
   .min(10, 'Description must be at least 10 characters.') 
@@ -41,22 +76,40 @@ export const descriptionSchema = Yup.string()
 export const phoneValidationSchema = Yup.string()
   .matches(/^6\d{8}$/, "Phone number must start with 6 and be 9 digits long.")
   .required("Phone number is required.");
+
 export const emailValidationSchema = Yup.string()
-  .email("Invalid email format")
-  .required("Email is required") 
+  .required("Email address is required.")
+  .email("Please enter a valid email address (e.g., user@domain.com).")
+  .max(254, 'Email address must be less than 255 characters.')
   .matches(
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 
-    "Invalid email format"
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    "The email address format is invalid."
   )
-  .test('no-blacklist', 'Email is blacklisted', (value) => {
+  .test('no-ip-address-domain', 'Email domain cannot be an IP address.', (value) => {
+    if (!value) return true;
+    const domain = value.split('@')[1];
+    return !/^\[?\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\]?$/.test(domain);
+  })
+  .test('no-temp-domains', 'Disposable email addresses are not allowed.', async (value) => {
+    const disposableDomains = ['mailinator.com', 'tempmail.com', 'guerrillamail.com'];
+    if (!value) return true;
+    const domain = value.split('@')[1];
+    return !disposableDomains.includes(domain);
+  })
+  .test('no-blacklist', 'This email domain is restricted. Please use another email.', (value) => {
     const blacklistedDomains = ['example.com', 'test.com'];
-    const domain = value?.split('@')[1];
+    if (!value) return true;
+    const domain = value.split('@')[1];
     return !blacklistedDomains.includes(domain);
   })
-  .test('no-restricted-chars', 'Email contains restricted characters', (value) => {
-    return !/[<>]/.test(value);
+  .test('no-leading-trailing-dot', 'Email cannot start or end with a dot.', (value) => {
+    if (!value) return true;
+    return !value.startsWith('.') && !value.endsWith('.');
   })
-  .max(320, 'Email must be less than 320 characters');
+  .test('no-consecutive-dots', 'Email cannot contain consecutive dots (e.g., "user..name@domain.com").', (value) => {
+    if (!value) return true;
+    return !/\.\./.test(value);
+  });
 
 
   export const nameValidationSchema = Yup.string()
@@ -265,7 +318,7 @@ export const emailValidationSchema = Yup.string()
   })
   .typeError("Specialty must be a valid string");
 
-  export const departmentValidationSchema = Yup.string()
+export const departmentValidationSchema = Yup.string()
   .required("Department is required")
   .min(3, "Department name must be at least 3 characters long")
   .max(100, "Department name must be less than 100 characters")
@@ -273,17 +326,59 @@ export const emailValidationSchema = Yup.string()
     /^[A-Za-z\s,.-]+$/,
     "Department name can only contain letters, spaces, commas, periods, and hyphens"
   )
-  .trim() 
+  .trim()
   .test("no-double-spaces", "Department name should not contain double spaces", (value) => {
     return value && !/\s{2,}/.test(value);
   })
   .typeError("Department name must be a valid string");
 
+  export const departmentDescriptionSchema = Yup.string()
+  .required("Department description is required.")
+  .min(20, "Description must be at least 20 characters long.")
+  .max(500, "Description must not exceed 500 characters.")
+  .matches(
+    /^[a-zA-Z0-9\s.,!?'"()_@#$%&*-/]+$/,
+    "Description contains invalid characters. Only letters, numbers, and common punctuation are allowed."
+  )
+  .trim()
+  .test(
+    'no-urls',
+    'Description should not contain any web addresses or links.',
+    (value) => {
+      if (value) {
+        return !/(https?:\/\/[^\s]+)/.test(value);
+      }
+      return true;
+    }
+  )
+  .typeError("Department description must be a valid string");
+
+  export const specialtyDescriptionSchema = Yup.string()
+  .required("Specialty description is required.")
+  .min(20, "Specialty description must be at least 20 characters long.")
+  .max(500, "Specialty description must not exceed 500 characters.")
+  .matches(
+    /^[a-zA-Z0-9\s.,!?'"()_@#$%&*-/]+$/,
+    "Specialty description contains invalid characters. Only letters, numbers, and common punctuation are allowed."
+  )
+  .trim()
+  .test(
+    "no-urls",
+    "Specialty description should not contain any web addresses or links.",
+    (value) => {
+      if (value) {
+        return !/(https?:\/\/[^\s]+)/.test(value);
+      }
+      return true;
+    }
+  )
+  .typeError("Specialty description must be a valid string");
+
  export  const registrationFeeValidationSchema = Yup.number()
   .required("Registration fee is required")
   .positive("Registration fee must be a positive number")
   .min(0, "Registration fee cannot be less than 0")
-  .max(10000000, "Registration fee cannot exceed $10,000")
+  .max(10000000, "Registration fee cannot exceed 10,000")
   .typeError("Registration fee must be a valid number")
   .test("valid-currency", "Registration fee must be a valid currency amount", (value) => {
     return /^\d+(\.\d{1,2})?$/.test(value);
@@ -292,11 +387,11 @@ export const emailValidationSchema = Yup.string()
   export const schoolFeeValidationSchema = Yup.number()
   .required("School fee is required")
   .positive("School fee must be a positive number")
-  .min(0, "School fee cannot be less than $0")
-  .max(100000000, "School fee cannot exceed $100,000")
+  .min(0, "School fee cannot be less than 0")
+  .max(100000000, "School fee cannot exceed 100,000")
   .typeError("School fee must be a valid number")
   .test("valid-currency", "School fee must be a valid currency amount", (value) => {
-    return /^\d+(\.\d{1,2})?$/.test(value);  // Valid currency format
+    return /^\d+(\.\d{1,2})?$/.test(value);
   });
 
  export const notesValidationSchema = Yup.string()
@@ -313,23 +408,8 @@ export const emailValidationSchema = Yup.string()
     /^[A-Za-z0-9\s.,!?'"()-]*$/, 
     'Reason can only contain letters, numbers, spaces, and common punctuation marks'
   )
-  .optional();  // Allow empty input
+  .optional();
 
- export const firstNameValidationSchema = Yup.string()
-  .required('First name is required')
-  .max(50, 'First name must be less than 50 characters')
-  .matches(
-    /^[A-Za-zÀ-ÿÁ-Ýá-ý'’\- ]+$/, 
-    'First name can only contain letters, spaces, apostrophes, and hyphens'
-  );
-
- export const lastNameValidationSchema = Yup.string()
-  .required('Last name is required')
-  .max(50, 'Last name must be less than 50 characters')
-  .matches(
-    /^[A-Za-zÀ-ÿÁ-Ýá-ý'’\- ]+$/, 
-    'Last name can only contain letters, spaces, apostrophes, and hyphens'
-  );
  export const batchTitleValidationSchema = Yup.string()
   .required('Batch title is required')
   .max(100, 'Batch title must be less than 100 characters')

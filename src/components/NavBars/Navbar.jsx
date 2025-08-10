@@ -9,6 +9,7 @@ import { useGetSchoolBranchDetails } from "../../hooks/schoolBranch/useGetSchool
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { data:schoolBranchDetails, isLoading } = useGetSchoolBranchDetails();
   const userData = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
   const queryClient = useQueryClient();
@@ -44,9 +45,15 @@ function Navbar() {
             </div>
             <div className="d-block font-size-sm">
               <p className="my-0 fw-semibold">
-                {userData.schoolDetails.abbreviation}
+                {
+                  isLoading ? "N/A" : schoolBranchDetails.data.abbreviation || "N/A"
+                }
               </p>
-              <p className="my-0  fw-semibod">{userData.schoolDetails.city}</p>
+              <p className="my-0  fw-semibod">
+                {
+                  isLoading ? "N/A" : schoolBranchDetails.data.city || "N/A"
+                }
+              </p>
             </div>
           </div>
           <div

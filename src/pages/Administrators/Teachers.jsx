@@ -69,13 +69,7 @@ function Teachers() {
           </div>
         </div>
         <div>
-          {memoizedRowData?.length > 0 ? (
-            <Table colDefs={memoizedColDefs} rowData={memoizedRowData}  rowHeight={55}/>
-          ) : (
-            <div className="alert alert-warning">
-              Oops, looks like you don't have any teachers.
-            </div>
-          )}
+         <Table colDefs={memoizedColDefs} rowData={memoizedRowData}  rowHeight={55}/>
         </div>
       </div>
     </>

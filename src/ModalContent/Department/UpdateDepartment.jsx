@@ -5,31 +5,36 @@ import Pageloaderspinner, {
 import { useState } from "react";
 import { useUpdateDepartment } from "../../hooks/department/useUpdateDepartment";
 import { useGetDepartmentDetails } from "../../hooks/department/useGetDepartmentDetails";
+import { TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
+import { departmentDescriptionSchema, departmentValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 function UpdateDepartment({ handleClose, rowData }) {
   const { mutate: updateDepartment, isPending } =
     useUpdateDepartment(handleClose);
-  const departmentId = rowData.id;
-  const { data: departmentDetails, isFetching } = useGetDepartmentDetails(
-    departmentId
-  );
+  const {id:departmentId, department_name, description } = rowData;
+  const { data: departmentDetails, isLoading } =
+    useGetDepartmentDetails(departmentId);
   const [formData, setFormData] = useState({
+    department_name: "",
+    description: "",
+  });
+  const [isFieldValid, setFieldValid] = useState({
     department_name: "",
     description: "",
   });
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-  const handleDepartmentUpdate = () => {
-    updateDepartment({departmentId, updateData:formData});
+  const handleValidChange = (field, value) => {
+    setFieldValid((prev) => ({ ...prev, [field]: value }));
   };
-  if (isFetching) {
-    return <Pageloaderspinner />;
-  }
+  const handleDepartmentUpdate = () => {
+    updateDepartment({ departmentId, updateData: formData });
+  };
   return (
     <>
       <div className="card w-100 border-none">
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-          <h5 className="m-0">Update Department</h5>
+          <span className="m-0">Update Department</span>
           <span
             className="m-0"
             onClick={() => {
@@ -39,34 +44,33 @@ function UpdateDepartment({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <div className="modal-content-container">
-          <div className="my-2">
-          <p className="my-0">Department Name</p>
-          <input
-            type="text"
-            className="form-control"
-            placeholder={departmentDetails.data.department_name}
-            name="department_name"
-            value={formData.department_name}
-            onChange={(e) =>
-              handleInputChange("department_name", e.target.value)
-            }
-          />
-        </div>
-        <div class="my-2">
-          <label for="exampleFormControlTextarea1" className="form-label">
-            Department Description
-          </label>
-          <textarea
-            className="form-control"
-            id="exampleFormControlTextarea1"
-            rows="5"
-            name="description"
-            value={formData.description}
-            onChange={(e) => handleInputChange("description", e.target.value)}
-            placeholder={departmentDetails.data.description}
-          ></textarea>
-        </div>
+        <div>
+          <div>
+            <label htmlFor="departmentName" className="font-size-sm">
+              Department Name
+            </label>
+            <TextInput
+              placeholder={isLoading ? department_name : departmentDetails.data.department_name}
+              onChange={(value) => handleInputChange("department_name", value)}
+              onValidationChange={(value) =>
+                handleValidChange("department_name", value)
+              }
+              validationSchema={departmentValidationSchema}
+            />
+          </div>
+          <div>
+            <label htmlFor="description" className="font-size-sm">
+              Department Description
+            </label>
+            <TextAreaInput
+              placeholder={isLoading ? description : departmentDetails.data.description}
+              onChange={(value) => handleInputChange("description", value)}
+              onValidationChange={(value) =>
+                handleValidChange("description", value)
+              }
+              validationSchema={departmentDescriptionSchema}
+            />
+          </div>
         </div>
       </div>
       <div className="w-100  position-relative mt-2 py-2">

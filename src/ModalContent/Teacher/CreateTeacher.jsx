@@ -2,6 +2,12 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { useCreateTeacher } from "../../hooks/teacher/useCreateTeacher";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import {
+  emailValidationSchema,
+  firstNameSchema,
+  fullNameSchema,
+  lastNameSchema,
+} from "../../ComponentConfig/YupValidationSchema";
 function CreateTeacher({ handleClose }) {
   const [formData, setFormData] = useState({
     email: "",
@@ -11,7 +17,15 @@ function CreateTeacher({ handleClose }) {
     gender:"",
     phone_one:""
   });
-
+  const [isFieldValid, setFieldValid] = useState({
+    email: "",
+    name: "",
+    last_name: "",
+    first_name: "",
+    gender:"",
+    phone_one:""
+  });
+  
   const { mutate:createTeacherMutation, isPending } = useCreateTeacher();
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -35,10 +49,6 @@ function CreateTeacher({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="font-size-sm gainsboro-color">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum
-            sint reprehenderit tempora. Aliquid
-          </span>
         </div>
         <div className="d-flex flex-row align-items-center gap-2">
           <div>

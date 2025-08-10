@@ -1,16 +1,22 @@
 import { useState } from "react";
-import { SpecialtyTitleInput } from "../../components/FormComponents/InputComponents";
-import { RegistrationFeeInput } from "../../components/FormComponents/InputComponents";
-import { SchoolFeeInput } from "../../components/FormComponents/InputComponents";
+import { NumberInput, TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
 import {  useCreateSpecialty } from "../../hooks/specialty/useCreateSpecialty";
 import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 import { useGetLevels } from "../../hooks/level/useGetLevels";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { registrationFeeValidationSchema, schoolFeeValidationSchema, specialtyDescriptionSchema, specialtyValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 function CreateSpecialty({ handleClose }) {
-  const [isValid, setIsValid] = useState(false);
   const [formData, setFormData] = useState({
+    specialty_name: "",
+    registration_fee: "",
+    school_fee: "",
+    department_id: "",
+    level_id: "",
+    description:""
+  });
+  const [isFieldValid, setIsFieldValid] = useState({
     specialty_name: "",
     registration_fee: "",
     school_fee: "",
@@ -32,30 +38,16 @@ function CreateSpecialty({ handleClose }) {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-
-  const handleValidation = (isInputValid) => {
-    setIsValid(isInputValid);
-  };
-
-  const handleEducationSelect = (selectedValues) => {
-    setFormData((prevalue) => ({ ...prevalue, level_id: selectedValues.id }));
-  };
-
-  const handleDepartmentSelect = (selectedValues) => {
-    setFormData((prevalue) => ({
-      ...prevalue,
-      department_id: selectedValues.id,
-    }));
+  const handleFieldValid = (field, value) => {
+    setIsFieldValid((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
-    if (!isValid) return;
     createSpecialtyMutation(formData)
   };
   return (
     <div className="w-100">
-      <div className="d-flex flex-row align-items-center">
-       <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+      <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
             <span className="m-0">Create Specialty</span>
             <span
               className="m-0"
@@ -66,33 +58,37 @@ function CreateSpecialty({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
+      <div>
+        <label htmlFor="specialtyName" className="font-size-sm">Specialty Name</label>
+       <TextInput 
+        placeholder={"e.g Software Engineering"}
+        onChange={(value) =>  handleInputChange('specialty_name', value)}
+        onValidationChange={(value) => handleFieldValid('specialty_name', value)}
+        validationSchema={specialtyValidationSchema}
+       />
       </div>
-      <div className="my-1">
-        <SpecialtyTitleInput
-          onValidationChange={handleValidation}
-          value={formData.specialty_name}
-          onChange={(value) => handleInputChange("specialty_name", value)}
-          placeholder={"Software Engineering"}
+      <div>
+        <label htmlFor="registrationFees" className="font-size-sm">Registration Fees</label>
+        <NumberInput 
+         placeholder={"e.g 80,000 XAF"}
+         onChange={(value) => handleInputChange('registration_fee', value)}
+         onValidationChange={(value) => handleFieldValid('registration_fee', value)}
+         step="0.01"
+         validationSchema={registrationFeeValidationSchema}
         />
       </div>
-      <div className="my-1">
-        <RegistrationFeeInput
-          onValidationChange={handleValidation}
-          value={formData.registration_fee}
-          onChange={(value) => handleInputChange("registration_fee", value)}
-          placeholder={"50000"}
+      <div>
+        <label htmlFor="schoolFees" className="font-size-sm">School Fees</label>
+        <NumberInput 
+         placeholder={"e.g 150,000 XAF"}
+         onChange={(value) => handleInputChange('school_fee', value)}
+         onValidationChange={(value) => handleFieldValid('school_fee', value)}
+         step="0.01"
+         validationSchema={schoolFeeValidationSchema}
         />
       </div>
-      <div className="my-1">
-        <SchoolFeeInput
-          onValidationChange={handleValidation}
-          value={formData.school_fee}
-          onChange={(value) => handleInputChange("school_fee", value)}
-          placeholder={"350000"}
-        />
-      </div>
-      <div className="my-1">
-        <span>Department</span>
+      <div>
+        <label htmlFor="departmentName" className="font-size-sm">Department Name</label>
         {departmentIsLoading ? (
           <select name="" className="form-select">
             <option value="">loading</option>
@@ -106,12 +102,12 @@ function CreateSpecialty({ handleClose }) {
             renameMapping={{ id: "id", department_name: "department_name" }}
             isLoading={departmentIsLoading}
             direction="up"
-            onSelect={handleDepartmentSelect}
+            onSelect={(value) => handleInputChange('department_id', value)}
           />
         )}
       </div>
-      <div className="my-1">
-        <span>Level</span>
+      <div>
+        <label htmlFor="level" className="font-size-sm">Level</label>
         {educationIsLoading ? (
           <select name="" className="form-select">
             <option value="">loading</option>
@@ -125,27 +121,20 @@ function CreateSpecialty({ handleClose }) {
             renameMapping={{ id: "id", name: "name", level: "level" }}
             isLoading={educationIsLoading}
             direction="up"
-            onSelect={handleEducationSelect}
+            onSelect={(value) => handleInputChange('level_id', value)}
           />
         )}
       </div>
-      <div class="my-2">
-        <label for="exampleFormControlTextarea1" className="form-label">
-         Specialty Description
-        </label>
-        <textarea
-          className="form-control"
-          id="exampleFormControlTextarea1"
-          rows="5"
-          name="description"
-          value={formData.description}
-          onChange={(e) => handleInputChange("description", e.target.value)}
-          placeholder={
-            formData.specialty_name === null || ""
-              ? "Write A short Description Of the department"
-              : ` Write A short Description Of ${formData.specialty_name}`
-          }
-        ></textarea>
+      <div>
+        <label htmlFor="specialtyDescription" className="font-size-sm">Specialty Description</label>
+        <TextAreaInput 
+           onValidationChange={(value) =>  handleFieldValid('description', value)}
+           onChange={(value) => handleInputChange('description', value)}
+           placeholder={ formData.specialty_name === null || ""
+                  ? "Write A short Description Of Specialty"
+                  : ` Write A short Description Of ${formData.specialty_name}`}
+          validationSchema={specialtyDescriptionSchema}
+        />
       </div>
       <div className="mt-4">
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
