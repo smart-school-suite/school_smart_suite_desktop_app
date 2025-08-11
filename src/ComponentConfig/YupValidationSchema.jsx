@@ -243,43 +243,25 @@ export const emailValidationSchema = Yup.string()
   ) 
   .typeError("Address must be a valid string");
 
-  export const courseCodeValidationSchema = Yup.string()
-  .required("Course code is required")
-  .matches(
-    /^[A-Za-z]{2,4}[-_]{0,1}[0-9]{3,4}$/,
-    "Course code must consist of 2-4 letters followed by 3-4 digits, optionally with a hyphen or underscore"
-  )
-  .min(5, "Course code must be at least 5 characters long")
-  .max(10, "Course code must be no more than 10 characters long")
-  .trim()
-  .test("no-double-hyphen-or-underscore", "Course code cannot have consecutive hyphens or underscores", (value) => {
-    return value && !/[-_]{2,}/.test(value);
-  });
+ export const courseCreditSchema = Yup.number()
+  .required("Course credit is required.")
+  .min(1, "Course credit must be at least 1.")
+  .max(10, "Course credit cannot be more than 10.")
+  .integer("Course credit must be a whole number.")
+  .typeError("Course credit must be a valid number.");
 
-  export const courseTitleValidationSchema = Yup.string()
-  .required("Course title is required")
-  .min(3, "Course title must be at least 3 characters long")
-  .max(100, "Course title must be less than 100 characters")
+  export const courseDescriptionSchema = Yup.string()
+  .required("Course description is required.")
+  .min(20, "Description must be at least 20 characters long.")
+  .max(1000, "Description must not exceed 1000 characters.")
   .matches(
-    /^[A-Za-z0-9\s,.-]+$/,
-    "Course title can only contain letters, numbers, spaces, commas, periods, and hyphens"
+    /^[a-zA-Z0-9\s.,!?'"()_@#$%&*-/]+$/,
+    "Description contains invalid characters. Only letters, numbers, and common punctuation are allowed."
   )
   .trim()
-  .test("no-double-spaces", "Course title should not contain double spaces", (value) => {
-    return value && !/\s{2,}/.test(value);
-  })
-  .typeError("Course title must be a valid string");
+  .typeError("Course description must be a valid string.");
 
-  export const courseCreditValidationSchema = Yup.number()
-  .required("Course credit is required")
-  .positive("Course credit must be a positive number")
-  .integer("Course credit must be an integer")
-  .min(1, "Course credit must be at least 1")
-  .max(6, "Course credit cannot exceed 6")
-  .typeError("Course credit must be a valid number");
-
-
-
+  
   export const weightedMarkValidationSchema = Yup.number()
   .required("Weighted mark is required")
   .positive("Weighted mark must be a positive number")
@@ -289,6 +271,17 @@ export const emailValidationSchema = Yup.string()
   .test("valid-number-format", "Invalid number format", (value) => {
     return /^[0-9]+(\.[0-9]{1,2})?$/.test(value);
   });
+
+  export const courseCodeSchema = Yup.string()
+  .required("Course code is required.")
+  .min(4, "Course code must be at least 4 characters long.")
+  .max(10, "Course code cannot be more than 10 characters.")
+  .matches(
+    /^[a-zA-Z]{2,4}\d{3,4}$/,
+    "Course code must be 2-4 letters followed by 3-4 digits (e.g., CS101)."
+  )
+  .trim()
+  .typeError("Course code must be a valid string.");
 
   export const occupationValidationSchema = Yup.string()
   .required("Occupation is required")
@@ -374,6 +367,19 @@ export const departmentValidationSchema = Yup.string()
   )
   .typeError("Specialty description must be a valid string");
 
+  export const courseTitleSchema = Yup.string()
+  .required("Course title is required.")
+  .min(5, "Course title must be at least 5 characters long.")
+  .max(150, "Course title must be less than 150 characters.")
+  .matches(
+    /^[a-zA-Z0-9\s:,'"-]+$/,
+    "Course title can only contain letters, numbers, spaces, and punctuation like :,',-, and ''."
+  )
+  .trim()
+  .test("no-double-spaces", "Course title should not contain double spaces", (value) => {
+    return value && !/\s{2,}/.test(value);
+  })
+  .typeError("Course title must be a valid string");
  export  const registrationFeeValidationSchema = Yup.number()
   .required("Registration fee is required")
   .positive("Registration fee must be a positive number")

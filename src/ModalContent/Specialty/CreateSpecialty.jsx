@@ -102,7 +102,7 @@ function CreateSpecialty({ handleClose }) {
             renameMapping={{ id: "id", department_name: "department_name" }}
             isLoading={departmentIsLoading}
             direction="up"
-            onSelect={(value) => handleInputChange('department_id', value)}
+            onSelect={(value) => handleInputChange('department_id', value.id)}
           />
         )}
       </div>
@@ -121,7 +121,7 @@ function CreateSpecialty({ handleClose }) {
             renameMapping={{ id: "id", name: "name", level: "level" }}
             isLoading={educationIsLoading}
             direction="up"
-            onSelect={(value) => handleInputChange('level_id', value)}
+            onSelect={(value) => handleInputChange('level_id', value.id)}
           />
         )}
       </div>

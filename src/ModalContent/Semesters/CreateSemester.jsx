@@ -106,6 +106,7 @@ function CreateSemester({ handleClose }) {
             onChange={(e) => handleInputChange("specialty_id", e.target.value)}
             className="form-select"
           >
+            <option selected>Select Specialty</option>
             {specailties.data.map((items) => (
               <option value={items.id}>{items.specialty_name}</option>
             ))}
@@ -121,6 +122,7 @@ function CreateSemester({ handleClose }) {
             }
             className="form-select"
           >
+            <option selected>Select Student Batch</option>
             {studentBatches.data.map((items) => (
               <option value={items.id}>{items.name}</option>
             ))}

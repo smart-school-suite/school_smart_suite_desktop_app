@@ -98,7 +98,7 @@ function UpdateSpecialty({  handleClose, rowData }) {
               filter_array_keys={["id", "department_name"]}
               renameMapping={{ id: "id", department_name: "department_name" }}
               direction="up"
-              onSelect={(value) => handleInputChange('department_id', value)}
+              onSelect={(value) => handleInputChange('department_id', value.id)}
             />
           )}
         </div>
@@ -116,7 +116,7 @@ function UpdateSpecialty({  handleClose, rowData }) {
               filter_array_keys={["id", "name", "level"]}
               renameMapping={{ id: "id", name: "name", level: "level" }}
               direction="up"
-              onSelect={(value) => handleInputChange('level_id', value)}
+              onSelect={(value) => handleInputChange('level_id', value.id)}
             />
           )}
         </div>
