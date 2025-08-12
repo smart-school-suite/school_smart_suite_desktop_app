@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import * as YupValidationSchema from "../../ComponentConfig/YupValidationSchema";
 import { Icon } from "@iconify/react";
+import InputMask from 'react-input-mask';
 export function PhoneNumberInput({ onChange, value, onValidationChange }) {
   const [phoneNumber, setPhoneNumber] = useState(value || "");
   const [error, setError] = useState("");
@@ -543,167 +544,6 @@ export function AddressInput({ onChange, value, onValidationChange }) {
   );
 }
 
-export function CourseCodeInput({ onChange, value, onValidationChange }) {
-  const [courseCode, setCourseCode] = useState(value || "");
-  const [courseCodeError, setCourseCodeError] = useState("");
-  const [isCourseCodeTouched, setIsCourseCodeTouched] = useState(false);
-
-  const validateCourseCode = async (value) => {
-    try {
-      await YupValidationSchema.courseCodeValidationSchema.validate(value);
-      setCourseCodeError("");
-      onValidationChange(true);
-    } catch (err) {
-      setCourseCodeError(err.message);
-      onValidationChange(false);
-    }
-  };
-
-  const handleCourseCodeChange = (e) => {
-    const { value } = e.target;
-    setCourseCode(value);
-    onChange(value);
-    validateCourseCode(value);
-  };
-
-  const handleCourseCodeFocus = () => {
-    setIsCourseCodeTouched(true);
-  };
-  return (
-    <div>
-      <span>Course Code</span>
-      <input
-        type="text"
-        placeholder="CS101, BIO-305 etc"
-        name="course_code"
-        className={`form-control ${
-          isCourseCodeTouched && courseCodeError ? "is-invalid" : ""
-        } ${
-          isCourseCodeTouched && !courseCodeError && courseCode
-            ? "is-valid"
-            : ""
-        }`}
-        onChange={handleCourseCodeChange}
-        onFocus={handleCourseCodeFocus}
-      />
-      {isCourseCodeTouched && courseCodeError && (
-        <div className="invalid-feedback">{courseCodeError}</div>
-      )}
-      {isCourseCodeTouched && !courseCodeError && courseCode && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
-    </div>
-  );
-}
-
-export function CourseTitleInput({
-  value,
-  onChange,
-  onValidationChange,
-  placeholder,
-}) {
-  const [courseTitle, setCourseTitle] = useState(value || "");
-  const [courseTitleError, setCourseTitleError] = useState("");
-  const [isCourseTitleTouched, setIsCourseTitleTouched] = useState(false);
-
-  const validateCourseTitle = async (value) => {
-    try {
-      await YupValidationSchema.courseTitleValidationSchema.validate(value);
-      setCourseTitleError("");
-      onValidationChange(true);
-    } catch (err) {
-      setCourseTitleError(err.message);
-      onValidationChange(false);
-    }
-  };
-
-  const handleCourseCodeChange = (e) => {
-    const { value } = e.target;
-    setCourseTitle(value);
-    onChange(value);
-    validateCourseTitle(value);
-  };
-
-  const handleCourseTitleFocus = () => {
-    setIsCourseTitleTouched(true);
-  };
-  return (
-    <div>
-      <span>Course Title</span>
-      <input
-        type="text"
-        className={`form-control ${
-          isCourseTitleTouched && courseTitleError ? "is-invalid" : ""
-        } ${
-          isCourseTitleTouched && !courseTitleError && courseTitle
-            ? "is-valid"
-            : ""
-        }`}
-        placeholder={placeholder === null ? "Mathematics" : placeholder}
-        onChange={handleCourseCodeChange}
-        onFocus={handleCourseTitleFocus}
-      />
-      {isCourseTitleTouched && courseTitleError && (
-        <div className="invalid-feedback">{courseTitleError}</div>
-      )}
-      {isCourseTitleTouched && !courseTitleError && courseTitle && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
-    </div>
-  );
-}
-
-export function CourseCreditInput({ value, onValidationChange, onChange }) {
-  const [courseCredit, setCourseCredit] = useState(value || "");
-  const [courseCreditError, setCourseCreditError] = useState("");
-  const [isCourseCreditTouched, setIsCourseCreditTouched] = useState(false);
-
-  const validateCourseCredit = async (value) => {
-    try {
-      await YupValidationSchema.courseCreditValidationSchema.validate(value);
-      setCourseCreditError("");
-      onValidationChange(true);
-    } catch (err) {
-      onValidationChange(false);
-      setCourseCreditError(err.message);
-    }
-  };
-
-  const handleCourseCreditChange = (e) => {
-    const { value } = e.target;
-    setCourseCredit(value);
-    onChange(value);
-    validateCourseCredit(value);
-  };
-
-  const handleCourseCreditFocus = () => {
-    setIsCourseCreditTouched(true);
-  };
-  return (
-    <div>
-      <span>Course Credit</span>
-      <input
-        type="number"
-        placeholder="1 credit, 2 credit"
-        className={`form-control ${
-          isCourseCreditTouched && courseCreditError ? "is-invalid" : ""
-        } ${
-          isCourseCreditTouched && !courseCreditError && courseCredit
-            ? "is-valid"
-            : ""
-        }`}
-        onChange={handleCourseCreditChange}
-        onFocus={handleCourseCreditFocus}
-      />
-      {isCourseCreditTouched && courseCreditError && (
-        <div className="invalid-feedback">{courseCreditError}</div>
-      )}
-      {isCourseCreditTouched && !courseCreditError && courseCredit && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
-    </div>
-  );
-}
 
 export function WeigtedMarkInput({ onChange, value, onValidationChange }) {
   const [weightedMark, setWeightedMark] = useState(value || "");
@@ -845,292 +685,6 @@ export function TextInputField({
   );
 }
 
-export function OccupationInput() {
-  const [occupation, setOccupation] = useState("");
-  const [occupationError, setOccupationError] = useState("");
-  const [isOccupationTouched, setIsOccupationTouched] = useState(false);
-
-  const validateOccupation = async (value) => {
-    try {
-      await YupValidationSchema.occupationValidationSchema.validate(value);
-      setOccupationError("");
-    } catch (err) {
-      setOccupationError(err.message);
-    }
-  };
-
-  const handleOccupationChange = (e) => {
-    const { value } = e.target;
-    setOccupation(value);
-    validateOccupation(value);
-  };
-
-  const handleOccupationFocus = () => {
-    setIsOccupationTouched(true);
-  };
-  return (
-    <div>
-      <span>Occupation</span>
-      <input
-        type="text"
-        placeholder="Singer, software Engineer"
-        onChange={handleOccupationChange}
-        onFocus={handleOccupationFocus}
-        className={`form-control ${
-          isOccupationTouched && occupationError ? "is-invalid" : ""
-        } ${
-          isOccupationTouched && !occupationError && occupation
-            ? "is-valid"
-            : ""
-        }`}
-      />
-      {isOccupationTouched && occupationError && (
-        <div className="invalid-feedback">{occupationError}</div>
-      )}
-      {isOccupationTouched && !occupationError && occupation && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
-    </div>
-  );
-}
-
-export function DepartmentNameInput({ onValidationChange, value, onChange }) {
-  const [department, setDepartment] = useState(value || "");
-  const [departmentError, setDepartmentError] = useState("");
-  const [isDepartmentTouched, setIsDepartmentTouched] = useState(false);
-
-  const validateDepartment = async (value) => {
-    try {
-      await YupValidationSchema.departmentValidationSchema.validate(value);
-      setDepartmentError("");
-      onValidationChange(true);
-    } catch (err) {
-      setDepartmentError(err.message);
-      onValidationChange(false);
-    }
-  };
-
-  const handleDepartmentChange = (e) => {
-    const { value } = e.target;
-    setDepartment(value);
-    onChange(value);
-    validateDepartment(value);
-  };
-
-  const handleCourseCreditFocus = () => {
-    setIsDepartmentTouched(true);
-  };
-  return (
-    <div>
-      <span>Department Name</span>
-      <input
-        type="text"
-        placeholder="Mathematics Department"
-        onChange={handleDepartmentChange}
-        onFocus={handleCourseCreditFocus}
-        className={`form-control ${
-          isDepartmentTouched && departmentError ? "is-invalid" : ""
-        } ${
-          isDepartmentTouched && !departmentError && department
-            ? "is-valid"
-            : ""
-        }`}
-      />
-      {isDepartmentTouched && departmentError && (
-        <div className="invalid-feedback">{departmentError}</div>
-      )}
-      {isDepartmentTouched && !departmentError && department && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
-    </div>
-  );
-}
-
-export function SpecialtyTitleInput({
-  value,
-  onChange,
-  onValidationChange,
-  placeholder,
-}) {
-  const [specailtyName, setSpecailtyName] = useState(value || "");
-  const [specailtyNameError, setSpecailtyNameError] = useState("");
-  const [isSpecailtyNameTouched, setIsSpecailtyNameTouched] = useState(false);
-
-  const validateSpecailtyName = async (value) => {
-    try {
-      await YupValidationSchema.specialtyValidationSchema.validate(value);
-      setSpecailtyNameError("");
-      onValidationChange(true);
-    } catch (err) {
-      setSpecailtyNameError(err.message);
-      onValidationChange(false);
-    }
-  };
-
-  const handleSpecailtyNameChange = (e) => {
-    const { value } = e.target;
-    setSpecailtyName(value);
-    onChange(value);
-    validateSpecailtyName(value);
-  };
-
-  const handleOccupationFocus = () => {
-    setIsSpecailtyNameTouched(true);
-  };
-  return (
-    <div style={{ height:"10dvh" }}>
-      <span>Specialty Name</span>
-      <input
-        type="text"
-        placeholder={placeholder}
-        className={`form-control ${
-          isSpecailtyNameTouched && specailtyNameError ? "is-invalid" : ""
-        } ${
-          isSpecailtyNameTouched && !specailtyNameError && specailtyName
-            ? "is-valid"
-            : ""
-        }`}
-        onChange={handleSpecailtyNameChange}
-        onFocus={handleOccupationFocus}
-      />
-      {isSpecailtyNameTouched && specailtyNameError && (
-        <div className="invalid-feedback">{specailtyNameError}</div>
-      )}
-      {isSpecailtyNameTouched && !specailtyNameError && specailtyName && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
-    </div>
-  );
-}
-
-export function RegistrationFeeInput({
-  onChange,
-  value,
-  onValidationChange,
-  placeholder,
-}) {
-  const [registrationFee, setRegistrationFee] = useState(value || "");
-  const [registrationFeeError, setRegistrationFeeError] = useState("");
-  const [isRegistrationFeeTouched, setIsRegistrationTouched] = useState(false);
-
-  const validateRegistrationFee = async (value) => {
-    try {
-      await YupValidationSchema.registrationFeeValidationSchema.validate(value);
-      setRegistrationFeeError("");
-      onValidationChange(true);
-    } catch (err) {
-      setRegistrationFeeError(err.message);
-      onValidationChange(false);
-    }
-  };
-
-  const handleRegistrationFeeChange = (e) => {
-    const { value } = e.target;
-    setRegistrationFee(value);
-    onChange(value);
-    validateRegistrationFee(value);
-  };
-
-  const handleRegistrationFeeFocus = () => {
-    setIsRegistrationTouched(true);
-  };
-  return (
-    <div>
-      <span>Registration Fee</span>
-      <input
-        type="number"
-        placeholder={placeholder}
-        onChange={handleRegistrationFeeChange}
-        onFocus={handleRegistrationFeeFocus}
-        className={`form-control ${
-          isRegistrationFeeTouched && registrationFeeError ? "is-invalid" : ""
-        } ${
-          isRegistrationFeeTouched && !registrationFeeError && registrationFee
-            ? "is-valid"
-            : ""
-        }`}
-      />
-      {isRegistrationFeeTouched && registrationFeeError && (
-        <div className="invalid-feedback">{registrationFeeError}</div>
-      )}
-      {isRegistrationFeeTouched && !registrationFeeError && registrationFee && (
-        <div className="valid-feedback">Looks good!</div>
-      )}
-    </div>
-  );
-}
-
-export function SchoolFeeInput({
-  onChange,
-  onValidationChange,
-  value,
-  placeholder,
-}) {
-  const [schoolFee, setSchoolFee] = useState(value || "");
-  const [schoolFeeError, setSchoolFeeError] = useState("");
-  const [isSchoolFeeTouched, setIsSchoolFeeTouched] = useState(false);
-
-  const validateSchoolFee = async (inputValue) => {
-    try {
-      await YupValidationSchema.schoolFeeValidationSchema.validate(inputValue);
-      setSchoolFeeError("");
-      onValidationChange(true);
-    } catch (err) {
-      setSchoolFeeError(err.message);
-      onValidationChange(false);
-    }
-  };
-
-  const handleSchoolFeeChange = (e) => {
-    const { value: newValue } = e.target;
-    setSchoolFee(newValue);
-    onChange(newValue);
-    validateSchoolFee(newValue);
-  };
-
-  const handleSchoolFeeFocus = () => {
-    setIsSchoolFeeTouched(true);
-  };
-
-  const feedbackContent = isSchoolFeeTouched && schoolFeeError
-    ? schoolFeeError
-    : (isSchoolFeeTouched && !schoolFeeError && schoolFee && 'Looks Good!');
-
-  const feedbackClasses = [
-    'transition-all font-size-sm',
-    isSchoolFeeTouched && schoolFeeError
-      ? 'invalid-feedback transition-all'
-      : (isSchoolFeeTouched && !schoolFeeError && schoolFee
-          ? 'valid-feedback transition-all'
-          : null), 
-    isSchoolFeeTouched && (schoolFeeError || (!schoolFeeError && schoolFee))
-      ? 'opacity-100 transition-all'
-      : 'opacity-0 transition-all',
-  ].filter(Boolean).join(' ');
-
-  return (
-    <div>
-      <span>School Fee</span>
-      <input
-        type="number"
-        value={schoolFee}
-        onChange={handleSchoolFeeChange}
-        onFocus={handleSchoolFeeFocus}
-        placeholder={placeholder}
-        className={`form-control ${
-          isSchoolFeeTouched && schoolFeeError ? "is-invalid" : ""
-        } ${
-          isSchoolFeeTouched && !schoolFeeError && schoolFee
-            ? "is-valid"
-            : ""
-        }`}
-      />
-      <div className={feedbackClasses}>
-        {feedbackContent}
-      </div>
-    </div>
-  );
-}
 
 export function TextInput({
   onChange,
@@ -1386,6 +940,252 @@ export function NumberInput({
       />
       <div className={`${feedbackClasses} mt-auto`}>
         {feedbackContent}
+      </div>
+    </div>
+  );
+}
+
+export function DateInput({
+  value,
+  onChange,
+  onValidationChange,
+  placeholder = "MM/DD/YYYY",
+  validationSchema,
+  id,
+  name
+}) {
+  const [displayValue, setDisplayValue] = useState(value || "");
+  const [inputError, setInputError] = useState("");
+  const [isInputTouched, setIsInputTouched] = useState(false);
+
+  const validateInput = async (currentValue) => {
+    if (!validationSchema) {
+      onValidationChange?.(true);
+      return;
+    }
+    try {
+      await validationSchema.validate(currentValue);
+      setInputError("");
+      onValidationChange?.(true);
+    } catch (err) {
+      setInputError(err.message);
+      onValidationChange?.(false);
+    }
+  };
+
+  const handleChange = useCallback(
+    (e) => {
+      const rawValue = e.target.value;
+      setDisplayValue(rawValue);
+
+      const unmaskedValue = rawValue.replace(/[^0-9]/g, "");
+
+      // Update parent value
+      if (unmaskedValue.length === 8) {
+        onChange(rawValue);
+      } else {
+        onChange("");
+      }
+
+      // Real-time validation if touched
+      if (isInputTouched) {
+        validateInput(rawValue);
+      }
+    },
+    [onChange, isInputTouched]
+  );
+
+  const handleFocus = () => {
+    setIsInputTouched(true);
+    validateInput(displayValue);
+  };
+
+  const handleBlur = () => {
+    validateInput(displayValue);
+  };
+
+  const feedbackContent =
+    isInputTouched && inputError
+      ? inputError
+      : isInputTouched && !inputError && displayValue && "Looks Good!";
+
+  const feedbackClasses = [
+    "transition-all font-size-sm",
+    isInputTouched && inputError
+      ? "invalid-feedback transition-all"
+      : isInputTouched && !inputError && displayValue
+      ? "valid-feedback transition-all"
+      : null,
+    isInputTouched && (inputError || (!inputError && displayValue))
+      ? "opacity-100 transition-all"
+      : "opacity-0 transition-all",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <div className="input-container">
+      <InputMask
+        mask="99/99/9999"
+        maskChar="_"
+        value={displayValue}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        id={id}
+        name={name}
+        placeholder={placeholder}
+        aria-describedby={`${id}-hint`}
+        className={`form-control date-input-field p-2 font-size-sm ${
+          isInputTouched && inputError
+            ? "is-invalid"
+            : isInputTouched && !inputError && displayValue
+            ? "is-valid"
+            : ""
+        }`}
+      />
+      <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
+    </div>
+  );
+}
+
+export function TimeInput({ value, onChange, id, name, placeholder = "HH:MM" }) {
+  const [displayValue, setDisplayValue] = useState(value);
+  const handleChange = useCallback((e) => {
+    const rawValue = e.target.value;
+    setDisplayValue(rawValue);
+    const unmaskedValue = rawValue.replace(/[^0-9]/g, '');
+    if (unmaskedValue.length === 4) {
+      onChange(rawValue);
+    } else if (unmaskedValue.length < 4 && value !== '') {
+        onChange('');
+    }
+  }, [onChange, value]);
+
+  return (
+    <div className="input-container">
+      <InputMask
+        mask="99:99"
+        maskChar="_"
+        value={value}
+        onChange={handleChange}
+        id={id}
+        name={name}
+        placeholder={placeholder}
+        aria-describedby={`${id}-hint`}
+        className="form-control time-input-field is-invalid"
+      />
+    </div>
+  );
+}
+
+
+export function DateRangeInput({
+  startValue,
+  endValue,
+  onChange,
+  onValidationChange,
+  validationSchema,
+  placeholderStart = "MM/DD/YYYY",
+  placeholderEnd = "MM/DD/YYYY",
+}) {
+  const [dates, setDates] = useState({
+    start_date: startValue || "",
+    end_date: endValue || "",
+  });
+  const [errors, setErrors] = useState({
+    start_date: "",
+    end_date: "",
+  });
+  const [touched, setTouched] = useState({
+    start_date: false,
+    end_date: false,
+  });
+
+  const validateField = async (field, value) => {
+    try {
+      await validationSchema.validate({ ...dates, [field]: value }, { abortEarly: false });
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+      onValidationChange?.(true);
+    } catch (err) {
+      const fieldError = err.inner.find((e) => e.path === field);
+      setErrors((prev) => ({ ...prev, [field]: fieldError ? fieldError.message : "" }));
+      onValidationChange?.(false);
+    }
+  };
+
+  const handleChange = (field) => (e) => {
+    const rawValue = e.target.value;
+    setDates((prev) => ({ ...prev, [field]: rawValue }));
+    onChange?.({ ...dates, [field]: rawValue });
+    if (touched[field]) validateField(field, rawValue);
+  };
+
+  const handleFocus = (field) => () => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    validateField(field, dates[field]);
+  };
+
+  const feedbackClasses = (field) =>
+    [
+      "transition-all font-size-sm",
+      touched[field] && errors[field]
+        ? "invalid-feedback"
+        : touched[field] && !errors[field] && dates[field]
+        ? "valid-feedback"
+        : null,
+      touched[field] && (errors[field] || (!errors[field] && dates[field]))
+        ? "opacity-100"
+        : "opacity-0",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+  const feedbackMessage = (field) =>
+    touched[field] && errors[field]
+      ? errors[field]
+      : touched[field] && !errors[field] && dates[field]
+      ? "Looks Good!"
+      : "";
+
+  return (
+    <div className="d-flex flex-row align-items-center gap-2 w-100" style={{ height:"10dvh" }}>
+      <div className="input-container w-50">
+        <label htmlFor="startDate" className="font-size-sm">Start Date</label>
+        <InputMask
+          mask="99/99/9999"
+          maskChar="_"
+          value={dates.start_date}
+          onChange={handleChange("start_date")}
+          onFocus={handleFocus("start_date")}
+          onBlur={handleFocus("start_date")}
+          placeholder={placeholderStart}
+          className={`form-control w-100 font-size-sm ${touched.start_date && errors.start_date ? "is-invalid" : ""} ${
+            touched.start_date && !errors.start_date && dates.start_date ? "is-valid" : ""
+          }`}
+        />
+        <div className={`${feedbackClasses("start_date")} font-size-sm mt-auto`}>
+          {feedbackMessage("start_date")}
+        </div>
+      </div>
+
+      <div className="input-container w-50">
+        <label htmlFor="endDate" className="font-size-sm">End Date</label>
+        <InputMask
+          mask="99/99/9999"
+          maskChar="_"
+          value={dates.end_date}
+          onChange={handleChange("end_date")}
+          onFocus={handleFocus("end_date")}
+          onBlur={handleFocus("end_date")}
+          placeholder={placeholderEnd}
+          className={`form-control w-100 font-size-sm ${touched.end_date && errors.end_date ? "is-invalid" : ""} ${
+            touched.end_date && !errors.end_date && dates.end_date ? "is-valid" : ""
+          }`}
+        />
+        <div className={`${feedbackClasses("end_date")} font-size-sm mt-auto`}>
+          {feedbackMessage("end_date")}
+        </div>
       </div>
     </div>
   );

@@ -1531,3 +1531,15 @@ textarea::-webkit-scrollbar-thumb:hover {
     height: 17.5dvh;
 }
 
+.date-input-field{
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: '"tnum"';
+    font-size: var(--font-size-sm);
+    vertical-align: center;
+}
+.time-input-field{
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: '"tnum"';
+    font-size: var(--font-size-sm);
+    vertical-align: center;
+}

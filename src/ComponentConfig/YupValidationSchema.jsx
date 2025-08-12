@@ -250,6 +250,54 @@ export const emailValidationSchema = Yup.string()
   .integer("Course credit must be a whole number.")
   .typeError("Course credit must be a valid number.");
 
+export const dateValidationSchema = Yup.string()
+  .required("Date is required")
+  .matches(
+    /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/,
+    "Invalid date format (MM/DD/YYYY)"
+  )
+  .test("is-valid-date", "Invalid date", (value) => {
+    if (!value) return false;
+    const [month, day, year] = value.split("/").map(Number);
+    const date = new Date(year, month - 1, day);
+    // Check that date components match exactly
+    return (
+      date.getFullYear() === year &&
+      date.getMonth() === month - 1 &&
+      date.getDate() === day
+    );
+  });
+
+  const isValidDate = (value) => {
+  if (!value) return false;
+  const [month, day, year] = value.split("/").map(Number);
+  const date = new Date(year, month - 1, day);
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+};
+  export const dateRangeValidationSchema = Yup.object().shape({
+  start_date: Yup.string()
+    .required("Start date is required")
+    .matches(/^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/, "Invalid date format (MM/DD/YYYY)")
+    .test("is-valid-date", "Invalid date", isValidDate),
+  end_date: Yup.string()
+    .required("End date is required")
+    .matches(/^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/, "Invalid date format (MM/DD/YYYY)")
+    .test("is-valid-date", "Invalid date", isValidDate)
+    .test("is-after-start", "End date must be after start date", function (value) {
+      const { start_date } = this.parent;
+      if (!isValidDate(start_date) || !isValidDate(value)) return true;
+      const [sm, sd, sy] = start_date.split("/").map(Number);
+      const [em, ed, ey] = value.split("/").map(Number);
+      const startDate = new Date(sy, sm - 1, sd);
+      const endDate = new Date(ey, em - 1, ed);
+      return endDate >= startDate;
+    }),
+});
+
   export const courseDescriptionSchema = Yup.string()
   .required("Course description is required.")
   .min(20, "Description must be at least 20 characters long.")
@@ -444,3 +492,45 @@ export const departmentValidationSchema = Yup.string()
     return value && !/\s{2,}/.test(value);
   });
 
+
+const safeTextRegex = /^[a-zA-Z0-9\s.,'’"()-]+$/;
+
+export const batchTitleSchema = Yup.string()
+  .required("Batch title is required")
+  .trim()
+  .min(3, "Batch title must be at least 3 characters long")
+  .max(100, "Batch title cannot exceed 100 characters")
+  .matches(
+    safeTextRegex,
+    "Batch title contains invalid characters"
+  )
+  .test(
+    "no-multiple-spaces",
+    "Batch title contains too many spaces",
+    (value) => !value || !/\s{2,}/.test(value)
+  )
+  .test(
+    "no-repetitive-chars",
+    "Batch title contains too many repeating characters",
+    (value) => !value || !/(.)\1{4,}/.test(value) // e.g., "AAAAA"
+  );
+
+export const batchDescriptionSchema = Yup.string()
+  .nullable()
+  .trim()
+  .min(20, "Description must be at least 20 characters long.")
+  .max(500, "Description cannot exceed 500 characters")
+  .matches(
+    safeTextRegex,
+    "Description contains invalid characters"
+  )
+  .test(
+    "no-multiple-spaces",
+    "Description contains too many spaces",
+    (value) => !value || !/\s{3,}/.test(value)
+  )
+  .test(
+    "no-repetitive-chars",
+    "Description contains too many repeating characters",
+    (value) => !value || !/(.)\1{6,}/.test(value) // e.g., "!!!!!!" or "AAAAAAA"
+  );

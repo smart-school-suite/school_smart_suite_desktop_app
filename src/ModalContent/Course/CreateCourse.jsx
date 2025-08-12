@@ -93,8 +93,6 @@ function CreateCourse({ handleClose }) {
             data={semesters.data}
             displayKey={["name"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "name"]}
-            renameMapping={{ id: "id", name: "name" }}
             direction="up"
             onSelect={(value) => handleInputChange('semester_id', value.id)}
           />
@@ -111,8 +109,6 @@ function CreateCourse({ handleClose }) {
             data={specialty.data}
             displayKey={["specialty_name", "level_name"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "specialty_name", "level_name"]}
-            renameMapping={{ id: "id", specialty_name: "specialty_name", leve_name:"level_name" }}
             direction="up"
             onSelect={(value) => handleInputChange('specialty_id', value.id)}
           />
