@@ -7,9 +7,7 @@ function CurrencyComponent(props) {
     return (
         <>
             <span className="text-overflow-elipse overflow-hidden my-0 text-start">
-                {/* Format the numeric value */}
                 {formatNumber(displayValue)}{' '}
-                {/* Display the currency symbol */}
                 {userCurrencySymbol}
             </span>
         </>

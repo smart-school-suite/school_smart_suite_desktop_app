@@ -442,7 +442,7 @@ export function DateInput({
   value,
   onChange,
   onValidationChange,
-  placeholder = "MM/DD/YYYY",
+  placeholder = "YYYY-MM-DD",
   validationSchema,
   id,
   name,
@@ -450,6 +450,10 @@ export function DateInput({
   const [displayValue, setDisplayValue] = useState(value || "");
   const [inputError, setInputError] = useState("");
   const [isInputTouched, setIsInputTouched] = useState(false);
+
+  useEffect(() => {
+    setDisplayValue(value || "");
+  }, [value]);
 
   const validateInput = async (currentValue) => {
     if (!validationSchema) {
@@ -473,14 +477,13 @@ export function DateInput({
 
       const unmaskedValue = rawValue.replace(/[^0-9]/g, "");
 
-      // Update parent value
+      // Update parent only when full date is entered
       if (unmaskedValue.length === 8) {
         onChange(rawValue);
       } else {
         onChange("");
       }
 
-      // Real-time validation if touched
       if (isInputTouched) {
         validateInput(rawValue);
       }
@@ -505,13 +508,13 @@ export function DateInput({
   const feedbackClasses = [
     "transition-all font-size-sm",
     isInputTouched && inputError
-      ? "invalid-feedback transition-all"
+      ? "invalid-feedback"
       : isInputTouched && !inputError && displayValue
-      ? "valid-feedback transition-all"
+      ? "valid-feedback"
       : null,
     isInputTouched && (inputError || (!inputError && displayValue))
-      ? "opacity-100 transition-all"
-      : "opacity-0 transition-all",
+      ? "opacity-100"
+      : "opacity-0",
   ]
     .filter(Boolean)
     .join(" ");
@@ -519,7 +522,7 @@ export function DateInput({
   return (
     <div className="input-container">
       <InputMask
-        mask="99/99/9999"
+        mask="9999-99-99"
         maskChar="_"
         value={displayValue}
         onChange={handleChange}
@@ -541,6 +544,7 @@ export function DateInput({
     </div>
   );
 }
+
 
 export function TimeInput({
   value,
@@ -585,10 +589,12 @@ export function DateRangeInput({
   startValue,
   endValue,
   onChange,
+  onStartDateChange,
+  onEndDateChange,
   onValidationChange,
   validationSchema,
-  placeholderStart = "MM/DD/YYYY",
-  placeholderEnd = "MM/DD/YYYY",
+  placeholderStart = "YYYY-MM-DD",
+  placeholderEnd = "YYYY-MM-DD",
 }) {
   const [dates, setDates] = useState({
     start_date: startValue || "",
@@ -604,6 +610,10 @@ export function DateRangeInput({
   });
 
   const validateField = async (field, value) => {
+    if (!validationSchema) {
+      onValidationChange?.(true);
+      return;
+    }
     try {
       await validationSchema.validate(
         { ...dates, [field]: value },
@@ -624,7 +634,16 @@ export function DateRangeInput({
   const handleChange = (field) => (e) => {
     const rawValue = e.target.value;
     setDates((prev) => ({ ...prev, [field]: rawValue }));
+
     onChange?.({ ...dates, [field]: rawValue });
+    
+    if (field === "start_date") {
+      onStartDateChange?.(rawValue);
+    }
+    if (field === "end_date") {
+      onEndDateChange?.(rawValue);
+    }
+
     if (touched[field]) validateField(field, rawValue);
   };
 
@@ -660,12 +679,13 @@ export function DateRangeInput({
       className="d-flex flex-row align-items-center gap-2 w-100"
       style={{ height: "10dvh" }}
     >
+      {/* Start Date */}
       <div className="input-container w-50">
         <label htmlFor="startDate" className="font-size-sm">
           Start Date
         </label>
         <InputMask
-          mask="99/99/9999"
+          mask="9999-99-99"
           maskChar="_"
           value={dates.start_date}
           onChange={handleChange("start_date")}
@@ -687,12 +707,13 @@ export function DateRangeInput({
         </div>
       </div>
 
+      {/* End Date */}
       <div className="input-container w-50">
         <label htmlFor="endDate" className="font-size-sm">
           End Date
         </label>
         <InputMask
-          mask="99/99/9999"
+          mask="9999-99-99"
           maskChar="_"
           value={dates.end_date}
           onChange={handleChange("end_date")}
@@ -715,111 +736,6 @@ export function DateRangeInput({
   );
 }
 
-export function GenderSelector({ onSelect, onError, error }) {
-  const [selectedGender, setSelectedGender] = useState(null);
-  const [isShowing, setIsShowing] = useState(false);
-  const [touched, setTouched] = useState(false);
-  const genderRef = useRef(null);
-
-  const genders = ["Male", "Female"];
-
-  const handle_toggle = () => {
-    setIsShowing((prev) => !prev);
-    setTouched(true);
-  };
-
-  const handleGenderSelect = (gender) => {
-    setSelectedGender(gender);
-    onSelect(gender);
-    onError && onError("");
-    setIsShowing(false);
-  };
-
-  const handleClickOutside = (event) => {
-    if (genderRef.current && !genderRef.current.contains(event.target)) {
-      setIsShowing(false);
-      if (touched && !selectedGender) {
-        onError && onError("Gender is required");
-      }
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [touched, selectedGender]);
-
-  return (
-    <div className="input-container">
-      <div className="position-relative" ref={genderRef}>
-        <div
-          className={`bg-white d-flex border flex-row align-items-center justify-content-between rounded-2 z-0 pointer-cursor ${
-            touched
-              ? error
-                ? "border-danger text-danger"
-                : selectedGender
-                ? "border-success text-success"
-                : ""
-              : ""
-          }`}
-          onClick={handle_toggle}
-          style={{ padding: "0.3rem" }}
-        >
-          <div className="d-flex flex-row align-items-center gap-3 font-size-sm">
-            <span>
-              {selectedGender === null ? "Select Gender" : selectedGender}
-            </span>
-          </div>
-          <div>
-            <span>
-              <Icon
-                icon="heroicons:chevron-up-20-solid"
-                className={
-                  isShowing ? "transition-3s" : "rotate-180 transition-3s"
-                }
-              />
-            </span>
-          </div>
-        </div>
-
-        <div>
-          {error ? (
-            <span className="font-size-sm text-danger">{error}</span>
-          ) : (
-            selectedGender && (
-              <span className="font-size-sm text-success">Looks Good</span>
-            )
-          )}
-        </div>
-
-        <CSSTransition
-          in={isShowing}
-          timeout={300}
-          classNames="dropdown"
-          unmountOnExit
-        >
-          <div className="p-2 bg-white d-flex flex-column border gap-1 mt-1 rounded-3 position-absolute w-100 z-3">
-            <div className="scrollable-dropdown d-flex flex-column gap-1">
-              {genders.map((gender, index) => (
-                <button
-                  key={index}
-                  className={`border-none m-1 gender-dropdown-item rounded-1 font-size-sm p-1 transparent-bg text-start ${
-                    gender === selectedGender ? "selected-gender" : ""
-                  }`}
-                  onClick={() => handleGenderSelect(gender)}
-                >
-                  {gender}
-                </button>
-              ))}
-            </div>
-          </div>
-        </CSSTransition>
-      </div>
-    </div>
-  );
-}
 
 export function InputGroup({
   onChange,
@@ -827,7 +743,8 @@ export function InputGroup({
   value,
   placeholder,
   validationSchema,
-  type = "text",
+  step = "1",
+  type = "number",
   InputGroupText
 }) {
   const [inputValue, setInputValue] = useState(value || "");
@@ -888,9 +805,10 @@ export function InputGroup({
   return (
     <>
      <div className="input-container">
-      <div className="input-group mb-3">
-         <input
+      <div className="input-group has-validation">
+       <input
         type={type}
+        step={step}
         value={inputValue}
         onChange={handleInputChange}
         onFocus={handleInputFocus}
@@ -898,13 +816,15 @@ export function InputGroup({
         placeholder={placeholder}
         className={`form-control font-size-sm p-2 ${
           isInputTouched && inputError ? "is-invalid" : ""
-        } ${isInputTouched && !inputError && inputValue ? "is-valid" : ""}`}
+        } ${
+          isInputTouched && !inputError && inputValue !== "" ? "is-valid" : ""
+        }`}
       />
         <span className="input-group-text" id="basic-addon1">
           {InputGroupText}
         </span>
-      </div>
       <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
+      </div>
      </div>
     </>
   );

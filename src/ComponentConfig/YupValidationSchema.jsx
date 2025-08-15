@@ -3,32 +3,48 @@ import * as Yup from "yup";
 const sanitizeInput = (input) => {
   return input.replace(/<[^>]*>/g, '').trim();
 };
-const cameroonLanguages = [
-  "English", "French", "Bamileke", "Douala", "Fang", "Basa'a", "Mungaka", "Yembe", "Banyang",
-  "Ntumba", "Mbenga", "Bamoun", "Cameroonian Pidgin English", "Mokpwe", "Mbole", "Tikar", "Aleghe",
-  "Madi", "Mofo", "Bassa", "Besingo", "Fuso", "Bendjum", "Other (Please Specify)"
-];
-export const preferredLanguageSchema = Yup.string()
-  .trim() 
-  .required("Preferred language is required")
-  .oneOf(cameroonLanguages, "Invalid language selection")
-  .max(50, "Language name is too long")
-  .test("valid-language", "Invalid language selection", value => {
-    return cameroonLanguages.includes(value);
-  });
-  export const numberSchema = (min = -Infinity, max = Infinity) => {
-  return Yup.number()
+
+export const numberSchema = ({ min = 0, max = 1000, optional = false } = {}) => {
+  let schema = Yup.number()
     .transform((value, originalValue) => {
       if (typeof originalValue === 'string' && originalValue.trim() === '') {
         return undefined;
       }
       return isNaN(value) ? undefined : value;
     })
-    .required('Number is required') 
     .typeError('Value must be a valid number')
     .min(min, `Number must be at least ${min}`)
     .max(max, `Number must be at most ${max}`);
+
+  if (!optional) {
+    schema = schema.required("Number is required");
+  }
+
+  return schema;
 };
+
+export const descriptionSchema = ({ min = 20, max = 500, optional = false } = {}) => {
+  let schema = Yup.string()
+    // Automatically trim leading and trailing whitespace
+    .trim()
+
+    // Enforce minimum length with a custom message
+    .min(min, `Description must be at least ${min} characters long.`)
+
+    // Enforce maximum length with a custom message
+    .max(max, `Description must not exceed ${max} characters.`)
+    
+    // Transform empty strings to null so required() works as expected
+    .transform(value => (value === '' ? null : value));
+
+  // Conditionally add the required validation
+  if (!optional) {
+    schema = schema.required("Description is required.");
+  }
+
+  return schema;
+};
+
  export  const relationshipSchema = Yup.object({
     relationshipToStudent: Yup.string()
       .trim()
@@ -91,19 +107,6 @@ export const fullNameSchema = Yup.string()
   })
   .required("Full name is required.");
 
-export const descriptionSchema = Yup.string()
-  .trim()
-  .min(10, 'Description must be at least 10 characters.') 
-  .max(1000, 'Description cannot be longer than 1000 characters.') 
-  .matches(/^[\w\s.,!?'"()-]*$/, 'Description contains invalid characters.') 
-  .test('no-xss', 'Description contains potentially harmful content.', (value) => {
-    if (value) {
-      const sanitizedValue = sanitizeInput(value);
-      return sanitizedValue === value;
-    }
-    return true;
-  })
-  .required('Description is required.');
 export const phoneValidationSchema = Yup.string()
   .matches(/^6\d{8}$/, "Phone number must start with 6 and be 9 digits long.")
   .required("Phone number is required.");
@@ -281,27 +284,10 @@ export const emailValidationSchema = Yup.string()
   .integer("Course credit must be a whole number.")
   .typeError("Course credit must be a valid number.");
 
-export const dateValidationSchema = Yup.string()
-  .required("Date is required")
-  .matches(
-    /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/,
-    "Invalid date format (MM/DD/YYYY)"
-  )
-  .test("is-valid-date", "Invalid date", (value) => {
-    if (!value) return false;
-    const [month, day, year] = value.split("/").map(Number);
-    const date = new Date(year, month - 1, day);
-    // Check that date components match exactly
-    return (
-      date.getFullYear() === year &&
-      date.getMonth() === month - 1 &&
-      date.getDate() === day
-    );
-  });
-
-  const isValidDate = (value) => {
+// Helper to check if a string is a valid date in YYYY-MM-DD format
+const isValidMySQLDate = (value) => {
   if (!value) return false;
-  const [month, day, year] = value.split("/").map(Number);
+  const [year, month, day] = value.split("-").map(Number);
   const date = new Date(year, month - 1, day);
   return (
     date.getFullYear() === year &&
@@ -309,24 +295,45 @@ export const dateValidationSchema = Yup.string()
     date.getDate() === day
   );
 };
-  export const dateRangeValidationSchema = Yup.object().shape({
+
+// Single MySQL date validation schema
+export const dateValidationSchema = Yup.string()
+  .required("Date is required")
+  .matches(
+    /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
+    "Invalid date format (YYYY-MM-DD)"
+  )
+  .test("is-valid-date", "Invalid date", isValidMySQLDate);
+
+// Date range validation schema for MySQL format
+export const dateRangeValidationSchema = Yup.object().shape({
   start_date: Yup.string()
     .required("Start date is required")
-    .matches(/^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/, "Invalid date format (MM/DD/YYYY)")
-    .test("is-valid-date", "Invalid date", isValidDate),
+    .matches(
+      /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
+      "Invalid date format (YYYY-MM-DD)"
+    )
+    .test("is-valid-date", "Invalid date", isValidMySQLDate),
+
   end_date: Yup.string()
     .required("End date is required")
-    .matches(/^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/, "Invalid date format (MM/DD/YYYY)")
-    .test("is-valid-date", "Invalid date", isValidDate)
-    .test("is-after-start", "End date must be after start date", function (value) {
-      const { start_date } = this.parent;
-      if (!isValidDate(start_date) || !isValidDate(value)) return true;
-      const [sm, sd, sy] = start_date.split("/").map(Number);
-      const [em, ed, ey] = value.split("/").map(Number);
-      const startDate = new Date(sy, sm - 1, sd);
-      const endDate = new Date(ey, em - 1, ed);
-      return endDate >= startDate;
-    }),
+    .matches(
+      /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
+      "Invalid date format (YYYY-MM-DD)"
+    )
+    .test("is-valid-date", "Invalid date", isValidMySQLDate)
+    .test(
+      "is-after-start",
+      "End date must be after or equal to start date",
+      function (value) {
+        const { start_date } = this.parent;
+        if (!isValidMySQLDate(start_date) || !isValidMySQLDate(value))
+          return true;
+        const startDate = new Date(start_date);
+        const endDate = new Date(value);
+        return endDate >= startDate;
+      }
+    ),
 });
 
   export const courseDescriptionSchema = Yup.string()

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import{
-  TextInput,
-  GenderSelector
+  TextInput
 } from "../../components/FormComponents/InputComponents";
 import {
   firstNameSchema,
