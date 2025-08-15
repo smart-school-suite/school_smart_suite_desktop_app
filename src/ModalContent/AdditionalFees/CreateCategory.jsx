@@ -2,13 +2,21 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { useCreateAdditionalFeeCategory } from "../../hooks/additionalFee/useCreateAdditionalFeeCategory";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { TextInput } from "../../components/FormComponents/InputComponents";
+import { categoryNameSchema } from "../../ComponentConfig/YupValidationSchema";
 function CreateCategory({ handleClose }) {
   const [formData, setFormData] = useState({
+    title: "",
+  });
+  const [isValid, setIsValid] = useState({
     title: "",
   });
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+  const handleFieldValid = (field, value) => {
+     setIsValid((prev) => ({ ...prev, [field]:value }))
+  }
   const { mutate: createCategory, isPending } =
     useCreateAdditionalFeeCategory(handleClose);
   const handleCreateCategory = () => {
@@ -19,7 +27,7 @@ function CreateCategory({ handleClose }) {
       <div>
         <div className="block">
           <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Create Additional Category</h5>
+            <span className="m-0">Create Additional Category</span>
             <span
               className="m-0"
               onClick={() => {
@@ -30,20 +38,16 @@ function CreateCategory({ handleClose }) {
             </span>
           </div>
         </div>
-       <div className="modal-content-container">
-         <div className="my-1">
-          <span>Category Name</span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Utility Bills"
-            name="title"
-            onChange={(e) => handleInputChange("title", e.target.value)}
+       <div>
+         <div>
+          <label htmlFor="categoryTitle" className="font-size-sm">Category Name</label>
+          <TextInput 
+            onChange={(value) => handleInputChange('title', value)}
+            onValidationChange={(value) => handleFieldValid('title', value)}
+            validationSchema={categoryNameSchema({ min:10, max:50 })}
+            placeholder={"e.g Student Id Card"}
+            value={formData.title}
           />
-        </div>
-        <div className="my-1">
-          <span>Description</span>
-          <textarea name="" id="" className="form-control"></textarea>
         </div>
         <button
           className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"
