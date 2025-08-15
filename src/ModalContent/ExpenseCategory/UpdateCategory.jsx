@@ -2,24 +2,32 @@ import { useUpdateExpenseCategory } from "../../hooks/expenseCategory/useUpdateE
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
+import { TextInput } from "../../components/FormComponents/InputComponents";
+import { categoryNameSchema } from "../../ComponentConfig/YupValidationSchema";
 function UpdateCategory({ handleClose, rowData }) {
-    const categoryId = rowData.id;
-     const [formData, setFormData] = useState({
-        name: "",
-      });
-      const handleInputChange = (field, value) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-      };
-    const { mutate:updateCategory, isPending } = useUpdateExpenseCategory();
-    const handleUpdate = () => {
-         updateCategory({ categoryId:categoryId, updateData:formData })
-    }
+  const { id: categoryId, name } = rowData;
+  const [formData, setFormData] = useState({
+    name: "",
+  });
+  const [isValid, setIsValid] = useState({
+    name: "",
+  });
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+  const handleFieldValid  = (field, value) => {
+    setIsValid((prev) => ({ ...prev, [field]:value }));
+  }
+  const { mutate: updateCategory, isPending } = useUpdateExpenseCategory();
+  const handleUpdate = () => {
+    updateCategory({ categoryId: categoryId, updateData: formData });
+  };
   return (
     <>
       <div>
         <div className="block">
           <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Update Expenses Category</h5>
+            <span className="m-0">Update Expenses Category</span>
             <span
               className="m-0"
               onClick={() => {
@@ -29,19 +37,14 @@ function UpdateCategory({ handleClose, rowData }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
-        <div className="my-1">
-          <span>Category Name</span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Utility Bills"
-            name="name"
-            onChange={(e) => handleInputChange("name", e.target.value)}
+        <div>
+          <label htmlFor="categoryName" className="font-size-sm">Category Name</label>
+          <TextInput 
+            onChange={(value) => handleInputChange('name', value)}
+            onValidationChange={(value) => handleFieldValid('name', value)}
+            validationSchema={categoryNameSchema(3, 50, true)}
+            placeholder={name}
           />
         </div>
         <button

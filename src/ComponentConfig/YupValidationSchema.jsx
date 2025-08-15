@@ -59,6 +59,24 @@ export const lastNameSchema = Yup.string()
   )
   .required("Last name is required.");
 
+export const categoryNameSchema = ({ min = 2, max = 50, optional = false } = {}) => {
+  let schema = Yup.string()
+    .trim()
+    .min(min, `Category name must be at least ${min} characters long.`)
+
+    .max(max, `Category name must not exceed ${max} characters.`)
+
+    .matches(
+      /^[a-zA-Z0-9\s-]+$/,
+      "Category name can only contain letters, numbers, spaces, and hyphens."
+    );
+
+  if (!optional) {
+    schema = schema.required("Category name is required.");
+  }
+
+  return schema;
+};
 export const fullNameSchema = Yup.string()
   .trim()
   .min(3, "Full name must be at least 3 characters long.")

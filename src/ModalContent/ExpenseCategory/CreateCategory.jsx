@@ -2,14 +2,22 @@ import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useCreateExpenseCategory } from "../../hooks/expenseCategory/useCreateExpenseCategory";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { TextInput } from "../../components/FormComponents/InputComponents";
+import { categoryNameSchema } from "../../ComponentConfig/YupValidationSchema";
 function CreateCategory({ handleClose }) {
   const [formData, setFormData] = useState({
+    name: "",
+  });
+   const [isValid, setIsValid] = useState({
     name: "",
   });
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-  const { mutate: createCategory, isPending } = useCreateExpenseCategory();
+  const handleValidField = (field, value) => {
+    setIsValid((prev) => ({...prev, [field]:value }))
+  }
+  const { mutate: createCategory, isPending } = useCreateExpenseCategory(handleClose);
   const handleCreateCategory = () => {
     createCategory(formData);
   };
@@ -18,7 +26,7 @@ function CreateCategory({ handleClose }) {
       <div>
         <div className="block">
           <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Create Expenses Category</h5>
+            <span className="m-0">Create Expenses Category</span>
             <span
               className="m-0"
               onClick={() => {
@@ -28,19 +36,14 @@ function CreateCategory({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
-        <div className="my-1">
-          <span>Category Name</span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Utility Bills"
-            name="name"
-            onChange={(e) => handleInputChange("name", e.target.value)}
+        <div>
+          <label htmlFor="categoryName" className="font-size-sm">Category Name</label>
+          <TextInput 
+            placeholder={"E.g Utility Bills, Maintainance Bills"}
+            validationSchema={categoryNameSchema(3, 100)}
+            onChange={(value) => handleInputChange('name', value)}
+            onValidationChange={(value) => handleValidField('name', value)}
           />
         </div>
         <button
