@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { WeigtedMarkInput } from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
@@ -101,18 +100,13 @@ function UpdateExam({ handleClose, rowData }) {
         />
       </div>
       <div className="my-1">
-        <span>School Year</span>
+        <label htmlFor="schoolYear" className="font-size-sm">School Year</label>
         <SchoolYearSelector onSelect={handleSchoolYearSelect} />
       </div>
       <div className="my-1">
-        <span>Exam Type</span>
-        {isExamTypeLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
+        <label htmlFor="examType" className="font-size-sm">Exam Type</label>
           <CustomDropdown
-            data={examType.data}
+            data={examType?.data || []}
             displayKey={["exam_name"]}
             valueKey={["id"]}
             filter_array_keys={["id", "exam_name"]}
@@ -120,18 +114,13 @@ function UpdateExam({ handleClose, rowData }) {
             isLoading={isExamTypeLoading}
             direction="up"
             onSelect={handleExamTypeSelect}
+            placeholder={"Select Exam Type"}
           />
-        )}
       </div>
       <div className="my-1">
-        <span>Specialty</span>
-        {isSpecailtyLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
+        <label htmlFor="specialty" className="font-size-sm"></label>
           <CustomDropdown
-            data={specialty.data}
+            data={specialty?.data || []}
             displayKey={["specialty_name", "level"]}
             valueKey={["id"]}
             filter_array_keys={["id", "specialty_name", "level_name"]}
@@ -139,8 +128,8 @@ function UpdateExam({ handleClose, rowData }) {
             isLoading={isSpecailtyLoading}
             direction="up"
             onSelect={handleSpecialtySelect}
+            placeholder="Select Specialty"
           />
-        )}
       </div>
       </div>
       <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">

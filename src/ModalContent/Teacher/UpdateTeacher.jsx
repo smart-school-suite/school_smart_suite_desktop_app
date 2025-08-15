@@ -36,10 +36,6 @@ function UpdateTeacher({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <span className="font-size-sm gainsboro-color">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum
-          sint reprehenderit tempora. Aliquid
-        </span>
         <div className="mb-2 d-flex flex-row gap-2 w-100">
           <div className="w-50">
             <label htmlFor="firstName">First Name</label>

@@ -24,6 +24,10 @@ function CreateCourse({ handleClose }) {
     semester_id: "",
     description:"",
   });
+    const [errors, setErrors] = useState({
+    specialty_id: "",
+    semester_id: "",
+  })
   const { mutate:createCourseMutation, isPending } = useCreateCourse(handleClose, formData.specialty_Id, formData.semester_Id);
   const { data:specialty, isFetching:isSpecailtyLoading  } = useGetSpecialties();
   const { data: semesters, isLoading: isSemesterLoading } = useGetSemester();
@@ -35,10 +39,14 @@ function CreateCourse({ handleClose }) {
   const handleValidChange = (field, value) => {
     setFieldValid((prev) => ({ ...prev, [field]: value }));
   };
+   const handleFieldError = (field, message) => {
+    setErrors((prev) => ({
+      ...prev,
+      [field]: message
+    }));
+  };
   const handleSubmit = async () => {
-    console.table(formData);
     createCourseMutation(formData)
-    
   };
 
   return (
@@ -84,35 +92,33 @@ function CreateCourse({ handleClose }) {
       </div>
       <div>
         <label htmlFor="semester" className="font-size-sm">Semester</label>
-        {isSemesterLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
           <CustomDropdown
-            data={semesters.data}
+            data={semesters?.data || []}
             displayKey={["name"]}
             valueKey={["id"]}
             direction="up"
             onSelect={(value) => handleInputChange('semester_id', value.id)}
+            isLoading={isSemesterLoading}
+            error={errors.semester_id}
+            errorMessage="Semester Required"
+            onError={(msg) => handleFieldError("semester_id", msg)}
+            placeholder="Select Semester"
           />
-        )}
       </div>
       <div>
         <label htmlFor="specialty" className="font-size-sm">Specialty</label>
-        {isSpecailtyLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
           <CustomDropdown
-            data={specialty.data}
+            data={specialty?.data || []}
             displayKey={["specialty_name", "level_name"]}
             valueKey={["id"]}
             direction="up"
             onSelect={(value) => handleInputChange('specialty_id', value.id)}
+            isLoading={isSpecailtyLoading}
+            error={errors.specialty_id}
+            errorMessage="Specialty Required"
+            onError={(msg) =>  handleFieldError("specialty_id", msg)}
+            placeholder="Select Specialty"
           />
-        )}
       </div>
        <div>
          <label htmlFor="courseDescription" className="font-size-sm">Course Description</label>

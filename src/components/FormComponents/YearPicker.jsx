@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { CSSTransition } from "react-transition-group";
+import { drop } from "lodash";
 function YearPicker({
   minYear = 1900,
   maxYear = new Date().getFullYear() + 50,
@@ -100,13 +101,19 @@ export function SchoolYearSelector({
   maxYear = new Date().getFullYear() + 10,
   disabledYears = [],
   onSelect,
+  onError,
+  error, 
 }) {
   const [selectedYear, setSelectedYear] = useState(null);
-  const [isShowing, setIshowing] = useState(false);
+  const [isShowing, setIsShowing] = useState(false);
+  const [touched, setTouched] = useState(false);
   const schoolYearRef = useRef(null);
+
   const handle_toggle = () => {
-    setIshowing((prevalue) => !prevalue);
+    setIsShowing((prev) => !prev);
+    setTouched(true); 
   };
+
   const generateSchoolYears = () => {
     const years = [];
     for (let year = minYear; year <= maxYear; year++) {
@@ -125,15 +132,17 @@ export function SchoolYearSelector({
     if (!isYearDisabled(year)) {
       setSelectedYear(year);
       onSelect(year);
-      setIshowing(false);
+      onError && onError("");
+      setIsShowing(false);
     }
   };
+
   const handleClickOutside = (event) => {
-    if (
-      schoolYearRef.current &&
-      !schoolYearRef.current.contains(event.target)
-    ) {
-      setIshowing(false);
+    if (schoolYearRef.current && !schoolYearRef.current.contains(event.target)) {
+      setIsShowing(false);
+      if (touched && !selectedYear) {
+        onError && onError("School year is required");
+      }
     }
   };
 
@@ -142,15 +151,22 @@ export function SchoolYearSelector({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [touched, selectedYear]);
+
   return (
     <div className="input-container">
       <div className="position-relative" ref={schoolYearRef}>
         <div
-          className=" bg-white d-flex border flex-row align-items-center justify-content-between rounded-2 z-0 pointer-cursor"
-          onClick={() => {
-            handle_toggle();
-          }}
+          className={`bg-white d-flex border flex-row align-items-center justify-content-between rounded-2 z-0 pointer-cursor ${
+    touched
+      ? error
+        ? "border-danger text-danger"
+        : selectedYear
+        ? "border-success text-success"
+        : ""
+      : ""
+  }`}
+          onClick={handle_toggle}
           style={{ padding: "0.3rem" }}
         >
           <div className="d-flex flex-row align-items-center gap-3 font-size-sm">
@@ -161,14 +177,21 @@ export function SchoolYearSelector({
           <div>
             <span>
               <Icon
-                icon="heroicons:chevron-down-20-solid"
-                className={
-                  isShowing ? " transition-3s" : "rotate-180 transition-3s"
-                }
+                icon="heroicons:chevron-up-20-solid"
+                className={isShowing ? "transition-3s" : "rotate-180 transition-3s"}
               />
             </span>
           </div>
         </div>
+
+        <div>
+          {error ? (
+            <span className="font-size-sm text-danger">{error}</span>
+          ) : (
+            selectedYear && <span className="font-size-sm text-success">Looks Good</span>
+          )}
+        </div>
+
         <CSSTransition
           in={isShowing}
           timeout={300}
@@ -182,9 +205,7 @@ export function SchoolYearSelector({
                   key={index}
                   className={`border-none m-1 year-dropdown-item rounded-1 font-size-sm p-1 transparent-bg text-start ${
                     year === selectedYear ? "selected-school-year" : ""
-                  }
-                        ${isYearDisabled(year) ? "disabled" : ""}
-                        `}
+                  } ${isYearDisabled(year) ? "disabled" : ""}`}
                   onClick={() => handleYearSelect(year)}
                   disabled={isYearDisabled(year)}
                 >
@@ -198,3 +219,4 @@ export function SchoolYearSelector({
     </div>
   );
 }
+

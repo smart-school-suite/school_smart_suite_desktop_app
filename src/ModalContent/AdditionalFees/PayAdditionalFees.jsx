@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { usePayAdditionalFee } from "../../hooks/additionalFee/usePayAdditionalFee";
+import { Icon } from "@iconify/react";
 function PayAdditionalFees({ rowData, handleClose }) {
   const additionalFeeId = rowData.id;
   const [formData, setFormData] = useState({

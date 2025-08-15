@@ -1,14 +1,12 @@
 import { Icon } from "@iconify/react";
-import Pageloaderspinner, {
-  SingleSpinner,
-} from "../../components/Spinners/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { useCreateSchoolSemester } from "../../hooks/schoolSemester/useCreateSchoolSemester";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
-import {DateRangeInput} from "../../components/FormComponents/InputComponents";
-import {dateRangeValidationSchema} from "../../ComponentConfig/YupValidationSchema";
+import { DateRangeInput } from "../../components/FormComponents/InputComponents";
+import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 function CreateSemester({ handleClose }) {
@@ -27,27 +25,23 @@ function CreateSemester({ handleClose }) {
     specialty_id: "",
     student_batch_id: "",
   });
-  const [isInvalid, setIsInvalid] = useState({
-    start_date: "",
-    end_date: "",
-    school_year: "",
+  const [errors, setErrors] = useState({
     semester_id: "",
     specialty_id: "",
     student_batch_id: "",
+    school_year: "",
   });
-
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const handleDateRangeChange = (value) => {
     const [changedKey] = Object.keys(value);
     const changedValue = value[changedKey];
-     
+
     setFormData((prev) => ({
       ...prev,
       [changedKey]: changedValue,
     }));
-    console.table(formData);
   };
   const handleDateRangeValid = (value) => {
     const [changedKey] = Object.keys(value);
@@ -57,10 +51,12 @@ function CreateSemester({ handleClose }) {
       ...prev,
       [changedKey]: changedValue,
     }));
-    
   };
-  const handleInputValid = (field, value) => {
-    setIsInvalid((prev) => ({ ...prev, [field]: value }));
+  const handleFieldError = (field, message) => {
+    setErrors((prev) => ({
+      ...prev,
+      [field]: message,
+    }));
   };
   const handleCreateSchoolSemester = () => {
     createSchoolSemester(formData);
@@ -89,77 +85,63 @@ function CreateSemester({ handleClose }) {
         </div>
         <div>
           <label htmlFor="schoolYear" className="font-size-sm">
-        School Year
-      </label>
+            School Year
+          </label>
           <SchoolYearSelector
             onSelect={(value) => handleInputChange("school_year", value)}
+            onError={(msg) => handleFieldError("school_year", msg)}
+            error={errors.school_year}
           />
         </div>
         <div>
           <label htmlFor="semester" className="font-size-sm">
             Semester
           </label>
-          {
-          isFetchingSemesters ? (
-            <select name="" className="form-select">
-              <option value="">loading</option>
-            </select>
-          ): (
-             <CustomDropdown 
-               data={semesters.data}
-               displayKey={['name']}
-               valueKey={['id']}
-               filter_array_keys={['id', 'name']}
-               renameMapping={{ id:"id", name:"name"}}
-               direction="up"
-               onSelect={(value) => handleInputChange('semester_id', value.id)}
-             />
-          )
-          }
+          <CustomDropdown
+            data={semesters?.data || []}
+            displayKey={["name"]}
+            valueKey={["id"]}
+            direction="up"
+            isLoading={isFetchingSemesters}
+            onSelect={(value) => handleInputChange("semester_id", value.id)}
+            error={errors.semester_id}
+            errorMessage="Semester Required"
+            onError={(msg) => handleFieldError("semester_id", msg)}
+          />
         </div>
         <div>
           <label htmlFor="specialty" className="font-size-sm">
             Specialty
           </label>
-          {isFetchingSpecialties ? (
-            <select name="" className="form-select">
-              <option value="">loading</option>
-            </select>
-          ) : (
-            <CustomDropdown
-              data={specialties.data}
-              displayKey={["specialty_name", "level_name"]}
-              valueKey={["id"]}
-              filter_array_keys={["id", "specialty_name", "level_name"]}
-              renameMapping={{
-                id: "id",
-                specialty_name: "specialty_name",
-                leve_name: "level_name",
-              }}
-              direction="up"
-              onSelect={(value) => handleInputChange("specialty_id", value.id)}
-            />
-          )}
+          <CustomDropdown
+            data={specialties?.data || []}
+            displayKey={["specialty_name", "level_name"]}
+            valueKey={["id"]}
+            direction="up"
+            isLoading={isFetchingSpecialties}
+            onSelect={(value) => handleInputChange("specialty_id", value.id)}
+            error={errors.specialty_id}
+            errorMessage="Specialty Required"
+            onError={(msg) => handleFieldError("specialty_id", msg)}
+          />
         </div>
         <div>
-          <label htmlFor="studentBatch" className="font-size-sm">Student Batch</label>
-          {isFetchingStudentBatches ? (
-            <select name="" className="form-select">
-              <option value="">loading</option>
-            </select>
-          ) : (
-            <CustomDropdown
-              data={studentBatches.data}
-              displayKey={["name"]}
-              valueKey={["id"]}
-              filter_array_keys={["id", "name"]}
-              renameMapping={{ id: "id", name: "name" }}
-              direction="up"
-              onSelect={(value) =>
-                handleInputChange("student_batch_id", value.id)
-              }
-            />
-          )}
+          <label htmlFor="studentBatch" className="font-size-sm">
+            Student Batch
+          </label>
+          <CustomDropdown
+            data={studentBatches?.data || []}
+            displayKey={["name"]}
+            valueKey={["id"]}
+            direction="up"
+            onSelect={(value) =>
+              handleInputChange("student_batch_id", value.id)
+            }
+            isLoading={isFetchingStudentBatches}
+            error={errors.student_batch_id}
+            errorMessage="Student Batch Required"
+            onError={(msg) => handleFieldError("student_batch_id", msg)}
+          />
         </div>
       </div>
       <div className="d-flex mt-3 flex-row align-items-center justify-content-end gap-2 w-100">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { WeigtedMarkInput } from "../../components/FormComponents/InputComponents";
+import { DateRangeInput, NumberInput} from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
@@ -8,8 +8,14 @@ import { Icon } from "@iconify/react";
 import { useGetExamTypes } from "../ExamType/useGetExamType";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
+import { dateRangeValidationSchema, weightedMarkValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 
 function CreateExam({ handleClose }) {
+    const { data: examType, isLoading: isExamTypeLoading } =
+    useGetExamTypes();
+  const { data: specialty, isLoading: isSpecailtyLoading } =
+    useGetSpecialties();
+  const { data: studentBatches, isLoading: isStudentBatchLoading } = useGetBatches();
   const { mutate:createExam, isPending } = useCreateExam(handleClose)
   const [formData, setFormData] = useState({
     start_date: "",
@@ -20,57 +26,59 @@ function CreateExam({ handleClose }) {
     school_year: "",
     student_batch_id:""
   });
-
-  const { data: examType, isLoading: isExamTypeLoading } =
-    useGetExamTypes();
-  const { data: specialty, isLoading: isSpecailtyLoading } =
-    useGetSpecialties();
-  const [isValid, setIsValid] = useState();
-  const { data: studentBatches, isLoading: isStudentBatchLoading } = useGetBatches();
- 
-  const handleExamTypeSelect = (selectedValues) => {
-    setFormData((prevalue) => ({
-      ...prevalue,
-      exam_type_id: selectedValues.id,
+  const [isInvalid, setIsInvalid] = useState({
+     start_date: "",
+    end_date: "",
+    exam_type_id: "",
+    weighted_mark: "",
+    specialty_id: "",
+    school_year: "",
+    student_batch_id:""
+  });
+  const [errors, setErrors] = useState({
+    school_year: "",
+    student_batch_id:"",
+    specialty_id: "",
+    exam_type_id: "",
+  })
+  const handleDateRangeChange = (value) => {
+    const [changedKey] = Object.keys(value);
+    const changedValue = value[changedKey];
+    setFormData((prev) => ({
+      ...prev,
+      [changedKey]: changedValue,
     }));
   };
+  const handleDateRangeValid = (value) => {
+    const [changedKey] = Object.keys(value);
+    const changedValue = value[changedKey];
 
-  const handleSpecialtySelect = (selectedValues) => {
-    setFormData((prevalue) => ({
-      ...prevalue,
-      specialty_id: selectedValues.id,
+    setIsInvalid((prev) => ({
+      ...prev,
+      [changedKey]: changedValue,
     }));
-  };
-  const handleStudentBatchSelect = (selectedValues) => {
-      setFormData((prevalue) => ({
-          ...prevalue,
-          student_batch_id:selectedValues.id
-      }))
-  }
-  const handleSchoolYearSelect = (selectedValues) => {
-    setFormData((prevalue) => ({
-      ...prevalue,
-      school_year: selectedValues,
-    }));
+    
   };
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-
-  const handleValidation = (isInputValid) => {
-    setIsValid(isInputValid);
+   const handleValidation = (field, value) => {
+    setIsInvalid((prev) => ({ ...prev, [field]: value }));
   };
-
+  const handleFieldError = (field, message) => {
+    setErrors((prev) => ({
+      ...prev,
+      [field]: message
+    }));
+  };
   const handleSubmit = () => {
-    createExam(formData)
-    
+    createExam(formData) 
   };
   return (
     <>
       <div className="d-flex flex-row align-items-center">
-        <div className="block">
-          <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Create Exam</h5>
+       <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+            <span className="m-0">Create Exam</span>
             <span
               className="m-0"
               onClick={() => {
@@ -80,104 +88,82 @@ function CreateExam({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-        </div>
       </div>
-      <div className="modal-content-container">
-        <div className="d-flex flex-row align-items-center gap-2">
-      <div className="my-1 w-50">
-        <span>Start Date</span>
-        <input
-          type="date"
-          className="form-control w-100"
-          name="start_date"
-          value={formData.start_date}
-          onChange={(e) => handleInputChange("start_date", e.target.value)}
+      <div>
+      <div>
+        <DateRangeInput 
+         validationSchema={dateRangeValidationSchema}
+         onChange={handleDateRangeChange}
+         onValidationChange={handleDateRangeValid}
         />
       </div>
-      <div className="my-1 w-50">
-        <span>End Date</span>
-        <input
-          type="date"
-          className="form-control w-100"
-          name="end_date"
-          value={formData.end_date}
-          onChange={(e) => handleInputChange("end_date", e.target.value)}
+      <div>
+        <label htmlFor="weightedMark" className="font-size-sm">Exam Score</label>
+        <NumberInput 
+         onChange={(value) => handleInputChange('weighted_mark', value)}
+         step="0.01"
+         onValidationChange={(value) => handleValidation('weighted_mark', value)}
+         validationSchema={weightedMarkValidationSchema}
+         placeholder={"e.g 100"}
         />
       </div>
-      </div>
-      <div className="my-1">
-        <WeigtedMarkInput
-          onChange={(value) => handleInputChange("weighted_mark", value)}
-          value={formData.weighted_mark}
-          onValidationChange={handleValidation}
+      <div>
+        <label htmlFor="schoolYear" className="font-size-sm">School Year</label>
+        <SchoolYearSelector 
+          onSelect={(value) => handleInputChange('school_year', value)}
+          onError={(msg) => handleFieldError("school_year", msg)}
+          error={errors.school_year}
         />
       </div>
-      <div className="my-1">
-        <span>School Year</span>
-        <SchoolYearSelector onSelect={handleSchoolYearSelect} />
-      </div>
-      <div className="my-1">
-        <span>Exam Type</span>
-        {isExamTypeLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
+      <div>
+        <label htmlFor="examType" className="font-size-sm">Exam Type</label>
           <CustomDropdown
-            data={examType.data}
+            data={ examType?.data || []}
             displayKey={["exam_name"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "exam_name"]}
-            renameMapping={{ id: "id", exam_name: "exam_name" }}
-            isLoading={isExamTypeLoading}
             direction="up"
-            onSelect={handleExamTypeSelect}
+            onSelect={(value) => handleInputChange('exam_type_id', value.id)}
+            placeholder="Select Exam Type"
+            error={errors.exam_type_id}
+            isLoading={isExamTypeLoading}
+            errorMessage="Exam Type Required"
+            onError={(msg) => handleFieldError("exam_type_id", msg)}
           />
-        )}
       </div>
-      <div className="my-1">
-        <span>Specialty</span>
-        {isSpecailtyLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
+      <div>
+        <label htmlFor="specialty" className="font-size-sm">Specialty</label>
           <CustomDropdown
-            data={specialty.data}
+            data={specialty?.data || []}
             displayKey={["specialty_name", "level"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "specialty_name", "level_name"]}
-            renameMapping={{ id: "id", specialty_name: "specialty_name", level_name:"level" }}
-            isLoading={isSpecailtyLoading}
             direction="up"
-            onSelect={handleSpecialtySelect}
+            isLoading={isSpecailtyLoading}
+            onSelect={(value) => handleInputChange('specialty_id', value.id)}
+            placeholder="Select Specialty"
+            error={errors.specialty_id}
+            errorMessage="Specialty Required"
+            onError={(msg) => handleFieldError('specialty_id', msg)}
           />
-        )}
       </div>
       <div className="mb-3">
-        <span>Student Batch</span>
-        {isStudentBatchLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
+        <label htmlFor="studentBatch" className="font-size-sm">Student Batch</label>
           <CustomDropdown
-            data={studentBatches.data}
+            data={studentBatches?.data || []}
             displayKey={["name"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "name"]}
-            renameMapping={{ id: "id", name:"name" }}
-            isLoading={isStudentBatchLoading}
             direction="up"
-            onSelect={handleStudentBatchSelect}
+            isLoading={isStudentBatchLoading}
+            onSelect={(value) => handleInputChange('student_batch_id', value.id)}
+            placeholder="Select Student Batch"
+            error={errors.student_batch_id}
+            errorMessage="Student Batches Required"
+            onError={(msg) => handleFieldError('student_batch_id', msg)}
           />
-        )}
       </div>
       </div>
       <div >
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
           <button
-            disabled={!isValid}
             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
             onClick={() => {
               handleSubmit();
