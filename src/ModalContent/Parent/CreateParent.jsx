@@ -2,6 +2,10 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateParent } from "../../hooks/parent/useCreateParent";
+import  { TextInput, PhoneNumberInput } from "../../components/FormComponents/InputComponents";
+import { addressValidationSchema, emailValidationSchema, fullNameSchema, occupationValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { guardianTypes, languages } from "../../data/data";
 function CreateParent({ handleClose }) {
   const { mutate:createParent, isPending } = useCreateParent(handleClose);
   const [formData, setFormData] = useState({
@@ -13,32 +17,28 @@ function CreateParent({ handleClose }) {
     relationship_to_student: "",
     preferred_language: "",
   });
-
+   const [isInvalid, setIsInvalid] = useState({
+    name: "",
+    email: "",
+    phone_one: "",
+    address: "",
+    occupation: "",
+    relationship_to_student: "",
+    preferred_language: "",
+  });
+  const [errors, setError] = useState({
+     relationship_to_student: "",
+     preferred_language: "",
+  })
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-  const guardianTypes = [
-    "Mother",
-    "Father",
-    "Stepmother",
-    "Stepfather",
-    "Grandmother",
-    "Grandfather",
-    "Aunt",
-    "Uncle",
-    "Older Brother",
-    "Older Sister",
-    "Guardian (non-family)",
-    "Foster Parent",
-    "Adoptive Parent",
-    "Older Cousin",
-    "Legal Guardian",
-    "Sibling (younger brother or sister)",
-    "Family Friend",
-    "Caretaker",
-    "Single Parent",
-    "Godparent",
-  ];
+  const handleFieldError = (field, value) => {
+    setError((prev) => ({ ...prev, [field]: value }));
+  };
+    const handleValidation = (field, value) => {
+    setIsInvalid((prev) => ({ ...prev, [field]: value }));
+  };
   const handleCreateGuardian = async () => {
     createParent(formData)
   };
@@ -46,7 +46,7 @@ function CreateParent({ handleClose }) {
     <>
       <div>
         <div className="d-flex flex-row align-items-center justify-content-between w-100 mb-3">
-          <h5 className="m-0">Create Guardian</h5>
+          <span className="m-0">Create Guardian</span>
           <span
             className="m-0"
             onClick={() => {
@@ -56,99 +56,80 @@ function CreateParent({ handleClose }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <div className="block">
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
+        <div>
+          <label htmlFor="guardianName" className="font-size-sm">Guardian Name</label>
+           <TextInput 
+             onChange={(value) => handleInputChange('name', value)}
+             onValidationChange={(value) => handleValidation('name', value)}
+             validationSchema={fullNameSchema}
+             placeholder={"Enter Guardian Full Names"}
+           />
         </div>
-        <div className="my-1">
-          <label htmlFor="guardianName">Guardian Name</label>
-          <input
-            type="text"
-            className="form-control"
-            name="name"
-            placeholder="John Doe"
-            value={formData.name}
-            onChange={(e) => handleInputChange("name", e.target.value)}
-          />
-        </div>
-        <div className="my-1">
-          <label htmlFor="email">E-mail</label>
-          <input
+        <div>
+          <label htmlFor="email" className="font-size-sm">E-mail</label>
+          <TextInput 
+            onChange={(value) => handleInputChange('email', value)}
+            onValidationChange={(value) => handleValidation('email', value)}
+            validationSchema={emailValidationSchema}
+            placeholder={"example@gmail.com"}
             type="email"
-            className="form-control"
-            placeholder="example@mail.com"
-            name="email"
-            value={formData.email}
-            onChange={(e) => handleInputChange("email", e.target.value)}
           />
         </div>
-        <div className="my-1">
-          <label htmlFor="phone">Phone Number</label>
-          <input
-            type="tel"
-            className="form-control"
-            placeholder="+237 6XX XXX XXX"
-            name="phone_one"
+        <div>
+             <label htmlFor="phone" className="font-size-sm">Phone Number</label>
+          <PhoneNumberInput 
+            onChange={(value) => handleInputChange('phone_one', value)}
             value={formData.phone_one}
-            onChange={(e) => handleInputChange("phone_one", e.target.value)}
+            onValidationChange={(value) => handleValidation('phone_one', value)}
           />
         </div>
-        <div className="my-1">
-          <label htmlFor="address">Address</label>
-          <input
+        <div>
+          <label htmlFor="address" className="font-size-sm">Address</label>
+          <TextInput 
             type="address"
-            className="form-control"
-            placeholder="Biyem assi yaounde"
-            name="address"
-            value={formData.address}
-            onChange={(e) => handleInputChange("address", e.target.value)}
+            onChange={(value) => handleInputChange('address', value)}
+            onValidationChange={(value) => handleValidation('address', value)}
+            validationSchema={addressValidationSchema}
+            placeholder={"Enter Guardian Address"}
           />
         </div>
-        <div className="my-1">
-          <label htmlFor="occupation">Occupation</label>
-          <input
-            type="text"
-            className="form-control"
-            name="occupation"
-            placeholder="Teacher, Engineer, etc."
-            value={formData.occupation}
-            onChange={(e) => handleInputChange("occupation", e.target.value)}
+        <div>
+          <label htmlFor="occupation" className="font-size-sm">Occupation</label>
+          <TextInput 
+            type="address"
+            onChange={(value) => handleInputChange('occupation', value)}
+            onValidationChange={(value) => handleValidation('occupation', value)}
+            validationSchema={occupationValidationSchema}
+            placeholder={"Enter Guardian Occupation"}
           />
         </div>
-        <div className="my-1">
-          <label htmlFor="relationshipToStudent">RelationShip To Student</label>
-          <select
-            name="relationship_to_student"
-            className="form-select"
-            value={formData.relationship_to_student}
-            onChange={(e) =>
-              handleInputChange("relationship_to_student", e.target.value)
-            }
-          >
-            <option selected>Open to select relationship</option>
-            {guardianTypes.map((items) => (
-              <option value={items}>{items}</option>
-            ))}
-          </select>
+        <div>
+          <label htmlFor="relationshipToStudent" className="font-size-sm">RelationShip To Student</label>
+           <CustomDropdown 
+             data={guardianTypes}
+             displayKey={["name"]}
+             valueKey={['name']}
+             direction="up"
+             onSelect={(value) => handleInputChange('relationship_to_student', value.name)}
+             error={errors.relationship_to_student}
+             onError={(msg) => handleFieldError('relationship_to_student', msg)}
+             errorMessage="Relationship To Student Required"
+           />
         </div>
-        <div className="my-1">
-          <label htmlFor="preferredLanguage">
+        <div>
+          <label htmlFor="preferredLanguage" className="font-size-sm">
             Preferred Language of Communication
           </label>
-          <select
-            name="preferred_language"
-            className="form-select"
-            value={formData.preferred_language}
-            onChange={(e) =>
-              handleInputChange("preferred_language", e.target.value)
-            }
-          >
-            <option selected>Open to select Language</option>
-            <option value="english">English</option>
-            <option value="french">French</option>
-          </select>
+          <CustomDropdown 
+            data={languages}
+            displayKey={['name']}
+            valueKey={['name']}
+            direction="up"
+            onSelect={(value) => handleInputChange('preferred_language', value.name)}
+            error={errors.preferred_language}
+            onError={(msg) => handleFieldError('preferred_language', msg)}
+            errorMessage="Preferred Language Of Communication Required"
+          />
         </div>
         <div className="mt-3">
           <button

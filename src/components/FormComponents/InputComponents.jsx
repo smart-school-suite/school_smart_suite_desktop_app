@@ -1,11 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import * as YupValidationSchema from "../../ComponentConfig/YupValidationSchema";
 import { Icon } from "@iconify/react";
-import InputMask from 'react-input-mask';
+import InputMask from "react-input-mask";
 export function PhoneNumberInput({ onChange, value, onValidationChange }) {
   const [phoneNumber, setPhoneNumber] = useState(value || "");
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
+
+  useEffect(() => {
+    if (value) {
+      validatePhoneNumber(value);
+    }
+  }, [value]);
 
   const validatePhoneNumber = async (phone) => {
     try {
@@ -19,44 +25,66 @@ export function PhoneNumberInput({ onChange, value, onValidationChange }) {
   };
 
   const handleInputChange = (e) => {
-    let value = e.target.value.replace(/\D/g, "");
-    if (value.length > 9) {
-      value = value.slice(0, 9);
+    let rawValue = e.target.value.replace(/\D/g, "");
+    if (rawValue.length > 9) {
+      rawValue = rawValue.slice(0, 9);
     }
-
-    const formattedValue = value
-      .replace(
-        /(\d{3})(\d{1,3})(\d{1,3})?/,
-        (match, p1, p2) =>
-          `${p1}${p2 ? "-" + p2 : ""}${
-            value.length > 6 ? "-" + value.slice(6) : ""
-          }`
-      )
+    const formattedValue = rawValue
+      .replace(/(\d{3})(\d{1,3})?(\d{1,3})?/, (match, p1, p2, p3) => {
+        let parts = [p1];
+        if (p2) parts.push(p2);
+        if (p3) parts.push(p3);
+        return parts.join("-");
+      })
       .trim();
 
     setPhoneNumber(formattedValue);
-    onChange(value);
-    if (value.length === 0) {
-      setError("Phone number is required.");
-    } else {
-      validatePhoneNumber(value);
+    onChange(rawValue);
+
+    if (isTouched) {
+      validatePhoneNumber(rawValue);
     }
   };
 
-  const handleFocus = () => setIsTouched(true);
+  const handleFocus = () => {
+    setIsTouched(true);
+    validatePhoneNumber(phoneNumber.replace(/\D/g, ""));
+  };
+
+  const handleBlur = () => {
+    validatePhoneNumber(phoneNumber.replace(/\D/g, ""));
+  };
+
+  const feedbackContent =
+    isTouched && error
+      ? error
+      : isTouched && !error && phoneNumber && "Looks good!";
+
+  const feedbackClasses = [
+    "transition-all font-size-sm",
+    isTouched && error
+      ? "invalid-feedback transition-all"
+      : isTouched && !error && phoneNumber
+      ? "valid-feedback transition-all"
+      : null,
+    isTouched && (error || (!error && phoneNumber))
+      ? "opacity-100 transition-all"
+      : "opacity-0 transition-all",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div>
-      <label htmlFor="phone">Phone Number</label>
+    <div className="input-container">
       <div className="input-group z-0 position-relative">
         <span className="input-group-text is-valid" id="basic-addon1">
-          <Icon icon="twemoji:flag-cameroon" width="26" height="26" />
+          <Icon icon="twemoji:flag-cameroon" width="24" height="24" />
         </span>
         <input
           type="tel"
-          className={`form-control ${isTouched && error ? "is-invalid" : ""} ${
-            isTouched && !error && phoneNumber ? "is-valid" : ""
-          }`}
+          className={`form-control font-size-sm ${
+            isTouched && error ? "is-invalid" : ""
+          } ${isTouched && !error && phoneNumber ? "is-valid" : ""}`}
           placeholder="6XX-XXX-XXX"
           aria-label="tel"
           aria-describedby="basic-addon1"
@@ -64,18 +92,10 @@ export function PhoneNumberInput({ onChange, value, onValidationChange }) {
           value={phoneNumber}
           onChange={handleInputChange}
           onFocus={handleFocus}
+          onBlur={handleBlur}
         />
       </div>
-      {isTouched && error && (
-        <div className="text-danger my-1" style={{ fontSize: "0.9rem" }}>
-          {error}
-        </div>
-      )}
-      {isTouched && !error && phoneNumber && (
-        <div className="text-success my-1" style={{ fontSize: "0.9rem" }}>
-          Looks good!
-        </div>
-      )}
+      <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
     </div>
   );
 }
@@ -94,7 +114,7 @@ export function TextInputField({
   const [isTouched, setIsTouched] = useState(false);
 
   useEffect(() => {
-    if (isTouched || inputValue) { 
+    if (isTouched || inputValue) {
       validateInput(inputValue);
     }
   }, [inputValue, validationSchema, isTouched]);
@@ -125,23 +145,26 @@ export function TextInputField({
     validateInput(inputValue);
   };
 
-  const feedbackContent = isTouched && inputError
-    ? inputError
-    : (isTouched && !inputError && inputValue
-      ? 'Looks Good!'
-      : '');
+  const feedbackContent =
+    isTouched && inputError
+      ? inputError
+      : isTouched && !inputError && inputValue
+      ? "Looks Good!"
+      : "";
 
   const feedbackClasses = [
-    'transition-all font-size-sm',
+    "transition-all font-size-sm",
     isTouched && inputError
-      ? 'invalid-feedback transition-all'
-      : (isTouched && !inputError && inputValue
-        ? 'valid-feedback transition-all'
-        : null),
+      ? "invalid-feedback transition-all"
+      : isTouched && !inputError && inputValue
+      ? "valid-feedback transition-all"
+      : null,
     isTouched && (inputError || (!inputError && inputValue))
-      ? 'opacity-100 transition-all'
-      : 'opacity-0 transition-all',
-  ].filter(Boolean).join(' ');
+      ? "opacity-100 transition-all"
+      : "opacity-0 transition-all",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div>
@@ -153,15 +176,9 @@ export function TextInputField({
         placeholder={placeholder}
         className={`form-control ${
           isTouched && inputError ? "is-invalid" : ""
-        } ${
-          isTouched && !inputError && inputValue
-            ? "is-valid"
-            : ""
-        }`}
+        } ${isTouched && !inputError && inputValue ? "is-valid" : ""}`}
       />
-      <div className={feedbackClasses}>
-        {feedbackContent}
-      </div>
+      <div className={feedbackClasses}>{feedbackContent}</div>
     </div>
   );
 }
@@ -211,21 +228,24 @@ export function TextInput({
     validateInput(inputValue);
   };
 
-  const feedbackContent = isInputTouched && inputError
-    ? inputError
-    : (isInputTouched && !inputError && inputValue && 'Looks Good!');
+  const feedbackContent =
+    isInputTouched && inputError
+      ? inputError
+      : isInputTouched && !inputError && inputValue && "Looks Good!";
 
   const feedbackClasses = [
-    'transition-all font-size-sm',
+    "transition-all font-size-sm",
     isInputTouched && inputError
-      ? 'invalid-feedback transition-all'
-      : (isInputTouched && !inputError && inputValue
-          ? 'valid-feedback transition-all'
-          : null),
+      ? "invalid-feedback transition-all"
+      : isInputTouched && !inputError && inputValue
+      ? "valid-feedback transition-all"
+      : null,
     isInputTouched && (inputError || (!inputError && inputValue))
-      ? 'opacity-100 transition-all'
-      : 'opacity-0 transition-all',
-  ].filter(Boolean).join(' ');
+      ? "opacity-100 transition-all"
+      : "opacity-0 transition-all",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className="input-container">
@@ -238,15 +258,9 @@ export function TextInput({
         placeholder={placeholder}
         className={`form-control font-size-sm p-2 ${
           isInputTouched && inputError ? "is-invalid" : ""
-        } ${
-          isInputTouched && !inputError && inputValue
-            ? "is-valid"
-            : ""
-        }`}
+        } ${isInputTouched && !inputError && inputValue ? "is-valid" : ""}`}
       />
-      <div className={`${feedbackClasses} mt-auto`}>
-        {feedbackContent}
-      </div>
+      <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
     </div>
   );
 }
@@ -257,7 +271,6 @@ export function TextAreaInput({
   value,
   placeholder,
   validationSchema,
-
 }) {
   const [inputValue, setInputValue] = useState(value || "");
   const [inputError, setInputError] = useState("");
@@ -416,11 +429,11 @@ export function NumberInput({
         placeholder={placeholder}
         className={`form-control font-size-sm p-2 ${
           isInputTouched && inputError ? "is-invalid" : ""
-        } ${isInputTouched && !inputError && inputValue !== "" ? "is-valid" : ""}`}
+        } ${
+          isInputTouched && !inputError && inputValue !== "" ? "is-valid" : ""
+        }`}
       />
-      <div className={`${feedbackClasses} mt-auto`}>
-        {feedbackContent}
-      </div>
+      <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
     </div>
   );
 }
@@ -432,7 +445,7 @@ export function DateInput({
   placeholder = "MM/DD/YYYY",
   validationSchema,
   id,
-  name
+  name,
 }) {
   const [displayValue, setDisplayValue] = useState(value || "");
   const [inputError, setInputError] = useState("");
@@ -529,18 +542,27 @@ export function DateInput({
   );
 }
 
-export function TimeInput({ value, onChange, id, name, placeholder = "HH:MM" }) {
+export function TimeInput({
+  value,
+  onChange,
+  id,
+  name,
+  placeholder = "HH:MM",
+}) {
   const [displayValue, setDisplayValue] = useState(value);
-  const handleChange = useCallback((e) => {
-    const rawValue = e.target.value;
-    setDisplayValue(rawValue);
-    const unmaskedValue = rawValue.replace(/[^0-9]/g, '');
-    if (unmaskedValue.length === 4) {
-      onChange(rawValue);
-    } else if (unmaskedValue.length < 4 && value !== '') {
-        onChange('');
-    }
-  }, [onChange, value]);
+  const handleChange = useCallback(
+    (e) => {
+      const rawValue = e.target.value;
+      setDisplayValue(rawValue);
+      const unmaskedValue = rawValue.replace(/[^0-9]/g, "");
+      if (unmaskedValue.length === 4) {
+        onChange(rawValue);
+      } else if (unmaskedValue.length < 4 && value !== "") {
+        onChange("");
+      }
+    },
+    [onChange, value]
+  );
 
   return (
     <div className="input-container">
@@ -583,12 +605,18 @@ export function DateRangeInput({
 
   const validateField = async (field, value) => {
     try {
-      await validationSchema.validate({ ...dates, [field]: value }, { abortEarly: false });
+      await validationSchema.validate(
+        { ...dates, [field]: value },
+        { abortEarly: false }
+      );
       setErrors((prev) => ({ ...prev, [field]: "" }));
       onValidationChange?.(true);
     } catch (err) {
       const fieldError = err.inner.find((e) => e.path === field);
-      setErrors((prev) => ({ ...prev, [field]: fieldError ? fieldError.message : "" }));
+      setErrors((prev) => ({
+        ...prev,
+        [field]: fieldError ? fieldError.message : "",
+      }));
       onValidationChange?.(false);
     }
   };
@@ -628,9 +656,14 @@ export function DateRangeInput({
       : "";
 
   return (
-    <div className="d-flex flex-row align-items-center gap-2 w-100" style={{ height:"10dvh" }}>
+    <div
+      className="d-flex flex-row align-items-center gap-2 w-100"
+      style={{ height: "10dvh" }}
+    >
       <div className="input-container w-50">
-        <label htmlFor="startDate" className="font-size-sm">Start Date</label>
+        <label htmlFor="startDate" className="font-size-sm">
+          Start Date
+        </label>
         <InputMask
           mask="99/99/9999"
           maskChar="_"
@@ -639,17 +672,25 @@ export function DateRangeInput({
           onFocus={handleFocus("start_date")}
           onBlur={handleFocus("start_date")}
           placeholder={placeholderStart}
-          className={`form-control w-100 font-size-sm ${touched.start_date && errors.start_date ? "is-invalid" : ""} ${
-            touched.start_date && !errors.start_date && dates.start_date ? "is-valid" : ""
+          className={`form-control w-100 font-size-sm ${
+            touched.start_date && errors.start_date ? "is-invalid" : ""
+          } ${
+            touched.start_date && !errors.start_date && dates.start_date
+              ? "is-valid"
+              : ""
           }`}
         />
-        <div className={`${feedbackClasses("start_date")} font-size-sm mt-auto`}>
+        <div
+          className={`${feedbackClasses("start_date")} font-size-sm mt-auto`}
+        >
           {feedbackMessage("start_date")}
         </div>
       </div>
 
       <div className="input-container w-50">
-        <label htmlFor="endDate" className="font-size-sm">End Date</label>
+        <label htmlFor="endDate" className="font-size-sm">
+          End Date
+        </label>
         <InputMask
           mask="99/99/9999"
           maskChar="_"
@@ -658,8 +699,12 @@ export function DateRangeInput({
           onFocus={handleFocus("end_date")}
           onBlur={handleFocus("end_date")}
           placeholder={placeholderEnd}
-          className={`form-control w-100 font-size-sm ${touched.end_date && errors.end_date ? "is-invalid" : ""} ${
-            touched.end_date && !errors.end_date && dates.end_date ? "is-valid" : ""
+          className={`form-control w-100 font-size-sm ${
+            touched.end_date && errors.end_date ? "is-invalid" : ""
+          } ${
+            touched.end_date && !errors.end_date && dates.end_date
+              ? "is-valid"
+              : ""
           }`}
         />
         <div className={`${feedbackClasses("end_date")} font-size-sm mt-auto`}>
@@ -670,11 +715,7 @@ export function DateRangeInput({
   );
 }
 
-export function GenderSelector({
-  onSelect,
-  onError,
-  error,
-}) {
+export function GenderSelector({ onSelect, onError, error }) {
   const [selectedGender, setSelectedGender] = useState(null);
   const [isShowing, setIsShowing] = useState(false);
   const [touched, setTouched] = useState(false);
@@ -735,7 +776,9 @@ export function GenderSelector({
             <span>
               <Icon
                 icon="heroicons:chevron-up-20-solid"
-                className={isShowing ? "transition-3s" : "rotate-180 transition-3s"}
+                className={
+                  isShowing ? "transition-3s" : "rotate-180 transition-3s"
+                }
               />
             </span>
           </div>
@@ -745,7 +788,9 @@ export function GenderSelector({
           {error ? (
             <span className="font-size-sm text-danger">{error}</span>
           ) : (
-            selectedGender && <span className="font-size-sm text-success">Looks Good</span>
+            selectedGender && (
+              <span className="font-size-sm text-success">Looks Good</span>
+            )
           )}
         </div>
 
@@ -773,5 +818,94 @@ export function GenderSelector({
         </CSSTransition>
       </div>
     </div>
+  );
+}
+
+export function InputGroup({
+  onChange,
+  onValidationChange,
+  value,
+  placeholder,
+  validationSchema,
+  type = "text",
+  InputGroupText
+}) {
+  const [inputValue, setInputValue] = useState(value || "");
+  const [inputError, setInputError] = useState("");
+  const [isInputTouched, setIsInputTouched] = useState(false);
+
+  const validateInput = async (currentValue) => {
+    if (!validationSchema) {
+      onValidationChange(true);
+      return;
+    }
+    try {
+      await validationSchema.validate(currentValue);
+      setInputError("");
+      onValidationChange(true);
+    } catch (err) {
+      setInputError(err.message);
+      onValidationChange(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { value: newValue } = e.target;
+    setInputValue(newValue);
+    onChange(newValue);
+    if (isInputTouched) {
+      validateInput(newValue);
+    }
+  };
+
+  const handleInputFocus = () => {
+    setIsInputTouched(true);
+    validateInput(inputValue);
+  };
+
+  const handleInputBlur = () => {
+    validateInput(inputValue);
+  };
+
+  const feedbackContent =
+    isInputTouched && inputError
+      ? inputError
+      : isInputTouched && !inputError && inputValue && "Looks Good!";
+
+  const feedbackClasses = [
+    "transition-all font-size-sm",
+    isInputTouched && inputError
+      ? "invalid-feedback transition-all"
+      : isInputTouched && !inputError && inputValue
+      ? "valid-feedback transition-all"
+      : null,
+    isInputTouched && (inputError || (!inputError && inputValue))
+      ? "opacity-100 transition-all"
+      : "opacity-0 transition-all",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  return (
+    <>
+     <div className="input-container">
+      <div className="input-group mb-3">
+         <input
+        type={type}
+        value={inputValue}
+        onChange={handleInputChange}
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
+        placeholder={placeholder}
+        className={`form-control font-size-sm p-2 ${
+          isInputTouched && inputError ? "is-invalid" : ""
+        } ${isInputTouched && !inputError && inputValue ? "is-valid" : ""}`}
+      />
+        <span className="input-group-text" id="basic-addon1">
+          {InputGroupText}
+        </span>
+      </div>
+      <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
+     </div>
+    </>
   );
 }

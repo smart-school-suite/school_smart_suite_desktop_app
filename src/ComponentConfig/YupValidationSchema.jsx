@@ -16,6 +16,19 @@ export const preferredLanguageSchema = Yup.string()
   .test("valid-language", "Invalid language selection", value => {
     return cameroonLanguages.includes(value);
   });
+  export const numberSchema = (min = -Infinity, max = Infinity) => {
+  return Yup.number()
+    .transform((value, originalValue) => {
+      if (typeof originalValue === 'string' && originalValue.trim() === '') {
+        return undefined;
+      }
+      return isNaN(value) ? undefined : value;
+    })
+    .required('Number is required') 
+    .typeError('Value must be a valid number')
+    .min(min, `Number must be at least ${min}`)
+    .max(max, `Number must be at most ${max}`);
+};
  export  const relationshipSchema = Yup.object({
     relationshipToStudent: Yup.string()
       .trim()

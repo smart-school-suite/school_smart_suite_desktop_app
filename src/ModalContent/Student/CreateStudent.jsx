@@ -16,6 +16,7 @@ import { useCreateStudent } from "../../hooks/student/useCreateStudent";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetAllParents } from "../../hooks/parent/useGetParents";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
+import { gender } from "../../data/data";
 function CreateStudent({ handleClose }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -125,9 +126,14 @@ function CreateStudent({ handleClose }) {
       </div>
       <div>
         <label htmlFor="gender" className="font-size-sm">Gender</label>
-        <GenderSelector
-          onSelect={(value) => handleInputChange("gender", value)}
-          onError={(value) => handleFieldError("gender", value)}
+        <CustomDropdown 
+          data={gender}
+          displayKey={['name']}
+          valueKey={['name']}
+          direction="up"
+          onSelect={(value) => handleInputChange('gender', value.name)}
+          onError={(value) => handleFieldError('gender', value)}
+          errorMessage="Gender Required"
           error={errors.gender}
         />
       </div>
@@ -142,6 +148,9 @@ function CreateStudent({ handleClose }) {
           direction="up"
           onSelect={(value) => handleInputChange("student_batch_id", value.id)}
           isLoading={isStudentBatchLoading}
+          onError={(value) => handleFieldError('student_batch_id', value)}
+          errorMessage="Student Batch Required"
+          error={errors.student_batch_id}
         />
       </div>
       <div>
@@ -156,6 +165,9 @@ function CreateStudent({ handleClose }) {
           onSelect={(value) => handleInputChange("specialty_id", value.id)}
           placeholder="Select Specialty"
           isLoading={isSpecialtiesLoading}
+          error={errors.specialty_id}
+          onError={(value) => handleFieldError('specialty_id', value)}
+          errorMessage="Specialty Required"
         />
       </div>
       <div className="my-1">
@@ -169,6 +181,9 @@ function CreateStudent({ handleClose }) {
           direction="up"
           onSelect={(value) => handleInputChange("guardian_id", value.id)}
           isLoading={isParentsLoading}
+          error={errors.guardian_id}
+          onError={(value) => handleFieldError('guardian_id', value)}
+          errorMessage="Guardian Required"
         />
       </div>
       <div className="mt-3">
