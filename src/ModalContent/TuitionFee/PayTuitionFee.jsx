@@ -2,25 +2,46 @@ import { useState } from "react";
 import { usePayTuitionFee } from "../../hooks/feePayment/usePayTuitionFee";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
+import { useSelector } from "react-redux";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { paymentMethods } from "../../data/data";
+import { InputGroup } from "../../components/FormComponents/InputComponents";
+import { numberSchema } from "../../ComponentConfig/YupValidationSchema";
 function PayStudentTuitionFee({ handleClose, rowData }) {
-  const feeId = rowData.id;
+  const { id: feeId, amount_left: amountLeft } = rowData;
+  const currencyState = useSelector((state) => state.auth.user);
+  const userCurrencySymbol =
+    currencyState?.schoolDetails?.school?.country?.currency || "";
+  const { mutate: payTuitionFee, isPending } = usePayTuitionFee(handleClose);
   const [formData, setFormData] = useState({
     tuition_id: feeId,
     payment_method: "",
     amount: "",
   });
-  const { mutate:payTuitionFee, isPending } = usePayTuitionFee(handleClose);
+  const [isValid, setIsValid] = useState({
+    amount: "",
+  });
+  const [errors, setErrors] = useState({
+    payment_method: "",
+  });
+  const handleFieldError = (field, value) => {
+    setErrors((prev) => ({ ...prev, [field]: value }));
+  };
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+  const handleFieldValid = (field, value) => {
+    setIsValid((prev) => ({ ...prev, [field]: value }));
+  };
   const handleSubmit = async () => {
-     payTuitionFee(formData)
+    payTuitionFee(formData);
   };
   return (
     <>
+    {console.table(formData)}
       <div className="block">
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-          <h5 className="m-0">Make Registration Fee Payment</h5>
+          <span className="m-0">Make Tuition Fee Payment</span>
           <span
             className="m-0"
             onClick={() => {
@@ -30,38 +51,36 @@ function PayStudentTuitionFee({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <span className="gainsboro-color font-size-sm">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-          nesciunt sunt
-        </span>
       </div>
       <div className="my-1">
-        <span>Amount</span>
-        <input
-          type="number"
-          className="form-control"
-          step="0.01"
+        <label htmlFor="amount" className="font-size-sm">
+          Amount
+        </label>
+        <InputGroup
+          onChange={(value) => handleInputChange("amount", value)}
           value={formData.amount}
-          placeholder="Enter amount"
-          name="amount"
-          onChange={(e) => handleInputChange("amount", e.target.value)}
+          step="0.01"
+          validationSchema={numberSchema({ min: 1, max: amountLeft })}
+          onValidationChange={(value) => handleFieldValid("amount", value)}
+          InputGroupText={userCurrencySymbol}
+          placeholder={"Enter Amount Paid"}
         />
       </div>
       <div className="my-2">
-        <span>Payment Method</span>
-        <select
-          className="form-select"
-          onChange={(e) => handleInputChange("payment_method", e.target.value)}
-          name="payment_method"
-          value={formData.payment_method}
-        >
-          <option selected>Select Payment Method</option>
-          <option value="cash">Cash Payment</option>
-          <option value="cheque">cheque</option>
-          <option value="credit_card">Credit card</option>
-          <option value="debit_card">Debit card</option>
-          <option value="bank_transfer">Bank transfer</option>
-        </select>
+        <label htmlFor="paymentMethod" className="font-size-sm">
+          Payment Method
+        </label>
+        <CustomDropdown
+          data={paymentMethods}
+          valueKey={["value"]}
+          displayKey={["label"]}
+          direction="down"
+          onError={(value) => handleFieldError("payment_method", value)}
+          onSelect={(value) => handleInputChange("payment_method", value.value)}
+          error={errors.payment_method}
+          errorMessage="Payment Method Required"
+          placeholder="Select Payment Method"
+        />
       </div>
       <div className="mt-4">
         <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
@@ -71,7 +90,7 @@ function PayStudentTuitionFee({ handleClose, rowData }) {
               handleSubmit();
             }}
           >
-            { isPending ? <SingleSpinner /> : "Make Payment" }
+            {isPending ? <SingleSpinner /> : "Make Payment"}
           </button>
         </div>
       </div>

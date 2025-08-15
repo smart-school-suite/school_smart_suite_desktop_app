@@ -33,3 +33,11 @@ export const gender = [
         id:2, name:'female'
     }
 ]
+
+export const paymentMethods = [
+  { value: 'cash', label: 'Cash Payment' },
+  { value: 'cheque', label: 'cheque' },
+  { value: 'credit_card', label: 'Credit card' },
+  { value: 'debit_card', label: 'Debit card' },
+  { value: 'bank_transfer', label: 'Bank transfer' }
+];

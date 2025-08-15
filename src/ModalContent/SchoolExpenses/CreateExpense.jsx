@@ -34,7 +34,7 @@ function CreateExpense({ handleClose }) {
      setErrors((prev) => ({ ...prev, [field]:value }))
   }
   const handleFieldValid = (field, value) => {
-     setErrors((prev) => ({ ...prev, [field]:value }))
+     setIsValid((prev) => ({ ...prev, [field]:value }))
   }
   const handleSubmit = () => {
     createExpenses(formData);
@@ -71,7 +71,7 @@ function CreateExpense({ handleClose }) {
             onValidationChange={(value) => handleFieldError('amount', value)}
             validationSchema={numberSchema({min:0, max:10000000})}
             placeholder={'E.g 1,00,000'}
-            
+            step="0.01"
           />
         </div>
         <div>
