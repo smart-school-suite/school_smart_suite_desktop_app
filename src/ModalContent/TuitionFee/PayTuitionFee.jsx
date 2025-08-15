@@ -38,7 +38,6 @@ function PayStudentTuitionFee({ handleClose, rowData }) {
   };
   return (
     <>
-    {console.table(formData)}
       <div className="block">
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
           <span className="m-0">Make Tuition Fee Payment</span>

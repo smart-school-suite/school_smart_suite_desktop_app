@@ -9,6 +9,8 @@ export const useCreateStudent = (handleClose) => {
          mutationFn:createStudent,
          onSuccess: () => {
             queryClient.invalidateQueries({ queryKey:['students'] })
+            queryClient.invalidateQueries({ queryKey:['registrationFees']})
+            queryClient.invalidateQueries({ queryKey:['tuitionFees'] })
             if(handleClose){
                handleClose();
             }
