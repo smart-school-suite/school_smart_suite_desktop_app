@@ -103,6 +103,7 @@ export function SchoolYearSelector({
   onSelect,
   onError,
   error, 
+  placeholder = "Select School Year"
 }) {
   const [selectedYear, setSelectedYear] = useState(null);
   const [isShowing, setIsShowing] = useState(false);
@@ -171,7 +172,7 @@ export function SchoolYearSelector({
         >
           <div className="d-flex flex-row align-items-center gap-3 font-size-sm">
             <span>
-              {selectedYear === null ? "Select School Year" : selectedYear}
+              {selectedYear === null ? placeholder : selectedYear}
             </span>
           </div>
           <div>

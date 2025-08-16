@@ -41,29 +41,30 @@ function CustomDropdown({
     return () => clearTimeout(timer);
   }, [searchTerm, data, displayKey]);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        if (isToggled) {
-          setIsToggled(false);
-          if (!selectedItem && onError) {
-            onError(errorMessage);
-          }
-        }
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isToggled, selectedItem, onError, errorMessage]);
+ useEffect(() => {
+  if (!isToggled) return;
 
-  const toggleDropdown = useCallback(() => {
-    setIsToggled((prev) => !prev);
-    if (!isToggled && inputRef.current) {
-      inputRef.current.focus();
+  const handleClickOutsideCapture = (event) => {
+    const el = dropdownRef.current;
+    if (!el) return;
+    if (!el.contains(event.target)) {
+      setIsToggled(false);
+      if (!selectedItem && onError) onError(errorMessage);
     }
-  }, [isToggled]);
+  };
+
+
+  document.addEventListener("pointerdown", handleClickOutsideCapture, true);
+
+  return () => {
+    document.removeEventListener("pointerdown", handleClickOutsideCapture, true);
+  };
+}, [isToggled, selectedItem, onError, errorMessage]);
+
+
+const toggleDropdown = useCallback(() => {
+  setIsToggled((prev) => !prev);
+}, []);
 
   const handleSelect = useCallback(
     (item) => {
@@ -126,6 +127,9 @@ function CustomDropdown({
           timeout={300}
           classNames="dropdown"
           unmountOnExit
+          onEntered={() => {
+             inputRef.current?.focus();
+          }}
         >
           <div
             className={`d-flex flex-column bg-white p-2 rounded-3 w-100 mt-4 border z-3 position-absolute ${

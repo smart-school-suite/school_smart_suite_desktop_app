@@ -34,24 +34,6 @@ function CreateSemester({ handleClose }) {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-  const handleDateRangeChange = (value) => {
-    const [changedKey] = Object.keys(value);
-    const changedValue = value[changedKey];
-
-    setFormData((prev) => ({
-      ...prev,
-      [changedKey]: changedValue,
-    }));
-  };
-  const handleDateRangeValid = (value) => {
-    const [changedKey] = Object.keys(value);
-    const changedValue = value[changedKey];
-
-    setIsInvalid((prev) => ({
-      ...prev,
-      [changedKey]: changedValue,
-    }));
-  };
   const handleFieldError = (field, message) => {
     setErrors((prev) => ({
       ...prev,
@@ -79,8 +61,8 @@ function CreateSemester({ handleClose }) {
         <div>
           <DateRangeInput
             validationSchema={dateRangeValidationSchema}
-            onChange={handleDateRangeChange}
-            onValidationChange={handleDateRangeValid}
+            onEndDateChange={(value) => handleInputChange('end_date', value)}
+            onStartDateChange={(value) => handleInputChange('start_date', value)}
           />
         </div>
         <div>

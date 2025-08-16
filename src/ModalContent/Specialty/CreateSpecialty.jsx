@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { NumberInput, TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
+import { InputGroup,TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
 import {  useCreateSpecialty } from "../../hooks/specialty/useCreateSpecialty";
 import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 import { useGetLevels } from "../../hooks/level/useGetLevels";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { registrationFeeValidationSchema, schoolFeeValidationSchema, specialtyDescriptionSchema, specialtyValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import { useSelector } from "react-redux";
+import { numberSchema, specialtyDescriptionSchema, specialtyValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 function CreateSpecialty({ handleClose }) {
+      const currencyState = useSelector((state) => state.auth.user);
+    const currency =
+      currencyState?.schoolDetails?.school?.country?.currency || "";
   const [formData, setFormData] = useState({
     specialty_name: "",
     registration_fee: "",
@@ -69,33 +73,31 @@ function CreateSpecialty({ handleClose }) {
       </div>
       <div>
         <label htmlFor="registrationFees" className="font-size-sm">Registration Fees</label>
-        <NumberInput 
-         placeholder={"e.g 80,000 XAF"}
-         onChange={(value) => handleInputChange('registration_fee', value)}
-         onValidationChange={(value) => handleFieldValid('registration_fee', value)}
-         step="0.01"
-         validationSchema={registrationFeeValidationSchema}
+        <InputGroup 
+          placeholder={"E.g 80,000"}
+          onChange={(value) => handleInputChange('registration_fee', value)}
+          onValidationChange={(value) => handleFieldValid('registration_fee', value)}
+          step="0.01"
+          validationSchema={numberSchema({ min:1, max:500000 })}
+          InputGroupText={currency}
         />
       </div>
       <div>
         <label htmlFor="schoolFees" className="font-size-sm">School Fees</label>
-        <NumberInput 
-         placeholder={"e.g 150,000 XAF"}
+        <InputGroup 
+         placeholder={"e.g 150,000"}
          onChange={(value) => handleInputChange('school_fee', value)}
          onValidationChange={(value) => handleFieldValid('school_fee', value)}
          step="0.01"
-         validationSchema={schoolFeeValidationSchema}
+         validationSchema={numberSchema({ min:1, max:1000000 })}
+         type="number"
+         InputGroupText={currency}
         />
       </div>
       <div>
         <label htmlFor="departmentName" className="font-size-sm">Department Name</label>
-        {departmentIsLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
           <CustomDropdown
-            data={departments.data}
+            data={departments?.data || []}
             displayKey={["department_name"]}
             valueKey={["id"]}
             filter_array_keys={["id", "department_name"]}
@@ -103,18 +105,13 @@ function CreateSpecialty({ handleClose }) {
             isLoading={departmentIsLoading}
             direction="up"
             onSelect={(value) => handleInputChange('department_id', value.id)}
+            placeholder="Select Department"
           />
-        )}
       </div>
       <div>
         <label htmlFor="level" className="font-size-sm">Level</label>
-        {educationIsLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
           <CustomDropdown
-            data={educationLevels.data}
+            data={educationLevels?.data || []}
             displayKey={["name", "level"]}
             valueKey={["id"]}
             filter_array_keys={["id", "name", "level"]}
@@ -122,8 +119,8 @@ function CreateSpecialty({ handleClose }) {
             isLoading={educationIsLoading}
             direction="up"
             onSelect={(value) => handleInputChange('level_id', value.id)}
+            placeholder="Select Level"
           />
-        )}
       </div>
       <div>
         <label htmlFor="specialtyDescription" className="font-size-sm">Specialty Description</label>

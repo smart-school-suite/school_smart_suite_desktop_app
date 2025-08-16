@@ -41,24 +41,6 @@ function CreateExam({ handleClose }) {
     specialty_id: "",
     exam_type_id: "",
   })
-  const handleDateRangeChange = (value) => {
-    const [changedKey] = Object.keys(value);
-    const changedValue = value[changedKey];
-    setFormData((prev) => ({
-      ...prev,
-      [changedKey]: changedValue,
-    }));
-  };
-  const handleDateRangeValid = (value) => {
-    const [changedKey] = Object.keys(value);
-    const changedValue = value[changedKey];
-
-    setIsInvalid((prev) => ({
-      ...prev,
-      [changedKey]: changedValue,
-    }));
-    
-  };
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -93,8 +75,8 @@ function CreateExam({ handleClose }) {
       <div>
         <DateRangeInput 
          validationSchema={dateRangeValidationSchema}
-         onChange={handleDateRangeChange}
-         onValidationChange={handleDateRangeValid}
+         onStartDateChange={(value) => handleInputChange('start_date', value)}
+         onEndDateChange={(value) => handleInputChange('end_date', value)}
         />
       </div>
       <div>

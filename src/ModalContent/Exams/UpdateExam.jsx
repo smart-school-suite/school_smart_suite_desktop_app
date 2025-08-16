@@ -6,8 +6,10 @@ import { Icon } from "@iconify/react";
 import { useGetExamTypes } from "../ExamType/useGetExamType";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useUpdateExam } from "../../hooks/exam/useUpdateExam";
+import { DateRangeInput, NumberInput } from "../../components/FormComponents/InputComponents";
+import { dateRangeValidationSchema, numberSchema } from "../../ComponentConfig/YupValidationSchema";
 function UpdateExam({ handleClose, rowData }) {
-    const examId = rowData.id;
+    const {id:examId, start_date, end_date, weighted_mark, school_year } = rowData;
     const { mutate:updateExam, isPending } = useUpdateExam(handleClose)
     const [formData, setFormData] = useState({
       start_date: "",
@@ -17,39 +19,38 @@ function UpdateExam({ handleClose, rowData }) {
       specialty_id: "",
       school_year: "",
     });
+    const [errors, setErrors] = useState({
+    school_year: "",
+    student_batch_id:"",
+    specialty_id: "",
+    exam_type_id: "",
+  })
+    const [isInvalid, setIsInvalid] = useState({
+     start_date: "",
+    end_date: "",
+    exam_type_id: "",
+    weighted_mark: "",
+    specialty_id: "",
+    school_year: "",
+    student_batch_id:""
+  });
   
     const { data: examType, isLoading: isExamTypeLoading } =
       useGetExamTypes();
     const { data: specialty, isLoading: isSpecailtyLoading } =
       useGetSpecialties();
-   
-    const handleExamTypeSelect = (selectedValues) => {
-      setFormData((prevalue) => ({
-        ...prevalue,
-        exam_type_id: selectedValues.id,
-      }));
-    };
-  
-    const handleSpecialtySelect = (selectedValues) => {
-      setFormData((prevalue) => ({
-        ...prevalue,
-        specialty_id: selectedValues.id,
-      }));
-    };
-    const handleSchoolYearSelect = (selectedValues) => {
-      setFormData((prevalue) => ({
-        ...prevalue,
-        school_year: selectedValues,
-      }));
-    };
     const handleInputChange = (field, value) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
     };
-  
-    const handleValidation = (isInputValid) => {
-      setIsValid(isInputValid);
-    };
-  
+      const handleValidation = (field, value) => {
+    setIsInvalid((prev) => ({ ...prev, [field]: value }));
+  };
+    const handleFieldError = (field, message) => {
+    setErrors((prev) => ({
+      ...prev,
+      [field]: message
+    }));
+  };
     const handleSubmit = () => {
       updateExam({examId:examId, updateData:formData})
       
@@ -71,64 +72,61 @@ function UpdateExam({ handleClose, rowData }) {
           </div>
         </div>
       </div>
-      <div className="modal-content-container">
-        <div className="my-1">
-        <span>Start Date</span>
-        <input
-          type="date"
-          className="form-control"
-          name="start_date"
-          value={formData.start_date}
-          onChange={(e) => handleInputChange("start_date", e.target.value)}
+      <div>
+      <div>
+        <DateRangeInput 
+          onStartDateChange={(value) => handleInputChange('start_date', value)}
+          onEndDateChange={(value) => handleInputChange('end_date', value)}
+          placeholderEnd={start_date}
+          placeholderStart={end_date}
+          validationSchema={dateRangeValidationSchema}
         />
       </div>
-      <div className="my-1">
-        <span>End Date</span>
-        <input
-          type="date"
-          className="form-control"
-          name="end_date"
-          value={formData.end_date}
-          onChange={(e) => handleInputChange("end_date", e.target.value)}
-        />
+      <div>
+       <NumberInput 
+         onChange={(value) => handleInputChange('weighted_mark', value)}
+         onValidationChange={(value) => handleValidation('weighted_mark', value)}
+         placeholder={weighted_mark}
+         validationSchema={numberSchema({ min:1, max:100, optional:true })}
+       />
       </div>
-      <div className="my-1">
-        <WeigtedMarkInput
-          onChange={(value) => handleInputChange("weighted_mark", value)}
-          value={formData.weighted_mark}
-          onValidationChange={handleValidation}
-        />
-      </div>
-      <div className="my-1">
+      <div>
         <label htmlFor="schoolYear" className="font-size-sm">School Year</label>
-        <SchoolYearSelector onSelect={handleSchoolYearSelect} />
+        <SchoolYearSelector 
+          onSelect={(value) => handleInputChange('school_year', value)}
+          onError={(value) => handleInputChange('school_year', value)}
+          error={errors.school_year}
+          placeholder={school_year}
+        />
       </div>
-      <div className="my-1">
+      <div>
         <label htmlFor="examType" className="font-size-sm">Exam Type</label>
           <CustomDropdown
             data={examType?.data || []}
             displayKey={["exam_name"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "exam_name"]}
-            renameMapping={{ id: "id", exam_name: "exam_name" }}
             isLoading={isExamTypeLoading}
             direction="up"
-            onSelect={handleExamTypeSelect}
+            onSelect={(value) => handleInputChange('exam_type_id', value)}
             placeholder={"Select Exam Type"}
+            errorMessage="Exam Type Required"
+            onError={(value) => handleFieldError('exam_type_id', value)}
+            error={errors.exam_type_id}
           />
       </div>
-      <div className="my-1">
-        <label htmlFor="specialty" className="font-size-sm"></label>
+      <div>
+        <label htmlFor="specialty" className="font-size-sm">Specialty</label>
           <CustomDropdown
             data={specialty?.data || []}
             displayKey={["specialty_name", "level"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "specialty_name", "level_name"]}
-            renameMapping={{ id: "id", specialty_name: "specialty_name", level_name:"level" }}
             isLoading={isSpecailtyLoading}
             direction="up"
-            onSelect={handleSpecialtySelect}
+            onSelect={(value) => handleInputChange('specialty_id', value)}
             placeholder="Select Specialty"
+            onError={(value) => handleFieldError('specialty_id', value)}
+            errorMessage="Specialty Required"
+            error={errors.specialty_id}
           />
       </div>
       </div>
