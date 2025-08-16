@@ -83,6 +83,7 @@ function UpdateExam({ handleClose, rowData }) {
         />
       </div>
       <div>
+        <label htmlFor="weightedMark" className="font-size-sm">Exam Score</label>
        <NumberInput 
          onChange={(value) => handleInputChange('weighted_mark', value)}
          onValidationChange={(value) => handleValidation('weighted_mark', value)}

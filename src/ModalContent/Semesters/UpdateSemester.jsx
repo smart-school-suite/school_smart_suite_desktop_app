@@ -6,18 +6,19 @@ import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { DateRangeInput } from "../../components/FormComponents/InputComponents";
+import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 function UpdateSemester({ handleClose, rowData }) {
-  const semesterId = rowData.id;
-  const { data: specailties, isLoading: isFetchingSpecialties } =
+  const {id:semesterId, school_year, start_date, end_date} = rowData;
+  const { data: specialties, isLoading: isFetchingSpecialties } =
     useGetSpecialties();
   const { data: studentBatches, isLoading: isFetchingStudentBatches } =
     useGetBatches();
   const { data: semesters, isLoading: isFetchingSemesters } =
     useGetSemester();
   const { mutate:updateSchoolSemester, isPending } = useUpdateSchoolSemester(handleClose, semesterId);
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
   const [formData, setFormData] = useState({
     start_date: "",
     end_date: "",
@@ -26,16 +27,21 @@ function UpdateSemester({ handleClose, rowData }) {
     specialty_id: "",
     student_batch_id: "",
   });
+  const [errors, setErrors] = useState({
+    semester_id: "",
+    specialty_id: "",
+    student_batch_id: "",
+    school_year: "",
+  });
+    const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+    const handleFieldError = (field, value) => {
+    setErrors((prev) => ({ ...prev, [field]: value }));
+  };
   const handleUpdateSchoolSemester = () => {
      updateSchoolSemester({schoolSemesterId:semesterId,  updateData:formData})
   };
-  if (
-    isFetchingSemesters ||
-    isFetchingSpecialties ||
-    isFetchingStudentBatches
-  ) {
-    return <Pageloaderspinner />;
-  }
   return (
     <>
       <div>
@@ -50,85 +56,67 @@ function UpdateSemester({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <div className="my-2">
-          <label htmlFor="startDate">Start Date</label>
-          <input
-            type="date"
-            className="form-control"
-            value={
-              formData.start_date === null
-                ? semesterDetails.data.start_date
-                : formData.start_date
-            }
-            name="start_date"
-            onChange={(e) => handleInputChange("start_date", e.target.value)}
+        <DateRangeInput 
+          onEndDateChange={(value) => handleInputChange('end_date', value)}
+          onStartDateChange={(value) => handleInputChange('start_date', value)}
+          validationSchema={dateRangeValidationSchema}
+          placeholderEnd={end_date}
+          placeholderStart={start_date}
+          startValue={formData.start_date}
+          endValue={formData.end_date}
+        />
+        <div>
+          <label htmlFor="schoolYear" className="font-size-sm">School Year</label>
+          <SchoolYearSelector 
+            onSelect={(value) => handleInputChange('school_year', value)}
+            onError={(value) => handleFieldError('school_year', value)}
+            error={errors.school_year}
+            placeholder={school_year}
           />
         </div>
-        <div className="my-2">
-          <label htmlFor="endDate">End Date</label>
-          <input
-            type="date"
-            className="form-control"
-            value={
-              formData.end_date === null
-                ? semesterDetails.data.end_date
-                : formData.end_date
-            }
-            name="end_date"
-            onChange={(e) => handleInputChange("end_date", e.target.value)}
+        <div>
+          <label htmlFor="semester" className="font-size-sm">Semester</label>
+           <CustomDropdown 
+             data={semesters?.data || []}
+             displayKey={["name"]}
+            valueKey={["id"]}
+            direction="up"
+            isLoading={isFetchingSemesters}
+            onSelect={(value) => handleInputChange("semester_id", value.id)}
+            error={errors.semester_id}
+            errorMessage="Semester Required"
+            onError={(msg) => handleFieldError("semester_id", msg)}
+           />
+        </div>
+        <div>
+          <label htmlFor="specialty" className="font-size-sm">Specialty</label>
+          <CustomDropdown 
+            data={specialties?.data || []}
+            displayKey={["specialty_name", "level_name"]}
+            valueKey={["id"]}
+            direction="up"
+            isLoading={isFetchingSpecialties}
+            onSelect={(value) => handleInputChange("specialty_id", value.id)}
+            error={errors.specialty_id}
+            errorMessage="Specialty Required"
+            onError={(msg) => handleFieldError("specialty_id", msg)}
           />
         </div>
-        <div className="my-2">
-          <label htmlFor="schoolYear">School Year</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="2021-2023"
-            value={formData.school_year}
-            name="school_year"
-            onChange={(e) => handleInputChange("school_year", e.target.value)}
-          />
-        </div>
-        <div className="my-2">
-          <label htmlFor="semester">Semester</label>
-          <select
-            className="form-select"
-            value={formData.semester_id}
-            name="semester_id"
-            onChange={(e) => handleInputChange("semester_id", e.target.value)}
-          >
-            {semesters.data.map((items) => (
-              <option value={items.id}>{items.name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="my-2">
-          <label htmlFor="specialty">Specialty</label>
-          <select
-            name="specialty_id"
-            value={formData.specialty_id}
-            onChange={(e) => handleInputChange("specialty_id", e.target.value)}
-            className="form-select"
-          >
-            {specailties.data.map((items) => (
-              <option value={items.id}>{items.specialty_name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="my-2">
-          <label htmlFor="studentBatch">Student Batch</label>
-          <select
-            name="student_batch_id"
-            value={formData.student_batch_id}
-            onChange={(e) =>
-              handleInputChange("student_batch_id", e.target.value)
+        <div>
+          <label htmlFor="studentBatch" className="font-size-sm">Student Batch</label>
+          <CustomDropdown
+            data={studentBatches?.data || []}
+            displayKey={["name"]}
+            valueKey={["id"]}
+            direction="up"
+            onSelect={(value) =>
+              handleInputChange("student_batch_id", value.id)
             }
-            className="form-select"
-          >
-            {studentBatches.data.map((items) => (
-              <option value={items.id}>{items.name}</option>
-            ))}
-          </select>
+            isLoading={isFetchingStudentBatches}
+            error={errors.student_batch_id}
+            errorMessage="Student Batch Required"
+            onError={(msg) => handleFieldError("student_batch_id", msg)}
+          />
         </div>
       </div>
       <div className="d-flex mt-3 flex-row align-items-center justify-content-end gap-2 w-100">
