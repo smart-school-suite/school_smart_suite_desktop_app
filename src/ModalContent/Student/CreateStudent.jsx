@@ -3,10 +3,8 @@ import{
   TextInput
 } from "../../components/FormComponents/InputComponents";
 import {
-  firstNameSchema,
-  lastNameSchema,
   emailValidationSchema,
-  fullNameSchema,
+  nameSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
@@ -86,7 +84,17 @@ function CreateStudent({ handleClose }) {
         <TextInput
           onChange={(value) => handleInputChange("first_name", value)}
           onValidationChange={(value) => handleValid("first_name", value)}
-          validationSchema={firstNameSchema}
+          value={formData.first_name}
+          validationSchema={nameSchema({
+             min:3,
+             max:50,
+             required:true,
+             messages:{
+               required:"First Name Required",
+               min:"First Name Must Be Atleast 3 characters Long",
+               max:"First Name Must Not Exceed 50 Characters"
+             }
+          })}
           placeholder={"Enter Student First Name"}
         />
       </div>
@@ -97,7 +105,16 @@ function CreateStudent({ handleClose }) {
         <TextInput
           onChange={(value) => handleInputChange("last_name", value)}
           onValidationChange={(value) => handleValid("last_name", value)}
-          validationSchema={lastNameSchema}
+          validationSchema={nameSchema({
+             min:3,
+             max:50,
+             required:true,
+             messages:{
+               required:"Last Name Required",
+               min:"Last Name Must Be Atleast 3 Characters Long",
+               max:"Last Name Must Not Exceed 50 Characters"
+             }
+          })}
           placeholder={"Enter Student Last Name"}
         />
       </div>
@@ -108,7 +125,15 @@ function CreateStudent({ handleClose }) {
         <TextInput
           onChange={(value) => handleInputChange("name", value)}
           onValidationChange={(value) => handleValid("name", value)}
-          validationSchema={fullNameSchema}
+          validationSchema={nameSchema({
+              min:3,
+              max:150,
+              messages:{
+                 required:"Full Name Required",
+                 min:"Full Names Must Be Atleast 3 Characters Long",
+                 max:"Full Name Must Not Exceed 150 Characters"
+              }
+          })}
           placeholder={"Enter Full Names"}
         />
       </div>
@@ -134,6 +159,7 @@ function CreateStudent({ handleClose }) {
           onError={(value) => handleFieldError('gender', value)}
           errorMessage="Gender Required"
           error={errors.gender}
+          placeholder="Select Gender"
         />
       </div>
       <div>
@@ -150,6 +176,7 @@ function CreateStudent({ handleClose }) {
           onError={(value) => handleFieldError('student_batch_id', value)}
           errorMessage="Student Batch Required"
           error={errors.student_batch_id}
+          placeholder="Select Student Batch"
         />
       </div>
       <div>
@@ -183,6 +210,7 @@ function CreateStudent({ handleClose }) {
           error={errors.guardian_id}
           onError={(value) => handleFieldError('guardian_id', value)}
           errorMessage="Guardian Required"
+          placeholder="Select Guardian"
         />
       </div>
       <div className="mt-3">

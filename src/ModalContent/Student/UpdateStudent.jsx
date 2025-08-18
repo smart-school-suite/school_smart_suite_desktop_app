@@ -8,10 +8,10 @@ import { useUpdateStudent } from "../../hooks/student/useUpdateStudent";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetAllParents } from "../../hooks/parent/useGetParents";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
-import { useGetStudentDetails } from "../../hooks/student/useGetStudentDetails";
-
+import { TextInput } from "../../components/FormComponents/InputComponents";
+import { emailValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 function UpdateStudent({ handleClose, rowData }) {
-  const studentId = rowData.id;
+  const {id:studentId, first_name, last_name, name, email }= rowData;
   const [formData, setFormData] = useState({
     name: "",
     first_name: "",
@@ -22,20 +22,30 @@ function UpdateStudent({ handleClose, rowData }) {
     gender: "",
     email: "",
   });
+  const [isValid, setIsValid] = useState({
+    name: "",
+    first_name: "",
+    last_name: "",
+    gender: "",
+    email: "",
+  });
+  const [errors, setErrors] = useState({
+    specialty_id: "",
+    student_batch_id: "",
+    guardian_id: "",
+  });
   const { mutate: updateStudent, isPending } = useUpdateStudent(
     handleClose,
     studentId
   );
-  const { data: studentDetails, isFetching: isStudentDetailsLoading } =
-    useGetStudentDetails(studentId);
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-  const handleSelect = (field) => (selectedValues) => {
-    setFormData((prevValue) => ({
-      ...prevValue,
-      [field]: selectedValues.id,
-    }));
+  const handleFieldError = (field, value) => {
+    setErrors((prev) => ({ ...prev, [field]: value }));
+  };
+  const handleFieldValid = (field, value) => {
+    setIsValid((prev) => ({ ...prev, [field]: value }));
   };
   const { data: specialties, isFetching: isSpecialtiesLoading } =
     useGetSpecialties();
@@ -64,121 +74,130 @@ function UpdateStudent({ handleClose, rowData }) {
           </span>
         </div>
       </div>
-      <div className="my-1">
-        <div className="d-flex flex-row align-items-center gap-2 w-100">
-          <div className="w-50">
-            <label htmlFor="firstName">First Name</label>
-            <input
-              type="text"
-              className="form-control w-100"
-              placeholder={studentDetails.data.first_name}
-              name="first_name"
-              value={formData.first_name}
-              onChange={(e) => handleInputChange("first_name", e.target.value)}
-            />
-          </div>
-          <div className="w-50">
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              type="text"
-              className="form-control w-100"
-              placeholder={studentDetails.data.last_name}
-              name="last_name"
-              value={formData.last_name}
-              onChange={(e) => handleInputChange("last_name", e.target.value)}
-            />
-          </div>
-        </div>
-      </div>
-      <div className="my-1">
-        <label htmlFor="firstName">Full Names</label>
-        <input
-          type="text"
-          className="form-control"
-          placeholder={studentDetails.data.name}
-          name="name"
+      <div>
+        <label htmlFor="firstName" className="font-size-sm">
+          First Name
+        </label>
+        <TextInput
+          onChange={(value) => handleInputChange("first_name", value)}
           value={formData.name}
-          onChange={(e) => handleInputChange("name", e.target.value)}
+          validationSchema={nameSchema({
+            min: 3,
+            max: 50,
+            required: false,
+            message: {
+              min: "First Name Must Be Atleast 3 Characters Long",
+              max: "First Name Must Not Exceed 50 Characters",
+            },
+          })}
+          placeholder={first_name}
+          onValidationChange={(value) => handleFieldValid('first_name', value)}
         />
       </div>
-      <div className="my-1">
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          className="form-control"
-          placeholder={studentDetails.data.email}
-          name="email"
-          value={formData.email}
-          onChange={(e) => handleInputChange("email", e.target.value)}
+      <div>
+        <label htmlFor="lastName" className="font-size-sm">
+          Last Name
+        </label>
+        <TextInput
+          onChange={(value) => handleInputChange("last_name", value)}
+          onValidationChange={(value) => handleValid("last_name", value)}
+          validationSchema={nameSchema({
+            min: 3,
+            max: 50,
+            required: false,
+            messages: {
+              min: "Last Name Must Be Atleast 3 Characters Long",
+              max: "Last Name Must Not Exceed 50 Characters",
+            },
+          })}
+          placeholder={last_name}
         />
       </div>
-      <div className="my-1">
-        <label htmlFor="gender">Gender</label>
-        <input
-          type="gender"
-          className="form-control"
-          placeholder={studentDetails.data.gender}
-          name="gender"
-          value={formData.gender}
-          onChange={(e) => handleInputChange("gender", e.target.value)}
+      <div>
+        <label htmlFor="firstName" className="font-size-sm">
+          Full Names
+        </label>
+        <TextInput
+          onChange={(value) => handleInputChange("name", value)}
+          onValidationChange={(value) => handleValid("name", value)}
+          validationSchema={nameSchema({
+            min: 3,
+            max: 150,
+            messages: {
+              min: "Full Names Must Be Atleast 3 Characters Long",
+              max: "Full Name Must Not Exceed 150 Characters",
+            },
+          })}
+          placeholder={name}
         />
       </div>
-      <div className="my-1">
-        <span>Student Batch</span>
-        {isStudentBatchLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
+      <div>
+        <label htmlFor="email" className="font-size-sm">Email</label>
+        <TextInput
+          onChange={(value) => handleInputChange("email", value)}
+          onValidationChange={(value) => handleValid("email", value)}
+          validationSchema={emailValidationSchema}
+          placeholder={email}
+        />
+      </div>
+      <div>
+        <label htmlFor="gender" className="font-size-sm">Gender</label>
+        <CustomDropdown 
+          data={gender}
+          displayKey={['name']}
+          valueKey={['name']}
+          direction="up"
+          onSelect={(value) => handleInputChange('gender', value.name)}
+          onError={(value) => handleFieldError('gender', value)}
+          errorMessage="Gender Required"
+          error={errors.gender}
+          placeholder="Select Gender"
+        />
+      </div>
+      <div>
+        <label htmlFor="studentBatch" className="font-size-sm">Student Batch</label>
           <CustomDropdown
             data={studentBatch.data}
             displayKey={["name"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "name"]}
-            renameMapping={{ id: "id", name: "name" }}
             isLoading={isStudentBatchLoading}
             direction="up"
-            onSelect={handleSelect("student_batch_id")}
+            onSelect={(value) => handleInputChange('student_batch_id', value)}
+            placeholder="Select Student Batch"
+            error={errors.student_batch_id}
+            onError={(value) => handleFieldError('student_batch_id', value)}
+            errorMessage="Student Batch Required"
           />
-        )}
       </div>
-      <div className="my-1">
-        <span>Specialty</span>
-        {isSpecialtiesLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
+      <div>
+        <label htmlFor="specialty" className="font-size-sm">Specialty</label>
           <CustomDropdown
             data={specialties.data}
             displayKey={["specialty_name", "level_name"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "specialty_name", "level_name"]}
-            renameMapping={{ id: "id", specialty_name: "specialty_name" }}
             isLoading={isSpecialtiesLoading}
             direction="up"
-            onSelect={handleSelect("specialty_id")}
+            onSelect={(value) => handleInputChange('specialty_id', value)}
+            onError={(value) => handleFieldError('specialty_id', value)}
+            error={errors.specialty_id}
+            errorMessage="Specialty Required"
+            placeholder="Select Specialty"
           />
-        )}
       </div>
-      <div className="my-1">
-        <span>Guardian</span>
-        {isParentsLoading ? (
-          <select name="" className="form-select">
-            <option value="">loading</option>
-          </select>
-        ) : (
+      <div>
+        <label htmlFor="guardian" className="font-size-sm">Guardian</label>
           <CustomDropdown
             data={parents.data}
             displayKey={["guardian_name"]}
             valueKey={["id"]}
-            filter_array_keys={["id", "guardian_name"]}
-            renameMapping={{ id: "id", name: "guardian_name" }}
             isLoading={isParentsLoading}
             direction="up"
-            onSelect={handleSelect("guardian_id")}
+            onSelect={(value) => handleInputChange('guardian_id', value)}
+            onError={(value) => handleFieldError('guardian_id', value)}
+            error={errors.guardian_id}
+            errorMessage="Guardian Required"
+            placeholder="Select Specialty"
           />
-        )}
       </div>
       <div className="mt-3">
         <button

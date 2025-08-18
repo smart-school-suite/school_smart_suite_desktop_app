@@ -7,7 +7,7 @@ import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 import { useGetLevels } from "../../hooks/level/useGetLevels";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useSelector } from "react-redux";
-import { numberSchema, specialtyDescriptionSchema, specialtyValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import { nameSchema, numberSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
 function CreateSpecialty({ handleClose }) {
       const currencyState = useSelector((state) => state.auth.user);
     const currency =
@@ -28,6 +28,10 @@ function CreateSpecialty({ handleClose }) {
     level_id: "",
     description:""
   });
+  const [errors, setErrors] = useState({
+     department_id: "",
+    level_id: "",
+  })
   const { mutate: createSpecialtyMutation, isPending } = useCreateSpecialty(handleClose); 
   const {
     data: educationLevels,
@@ -45,7 +49,9 @@ function CreateSpecialty({ handleClose }) {
   const handleFieldValid = (field, value) => {
     setIsFieldValid((prev) => ({ ...prev, [field]: value }));
   };
-
+  const handleFieldError = (field, value) => {
+    setErrors((prev) => ({...prev, [field]:value}))
+  }
   const handleSubmit = async () => {
     createSpecialtyMutation(formData)
   };
@@ -68,7 +74,16 @@ function CreateSpecialty({ handleClose }) {
         placeholder={"e.g Software Engineering"}
         onChange={(value) =>  handleInputChange('specialty_name', value)}
         onValidationChange={(value) => handleFieldValid('specialty_name', value)}
-        validationSchema={specialtyValidationSchema}
+        validationSchema={nameSchema({
+            min:3,
+            max:150,
+            required:true,
+            messages:{
+               required:"Specialty Name Required", 
+               min:`Specialty Name Must Be Atleast 3 Characters`,
+               max:`Specialty Name Must Not Exceed 150 Characters`
+            }
+        })}
        />
       </div>
       <div>
@@ -78,7 +93,16 @@ function CreateSpecialty({ handleClose }) {
           onChange={(value) => handleInputChange('registration_fee', value)}
           onValidationChange={(value) => handleFieldValid('registration_fee', value)}
           step="0.01"
-          validationSchema={numberSchema({ min:1, max:500000 })}
+          validationSchema={numberSchema({ 
+            min:1, 
+            max:500000,
+            required:true,
+            messages:{
+               max:`Registration Fees Must Not Exceed 500000 ${currency}`,
+               min:`Registration Fees Must Be Atleast 1 ${currency}`,
+               required:"Registration Fees Required"
+            }
+          })}
           InputGroupText={currency}
         />
       </div>
@@ -89,7 +113,16 @@ function CreateSpecialty({ handleClose }) {
          onChange={(value) => handleInputChange('school_fee', value)}
          onValidationChange={(value) => handleFieldValid('school_fee', value)}
          step="0.01"
-         validationSchema={numberSchema({ min:1, max:1000000 })}
+         validationSchema={numberSchema({ 
+          min:1, 
+          max:1000000,
+          integerOnly:false,
+          messages:{
+             max:`School Fee Must Not Exceeed 1000000  ${currency}`,
+             min:`School Fee Must Be Atleast 1 ${currency}`,
+             required:"School Fee Required"
+          }
+        })}
          type="number"
          InputGroupText={currency}
         />
@@ -106,6 +139,8 @@ function CreateSpecialty({ handleClose }) {
             direction="up"
             onSelect={(value) => handleInputChange('department_id', value.id)}
             placeholder="Select Department"
+            error={errors.department_id}
+            onError={(value) => handleFieldError('department_id', value)}
           />
       </div>
       <div>
@@ -120,6 +155,8 @@ function CreateSpecialty({ handleClose }) {
             direction="up"
             onSelect={(value) => handleInputChange('level_id', value.id)}
             placeholder="Select Level"
+            error={errors.level_id}
+            onError={(value) => handleFieldError('level_id', value)}
           />
       </div>
       <div>
@@ -130,7 +167,17 @@ function CreateSpecialty({ handleClose }) {
            placeholder={ formData.specialty_name === null || ""
                   ? "Write A short Description Of Specialty"
                   : ` Write A short Description Of ${formData.specialty_name}`}
-          validationSchema={specialtyDescriptionSchema}
+          validationSchema={textareaSchema({
+              min:10,
+              max:1000,
+              required:true,
+              messages:{
+                 min:"Description Must Be Atleast 10 Characters",
+                 max:"Description Must Not Exceed 1000 Characters",
+                 required:"Description Is Required"
+              }
+          })}
+
         />
       </div>
       <div className="mt-4">

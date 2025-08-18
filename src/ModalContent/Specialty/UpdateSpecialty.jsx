@@ -12,9 +12,9 @@ import { useUpdateSpecialty } from "../../hooks/specialty/useUpdateSpecialty";
 import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 import { useGetLevels } from "../../hooks/level/useGetLevels";
 import {
+  nameSchema,
   numberSchema,
-  specialtyDescriptionSchema,
-  specialtyValidationSchema,
+  textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { formatNumber } from "../../utils/functions";
 function UpdateSpecialty({ handleClose, rowData }) {
@@ -90,7 +90,15 @@ function UpdateSpecialty({ handleClose, rowData }) {
             onValidationChange={(value) =>
               handleFieldValid("specialty_name", value)
             }
-            validationSchema={specialtyValidationSchema}
+            validationSchema={nameSchema({
+            min:3,
+            max:150,
+            required:false,
+            messages:{
+               min:`Specialty Name Must Be Atleast 3 Characters`,
+               max:`Specialty Name Must Not Exceed 150 Characters`
+            }
+        })}
           />
         </div>
         <div>
@@ -104,7 +112,16 @@ function UpdateSpecialty({ handleClose, rowData }) {
               handleFieldValid("registration_fee", value)
             }
             step="0.01"
-            validationSchema={numberSchema({ min: 1, max: 500000 })}
+            validationSchema={numberSchema({
+              min: 1, 
+              max: 500000,
+              required:false,
+              integerOnly:false,
+              messages:{
+                 min:`Registration Fee Must Be Atleast 1 ${currency}`,
+                 max:`Registration Fee Must Not Exceed 500000 ${currency}` 
+              } 
+            })}
             type="number"
             InputGroupText={currency}
             value={formData.registration_fee}
@@ -121,7 +138,16 @@ function UpdateSpecialty({ handleClose, rowData }) {
               handleFieldValid("school_fee", value)
             }
             step="0.01"
-            validationSchema={numberSchema({ min: 1, max: 10000000 })}
+            validationSchema={numberSchema({ 
+               min: 1,
+               max: 10000000,
+              required:false,
+              integerOnly:false,
+              messages:{
+                 min:`Registration Fee Must Be Atleast 1 ${currency}`,
+                 max:`Registration Fee Must Not Exceed  10000000 ${currency}` 
+              } 
+              })}
             type="number"
             InputGroupText={currency}
             value={formData.school_fee}
@@ -157,6 +183,7 @@ function UpdateSpecialty({ handleClose, rowData }) {
             error={errors.level_id}
             onError={(value) => handleFieldError("level_id", value)}
             placeholder={"Select Level"}
+            errorMessage="Level Required"
           />
         </div>
         <div>
@@ -169,7 +196,16 @@ function UpdateSpecialty({ handleClose, rowData }) {
             }
             onChange={(value) => handleInputChange("description", value)}
             placeholder={description}
-            validationSchema={specialtyDescriptionSchema}
+            validationSchema={textareaSchema({
+              min:10,
+              max:1000,
+              required:false,
+              messages:{
+                 min:"Description Must Be Atleast 10 Characters",
+                 max:"Description Must Not Exceed 1000 Characters",
+                 required:"Description Is Required"
+              }
+          })}
           />
         </div>
       </div>
