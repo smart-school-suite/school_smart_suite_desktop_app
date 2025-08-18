@@ -8,7 +8,7 @@ import { Icon } from "@iconify/react";
 import { useGetExamTypes } from "../ExamType/useGetExamType";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
-import { dateRangeValidationSchema, weightedMarkValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import { dateRangeValidationSchema, numberSchema, weightedMarkValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 
 function CreateExam({ handleClose }) {
     const { data: examType, isLoading: isExamTypeLoading } =
@@ -85,7 +85,15 @@ function CreateExam({ handleClose }) {
          onChange={(value) => handleInputChange('weighted_mark', value)}
          step="0.01"
          onValidationChange={(value) => handleValidation('weighted_mark', value)}
-         validationSchema={weightedMarkValidationSchema}
+         validationSchema={numberSchema({
+            min:1,
+            max:500,
+            required:true,
+            messages:{
+               min:"Weighted Mark Must Be Atleast ",
+               max:"Weighted Mark Must Not Exceed 1000"
+            }
+         })}
          placeholder={"e.g 100"}
         />
       </div>

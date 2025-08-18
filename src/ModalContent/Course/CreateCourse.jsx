@@ -6,7 +6,7 @@ import { useCreateCourse } from "../../hooks/course/useCreateCourse";
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { NumberInput, TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
-import { courseCodeSchema, courseCreditSchema, courseDescriptionSchema, courseTitleSchema } from "../../ComponentConfig/YupValidationSchema";
+import { courseCodeSchema, nameSchema, numberSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
 function CreateCourse({ handleClose }) {
   const [formData, setFormData] = useState({
     course_code: "",
@@ -69,7 +69,16 @@ function CreateCourse({ handleClose }) {
            placeholder={"e.g Engineering Mathematics"}
            onChange={(value) => handleInputChange('course_title', value)}
            onValidationChange={(value) => handleValidChange('course_title', value)}
-           validationSchema={courseTitleSchema}
+           validationSchema={nameSchema({
+             min:3,
+             max:150,
+             required:true,
+             messages:{
+                required:"Course Title Required",
+                min:"Course Title Must Be Atleast 3 Characters Long",
+                max:"Course Title Must Not Exceed 150 Characters"
+             }
+           })}
          />
         </div>
       <div>
@@ -78,7 +87,16 @@ function CreateCourse({ handleClose }) {
          placeholder={"e.g SWE005"}
          onChange={(value) => handleInputChange('course_code', value)}
          onValidationChange={(value) => handleValidChange('course_code', value)}
-         validationSchema={courseCodeSchema}
+         validationSchema={courseCodeSchema({
+            min:3,
+            max:10,
+            required:true,
+            messages:{
+               required:"Course Code Required",
+               min:"Course Code Must Be Atleast 3 Characters Long",
+               max:"Course Code Must Not Exceed 10 Characters"
+            }
+         })}
         />
       </div>
       <div>
@@ -87,7 +105,17 @@ function CreateCourse({ handleClose }) {
          placeholder={"e.g 2 Credit"}
          onChange={(value) => handleInputChange('credit', value)}
          onValidationChange={(value) => handleValidChange('credit', value)}
-         validationSchema={courseCreditSchema}
+         validationSchema={numberSchema({
+             min:1,
+             max:100,
+             required:true,
+             integerOnly:true,
+             messages:{
+                required:"Course Credit Required",
+                min:"Course Credit Must Be Atleast 1",
+                max:"Course Credit Must Not Exceed 100"
+             }
+         })}
         />
       </div>
       <div>
@@ -124,9 +152,19 @@ function CreateCourse({ handleClose }) {
          <label htmlFor="courseDescription" className="font-size-sm">Course Description</label>
          <TextAreaInput 
            onChange={(value) => handleInputChange('description', value)}
-           validationSchema={courseDescriptionSchema}
+           validationSchema={textareaSchema({
+               min:10,
+               max:1000,
+               messages:{
+                  required:"Course Description Required",
+                  min:"Course Description Must Be Atleast 10 Characters Long",
+                  max:"Course Description Must Not Exceed 1000 Characters"
+               }
+           })}
            onValidationChange={(value) => handleValidChange('description', value)}
-           placeholder={`Enter A Short Description For ${formData.course_title}`}
+           placeholder={formData.course_title ? `Enter A Short Description For ${formData.course_title}` : 
+             "Enter A Short Description Of The Course"
+           }
          />
       </div>
       </div>

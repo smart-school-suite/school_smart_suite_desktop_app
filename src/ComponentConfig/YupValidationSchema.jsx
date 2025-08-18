@@ -1,112 +1,36 @@
 import * as Yup from "yup";
 
-const sanitizeInput = (input) => {
-  return input.replace(/<[^>]*>/g, '').trim();
+
+export const isValidMySQLDate = (value) => {
+  if (!value) return false;
+
+  const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+  if (!regex.test(value)) return false;
+
+  const [year, month, day] = value.split("-").map(Number);
+
+  if (year < 1000 || year > 9999) return false;
+  if (month < 1 || month > 12) return false;
+
+  const daysInMonth = new Date(year, month, 0).getDate();
+  return day >= 1 && day <= daysInMonth;
 };
+const sanitizeInput = (value, removeEmojis = true) => {
+  if (!value) return value;
 
-export const numberSchema = ({ min = 0, max = 1000, optional = false } = {}) => {
-  let schema = Yup.number()
-    .transform((value, originalValue) => {
-      if (typeof originalValue === 'string' && originalValue.trim() === '') {
-        return undefined;
-      }
-      return isNaN(value) ? undefined : value;
-    })
-    .typeError('Value must be a valid number')
-    .min(min, `Number must be at least ${min}`)
-    .max(max, `Number must be at most ${max}`);
+  let cleaned = value
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/[\x00-\x1F\x7F]/g, "");
 
-  if (!optional) {
-    schema = schema.required("Number is required");
-  }
-
-  return schema;
-};
-
-export const descriptionSchema = ({ min = 20, max = 500, optional = false } = {}) => {
-  let schema = Yup.string()
-    // Automatically trim leading and trailing whitespace
-    .trim()
-
-    // Enforce minimum length with a custom message
-    .min(min, `Description must be at least ${min} characters long.`)
-
-    // Enforce maximum length with a custom message
-    .max(max, `Description must not exceed ${max} characters.`)
-    
-    // Transform empty strings to null so required() works as expected
-    .transform(value => (value === '' ? null : value));
-
-  // Conditionally add the required validation
-  if (!optional) {
-    schema = schema.required("Description is required.");
-  }
-
-  return schema;
-};
-
- export  const relationshipSchema = Yup.object({
-    relationshipToStudent: Yup.string()
-      .trim()
-      .required('Relationship to student is required.')
-      .min(3, 'Relationship must be at least 3 characters.')
-      .max(50, 'Relationship must be less than 50 characters.')
-      .matches(/^[a-zA-Z\s]+$/, 'Relationship must only contain letters and spaces.')
-      .strict()
-  });
-
-export const firstNameSchema = Yup.string()
-  .trim()
-  .min(2, "First name must be at least 2 characters long.")
-  .max(50, "First name cannot exceed 50 characters.")
-  .matches(
-    /^[a-zA-Z\u00C0-\u017F\s'-.]+$/,
-    "First name can only contain letters, spaces, hyphens, apostrophes, and periods."
-  )
-  .required("First name is required.");
-
-export const lastNameSchema = Yup.string()
-  .trim()
-  .min(2, "Last name must be at least 2 characters long.")
-  .max(50, "Last name cannot exceed 50 characters.")
-  .matches(
-    /^[a-zA-Z\u00C0-\u017F\s'-.]+$/,
-    "Last name can only contain letters, spaces, hyphens, apostrophes, and periods."
-  )
-  .required("Last name is required.");
-
-export const categoryNameSchema = ({ min = 2, max = 50, optional = false } = {}) => {
-  let schema = Yup.string()
-    .trim()
-    .min(min, `Category name must be at least ${min} characters long.`)
-
-    .max(max, `Category name must not exceed ${max} characters.`)
-
-    .matches(
-      /^[a-zA-Z0-9\s-]+$/,
-      "Category name can only contain letters, numbers, spaces, and hyphens."
+  if (removeEmojis) {
+    cleaned = cleaned.replace(
+      /([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD83C-\uDBFF\uDC00-\uDFFF]|[\uFE0F])/g,
+      ""
     );
-
-  if (!optional) {
-    schema = schema.required("Category name is required.");
   }
 
-  return schema;
+  return cleaned;
 };
-export const fullNameSchema = Yup.string()
-  .trim()
-  .min(3, "Full name must be at least 3 characters long.")
-  .max(100, "Full name cannot exceed 100 characters.")
-  .matches(
-    /^[a-zA-Z\u00C0-\u017F\s'-.]+$/,
-    "Full name can only contain letters, spaces, hyphens, apostrophes, and periods."
-  )
-  .test('has-multiple-parts', 'Please provide at least a first name and a last name for the full name.', (value) => {
-    if (!value) return false;
-    return value.trim().split(/\s+/).length >= 2;
-  })
-  .required("Full name is required.");
-
 export const phoneValidationSchema = Yup.string()
   .matches(/^6\d{8}$/, "Phone number must start with 6 and be 9 digits long.")
   .required("Phone number is required.");
@@ -145,167 +69,76 @@ export const emailValidationSchema = Yup.string()
     return !/\.\./.test(value);
   });
 
+export const courseCodeSchema = ({
+  min = 4,
+  max = 10,
+  required = true,
+  messages = {}
+} = {}) => {
+  let schema = Yup.string()
+    .trim()
+    .min(min, messages.min || `Course code must be at least ${min} characters long.`)
+    .max(max, messages.max || `Course code cannot be more than ${max} characters.`)
+    .matches(
+      /^[A-Za-z0-9]+$/, // letters & numbers only, any order
+      messages.invalid || "Course code can only contain letters and numbers."
+    )
+    .transform((val) => (val === "" ? null : val));
 
-  export const nameValidationSchema = Yup.string()
-  .required("Name is required") 
-  .min(3, "Name must be at least 3 characters")
-  .max(100, "Name must be less than 100 characters")
-  .trim()
-  .matches(
-    /^[A-Za-z\s'-]+$/,
-    "Name can only contain letters, spaces, apostrophes, and hyphens"
-  ) 
-  .test('no-double-spaces', 'Name should not contain double spaces', (value) => {
-    return value && !/\s{2,}/.test(value);
-  });
+  if (required) {
+    schema = schema.required(messages.required || "Course code is required.");
+  } else {
+    schema = schema.nullable();
+  }
 
- export  const fieldOfStudyValidationSchema = Yup.string()
-  .required("Field of study is required")
-  .min(3, "Field of study must be at least 3 characters long")
-  .max(100, "Field of study must be less than 100 characters")
-  .trim()
-  .matches(
-    /^[A-Za-z0-9\s.,;:'"-]+$/,
-    "Field of study can only contain letters, numbers, spaces, and common punctuation"
-  ) 
-  .test('no-double-spaces', 'Field of study should not contain double spaces', (value) => {
-    return value && !/\s{2,}/.test(value);
-  });
-
-  export const createNumberSchema = (maxValue) => {
-    return Yup.number()
-      .typeError('Value must be a number.')
-      .required('Field is required.')
-      .min(0, 'Value must be at least 0.')
-      .max(maxValue, `Value cannot be more than ${maxValue}.`); 
-  };
-
-  export const religionValidationSchema = Yup.string()
-  .required("Religion is required")
-  .min(3, "Religion name must be at least 3 characters long")
-  .max(50, "Religion name must be less than 50 characters")
-  .trim()
-  .matches(
-    /^[A-Za-z\s'-]+$/,
-    "Religion name can only contain letters, spaces, apostrophes, and hyphens"
-  ) 
-  .test('no-double-spaces', 'Religion name should not contain double spaces', (value) => {
-    return value && !/\s{2,}/.test(value);
-  });
-
-  export const culturalBackgroundValidationSchema = Yup.string()
-  .required("Cultural background is required")
-  .min(3, "Cultural background must be at least 3 characters long")
-  .max(100, "Cultural background must be less than 100 characters")
-  .trim()  
-  .matches(
-    /^[A-Za-z0-9\s.,;:'"-]+$/,
-    "Cultural background can only contain letters, numbers, spaces, and common punctuation"
-  )  
-  .test('no-double-spaces', 'Cultural background should not contain double spaces', (value) => {
-    return value && !/\s{2,}/.test(value); 
-  });
-
-  export const cityValidationSchema = Yup.string()
-  .required("City is required")
-  .min(2, "City name must be at least 2 characters long")
-  .max(100, "City name must be less than 100 characters")
-  .trim()
-  .matches(
-    /^[A-Za-z\s-]+$/,
-    "City name can only contain letters, spaces, and hyphens"
-  ) 
-  .test('no-double-spaces', 'City name should not contain double spaces', (value) => {
-    return value && !/\s{2,}/.test(value); 
-  });
-
-  export const schoolNameValidationSchema = Yup.string()
-  .required("School name is required")
-  .trim("Leading and trailing spaces are not allowed")
-  .min(2, "School name must be at least 2 characters")
-  .max(100, "School name must be less than 100 characters")
-  .matches(
-    /^[a-zA-Z0-9\s-'.&()]+$/,
-    "School name can only contain letters, numbers, spaces, and the following symbols: -'.&()"
-  );
-
-  export const schoolBranchNameValidationSchema = Yup.string()
-  .required("School branch name is required")
-  .trim("Leading and trailing spaces are not allowed")
-  .min(2, "School branch name must be at least 2 characters")
-  .max(100, "School branch name must be less than 100 characters")
-  .matches(
-    /^[a-zA-Z0-9\s-'.&()]+$/,
-    "School branch name can only contain letters, numbers, spaces, and the following symbols: -'.&()"
-  );
-
-  export const schoolNameAbbreviationValidationSchema = Yup.string()
-  .required("School abbreviation is required")
-  .trim("Leading and trailing spaces are not allowed")
-  .min(2, "School abbreviation must be at least 2 characters")
-  .max(10, "School abbreviation must be less than 10 characters")
-  .uppercase("School abbreviation must be in uppercase")
-  .matches(
-    /^[A-Z0-9]+$/,
-    "School abbreviation can only contain uppercase letters and numbers"
-  );
-
-  export const salaryValidationSchema = Yup.number()
-  .required("Salary is required")
-  .positive("Salary must be a positive number")
-  .typeError("Salary must be a valid number")
-  .min(1000, "Salary must be at least 1000")
-  .max(1000000, "Salary must be less than 1,000,000")
-  .integer("Salary must be an integer");
-
-  export const experienceValidationSchema = Yup.number()
-  .required("Years of experience is required")
-  .positive("Years of experience must be a positive number")
-  .integer("Years of experience must be an integer")
-  .min(0, "Years of experience cannot be negative")
-  .max(50, "Years of experience must be less than or equal to 50")
-  .typeError("Years of experience must be a valid number");
-
-  export const addressValidationSchema = Yup.string()
-  .required("Address is required")
-  .min(10, "Address must be at least 10 characters long")
-  .max(200, "Address must be less than 200 characters")
-  .trim()
-  .matches(
-    /^[A-Za-z0-9\s,.-/#]+$/,
-    "Address can only contain letters, numbers, spaces, commas, periods, slashes, and hyphens"
-  ) 
-  .typeError("Address must be a valid string");
-
- export const courseCreditSchema = Yup.number()
-  .required("Course credit is required.")
-  .min(1, "Course credit must be at least 1.")
-  .max(10, "Course credit cannot be more than 10.")
-  .integer("Course credit must be a whole number.")
-  .typeError("Course credit must be a valid number.");
-
-// Helper to check if a string is a valid date in YYYY-MM-DD format
-const isValidMySQLDate = (value) => {
-  if (!value) return false;
-  const [year, month, day] = value.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
-  return (
-    date.getFullYear() === year &&
-    date.getMonth() === month - 1 &&
-    date.getDate() === day
-  );
+  return schema;
 };
 
-// Single MySQL date validation schema
-export const dateValidationSchema = Yup.string()
-  .required("Date is required")
-  .matches(
-    /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
-    "Invalid date format (YYYY-MM-DD)"
-  )
-  .test("is-valid-date", "Invalid date", isValidMySQLDate);
 
-// Date range validation schema for MySQL format
+export const dateValidationSchema = ({
+  required = true,
+  futureOrToday = false,
+  messages = {}
+} = {}) => {
+  let schema = Yup.string()
+    .trim()
+    .matches(
+      /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
+      messages.format || "Invalid date format (YYYY-MM-DD)"
+    )
+    .test(
+      "is-valid-date",
+      messages.invalid || "Invalid date",
+      (val) => !val || isValidMySQLDate(val)
+    )
+    .transform((val) => (val === "" ? null : val));
+
+  if (futureOrToday) {
+    schema = schema.test(
+      "is-future-or-today",
+      messages.futureOrToday || "Date must be today or in the future",
+      (val) => {
+        if (!val) return true; // let required handle emptiness
+        if (!isValidMySQLDate(val)) return false;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // reset time
+
+        const inputDate = new Date(val);
+        return inputDate >= today;
+      }
+    );
+  }
+
+  if (required) {
+    schema = schema.required(messages.required || "Date is required");
+  } else {
+    schema = schema.nullable();
+  }
+
+  return schema;
+};
+
 export const dateRangeValidationSchema = Yup.object().shape({
   start_date: Yup.string()
     .required("Start date is required")
@@ -336,239 +169,111 @@ export const dateRangeValidationSchema = Yup.object().shape({
     ),
 });
 
-  export const courseDescriptionSchema = Yup.string()
-  .required("Course description is required.")
-  .min(20, "Description must be at least 20 characters long.")
-  .max(1000, "Description must not exceed 1000 characters.")
-  .matches(
-    /^[a-zA-Z0-9\s.,!?'"()_@#$%&*-/]+$/,
-    "Description contains invalid characters. Only letters, numbers, and common punctuation are allowed."
-  )
-  .trim()
-  .typeError("Course description must be a valid string.");
+export const textareaSchema = ({
+  min = 20,
+  max = 500,
+  required = true,
+  allowEmojis = false,
+  messages = {}
+} = {}) => {
+  let schema = Yup.string()
+    .transform((value) => sanitizeInput(value?.trim() || "", !allowEmojis))
+    .min(min, messages.min || `Text must be at least ${min} characters long.`)
+    .max(max, messages.max || `Text must not exceed ${max} characters.`)
+    .matches(
+      /^[\w\s.,!?'"()\-:;#&@/]*$/u,
+      messages.invalid || "Text contains invalid or unsafe characters."
+    )
+    .test(
+      "no-scripts",
+      messages.scripts || "Text cannot contain scripts or HTML tags.",
+      (val) => !/<script|<\/script|<[^>]+>/i.test(val || "")
+    )
+    .transform((value) => (value === "" ? null : value));
 
-  
-  export const weightedMarkValidationSchema = Yup.number()
-  .required("Weighted mark is required")
-  .positive("Weighted mark must be a positive number")
-  .min(0, "Weighted mark cannot be less than 0")
-  .max(100, "Weighted mark cannot exceed 100")
-  .typeError("Weighted mark must be a valid number")
-  .test("valid-number-format", "Invalid number format", (value) => {
-    return /^[0-9]+(\.[0-9]{1,2})?$/.test(value);
-  });
+  if (required) {
+    schema = schema.required(messages.required || "This field is required.");
+  } else {
+    schema = schema.nullable();
+  }
 
-  export const courseCodeSchema = Yup.string()
-  .required("Course code is required.")
-  .min(4, "Course code must be at least 4 characters long.")
-  .max(10, "Course code cannot be more than 10 characters.")
-  .matches(
-    /^[a-zA-Z]{2,4}\d{3,4}$/,
-    "Course code must be 2-4 letters followed by 3-4 digits (e.g., CS101)."
-  )
-  .trim()
-  .typeError("Course code must be a valid string.");
+  return schema;
+};
 
-  export const occupationValidationSchema = Yup.string()
-  .required("Occupation is required")
-  .min(3, "Occupation must be at least 3 characters long")
-  .max(100, "Occupation must be less than 100 characters")
-  .matches(
-    /^[A-Za-z\s,.'-]+$/, 
-    "Occupation can only contain letters, spaces, commas, periods, apostrophes, and hyphens"
-  )
-  .trim() 
-  .test("no-double-spaces", "Occupation should not contain consecutive spaces", (value) => {
-    return value && !/\s{2,}/.test(value); 
-  })
-  .typeError("Occupation must be a valid string");
+export const nameSchema = ({
+  min = 2,
+  max = 50,
+  required = true,
+  messages = {}
+} = {}) => {
+  let schema = Yup.string()
+    .transform((value) => sanitizeInput(value?.trim() || "", true)) 
+    .min(min, messages.min || `Name must be at least ${min} characters long.`)
+    .max(max, messages.max || `Name must not exceed ${max} characters.`)
+    .matches(
+      /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/u,
+      messages.invalid || "Name can only contain letters, spaces, apostrophes, and hyphens."
+    )
+    .test(
+      "no-numbers",
+      messages.noNumbers || "Name cannot contain numbers.",
+      (val) => !/[0-9]/.test(val || "")
+    )
+    .test(
+      "no-html",
+      messages.html || "Name cannot contain HTML tags.",
+      (val) => !/<[^>]*>/g.test(val || "")
+    )
+    .transform((value) => (value === "" ? null : value));
 
-  export const specialtyValidationSchema = Yup.string()
-  .required("Specialty is required")
-  .min(3, "Specialty must be at least 3 characters long")
-  .max(100, "Specialty must be less than 100 characters")
-  .matches(
-    /^[A-Za-z\s,.'-]+$/, 
-    "Specialty can only contain letters, spaces, commas, periods, apostrophes, and hyphens"
-  )
-  .trim()
-  .test("no-double-spaces", "Specialty should not contain consecutive spaces", (value) => {
-    return value && !/\s{2,}/.test(value);
-  })
-  .typeError("Specialty must be a valid string");
+  if (required) {
+    schema = schema.required(messages.required || "This field is required.");
+  } else {
+    schema = schema.nullable();
+  }
 
-export const departmentValidationSchema = Yup.string()
-  .required("Department is required")
-  .min(3, "Department name must be at least 3 characters long")
-  .max(100, "Department name must be less than 100 characters")
-  .matches(
-    /^[A-Za-z\s,.-]+$/,
-    "Department name can only contain letters, spaces, commas, periods, and hyphens"
-  )
-  .trim()
-  .test("no-double-spaces", "Department name should not contain double spaces", (value) => {
-    return value && !/\s{2,}/.test(value);
-  })
-  .typeError("Department name must be a valid string");
+  return schema;
+};
 
-  export const departmentDescriptionSchema = Yup.string()
-  .required("Department description is required.")
-  .min(20, "Description must be at least 20 characters long.")
-  .max(500, "Description must not exceed 500 characters.")
-  .matches(
-    /^[a-zA-Z0-9\s.,!?'"()_@#$%&*-/]+$/,
-    "Description contains invalid characters. Only letters, numbers, and common punctuation are allowed."
-  )
-  .trim()
-  .test(
-    'no-urls',
-    'Description should not contain any web addresses or links.',
-    (value) => {
-      if (value) {
-        return !/(https?:\/\/[^\s]+)/.test(value);
+export const numberSchema = ({
+  min = 0,
+  max = 1000,
+  required = true,
+  integerOnly = false,
+  messages = {}
+} = {}) => {
+  let schema = Yup.number()
+    .transform((value, originalValue) => {
+      if (typeof originalValue === "string") {
+        const trimmed = originalValue.trim();
+
+        if (trimmed === "") return undefined;
+        if (!/^-?\d+(\.\d+)?$/.test(trimmed)) return NaN; 
+
+        const num = Number(trimmed);
+        if (!isFinite(num)) return NaN;
+
+        return num;
       }
-      return true;
-    }
-  )
-  .typeError("Department description must be a valid string");
+      return isNaN(value) ? undefined : value;
+    })
+    .typeError(messages.typeError || "Value must be a valid number")
+    .min(min, messages.min || `Number must be at least ${min}`)
+    .max(max, messages.max || `Number must be at most ${max}`);
 
-  export const specialtyDescriptionSchema = Yup.string()
-  .required("Specialty description is required.")
-  .min(20, "Specialty description must be at least 20 characters long.")
-  .max(500, "Specialty description must not exceed 500 characters.")
-  .matches(
-    /^[a-zA-Z0-9\s.,!?'"()_@#$%&*-/]+$/,
-    "Specialty description contains invalid characters. Only letters, numbers, and common punctuation are allowed."
-  )
-  .trim()
-  .test(
-    "no-urls",
-    "Specialty description should not contain any web addresses or links.",
-    (value) => {
-      if (value) {
-        return !/(https?:\/\/[^\s]+)/.test(value);
-      }
-      return true;
-    }
-  )
-  .typeError("Specialty description must be a valid string");
+  if (integerOnly) {
+    schema = schema.test(
+      "is-integer",
+      messages.integer || "Value must be an integer",
+      (val) => val == null || Number.isInteger(val)
+    );
+  }
 
-  export const courseTitleSchema = Yup.string()
-  .required("Course title is required.")
-  .min(5, "Course title must be at least 5 characters long.")
-  .max(150, "Course title must be less than 150 characters.")
-  .matches(
-    /^[a-zA-Z0-9\s:,'"-]+$/,
-    "Course title can only contain letters, numbers, spaces, and punctuation like :,',-, and ''."
-  )
-  .trim()
-  .test("no-double-spaces", "Course title should not contain double spaces", (value) => {
-    return value && !/\s{2,}/.test(value);
-  })
-  .typeError("Course title must be a valid string");
- export  const registrationFeeValidationSchema = Yup.number()
-  .required("Registration fee is required")
-  .positive("Registration fee must be a positive number")
-  .min(0, "Registration fee cannot be less than 0")
-  .max(10000000, "Registration fee cannot exceed 10,000")
-  .typeError("Registration fee must be a valid number")
-  .test("valid-currency", "Registration fee must be a valid currency amount", (value) => {
-    return /^\d+(\.\d{1,2})?$/.test(value);
-  });
+  if (required) {
+    schema = schema.required(messages.required || "Number is required");
+  } else {
+    schema = schema.nullable();
+  }
 
-  export const schoolFeeValidationSchema = Yup.number()
-  .required("School fee is required")
-  .positive("School fee must be a positive number")
-  .min(0, "School fee cannot be less than 0")
-  .max(100000000, "School fee cannot exceed 100,000")
-  .typeError("School fee must be a valid number")
-  .test("valid-currency", "School fee must be a valid currency amount", (value) => {
-    return /^\d+(\.\d{1,2})?$/.test(value);
-  });
-
- export const notesValidationSchema = Yup.string()
-  .max(1000, "Notes must be less than 1000 characters")
-  .matches(
-    /^[A-Za-z0-9\s.,!?'"()-]*$/,
-    "Notes can only contain letters, numbers, spaces, and common punctuation marks"
-  )
-  .optional();
-
- export const reasonValidationSchema = Yup.string()
-  .max(500, 'Reason must be less than 500 characters')
-  .matches(
-    /^[A-Za-z0-9\s.,!?'"()-]*$/, 
-    'Reason can only contain letters, numbers, spaces, and common punctuation marks'
-  )
-  .optional();
-
- export const batchTitleValidationSchema = Yup.string()
-  .required('Batch title is required')
-  .max(100, 'Batch title must be less than 100 characters')
-  .matches(
-    /^[A-Za-z0-9\s\-_]+$/, 
-    'Batch title can only contain letters, numbers, spaces, hyphens, and underscores'
-  );
-  export const locationValidationSchema = Yup.string()
-  .required('Location is required') 
-  .min(3, 'Location must be at least 3 characters') 
-  .matches(/^[a-zA-Z\s]+$/, 'Location should only contain letters and spaces');
-
-  export const titleValidationSchema = Yup.string()
-  .required('Title is required')
-  .trim()
-  .min(3, 'Title must be at least 3 characters long')
-  .max(100, 'Title must be less than 100 characters long')
-  .matches(
-    /^[A-Za-z0-9\s.,;:'"-]+$/,
-    'Title can only contain letters, numbers, spaces, and basic punctuation.'
-  ) 
-  .test('capitalize', 'Title should start with a capital letter', (value) => {
-    return value && /^[A-Z]/.test(value.trim());
-  })
-  .test('no-double-spaces', 'Title should not contain double spaces', (value) => {
-    return value && !/\s{2,}/.test(value);
-  });
-
-
-const safeTextRegex = /^[a-zA-Z0-9\s.,'’"()-]+$/;
-
-export const batchTitleSchema = Yup.string()
-  .required("Batch title is required")
-  .trim()
-  .min(3, "Batch title must be at least 3 characters long")
-  .max(100, "Batch title cannot exceed 100 characters")
-  .matches(
-    safeTextRegex,
-    "Batch title contains invalid characters"
-  )
-  .test(
-    "no-multiple-spaces",
-    "Batch title contains too many spaces",
-    (value) => !value || !/\s{2,}/.test(value)
-  )
-  .test(
-    "no-repetitive-chars",
-    "Batch title contains too many repeating characters",
-    (value) => !value || !/(.)\1{4,}/.test(value) // e.g., "AAAAA"
-  );
-
-export const batchDescriptionSchema = Yup.string()
-  .nullable()
-  .trim()
-  .min(20, "Description must be at least 20 characters long.")
-  .max(500, "Description cannot exceed 500 characters")
-  .matches(
-    safeTextRegex,
-    "Description contains invalid characters"
-  )
-  .test(
-    "no-multiple-spaces",
-    "Description contains too many spaces",
-    (value) => !value || !/\s{3,}/.test(value)
-  )
-  .test(
-    "no-repetitive-chars",
-    "Description contains too many repeating characters",
-    (value) => !value || !/(.)\1{6,}/.test(value) // e.g., "!!!!!!" or "AAAAAAA"
-  );
+  return schema;
+};

@@ -4,8 +4,14 @@ import { Icon } from "@iconify/react";
 import { useGetAdditionalFeeCategory } from "../../hooks/additionalFee/useGetAdditionalFeeCategories";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { InputGroup, NumberInput, TextAreaInput } from "../../components/FormComponents/InputComponents";
+import { numberSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
+
 function CreateStudentAdditionalFee({ handleClose, rowData }) {
   const studentId = rowData.id;
+  const currencyState = useSelector((state) => state.auth.user);
+    const currency =
+      currencyState?.schoolDetails?.school?.country?.currency || "";
   const { mutate: createAdditionalFee, isPending } =
     useCreateStudentAdditionalFee(handleClose);
   const { data: category, isFetching } = useGetAdditionalFeeCategory();
@@ -15,24 +21,30 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
     additionalfee_category_id: "",
     student_id: studentId,
   });
+  const [isValid, setIsValid] = useState({
+    amount: 0,
+    reason: "",
+  })
+  const [errors, setErrors] = useState({
+     additionalfee_category_id: "",
+  })
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-  const handleCategorySelect = (selectedValues) => {
-    setFormData((prevalue) => ({
-      ...prevalue,
-      additionalfee_category_id: selectedValues.id,
-    }));
-  };
+  const handleFieldError = (field, value) => {
+    setErrors((prev) => ({ ...prev, [field]:value }))
+  }
+  const handleFieldValid = (field, value) => {
+    setIsValid((prev) => ({ ...prev, [field]:value}))
+  }
   const handleSubmit = () => {
     createAdditionalFee(formData);
   };
   return (
     <>
       <div className="card w-100 border-none">
-        <div className="block">
-          <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Create Additional Fee</h5>
+        <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+            <span className="m-0">Create Additional Fee</span>
             <span
               className="m-0"
               onClick={() => {
@@ -42,26 +54,29 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-        </div>
-       <div className="modal-content-container">
-         <div className="my-1">
-          <span>Amount</span>
-          <input
-            type="number"
-            className="form-control"
-            placeholder="enter the cost"
-            name="amount"
-            onChange={(e) => handleInputChange("amount", e.target.value)}
+       <div>
+         <div>
+          <label htmlFor="amount" className="font-size-sm">Amount</label>
+          <InputGroup
+            onChange={(value) => handleInputChange('amount', value)}
+            onValidationChange={(value) => handleFieldValid('amount', value)}
+            value={formData.amount}
             step="0.01"
+            type="number"
+            validationSchema={numberSchema({
+               min:1,
+               max:1000000,
+               required:true,
+               messages:{
+                 min:"Amount Must Be Greater Than 1",
+                 max:"Amount Must Not Exceed 1000000"
+               }
+            })}
+            InputGroupText={currency}
           />
         </div>
-        <div className="my-1">
-          <span>Additional Fee Category</span>
-          {isFetching ? (
-            <select name="" className="form-select">
-              <option value="">loading</option>
-            </select>
-          ) : (
+        <div>
+           <label htmlFor="category" className="font-size-sm">Category</label>
             <CustomDropdown
               data={category.data}
               displayKey={["title"]}
@@ -70,17 +85,29 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
               renameMapping={{ id: "id", title: "title" }}
               isLoading={isFetching}
               direction="up"
-              onSelect={handleCategorySelect}
+              onSelect={(value) => handleInputChange('additional_fee_category', value)}
+              error={errors.additionalfee_category_id}
+              errorMessage="Additional Fee Category Required"
+              placeholder="Select Additional Fee Category"
             />
-          )}
         </div>
-        <div className="my-1">
-          <span>Reason</span>
-          <textarea
-            name="reason"
-            className="form-control"
-            onChange={(e) => handleInputChange("reason", e.target.value)}
-          ></textarea>
+        <div>
+          <label htmlFor="reason" className="font-size-sm">Reason</label>
+          <TextAreaInput 
+            placeholder={formData.amount ? `Enter Reason For Billing Student Additional Fee of ${formData.amount}`: "Write a short reason for the billing"}
+            onChange={(value) => handleInputChange('reason', value)}
+            onValidationChange={(value) => handleFieldValid('reason', value)}
+            validationSchema={textareaSchema({
+               min:10,
+               max:1000,
+               required:true,
+               messages:{
+                 required:"Reason Required",
+                 min:"Reason Length Must Be Atleast 10 Characters Long",
+                 max:"Reason Must Not Exceed 1000 Characters"
+               }
+            })}
+          />
         </div>
       </div>
       <div className="w-100 mt-2">

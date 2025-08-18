@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateDepartment } from "../../hooks/department/useCreateDepartment";
 import { TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
-import { departmentDescriptionSchema, departmentValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import { departmentDescriptionSchema, departmentValidationSchema, nameSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
 function CreateDepartment({ handleClose }) {
   const [formData, setFormData] = useState({
     department_name: "",
@@ -47,7 +47,17 @@ function CreateDepartment({ handleClose }) {
            placeholder={"e.g Engineering Department"}
            onChange={(value) => handleInputChange('department_name', value)}
            onValidationChange={(value) => handleValidChange('department_name', value)}
-           validationSchema={departmentValidationSchema}
+           validationSchema={nameSchema({
+             min:3,
+             max:100,
+             required:true,
+             messages:{
+               required:"Department Name Required",
+               min:"Department Name Must Be Atleast 3 characters Long",
+               max:"Department Description Must Not Exceed 100 Characters"
+             }
+           })}
+          
         />
       </div>
       <div>
@@ -56,7 +66,16 @@ function CreateDepartment({ handleClose }) {
           placeholder={`Write a short description of ${formData.department_name}`}
           onChange={(value) => handleInputChange('description', value)}
           onValidationChange={(value) => handleValidChange('description', value)}
-          validationSchema={departmentDescriptionSchema}
+          validationSchema={textareaSchema({
+             min:10,
+             max:1000,
+             required:true,
+             messages:{
+               required:"Department Description Required!",
+               min:"Description Must Be Atleast 10 characters long",
+               max:"Description Must Not Exceed 1000 characters"
+             }
+          })}
         />
       </div>
       </div>

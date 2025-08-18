@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useCreateAdditionalFeeCategory } from "../../hooks/additionalFee/useCreateAdditionalFeeCategory";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { TextInput } from "../../components/FormComponents/InputComponents";
-import { categoryNameSchema } from "../../ComponentConfig/YupValidationSchema";
+import { categoryNameSchema, nameSchema } from "../../ComponentConfig/YupValidationSchema";
 function CreateCategory({ handleClose }) {
   const [formData, setFormData] = useState({
     title: "",
@@ -44,7 +44,16 @@ function CreateCategory({ handleClose }) {
           <TextInput 
             onChange={(value) => handleInputChange('title', value)}
             onValidationChange={(value) => handleFieldValid('title', value)}
-            validationSchema={categoryNameSchema({ min:10, max:50 })}
+            validationSchema={nameSchema({ 
+                min:3,
+                max:100,
+                required:true,
+                messages:{
+                   min:"Category Name Must Be Atleast 3 Characters Long",
+                   max:"Category Name Must Not Exceed 100 Characters",
+                   required:"Category Name Required"
+                }
+             })}
             placeholder={"e.g Student Id Card"}
             value={formData.title}
           />

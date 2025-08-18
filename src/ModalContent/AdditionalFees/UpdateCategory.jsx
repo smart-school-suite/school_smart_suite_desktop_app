@@ -2,11 +2,18 @@ import { useUpdateAdditionalFeeCategory } from "../../hooks/additionalFee/useUpd
 import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
+import { TextInput } from "../../components/FormComponents/InputComponents";
 function UpdateCategory({ handleClose, rowData }) {
-  const categoryId = rowData.id;
+  const {id:categoryId, title } = rowData;
   const [formData, setFormData] = useState({
     title: "",
   });
+    const [isValid, setIsValid] = useState({
+    title: "",
+  });
+  const handleFieldValid = (field, value) => {
+     setIsValid((prev) => ({ ...prev, [field]:value }))
+  }
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -31,20 +38,24 @@ function UpdateCategory({ handleClose, rowData }) {
             </span>
           </div>
         </div>
-        <div className="modal-content-container">
-          <div className="my-1">
-          <span>Category Name</span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Utility Bills"
-            name="title"
-            onChange={(e) => handleInputChange("title", e.target.value)}
+        <div>
+          <div>
+          <label htmlFor="categoryName" className="font-size-sm">Category Name</label>
+          <TextInput 
+            placeholder={title}
+            onChange={(value) => handleInputChange('title', value)}
+            onValidationChange={(value) => handleFieldValid('title', value)}
+            validationSchema={nameSchema({
+                min:3,
+                max:100,
+                required:false,
+                message:{
+                   min:"Category Name Must Be Atleast 3 Characters Long",
+                   max:"Category Name Must Not Exceed 100 Characters",
+                }
+            })}
+            value={formData.title}
           />
-        </div>
-        <div className="my-1">
-          <span>Description</span>
-          <textarea name="" id="" className="form-control"></textarea>
         </div>
         </div>
         <button

@@ -6,7 +6,7 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useUpdateCourse } from "../../hooks/course/useUpdateCourse";
-import { courseCodeSchema, courseCreditSchema, courseDescriptionSchema, courseTitleSchema } from "../../ComponentConfig/YupValidationSchema";
+import { courseCodeSchema, nameSchema, numberSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
 function UpdateCourse({ handleClose, rowData }) {
   const { id: courseId, course_code, course_title, credit, description } = rowData;
   const [formData, setFormData] = useState({
@@ -25,6 +25,10 @@ function UpdateCourse({ handleClose, rowData }) {
     semester_id: "",
     description: "",
   });
+  const [errors, setErrors] = useState({
+    specialty_id: "",
+    semester_id: "",
+  })
   const { mutate: updateCourse, isPending } = useUpdateCourse(
     handleClose,
     courseId
@@ -39,6 +43,13 @@ function UpdateCourse({ handleClose, rowData }) {
   const handleValidChange = (field, value) => {
     setIsValid((prev) => ({ ...prev, [field]: value }));
   };
+     const handleFieldError = (field, message) => {
+    setErrors((prev) => ({
+      ...prev,
+      [field]: message
+    }));
+  };
+  cons
   const handleSubmit = async () => {
     updateCourse({ courseId, updateData: formData });
   };
@@ -67,7 +78,15 @@ function UpdateCourse({ handleClose, rowData }) {
               onValidationChange={(value) =>
                 handleValidChange("course_title", value)
               }
-              validationSchema={courseTitleSchema}
+              validationSchema={nameSchema({
+                  min:3,
+                  max:150,
+                  required:false,
+                  messages:{
+                     min:"Course Title Must Be Atleast 3 Characters Long",
+                     max:"Course Title Must Not Exceed 150 Characters"
+                  }
+              })}
             />
           </div>
           <div>
@@ -80,7 +99,15 @@ function UpdateCourse({ handleClose, rowData }) {
               onValidationChange={(value) =>
                 handleValidChange("course_code", value)
               }
-              validationSchema={courseCodeSchema}
+              validationSchema={courseCodeSchema({
+                  required:false,
+                  min:3,
+                  max:10,
+                  messages:{
+                     min:"Course Code Must Be Atleast 3 Characters Long",
+                     max:"Course Code Must Not Exceed 10 Characters"
+                  }
+              })}
             />
           </div>
           <div>
@@ -91,16 +118,20 @@ function UpdateCourse({ handleClose, rowData }) {
               placeholder={credit}
               onChange={(value) => handleInputChange("credit", value)}
               onValidationChange={(value) => handleValidChange("credit", value)}
-              validationSchema={courseCreditSchema}
+              validationSchema={numberSchema({
+                  min:1,
+                  max:10,
+                  required:false,
+                  integerOnly:true,
+                  messages:{
+                     min:"Course Credit Must Be Atleast 1",
+                     max:"Course Code Must Not Exceed 10"
+                  }
+              })}
             />
           </div>
           <div>
             <label htmlFor="semester" className="font-size-sm">Semester</label>
-            {isSemesterLoading ? (
-              <select name="" className="form-select">
-                <option value="">loading</option>
-              </select>
-            ) : (
               <CustomDropdown
                 data={semesters.data}
                 displayKey={["name"]}
@@ -110,37 +141,38 @@ function UpdateCourse({ handleClose, rowData }) {
                 isLoading={isSemesterLoading}
                 direction="up"
                 onSelect={(value) => handleInputChange('semester_id', value.id)}
+                error={errors.semester_id}
+                onError={(value) => handleFieldError('semester_id', value)}
+                placeholder="Select Semester"
               />
-            )}
           </div>
           <div>
             <label htmlFor="specialty" className="font-size-sm">Specialty</label>
-            {isSemesterLoading ? (
-              <select name="" className="form-select">
-                <option value="">loading</option>
-              </select>
-            ) : (
               <CustomDropdown
                 data={specialty.data}
                 displayKey={["specialty_name", "level_name"]}
                 valueKey={["id"]}
-                filter_array_keys={["id", "specialty_name", "level_name"]}
-                renameMapping={{
-                  id: "id",
-                  specialty_name: "specialty_name",
-                  leve_name: "level_name",
-                }}
                 isLoading={isSpecailtyLoading}
                 direction="up"
                 onSelect={(value) => handleInputChange('specialty_id', value.id)}
+                error={errors.specialty_id}
+                onError={(value) => handleFieldError('specialty_id', value)}
+                placeholder="Select Specailty"
               />
-            )}
           </div>
           <div>
          <label htmlFor="courseDescription" className="font-size-sm">Course Description</label>
          <TextAreaInput 
            onChange={(value) => handleInputChange('description', value)}
-           validationSchema={courseDescriptionSchema}
+           validationSchema={textareaSchema({
+               min:10,
+               max:1000,
+               required:false,
+               messages:{
+                 min:"Description Must Be Atleast 10 Characters Long",
+                 max:"Description Must Not Exceed 1000 Characters"
+               }
+           })}
            onValidationChange={(value) => handleValidChange('description', value)}
            placeholder={description}
          />

@@ -1,16 +1,20 @@
 import { Icon } from "@iconify/react";
-import Pageloaderspinner, {
-  SingleSpinner,
-} from "../../components/Spinners/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { useUpdateDepartment } from "../../hooks/department/useUpdateDepartment";
 import { useGetDepartmentDetails } from "../../hooks/department/useGetDepartmentDetails";
-import { TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
-import { departmentDescriptionSchema, departmentValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import {
+  TextAreaInput,
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
+import {
+  nameSchema,
+  textareaSchema,
+} from "../../ComponentConfig/YupValidationSchema";
 function UpdateDepartment({ handleClose, rowData }) {
   const { mutate: updateDepartment, isPending } =
     useUpdateDepartment(handleClose);
-  const {id:departmentId, department_name, description } = rowData;
+  const { id: departmentId, department_name, description } = rowData;
   const { data: departmentDetails, isLoading } =
     useGetDepartmentDetails(departmentId);
   const [formData, setFormData] = useState({
@@ -50,12 +54,24 @@ function UpdateDepartment({ handleClose, rowData }) {
               Department Name
             </label>
             <TextInput
-              placeholder={isLoading ? department_name : departmentDetails.data.department_name}
+              placeholder={
+                isLoading
+                  ? department_name
+                  : departmentDetails.data.department_name
+              }
               onChange={(value) => handleInputChange("department_name", value)}
               onValidationChange={(value) =>
                 handleValidChange("department_name", value)
               }
-              validationSchema={departmentValidationSchema}
+              validationSchema={nameSchema({
+                min: 3,
+                max: 100,
+                required: false,
+                messages: {
+                  min: "Department Name Must Be Atleast 3 characters Long",
+                  max: "Department Description Must Not Exceed 100 Characters",
+                },
+              })}
             />
           </div>
           <div>
@@ -63,12 +79,22 @@ function UpdateDepartment({ handleClose, rowData }) {
               Department Description
             </label>
             <TextAreaInput
-              placeholder={isLoading ? description : departmentDetails.data.description}
+              placeholder={
+                isLoading ? description : departmentDetails.data.description
+              }
               onChange={(value) => handleInputChange("description", value)}
               onValidationChange={(value) =>
                 handleValidChange("description", value)
               }
-              validationSchema={departmentDescriptionSchema}
+              validationSchema={textareaSchema({
+                min: 10,
+                max: 1000,
+                required: false,
+                messages: {
+                  min: "Description Must Be Atleast 10 characters long",
+                  max: "Description Must Not Exceed 1000 characters",
+                },
+              })}
             />
           </div>
         </div>
