@@ -3,7 +3,7 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateStudentBatch } from "../../hooks/studentBatch/useCreateBatch";
 import { Icon } from "@iconify/react";
 import { TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
-import { batchDescriptionSchema, batchTitleSchema } from "../../ComponentConfig/YupValidationSchema";
+import { batchDescriptionSchema, batchTitleSchema, nameSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
 function CreateStudentBatch({ handleClose }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -41,8 +41,18 @@ function CreateStudentBatch({ handleClose }) {
         <TextInput 
           onChange={(value) => handleInputChange('name', value)}
           onValidationChange={(value) => handleIsValid('name', value)}
-          validationSchema={batchTitleSchema}
+          validationSchema={nameSchema({
+             min:3,
+             max:100,
+             required:true,
+             messages:{
+               min:"Batch Title Must Be Atleast 3 Characters Long",
+               max:"Batch Title Must Not Exceed 100 Characters",
+               required:"Batch Title Required"
+             }
+          })}
           placeholder={"e.g Batch Of 2027"}
+          value={formData.name}
         />
       </div>
       <div>
@@ -50,7 +60,16 @@ function CreateStudentBatch({ handleClose }) {
         <TextAreaInput 
           onChange={(value) => handleInputChange('description', value)}
           onValidationChange={(value) => handleIsValid('description', value)}
-          validationSchema={batchDescriptionSchema}
+          validationSchema={textareaSchema({
+              min:10,
+              max:1000,
+              required:true,
+              messages:{
+                 min:"Batch Description Must Be Atleast 10 Characters Long",
+                 max:"Batch Description Must Not Exceed 1000 Characters"
+              }
+          })}
+          value={formData.description}
           placeholder={formData.name === null ? "Enter A short description of student batch" : `Enter A Short Description of ${formData.name}`}
         />
       </div>
