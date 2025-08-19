@@ -35,39 +35,54 @@ export const phoneValidationSchema = Yup.string()
   .matches(/^6\d{8}$/, "Phone number must start with 6 and be 9 digits long.")
   .required("Phone number is required.");
 
-export const emailValidationSchema = Yup.string()
-  .required("Email address is required.")
-  .email("Please enter a valid email address (e.g., user@domain.com).")
-  .max(254, 'Email address must be less than 255 characters.')
-  .matches(
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    "The email address format is invalid."
-  )
-  .test('no-ip-address-domain', 'Email domain cannot be an IP address.', (value) => {
-    if (!value) return true;
-    const domain = value.split('@')[1];
-    return !/^\[?\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\]?$/.test(domain);
-  })
-  .test('no-temp-domains', 'Disposable email addresses are not allowed.', async (value) => {
-    const disposableDomains = ['mailinator.com', 'tempmail.com', 'guerrillamail.com'];
-    if (!value) return true;
-    const domain = value.split('@')[1];
-    return !disposableDomains.includes(domain);
-  })
-  .test('no-blacklist', 'This email domain is restricted. Please use another email.', (value) => {
-    const blacklistedDomains = ['example.com', 'test.com'];
-    if (!value) return true;
-    const domain = value.split('@')[1];
-    return !blacklistedDomains.includes(domain);
-  })
-  .test('no-leading-trailing-dot', 'Email cannot start or end with a dot.', (value) => {
-    if (!value) return true;
-    return !value.startsWith('.') && !value.endsWith('.');
-  })
-  .test('no-consecutive-dots', 'Email cannot contain consecutive dots (e.g., "user..name@domain.com").', (value) => {
-    if (!value) return true;
-    return !/\.\./.test(value);
-  });
+export const emailValidationSchema = ({
+  required = true,
+  disposableDomains = ["mailinator.com", "tempmail.com", "guerrillamail.com"],
+  blacklistedDomains = ["example.com", "test.com"],
+  messages = {}
+} = {}) => {
+  let schema = Yup.string()
+    .transform((val) => (val ? val.trim().toLowerCase() : val)) // sanitize
+    .email(messages.email || "Please enter a valid email address (e.g., user@domain.com).")
+    .max(254, messages.max || "Email address must be less than 255 characters.")
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      messages.format || "The email address format is invalid."
+    )
+    .test("no-ip-address-domain", messages.ip || "Email domain cannot be an IP address.", (value) => {
+      if (!value) return true;
+      const domain = value.split("@")[1];
+      return !/^\[?\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\]?$/.test(domain);
+    })
+    .test("no-temp-domains", messages.temp || "Disposable email addresses are not allowed.", (value) => {
+      if (!value) return true;
+      const domain = value.split("@")[1];
+      return !disposableDomains.includes(domain);
+    })
+    .test("no-blacklist", messages.blacklist || "This email domain is restricted. Please use another email.", (value) => {
+      if (!value) return true;
+      const domain = value.split("@")[1];
+      return !blacklistedDomains.includes(domain);
+    })
+    .test("no-leading-trailing-dot", messages.dot || "Email cannot start or end with a dot.", (value) => {
+      if (!value) return true;
+      return !value.startsWith(".") && !value.endsWith(".");
+    })
+    .test("no-consecutive-dots", messages.dots || "Email cannot contain consecutive dots.", (value) => {
+      if (!value) return true;
+      return !/\.\./.test(value);
+    })
+    .transform((val) => (val === "" ? null : val));
+
+  if (required) {
+    schema = schema.required(messages.required || "Email address is required.");
+  } else {
+    schema = schema.nullable();
+  }
+
+  return schema;
+};
+
 
 export const courseCodeSchema = ({
   min = 4,
@@ -139,35 +154,58 @@ export const dateValidationSchema = ({
   return schema;
 };
 
-export const dateRangeValidationSchema = Yup.object().shape({
-  start_date: Yup.string()
-    .required("Start date is required")
-    .matches(
-      /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
-      "Invalid date format (YYYY-MM-DD)"
-    )
-    .test("is-valid-date", "Invalid date", isValidMySQLDate),
+export const dateRangeValidationSchema = ({
+  optional = false,
+  futureOnly = false,
+} = {}) => {
+  const buildDateSchema = (label) => {
+    let schema = Yup.string()
+      .matches(
+        /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
+        "Invalid date format (YYYY-MM-DD)"
+      )
+      .test("is-valid-date", "Invalid date", (value) =>
+        value ? isValidMySQLDate(value) : true
+      );
 
-  end_date: Yup.string()
-    .required("End date is required")
-    .matches(
-      /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
-      "Invalid date format (YYYY-MM-DD)"
-    )
-    .test("is-valid-date", "Invalid date", isValidMySQLDate)
-    .test(
+    if (!optional) {
+      schema = schema.required(`${label} is required`);
+    }
+
+    if (futureOnly) {
+      schema = schema.test(
+        "is-today-or-future",
+        `${label} must be today or a future date`,
+        (value) => {
+          if (!value || !isValidMySQLDate(value)) return true;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const inputDate = new Date(value);
+          return inputDate >= today;
+        }
+      );
+    }
+
+    return schema;
+  };
+
+  return Yup.object().shape({
+    start_date: buildDateSchema("Start date"),
+
+    end_date: buildDateSchema("End date").test(
       "is-after-start",
       "End date must be after or equal to start date",
       function (value) {
         const { start_date } = this.parent;
-        if (!isValidMySQLDate(start_date) || !isValidMySQLDate(value))
-          return true;
+        if (!isValidMySQLDate(start_date) || !isValidMySQLDate(value)) return true;
+
         const startDate = new Date(start_date);
         const endDate = new Date(value);
         return endDate >= startDate;
       }
     ),
-});
+  });
+};
 
 export const textareaSchema = ({
   min = 20,

@@ -82,7 +82,7 @@ export function PhoneNumberInput({ onChange, value, onValidationChange }) {
         </span>
         <input
           type="tel"
-          className={`form-control font-size-sm ${
+          className={`form-control z-0 position-absolute font-size-sm ${
             isTouched && error ? "is-invalid" : ""
           } ${isTouched && !error && phoneNumber ? "is-valid" : ""}`}
           placeholder="6XX-XXX-XXX"
@@ -94,91 +94,8 @@ export function PhoneNumberInput({ onChange, value, onValidationChange }) {
           onFocus={handleFocus}
           onBlur={handleBlur}
         />
-      </div>
       <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
-    </div>
-  );
-}
-
-export function TextInputField({
-  onChange,
-  onValidationChange,
-  value,
-  placeholder,
-  validationSchema,
-  label,
-  onErrorChange,
-}) {
-  const [inputValue, setInputValue] = useState(value || "");
-  const [inputError, setInputError] = useState("");
-  const [isTouched, setIsTouched] = useState(false);
-
-  useEffect(() => {
-    if (isTouched || inputValue) {
-      validateInput(inputValue);
-    }
-  }, [inputValue, validationSchema, isTouched]);
-
-  const validateInput = async (currentValue) => {
-    try {
-      await validationSchema.validate(currentValue);
-      setInputError("");
-      onValidationChange(true);
-      onErrorChange("");
-    } catch (err) {
-      setInputError(err.message);
-      onValidationChange(false);
-      onErrorChange(err.message);
-    }
-  };
-
-  const handleChange = (e) => {
-    const { value: newValue } = e.target;
-    setInputValue(newValue);
-    onChange(newValue);
-  };
-
-  const handleBlur = () => {
-    if (!isTouched) {
-      setIsTouched(true);
-    }
-    validateInput(inputValue);
-  };
-
-  const feedbackContent =
-    isTouched && inputError
-      ? inputError
-      : isTouched && !inputError && inputValue
-      ? "Looks Good!"
-      : "";
-
-  const feedbackClasses = [
-    "transition-all font-size-sm",
-    isTouched && inputError
-      ? "invalid-feedback transition-all"
-      : isTouched && !inputError && inputValue
-      ? "valid-feedback transition-all"
-      : null,
-    isTouched && (inputError || (!inputError && inputValue))
-      ? "opacity-100 transition-all"
-      : "opacity-0 transition-all",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  return (
-    <div>
-      {label && <span>{label}</span>}
-      <input
-        type="text"
-        value={inputValue}
-        onChange={handleChange}
-        placeholder={placeholder}
-        className={`form-control ${
-          isTouched && inputError ? "is-invalid" : ""
-        } ${isTouched && !inputError && inputValue ? "is-valid" : ""}`}
-      />
-      <div className={feedbackClasses}>{feedbackContent}</div>
+      </div>
     </div>
   );
 }

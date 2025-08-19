@@ -10,6 +10,7 @@ import { useGetAllParents } from "../../hooks/parent/useGetParents";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import { emailValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import { gender } from "../../data/data";
 function UpdateStudent({ handleClose, rowData }) {
   const {id:studentId, first_name, last_name, name, email }= rowData;
   const [formData, setFormData] = useState({

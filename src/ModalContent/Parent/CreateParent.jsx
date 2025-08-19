@@ -76,7 +76,7 @@ function CreateParent({ handleClose }) {
           />
         </div>
         <div>
-             <label htmlFor="phone" className="font-size-sm">Phone Number</label>
+            <label htmlFor="phone" className="font-size-sm">Phone Number</label>
           <PhoneNumberInput 
             onChange={(value) => handleInputChange('phone_one', value)}
             value={formData.phone_one}
