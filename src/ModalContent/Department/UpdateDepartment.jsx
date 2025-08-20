@@ -11,6 +11,9 @@ import {
   nameSchema,
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
+import { hasNonEmptyValue, optionalValidateObject } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateDepartment({ handleClose, rowData }) {
   const { mutate: updateDepartment, isPending } =
     useUpdateDepartment(handleClose);
@@ -25,13 +28,29 @@ function UpdateDepartment({ handleClose, rowData }) {
     department_name: "",
     description: "",
   });
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleValidChange = (field, value) => {
-    setFieldValid((prev) => ({ ...prev, [field]: value }));
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleDepartmentUpdate = () => {
+    if(optionalValidateObject(isFieldValid) == false){
+         toast.custom(
+          <ToastWarning 
+            title={"Invalid Fields"}
+            description={"Please ensure all fields are valid before updating."}
+          />
+         )
+         return;
+    }
+
+    if(hasNonEmptyValue(formData) ==  false){
+      toast.custom(
+        <ToastWarning 
+          title={"Nothing to Update"}
+          description={"Please ensure all fields are filled before updating."}
+        />
+      );
+      return;
+    }
     updateDepartment({ departmentId, updateData: formData });
   };
   return (
@@ -59,9 +78,9 @@ function UpdateDepartment({ handleClose, rowData }) {
                   ? department_name
                   : departmentDetails.data.department_name
               }
-              onChange={(value) => handleInputChange("department_name", value)}
+              onChange={(value) => handleStateChange("department_name", value, setFormData)}
               onValidationChange={(value) =>
-                handleValidChange("department_name", value)
+                handleStateChange("department_name", value, setFieldValid)
               }
               validationSchema={nameSchema({
                 min: 3,
@@ -82,9 +101,9 @@ function UpdateDepartment({ handleClose, rowData }) {
               placeholder={
                 isLoading ? description : departmentDetails.data.description
               }
-              onChange={(value) => handleInputChange("description", value)}
+              onChange={(value) => handleStateChange("description", value, setFormData)}
               onValidationChange={(value) =>
-                handleValidChange("description", value)
+                handleStateChange("description", value, setFieldValid)
               }
               validationSchema={textareaSchema({
                 min: 10,

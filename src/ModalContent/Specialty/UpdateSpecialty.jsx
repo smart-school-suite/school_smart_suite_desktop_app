@@ -56,7 +56,6 @@ function UpdateSpecialty({ handleClose, rowData }) {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSpecialtyUpdate = async () => {
-    console.table(isFieldValid)
     if(optionalValidateObject(isFieldValid) == false){
       toast.custom(
         <ToastWarning 

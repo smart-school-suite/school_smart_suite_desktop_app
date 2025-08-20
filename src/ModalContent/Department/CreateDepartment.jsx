@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateDepartment } from "../../hooks/department/useCreateDepartment";
 import { TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
-import { departmentDescriptionSchema, departmentValidationSchema, nameSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
+import { nameSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
+import { allFieldsValid, hasNonEmptyValue } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function CreateDepartment({ handleClose }) {
+  const departmentNameRef = useRef();
+  const descriptionRef = useRef();
   const [formData, setFormData] = useState({
     department_name: "",
     description: "",
@@ -17,14 +22,37 @@ function CreateDepartment({ handleClose }) {
     mutate: createDepartmentMutation,
     isPending, 
   } = useCreateDepartment(handleClose);
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-   const handleValidChange = (field, value) => {
-    setFieldValid((prev) => ({ ...prev, [field]: value }));
-  };
-
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
+  }; 
+  const handlePrevalidation = async () => {
+      const departmentName = await departmentNameRef.current.triggerValidation();
+      const description = await descriptionRef.current.triggerValidation();
+      return {
+         departmentName,
+         description
+      }
+  }
   const handleSubmit = async () => {
+     const prevalidation = await handlePrevalidation();
+     if(!allFieldsValid(prevalidation)){
+        toast.custom(
+           <ToastWarning 
+             title={"Invalid Fields"}
+             description={"Please ensure all fields are valid before creating a department."}
+           />
+        )
+        return
+     }
+     if(!allFieldsValid(isFieldValid)){
+        toast.custom(
+           <ToastWarning 
+             title={"Invalid Fields"}
+             description={"Please ensure all fields are valid before creating a department."}
+           />
+        )
+        return;
+     }
     createDepartmentMutation(formData);
   };
   return (
@@ -45,8 +73,8 @@ function CreateDepartment({ handleClose }) {
         <label htmlFor="departmentName" className="font-size-sm">Department Name</label>
         <TextInput 
            placeholder={"e.g Engineering Department"}
-           onChange={(value) => handleInputChange('department_name', value)}
-           onValidationChange={(value) => handleValidChange('department_name', value)}
+           onChange={(value) => handleStateChange('department_name', value, setFormData)}
+           onValidationChange={(value) => handleStateChange('department_name', value, setFieldValid)}
            validationSchema={nameSchema({
              min:3,
              max:100,
@@ -57,15 +85,16 @@ function CreateDepartment({ handleClose }) {
                max:"Department Description Must Not Exceed 100 Characters"
              }
            })}
-          
+          value={formData.value}
+          ref={departmentNameRef}
         />
       </div>
       <div>
         <label htmlFor="description" className="font-size-sm">Department Description</label>
         <TextAreaInput 
           placeholder={`Write a short description of ${formData.department_name}`}
-          onChange={(value) => handleInputChange('description', value)}
-          onValidationChange={(value) => handleValidChange('description', value)}
+          onChange={(value) => handleStateChange('description', value, setFormData)}
+          onValidationChange={(value) => handleStateChange('description', value, setFieldValid)}
           validationSchema={textareaSchema({
              min:10,
              max:1000,
@@ -76,6 +105,8 @@ function CreateDepartment({ handleClose }) {
                max:"Description Must Not Exceed 1000 characters"
              }
           })}
+          ref={descriptionRef}
+          value={formData.description}
         />
       </div>
       </div>
