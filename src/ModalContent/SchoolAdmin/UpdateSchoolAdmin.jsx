@@ -3,8 +3,10 @@ import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useUpdateSchoolAdmin } from "../../hooks/schoolAdmin/useUpdateSchoolAdmin";
 import { TextInput } from "../../components/FormComponents/InputComponents";
-import { allFieldsValid, objectHasEmpty } from "../../utils/functions";
 import { emailValidationSchema, nameSchema } from "../../ComponentConfig/YupValidationSchema";
+import { hasNonEmptyValue, optionalValidateObject } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 const UpdateSchoolAdmin = ({ rowData, handleClose }) => {
   const { id: schoolAdminId, email, first_name, last_name, name } = rowData;
   const { mutate: update, isPending } = useUpdateSchoolAdmin(handleClose);
@@ -24,6 +26,24 @@ const UpdateSchoolAdmin = ({ rowData, handleClose }) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleAdminUpdate = () => {
+    if(optionalValidateObject(isFieldValid) == false){
+      toast.custom(
+        <ToastWarning 
+          title={"Invalid Fields"}
+          description={"Please ensure all fields are valid before updating."}
+        />
+      );
+      return;
+    }
+    if(hasNonEmptyValue(formData) == false) {
+      toast.custom(
+        <ToastWarning 
+          title={"Nothing to Update"}
+          description={"Please ensure all fields are filled before updating."}
+        />
+      );
+      return;
+    }
     update({ schoolAdminId, updateData: formData });
   };
   return (

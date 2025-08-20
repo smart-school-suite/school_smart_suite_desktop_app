@@ -1,13 +1,19 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useCreateSchoolAdmin } from "../../hooks/schoolAdmin/useCreateSchoolAdmin";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import { emailValidationSchema, nameSchema } from "../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid, objectHasEmpty } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function CreateSchoolAdmin({ handleClose }) {
   const { mutate: createAdmin, isPending } =
     useCreateSchoolAdmin(handleClose);
+  const emailRef = useRef();
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
+  const fullNameRef = useRef();
   const [formData, setFormData] = useState({
     email: "",
     name: "",
@@ -23,7 +29,38 @@ function CreateSchoolAdmin({ handleClose }) {
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
+  const handlePrevalidation = async () => {
+    const firstName = await firstNameRef.current.triggerValidation();
+    const lastName = await lastNameRef.current.triggerValidation();
+    const fullName = await fullNameRef.current.triggerValidation();
+    const email = await emailRef.current.triggerValidation();
+    return {
+      firstName,
+      lastName,
+      fullName,
+      email,
+    };
+  }
   const handleCreateSchoolAdmin = async () => {
+    const prevalidation = await handlePrevalidation();
+    if(!allFieldsValid(prevalidation)){
+        toast.custom(
+          <ToastWarning 
+            title={"Invalid Fields"}
+            description={"Please ensure all fields are valid before creating a school admin."}
+          />
+        )
+        return;
+    }
+    if(!allFieldsValid(isFieldValid)){
+       toast.custom(
+          <ToastWarning 
+            title={"Invalid Fields"}
+            description={"Please ensure all fields are valid before creating a school admin."}
+          />
+        )
+        return;
+    }
     createAdmin(formData);
   };
   return (
@@ -61,6 +98,7 @@ function CreateSchoolAdmin({ handleClose }) {
             })}
             onValidationChange={(value) => handleStateChange("first_name", value, setFieldValid)}
             value={formData.first_name}
+            ref={firstNameRef}
           />
         </div>
         <div>
@@ -84,6 +122,7 @@ function CreateSchoolAdmin({ handleClose }) {
               },
             })}
             value={formData.last_name}
+            ref={lastNameRef}
           />
         </div>
         <div>
@@ -105,6 +144,7 @@ function CreateSchoolAdmin({ handleClose }) {
               },
             })}
             value={formData.name}
+            ref={fullNameRef}
           />
         </div>
         <div>
@@ -120,13 +160,14 @@ function CreateSchoolAdmin({ handleClose }) {
                required:true
             })}
             value={formData.email}
+            ref={emailRef}
           />
         </div>
         <div className="mt-2">
           <button
             className="rounded-3 p-2 text-white border-none primary-background font-size-sm w-100"
             onClick={handleCreateSchoolAdmin}
-            disabled={isPending || objectHasEmpty(formData) || !allFieldsValid(isFieldValid) }
+            disabled={isPending}
           >
             {isPending ? <SingleSpinner /> : "Create School Admin"}
           </button>
