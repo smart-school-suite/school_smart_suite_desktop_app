@@ -4,7 +4,7 @@ import { Icon } from "@iconify/react";
 import { useUpdateSchoolAdmin } from "../../hooks/schoolAdmin/useUpdateSchoolAdmin";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import { allFieldsValid, objectHasEmpty } from "../../utils/functions";
-import { emailValidationSchema, firstNameSchema, fullNameSchema, lastNameSchema } from "../../ComponentConfig/YupValidationSchema";
+import { emailValidationSchema, nameSchema } from "../../ComponentConfig/YupValidationSchema";
 const UpdateSchoolAdmin = ({ rowData, handleClose }) => {
   const { id: schoolAdminId, email, first_name, last_name, name } = rowData;
   const { mutate: update, isPending } = useUpdateSchoolAdmin(handleClose);
@@ -20,11 +20,8 @@ const UpdateSchoolAdmin = ({ rowData, handleClose }) => {
     last_name: "",
     first_name: "",
   });
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleValidChange = (field, value) => {
-    setFieldValid((prev) => ({ ...prev, [field]: value }));
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleAdminUpdate = () => {
     update({ schoolAdminId, updateData: formData });
@@ -46,60 +43,89 @@ const UpdateSchoolAdmin = ({ rowData, handleClose }) => {
           </div>
         </div>
         <div>
-            <label htmlFor="firstname" className="font-size-sm">
-              First Name
-            </label>
-            <TextInput
-              onChange={(value) => {
-                handleInputChange("first_name", value);
-              }}
-              placeholder={first_name}
-              validationSchema={firstNameSchema}
-              onValidationChange={(value) =>
-                handleValidChange("first_name", value)
-              }
-            />
-          </div>
-        <div>
-            <label htmlFor="lastname" className="font-size-sm">
-              Last Name
-            </label>
-            <TextInput
-              onChange={(value) => {
-                handleInputChange("last_name", value);
-              }}
-              placeholder={last_name}
-              validationSchema={lastNameSchema}
-              onValidationChange={(value) =>
-                handleValidChange("last_name", value)
-              }
-            />
-          </div>
-        <div>
-          <label htmlFor="fullnames" className="font-size-sm">Full Names</label>
+          <label htmlFor="firstname" className="font-size-sm">
+            First Name
+          </label>
           <TextInput
-              onChange={(value) => {
-                handleInputChange("name", value);
-              }}
-              placeholder={name}
-              validationSchema={fullNameSchema}
-              onValidationChange={(value) =>
-                handleValidChange("name", value)
-              }
-            />
+            onChange={(value) => {
+              handleStateChange("first_name", value, setFormData);
+            }}
+            placeholder={first_name}
+            validationSchema={nameSchema({
+              min: 3,
+              max: 50,
+              required: false,
+              messages: {
+                min: "First Name Must Be Atleast 3 characters Long",
+                max: "First Name Must Not Exceed 50 Characters",
+              },
+            })}
+            onValidationChange={(value) =>
+              handleStateChange("first_name", value, setFieldValid)
+            }
+            value={formData.first_name}
+          />
         </div>
         <div>
-          <label htmlFor="email" className="font-size-sm">Email</label>
-          <TextInput 
-             onChange={(value) => {
-                handleInputChange("name", value);
-              }}
-              placeholder={email}
-              validationSchema={emailValidationSchema}
-              onValidationChange={(value) =>
-                handleValidChange("email", value)
-              }
-              type="email"
+          <label htmlFor="lastname" className="font-size-sm">
+            Last Name
+          </label>
+          <TextInput
+            onChange={(value) => {
+              handleStateChange("last_name", value, setFormData);
+            }}
+            placeholder={last_name}
+            validationSchema={nameSchema({
+              min: 3,
+              max: 50,
+              required: false,
+              messages: {
+                min: "Last Name Must Be Atleast 3 Characters Long",
+                max: "Last Name Must Not Exceed 50 Characters",
+              },
+            })}
+            onValidationChange={(value) =>
+              handleStateChange("last_name", value, setFieldValid)
+            }
+          />
+        </div>
+        <div>
+          <label htmlFor="fullnames" className="font-size-sm">
+            Full Names
+          </label>
+          <TextInput
+            onChange={(value) => {
+              handleStateChange("name", value, setFormData);
+            }}
+            placeholder={name}
+            validationSchema={nameSchema({
+              min: 3,
+              max: 150,
+              required: false,
+              messages: {
+                min: "Full Names Must Be Atleast 3 Characters Long",
+                max: "Full Names Must Not Exceed 150 Characters",
+              },
+            })}
+            onValidationChange={(value) =>
+              handleStateChange("name", value, setFieldValid)
+            }
+          />
+        </div>
+        <div>
+          <label htmlFor="email" className="font-size-sm">
+            Email
+          </label>
+          <TextInput
+            onChange={(value) => {
+              handleStateChange("name", value, setFormData);
+            }}
+            placeholder={email}
+            validationSchema={emailValidationSchema({
+               required:true
+            })}
+            onValidationChange={(value) => handleStateChange("email", value, setFieldValid)}
+            type="email"
           />
         </div>
         <div className="my-1 w-100 mt-3">

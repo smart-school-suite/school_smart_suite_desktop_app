@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { InputGroup,TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
@@ -8,10 +8,19 @@ import { useGetLevels } from "../../hooks/level/useGetLevels";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useSelector } from "react-redux";
 import { nameSchema, numberSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function CreateSpecialty({ handleClose }) {
-      const currencyState = useSelector((state) => state.auth.user);
-    const currency =
-      currencyState?.schoolDetails?.school?.country?.currency || "";
+  const currency = useSelector(
+  (state) => state.auth.user?.schoolDetails?.school?.country?.currency ?? ''
+);
+ const specialtyNameRef = useRef();
+ const registrationFeeRef = useRef();
+ const descriptionRef = useRef();
+  const schoolFeesRef = useRef();
+  const educationLevelRef = useRef();
+  const departmentRef = useRef();
   const [formData, setFormData] = useState({
     specialty_name: "",
     registration_fee: "",
@@ -24,8 +33,6 @@ function CreateSpecialty({ handleClose }) {
     specialty_name: "",
     registration_fee: "",
     school_fee: "",
-    department_id: "",
-    level_id: "",
     description:""
   });
   const [errors, setErrors] = useState({
@@ -43,16 +50,45 @@ function CreateSpecialty({ handleClose }) {
     isFetching: departmentIsLoading,
   } = useGetDepartments();
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
-  const handleFieldValid = (field, value) => {
-    setIsFieldValid((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleFieldError = (field, value) => {
-    setErrors((prev) => ({...prev, [field]:value}))
+  const handlePrevalidation = async () => {
+     const specialtyName = await specialtyNameRef.current.triggerValidation();
+     const department = await departmentRef.current.triggerValidation();
+     const level = await educationLevelRef.current.triggerValidation();
+     const registrationFee = await registrationFeeRef.current.triggerValidation();
+     const schoolFee = await schoolFeesRef.current.triggerValidation();
+     const description = await descriptionRef.current.triggerValidation(); 
+     return {
+        specialtyName,
+        department,
+        level,
+        registrationFee,
+        schoolFee,
+        description
+     }
   }
   const handleSubmit = async () => {
+    const prevalidation = await handlePrevalidation();
+    if(!allFieldsValid(prevalidation)){
+        toast.custom(
+          <ToastWarning 
+             title={"Invalid Fields"}
+             description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
+          />
+        )
+        return
+    }
+    if(!allFieldsValid(isFieldValid)){
+      toast.custom(
+        <ToastWarning 
+          title={"Invalid Fields"}
+          description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
+        />
+      )
+      return
+    }
     createSpecialtyMutation(formData)
   };
   return (
@@ -71,9 +107,10 @@ function CreateSpecialty({ handleClose }) {
       <div>
         <label htmlFor="specialtyName" className="font-size-sm">Specialty Name</label>
        <TextInput 
+        ref={specialtyNameRef}
         placeholder={"e.g Software Engineering"}
-        onChange={(value) =>  handleInputChange('specialty_name', value)}
-        onValidationChange={(value) => handleFieldValid('specialty_name', value)}
+        onChange={(value) =>  handleStateChange('specialty_name', value, setFormData)}
+        onValidationChange={(value) => handleStateChange('specialty_name', value, setIsFieldValid)}
         validationSchema={nameSchema({
             min:3,
             max:150,
@@ -84,14 +121,17 @@ function CreateSpecialty({ handleClose }) {
                max:`Specialty Name Must Not Exceed 150 Characters`
             }
         })}
+        value={formData.specialty_name}
        />
       </div>
-      <div>
-        <label htmlFor="registrationFees" className="font-size-sm">Registration Fees</label>
+      <div className="d-flex flex-row w-100 gap-2">
+        <div className="w-50">
+        <label htmlFor="registrationFeeRef" className="font-size-sm">Registration Fees</label>
         <InputGroup 
+          ref={registrationFeeRef}
           placeholder={"E.g 80,000"}
-          onChange={(value) => handleInputChange('registration_fee', value)}
-          onValidationChange={(value) => handleFieldValid('registration_fee', value)}
+          onChange={(value) => handleStateChange('registration_fee', value, setFormData)}
+          onValidationChange={(value) => handleStateChange('registration_fee', value, setIsFieldValid)}
           step="0.01"
           validationSchema={numberSchema({ 
             min:1, 
@@ -104,14 +144,16 @@ function CreateSpecialty({ handleClose }) {
             }
           })}
           InputGroupText={currency}
+          value={formData.registration_fee}
         />
       </div>
-      <div>
-        <label htmlFor="schoolFees" className="font-size-sm">School Fees</label>
+      <div className="w-50">
+        <label htmlFor="schoolFeesRef" className="font-size-sm">School Fees</label>
         <InputGroup 
+         ref={schoolFeesRef}
          placeholder={"e.g 150,000"}
-         onChange={(value) => handleInputChange('school_fee', value)}
-         onValidationChange={(value) => handleFieldValid('school_fee', value)}
+         onChange={(value) => handleStateChange('school_fee', value, setFormData)}
+         onValidationChange={(value) => handleStateChange('school_fee', value, setIsFieldValid)}
          step="0.01"
          validationSchema={numberSchema({ 
           min:1, 
@@ -125,7 +167,9 @@ function CreateSpecialty({ handleClose }) {
         })}
          type="number"
          InputGroupText={currency}
+         value={formData.school_fee}
         />
+      </div>
       </div>
       <div>
         <label htmlFor="departmentName" className="font-size-sm">Department Name</label>
@@ -137,10 +181,12 @@ function CreateSpecialty({ handleClose }) {
             renameMapping={{ id: "id", department_name: "department_name" }}
             isLoading={departmentIsLoading}
             direction="up"
-            onSelect={(value) => handleInputChange('department_id', value.id)}
+            onSelect={(value) => handleStateChange('department_id', value.id, setFormData)}
             placeholder="Select Department"
             error={errors.department_id}
-            onError={(value) => handleFieldError('department_id', value)}
+            onError={(value) => handleStateChange('department_id', value, setErrors)}
+            errorMessage="Department Required"
+            ref={departmentRef}
           />
       </div>
       <div>
@@ -153,17 +199,19 @@ function CreateSpecialty({ handleClose }) {
             renameMapping={{ id: "id", name: "name", level: "level" }}
             isLoading={educationIsLoading}
             direction="up"
-            onSelect={(value) => handleInputChange('level_id', value.id)}
+            onSelect={(value) => handleStateChange('level_id', value.id, setFormData)}
             placeholder="Select Level"
             error={errors.level_id}
-            onError={(value) => handleFieldError('level_id', value)}
+            onError={(value) => handleStateChange('level_id', value, setErrors)}
+            errorMessage="Level Required"
+            ref={educationLevelRef}
           />
       </div>
       <div>
         <label htmlFor="specialtyDescription" className="font-size-sm">Specialty Description</label>
         <TextAreaInput 
-           onValidationChange={(value) =>  handleFieldValid('description', value)}
-           onChange={(value) => handleInputChange('description', value)}
+           onValidationChange={(value) =>  handleStateChange('description', value, setIsFieldValid)}
+           onChange={(value) => handleStateChange('description', value, setFormData)}
            placeholder={ formData.specialty_name === null || ""
                   ? "Write A short Description Of Specialty"
                   : ` Write A short Description Of ${formData.specialty_name}`}
@@ -177,7 +225,8 @@ function CreateSpecialty({ handleClose }) {
                  required:"Description Is Required"
               }
           })}
-
+          value={formData.description}
+          ref={descriptionRef}
         />
       </div>
       <div className="mt-4">
@@ -185,9 +234,7 @@ function CreateSpecialty({ handleClose }) {
           <button
             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
             disabled={isPending}
-            onClick={() => {
-              handleSubmit();
-            }}
+            onClick={handleSubmit}
           >
            { isPending ? <SingleSpinner /> : "Create Specialty" }
           </button>

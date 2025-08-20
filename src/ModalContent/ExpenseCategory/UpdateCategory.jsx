@@ -3,7 +3,7 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { TextInput } from "../../components/FormComponents/InputComponents";
-import { categoryNameSchema } from "../../ComponentConfig/YupValidationSchema";
+import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
 function UpdateCategory({ handleClose, rowData }) {
   const { id: categoryId, name } = rowData;
   const [formData, setFormData] = useState({
@@ -12,11 +12,8 @@ function UpdateCategory({ handleClose, rowData }) {
   const [isValid, setIsValid] = useState({
     name: "",
   });
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleFieldValid  = (field, value) => {
-    setIsValid((prev) => ({ ...prev, [field]:value }));
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]:value }));
   }
   const { mutate: updateCategory, isPending } = useUpdateExpenseCategory();
   const handleUpdate = () => {
@@ -41,10 +38,19 @@ function UpdateCategory({ handleClose, rowData }) {
         <div>
           <label htmlFor="categoryName" className="font-size-sm">Category Name</label>
           <TextInput 
-            onChange={(value) => handleInputChange('name', value)}
-            onValidationChange={(value) => handleFieldValid('name', value)}
-            validationSchema={categoryNameSchema(3, 50, true)}
+            onChange={(value) => handleStateChange('name', value, setFormData)}
+            onValidationChange={(value) => handleStateChange('name', value, setIsValid)}
+            validationSchema={nameSchema({
+              min: 3,
+              max: 100,
+              required: false,
+              messages: {
+                min: "Category Name Must Be Atleast 3 Characters",
+                max: "Category Name Must Not Exceed 100 Characters",
+              },
+            })}
             placeholder={name}
+            value={formData.name}
           />
         </div>
         <button

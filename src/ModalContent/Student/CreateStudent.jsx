@@ -144,7 +144,10 @@ function CreateStudent({ handleClose }) {
         <TextInput
           onChange={(value) => handleInputChange("email", value)}
           onValidationChange={(value) => handleValid("email", value)}
-          validationSchema={emailValidationSchema}
+          validationSchema={emailValidationSchema({
+              required:true
+          })}
+          value={formData.email}
           placeholder={"e.g example@gmail.com"}
         />
       </div>

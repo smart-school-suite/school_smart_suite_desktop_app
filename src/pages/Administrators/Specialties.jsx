@@ -59,6 +59,7 @@ function Specialties() {
           <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
             <ModalButton
               action={{ modalContent: CreateSpecialty }}
+              size={"lg"}
               classname={
                 "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
               }
@@ -98,7 +99,6 @@ export function DropdownComponent(props) {
     setShowModal(true);
   };
 
-  //update, details, delete, deactivate, activate
   return (
     <>
       <ActionButtonDropdown
@@ -111,7 +111,7 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateSpecialty, "md")}
+          onClick={() => handleShowModal(UpdateSpecialty, "lg")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">

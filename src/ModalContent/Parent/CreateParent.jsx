@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateParent } from "../../hooks/parent/useCreateParent";
 import  { TextInput, PhoneNumberInput } from "../../components/FormComponents/InputComponents";
-import { addressValidationSchema, emailValidationSchema, fullNameSchema, occupationValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import { addressValidationSchema, emailValidationSchema, nameSchema, occupationValidationSchema, phoneValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { guardianTypes, languages } from "../../data/data";
 function CreateParent({ handleClose }) {
@@ -61,8 +61,18 @@ function CreateParent({ handleClose }) {
            <TextInput 
              onChange={(value) => handleInputChange('name', value)}
              onValidationChange={(value) => handleValidation('name', value)}
-             validationSchema={fullNameSchema}
+             validationSchema={nameSchema({
+                min:3,
+                max:150,
+                required:"Guardian Name Is Required",
+                message:{
+                  required:"Guardian Name Required",
+                  min:"Guardian Name Should Be Atleast 3 Characters",
+                  max:"Guardian Name Should Not Exceed 150 Characters"
+                }
+             })}
              placeholder={"Enter Guardian Full Names"}
+             value={formData.name}
            />
         </div>
         <div>
@@ -70,17 +80,21 @@ function CreateParent({ handleClose }) {
           <TextInput 
             onChange={(value) => handleInputChange('email', value)}
             onValidationChange={(value) => handleValidation('email', value)}
-            validationSchema={emailValidationSchema}
+            validationSchema={emailValidationSchema({
+               required:true
+            })}
             placeholder={"example@gmail.com"}
             type="email"
+            value={formData.email}
           />
         </div>
         <div>
-            <label htmlFor="phone" className="font-size-sm">Phone Number</label>
+          <label htmlFor="phone" className="font-size-sm">Phone Number</label>
           <PhoneNumberInput 
             onChange={(value) => handleInputChange('phone_one', value)}
             value={formData.phone_one}
             onValidationChange={(value) => handleValidation('phone_one', value)}
+            validationSchema={phoneValidationSchema}
           />
         </div>
         <div>

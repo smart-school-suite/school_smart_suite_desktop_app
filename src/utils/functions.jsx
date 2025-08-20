@@ -664,22 +664,30 @@ export function objectHasEmpty(obj, strict = false) {
 
 export function objectHasErrors(obj) {
   return Object.values(obj).some(value => {
-    if (value == null) return false; // null/undefined = no error
+    if (value == null) return false; 
 
-    // String: non-empty (after trim) = error
     if (typeof value === "string") return value.trim().length > 0;
 
-    // Array: non-empty array = error
     if (Array.isArray(value)) return value.length > 0;
 
-    // Object: non-empty object = error
     if (typeof value === "object") return Object.keys(value).length > 0;
 
-    // Numbers, booleans, bigint: any truthy value = error
     return Boolean(value);
   });
 }
 
 export function allFieldsValid(obj) {
   return Object.values(obj).every(value => value === true);
+}
+
+export function optionalValidateObject(data) {
+  const hasFalseValue = Object.values(data).some(value => value === false);
+  if (hasFalseValue) {
+    return false;
+  }
+  return true;
+}
+
+export function hasNonEmptyValue(data) {
+  return Object.values(data).some(value => value !== null && value !== '' && typeof value !== 'undefined');
 }

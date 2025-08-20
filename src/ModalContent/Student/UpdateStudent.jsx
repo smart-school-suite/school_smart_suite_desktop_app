@@ -130,6 +130,7 @@ function UpdateStudent({ handleClose, rowData }) {
             },
           })}
           placeholder={name}
+          type="first_name"
         />
       </div>
       <div>
@@ -137,8 +138,12 @@ function UpdateStudent({ handleClose, rowData }) {
         <TextInput
           onChange={(value) => handleInputChange("email", value)}
           onValidationChange={(value) => handleValid("email", value)}
-          validationSchema={emailValidationSchema}
+          validationSchema={emailValidationSchema({
+             required:false
+          })}
           placeholder={email}
+          value={formData.email}
+          type="email"
         />
       </div>
       <div>

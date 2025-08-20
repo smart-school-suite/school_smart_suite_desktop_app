@@ -28,12 +28,6 @@ function SpecialtyDetails({  handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <div className="my-2">
-          <p className="font-size-sm gainsboro-color">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla
-            molestias repellendus facere voluptate?
-          </p>
-        </div>
         <div className="d-flex align-items-center justify-content-between my-1 w-100">
           <div
             className=" py-2 d-flex flex-column"

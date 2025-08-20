@@ -2,108 +2,145 @@ import { useState } from "react";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
 import { useUpdateExpense } from "../../hooks/schoolExpenses/useUpdateSchoolExpense";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetExpensesCategories } from "../../hooks/expenseCategory/useGetExpensesCategories";
+import {
+  DateInput,
+  InputGroup,
+  TextAreaInput,
+} from "../../components/FormComponents/InputComponents";
+import {
+  dateValidationSchema,
+  numberSchema,
+  textareaSchema,
+} from "../../ComponentConfig/YupValidationSchema";
+import { useSelector } from "react-redux";
 function UpdateExpense({ handleClose, rowData }) {
-    const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     date: "",
     amount: "",
     expenses_category_id: "",
     description: "",
   });
-  const expenseId = rowData.id;
-  const { mutate:updateExpense, isPending } = useUpdateExpense(handleClose);
-  const { data:expenseCategory, isFetching } = useGetExpensesCategories();
-    const handleExpensesCategorySelect = (selectedValues) => {
-    setFormData((prevalue) => ({
-      ...prevalue,
-      expenses_category_id: selectedValues.id,
-    }));
+  const [isValid, setIsValid] = useState({
+    date: "",
+    amount: "",
+    description: "",
+  });
+  const [errors, setErrors] = useState({
+    expenses_category_id: "",
+  });
+  const currencyState = useSelector((state) => state.auth.user);
+  const userCurrencySymbol =
+    currencyState?.schoolDetails?.school?.country?.currency || "";
+  const { id: expenseId, date, amount, description } = rowData;
+  const { mutate: updateExpense, isPending } = useUpdateExpense(handleClose);
+  const { data: expenseCategory, isFetching } = useGetExpensesCategories();
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
-
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
   const handleSubmit = () => {
-    updateExpense({ expenseId:expenseId, updateData:formData });
+    updateExpense({ expenseId: expenseId, updateData: formData });
   };
   return (
     <>
-          <div className="card w-100 border-none">
-            <div className="block">
-              <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-                <h5 className="m-0">Update Expenses</h5>
-                <span
-                  className="m-0"
-                  onClick={() => {
-                    handleClose();
-                  }}
-                >
-                  <Icon icon="charm:cross" width="22" height="22" />
-                </span>
-              </div>
-            </div>
-            <div className="my-1">
-              <span>Date</span>
-              <input
-                type="date"
-                className="form-control"
-                value={formData.date}
-                name="date"
-                onChange={(e) => handleInputChange("date", e.target.value)}
-              />
-            </div>
-            <div className="my-1">
-              <span>Amount</span>
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Enter Amount"
-                name="amount"
-                onChange={(e) => handleInputChange("amount", e.target.value)}
-                step="0.01"
-              />
-            </div>
-            <div className="my-1">
-              <span>Expenses Category</span>
-              {isFetching ? (
-                <select name="" className="form-select">
-                  <option value="">loading</option>
-                </select>
-              ) : (
-                <CustomDropdown
-                  data={expenseCategory.data}
-                  displayKey={["name"]}
-                  valueKey={["id"]}
-                  filter_array_keys={["id", "name"]}
-                  renameMapping={{ id: "id", name: "name" }}
-                  isLoading={isFetching}
-                  direction="up"
-                  onSelect={handleExpensesCategorySelect}
-                />
-              )}
-            </div>
-            <div className="my-1">
-              <span>Description</span>
-              <textarea
-                name="description"
-                className="form-control"
-                placeholder="Enter Reason for the Expenses"
-                onChange={(e) => handleInputChange("description", e.target.value)}
-              ></textarea>
-            </div>
-          </div>
-          <div className="w-100 mt-2">
-            <button
-              className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"
-              onClick={() => {
-                handleSubmit();
-              }}
-              disabled={isPending}
-            >
-              {isPending ? <SingleSpinner /> : "Create Expense"}
-            </button>
-          </div>
+      <div className="card w-100 border-none">
+        <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+          <span className="m-0">Update Expenses</span>
+          <span
+            className="m-0"
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            <Icon icon="charm:cross" width="22" height="22" />
+          </span>
+        </div>
+        <div>
+          <label htmlFor="Date" className="font-size-sm">
+            Date
+          </label>
+          <DateInput
+            onChange={(value) => handleStateChange("date", value, setFormData)}
+            onValidationChange={(value) => handleStateChange("date", value, setIsValid)}
+            placeholder={date}
+            value={formData.date}
+            validationSchema={dateValidationSchema({
+              required: false,
+            })}
+          />
+        </div>
+        <div>
+          <label htmlFor="amount" className="font-size-sm">
+            Amount
+          </label>
+          <InputGroup
+            onChange={(value) => handleStateChange("amount", value, setFormData)}
+            placeholder={amount}
+            validationSchema={numberSchema({
+              min: 1,
+              max: 1000000,
+              required: false,
+              messages: {
+                min: `Amount must be atleast 1 ${userCurrencySymbol}`,
+                max: `Amount must not exceed 1000000 ${userCurrencySymbol}`,
+              },
+            })}
+            onValidationChange={(value) => handleStateChange("amount", value, setIsValid)}
+            step="0.01"
+            InputGroupText={userCurrencySymbol}
+          />
+        </div>
+        <div>
+          <label htmlFor="category" className="font-size-sm">
+            Expenses Category
+          </label>
+          <CustomDropdown
+            data={expenseCategory?.data || []}
+            displayKey={["name"]}
+            valueKey={["id"]}
+            isLoading={isFetching}
+            direction="up"
+            onSelect={(value) => handleStateChange('expenses_category_id', value, setFormData)}
+            onError={(value) => handleStateChange('expenses_category_id', value, setErrors)}
+            error={errors.expenses_category_id}
+            placeholder="Select Category"
+            errorMessage="Expenses Category Required"
+          />
+        </div>
+        <div>
+          <label htmlFor="description" className="font-size-sm">
+            Description
+          </label>
+          <TextAreaInput
+            onChange={(value) => handleStateChange("description", value, setFormData)}
+            onValidationChange={(value) =>
+              handleStateChange("description", value, setIsValid)
+            }
+            validationSchema={textareaSchema({
+              min: 5,
+              max: 1000,
+              required: false,
+              messages: {
+                max: "Reason Must Be Exceed 1000 Characters Long",
+                min: "Reason Must Be Atleast 5 Characters Long",
+              },
+            })}
+            placeholder={description}
+          />
+        </div>
+      </div>
+      <div className="w-100 mt-2">
+        <button
+          className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"
+          onClick={() => {
+            handleSubmit();
+          }}
+          disabled={isPending}
+        >
+          {isPending ? <SingleSpinner /> : "Update Expense"}
+        </button>
+      </div>
     </>
   );
 }

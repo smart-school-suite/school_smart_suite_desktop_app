@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import { useCreateExpenseCategory } from "../../hooks/expenseCategory/useCreateExpenseCategory";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { TextInput } from "../../components/FormComponents/InputComponents";
-import { categoryNameSchema } from "../../ComponentConfig/YupValidationSchema";
+import {  nameSchema } from "../../ComponentConfig/YupValidationSchema";
 function CreateCategory({ handleClose }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -11,11 +11,8 @@ function CreateCategory({ handleClose }) {
    const [isValid, setIsValid] = useState({
     name: "",
   });
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleValidField = (field, value) => {
-    setIsValid((prev) => ({...prev, [field]:value }))
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({...prev, [field]:value }))
   }
   const { mutate: createCategory, isPending } = useCreateExpenseCategory(handleClose);
   const handleCreateCategory = () => {
@@ -41,9 +38,19 @@ function CreateCategory({ handleClose }) {
           <label htmlFor="categoryName" className="font-size-sm">Category Name</label>
           <TextInput 
             placeholder={"E.g Utility Bills, Maintainance Bills"}
-            validationSchema={categoryNameSchema(3, 100)}
-            onChange={(value) => handleInputChange('name', value)}
-            onValidationChange={(value) => handleValidField('name', value)}
+            validationSchema={nameSchema({
+               min:3,
+               max:100,
+               required:true,
+               messages:{
+                 required:"Category Name Required",
+                 min:"Category Name Must Be Atleast 3 Characters",
+                 max:"Category Name Must Not Exceed 100 Characters"
+               }
+            })}
+            onChange={(value) => handleStateChange('name', value, setFormData)}
+            onValidationChange={(value) => handleStateChange('name', value, setIsValid)}
+            value={formData.name}
           />
         </div>
         <button

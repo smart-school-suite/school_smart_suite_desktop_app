@@ -3,15 +3,10 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useCreateSchoolAdmin } from "../../hooks/schoolAdmin/useCreateSchoolAdmin";
 import { TextInput } from "../../components/FormComponents/InputComponents";
-import {
-  emailValidationSchema,
-  firstNameSchema,
-  fullNameSchema,
-  lastNameSchema,
-} from "../../ComponentConfig/YupValidationSchema";
+import { emailValidationSchema, nameSchema } from "../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid, objectHasEmpty } from "../../utils/functions";
 function CreateSchoolAdmin({ handleClose }) {
-  const { mutate: createSchoolAdminMutation, isPending } =
+  const { mutate: createAdmin, isPending } =
     useCreateSchoolAdmin(handleClose);
   const [formData, setFormData] = useState({
     email: "",
@@ -25,15 +20,11 @@ function CreateSchoolAdmin({ handleClose }) {
     last_name: "",
     first_name: "",
   });
-  
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleValidChange = (field, value) => {
-    setFieldValid((prev) => ({ ...prev, [field]: value }));
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleCreateSchoolAdmin = async () => {
-    createSchoolAdminMutation(formData);
+    createAdmin(formData);
   };
   return (
     <>
@@ -55,11 +46,21 @@ function CreateSchoolAdmin({ handleClose }) {
           </label>
           <TextInput
             onChange={(value) => {
-              handleInputChange("first_name", value);
+              handleStateChange("first_name", value, setFormData);
             }}
             placeholder={"Enter First Name"}
-            validationSchema={firstNameSchema}
-            onValidationChange={(value) => handleValidChange("first_name", value)}
+            validationSchema={nameSchema({
+               min:3,
+               max:50,
+               required:true,
+                messages:{
+                  required:"First Name Required",
+                  min:"First Name Must Be Atleast 3 characters Long",
+                  max:"First Name Must Not Exceed 50 Characters"
+                }
+            })}
+            onValidationChange={(value) => handleStateChange("first_name", value, setFieldValid)}
+            value={formData.first_name}
           />
         </div>
         <div>
@@ -67,12 +68,22 @@ function CreateSchoolAdmin({ handleClose }) {
             Last Name
           </label>
           <TextInput
-            onChange={(value) => handleInputChange("last_name", value)}
+            onChange={(value) => handleStateChange("last_name", value, setFormData)}
             placeholder={"Enter Last Name"}
             onValidationChange={(value) =>
-              handleValidChange("last_name", value)
+             handleStateChange("last_name", value, setFieldValid)
             }
-            validationSchema={lastNameSchema}
+            validationSchema={nameSchema({
+              min: 3,
+              max: 50,
+              required: true,
+              messages: {
+                required: "Last Name Required",
+                min: "Last Name Must Be Atleast 3 Characters Long",
+                max: "Last Name Must Not Exceed 50 Characters",
+              },
+            })}
+            value={formData.last_name}
           />
         </div>
         <div>
@@ -80,22 +91,35 @@ function CreateSchoolAdmin({ handleClose }) {
             Full Names
           </label>
           <TextInput
-            onChange={(value) => handleInputChange("name", value)}
+            onChange={(value) => handleStateChange("name", value, setFormData)}
             placeholder={"Enter Full Names"}
-            onValidationChange={(value) => handleValidChange("name", value)}
-            validationSchema={fullNameSchema}
+            onValidationChange={(value) => handleStateChange("name", value, setFieldValid)}
+            validationSchema={nameSchema({
+              min: 3,
+              max: 150,
+              required: true,
+              messages: {
+                required: "Full Name Required",
+                min: "Full Names Must Be Atleast 3 Characters Long",
+                max: "Full Names Must Not Exceed 150 Characters",
+              },
+            })}
+            value={formData.name}
           />
         </div>
         <div>
-          <label htmlFor="fullNames" className="font-size-sm">
+          <label htmlFor="email" className="font-size-sm">
             Email
           </label>
           <TextInput
-            onChange={(value) => handleInputChange("email", value)}
+            onChange={(value) => handleStateChange("email", value, setFormData)}
             placeholder={"example@gmail.com"}
-            onValidationChange={(value) => handleValidChange("email", value)}
+            onValidationChange={(value) => handleStateChange("email", value, setFieldValid)}
             type="email"
-            validationSchema={emailValidationSchema}
+            validationSchema={emailValidationSchema({
+               required:true
+            })}
+            value={formData.email}
           />
         </div>
         <div className="mt-2">

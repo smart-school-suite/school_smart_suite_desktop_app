@@ -59,7 +59,10 @@ function UpdateSemester({ handleClose, rowData }) {
         <DateRangeInput 
           onEndDateChange={(value) => handleInputChange('end_date', value)}
           onStartDateChange={(value) => handleInputChange('start_date', value)}
-          validationSchema={dateRangeValidationSchema}
+          validationSchema={dateRangeValidationSchema({
+             optional:true,
+             futureOnly:true
+          })}
           placeholderEnd={end_date}
           placeholderStart={start_date}
           startValue={formData.start_date}

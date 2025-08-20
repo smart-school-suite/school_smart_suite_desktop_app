@@ -60,9 +60,13 @@ function CreateSemester({ handleClose }) {
         <div className="w-100 d-flex flex-row gap-2"></div>
         <div>
           <DateRangeInput
-            validationSchema={dateRangeValidationSchema}
+            validationSchema={dateRangeValidationSchema({
+               futureOnly:true
+            })}
             onEndDateChange={(value) => handleInputChange('end_date', value)}
             onStartDateChange={(value) => handleInputChange('start_date', value)}
+            startValue={formData.start_date}
+          endValue={formData.end_date}
           />
         </div>
         <div>
@@ -73,6 +77,7 @@ function CreateSemester({ handleClose }) {
             onSelect={(value) => handleInputChange("school_year", value)}
             onError={(msg) => handleFieldError("school_year", msg)}
             error={errors.school_year}
+            placeholder={formData.year}
           />
         </div>
         <div>
