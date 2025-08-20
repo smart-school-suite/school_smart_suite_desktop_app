@@ -7,6 +7,9 @@ import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useUpdateCourse } from "../../hooks/course/useUpdateCourse";
 import { courseCodeSchema, nameSchema, numberSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
+import { optionalValidateObject, hasNonEmptyValue } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateCourse({ handleClose, rowData }) {
   const { id: courseId, course_code, course_title, credit, description } = rowData;
   const [formData, setFormData] = useState({
@@ -21,8 +24,6 @@ function UpdateCourse({ handleClose, rowData }) {
     course_code: "",
     course_title: "",
     credit: "",
-    specialty_id: "",
-    semester_id: "",
     description: "",
   });
   const [errors, setErrors] = useState({
@@ -37,20 +38,28 @@ function UpdateCourse({ handleClose, rowData }) {
     useGetSpecialties();
   const { data: semesters, isLoading: isSemesterLoading } = useGetSemester();
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
-  const handleValidChange = (field, value) => {
-    setIsValid((prev) => ({ ...prev, [field]: value }));
-  };
-     const handleFieldError = (field, message) => {
-    setErrors((prev) => ({
-      ...prev,
-      [field]: message
-    }));
-  };
-  cons
   const handleSubmit = async () => {
+    if(optionalValidateObject(isValid) == false){
+      toast.custom(
+        <ToastWarning 
+           title={"Invalid Fields"}
+           description={"Please Ensure All Fields Are Valid Before Submitting"}
+        />
+      )
+      return;
+    }
+    if(hasNonEmptyValue(formData) == false){
+      toast.custom(
+        <ToastWarning 
+          title={"Nothing To Update"}
+          description={"Please Ensure Atleast One Field Is Updated Before Submitting"}
+        />
+      )
+      return;
+    }
     updateCourse({ courseId, updateData: formData });
   };
   return (
@@ -74,9 +83,9 @@ function UpdateCourse({ handleClose, rowData }) {
             </label>
             <TextInput
               placeholder={course_title}
-              onChange={(value) => handleInputChange("course_title", value)}
+              onChange={(value) => handleStateChange("course_title", value, setFormData)}
               onValidationChange={(value) =>
-                handleValidChange("course_title", value)
+                handleStateChange("course_title", value, setIsValid)
               }
               validationSchema={nameSchema({
                   min:3,
@@ -89,15 +98,16 @@ function UpdateCourse({ handleClose, rowData }) {
               })}
             />
           </div>
-          <div>
+          <div className="d-flex flex-row align-items-center gap-2">
+            <div className="w-50">
             <label htmlFor="courseCode" className="font-size-sm">
               Course Code
             </label>
             <TextInput
               placeholder={course_code}
-              onChange={(value) => handleInputChange("course_code", value)}
+              onChange={(value) => handleStateChange("course_code", value, setFormData)}
               onValidationChange={(value) =>
-                handleValidChange("course_code", value)
+                handleStateChange("course_code", value, setIsValid)
               }
               validationSchema={courseCodeSchema({
                   required:false,
@@ -110,14 +120,14 @@ function UpdateCourse({ handleClose, rowData }) {
               })}
             />
           </div>
-          <div>
+          <div className="w-50">
             <label htmlFor="courseCredit" className="font-size-sm">
               Course Credit
             </label>
             <NumberInput
               placeholder={credit}
-              onChange={(value) => handleInputChange("credit", value)}
-              onValidationChange={(value) => handleValidChange("credit", value)}
+              onChange={(value) => handleStateChange("credit", value, setFormData)}
+              onValidationChange={(value) => handleStateChange("credit", value, setIsValid)}
               validationSchema={numberSchema({
                   min:1,
                   max:10,
@@ -130,6 +140,7 @@ function UpdateCourse({ handleClose, rowData }) {
               })}
             />
           </div>
+          </div>
           <div>
             <label htmlFor="semester" className="font-size-sm">Semester</label>
               <CustomDropdown
@@ -140,9 +151,9 @@ function UpdateCourse({ handleClose, rowData }) {
                 renameMapping={{ id: "id", name: "name" }}
                 isLoading={isSemesterLoading}
                 direction="up"
-                onSelect={(value) => handleInputChange('semester_id', value.id)}
+                onSelect={(value) => handleStateChange('semester_id', value.id, setFormData)}
                 error={errors.semester_id}
-                onError={(value) => handleFieldError('semester_id', value)}
+                onError={(value) => handleStateChange('semester_id', value, setErrors)}
                 placeholder="Select Semester"
               />
           </div>
@@ -154,16 +165,16 @@ function UpdateCourse({ handleClose, rowData }) {
                 valueKey={["id"]}
                 isLoading={isSpecailtyLoading}
                 direction="up"
-                onSelect={(value) => handleInputChange('specialty_id', value.id)}
+                onSelect={(value) => handleStateChange('specialty_id', value.id, setFormData)}
                 error={errors.specialty_id}
-                onError={(value) => handleFieldError('specialty_id', value)}
+                onError={(value) => handleStateChange('specialty_id', value, setErrors)}
                 placeholder="Select Specailty"
               />
           </div>
           <div>
          <label htmlFor="courseDescription" className="font-size-sm">Course Description</label>
          <TextAreaInput 
-           onChange={(value) => handleInputChange('description', value)}
+           onChange={(value) => handleStateChange('description', value, setFormData)}
            validationSchema={textareaSchema({
                min:10,
                max:1000,
@@ -173,7 +184,7 @@ function UpdateCourse({ handleClose, rowData }) {
                  max:"Description Must Not Exceed 1000 Characters"
                }
            })}
-           onValidationChange={(value) => handleValidChange('description', value)}
+           onValidationChange={(value) => handleStateChange('description', value, setIsValid)}
            placeholder={description}
          />
       </div>

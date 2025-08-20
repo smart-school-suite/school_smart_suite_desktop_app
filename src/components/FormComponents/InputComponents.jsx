@@ -394,7 +394,10 @@ export const NumberInput = forwardRef(function NumberInput(
 
   // ✅ Expose manual check to parent
   useImperativeHandle(ref, () => ({
-    triggerValidation: () => validateInput(inputValue),
+    triggerValidation: () => {
+        setIsInputTouched(true)
+        validateInput(inputValue)
+    },
     resetField: () => {
       setInputValue("");
       setInputError("");
