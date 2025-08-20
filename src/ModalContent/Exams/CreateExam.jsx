@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { DateRangeInput, NumberInput} from "../../components/FormComponents/InputComponents";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
@@ -8,9 +8,17 @@ import { Icon } from "@iconify/react";
 import { useGetExamTypes } from "../ExamType/useGetExamType";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
-import { dateRangeValidationSchema, numberSchema, weightedMarkValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import { dateRangeValidationSchema, numberSchema } from "../../ComponentConfig/YupValidationSchema";
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 
 function CreateExam({ handleClose }) {
+    const dateRangeRef = useRef();
+    const exanTypeRef = useRef();
+    const specialtyRef = useRef();
+    const weightedMarkRef = useRef();
+    const studentBatchRef = useRef();
     const { data: examType, isLoading: isExamTypeLoading } =
     useGetExamTypes();
   const { data: specialty, isLoading: isSpecailtyLoading } =
@@ -41,19 +49,45 @@ function CreateExam({ handleClose }) {
     specialty_id: "",
     exam_type_id: "",
   })
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-   const handleValidation = (field, value) => {
-    setIsInvalid((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleFieldError = (field, message) => {
-    setErrors((prev) => ({
-      ...prev,
-      [field]: message
-    }));
+  const handlePrevalidation = async () => {
+    const startDate = await dateRangeRef.current.preValidateStart();
+    const endDate = await dateRangeRef.current.preValidateEnd();
+    const examType = await exanTypeRef.current.triggerValidation();
+    const weightedMark = await weightedMarkRef.current.triggerValidation();
+    const specialty = await specialtyRef.current.triggerValidation();
+    const studentBatch = await studentBatchRef.current.triggerValidation();
+    return {
+      startDate,
+      endDate,
+      examType,
+      weightedMark,
+      specialty,
+      studentBatch
+    };
+  }
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = () => {
+    const prevalidation = handlePrevalidation();
+    if(!allFieldsValid(prevalidation)){
+        toast.custom(
+           <ToastWarning 
+              title={"Invalid Fields"}
+              description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
+           />
+        )
+        return
+    }
+    if(!allFieldsValid(isInvalid)){
+        toast.custom(
+           <ToastWarning 
+              title={"Invalid Fields"}
+              description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
+           />
+        )
+        return
+    }
     createExam(formData) 
   };
   return (
@@ -74,27 +108,36 @@ function CreateExam({ handleClose }) {
       <div>
       <div>
         <DateRangeInput 
-         validationSchema={dateRangeValidationSchema}
-         onStartDateChange={(value) => handleInputChange('start_date', value)}
-         onEndDateChange={(value) => handleInputChange('end_date', value)}
+         validationSchema={dateRangeValidationSchema({
+               futureOnly:true
+            })}
+         onStartDateChange={(value) => handleStateChange('start_date', value, setFormData)}
+         onEndDateChange={(value) => handleInputChange('end_date', value, setFormData)}
+         onStartDateValidationChange = {(value) => handleStateChange('start_date', value, setIsInvalid)}
+         onEndDateValidationChange = {(value) => handleStateChange('end_date', value, setIsInvalid)}
+         ref={dateRangeRef}
+         startValue={formData.start_date}
+         endValue={formData.end_date}
         />
       </div>
       <div>
         <label htmlFor="weightedMark" className="font-size-sm">Exam Score</label>
         <NumberInput 
-         onChange={(value) => handleInputChange('weighted_mark', value)}
+         onChange={(value) => handleStateChange('weighted_mark', value, setFormData)}
          step="0.01"
-         onValidationChange={(value) => handleValidation('weighted_mark', value)}
+         onValidationChange={(value) => handleStateChange('weighted_mark', value, setIsInvalid)}
          validationSchema={numberSchema({
             min:1,
             max:500,
             required:true,
+            integerOnly:false,
             messages:{
-               min:"Weighted Mark Must Be Atleast ",
-               max:"Weighted Mark Must Not Exceed 1000"
+               min:"Exam Mark Must Be Atleast ",
+               max:"Exam Mark Must Not Exceed 1000"
             }
          })}
          placeholder={"e.g 100"}
+         ref={weightedMarkRef}
         />
       </div>
       <div>
@@ -112,12 +155,13 @@ function CreateExam({ handleClose }) {
             displayKey={["exam_name"]}
             valueKey={["id"]}
             direction="up"
-            onSelect={(value) => handleInputChange('exam_type_id', value.id)}
+            onSelect={(value) => handleStateChange('exam_type_id', value.id, setFormData)}
             placeholder="Select Exam Type"
             error={errors.exam_type_id}
             isLoading={isExamTypeLoading}
             errorMessage="Exam Type Required"
-            onError={(msg) => handleFieldError("exam_type_id", msg)}
+            onError={(msg) => handleStateChange("exam_type_id", msg, setErrors)}
+            ref={exanTypeRef}
           />
       </div>
       <div>
@@ -128,11 +172,12 @@ function CreateExam({ handleClose }) {
             valueKey={["id"]}
             direction="up"
             isLoading={isSpecailtyLoading}
-            onSelect={(value) => handleInputChange('specialty_id', value.id)}
+            onSelect={(value) => handleStateChange('specialty_id', value.id, setFormData)}
             placeholder="Select Specialty"
             error={errors.specialty_id}
             errorMessage="Specialty Required"
-            onError={(msg) => handleFieldError('specialty_id', msg)}
+            onError={(msg) => handleStateChange('specialty_id', msg, setErrors)}
+            ref={specialtyRef}
           />
       </div>
       <div className="mb-3">
@@ -143,11 +188,12 @@ function CreateExam({ handleClose }) {
             valueKey={["id"]}
             direction="up"
             isLoading={isStudentBatchLoading}
-            onSelect={(value) => handleInputChange('student_batch_id', value.id)}
+            onSelect={(value) => handleStateChange('student_batch_id', value.id, setFormData)}
             placeholder="Select Student Batch"
             error={errors.student_batch_id}
             errorMessage="Student Batches Required"
-            onError={(msg) => handleFieldError('student_batch_id', msg)}
+            onError={(msg) => handleStateChange('student_batch_id', msg, setErrors)}
+            ref={studentBatchRef}
           />
       </div>
       </div>

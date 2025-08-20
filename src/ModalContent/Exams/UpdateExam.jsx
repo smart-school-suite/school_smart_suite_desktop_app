@@ -8,6 +8,9 @@ import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useUpdateExam } from "../../hooks/exam/useUpdateExam";
 import { DateRangeInput, NumberInput } from "../../components/FormComponents/InputComponents";
 import { dateRangeValidationSchema, numberSchema } from "../../ComponentConfig/YupValidationSchema";
+import { hasNonEmptyValue, optionalValidateObject } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateExam({ handleClose, rowData }) {
     const {id:examId, start_date, end_date, weighted_mark, school_year } = rowData;
     const { mutate:updateExam, isPending } = useUpdateExam(handleClose)
@@ -27,33 +30,38 @@ function UpdateExam({ handleClose, rowData }) {
   })
     const [isInvalid, setIsInvalid] = useState({
      start_date: "",
-    end_date: "",
-    exam_type_id: "",
+      end_date: "",
     weighted_mark: "",
-    specialty_id: "",
-    school_year: "",
-    student_batch_id:""
   });
   
     const { data: examType, isLoading: isExamTypeLoading } =
       useGetExamTypes();
     const { data: specialty, isLoading: isSpecailtyLoading } =
       useGetSpecialties();
-    const handleInputChange = (field, value) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
+    const handleStateChange = (field, value, stateFn) => {
+      stateFn((prev) => ({ ...prev, [field]: value }));
     };
-      const handleValidation = (field, value) => {
-    setIsInvalid((prev) => ({ ...prev, [field]: value }));
-  };
-    const handleFieldError = (field, message) => {
-    setErrors((prev) => ({
-      ...prev,
-      [field]: message
-    }));
-  };
     const handleSubmit = () => {
+      if(optionalValidateObject(isInvalid) == false){
+          toast.custom(
+            <ToastWarning 
+               title={"Invalid Fields"}
+               description={"Please Ensure All Fields Are Valid Before Submitting"}
+            />
+          )
+          return;
+      }
+      if(hasNonEmptyValue(formData) == false){
+          toast.custom(
+            <ToastWarning 
+               title={"Nothing To Update"}
+               description={"Please Ensure Atleast One Field Is Updated Before Submitting"}
+            />
+          )
+          return;
+      }
       updateExam({examId:examId, updateData:formData})
-      
+
     };
   return (
     <>
@@ -75,27 +83,40 @@ function UpdateExam({ handleClose, rowData }) {
       <div>
       <div>
         <DateRangeInput 
+          validationSchema={dateRangeValidationSchema({
+               futureOnly:true,
+               optional:true,
+            })}
           onStartDateChange={(value) => handleInputChange('start_date', value)}
           onEndDateChange={(value) => handleInputChange('end_date', value)}
           placeholderEnd={start_date}
           placeholderStart={end_date}
-          validationSchema={dateRangeValidationSchema}
+          onStartDateValidationChange={(value) => handleStateChange('start_date', value, setIsInvalid)}
+          onEndDateValidationChange={(value) => handleStateChange('end_date', value, setIsInvalid)}
         />
       </div>
       <div>
         <label htmlFor="weightedMark" className="font-size-sm">Exam Score</label>
        <NumberInput 
-         onChange={(value) => handleInputChange('weighted_mark', value)}
-         onValidationChange={(value) => handleValidation('weighted_mark', value)}
+         onChange={(value) => handleStateChange('weighted_mark', value, setFormData)}
+         onValidationChange={(value) => handleStateChange('weighted_mark', value, setIsInvalid)}
          placeholder={weighted_mark}
-         validationSchema={numberSchema({ min:1, max:100, optional:true })}
+         validationSchema={numberSchema({ 
+          min:1, max:100,
+          optional:true,
+          integerOnly:false,
+          messages:{
+             min:"Exam Score Must Be Atleast 1",
+             max:"Exam Score Must Not Exceed 100"
+          }
+        })}
        />
       </div>
       <div>
         <label htmlFor="schoolYear" className="font-size-sm">School Year</label>
         <SchoolYearSelector 
-          onSelect={(value) => handleInputChange('school_year', value)}
-          onError={(value) => handleInputChange('school_year', value)}
+          onSelect={(value) => handleStateChange('school_year', value, setFormData)}
+          onError={(value) => handleStateChange('school_year', value, setErrors)}
           error={errors.school_year}
           placeholder={school_year}
         />
@@ -108,10 +129,10 @@ function UpdateExam({ handleClose, rowData }) {
             valueKey={["id"]}
             isLoading={isExamTypeLoading}
             direction="up"
-            onSelect={(value) => handleInputChange('exam_type_id', value)}
+            onSelect={(value) => handleStateChange('exam_type_id', value, setFormData)}
             placeholder={"Select Exam Type"}
             errorMessage="Exam Type Required"
-            onError={(value) => handleFieldError('exam_type_id', value)}
+            onError={(value) => handleStateChange('exam_type_id', value, setErrors)}
             error={errors.exam_type_id}
           />
       </div>
@@ -123,9 +144,9 @@ function UpdateExam({ handleClose, rowData }) {
             valueKey={["id"]}
             isLoading={isSpecailtyLoading}
             direction="up"
-            onSelect={(value) => handleInputChange('specialty_id', value)}
+            onSelect={(value) => handleStateChange('specialty_id', value, setFormData)}
             placeholder="Select Specialty"
-            onError={(value) => handleFieldError('specialty_id', value)}
+            onError={(value) => handleStateChange('specialty_id', value, setErrors)}
             errorMessage="Specialty Required"
             error={errors.specialty_id}
           />
