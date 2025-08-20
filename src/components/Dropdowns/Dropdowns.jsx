@@ -16,7 +16,7 @@ const CustomDropdown = forwardRef(
       onError,
       error,
       errorMessage = "Field Required",
-      optional = false, // 👈 new prop
+      optional = false,
     },
     ref
   ) => {
@@ -29,7 +29,6 @@ const CustomDropdown = forwardRef(
     const inputRef = useRef(null);
     const dropdownRef = useRef(null);
 
-    // 🔹 expose a helper method to parent via ref
     useImperativeHandle(ref, () => ({
       triggerValidation: () => {
         if (!optional && !selectedItem && onError) {
@@ -72,7 +71,6 @@ const CustomDropdown = forwardRef(
         if (!el) return;
         if (!el.contains(event.target)) {
           setIsToggled(false);
-          // 🔹 only validate if field is required
           if (!optional && !selectedItem && onError) onError(errorMessage);
         }
       };

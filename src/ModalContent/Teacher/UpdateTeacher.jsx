@@ -43,7 +43,8 @@ function UpdateTeacher({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <div>
+        <div className="d-flex flex-row align-items-center gap-2 w-100">
+          <div className="w-50">
           <label htmlFor="firstName" className="font-size-sm">First Name</label>
            <TextInput 
              placeholder={first_name}
@@ -61,7 +62,7 @@ function UpdateTeacher({ handleClose, rowData }) {
              })}
            />
         </div>
-        <div>
+        <div className="w-50">
           <label htmlFor="lastName" className="font-size-sm">Last Name</label>
           <TextInput 
             placeholder={last_name}
@@ -78,6 +79,7 @@ function UpdateTeacher({ handleClose, rowData }) {
                 }
             })}
           />
+        </div>
         </div>
         <div>
           <label htmlFor="fullname" className="font-size-sm">Full Names</label>

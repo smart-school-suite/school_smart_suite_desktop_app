@@ -50,6 +50,7 @@ function Semester() {
               "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
             }
             action={{ modalContent: CreateSemester }}
+            size={"lg"}
           >
             <Icon icon="icons8:plus" className="font-size-md" />
             <span className="font-size-sm">Create Semester</span>
@@ -104,7 +105,7 @@ function ActionButtonGroup(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateSemester, "md")}
+          onClick={() => handleShowModal(UpdateSemester, "lg")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">

@@ -637,7 +637,8 @@ export const DateRangeInput = forwardRef(
       onChange,
       onStartDateChange,
       onEndDateChange,
-      onValidationChange,
+      onStartDateValidationChange,
+      onEndDateValidationChange,
       validationSchema,
       placeholderStart = "YYYY-MM-DD",
       placeholderEnd = "YYYY-MM-DD",
@@ -648,10 +649,12 @@ export const DateRangeInput = forwardRef(
       start_date: startValue || "",
       end_date: endValue || "",
     });
+
     const [errors, setErrors] = useState({
       start_date: "",
       end_date: "",
     });
+
     const [touched, setTouched] = useState({
       start_date: false,
       end_date: false,
@@ -660,31 +663,38 @@ export const DateRangeInput = forwardRef(
     // 🔹 Field-level validation
     const validateField = async (field, value) => {
       if (!validationSchema) {
-        onValidationChange?.(true);
+        if (field === "start_date") onStartDateValidationChange?.(true);
+        if (field === "end_date") onEndDateValidationChange?.(true);
         return;
       }
+
       try {
         await validationSchema.validate(
           { ...dates, [field]: value },
           { abortEarly: false }
         );
+
         setErrors((prev) => ({ ...prev, [field]: "" }));
-        onValidationChange?.(true);
+
+        if (field === "start_date") onStartDateValidationChange?.(true);
+        if (field === "end_date") onEndDateValidationChange?.(true);
       } catch (err) {
         const fieldError = err.inner.find((e) => e.path === field);
         setErrors((prev) => ({
           ...prev,
           [field]: fieldError ? fieldError.message : "",
         }));
-        onValidationChange?.(false);
+
+        if (field === "start_date") onStartDateValidationChange?.(false);
+        if (field === "end_date") onEndDateValidationChange?.(false);
       }
     };
 
     // 🔹 Handle input changes
     const handleChange = (field) => (e) => {
       const rawValue = e.target.value;
-      setDates((prev) => ({ ...prev, [field]: rawValue }));
 
+      setDates((prev) => ({ ...prev, [field]: rawValue }));
       onChange?.({ ...dates, [field]: rawValue });
 
       if (field === "start_date") onStartDateChange?.(rawValue);
@@ -702,12 +712,14 @@ export const DateRangeInput = forwardRef(
     useImperativeHandle(ref, () => ({
       preValidateStart: () => {
         if (!dates.start_date) {
-         return validateField("start_date", dates.start_date);
+          setTouched((prev) => ({...prev, start_date:true}))
+          return validateField("start_date", dates.start_date);
         }
         return true;
       },
       preValidateEnd: () => {
         if (!dates.end_date) {
+          setTouched((prev) => ({...prev, end_date:true}))
           return validateField("end_date", dates.end_date);
         }
         return true;

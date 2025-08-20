@@ -1,4 +1,3 @@
-import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useUpdateSchoolSemester } from "../../hooks/schoolSemester/useUpdateSchoolSemester";
@@ -10,6 +9,9 @@ import { DateRangeInput } from "../../components/FormComponents/InputComponents"
 import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { hasNonEmptyValue, optionalValidateObject } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateSemester({ handleClose, rowData }) {
   const {id:semesterId, school_year, start_date, end_date} = rowData;
   const { data: specialties, isLoading: isFetchingSpecialties } =
@@ -27,19 +29,38 @@ function UpdateSemester({ handleClose, rowData }) {
     specialty_id: "",
     student_batch_id: "",
   });
+  const [isValid, setIsValid] = useState({
+    start_date: null,
+    end_date: null,
+  })
   const [errors, setErrors] = useState({
     semester_id: "",
     specialty_id: "",
     student_batch_id: "",
     school_year: "",
   });
-    const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-    const handleFieldError = (field, value) => {
-    setErrors((prev) => ({ ...prev, [field]: value }));
+    const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleUpdateSchoolSemester = () => {
+    if(optionalValidateObject(isValid) == false){
+          toast.custom(
+            <ToastWarning 
+               title={"Invalid Fields"}
+               description={"Please Ensure All Fields Are Valid Before Submitting"}
+            />
+          )
+          return;
+        }
+        if(hasNonEmptyValue(formData) == false){
+          toast.custom(
+             <ToastWarning 
+               title={"Nothing To Update"}
+              description={"Please Ensure Atleast One Field Is Updated Before Submitting"}
+             />
+          )
+          return;
+        }
      updateSchoolSemester({schoolSemesterId:semesterId,  updateData:formData})
   };
   return (
@@ -57,8 +78,10 @@ function UpdateSemester({ handleClose, rowData }) {
           </span>
         </div>
         <DateRangeInput 
-          onEndDateChange={(value) => handleInputChange('end_date', value)}
-          onStartDateChange={(value) => handleInputChange('start_date', value)}
+          onEndDateChange={(value) => handleStateChange('end_date', value, setFormData)}
+          onStartDateChange={(value) => handleStateChange('start_date', value, setFormData)}
+          onStartDateValidationChange={(value) => handleStateChange('start_date', value, setIsValid)}
+          onEndDateValidationChange={(value) => handleStateChange('end_date', value, setIsValid)}
           validationSchema={dateRangeValidationSchema({
              optional:true,
              futureOnly:true
@@ -71,8 +94,8 @@ function UpdateSemester({ handleClose, rowData }) {
         <div>
           <label htmlFor="schoolYear" className="font-size-sm">School Year</label>
           <SchoolYearSelector 
-            onSelect={(value) => handleInputChange('school_year', value)}
-            onError={(value) => handleFieldError('school_year', value)}
+            onSelect={(value) => handleStateChange('school_year', value, setFormData)}
+            onError={(value) => handleFieldError('school_year', value, setErrors)}
             error={errors.school_year}
             placeholder={school_year}
           />
@@ -85,10 +108,11 @@ function UpdateSemester({ handleClose, rowData }) {
             valueKey={["id"]}
             direction="up"
             isLoading={isFetchingSemesters}
-            onSelect={(value) => handleInputChange("semester_id", value.id)}
+            onSelect={(value) => handleStateChange("semester_id", value.id, setFormData)}
             error={errors.semester_id}
             errorMessage="Semester Required"
-            onError={(msg) => handleFieldError("semester_id", msg)}
+            onError={(msg) => handleStateChange("semester_id", msg, setErrors)}
+            optional={true}
            />
         </div>
         <div>
@@ -99,10 +123,11 @@ function UpdateSemester({ handleClose, rowData }) {
             valueKey={["id"]}
             direction="up"
             isLoading={isFetchingSpecialties}
-            onSelect={(value) => handleInputChange("specialty_id", value.id)}
+            onSelect={(value) => handleStateChange("specialty_id", value.id, setFormData)}
             error={errors.specialty_id}
             errorMessage="Specialty Required"
-            onError={(msg) => handleFieldError("specialty_id", msg)}
+            onError={(msg) => handleStateChange("specialty_id", msg, setErrors)}
+            optional={true}
           />
         </div>
         <div>
@@ -113,12 +138,13 @@ function UpdateSemester({ handleClose, rowData }) {
             valueKey={["id"]}
             direction="up"
             onSelect={(value) =>
-              handleInputChange("student_batch_id", value.id)
+              handleStateChange("student_batch_id", value.id, setFormData)
             }
             isLoading={isFetchingStudentBatches}
             error={errors.student_batch_id}
             errorMessage="Student Batch Required"
-            onError={(msg) => handleFieldError("student_batch_id", msg)}
+            onError={(msg) => handleStateChange("student_batch_id", msg, setErrors)}
+            optional={true}
           />
         </div>
       </div>

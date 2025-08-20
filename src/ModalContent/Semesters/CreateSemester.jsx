@@ -9,7 +9,15 @@ import { DateRangeInput } from "../../components/FormComponents/InputComponents"
 import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { useRef } from "react";
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function CreateSemester({ handleClose }) {
+  const dateRangeRef = useRef();
+  const semesterRef = useRef();
+  const specialtyRef = useRef();
+  const studentBatchRef = useRef();
   const { data: specialties, isLoading: isFetchingSpecialties } =
     useGetSpecialties();
   const { data: studentBatches, isLoading: isFetchingStudentBatches } =
@@ -31,16 +39,49 @@ function CreateSemester({ handleClose }) {
     student_batch_id: "",
     school_year: "",
   });
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const [isValid, setIsValid] = useState({
+    start_date: "",
+    end_date: "",
+  })
+  const handlePrevalidation = async () => {
+      const startDate = await dateRangeRef.current.preValidateStart();
+      const endDate = await dateRangeRef.current.preValidateEnd();
+      const semester = await semesterRef.current.triggerValidation();
+      const specialty = await specialtyRef.current.triggerValidation();
+      const studentBatch = await studentBatchRef.current.triggerValidation();
+
+      return {
+          startDate,
+          endDate,
+          semester,
+          studentBatch,
+          specialty
+      }
+  }
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
-  const handleFieldError = (field, message) => {
-    setErrors((prev) => ({
-      ...prev,
-      [field]: message,
-    }));
-  };
-  const handleCreateSchoolSemester = () => {
+  const handleCreateSchoolSemester = async () => {
+     const prevalidation = await handlePrevalidation();
+     if(!allFieldsValid(prevalidation)){
+         toast.custom(
+          <ToastWarning 
+            title={"Invalid Fields"}
+            description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
+          />
+         )
+         return
+     }
+     if(!allFieldsValid(isValid)){
+        toast.custom(
+           <ToastWarning 
+            title={"Invalid Fields"}
+            description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
+          />
+        )
+
+        return
+     }
     createSchoolSemester(formData);
   };
   return (
@@ -63,10 +104,13 @@ function CreateSemester({ handleClose }) {
             validationSchema={dateRangeValidationSchema({
                futureOnly:true
             })}
-            onEndDateChange={(value) => handleInputChange('end_date', value)}
-            onStartDateChange={(value) => handleInputChange('start_date', value)}
+            onEndDateChange={(value) => handleStateChange('end_date', value, setFormData)}
+            onStartDateChange={(value) => handleStateChange('start_date', value, setFormData)}
+            onStartDateValidationChange={(value) => handleStateChange('start_date', value, setIsValid)}
+            onEndDateValidationChange={(value) => handleStateChange('end_date', value, setIsValid)}
             startValue={formData.start_date}
-          endValue={formData.end_date}
+            endValue={formData.end_date}
+            ref={dateRangeRef}
           />
         </div>
         <div>
@@ -74,7 +118,7 @@ function CreateSemester({ handleClose }) {
             School Year
           </label>
           <SchoolYearSelector
-            onSelect={(value) => handleInputChange("school_year", value)}
+            onSelect={(value) => handleStateChange("school_year", value, setFormData)}
             onError={(msg) => handleFieldError("school_year", msg)}
             error={errors.school_year}
             placeholder={formData.year}
@@ -90,10 +134,11 @@ function CreateSemester({ handleClose }) {
             valueKey={["id"]}
             direction="up"
             isLoading={isFetchingSemesters}
-            onSelect={(value) => handleInputChange("semester_id", value.id)}
+            onSelect={(value) => handleStateChange("semester_id", value.id, setFormData)}
             error={errors.semester_id}
             errorMessage="Semester Required"
-            onError={(msg) => handleFieldError("semester_id", msg)}
+            onError={(msg) => handleStateChange("semester_id", msg, setErrors)}
+            ref={semesterRef}
           />
         </div>
         <div>
@@ -106,10 +151,11 @@ function CreateSemester({ handleClose }) {
             valueKey={["id"]}
             direction="up"
             isLoading={isFetchingSpecialties}
-            onSelect={(value) => handleInputChange("specialty_id", value.id)}
+            onSelect={(value) => handleStateChange("specialty_id", value.id, setFormData)}
             error={errors.specialty_id}
             errorMessage="Specialty Required"
-            onError={(msg) => handleFieldError("specialty_id", msg)}
+            onError={(msg) => handleStateChange("specialty_id", msg, setErrors)}
+            ref={specialtyRef}
           />
         </div>
         <div>
@@ -122,12 +168,13 @@ function CreateSemester({ handleClose }) {
             valueKey={["id"]}
             direction="up"
             onSelect={(value) =>
-              handleInputChange("student_batch_id", value.id)
+              handleStateChange("student_batch_id", value.id, setFormData)
             }
             isLoading={isFetchingStudentBatches}
             error={errors.student_batch_id}
             errorMessage="Student Batch Required"
-            onError={(msg) => handleFieldError("student_batch_id", msg)}
+            onError={(msg) => handleStateChange("student_batch_id", msg, setErrors)}
+            ref={studentBatchRef}
           />
         </div>
       </div>
