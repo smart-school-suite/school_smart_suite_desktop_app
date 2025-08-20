@@ -10,34 +10,32 @@ function PhoneNumberInputComponent(
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
 
+  // Sync external `value` only when it actually changes
   useEffect(() => {
     setPhoneNumber(value || "");
-    if (isTouched) {
-      validatePhoneNumber(value || "");
-    } else if (!value && optional) {
-      onValidationChange(true);
-    }
-  }, [value, isTouched, optional, validationSchema]);
+  }, [value]);
 
   const validatePhoneNumber = async (phone) => {
-    if (optional && (phone === "" || phone === null || phone === undefined)) {
+    if (optional && !phone) {
       setError("");
-      onValidationChange(true);
-      return;
+      onValidationChange?.(true);
+      return true;
     }
 
     if (!validationSchema) {
-      onValidationChange(true);
-      return;
+      onValidationChange?.(true);
+      return true;
     }
 
     try {
       await validationSchema.validate(phone);
       setError("");
-      onValidationChange(true);
+      onValidationChange?.(true);
+      return true;
     } catch (err) {
       setError(err.message);
-      onValidationChange(false);
+      onValidationChange?.(false);
+      return false;
     }
   };
 
@@ -45,12 +43,10 @@ function PhoneNumberInputComponent(
     triggerValidation: async () => {
       const rawValue = phoneNumber.replace(/\D/g, "");
       if (!rawValue) {
-        setError("Phone number is required");
-        onValidationChange(false);
-        return false;
+         setIsTouched(true);
+         return validatePhoneNumber(rawValue);
       }
-      await validatePhoneNumber(rawValue);
-      return !error;
+      return await validatePhoneNumber(rawValue);
     },
   }));
 
@@ -70,7 +66,7 @@ function PhoneNumberInputComponent(
       .trim();
 
     setPhoneNumber(formattedValue);
-    onChange(rawValue);
+    onChange?.(rawValue);
 
     if (isTouched) {
       validatePhoneNumber(rawValue);
@@ -79,7 +75,6 @@ function PhoneNumberInputComponent(
 
   const handleFocus = () => {
     setIsTouched(true);
-    validatePhoneNumber(phoneNumber.replace(/\D/g, ""));
   };
 
   const handleBlur = () => {
@@ -107,13 +102,13 @@ function PhoneNumberInputComponent(
 
   return (
     <div className="input-container">
-      <div className="input-group z-0 position-relative">
-        <span className="input-group-text is-valid" id="basic-addon1">
+      <div className="input-group position-relative z-0 has-validation">
+        <span className="input-group-text" id="basic-addon1">
           <Icon icon="twemoji:flag-cameroon" width="24" height="24" />
         </span>
         <input
           type="tel"
-          className={`form-control z-0 position-absolute font-size-sm ${
+          className={`form-control font-size-sm p-2 ${
             isTouched && error ? "is-invalid" : ""
           } ${isTouched && !error && phoneNumber ? "is-valid" : ""}`}
           placeholder="6XX-XXX-XXX"
@@ -130,7 +125,9 @@ function PhoneNumberInputComponent(
     </div>
   );
 }
+
 export const PhoneNumberInput = forwardRef(PhoneNumberInputComponent);
+
 
 export const TextInput = forwardRef(
   ({ onChange, onValidationChange, value, placeholder, validationSchema, type = "text" }, ref) => {

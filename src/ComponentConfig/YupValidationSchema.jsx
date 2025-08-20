@@ -31,9 +31,33 @@ const sanitizeInput = (value, removeEmojis = true) => {
 
   return cleaned;
 };
-export const phoneValidationSchema = Yup.string()
-  .matches(/^6\d{8}$/, "Phone number must start with 6 and be 9 digits long.")
-  .required("Phone number is required.");
+export const phoneValidationSchema = (options) => {
+  const {
+    optional = false,
+    prefixes = ['6'],
+    length = 9,
+    errorMessage, 
+  } = options || {};
+
+  const prefixPattern = prefixes.map(p => `(?:${p})`).join('|'); 
+  const finalRegex = new RegExp(`^(${prefixPattern})\\d{${length - prefixes[0].length}}$`);
+
+  const defaultErrorMessage =
+    `Phone number must start with one of ${prefixes.map(p => `'${p}'`).join(', ')} and be ${length} digits long.`;
+
+  let schema = Yup.string().matches(
+    finalRegex,
+    errorMessage || defaultErrorMessage 
+  );
+
+  if (!optional) {
+    schema = schema.required("Phone number is required.");
+  } else {
+    schema = schema.notRequired();
+  }
+
+  return schema;
+};
 
 export const emailValidationSchema = ({
   required = true,

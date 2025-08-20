@@ -62,6 +62,7 @@ function Teachers() {
                 "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
               }
               action={{ modalContent:CreateTeacher }}
+              size={"lg"}
             >
               <Icon icon="icons8:plus" className="font-size-md" />
               <span>Create Teacher</span>
