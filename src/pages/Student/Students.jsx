@@ -11,7 +11,6 @@ import MarkAsDropout from "../../ModalContent/Student/MarkAsDropout";
 import { useGetStudents } from "../../hooks/student/useGetStudent";
 import Table from "../../components/Tables/Tables";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
-import { Icon } from "@iconify/react";
 import React, {useState} from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
@@ -50,6 +49,7 @@ function Students() {
             <ModalButton
               action={{ modalContent: CreateStudent }}
               classname="border-none rounded-3 green-bg font-size-sm text-white px-3 py-2"
+              size={"lg"}
             >
               <span className="font-size-sm">Create Student</span>
             </ModalButton>
@@ -97,7 +97,7 @@ export function DropdownComponent(props) {
       >
        <DropDownMenuItem
            className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
-          onClick={() => handleShowModal(UpdateStudent)}
+          onClick={() => handleShowModal(UpdateStudent, 'lg')}
        >
             <div>
           <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">

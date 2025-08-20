@@ -1,18 +1,31 @@
 import { useState } from "react";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
-import Pageloaderspinner, {
-  SingleSpinner,
-} from "../../components/Spinners/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useUpdateStudent } from "../../hooks/student/useUpdateStudent";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetAllParents } from "../../hooks/parent/useGetParents";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 import { TextInput } from "../../components/FormComponents/InputComponents";
-import { emailValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import {
+  emailValidationSchema,
+  nameSchema,
+} from "../../ComponentConfig/YupValidationSchema";
 import { gender } from "../../data/data";
+import {
+  hasNonEmptyValue,
+  optionalValidateObject,
+} from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateStudent({ handleClose, rowData }) {
-  const {id:studentId, first_name, last_name, name, email }= rowData;
+  const {
+    id: studentId,
+    student_first_name: first_name,
+    student_last_name: last_name,
+    student_name: name,
+    student_email: email,
+  } = rowData;
   const [formData, setFormData] = useState({
     name: "",
     first_name: "",
@@ -39,14 +52,8 @@ function UpdateStudent({ handleClose, rowData }) {
     handleClose,
     studentId
   );
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleFieldError = (field, value) => {
-    setErrors((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleFieldValid = (field, value) => {
-    setIsValid((prev) => ({ ...prev, [field]: value }));
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const { data: specialties, isFetching: isSpecialtiesLoading } =
     useGetSpecialties();
@@ -55,11 +62,28 @@ function UpdateStudent({ handleClose, rowData }) {
     useGetBatches();
   const { data: parents, isFetching: isParentsLoading } = useGetAllParents();
   const handleUpdateStudent = () => {
+    if (optionalValidateObject(isValid) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
+        />
+      );
+      return;
+    }
+    if (hasNonEmptyValue(formData) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Nothing To Update"}
+          description={
+            "Please Ensure Atleast One Field Is Updated Before Submitting"
+          }
+        />
+      );
+      return;
+    }
     updateStudent({ studentId, updateData: formData });
   };
-  if (isStudentDetailsLoading) {
-    return <Pageloaderspinner />;
-  }
   return (
     <>
       <div>
@@ -75,55 +99,68 @@ function UpdateStudent({ handleClose, rowData }) {
           </span>
         </div>
       </div>
-      <div>
-        <label htmlFor="firstName" className="font-size-sm">
-          First Name
-        </label>
-        <TextInput
-          onChange={(value) => handleInputChange("first_name", value)}
-          value={formData.name}
-          validationSchema={nameSchema({
-            min: 3,
-            max: 50,
-            required: false,
-            message: {
-              min: "First Name Must Be Atleast 3 Characters Long",
-              max: "First Name Must Not Exceed 50 Characters",
-            },
-          })}
-          placeholder={first_name}
-          onValidationChange={(value) => handleFieldValid('first_name', value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="lastName" className="font-size-sm">
-          Last Name
-        </label>
-        <TextInput
-          onChange={(value) => handleInputChange("last_name", value)}
-          onValidationChange={(value) => handleValid("last_name", value)}
-          validationSchema={nameSchema({
-            min: 3,
-            max: 50,
-            required: false,
-            messages: {
-              min: "Last Name Must Be Atleast 3 Characters Long",
-              max: "Last Name Must Not Exceed 50 Characters",
-            },
-          })}
-          placeholder={last_name}
-        />
+      <div className="d-flex flex-row align-items-center gap-2">
+        <div className="w-50">
+          <label htmlFor="firstName" className="font-size-sm">
+            First Name
+          </label>
+          <TextInput
+            onChange={(value) =>
+              handleStateChange("first_name", value, setFormData)
+            }
+            value={formData.name}
+            validationSchema={nameSchema({
+              min: 3,
+              max: 50,
+              required: false,
+              message: {
+                min: "First Name Must Be Atleast 3 Characters Long",
+                max: "First Name Must Not Exceed 50 Characters",
+              },
+            })}
+            placeholder={first_name}
+            onValidationChange={(value) =>
+              handleStateChange("first_name", value, setIsValid)
+            }
+          />
+        </div>
+        <div className="w-50">
+          <label htmlFor="lastName" className="font-size-sm">
+            Last Name
+          </label>
+          <TextInput
+            onChange={(value) =>
+              handleStateChange("last_name", value, setFormData)
+            }
+            onValidationChange={(value) =>
+              handleValid("last_name", value, setIsValid)
+            }
+            validationSchema={nameSchema({
+              min: 3,
+              max: 50,
+              required: false,
+              messages: {
+                min: "Last Name Must Be Atleast 3 Characters Long",
+                max: "Last Name Must Not Exceed 50 Characters",
+              },
+            })}
+            placeholder={last_name}
+          />
+        </div>
       </div>
       <div>
         <label htmlFor="firstName" className="font-size-sm">
           Full Names
         </label>
         <TextInput
-          onChange={(value) => handleInputChange("name", value)}
-          onValidationChange={(value) => handleValid("name", value)}
+          onChange={(value) => handleStateChange("name", value, setFormData)}
+          onValidationChange={(value) =>
+            handleStateChange("name", value, setIsValid)
+          }
           validationSchema={nameSchema({
             min: 3,
             max: 150,
+            required: false,
             messages: {
               min: "Full Names Must Be Atleast 3 Characters Long",
               max: "Full Name Must Not Exceed 150 Characters",
@@ -134,12 +171,16 @@ function UpdateStudent({ handleClose, rowData }) {
         />
       </div>
       <div>
-        <label htmlFor="email" className="font-size-sm">Email</label>
+        <label htmlFor="email" className="font-size-sm">
+          Email
+        </label>
         <TextInput
-          onChange={(value) => handleInputChange("email", value)}
-          onValidationChange={(value) => handleValid("email", value)}
+          onChange={(value) => handleStateChange("email", value, setFormData)}
+          onValidationChange={(value) =>
+            handleStateChange("email", value, setIsValid)
+          }
           validationSchema={emailValidationSchema({
-             required:false
+            required: false,
           })}
           placeholder={email}
           value={formData.email}
@@ -147,63 +188,91 @@ function UpdateStudent({ handleClose, rowData }) {
         />
       </div>
       <div>
-        <label htmlFor="gender" className="font-size-sm">Gender</label>
-        <CustomDropdown 
+        <label htmlFor="gender" className="font-size-sm">
+          Gender
+        </label>
+        <CustomDropdown
           data={gender}
-          displayKey={['name']}
-          valueKey={['name']}
+          displayKey={["name"]}
+          valueKey={["name"]}
           direction="up"
-          onSelect={(value) => handleInputChange('gender', value.name)}
-          onError={(value) => handleFieldError('gender', value)}
+          onSelect={(value) =>
+            handleStateChange("gender", value.name, setFormData)
+          }
+          onError={(value) => handleStateChange("gender", value, setErrors)}
           errorMessage="Gender Required"
           error={errors.gender}
           placeholder="Select Gender"
+          optional={true}
         />
       </div>
-      <div>
-        <label htmlFor="studentBatch" className="font-size-sm">Student Batch</label>
+      <div className="d-flex flex-row align-items-center gap-2">
+        <div className="w-50">
+          <label htmlFor="studentBatch" className="font-size-sm">
+            Student Batch
+          </label>
           <CustomDropdown
-            data={studentBatch.data}
+            data={studentBatch?.data || []}
             displayKey={["name"]}
             valueKey={["id"]}
             isLoading={isStudentBatchLoading}
             direction="up"
-            onSelect={(value) => handleInputChange('student_batch_id', value)}
+            onSelect={(value) =>
+              handleStateChange("student_batch_id", value, setFormData)
+            }
             placeholder="Select Student Batch"
             error={errors.student_batch_id}
-            onError={(value) => handleFieldError('student_batch_id', value)}
+            onError={(value) =>
+              handleStateChange("student_batch_id", value, setErrors)
+            }
             errorMessage="Student Batch Required"
+            optional={true}
           />
-      </div>
-      <div>
-        <label htmlFor="specialty" className="font-size-sm">Specialty</label>
+        </div>
+        <div className="w-50">
+          <label htmlFor="specialty" className="font-size-sm">
+            Specialty
+          </label>
           <CustomDropdown
-            data={specialties.data}
+            data={specialties?.data || []}
             displayKey={["specialty_name", "level_name"]}
             valueKey={["id"]}
             isLoading={isSpecialtiesLoading}
             direction="up"
-            onSelect={(value) => handleInputChange('specialty_id', value)}
-            onError={(value) => handleFieldError('specialty_id', value)}
+            onSelect={(value) =>
+              handleStateChange("specialty_id", value, setFormData)
+            }
+            onError={(value) =>
+              handleStateChange("specialty_id", value, setErrors)
+            }
             error={errors.specialty_id}
             errorMessage="Specialty Required"
             placeholder="Select Specialty"
+            optional={true}
           />
+        </div>
       </div>
       <div>
-        <label htmlFor="guardian" className="font-size-sm">Guardian</label>
-          <CustomDropdown
-            data={parents.data}
-            displayKey={["guardian_name"]}
-            valueKey={["id"]}
-            isLoading={isParentsLoading}
-            direction="up"
-            onSelect={(value) => handleInputChange('guardian_id', value)}
-            onError={(value) => handleFieldError('guardian_id', value)}
-            error={errors.guardian_id}
-            errorMessage="Guardian Required"
-            placeholder="Select Specialty"
-          />
+        <label htmlFor="guardian" className="font-size-sm">
+          Guardian
+        </label>
+        <CustomDropdown
+          data={parents?.data || []}
+          displayKey={["guardian_name"]}
+          valueKey={["id"]}
+          isLoading={isParentsLoading}
+          direction="up"
+          onSelect={(value) =>
+            handleStateChange("guardian_id", value, setFormData)
+          }
+          onError={(value) =>
+            handleStateChange("guardian_id", value, setErrors)
+          }
+          error={errors.guardian_id}
+          errorMessage="Guardian Required"
+          placeholder="Select Specialty"
+          optional={true}
+        />
       </div>
       <div className="mt-3">
         <button

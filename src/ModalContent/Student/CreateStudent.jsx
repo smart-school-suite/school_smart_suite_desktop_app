@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import{
   TextInput
 } from "../../components/FormComponents/InputComponents";
@@ -14,7 +14,18 @@ import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetAllParents } from "../../hooks/parent/useGetParents";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 import { gender } from "../../data/data";
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function CreateStudent({ handleClose }) {
+  const nameRef = useRef();
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
+  const specialtyRef = useRef();
+  const studentBatchRef = useRef();
+  const guardianRef = useRef();
+  const genderRef = useRef();
+  const emailRef = useRef();
   const [formData, setFormData] = useState({
     name: "",
     first_name: "",
@@ -42,24 +53,55 @@ function CreateStudent({ handleClose }) {
     gender: "",
   });
   const { mutate: createStudent, isPending } = useCreateStudent(handleClose);
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleValid = (field, value) => {
-    setIsValid((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleFieldError = (field, message) => {
-    setErrors((prev) => ({
-      ...prev,
-      [field]: message,
-    }));
+  const handlePrevalidation = async () => {
+      const email = emailRef.current.triggerValidation();
+      const firstName = firstNameRef.current.triggerValidation();
+      const lastName = lastNameRef.current.triggerValidation();
+      const fullName = nameRef.current.triggerValidation();
+      const specialty = specialtyRef.current.triggerValidation();
+      const studentBatch = studentBatchRef.current.triggerValidation();
+      const gender = genderRef.current.triggerValidation();
+      const guardian = guardianRef.current.triggerValidation();
+
+      return {
+         email,
+         firstName,
+         lastName,
+         fullName,
+         specialty,
+         studentBatch,
+         gender,
+         guardian
+      }
+  }
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const { data: specialties, isFetching: isSpecialtiesLoading } =
     useGetSpecialties();
   const { data: studentBatch, isFetching: isStudentBatchLoading } =
     useGetBatches();
   const { data: parents, isFetching: isParentsLoading } = useGetAllParents();
-  const handleCreateStudent = () => {
+  const handleCreateStudent = async () => {
+     const prevalidation = await handlePrevalidation();
+     if(!allFieldsValid(prevalidation)){
+        toast.custom(
+          <ToastWarning 
+              title={"Invalid Fields"}
+              description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
+         />  
+        )
+        return;
+     }
+     if(!allFieldsValid(isValid)){
+       toast.custom(
+          <ToastWarning 
+              title={"Invalid Fields"}
+              description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
+         />  
+        )
+        return
+     }
     createStudent(formData);
   };
   return (
@@ -77,13 +119,14 @@ function CreateStudent({ handleClose }) {
           </span>
         </div>
       </div>
-      <div>
+      <div className="d-flex flex-row align-items-center gap-2">
+        <div className="w-50">
         <label htmlFor="firstName" className="font-size-sm">
           First Name
         </label>
         <TextInput
-          onChange={(value) => handleInputChange("first_name", value)}
-          onValidationChange={(value) => handleValid("first_name", value)}
+          onChange={(value) => handleStateChange("first_name", value, setFormData)}
+          onValidationChange={(value) => handleStateChange("first_name", value, setIsValid)}
           value={formData.first_name}
           validationSchema={nameSchema({
              min:3,
@@ -96,15 +139,16 @@ function CreateStudent({ handleClose }) {
              }
           })}
           placeholder={"Enter Student First Name"}
+          ref={firstNameRef}
         />
       </div>
-      <div>
+      <div className="w-50">
         <label htmlFor="lastName" className="font-size-sm">
           Last Name
         </label>
         <TextInput
-          onChange={(value) => handleInputChange("last_name", value)}
-          onValidationChange={(value) => handleValid("last_name", value)}
+          onChange={(value) => handleStateChange("last_name", value, setFormData)}
+          onValidationChange={(value) => handleStateChange("last_name", value, setIsValid)}
           validationSchema={nameSchema({
              min:3,
              max:50,
@@ -116,15 +160,17 @@ function CreateStudent({ handleClose }) {
              }
           })}
           placeholder={"Enter Student Last Name"}
+          ref={lastNameRef}
         />
+      </div>
       </div>
       <div>
         <label htmlFor="fullNames" className="font-size-sm">
           Full Names
         </label>
         <TextInput
-          onChange={(value) => handleInputChange("name", value)}
-          onValidationChange={(value) => handleValid("name", value)}
+          onChange={(value) => handleStateChange("name", value, setFormData)}
+          onValidationChange={(value) => handleStateChange("name", value, setIsValid)}
           validationSchema={nameSchema({
               min:3,
               max:150,
@@ -135,6 +181,7 @@ function CreateStudent({ handleClose }) {
               }
           })}
           placeholder={"Enter Full Names"}
+          ref={nameRef}
         />
       </div>
       <div>
@@ -142,13 +189,14 @@ function CreateStudent({ handleClose }) {
           Email
         </label>
         <TextInput
-          onChange={(value) => handleInputChange("email", value)}
-          onValidationChange={(value) => handleValid("email", value)}
+          onChange={(value) => handleStateChange("email", value, setFormData)}
+          onValidationChange={(value) => handleStateChange("email", value, setIsValid)}
           validationSchema={emailValidationSchema({
               required:true
           })}
           value={formData.email}
           placeholder={"e.g example@gmail.com"}
+          ref={emailRef}
         />
       </div>
       <div>
@@ -158,14 +206,16 @@ function CreateStudent({ handleClose }) {
           displayKey={['name']}
           valueKey={['name']}
           direction="up"
-          onSelect={(value) => handleInputChange('gender', value.name)}
-          onError={(value) => handleFieldError('gender', value)}
+          onSelect={(value) => handleStateChange('gender', value.name, setFormData)}
+          onError={(value) => handleStateChange('gender', value, setErrors)}
           errorMessage="Gender Required"
           error={errors.gender}
           placeholder="Select Gender"
+          ref={genderRef}
         />
       </div>
-      <div>
+     <div className="d-flex flex-row align-items-center gap-2">
+       <div className="w-50">
         <label htmlFor="studentBatch" className="font-size-sm">
           Student Batch
         </label>
@@ -174,15 +224,16 @@ function CreateStudent({ handleClose }) {
           displayKey={["name"]}
           valueKey={["id"]}
           direction="up"
-          onSelect={(value) => handleInputChange("student_batch_id", value.id)}
+          onSelect={(value) => handleStateChange("student_batch_id", value.id, setFormData)}
           isLoading={isStudentBatchLoading}
-          onError={(value) => handleFieldError('student_batch_id', value)}
+          onError={(value) => handleStateChange('student_batch_id', value, setErrors)}
           errorMessage="Student Batch Required"
           error={errors.student_batch_id}
           placeholder="Select Student Batch"
+          ref={studentBatchRef}
         />
       </div>
-      <div>
+      <div className="w-50">
         <label htmlFor="specialty" className="font-size-sm">
           Specialty
         </label>
@@ -191,14 +242,16 @@ function CreateStudent({ handleClose }) {
           displayKey={["specialty_name", "level_name"]}
           valueKey={["id"]}
           direction="up"
-          onSelect={(value) => handleInputChange("specialty_id", value.id)}
+          onSelect={(value) => handleStateChange("specialty_id", value.id, setFormData)}
           placeholder="Select Specialty"
           isLoading={isSpecialtiesLoading}
           error={errors.specialty_id}
-          onError={(value) => handleFieldError('specialty_id', value)}
+          onError={(value) => handleStateChange('specialty_id', value, setErrors)}
           errorMessage="Specialty Required"
+          ref={specialtyRef}
         />
       </div>
+     </div>
       <div className="my-1">
         <label htmlFor="guardian" className="font-size-sm">
           Select Guardian
@@ -208,12 +261,13 @@ function CreateStudent({ handleClose }) {
           displayKey={["guardian_name"]}
           valueKey={["id"]}
           direction="up"
-          onSelect={(value) => handleInputChange("guardian_id", value.id)}
+          onSelect={(value) => handleStateChange("guardian_id", value.id, setFormData)}
           isLoading={isParentsLoading}
           error={errors.guardian_id}
-          onError={(value) => handleFieldError('guardian_id', value)}
+          onError={(value) => handleStateChange('guardian_id', value, setErrors)}
           errorMessage="Guardian Required"
           placeholder="Select Guardian"
+          ref={guardianRef}
         />
       </div>
       <div className="mt-3">
