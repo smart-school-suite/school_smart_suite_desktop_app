@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useCreateExpenseCategory } from "../../hooks/expenseCategory/useCreateExpenseCategory";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import {  nameSchema } from "../../ComponentConfig/YupValidationSchema";
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function CreateCategory({ handleClose }) {
+  const nameRef = useRef();
   const [formData, setFormData] = useState({
     name: "",
   });
@@ -14,8 +18,33 @@ function CreateCategory({ handleClose }) {
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({...prev, [field]:value }))
   }
+  const handlePrevalidation = async () => {
+      const name = await nameRef.current.triggerValidation();
+      return {
+          name
+      }
+  }  
   const { mutate: createCategory, isPending } = useCreateExpenseCategory(handleClose);
   const handleCreateCategory = () => {
+    const prevalidation = handlePrevalidation();
+    if(!allFieldsValid(prevalidation)){
+        toast.custom(
+           <ToastWarning 
+               title={"Invalid Fields"}
+               description={"Please Ensure All Fields Are Valid Before Submitting"}
+           />
+        )
+        return;
+    }
+     if(!allFieldsValid(isValid)){
+        toast.custom(
+           <ToastWarning 
+               title={"Invalid Fields"}
+               description={"Please Ensure All Fields Are Valid Before Submitting"}
+           />
+        )
+        return;
+    }
     createCategory(formData);
   };
   return (
@@ -51,6 +80,7 @@ function CreateCategory({ handleClose }) {
             onChange={(value) => handleStateChange('name', value, setFormData)}
             onValidationChange={(value) => handleStateChange('name', value, setIsValid)}
             value={formData.name}
+            ref={nameRef}
           />
         </div>
         <button

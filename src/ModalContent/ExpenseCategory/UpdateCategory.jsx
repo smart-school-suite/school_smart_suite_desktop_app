@@ -4,6 +4,12 @@ import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
+import {
+  hasNonEmptyValue,
+  optionalValidateObject,
+} from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateCategory({ handleClose, rowData }) {
   const { id: categoryId, name } = rowData;
   const [formData, setFormData] = useState({
@@ -17,6 +23,26 @@ function UpdateCategory({ handleClose, rowData }) {
   }
   const { mutate: updateCategory, isPending } = useUpdateExpenseCategory();
   const handleUpdate = () => {
+    if (optionalValidateObject(isValid) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
+        />
+      );
+      return;
+    }
+    if (hasNonEmptyValue(formData) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Nothing To Update"}
+          description={
+            "Please Ensure Atleast One Field Is Updated Before Submitting"
+          }
+        />
+      );
+      return;
+    }
     updateCategory({ categoryId: categoryId, updateData: formData });
   };
   return (

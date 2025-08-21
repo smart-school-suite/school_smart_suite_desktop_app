@@ -68,7 +68,7 @@ function CreateParent({ handleClose }) {
         toast.custom(
           <ToastWarning 
             title={"Invalid Fields"}
-            description={"Please ensure all fields are valid before creating a teacher."}
+            description={"Please ensure all fields are valid before creating a Guardian."}
           />
         )
         return;
@@ -77,7 +77,7 @@ function CreateParent({ handleClose }) {
         toast.custom(
           <ToastWarning 
             title={"Invalid Fields"}
-            description={"Please ensure all fields are valid before creating a teacher."}
+            description={"Please ensure all fields are valid before creating a Guardian."}
           />
         )
         return;
