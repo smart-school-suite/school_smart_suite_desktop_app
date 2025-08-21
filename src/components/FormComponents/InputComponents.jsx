@@ -539,9 +539,8 @@ function DateInputComponent(
   useImperativeHandle(ref, () => ({
     async triggerValidation() {
       if (!displayValue) {
-        setInputError("This field is required");
-        onValidationChange?.(false);
-        return false;
+        setIsInputTouched(true);
+        return validateInput(displayValue);
       }
       return validateInput(displayValue);
     },

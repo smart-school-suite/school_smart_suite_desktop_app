@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useGetExpensesCategories } from "../../hooks/expenseCategory/useGetExpensesCategories";
 import { useCreateSchoolExpense } from "../../hooks/schoolExpenses/useCreateSchoolExpenses";
@@ -7,7 +7,14 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useSelector } from "react-redux";
 import { DateInput, InputGroup, TextAreaInput } from "../../components/FormComponents/InputComponents";
 import { dateValidationSchema, numberSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function CreateExpense({ handleClose }) {
+  const dateRef = useRef();
+  const amountRef = useRef();
+  const categoryRef = useRef();
+  const descriptionRef = useRef();
   const [formData, setFormData] = useState({
     date: "",
     amount: "",
@@ -22,6 +29,18 @@ function CreateExpense({ handleClose }) {
   const [errors, setErrors] = useState({
        expenses_category_id: "",
   }) 
+  const handlePrevalidation = async () => {
+    const date = await dateRef.current.triggerValidation();
+    const amount = await amountRef.current.triggerValidation();
+    const category = await categoryRef.current.triggerValidation();
+    const description = await descriptionRef.current.triggerValidation();
+    return {
+      date,
+      amount,
+      category,
+      description,
+    };
+  }
    const currencyState = useSelector((state) => state.auth.user);
     const userCurrencySymbol = currencyState?.schoolDetails?.school?.country?.currency || '';
   const { data: expenseCategory, isFetching } = useGetExpensesCategories();
@@ -30,8 +49,26 @@ function CreateExpense({ handleClose }) {
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
-
   const handleSubmit = () => {
+    const prevalidation = handlePrevalidation();
+    if(!allFieldsValid(prevalidation)){
+       toast.custom(
+         <ToastWarning 
+            title={"Invalid Fields"}
+            description={"Please Ensure All Fields Are Valid Before Submitting"}
+         />
+       )
+       return;
+    }
+    if(!allFieldsValid(isValid)){
+        toast.custom(
+          <ToastWarning 
+              title={"Invalid Fields"}
+              description={"Please Ensure All Fields Are Valid Before Submitting"}
+          />
+        )
+        return;
+    }
     createExpenses(formData);
   };
   return (
@@ -58,6 +95,7 @@ function CreateExpense({ handleClose }) {
             })}
             onChange={(value) => handleStateChange('date', value, setFormData)}
             onValidationChange={(value) => handleStateChange('date', value, setIsValid)}
+            ref={dateRef}
            />
         </div>
         <div>
@@ -65,7 +103,7 @@ function CreateExpense({ handleClose }) {
            <InputGroup 
             InputGroupText={userCurrencySymbol}
             onChange={(value) => handleStateChange('amount', value, setFormData)}
-            onValidationChange={(value) => handleStateChange('amount', value, setErrors)}
+            onValidationChange={(value) => handleStateChange('amount', value, setIsValid)}
             validationSchema={numberSchema({
               min:1, 
               max:10000000,
@@ -78,6 +116,7 @@ function CreateExpense({ handleClose }) {
             })}
             placeholder={'E.g 1,00,000'}
             step="0.01"
+            ref={amountRef}
           />
         </div>
         <div>
@@ -93,6 +132,7 @@ function CreateExpense({ handleClose }) {
               error={errors.expenses_category_id}
               errorMessage="Expenses Category Required"
               placeholder="Select Category"
+              ref={categoryRef}
             />
         </div>
         <div>
@@ -111,6 +151,7 @@ function CreateExpense({ handleClose }) {
                    min:"Reason Must Be Atleast 5 Characters Long"
                 }
              })}
+              ref={descriptionRef}
            />
         </div>
       </div>

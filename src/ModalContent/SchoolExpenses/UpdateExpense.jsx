@@ -15,6 +15,12 @@ import {
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { useSelector } from "react-redux";
+import {
+  hasNonEmptyValue,
+  optionalValidateObject,
+} from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateExpense({ handleClose, rowData }) {
   const [formData, setFormData] = useState({
     date: "",
@@ -36,10 +42,31 @@ function UpdateExpense({ handleClose, rowData }) {
   const { id: expenseId, date, amount, description } = rowData;
   const { mutate: updateExpense, isPending } = useUpdateExpense(handleClose);
   const { data: expenseCategory, isFetching } = useGetExpensesCategories();
+
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = () => {
+    if (optionalValidateObject(isValid) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
+        />
+      );
+      return;
+    }
+    if (hasNonEmptyValue(formData) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Nothing To Update"}
+          description={
+            "Please Ensure Atleast One Field Is Updated Before Submitting"
+          }
+        />
+      );
+      return;
+    }
     updateExpense({ expenseId: expenseId, updateData: formData });
   };
   return (
@@ -62,7 +89,9 @@ function UpdateExpense({ handleClose, rowData }) {
           </label>
           <DateInput
             onChange={(value) => handleStateChange("date", value, setFormData)}
-            onValidationChange={(value) => handleStateChange("date", value, setIsValid)}
+            onValidationChange={(value) =>
+              handleStateChange("date", value, setIsValid)
+            }
             placeholder={date}
             value={formData.date}
             validationSchema={dateValidationSchema({
@@ -75,7 +104,9 @@ function UpdateExpense({ handleClose, rowData }) {
             Amount
           </label>
           <InputGroup
-            onChange={(value) => handleStateChange("amount", value, setFormData)}
+            onChange={(value) =>
+              handleStateChange("amount", value, setFormData)
+            }
             placeholder={amount}
             validationSchema={numberSchema({
               min: 1,
@@ -86,7 +117,9 @@ function UpdateExpense({ handleClose, rowData }) {
                 max: `Amount must not exceed 1000000 ${userCurrencySymbol}`,
               },
             })}
-            onValidationChange={(value) => handleStateChange("amount", value, setIsValid)}
+            onValidationChange={(value) =>
+              handleStateChange("amount", value, setIsValid)
+            }
             step="0.01"
             InputGroupText={userCurrencySymbol}
           />
@@ -101,11 +134,16 @@ function UpdateExpense({ handleClose, rowData }) {
             valueKey={["id"]}
             isLoading={isFetching}
             direction="up"
-            onSelect={(value) => handleStateChange('expenses_category_id', value, setFormData)}
-            onError={(value) => handleStateChange('expenses_category_id', value, setErrors)}
+            onSelect={(value) =>
+              handleStateChange("expenses_category_id", value, setFormData)
+            }
+            onError={(value) =>
+              handleStateChange("expenses_category_id", value, setErrors)
+            }
             error={errors.expenses_category_id}
             placeholder="Select Category"
             errorMessage="Expenses Category Required"
+            optional={true}
           />
         </div>
         <div>
@@ -113,7 +151,9 @@ function UpdateExpense({ handleClose, rowData }) {
             Description
           </label>
           <TextAreaInput
-            onChange={(value) => handleStateChange("description", value, setFormData)}
+            onChange={(value) =>
+              handleStateChange("description", value, setFormData)
+            }
             onValidationChange={(value) =>
               handleStateChange("description", value, setIsValid)
             }

@@ -21,7 +21,15 @@ import {
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateParent({ handleClose, rowData }) {
-  const { id: parentId, guardian_name, email, phone_one, phone_two, address, occupation } = rowData;
+  const {
+    id: parentId,
+    guardian_name,
+    email,
+    phone_one,
+    phone_two,
+    address,
+    occupation,
+  } = rowData;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -45,26 +53,26 @@ function UpdateParent({ handleClose, rowData }) {
 
   const { mutate: updateParent, isPending } = useUpdateParent(handleClose);
   const handleUpdateParent = () => {
-        if (optionalValidateObject(isValid) == false) {
-          toast.custom(
-            <ToastWarning
-              title={"Invalid Fields"}
-              description={"Please Ensure All Fields Are Valid Before Submitting"}
-            />
-          );
-          return;
-        }
-        if (hasNonEmptyValue(formData) == false) {
-          toast.custom(
-            <ToastWarning
-              title={"Nothing To Update"}
-              description={
-                "Please Ensure Atleast One Field Is Updated Before Submitting"
-              }
-            />
-          );
-          return;
-        }
+    if (optionalValidateObject(isValid) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
+        />
+      );
+      return;
+    }
+    if (hasNonEmptyValue(formData) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Nothing To Update"}
+          description={
+            "Please Ensure Atleast One Field Is Updated Before Submitting"
+          }
+        />
+      );
+      return;
+    }
     updateParent({ parentId: parentId, updateData: formData });
   };
   return (
@@ -120,7 +128,9 @@ function UpdateParent({ handleClose, rowData }) {
         </div>
         <div className="d-flex flex-row align-items-center gap-2 w-100">
           <div className="w-50">
-            <label htmlFor="contactOne" className="font-size-sm">Contact One</label>
+            <label htmlFor="contactOne" className="font-size-sm">
+              Contact One
+            </label>
             <PhoneNumberInput
               onChange={(value) =>
                 handleStateChange("phone_one", value, setFormData)
@@ -137,7 +147,9 @@ function UpdateParent({ handleClose, rowData }) {
             />
           </div>
           <div className="w-50">
-            <label htmlFor="contactTwo" className="font-size-sm">Contact Two</label>
+            <label htmlFor="contactTwo" className="font-size-sm">
+              Contact Two
+            </label>
             <PhoneNumberInput
               onChange={(value) =>
                 handleStateChange("phone_two", value, setFormData)
@@ -172,7 +184,6 @@ function UpdateParent({ handleClose, rowData }) {
               })}
               placeholder={address}
               value={formData.address}
-              
             />
           </div>
           <div className="w-50">
@@ -202,27 +213,37 @@ function UpdateParent({ handleClose, rowData }) {
           </div>
         </div>
         <div>
-          <label htmlFor="relationshipToStudent" className="font-size-sm">RelationShip To Student</label>
-           <CustomDropdown 
-             data={guardianTypes}
-             displayKey={["name"]}
-             valueKey={['name']}
-             direction="up"
-             onSelect={(value) => handleStateChange('relationship_to_student', value.name, setFormData)}
-             placeholder="Select Relationship To Student"
-             option={true}
-           />
+          <label htmlFor="relationshipToStudent" className="font-size-sm">
+            RelationShip To Student
+          </label>
+          <CustomDropdown
+            data={guardianTypes}
+            displayKey={["name"]}
+            valueKey={["name"]}
+            direction="up"
+            onSelect={(value) =>
+              handleStateChange(
+                "relationship_to_student",
+                value.name,
+                setFormData
+              )
+            }
+            placeholder="Select Relationship To Student"
+            option={true}
+          />
         </div>
         <div>
           <label htmlFor="preferredLanguage" className="font-size-sm">
             Preferred Language of Communication
           </label>
-          <CustomDropdown 
+          <CustomDropdown
             data={languages}
-            displayKey={['name']}
-            valueKey={['name']}
+            displayKey={["name"]}
+            valueKey={["name"]}
             direction="up"
-            onSelect={(value) => handleStateChange('preferred_language', value.name, setFormData)}
+            onSelect={(value) =>
+              handleStateChange("preferred_language", value.name, setFormData)
+            }
             placeholder="Select Preferred Language"
             optional={true}
           />
