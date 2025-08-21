@@ -3,7 +3,6 @@ import Table from "../../components/Tables/Tables";
 import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import { Icon } from "@iconify/react";
 import { ParentsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DeleteParent from "../../ModalContent/Parent/DeleteParent";
 import ParentDetails from "../../ModalContent/Parent/ParentDetails";
@@ -47,6 +46,7 @@ function Parents() {
             <ModalButton
               action={{ modalContent: CreateParent }}
               classname="border-none rounded-3 green-bg font-size-sm text-white px-3 py-2"
+              size={"lg"}
             >
               <span className="font-size-sm">Create Parent</span>
             </ModalButton>
@@ -98,7 +98,7 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateParent)}
+          onClick={() => handleShowModal(UpdateParent, "lg")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
