@@ -1,14 +1,20 @@
 import { useCreateStudentAdditionalFee } from "../../hooks/additionalFee/useCreateStudentAdditionalFee";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useGetAdditionalFeeCategory } from "../../hooks/additionalFee/useGetAdditionalFeeCategories";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { InputGroup, NumberInput, TextAreaInput } from "../../components/FormComponents/InputComponents";
+import { InputGroup, TextAreaInput } from "../../components/FormComponents/InputComponents";
 import { numberSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
-
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import { useSelector } from "react-redux";
 function CreateStudentAdditionalFee({ handleClose, rowData }) {
-  const studentId = rowData.id;
+  const {id:studentId} = rowData;
+  const amountRef = useRef();
+  const reasonRef = useRef();
+  const categoryRef = useRef();
   const currencyState = useSelector((state) => state.auth.user);
     const currency =
       currencyState?.schoolDetails?.school?.country?.currency || "";
@@ -16,28 +22,53 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
     useCreateStudentAdditionalFee(handleClose);
   const { data: category, isFetching } = useGetAdditionalFeeCategory();
   const [formData, setFormData] = useState({
-    amount: 0,
+    amount: "",
     reason: "",
     additionalfee_category_id: "",
     student_id: studentId,
   });
   const [isValid, setIsValid] = useState({
-    amount: 0,
-    reason: "",
+    amount: null,
+    reason: null,
   })
   const [errors, setErrors] = useState({
      additionalfee_category_id: "",
   })
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handlePrevalidation = async () => {
+    const amount = await amountRef.current.triggerValidation();
+    const reason = await reasonRef.current.triggerValidation();
+    const category = await categoryRef.current.triggerValidation();
+    return {
+      amount,
+      reason,
+      category
+    };
+  }
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
-  const handleFieldError = (field, value) => {
-    setErrors((prev) => ({ ...prev, [field]:value }))
-  }
-  const handleFieldValid = (field, value) => {
-    setIsValid((prev) => ({ ...prev, [field]:value}))
-  }
   const handleSubmit = () => {
+    const prevalidation = handlePrevalidation();
+    if(!allFieldsValid(prevalidation)){
+        toast.custom(
+           <ToastWarning 
+                title={"Invalid Fields"}
+                description={"Please Ensure All Fields Are Valid Before Submitting"} 
+          />
+        )
+
+        return;
+    }
+    if(!allFieldsValid(isValid)){
+        toast.custom(
+           <ToastWarning 
+                title={"Invalid Fields"}
+                description={"Please Ensure All Fields Are Valid Before Submitting"} 
+          />
+        )
+
+        return;
+    }
     createAdditionalFee(formData);
   };
   return (
@@ -58,8 +89,8 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
          <div>
           <label htmlFor="amount" className="font-size-sm">Amount</label>
           <InputGroup
-            onChange={(value) => handleInputChange('amount', value)}
-            onValidationChange={(value) => handleFieldValid('amount', value)}
+            onChange={(value) => handleStateChange('amount', value, setFormData)}
+            onValidationChange={(value) => handleStateChange('amount', value, setIsValid)}
             value={formData.amount}
             step="0.01"
             type="number"
@@ -73,6 +104,8 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
                }
             })}
             InputGroupText={currency}
+            placeholder="Enter Amount"
+            ref={amountRef}
           />
         </div>
         <div>
@@ -85,18 +118,20 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
               renameMapping={{ id: "id", title: "title" }}
               isLoading={isFetching}
               direction="up"
-              onSelect={(value) => handleInputChange('additional_fee_category', value)}
+              onSelect={(value) => handleStateChange('additional_fee_category', value, setFormData)}
+              onError={(value) => handleStateChange('additionalfee_category_id', value, setErrors)}
               error={errors.additionalfee_category_id}
               errorMessage="Additional Fee Category Required"
               placeholder="Select Additional Fee Category"
+              ref={categoryRef}
             />
         </div>
         <div>
           <label htmlFor="reason" className="font-size-sm">Reason</label>
           <TextAreaInput 
             placeholder={formData.amount ? `Enter Reason For Billing Student Additional Fee of ${formData.amount}`: "Write a short reason for the billing"}
-            onChange={(value) => handleInputChange('reason', value)}
-            onValidationChange={(value) => handleFieldValid('reason', value)}
+            onChange={(value) => handleStateChange('reason', value, setFormData)}
+            onValidationChange={(value) => handleStateChange('reason', value, setIsValid)}
             validationSchema={textareaSchema({
                min:10,
                max:1000,
@@ -107,10 +142,11 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
                  max:"Reason Must Not Exceed 1000 Characters"
                }
             })}
+            ref={reasonRef}
           />
         </div>
       </div>
-      <div className="w-100 mt-2">
+      <div className="w-100 mt-4">
         <button
           className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"
           onClick={() => {

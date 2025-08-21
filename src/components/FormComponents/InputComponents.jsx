@@ -935,7 +935,7 @@ export const InputGroup = forwardRef(
               isInputTouched && !inputError && inputValue !== "" ? "is-valid" : ""
             }`}
           />
-          <span className="input-group-text font-size-sm fw-semibold" id="basic-addon1">
+          <span className="input-group-text font-size-sm  fw-semibold" id="basic-addon1">
             {InputGroupText}
           </span>
           <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>

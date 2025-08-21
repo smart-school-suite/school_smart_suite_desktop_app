@@ -7,6 +7,12 @@ import { useGetAdditionalFeeCategory } from "../../hooks/additionalFee/useGetAdd
 import { InputGroup, TextAreaInput } from "../../components/FormComponents/InputComponents";
 import { numberSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
 import { useSelector } from "react-redux";
+import {
+  hasNonEmptyValue,
+  optionalValidateObject,
+} from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateAdditionalFees({ rowData, handleClose }) {
     const currencyState = useSelector((state) => state.auth.user);
     const currency =
@@ -29,16 +35,30 @@ function UpdateAdditionalFees({ rowData, handleClose }) {
     handleClose,
     additionalFeeId
   );
-   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+   const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
-  const handleFieldValid = (field, value) => {
-    setIsValid((prev) => ({...prev, [field]:value }));
-  }
-  const handleFieldError = (field, value) => {
-    setErrors((prev) => ({...prev, [field]:value}))
-  }
   const handleUpdate = () => {
+        if (optionalValidateObject(isValid) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
+        />
+      );
+      return;
+    }
+    if (hasNonEmptyValue(formData) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Nothing To Update"}
+          description={
+            "Please Ensure Atleast One Field Is Updated Before Submitting"
+          }
+        />
+      );
+      return;
+    }
     updateAdditionalFee({ additionalFeeId, updateData: formData });
   };
   return (
@@ -72,9 +92,9 @@ function UpdateAdditionalFees({ rowData, handleClose }) {
                      max:`Amount Must Not Exceed 1000000 ${currency} `
                   }
               })}
-              onChange={(value) => handleInputChange('amount', value)}
-              onValidationChange={(value) => handleFieldValid('amount', value)}
-             
+              onChange={(value) => handleStateChange('amount', value, setFormData)}
+              onValidationChange={(value) => handleStateChange('amount', value, setIsValid)}
+              InputGroupText={currency}
             />
           </div>
           <div className="my-1">
@@ -83,21 +103,21 @@ function UpdateAdditionalFees({ rowData, handleClose }) {
                 data={category.data}
                 displayKey={["title"]}
                 valueKey={["id"]}
-                filter_array_keys={["id", "title"]}
-                renameMapping={{ id: "id", title: "title" }}
                 isLoading={isFetching}
                 direction="up"
-                onSelect={(value) => handleInputChange('additionalfee_category_id', value)}
+                onSelect={(value) => handleStateChange('additionalfee_category_id', value)}
                 errorMessage="Category Required"
                 error={errors.additionalfee_category_id}
                 onError={(value) => handleFieldError('additionalfee_category_id', value)}
+                optional={true}
+                placeholder="Select Additional Fee Category"
               />
           </div>
           <div>
             <label htmlFor="reason" className="font-size-sm">Reason</label>
             <TextAreaInput 
-              onChange={(value) => handleInputChange('reason', value)}
-              onValidationChange={(value) => handleFieldValid('reason', value)}
+              onChange={(value) => handleStateChange('reason', value)}
+              onValidationChange={(value) => handleStateChange('reason', value)}
               validationSchema={textareaSchema({
                   min:10,
                   max:1000,

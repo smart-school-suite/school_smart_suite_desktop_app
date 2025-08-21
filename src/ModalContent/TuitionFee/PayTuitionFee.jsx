@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { usePayTuitionFee } from "../../hooks/feePayment/usePayTuitionFee";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
@@ -7,8 +7,13 @@ import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { paymentMethods } from "../../data/data";
 import { InputGroup } from "../../components/FormComponents/InputComponents";
 import { numberSchema } from "../../ComponentConfig/YupValidationSchema";
+import { allFieldsValid, formatNumber } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function PayStudentTuitionFee({ handleClose, rowData }) {
   const { id: feeId, amount_left: amountLeft } = rowData;
+  const amountRef = useRef();
+  const methodRef = useRef();
   const currencyState = useSelector((state) => state.auth.user);
   const userCurrencySymbol =
     currencyState?.schoolDetails?.school?.country?.currency || "";
@@ -24,16 +29,37 @@ function PayStudentTuitionFee({ handleClose, rowData }) {
   const [errors, setErrors] = useState({
     payment_method: "",
   });
-  const handleFieldError = (field, value) => {
-    setErrors((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleFieldValid = (field, value) => {
-    setIsValid((prev) => ({ ...prev, [field]: value }));
+  const handlePrevalidation = async () => {
+    const amount = await amountRef.current.triggerValidation();
+    const paymentMethod = await methodRef.current.triggerValidation();
+    return {
+      amount,
+      payment_method: paymentMethod,
+    };
+  }
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
+    const prevalidation = await handlePrevalidation();
+    if(!allFieldsValid(prevalidation)){
+       toast.custom(
+          <ToastWarning 
+              title={"Invalid Fields"}
+              description={"Please Ensure All Fields Are Valid Before Submitting"}
+          />
+       )
+       return;
+    }
+    if(!allFieldsValid(isValid)){
+       toast.custom(
+          <ToastWarning 
+              title={"Invalid Fields"}
+              description={"Please Ensure All Fields Are Valid Before Submitting"}
+          />
+       )
+       return;
+    }
     payTuitionFee(formData);
   };
   return (
@@ -53,16 +79,27 @@ function PayStudentTuitionFee({ handleClose, rowData }) {
       </div>
       <div className="my-1">
         <label htmlFor="amount" className="font-size-sm">
-          Amount
+          Amount  <span className="gainsboro-color"> Hint(amount left: {formatNumber(amountLeft)} {userCurrencySymbol})</span>
         </label>
         <InputGroup
-          onChange={(value) => handleInputChange("amount", value)}
+          onChange={(value) => handleStateChange("amount", value, setFormData)}
           value={formData.amount}
           step="0.01"
-          validationSchema={numberSchema({ min: 1, max: amountLeft })}
-          onValidationChange={(value) => handleFieldValid("amount", value)}
+          validationSchema={numberSchema({ 
+            min: 1, 
+            max: amountLeft,
+            required:true,
+            integerOnly:false,
+            messages:{
+                required: "Amount is required",
+                min: `Amount must be atleast 1 ${userCurrencySymbol}`, 
+                max: `Amount must not exceed ${amountLeft} ${userCurrencySymbol}`,
+            }
+          })}
+          onValidationChange={(value) => handleStateChange("amount", value, setIsValid)}
           InputGroupText={userCurrencySymbol}
           placeholder={"Enter Amount Paid"}
+          ref={amountRef}
         />
       </div>
       <div className="my-2">
@@ -74,11 +111,12 @@ function PayStudentTuitionFee({ handleClose, rowData }) {
           valueKey={["value"]}
           displayKey={["label"]}
           direction="down"
-          onError={(value) => handleFieldError("payment_method", value)}
-          onSelect={(value) => handleInputChange("payment_method", value.value)}
+          onError={(value) => handleStateChange("payment_method", value, setErrors)}
+          onSelect={(value) => handleStateChange("payment_method", value.value, setFormData)}
           error={errors.payment_method}
           errorMessage="Payment Method Required"
           placeholder="Select Payment Method"
+          ref={methodRef}
         />
       </div>
       <div className="mt-4">

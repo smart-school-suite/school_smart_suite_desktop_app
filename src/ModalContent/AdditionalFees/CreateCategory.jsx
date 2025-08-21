@@ -1,25 +1,51 @@
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useCreateAdditionalFeeCategory } from "../../hooks/additionalFee/useCreateAdditionalFeeCategory";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { TextInput } from "../../components/FormComponents/InputComponents";
-import { categoryNameSchema, nameSchema } from "../../ComponentConfig/YupValidationSchema";
+import {  nameSchema } from "../../ComponentConfig/YupValidationSchema";
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function CreateCategory({ handleClose }) {
+  const titleRef = useRef();
   const [formData, setFormData] = useState({
     title: "",
   });
   const [isValid, setIsValid] = useState({
     title: "",
   });
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
-  const handleFieldValid = (field, value) => {
-     setIsValid((prev) => ({ ...prev, [field]:value }))
+  const handlePrevalidation = async () => {
+    const title = await titleRef.current.triggerValidation();
+    return {
+      title,
+    };
   }
   const { mutate: createCategory, isPending } =
     useCreateAdditionalFeeCategory(handleClose);
   const handleCreateCategory = () => {
+    const prevalidation = handlePrevalidation();
+     if (!allFieldsValid(prevalidation)) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
+        />
+      );
+      return;
+    }
+    if (!allFieldsValid(isValid)) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
+        />
+      );
+      return;
+    }
     createCategory(formData);
   };
   return (
@@ -42,8 +68,8 @@ function CreateCategory({ handleClose }) {
          <div>
           <label htmlFor="categoryTitle" className="font-size-sm">Category Name</label>
           <TextInput 
-            onChange={(value) => handleInputChange('title', value)}
-            onValidationChange={(value) => handleFieldValid('title', value)}
+            onChange={(value) => handleStateChange('title', value, setFormData)}
+            onValidationChange={(value) => handleStateChange('title', value, setIsValid)}
             validationSchema={nameSchema({ 
                 min:3,
                 max:100,
@@ -56,6 +82,7 @@ function CreateCategory({ handleClose }) {
              })}
             placeholder={"e.g Student Id Card"}
             value={formData.title}
+            ref={titleRef}
           />
         </div>
         <button
