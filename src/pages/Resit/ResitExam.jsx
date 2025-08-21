@@ -1,7 +1,6 @@
 import { useGetAllResitExams } from "../../hooks/resitExam/useGetResitExams";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import Table from "../../components/Tables/Tables";
-import { Icon } from "@iconify/react";
 import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";

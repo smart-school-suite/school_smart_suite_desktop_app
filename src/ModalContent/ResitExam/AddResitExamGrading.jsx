@@ -12,7 +12,6 @@ function ResitExamGrading({ handleClose, rowData }){
   const { mutate:addExamGrading, isPending } = useAddResitExamGrading(handleClose);
 
  const handleSaveChanges = () => {
-    console.log(examId, gradeConfig)
   addExamGrading({ resitExamId:examId, gradesConfigId: gradeConfig });
 };
   const handleSelectGradeConfig = (gradeConfigId) => {
