@@ -34,8 +34,6 @@ function CreateParent({ handleClose }) {
     phone_one: "",
     address: "",
     occupation: "",
-    relationship_to_student: "",
-    preferred_language: "",
   });
   const [errors, setError] = useState({
      relationship_to_student: "",

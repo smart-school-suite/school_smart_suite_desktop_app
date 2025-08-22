@@ -32,7 +32,6 @@ function CreateTeacher({ handleClose }) {
     name: "",
     last_name: "",
     first_name: "",
-    gender: "",
     phone_one: "",
   });
   const [errors, setErrors] = useState({
