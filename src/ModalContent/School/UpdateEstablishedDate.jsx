@@ -2,18 +2,49 @@ import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useUpdateSchool } from "../../hooks/school/useUpdateSchool";
 import { useState } from "react";
+import { DateInput } from "../../components/FormComponents/InputComponents";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import {
+  hasNonEmptyValue,
+  optionalValidateObject,
+} from "../../utils/functions";
+import { dateValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 function UpdateEstablishedDate({ handleClose }) {
   const [formData, setFormData] = useState({
     established_year: "",
   });
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const [isValid, setIsValid] = useState({
+     established_year: "",
+  })
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const { mutate: updateEstablishedDate, isPending } = useUpdateSchool(
     handleClose,
     "Established Date"
   );
   const handleUpdateDate = () => {
+        if (optionalValidateObject(isValid) == false) {
+          toast.custom(
+            <ToastWarning
+              title={"Invalid Fields"}
+              description={"Please Ensure All Fields Are Valid Before Submitting"}
+            />
+          );
+          return;
+        }
+        if (hasNonEmptyValue(formData) == false) {
+          toast.custom(
+            <ToastWarning
+              title={"Nothing To Update"}
+              description={
+                "Please Ensure Atleast One Field Is Updated Before Submitting"
+              }
+            />
+          );
+          return;
+        }
     updateEstablishedDate({ updateData: formData });
   };
   return (
@@ -31,20 +62,17 @@ function UpdateEstablishedDate({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
         <div className="my-1">
-          <span>Established Date</span>
-          <input
-            type="date"
-            name="established_year"
-            className="form-control"
-            onChange={(e) =>
-              handleInputChange("established_year", e.target.value)
-            }
+          <label htmlFor="establishedDate" className="date">Established Date</label>
+          <DateInput 
+            onChange={(value) => handleStateChange('established_year', value, setFormData)}
+            onValidationChange={(value) => handleStateChange('established_year', value, setIsValid)}
+            value={formData.date}
+            validationSchema={dateValidationSchema({
+                required:false,
+                futureOrToday:false
+            })}
           />
         </div>
         <button
