@@ -3,10 +3,7 @@ import { useRef, useState } from "react";
 import { useCreateTeacher } from "../../hooks/teacher/useCreateTeacher";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { emailValidationSchema, nameSchema, phoneValidationSchema } from "../../ComponentConfig/YupValidationSchema";
-import {
-  PhoneNumberInput,
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
+import { PhoneNumberInput, TextInput} from "../../components/FormComponents/InputComponents";
 import { gender } from "../../data/data";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { allFieldsValid } from "../../utils/functions";

@@ -9,20 +9,20 @@ import {
   optionalValidateObject,
 } from "../../utils/functions";
 import { TextInput } from "../../components/FormComponents/InputComponents";
-import { addressSchema } from "../../ComponentConfig/YupValidationSchema";
-function UpdateSchoolBranchAddress({ handleClose }) {
-  const [formData, setFormData] = useState({
-    address: "",
+import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
+function UpdateBranchPostalCode({ handleClose }){
+   const [formData, setFormData] = useState({
+    postal_code: "",
   });
-  const [isValid, setIsValid] = useState({
-    address: "",
-  });
+  const [isValid, setIsInvalid] = useState({
+    postal_code:""
+  })
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const { mutate: update, isPending } = useUpdateSchoolBranch(
     handleClose,
-    "Address"
+    "Postal Code"
   );
   const handleUpdate = () => {
     if (optionalValidateObject(isValid) == false) {
@@ -47,12 +47,12 @@ function UpdateSchoolBranchAddress({ handleClose }) {
     }
     update({ updateData: formData });
   };
-  return (
-    <>
-      <div>
+   return (
+     <>
+           <div>
         <div className="block">
           <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <span className="m-0">Update Address</span>
+            <span className="m-0">Update name</span>
             <span
               className="m-0"
               onClick={() => {
@@ -64,21 +64,22 @@ function UpdateSchoolBranchAddress({ handleClose }) {
           </div>
         </div>
         <div className="my-1">
-          <label htmlFor="address" className="font-size-sm">
-            Address
-          </label>
-          <TextInput
-            onChange={(value) =>
-              handleStateChange("address", value, setFormData)
-            }
-            onValidationChange={(value) =>
-              handleStateChange("address", value, setIsValid)
-            }
-            type="address"
-            placeholder={"Enter Address"}
-            validationSchema={addressSchema({
-              required: false,
+          <label htmlFor="postCode" className="font-size-sm">Postal code</label>
+          <TextInput 
+            onChange={(value) => handleStateChange('postal_code', value, setFormData)}
+            onValidationChange={(value) => handleStateChange('postal_code', value, setIsInvalid)}
+            validationSchema={nameSchema({
+                min:3,
+                max:15,
+                required:false,
+                message:{
+                    min:"Postal Code Must Be Atleast 3 Characters Long",
+                    max:"Postal Code Must Not Exceed 15 Characters"
+                }
             })}
+            value={formData.postal_code}
+            type="text"
+            placeholder="Enter Postal Code"
           />
         </div>
         <button
@@ -88,11 +89,10 @@ function UpdateSchoolBranchAddress({ handleClose }) {
           }}
           disabled={isPending}
         >
-          {isPending ? <SingleSpinner /> : "Update Address"}
+          {isPending ? <SingleSpinner /> : "Update Code"}
         </button>
       </div>
-    </>
-  );
+     </>
+   )
 }
-
-export default UpdateSchoolBranchAddress;
+export default UpdateBranchPostalCode;

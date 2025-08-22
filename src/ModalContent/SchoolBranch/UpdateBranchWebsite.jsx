@@ -2,18 +2,49 @@ import { useUpdateSchoolBranch } from "../../hooks/schoolBranch/useUpdateSchoolB
 import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import {
+  hasNonEmptyValue,
+  optionalValidateObject,
+} from "../../utils/functions";
+import { TextInput } from "../../components/FormComponents/InputComponents";
+import { urlSchema } from "../../ComponentConfig/YupValidationSchema";
 function UpdateSchoolBranchWebsite({ handleClose }) {
   const [formData, setFormData] = useState({
     website: "",
   });
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const [isValid, setIsValid] = useState({
+     website:"",
+  })
+  const handleChangeState = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const { mutate: update, isPending } = useUpdateSchoolBranch(
     handleClose,
     "website"
   );
   const handleUpdate = () => {
+      if (optionalValidateObject(isValid) == false) {
+          toast.custom(
+            <ToastWarning
+              title={"Invalid Fields"}
+              description={"Please Ensure All Fields Are Valid Before Submitting"}
+            />
+          );
+          return;
+        }
+        if (hasNonEmptyValue(formData) == false) {
+          toast.custom(
+            <ToastWarning
+              title={"Nothing To Update"}
+              description={
+                "Please Ensure Atleast One Field Is Updated Before Submitting"
+              }
+            />
+          );
+          return;
+        }
     update({ updateData: formData });
   };
   return (
@@ -21,7 +52,7 @@ function UpdateSchoolBranchWebsite({ handleClose }) {
       <div>
         <div className="block">
           <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Update website</h5>
+            <span className="m-0">Update website</span>
             <span
               className="m-0"
               onClick={() => {
@@ -31,19 +62,16 @@ function UpdateSchoolBranchWebsite({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
         <div className="my-1">
-          <span>website</span>
-          <input
-            type="website"
-            className="form-control"
-            placeholder="Enter School Branch website"
-            name="website"
-            onChange={(e) => handleInputChange("website", e.target.value)}
+          <label htmlFor="website" className="font-size-sm">Website</label>
+          <TextInput 
+            type="url"
+            placeholder="e.g https://www.example.com"
+            onChange={(value) =>  handleChangeState('website', value, setFormData)}
+            onValidationChange={(value) =>  handleChangeState('state', value, setIsValid)}
+            value={formData.website}
+            validationSchema={urlSchema(true)}
           />
         </div>
         <button

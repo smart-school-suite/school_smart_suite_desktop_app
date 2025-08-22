@@ -2,18 +2,49 @@ import { useUpdateSchoolBranch } from "../../hooks/schoolBranch/useUpdateSchoolB
 import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import {
+  hasNonEmptyValue,
+  optionalValidateObject,
+} from "../../utils/functions";
+import { PhoneNumberInput } from "../../components/FormComponents/InputComponents";
+import { phoneValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 function UpdateSchoolBranchContactTwo({ handleClose }) {
   const [formData, setFormData] = useState({
     phone_two: "",
   });
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const [isValid, setIsValid] = useState({
+    phone_two: "",
+  });
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const { mutate: update, isPending } = useUpdateSchoolBranch(
     handleClose,
     "Contact Two"
   );
   const handleUpdateSchool = () => {
+    if (optionalValidateObject(isValid) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
+        />
+      );
+      return;
+    }
+    if (hasNonEmptyValue(formData) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Nothing To Update"}
+          description={
+            "Please Ensure Atleast One Field Is Updated Before Submitting"
+          }
+        />
+      );
+      return;
+    }
     update({ updateData: formData });
   };
   return (
@@ -21,7 +52,7 @@ function UpdateSchoolBranchContactTwo({ handleClose }) {
       <div>
         <div className="block">
           <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Update Contact</h5>
+            <span className="m-0">Update Contact</span>
             <span
               className="m-0"
               onClick={() => {
@@ -31,19 +62,23 @@ function UpdateSchoolBranchContactTwo({ handleClose }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
         <div className="my-1">
-          <span>Contact Two</span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Enter Phone Number"
-            name="phone_two"
-            onChange={(e) => handleInputChange("phone_two", e.target.value)}
+          <label htmlFor="contactTwo" className="font-size-sm">
+            Contact Two
+          </label>
+          <PhoneNumberInput
+            onChange={(value) =>
+              handleStateChange("phone_two", value, setFormData)
+            }
+            onValidationChange={(value) =>
+              handleStateChange("phone_two", value, setIsValid)
+            }
+            validationSchema={phoneValidationSchema({
+              optional: true,
+              prefixes: ["6", "2"],
+            })}
+            value={formData.phone_two}
           />
         </div>
         <button

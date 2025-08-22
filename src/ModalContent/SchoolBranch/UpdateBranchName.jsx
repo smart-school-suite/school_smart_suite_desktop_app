@@ -2,26 +2,57 @@ import { useUpdateSchoolBranch } from "../../hooks/schoolBranch/useUpdateSchoolB
 import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
-function UpdateSchoolBranchName({ handleClose }){
-      const [formData, setFormData] = useState({
-        name: "",
-      });
-      const handleInputChange = (field, value) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-      };
-      const { mutate: update, isPending } = useUpdateSchoolBranch(
-        handleClose,
-        "name"
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import {
+  hasNonEmptyValue,
+  optionalValidateObject,
+} from "../../utils/functions";
+import { TextInput } from "../../components/FormComponents/InputComponents";
+import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
+function UpdateSchoolBranchName({ handleClose }) {
+  const [formData, setFormData] = useState({
+    name: "",
+  });
+  const [isValid, setIsInvalid] = useState({
+     name:""
+  })
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
+  };
+  const { mutate: update, isPending } = useUpdateSchoolBranch(
+    handleClose,
+    "name"
+  );
+  const handleUpdate = () => {
+    if (optionalValidateObject(isValid) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
+        />
       );
-      const handleUpdate = () => {
-        update({ updateData: formData });
-      };
-    return(
-        <>
-                      <div>
+      return;
+    }
+    if (hasNonEmptyValue(formData) == false) {
+      toast.custom(
+        <ToastWarning
+          title={"Nothing To Update"}
+          description={
+            "Please Ensure Atleast One Field Is Updated Before Submitting"
+          }
+        />
+      );
+      return;
+    }
+    update({ updateData: formData });
+  };
+  return (
+    <>
+      <div>
         <div className="block">
           <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-            <h5 className="m-0">Update name</h5>
+            <span className="m-0">Update name</span>
             <span
               className="m-0"
               onClick={() => {
@@ -31,19 +62,24 @@ function UpdateSchoolBranchName({ handleClose }){
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-          <span className="gainsboro-color font-size-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem harum
-            nesciunt sunt
-          </span>
         </div>
         <div className="my-1">
-          <span>name</span>
-          <input
+          <label htmlFor="schoolName" className="font-size-sm">School Branch Name</label>
+          <TextInput 
+            onChange={(value) => handleStateChange('name', value, setFormData)}
+            onValidationChange={(value) => handleStateChange('name', value, setIsInvalid)}
+            validationSchema={nameSchema({
+                min:3,
+                max:150,
+                required:false,
+                message:{
+                    min:"School Branch Name Must Be Atleast 3 Characters Long",
+                    max:"School Branch Name Must Not Exceed 150 Characters"
+                }
+            })}
+            value={formData.name}
             type="text"
-            className="form-control"
-            placeholder="Enter School Branch name"
-            name="name"
-            onChange={(e) => handleInputChange("name", e.target.value)}
+            placeholder="Enter School Branch Name"
           />
         </div>
         <button
@@ -56,7 +92,7 @@ function UpdateSchoolBranchName({ handleClose }){
           {isPending ? <SingleSpinner /> : "Update name"}
         </button>
       </div>
-        </>
-    )
+    </>
+  );
 }
 export default UpdateSchoolBranchName;

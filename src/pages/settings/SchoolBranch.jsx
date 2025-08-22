@@ -12,6 +12,7 @@ import UpdateSchoolBranchContactTwo from "../../ModalContent/SchoolBranch/Update
 import UpdateSchoolBranchContactOne from "../../ModalContent/SchoolBranch/UpdateBranchContactOne";
 import UpdateSchoolBranchWebsite from "../../ModalContent/SchoolBranch/UpdateBranchWebsite";
 import UpdateSchoolBranchCity from "../../ModalContent/SchoolBranch/UpdateBranchCity";
+import UpdateBranchPostalCode from "../../ModalContent/SchoolBranch/UpdateBranchPostalCode";
 function SchoolBranch() {
   const userData = useSelector((state) => state.auth.user);
   const { data:schoolBranch, isLoading } = useGetSchoolBranchDetails();
@@ -130,19 +131,22 @@ function SchoolBranch() {
                   </div>
                 </ModalButton>
                 <hr />
-                <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
-                  <div className="d-flex flex-column">
+                 <ModalButton
+                 classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
+                 action={{ modalContent:UpdateBranchPostalCode }}
+                >
+                   <div className="d-flex flex-column text-start">
                     <span className="fw-semibold">Postal Code</span>
                     <span className="gainsboro-color fw-light">
                       {schoolBranch.data.postal_code === null
                         ? "Add Postal Code"
-                        : schoolBranch.data.postal_Code}
+                        : schoolBranch.data.postal_code}
                     </span>
                   </div>
                   <div>
                     <Icon icon="iconamoon:edit-thin" width="24" height="24" />
                   </div>
-                </div>
+                </ModalButton>
               </div>
             </div>
             <div>

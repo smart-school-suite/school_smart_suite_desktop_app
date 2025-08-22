@@ -42,7 +42,6 @@ function UpdateExam({ handleClose, rowData }) {
       stateFn((prev) => ({ ...prev, [field]: value }));
     };
     const handleSubmit = () => {
-      console.log(isInvalid);
       if(optionalValidateObject(isInvalid) == false){
           toast.custom(
             <ToastWarning 
@@ -92,10 +91,7 @@ function UpdateExam({ handleClose, rowData }) {
           onEndDateChange={(value) => handleStateChange('end_date', value, setFormData)}
           placeholderEnd={start_date}
           placeholderStart={end_date}
-          onStartDateValidationChange = {(value) => {
-             handleStateChange('start_date', value, setIsInvalid)
-             console.log("start_date", value)
-          }}
+          onStartDateValidationChange = {(value) => handleStateChange('start_date', value, setIsInvalid)}
           onEndDateValidationChange = {(value) => handleStateChange('end_date', value, setIsInvalid)}
           startValue={formData.start_date}
           endValue={formData.end_date}

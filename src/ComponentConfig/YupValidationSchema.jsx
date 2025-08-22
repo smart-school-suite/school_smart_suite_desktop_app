@@ -373,3 +373,23 @@ export const numberSchema = ({
 
   return schema;
 };
+
+export const urlSchema = (optional = false) => {
+  let schema = Yup.string().trim();
+
+  if (optional) {
+    schema = schema.nullable().notRequired();
+  } else {
+    schema = schema.required('URL is required.');
+  }
+
+  schema = schema
+    .url('Must be a valid URL.')
+    .test('is-secure-protocol', 'URL must use http:// or https://', (value) => {
+      if (!value) return true;
+      return value.startsWith('http://') || value.startsWith('https://');
+    })
+    .max(2048, 'URL is too long. Maximum length is 2048 characters.');
+
+  return schema;
+};

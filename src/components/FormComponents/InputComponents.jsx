@@ -10,7 +10,6 @@ function PhoneNumberInputComponent(
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
 
-  // Sync external `value` only when it actually changes
   useEffect(() => {
     setPhoneNumber(value || "");
   }, [value]);
