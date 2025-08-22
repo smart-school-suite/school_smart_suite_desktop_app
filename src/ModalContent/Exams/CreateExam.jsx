@@ -19,6 +19,7 @@ function CreateExam({ handleClose }) {
     const specialtyRef = useRef();
     const weightedMarkRef = useRef();
     const studentBatchRef = useRef();
+    const schoolYearRef = useRef();
     const { data: examType, isLoading: isExamTypeLoading } =
     useGetExamTypes();
   const { data: specialty, isLoading: isSpecailtyLoading } =
@@ -35,13 +36,9 @@ function CreateExam({ handleClose }) {
     student_batch_id:""
   });
   const [isInvalid, setIsInvalid] = useState({
-     start_date: "",
+    start_date: "",
     end_date: "",
-    exam_type_id: "",
     weighted_mark: "",
-    specialty_id: "",
-    school_year: "",
-    student_batch_id:""
   });
   const [errors, setErrors] = useState({
     school_year: "",
@@ -56,20 +53,22 @@ function CreateExam({ handleClose }) {
     const weightedMark = await weightedMarkRef.current.triggerValidation();
     const specialty = await specialtyRef.current.triggerValidation();
     const studentBatch = await studentBatchRef.current.triggerValidation();
+    const schoolYear = await schoolYearRef.current.triggerValidation();
     return {
       startDate,
       endDate,
       examType,
       weightedMark,
       specialty,
-      studentBatch
+      studentBatch,
+      schoolYear
     };
   }
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
-  const handleSubmit = () => {
-    const prevalidation = handlePrevalidation();
+  const handleSubmit = async  () => {
+    const prevalidation =  await handlePrevalidation();
     if(!allFieldsValid(prevalidation)){
         toast.custom(
            <ToastWarning 
@@ -109,10 +108,11 @@ function CreateExam({ handleClose }) {
       <div>
         <DateRangeInput 
          validationSchema={dateRangeValidationSchema({
-               futureOnly:true
+               futureOnly:true,
+               optional:false
             })}
          onStartDateChange={(value) => handleStateChange('start_date', value, setFormData)}
-         onEndDateChange={(value) => handleInputChange('end_date', value, setFormData)}
+         onEndDateChange={(value) => handleStateChange('end_date', value, setFormData)}
          onStartDateValidationChange = {(value) => handleStateChange('start_date', value, setIsInvalid)}
          onEndDateValidationChange = {(value) => handleStateChange('end_date', value, setIsInvalid)}
          ref={dateRangeRef}
@@ -125,15 +125,18 @@ function CreateExam({ handleClose }) {
         <NumberInput 
          onChange={(value) => handleStateChange('weighted_mark', value, setFormData)}
          step="0.01"
-         onValidationChange={(value) => handleStateChange('weighted_mark', value, setIsInvalid)}
+         onValidationChange={(value) => {
+           handleStateChange('weighted_mark', value, setIsInvalid)
+         }}
          validationSchema={numberSchema({
             min:1,
             max:500,
             required:true,
             integerOnly:false,
             messages:{
-               min:"Exam Mark Must Be Atleast ",
-               max:"Exam Mark Must Not Exceed 1000"
+              required:"Exam Score Required",
+               min:"Exam Mark Must Be Atleast 1",
+               max:"Exam Mark Must Not Exceed 500"
             }
          })}
          placeholder={"e.g 100"}
@@ -143,9 +146,11 @@ function CreateExam({ handleClose }) {
       <div>
         <label htmlFor="schoolYear" className="font-size-sm">School Year</label>
         <SchoolYearSelector 
-          onSelect={(value) => handleInputChange('school_year', value)}
-          onError={(msg) => handleFieldError("school_year", msg)}
+          onSelect={(value) => handleStateChange('school_year', value, setFormData)}
+          onError={(msg) => handleStateChange("school_year", msg, setErrors)}
           error={errors.school_year}
+          ref={schoolYearRef}
+          required={true}
         />
       </div>
       <div>

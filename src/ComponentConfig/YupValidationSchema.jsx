@@ -250,17 +250,16 @@ export const dateRangeValidationSchema = ({
 
   return Yup.object().shape({
     start_date: buildDateSchema("Start date"),
-
     end_date: buildDateSchema("End date").test(
       "is-after-start",
-      "End date must be after or equal to start date",
+      "End date must be after start date",
       function (value) {
         const { start_date } = this.parent;
-        if (!isValidMySQLDate(start_date) || !isValidMySQLDate(value)) return true;
-
-        const startDate = new Date(start_date);
-        const endDate = new Date(value);
-        return endDate >= startDate;
+        // Only validate if both fields are filled and valid
+        if (!value || !start_date || !isValidMySQLDate(value) || !isValidMySQLDate(start_date)) {
+          return true;
+        }
+        return new Date(value) >= new Date(start_date);
       }
     ),
   });

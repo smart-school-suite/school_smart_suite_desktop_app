@@ -30,8 +30,8 @@ function UpdateExam({ handleClose, rowData }) {
   })
     const [isInvalid, setIsInvalid] = useState({
      start_date: "",
-      end_date: "",
-    weighted_mark: "",
+     end_date: "",
+     weighted_mark: "",
   });
   
     const { data: examType, isLoading: isExamTypeLoading } =
@@ -42,6 +42,7 @@ function UpdateExam({ handleClose, rowData }) {
       stateFn((prev) => ({ ...prev, [field]: value }));
     };
     const handleSubmit = () => {
+      console.log(isInvalid);
       if(optionalValidateObject(isInvalid) == false){
           toast.custom(
             <ToastWarning 
@@ -87,12 +88,17 @@ function UpdateExam({ handleClose, rowData }) {
                futureOnly:true,
                optional:true,
             })}
-          onStartDateChange={(value) => handleInputChange('start_date', value)}
-          onEndDateChange={(value) => handleInputChange('end_date', value)}
+          onStartDateChange={(value) => handleStateChange('start_date', value, setFormData)}
+          onEndDateChange={(value) => handleStateChange('end_date', value, setFormData)}
           placeholderEnd={start_date}
           placeholderStart={end_date}
-          onStartDateValidationChange={(value) => handleStateChange('start_date', value, setIsInvalid)}
-          onEndDateValidationChange={(value) => handleStateChange('end_date', value, setIsInvalid)}
+          onStartDateValidationChange = {(value) => {
+             handleStateChange('start_date', value, setIsInvalid)
+             console.log("start_date", value)
+          }}
+          onEndDateValidationChange = {(value) => handleStateChange('end_date', value, setIsInvalid)}
+          startValue={formData.start_date}
+          endValue={formData.end_date}
         />
       </div>
       <div>
@@ -102,7 +108,7 @@ function UpdateExam({ handleClose, rowData }) {
          onValidationChange={(value) => handleStateChange('weighted_mark', value, setIsInvalid)}
          placeholder={weighted_mark}
          validationSchema={numberSchema({ 
-          min:1, max:100,
+          min:1, max:500,
           optional:true,
           integerOnly:false,
           messages:{
@@ -119,6 +125,7 @@ function UpdateExam({ handleClose, rowData }) {
           onError={(value) => handleStateChange('school_year', value, setErrors)}
           error={errors.school_year}
           placeholder={school_year}
+          required={false}
         />
       </div>
       <div>
@@ -134,6 +141,7 @@ function UpdateExam({ handleClose, rowData }) {
             errorMessage="Exam Type Required"
             onError={(value) => handleStateChange('exam_type_id', value, setErrors)}
             error={errors.exam_type_id}
+            optional={false}
           />
       </div>
       <div>
@@ -149,6 +157,7 @@ function UpdateExam({ handleClose, rowData }) {
             onError={(value) => handleStateChange('specialty_id', value, setErrors)}
             errorMessage="Specialty Required"
             error={errors.specialty_id}
+            optional={false}
           />
       </div>
       </div>

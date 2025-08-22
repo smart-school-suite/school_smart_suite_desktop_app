@@ -18,6 +18,7 @@ function CreateSemester({ handleClose }) {
   const semesterRef = useRef();
   const specialtyRef = useRef();
   const studentBatchRef = useRef();
+  const schoolYearRef = useRef();
   const { data: specialties, isLoading: isFetchingSpecialties } =
     useGetSpecialties();
   const { data: studentBatches, isLoading: isFetchingStudentBatches } =
@@ -49,13 +50,14 @@ function CreateSemester({ handleClose }) {
       const semester = await semesterRef.current.triggerValidation();
       const specialty = await specialtyRef.current.triggerValidation();
       const studentBatch = await studentBatchRef.current.triggerValidation();
-
+      const schoolYear = await schoolYearRef.current.triggerValidation();
       return {
           startDate,
           endDate,
           semester,
           studentBatch,
-          specialty
+          specialty,
+          schoolYear
       }
   }
   const handleStateChange = (field, value, stateFn) => {
@@ -119,9 +121,11 @@ function CreateSemester({ handleClose }) {
           </label>
           <SchoolYearSelector
             onSelect={(value) => handleStateChange("school_year", value, setFormData)}
-            onError={(msg) => handleFieldError("school_year", msg)}
+            onError={(msg) => handleStateChange("school_year", msg, setErrors)}
             error={errors.school_year}
             placeholder={formData.year}
+            required={true}
+            ref={schoolYearRef}
           />
         </div>
         <div>

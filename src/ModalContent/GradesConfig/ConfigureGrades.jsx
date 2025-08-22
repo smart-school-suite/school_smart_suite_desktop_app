@@ -1,12 +1,18 @@
 import { Icon } from "@iconify/react";
 import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCreateExamGrades } from "../../hooks/examGrade/useCreateExamGrades";
 import { useGetLetterGrades } from "../../hooks/letterGrade/useGetLetterGrades";
+import { NumberInput } from "../../components/FormComponents/InputComponents";
+import { numberSchema } from "../../ComponentConfig/YupValidationSchema";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function ConfigureGrades({ handleClose, rowData }) {
-  const gradesCategoryId = rowData.grades_category_id;
+  const scoreRef = useRef();
+  const {grades_category_id:gradesCategoryId} = rowData;
   const [formData, setFormData] = useState([]);
-  const [maxScore, setMaxScore] = useState(0.0);
+  const [maxScore, setMaxScore] = useState(null);
+  const [isValid, setIsValid] = useState(null);
   const { data: letterGrades, isFetching: isLetterGradeLoading } =
     useGetLetterGrades();
   const { mutate:createGrades, isPending } = useCreateExamGrades();
@@ -37,6 +43,16 @@ function ConfigureGrades({ handleClose, rowData }) {
     });
   };
   const handleCreateGrades = () => {
+    if(!isValid || isValid == null || maxScore == null){
+       scoreRef.current.triggerValidation();
+       toast.custom(
+         <ToastWarning 
+           title={"Incomplete Or Invalid Exam Score"}
+           description={"Please Check The Exam Max Score To Ensure that the Exam Score is Valid"}
+         />
+       )
+       return;
+    }
     const payload = {
       grades: formData
         .filter(
@@ -81,17 +97,31 @@ function ConfigureGrades({ handleClose, rowData }) {
         </div>
         <div className="d-flex flex-row justify-content-end gap-2 mb-2">
           <div className="d-flex flex-row gap-2">
-            <input 
-           type="number"
-           className="form-control form-control-sm py-1"
-           value={maxScore}
+          <NumberInput 
+           placeholder="Enter Max Score"
+           validationSchema={numberSchema({
+               required:true,
+               min:1,
+               max:500,
+               integerOnly:false,
+               message:{
+                  required:"Max Score Required",
+                  min:"Exam Score Must Be Atleast 1",
+                  max:"Exam Score Must Not Exceed 500"
+               }
+           })}
            step={"0.01"}
-           onChange={(e) => setMaxScore(e.target.value)}  
+           onChange={(value) => setMaxScore(value)}
+           onValidationChange={(value) => setIsValid(value)}
+           value={maxScore}
+           ref={scoreRef}
          />
          <button className="border-none rounded-2 py-2 px-3 font-size-sm primary-background text-white"
+           style={{height:"68%"}}
            onClick={() => {
              handleCreateGrades();
            }}
+           disabled={isPending}
          >
           {
             isPending ? <SingleSpinner /> : "Submit"
