@@ -5,19 +5,19 @@ import UpdateGradeConfig from "../../ModalContent/GradesConfig/UpdateGrades";
 import DeleteGradesConfig from "../../ModalContent/GradesConfig/DeleteGrades";
 import ViewGradesConfig from "../../ModalContent/GradesConfig/ViewConfigurations";
 import ConfigureGrades from "../../ModalContent/GradesConfig/ConfigureGrades";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { ExamGradingCongfig } from "../../ComponentConfig/AgGridTableConfig";
 import ConfigureByOtherGrades from "../../ModalContent/GradesConfig/ConfigureByOtherGrades";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import React, { useState } from "react";
-import { DeleteIcon, DetailsIcon, ReuseIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon,  GenerateIcon, ReuseIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { GradeIcon } from "../../icons/Icons";
+import AutoConfigureGrades from "../../ModalContent/GradesConfig/AutoConfigGrades";
 function Gradesconfiguration() {
-  const { data:gradeCategory, isFetching } = useGetSchoolGradeCategories();
-  if (isFetching) {
+  const { data:gradeCategory, isLoading } = useGetSchoolGradeCategories();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -91,16 +91,29 @@ function DropdownComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
+         <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(AutoConfigureGrades, 'md')}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Auto Generate Grades</span>
+              <GenerateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteGradesConfig, 'md')}
+          onClick={() => handleShowModal(ConfigureGrades, 'xl')}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Grades Config</span>
-              <DeleteIcon />
+              <span>Configure Grade</span>
+              <CreateIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -114,19 +127,6 @@ function DropdownComponent(props) {
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Grades Config</span>
               <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(ConfigureGrades, 'xl')}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Configure Grade</span>
-              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -153,6 +153,19 @@ function DropdownComponent(props) {
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Configure By Other Grades</span>
               <ReuseIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteGradesConfig, 'md')}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Grades Config</span>
+              <DeleteIcon />
             </div>
           </div>
         </DropDownMenuItem>

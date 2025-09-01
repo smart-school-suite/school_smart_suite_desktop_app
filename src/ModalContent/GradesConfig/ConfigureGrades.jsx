@@ -7,6 +7,8 @@ import { NumberInput } from "../../components/FormComponents/InputComponents";
 import { numberSchema } from "../../ComponentConfig/YupValidationSchema";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { examRemarks, passFailOptions, resitOptions } from "../../data/data";
 function ConfigureGrades({ handleClose, rowData }) {
   const scoreRef = useRef();
   const {grades_category_id:gradesCategoryId} = rowData;
@@ -27,6 +29,11 @@ function ConfigureGrades({ handleClose, rowData }) {
         resit_status:"",
         grades_category_id:gradesCategoryId,
         grade_points: 0.0,
+        isValid:{
+           maximum_score:null,
+           minimum_score:null,
+           grade_points:null
+        }
       }));
       setFormData(preSetFormData);
     }
@@ -42,6 +49,19 @@ function ConfigureGrades({ handleClose, rowData }) {
       return updatedFormData;
     });
   };
+  const handleIsValidChange = (index, field, value) => {
+  setFormData(prevItems => {
+    const newItems = [...prevItems];
+    newItems[index] = {
+      ...newItems[index],
+      isValid: {
+        ...newItems[index].isValid,
+        [field]: value,
+      },
+    };
+    return newItems;
+  });
+};
   const handleCreateGrades = () => {
     if(!isValid || isValid == null || maxScore == null){
        scoreRef.current.triggerValidation();
@@ -136,7 +156,7 @@ function ConfigureGrades({ handleClose, rowData }) {
                 <th className="text-center">Letter Grade</th>
                 <th className="text-center">Status</th>
                 <th className="text-center">Resit Status</th>
-                <th className="text-center">Determinant</th>
+                <th className="text-center">Remark</th>
                 <th className="text-center">Grade Points</th>
                 <th className="text-center">Min Score</th>
                 <th className="text-center">Max Score</th>
@@ -150,147 +170,122 @@ function ConfigureGrades({ handleClose, rowData }) {
                       className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
                       style={{ fontSize:"0.85rem" }}
                       >
-                      {item.letter_grade}
-                    </div>
-                  </td>
-                  <td style={{ width: "15%" }}>
-                    <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
-                    <div className="d-flex flex-column w-100">
-                        <select
-                      className="form-select form-select-sm w-100"
-                      name="grade_status"
-                      value={
-                        formData[index] ? formData[index].grade_status : ""
-                      }
-                      onChange={(e) =>
-                        handleInputChange(index, "grade_status", e.target.value)
-                      }
-                    >
-                      <option selected>Passed</option>
-                      <option value="passed">Pass</option>
-                      <option value="failed">Failed</option>
-                    </select>
-                    <span className="font-size-sm m-0" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
-                    </div>
-                    </div>
-                  </td>
-                  <td style={{ width: "15%" }}>
-                    <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
-                    <div className="d-flex flex-column w-100">
-                        <select
-                      className="form-select form-select-sm w-100"
-                      name="resit_status"
-                      value={
-                        formData[index] ? formData[index].resit_status : ""
-                      }
-                      onChange={(e) =>
-                        handleInputChange(index, "resit_status", e.target.value)
-                      }
-                    >
-                      <option selected>Select Resit Status</option>
-                      <option value="high_resit_potential">High Resit Potential</option>
-                      <option value="low_resit_potential">Low Resit Potential</option>
-                      <option value="resit">Resit</option>
-                      <option value="no_resit">No Resit</option>
-                    </select>
-                    <span className="font-size-sm m-0" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
-                    </div>
-                    </div>
-                  </td>
-                  <td style={{ width: "15%" }}>
-                    <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
-                      <div className="d-flex flex-column w-100">
-                        <select
-                      className="form-select form-select-sm w-100"
-                      name="determinant"
-                      value={formData[index] ? formData[index].determinant : ""}
-                      onChange={(e) =>
-                        handleInputChange(index, "determinant", e.target.value)
-                      }
-                    >
-                      <option selected>Very Good</option>
-                      <option value="Excellent">Excellent</option>
-                      <option value="Outstanding">Outstanding</option>
-                      <option value="Very Good">Very Good</option>
-                      <option value="Good">Good</option>
-                      <option value="Satisfactory">Satisfactory</option>
-                      <option value="Fair">Fair</option>
-                      <option value="Unsatisfactory">Unsatisfactory</option>
-                      <option value="Poor">Poor</option>
-                      <option value="Inadequate">Inadequate</option>
-                      <option value="Below Average">Below Average</option>
-                      <option value="Marginal">Marginal</option>
-                      <option value="Commendable">Commendable</option>
-                      <option value="Promising">Promising</option>
-                    </select>
-                    <span className="font-size-sm" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
+                      <div className="d-flex flex-column w-100 justify-content-center text-center gap-2">
+                        <span>{item.letter_grade}</span>
+                        <span className="font-size-xs visually-hidden">Clash Detected</span>
                       </div>
                     </div>
                   </td>
-                  <td style={{ width: "15%" }}>
+                  <td style={{ width: "20%" }}>
+                    <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
+                    <div className="d-flex flex-column w-100">
+                       <CustomDropdown 
+                         data={passFailOptions}
+                         displayKey={['name']}
+                         valueKey={['value']}
+                         optional={true}
+                         direction={"down"}
+                         placeholder={"Select Grade Status"}
+                         onChange={(value) => handleInputChange(index, 'grade_status', value)}
+                       />
+                    </div>
+                    </div>
+                  </td>
+                  <td style={{ width: "20%" }}>
+                    <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
+                    <div className="d-flex flex-column w-100">
+                      <CustomDropdown 
+                        data={resitOptions}
+                        displayKey={['name']}
+                        valueKey={['value']}
+                        optional={true}
+                        direction={"down"}
+                        placeholder={"Select Resit Status"}
+                        onChange={(value) => handleInputChange(index, "resit_status", value)}
+                      />
+                    </div>
+                    </div>
+                  </td>
+                  <td style={{ width: "20%" }}>
+                    <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
+                      <div className="d-flex flex-column w-100">
+                        <CustomDropdown 
+                          data={examRemarks}
+                          displayKey={['name']}
+                          valueKey={['value']}
+                          optional={true}
+                          direction="down"
+                          placeholder={'Select Remark'}
+                          onSelect={(value) => handleInputChange(index, "determinant", value)}
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ width: "10%" }}>
                    <div className="h-100 w-100 d-flex flex-row align-item-center align-items-center justify-content-center">
                      <div className="d-flex flex-column">
-                       <input
-                      type="number"
-                      className="form-control form-control-sm"
-                      step="0.01"
-                      name="grade_points"
-                      value={
-                        formData[index] ? formData[index].grade_points : ""
-                      }
-                      placeholder="4.00 - 3.00"
-                      onChange={(e) =>
-                        handleInputChange(index, "grade_points", e.target.value)
-                      }
-                    />
-                    <span className="font-size-sm" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
+                      <NumberInput 
+                        placeholder={0.0}
+                        onChange={(value) => handleInputChange(index,  'grade_points',  value)}
+                        step={"0.01"}
+                        onValidationChange={(value) => handleIsValidChange(index, 'grade_points', value)}
+                        validationSchema={numberSchema({
+                            min:0.01,
+                            max:4.00,
+                            required:false,
+                            integerOnly:false,
+                            messages:{
+                               min:"Score Must Be Atleast 0.01",
+                               max:"Score Must Not Exceed 100"
+                            }
+                        })}
+                      />
                      </div>
                    </div>
                   </td>
-                  <td style={{ width: "15%" }}>
+                  <td style={{ width: "10%" }}>
                     <div className="d-flex flex-row align-items-center justify-content-center h-100 w-100">
                       <div className="d-flex flex-column">
-                         <input
-                      type="number"
-                      className="form-control form-control-sm"
-                      value={
-                        formData[index] ? formData[index].minimum_score : ""
-                      }
-                      name="minimum_score"
-                      step="0.01"
-                      onChange={(e) =>
-                        handleInputChange(
-                          index,
-                          "minimum_score",
-                          e.target.value
-                        )
-                      }
-                      
-                    />
-                    <span className="font-size-sm" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
+                        <NumberInput 
+                          placeholder={0.0}
+                          onChange={(value) => handleInputChange(index, 'minimum_score', value)}
+                          onValidationChange={(value) => handleIsValidChange(index, 'minimum_score', value)}
+                          step={"0.01"}
+                          validationSchema={numberSchema({
+                            min:0.01,
+                            max:100,
+                            required:false,
+                            integerOnly:false,
+                            messages:{
+                               min:"Score Must Be Atleast 0.01",
+                               max:"Score Must Not Exceed 100"
+                            }
+                        })}
+                        />
                       </div>
                     </div>
                   </td>
-                  <td style={{ width: "15%" }}>
+                  <td style={{ width: "10%" }}>
                    <div className="h-100 w-100 d-flex flex-row align-items-center justify-content-center">
                      <div className="d-flex flex-column">
-                      <input
-                      type="number"
-                      className="form-control form-control-sm"
-                      value={
-                        formData[index] ? formData[index].maximum_score : ""
-                      }
-                      name="maximum_score"
-                      step="0.01"
-                      onChange={(e) =>
-                        handleInputChange(
-                          index,
-                          "maximum_score",
-                          e.target.value
-                        )
-                      }
-                    />
-                      <span className="font-size-sm" style={{ fontSize:"0.65rem", opacity:0 }}>Danger Text</span>
+                      <NumberInput 
+                        onChange={(value) => handleInputChange(index, 'maximum_score', value)}
+                        onValidationChange={(value) => handleIsValidChange(index, 'maximum_score', value)}
+                        placeholder={0.0}
+                        step={"0.01"}
+                        validationSchema={
+                          numberSchema({
+                            min:0.01,
+                            max:100,
+                            required:false,
+                            integerOnly:false,
+                            messages:{
+                               min:"Score Must Be Atleast 0.01",
+                               max:"Score Must Not Exceed 100"
+                            }
+                        })
+                        }
+                      />
                      </div>
                    </div>
                   </td>

@@ -12,7 +12,6 @@ import pricingReducer from "../Slices/Asynslices/subcriptionPricingSlice";
 import timetableReducer from "../Slices/Asynslices/TimetableSlice";
 import examtimetableReducer from "../Slices/Asynslices/ExamTimetableSlice";
 import studentScoreReducer from "../Slices/Asynslices/StudentScoreSlice";
-import notificationReducer from "../Slices/Asynslices/NotificationSlice";
 import specialtyTimetableReducer from "../Slices/Asynslices/SpecialtyTimetableSlice";
 import createCaScoreReducer from "../Slices/Asynslices/CaScoreSlice";
 import createExamScoreReducer from "../Slices/Asynslices/ExamScoreSlice";
@@ -20,6 +19,7 @@ import resitExamTimetableReducer from "../Slices/Asynslices/ResitExamTimetableSl
 import createResitExamScoreReducer from "../Slices/Asynslices/ResitScoreSlice";
 import announcementReducer from "../Slices/Asynslices/AnnouncementSlice";
 import appSettingReducer  from "../Slices/Asynslices/AppSetting";
+import autoGenTimetableSliceReducer from "../Slices/Asynslices/AutoGenTimetableSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -45,14 +45,14 @@ const rootReducer = combineReducers({
   timetable: timetableReducer,
   examtimetable: examtimetableReducer,
   studentScore: studentScoreReducer,
-  notification: notificationReducer,
   specialtyTimetable: specialtyTimetableReducer,
   createCaScore:createCaScoreReducer,
   createExamScore:createExamScoreReducer,
   resitExamTimetable:resitExamTimetableReducer,
   createResitExamScore:createResitExamScoreReducer,
   announcement:announcementReducer,
-  appSetting:appSettingReducer
+  appSetting:appSettingReducer,
+  autoGenTimetable:autoGenTimetableSliceReducer
 });
 
 

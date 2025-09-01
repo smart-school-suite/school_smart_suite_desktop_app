@@ -664,7 +664,7 @@ button.disabled {
     scroll-behavior: smooth;
     scrollbar-width: 0.2rem;
     scrollbar-gutter: 1rem;
-    max-height: 10rem;
+    max-height: 25dvh;
     overflow-y: auto;
     display: block;
     overflow-x: hidden;
@@ -1048,7 +1048,7 @@ thead {
 
 .grades-box {
     height: auto;
-    max-height: 75dvh;
+    max-height: 70dvh;
     overflow-y: auto;
 }
 

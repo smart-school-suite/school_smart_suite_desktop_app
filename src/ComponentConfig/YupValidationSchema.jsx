@@ -393,3 +393,68 @@ export const urlSchema = (optional = false) => {
 
   return schema;
 };
+
+
+const parseTime = (time) => {
+  if (!time || typeof time !== 'string' || !/^([01]\d|2[0-3]):?([0-5]\d)$/.test(time)) {
+    return null;
+  }
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+};
+
+export const timeRangeSchema = ({ optional = false, messages = {} } = {}) => {
+  const timeValidation = Yup.string()
+    .trim()
+    .matches(
+      /^([01]\d|2[0-3]):?([0-5]\d)$/,
+      messages.invalid || "Time must be in HH:mm format (e.g., 08:30)."
+    );
+
+  let schema = Yup.object({
+    start_time: timeValidation,
+    end_time: timeValidation
+      .test(
+        'is-after-start',
+        messages.afterStart || "End time must be after the start time.",
+        function (value) {
+          const { start_time } = this.parent;
+          
+          // If optional, and both fields are empty, validation passes
+          if (optional && (!start_time && !value)) {
+            return true;
+          }
+
+          // If one field is present, both must be valid for comparison
+          if (start_time && !value) {
+            return this.createError({ message: messages.requiredEnd || "End time is required." });
+          }
+          if (!start_time && value) {
+            return this.createError({ message: messages.requiredStart || "Start time is required." });
+          }
+
+          // Normal comparison
+          const startTimeInMinutes = parseTime(start_time);
+          const endTimeInMinutes = parseTime(value);
+
+          if (startTimeInMinutes === null || endTimeInMinutes === null) {
+            // This case should be caught by the .matches() test
+            return true; 
+          }
+          
+          return endTimeInMinutes > startTimeInMinutes;
+        }
+      )
+  });
+
+  if (optional) {
+    schema = schema.nullable();
+    schema.fields.start_time = schema.fields.start_time.nullable();
+    schema.fields.end_time = schema.fields.end_time.nullable();
+  } else {
+    schema.fields.start_time = schema.fields.start_time.required(messages.requiredStart || "Start time is required.");
+    schema.fields.end_time = schema.fields.end_time.required(messages.requiredEnd || "End time is required.");
+  }
+  
+  return schema;
+};

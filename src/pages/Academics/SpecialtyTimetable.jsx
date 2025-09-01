@@ -1,24 +1,21 @@
 import Table from "../../components/Tables/Tables";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { SpecialtyTimetableTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import ViewTimetable from "../../ModalContent/SpecialtyTimetable/ViewTimetable";
 import DeleteTimetable from "../../ModalContent/SpecialtyTimetable/DeleteTimetable";
-import CreateTimetable from "../../ModalContent/SpecialtyTimetable/CreateTimetable";
-import UpdateTimetable from "../../ModalContent/SpecialtyTimetable/UpdateTimetable";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { useGetActiveSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
-import { Icon } from "@iconify/react";
 import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
-import CreateTimetableByPreference from "../../ModalContent/SpecialtyTimetable/CreateTimetablePreference";
 import { TimetableIcon } from "../../icons/Icons";
 import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
+import AutomaticCreateTimetable from "../../ModalContent/SpecialtyTimetable/AutomaticCreateTimetable";
+import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 function SpecialtyTimetable() {
-  const { data:schoolSemesters, isFetching } = useGetActiveSchoolSemesters();
-  if (isFetching) {
-    return <Pageloaderspinner />;
+  const { data:schoolSemesters, isLoading } = useGetActiveSchoolSemesters();
+  if (isLoading) {
+    return <DataTableNavLoader />;
   }
   return (
     <>
@@ -93,7 +90,7 @@ function ActionButtonGroup(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(CreateTimetable, null, true)}
+          onClick={() => handleShowModal(AutomaticCreateTimetable, "xl")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">

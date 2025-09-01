@@ -964,3 +964,203 @@ export const DateRangeInput = forwardRef(
     );
   }
 );
+
+export const TimeRangeInput = forwardRef(
+  (
+    {
+      startValue,
+      endValue,
+      onChange,
+      onStartTimeChange,
+      onEndTimeChange,
+      onStartTimeValidationChange,
+      onEndTimeValidationChange,
+      validationSchema,
+      placeholderStart = "HH:MM",
+      placeholderEnd = "HH:MM",
+    },
+    ref
+  ) => {
+    const [times, setTimes] = useState({
+      start_time: startValue || "",
+      end_time: endValue || "",
+    });
+
+    const [errors, setErrors] = useState({
+      start_time: "",
+      end_time: "",
+    });
+
+    const [touched, setTouched] = useState({
+      start_time: false,
+      end_time: false,
+    });
+
+    // 🔹 Independent field validation
+    const validateStartTime = async (value) => {
+      if (!validationSchema) {
+        onStartTimeValidationChange?.(true);
+        return true;
+      }
+
+      try {
+        await validationSchema.fields.start_time.validate(value);
+        setErrors((prev) => ({ ...prev, start_time: "" }));
+        onStartTimeValidationChange?.(true);
+        return true;
+      } catch (err) {
+        setErrors((prev) => ({
+          ...prev,
+          start_time: err.message || "Invalid start time",
+        }));
+        onStartTimeValidationChange?.(false);
+        return false;
+      }
+    };
+
+    const validateEndTime = async (value) => {
+      if (!validationSchema) {
+        onEndTimeValidationChange?.(true);
+        return true;
+      }
+
+      try {
+        await validationSchema.validate(
+          { start_time: times.start_time, end_time: value },
+          { abortEarly: false }
+        );
+        setErrors((prev) => ({ ...prev, end_time: "" }));
+        onEndTimeValidationChange?.(true);
+        return true;
+      } catch (err) {
+        const fieldError = err.inner.find((e) => e.path === "end_time");
+        setErrors((prev) => ({
+          ...prev,
+          end_time: fieldError ? fieldError.message : "Invalid end time",
+        }));
+        onEndTimeValidationChange?.(false);
+        return false;
+      }
+    };
+
+    // 🔹 Handle input changes
+    const handleChange = (field) => (e) => {
+      const rawValue = e.target.value;
+      setTimes((prev) => ({ ...prev, [field]: rawValue }));
+      onChange?.({ ...times, [field]: rawValue });
+
+      if (field === "start_time") {
+        onStartTimeChange?.(rawValue);
+        if (touched.start_time) validateStartTime(rawValue);
+      }
+      if (field === "end_time") {
+        onEndTimeChange?.(rawValue);
+        if (touched.end_time) validateEndTime(rawValue);
+      }
+    };
+
+    const handleFocus = (field) => () => {
+      setTouched((prev) => ({ ...prev, [field]: true }));
+      if (field === "start_time") validateStartTime(times.start_time);
+      if (field === "end_time") validateEndTime(times.end_time);
+    };
+
+    // 🔹 Expose granular validation to parent
+    useImperativeHandle(ref, () => ({
+      preValidateStart: async () => {
+        if (!times.start_time) {
+          setTouched((prev) => ({ ...prev, start_time: true }));
+        }
+        return await validateStartTime(times.start_time);
+      },
+      preValidateEnd: async () => {
+        if (!times.end_time) {
+          setTouched((prev) => ({ ...prev, end_time: true }));
+        }
+        return await validateEndTime(times.end_time);
+      },
+    }));
+
+    const feedbackClasses = (field) =>
+      [
+        "transition-all font-size-sm",
+        touched[field] && errors[field]
+          ? "invalid-feedback"
+          : touched[field] && !errors[field] && times[field]
+          ? "valid-feedback"
+          : null,
+        touched[field] && (errors[field] || (!errors[field] && times[field]))
+          ? "opacity-100"
+          : "opacity-0",
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+    const feedbackMessage = (field) =>
+      touched[field] && errors[field]
+        ? errors[field]
+        : touched[field] && !errors[field] && times[field]
+        ? "Looks Good!"
+        : "";
+
+    return (
+      <div
+        className="d-flex flex-row align-items-center gap-2 w-100"
+      >
+        <div className="w-50 d-flex flex-column" style={{ height:"9dvh" }}>
+          <label htmlFor="startTime" className="font-size-sm">
+            Start Time
+          </label>
+          <InputMask
+            mask="99:99"
+            maskChar="_"
+            value={times.start_time}
+            onChange={handleChange("start_time")}
+            onFocus={handleFocus("start_time")}
+            onBlur={handleFocus("start_time")}
+            placeholder={placeholderStart}
+            className={`form-control w-100 font-size-sm p-2 ${
+              touched.start_time && errors.start_time ? "is-invalid" : ""
+            } ${
+              touched.start_time && !errors.start_time && times.start_time
+                ? "is-valid"
+                : ""
+            }`}
+          />
+          <div
+            className={`${feedbackClasses("start_time")} font-size-sm mt-auto`}
+          >
+            {feedbackMessage("start_time")}
+          </div>
+        </div>
+
+        <div className="w-50 d-flex flex-column w-50" style={{ height:"9dvh" }}>
+          <label htmlFor="endTime" className="font-size-sm">
+            End Time
+          </label>
+          <InputMask
+            mask="99:99"
+            maskChar="_"
+            value={times.end_time}
+            onChange={handleChange("end_time")}
+            onFocus={handleFocus("end_time")}
+            onBlur={handleFocus("end_time")}
+            placeholder={placeholderEnd}
+            className={`form-control w-100 p-2 font-size-sm ${
+              touched.end_time && errors.end_time ? "is-invalid" : ""
+            } ${
+              touched.end_time && !errors.end_time && times.end_time
+                ? "is-valid"
+                : ""
+            }`}
+          />
+          <div
+            className={`${feedbackClasses("end_time")} font-size-sm mt-auto`}
+          >
+            {feedbackMessage("end_time")} 
+          </div>
+        </div>
+      </div>
+    );
+  }
+);

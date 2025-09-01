@@ -331,3 +331,7 @@ body{
     cursor: not-allowed;
     pointer-events: none;
 }
+
+.z-9{
+    z-index: 999;
+}

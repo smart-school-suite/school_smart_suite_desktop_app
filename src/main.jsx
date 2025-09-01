@@ -13,7 +13,6 @@ import { PersistGate } from "redux-persist/integration/react";
 import { AuthProvider } from "./context/authContext";
 import Links from "./routers/Links";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import NotificationFetcher from "./components/BackgroundFetchers/BackgroundNotificationFetch";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -31,8 +30,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <PersistGate loading={null} persistor={persistor}>
         <AuthProvider>
           <QueryClientProvider client={queryClient}>
-            <NotificationFetcher />
-          <Links />
+            <Links />
           </QueryClientProvider>
         </AuthProvider>
       </PersistGate>

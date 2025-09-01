@@ -78,4 +78,10 @@ const RepeatIcon = ({ iconStyle }) => {
         <Icon icon="material-symbols:repeat-rounded" style={{...iconStyle, fontSize:"1rem"}} />
      )
 }
-export { RepeatIcon, ReverseIcon, ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }
+
+const GenerateIcon = ({ iconStyle }) => {
+     return (
+        <Icon icon="oui:generate" style={{...iconStyle, fontSize:"1rem"}}  />
+     )
+}
+export { GenerateIcon, RepeatIcon, ReverseIcon, ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }

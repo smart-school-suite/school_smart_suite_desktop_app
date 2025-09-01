@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useGenerateTimetable } from "../../hooks/timetable/useGenerateTimetable";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 
@@ -11,26 +9,8 @@ function ViewTimetable({ handleClose, rowData }) {
   const [timetable, setTimetable] = useState(null);
 
   const handleGenerate = async () => {
-    generate(
-      { specialty_id, level_id, semester_id: id, student_batch_id },
-      {
-        onSuccess: (data) => {
-          setTimetable(data.data);
-          console.table("Timetable generated successfully:", data);
-        },
-        onError: (error) => {
-          toast.custom(
-            <ToastWarning
-              title={"Error Generating Timetable"}
-              message={
-                error?.response?.data?.message ||
-                "An error occurred while generating the timetable."
-              }
-            />
-          );
-        },
-      }
-    );
+      const timetable = await generate({ specialty_id, level_id, semester_id: id, student_batch_id });
+      setTimetable(timetable.data);
   };
 
   useEffect(() => {
@@ -41,7 +21,7 @@ function ViewTimetable({ handleClose, rowData }) {
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between mb-4">
-        <h5>Generate Timetable</h5>
+        <span>Generate Timetable</span>
         <span
           onClick={() => {
             handleClose();
@@ -72,14 +52,18 @@ function ViewTimetable({ handleClose, rowData }) {
                       <div className="d-flex flex-row align-items-center gap-1 w-100 flex-wrap gap-2">
                         {courses.length > 0 ? (
                           courses.map((course) => (
-                            <TimetableCard
+                            <div style={{ width:"32%" }}> 
+                               <SlotCard
                               key={course.id}
                               courseTitle={course.course}
                               courseCode={course.course_code}
                               teacherName={course.teacher}
                               startTime={course.start_time}
                               endTime={course.end_time}
+                              duration={course.duration}
+                              courseCredit={course.credit}
                             />
+                            </div>
                           ))
                         ) : (
                           <span>No courses scheduled</span>
@@ -98,36 +82,47 @@ function ViewTimetable({ handleClose, rowData }) {
 
 export default ViewTimetable;
 
-function TimetableCard({
+function SlotCard({
   courseTitle,
   courseCode,
   teacherName,
   startTime,
   endTime,
+  duration,
+  courseCredit,
 }) {
   return (
-    <div className="card rounded-3 p-2 d-flex gap-3" style={{ width: "25%" }}>
-      <div className="d-flex flex-column">
-        <span className="fw-semibold" style={{ fontSize: "0.7rem" }}>
-          {courseTitle}
-        </span>
-        <span className="fw-light" style={{ fontSize: "0.75rem" }}>
-          {courseCode}
-        </span>
+    <>
+      <div className="card p-2 w-100 rounded-3 d-flex flex-column gap-3 primary-background-50 primary-color-dark border-none ">
+        <div className="font-size-sm d-flex flex-column">
+          <div className="d-flex flex-row align-items-center w-100 justify-content-between">
+            <span className="fw-semibold">{courseTitle}</span>
+            <span className="pointer-cursor">
+              <Icon
+                icon="qlementine-icons:menu-dots-16"
+                width="16"
+                height="16"
+              />
+            </span>
+          </div>
+          <span className="fw-medium">{teacherName}</span>
+        </div>
+        <div className="font-size-sm d-flex flex-column fw-light">
+          <span>{courseCredit} Credit</span>
+          <span>{courseCode}</span>
+        </div>
+        <div className="d-flex flex-row align-items-center justify-content-between font-size-sm fw-medium">
+          <div className="d-flex flex-row align-items-center gap-2">
+            <span>{startTime}</span>
+            <span>
+              <Icon icon="octicon:dash-16" />
+            </span>
+            <span>{endTime}</span>
+          </div>
+          <span>{duration}</span>
+        </div>
       </div>
-      <div className="d-flex flex-column font-size-sm">
-        <span className="fw-light">{teacherName}</span>
-      </div>
-      <div
-        className="d-flex flex-row align-items-center fw-semibold gap-1"
-        style={{ fontSize: "0.65rem" }}
-      >
-        <span>{startTime}</span>
-        <span>
-          <Icon icon="pajamas:dash" />
-        </span>
-        <span>{endTime}</span>
-      </div>
-    </div>
+    </>
   );
 }
+

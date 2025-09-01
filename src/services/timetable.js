@@ -44,3 +44,8 @@ export const deleteTimetable = async (deleteData) => {
      const response = await axiosInstance.post("timetable/timetable/specialty", deleteData);
      return response.data;
 }
+
+export const autoGenerateTimetable = async ({payload, schoolSemesterId}) => {
+      const response = await axiosInstance.post(`timetable/timetable-automatic/${schoolSemesterId}`, payload);
+      return response.data;
+}
