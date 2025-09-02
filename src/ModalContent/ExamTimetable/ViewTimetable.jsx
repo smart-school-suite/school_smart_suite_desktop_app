@@ -11,7 +11,7 @@ function ViewTimetable({ handleClose, rowData }){
     return(
         <>
           <div className="d-flex flex-row align-items-center justify-content-between mb-4">
-                 <h5>Generate Timetable</h5>
+                 <span>Generate Timetable</span>
                  <span
                    onClick={() => {
                      handleClose();
@@ -24,8 +24,8 @@ function ViewTimetable({ handleClose, rowData }){
           <table className="table table-responsive">
             <thead className="grades-thead">
               <tr>
-                <th>Day</th>
-                <th>Courses</th>
+                <th className="font-size-sm">Day</th>
+                <th className="font-size-sm">Courses</th>
               </tr>
             </thead>
             <tbody>
@@ -37,13 +37,16 @@ function ViewTimetable({ handleClose, rowData }){
                       <div className="d-flex flex-row align-items-center gap-1 w-100 flex-wrap gap-2">
                         {courses.length > 0 ? (
                           courses.map((course) => (
-                            <TimetableCard
+                            <div style={{ width:"32%" }}>
+                               <SlotCard
                               key={course.id}
                               courseTitle={course.course_title}
                               courseCode={course.course_code}
+                              courseCredit={course.credit}
                               startTime={course.start_time}
                               endTime={course.end_time}
                             />
+                              </div>
                           ))
                         ) : (
                           <span>No courses scheduled</span>
@@ -60,32 +63,42 @@ function ViewTimetable({ handleClose, rowData }){
 }
 export default ViewTimetable;
 
-function TimetableCard({
+function SlotCard({
   courseTitle,
   courseCode,
   startTime,
   endTime,
+  duration,
+  courseCredit,
 }) {
   return (
-    <div className="card rounded-3 p-2 d-flex gap-3" style={{ width: "25%" }}>
-      <div className="d-flex flex-column">
-        <span className="fw-semibold" style={{ fontSize: "0.7rem" }}>
-          {courseTitle}
-        </span>
-        <span className="fw-light" style={{ fontSize: "0.75rem" }}>
-          {courseCode}
-        </span>
+    <>
+      <div className="card p-2 w-100 rounded-3 d-flex flex-column gap-5 primary-background-50 primary-color-dark border-none ">
+        <div className="font-size-sm d-flex flex-column gap-1">
+          <div className="d-flex flex-row align-items-center w-100 justify-content-between">
+            <span className="fw-semibold">{courseTitle}</span>
+            <span className="pointer-cursor">
+              <Icon
+                icon="qlementine-icons:menu-dots-16"
+                width="16"
+                height="16"
+              />
+            </span>
+          </div>
+          <span className="fw-medium">{courseCode}</span>
+          <span className="fw-medium">{courseCredit} Credit</span>
+        </div>
+        <div className="d-flex flex-row align-items-center justify-content-between font-size-sm fw-medium">
+          <div className="d-flex flex-row align-items-center gap-2">
+            <span>{startTime}</span>
+            <span>
+              <Icon icon="octicon:dash-16" />
+            </span>
+            <span>{endTime}</span>
+          </div>
+          <span>{duration}</span>
+        </div>
       </div>
-      <div
-        className="d-flex flex-row align-items-center fw-semibold gap-1"
-        style={{ fontSize: "0.65rem" }}
-      >
-        <span>{startTime}</span>
-        <span>
-          <Icon icon="pajamas:dash" />
-        </span>
-        <span>{endTime}</span>
-      </div>
-    </div>
+    </>
   );
 }

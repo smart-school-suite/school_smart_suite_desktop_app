@@ -34,3 +34,8 @@ export const generateExamTimetable = async (examId) => {
   const response = await axiosInstance.get(`exam-timetable/${examId}`);
   return response.data;
 };
+
+export const autoGenExamTimetable = async (data) => {
+   const response = await axiosInstance.post("exam-timetable/auto-gen-timetable", data);
+   return response.data;
+}

@@ -691,3 +691,31 @@ export function optionalValidateObject(data) {
 export function hasNonEmptyValue(data) {
   return Object.values(data).some(value => value !== null && value !== '' && typeof value !== 'undefined');
 }
+
+export function convertToMySQLTimeHHMM(timeStr) {
+  // Remove AM/PM and trim whitespace
+  const cleanStr = timeStr.replace(/\s*(AM|PM|am|pm)\s*/i, '').trim();
+
+  // Determine if it's PM or AM
+  const isPM = /pm/i.test(timeStr);
+  const isAM = /am/i.test(timeStr);
+
+  // Split into hours and minutes
+  const [hourPart, minutePart = '00'] = cleanStr.split(':');
+
+  let hours = parseInt(hourPart, 10);
+  const minutes = parseInt(minutePart, 10);
+
+  // Convert to 24-hour format
+  if (isPM && hours < 12) {
+    hours += 12;
+  } else if (isAM && hours === 12) {
+    hours = 0;
+  }
+
+  // Format to HH:MM
+  const hh = String(hours).padStart(2, '0');
+  const mm = String(minutes).padStart(2, '0');
+
+  return `${hh}:${mm}`;
+}
