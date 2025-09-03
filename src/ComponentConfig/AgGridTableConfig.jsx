@@ -2748,3 +2748,65 @@ export function AnnouncementTagTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
+
+
+export function ExamResultsTableConfig({ DropdownComponent }){
+  const tableConfig = [
+    {
+      field: "student_name",
+      headerName: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level",
+      headerName: "Level",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "exam_name",
+      headerName: "Exam",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "gpa",
+      headerName: "GPA",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+     {
+      field: "total_score",
+      headerName: "Total Score",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ]
+  return tableConfig
+}

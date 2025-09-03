@@ -894,6 +894,25 @@ button.disabled {
 .modal-content-container::-webkit-scrollbar {
     width: 4px;
 }
+.modal-content-container-sm {
+    height: auto;
+    max-height: 65dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.modal-content-container-sm::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+
+.modal-content-container-sm::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+.modal-content-container-sm::-webkit-scrollbar {
+    width: 4px;
+}
 
 .toast-danger {
     width: 25vw;

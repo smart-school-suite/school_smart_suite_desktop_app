@@ -7,8 +7,17 @@ const ExamCandidates = React.lazy(() =>
 const ExamTimetable = React.lazy(() =>
   import("../../pages/Exam/ExamTimetable")
 );
-
+const ExamResults = React.lazy(() => import("../../pages/Exam/ExamResults"));
 const ExamRoutes = [
+  <Route 
+    key="examResults"
+    path="/exam-results"
+    element={
+       <Suspense>
+        <ExamResults />
+       </Suspense>
+    }
+  />,
   <Route
     key="exam"
     path="/exam"

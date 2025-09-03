@@ -12,6 +12,7 @@ export const useCreateCaMark = (handleClose) => {
          mutationFn:createCaMark,
          onSuccess:() => {
              queryClient.invalidateQueries({queryKey:["examCandidates"]})
+             queryClient.invalidateQueries({ queryKey:["examResults"] })
              if(handleClose){
                 handleClose();
              }

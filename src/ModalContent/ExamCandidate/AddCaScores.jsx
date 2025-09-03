@@ -88,7 +88,7 @@ const scoresData = formData
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between mb-4 ">
-        <h5>Create CA Scores</h5>
+        <span>Create CA Scores</span>
         <span
           onClick={() => {
             handleClose();
@@ -124,10 +124,9 @@ const scoresData = formData
               <tr className="grades-tr" key={index}>
                 <td style={{ width: "20%" }}>
                   <div
-                    className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
-                    style={{ fontSize: "0.85rem" }}
+                    className="w-100 h-100 d-flex flex-row align-items-center justify-content-center font-size-sm"
                   >
-                    <div className="d-flex flex-column w-100">
+                    <div className="d-flex flex-column w-100 font-size">
                       <span>{items.courseName}</span>
                       <span style={{ fontSize: "0.65rem", opacity: 0 }}>
                         Error
@@ -137,14 +136,13 @@ const scoresData = formData
                 </td>
                 <td style={{ width: "20%" }}>
                   <div
-                    className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
-                    style={{ fontSize: "0.85rem" }}
+                    className="w-100 h-100 d-flex flex-row align-items-center justify-content-center font-size-sm"
                   >
                     <div className="d-flex flex-column">
                       <input
                         type="number"
                         step="0.01"
-                        className="form-control form-control-sm"
+                        className="form-control font-size-sm p-2"
                         value={items.score}
                         onChange={(e) => handleScoreChange(e, index)}
                       />
@@ -156,8 +154,7 @@ const scoresData = formData
                 </td>
                 <td style={{ width: "20%" }}>
                   <div
-                    className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
-                    style={{ fontSize: "0.85rem" }}
+                    className="w-100 h-100 d-flex flex-row align-items-center justify-content-center font-size-sm"
                   >
                     <div className="d-flex flex-column">
                       <span>{<NumberFlow value={items.gradePoints.toFixed(2)}  />}</span>
@@ -169,8 +166,7 @@ const scoresData = formData
                 </td>
                 <td style={{ width: "20%" }}>
                   <div
-                    className="h-100 d-flex flex-row align-items-center justify-content-center"
-                    style={{ fontSize: "0.85rem" }}
+                    className="h-100 d-flex flex-row align-items-center justify-content-center font-size-sm"
                   >
                     <div className="d-flex flex-column">
                       <span>{items.gradeStatus || "NA"}</span>
@@ -182,8 +178,7 @@ const scoresData = formData
                 </td>
                 <td style={{ width: "20%" }}>
                   <div
-                    className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
-                    style={{ fontSize: "0.85rem" }}
+                    className="w-100 h-100 d-flex flex-row align-items-center justify-content-center font-size-sm"
                   >
                     <div className="d-flex flex-column">
                       <span>{items.letterGrade || "N/A"}</span>

@@ -340,6 +340,20 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
+                    <div className="box-nav">
+                      <div className="subbox-nav">
+                        <NavLink
+                          to="/exam-results"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-decoration-none fw-medium color-primary"
+                              : "text-decoration-none gainsboro-color"
+                          }
+                        >
+                          <p>Exam Results</p>
+                        </NavLink>
+                      </div>
+                    </div>
                   </div>
                 </div>
                  </div>

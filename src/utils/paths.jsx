@@ -27,7 +27,7 @@ export const academicRoutes = [
   "/grades-configuration",
 ];
 
-export const examRoutes = ["/exam", "/exam-candidate", "/exam-timetable"];
+export const examRoutes = ["/exam", "/exam-candidate", "/exam-timetable", "/exam-results"];
 
 export const resitRoutes = [
   "/resit-candidate",

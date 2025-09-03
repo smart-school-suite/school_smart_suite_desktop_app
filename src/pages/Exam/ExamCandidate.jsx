@@ -2,9 +2,7 @@ import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader"
 import { useGetExamCandidates } from "../../hooks/examCandidate/useGetExamCandidates";
 import Table from "../../components/Tables/Tables";
 import { ExamCandidateTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import { Icon } from "@iconify/react";
-import React from "react";
-import { useState } from "react";
+import  React, { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { CreateIcon, DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";

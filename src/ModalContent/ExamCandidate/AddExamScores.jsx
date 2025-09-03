@@ -93,7 +93,7 @@ function AddExamScores({ handleClose, rowData }) {
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between mb-4 ">
-        <h5>Create Exam Scores</h5>
+        <span>Create Exam Scores</span>
         <span
           onClick={() => {
             handleClose();
@@ -151,7 +151,7 @@ function AddExamScores({ handleClose, rowData }) {
                       <input
                         type="number"
                         step="0.01"
-                        className="form-control form-control-sm"
+                        className="form-control font-size-sm p-2"
                         value={items.score}
                         onChange={(e) => handleScoreChange(e, index)}
                       />
