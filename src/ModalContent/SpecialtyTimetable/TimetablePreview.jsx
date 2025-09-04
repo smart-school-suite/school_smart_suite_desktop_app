@@ -36,7 +36,7 @@ function TimetablePreview({ handleStateChange, data, handleClose }) {
 
       const data = await autoGenerateTimetable({ payload, schoolSemesterId });
 
-      setGenTimetable(data.data);
+      setGenTimetable(data.data.timetable);
     } catch (error) {
       console.error("Mutation failed:", error);
     }

@@ -1,19 +1,19 @@
 import { useGetAllResitExams } from "../../hooks/resitExam/useGetResitExams";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import Table from "../../components/Tables/Tables";
-import { Icon } from "@iconify/react";
 import React from "react";
 import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { GenerateIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { ResitTimetableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import CreateTimetable from "../../ModalContent/ExamResitTimetable/CreateTimetable";
 import { TimetableIcon } from "../../icons/Icons";
+import AutoGenResitExamTimetable from "../../ModalContent/ExamResitTimetable/AutoGenResitExamTimetable";
 function ResitTimetable() {
-  const { data: resitExams, isFetching } = useGetAllResitExams();
-  if (isFetching) {
+  const { data: resitExams, isLoading } = useGetAllResitExams();
+  if (isLoading) {
     return <DataTableNavLoader />;
   }
   return (
@@ -91,6 +91,19 @@ function DropdownComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(AutoGenResitExamTimetable, "xl")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Auto Generate Timetable</span>
+              <GenerateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"

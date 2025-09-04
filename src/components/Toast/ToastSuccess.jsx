@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 function ToastSuccess({ title, description }) {
   return (
     <>
-      <div className="p-2 rounded-4  toast-success">
+      <div className="p-2 rounded-3  toast-success border">
         <div className="d-flex flex-row align-items-center gap-2">
           <Icon
             icon="material-symbols-light:check-circle-rounded"

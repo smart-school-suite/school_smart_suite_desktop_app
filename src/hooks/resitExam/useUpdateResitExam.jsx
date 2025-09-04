@@ -6,7 +6,7 @@ import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useUpdateResitExam = (handleClose) => {
     const queryClient = useQueryClient();
     return useMutation({ 
-        mutationFn:({ resitExamId, updateData }) => updateResitExam(resitExamId, updateData),
+        mutationFn:({ resitExamId, updateData }) => updateResitExam({resitExamId, updateData}),
         onSuccess:() => {
             queryClient.invalidateQueries({ queryKey:["resitExams"] })
              if(handleClose){

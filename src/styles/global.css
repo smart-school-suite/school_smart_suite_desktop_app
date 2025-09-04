@@ -607,12 +607,10 @@ aside {
     position: sticky;
     top: 0;
     background-color: white;
-    /* Ensure the header has a background */
 }
 
 .custom-table td:not(.first-column) {
     width: 90%;
-    /* Set other columns to occupy 90% */
 }
 
 .fill-hover:hover {
@@ -915,24 +913,22 @@ button.disabled {
 }
 
 .toast-danger {
-    width: 25vw;
+    width: 20vw;
     background: #fff0f0;
     border: 1px solid #ff9494;
     color: #500000;
 }
 
 .toast-warning {
-    width: 25vw;
+    width: 20vw;
     background: #fffceb;
     border: 1px solid #ffda46;
     color: #481a00;
 }
 
 .toast-success {
-    width: 25vw;
-    background: #f4faf3;
-    border: 1px solid #9ed89d;
-    color: #0e2510;
+    width: 23.5vw;
+    background: #fff;
 }
 
 .custom-modal .modal-content {

@@ -168,7 +168,7 @@ function AddExamScores({ handleClose, rowData }) {
                   >
                     <div className="d-flex flex-column">
                       <span>
-                        {<NumberFlow value={items.caScore.toFixed(2)} />}
+                        {<NumberFlow value={parseFloat(items.caScore).toFixed(2)} />}
                       </span>
                       <span style={{ fontSize: "0.65rem", opacity: 0 }}>
                         Error
@@ -183,7 +183,7 @@ function AddExamScores({ handleClose, rowData }) {
                   >
                     <div className="d-flex flex-column">
                       <span>
-                        {<NumberFlow value={items.examScore.toFixed(2)} />}
+                        {<NumberFlow value={parseFloat(items.examScore).toFixed(2)} />}
                       </span>
                       <span style={{ fontSize: "0.65rem", opacity: 0 }}>
                         Error

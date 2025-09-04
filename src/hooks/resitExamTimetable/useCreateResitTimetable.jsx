@@ -6,7 +6,7 @@ import ToastDanger from "../../components/Toast/ToastDanger";
 export const useCreateResitTimetable = (handleClose) => {
     const queryClient = useQueryClient();
     return useMutation({
-         mutationFn:({resitExamId, createData}) => createResitTimetable(resitExamId, createData),
+         mutationFn:({resitExamId, createData}) => createResitTimetable({resitExamId, createData}),
          onSuccess:() => {
              queryClient.invalidateQueries({ queryKey:["resitExams"] })
              

@@ -27,8 +27,8 @@ export const getResitExamDetails = async (resitExamId) => {
   return response.data;
 };
 
-export const updateResitExam = async (resitExamId, data) => {
-  const response = await axiosInstance.put(`resit-exam/${resitExamId}`, data);
+export const updateResitExam = async ({resitExamId, updateData}) => {
+  const response = await axiosInstance.put(`resit-exam/${resitExamId}`, updateData);
   return response.data;
 };
 

@@ -48,7 +48,9 @@ function UpdateResitExam({ handleClose, rowData }) {
           )
           return;
       }
-      updateExam({examId, formData})
+      console.log(examId)
+      console.table(formData)
+      updateExam({resitExamId:examId, updateData:formData})
   }
   return (
     <>
@@ -98,14 +100,14 @@ function UpdateResitExam({ handleClose, rowData }) {
         />
       </div>
       <div>
-        <label htmlFor="schoolYear">School Year</label>
+        <label htmlFor="schoolYear" className="font-size-sm">School Year</label>
         <SchoolYearSelector 
           onSelect={(value) => handleStateChange('school_year', value, setFormData)}
           onError={(msg) => handleStateChange("school_year", msg, setErrors)}
           error={errors.school_year}
         />
       </div>
-      <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
+      <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100 mt-2">
         <button
           disabled={isPending}
           className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"

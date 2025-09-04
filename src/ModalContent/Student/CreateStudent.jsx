@@ -40,10 +40,6 @@ function CreateStudent({ handleClose }) {
     name: "",
     first_name: "",
     last_name: "",
-    specialty_id: "",
-    student_batch_id: "",
-    guardian_id: "",
-    gender: "",
     email: "",
   });
   const [errors, setErrors] = useState({
@@ -54,14 +50,14 @@ function CreateStudent({ handleClose }) {
   });
   const { mutate: createStudent, isPending } = useCreateStudent(handleClose);
   const handlePrevalidation = async () => {
-      const email = emailRef.current.triggerValidation();
-      const firstName = firstNameRef.current.triggerValidation();
-      const lastName = lastNameRef.current.triggerValidation();
-      const fullName = nameRef.current.triggerValidation();
-      const specialty = specialtyRef.current.triggerValidation();
-      const studentBatch = studentBatchRef.current.triggerValidation();
-      const gender = genderRef.current.triggerValidation();
-      const guardian = guardianRef.current.triggerValidation();
+      const email = await emailRef.current.triggerValidation();
+      const firstName = await firstNameRef.current.triggerValidation();
+      const lastName = await lastNameRef.current.triggerValidation();
+      const fullName = await nameRef.current.triggerValidation();
+      const specialty = await specialtyRef.current.triggerValidation();
+      const studentBatch = await studentBatchRef.current.triggerValidation();
+      const gender = await genderRef.current.triggerValidation();
+      const guardian = await guardianRef.current.triggerValidation();
 
       return {
          email,
@@ -84,6 +80,7 @@ function CreateStudent({ handleClose }) {
   const { data: parents, isFetching: isParentsLoading } = useGetAllParents();
   const handleCreateStudent = async () => {
      const prevalidation = await handlePrevalidation();
+     console.table(prevalidation);
      if(!allFieldsValid(prevalidation)){
         toast.custom(
           <ToastWarning 
