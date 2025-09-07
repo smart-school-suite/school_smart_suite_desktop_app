@@ -13,6 +13,7 @@ function SummitScores({ handleClose, rowData }){
    const { data:helperData, isFetching } = useGetResitEvaluationHelperData(resitExamId, candidateId);
     const formData = useSelector((state) => state.createResitExamScore.examScores);
      const  { mutate:createScore, isPending } = useCreateResitScore(handleClose); 
+     const darkMode = useSelector((state) => state.theme.darkMode);
      const resultSummary = useSelector(
        (state) => state.createResitExamScore.resultSummary
      );
@@ -82,7 +83,7 @@ function SummitScores({ handleClose, rowData }){
     return(
         <>
               <div className="d-flex flex-row align-items-center justify-content-between mb-4 ">
-                <h5>Create Resit Exam Scores</h5>
+                <span>Create Resit Exam Scores</span>
                 <span
                   onClick={() => {
                     handleClose();
@@ -102,10 +103,10 @@ function SummitScores({ handleClose, rowData }){
                   { isPending ? <SingleSpinner /> : "Submit Score"}
                 </button>
               </div>
-              <div className="card grades-box rounded-3 border">
-        <table className="table table-responsive font-size-sm">
+              <div className={`card grades-box rounded-3 ${darkMode ? 'dark-bg gainsboro-color' : 'bg-white  border'}`}>
+        <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
           <thead className="grades-thead">
-            <tr>
+            <tr className="font-size-sm">
               <th className="text-start">Course</th>
               <th className="text-center">Score</th>
               <th className="text-center">Grade Points</th>
@@ -120,9 +121,8 @@ function SummitScores({ handleClose, rowData }){
                 <td style={{ width: "20%" }}>
                   <div
                     className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
-                    style={{ fontSize: "0.85rem" }}
                   >
-                    <div className="d-flex flex-column w-100">
+                    <div className="d-flex flex-column w-100 font-size-sm">
                       <span>{items.courseName}</span>
                       <span style={{ fontSize: "0.65rem", opacity: 0 }}>
                         Error
@@ -139,7 +139,7 @@ function SummitScores({ handleClose, rowData }){
                       <input
                         type="number"
                         step="0.01"
-                        className="form-control form-control-sm"
+                        className={`form-control w-100 font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null}`}
                         value={items.score}
                         onChange={(e) => handleScoreChange(e, index)}
                       />

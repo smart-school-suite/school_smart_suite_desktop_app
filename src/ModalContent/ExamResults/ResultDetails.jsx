@@ -2,8 +2,10 @@ import { Icon } from "@iconify/react";
 import { useGetExamResultDetails } from "../../hooks/examResults/useGetExamResultDetails";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { ExamIcon, StudentIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
 function ExamResultDetails({ handleClose, rowData }) {
   const { id: resultId } = rowData;
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const { data: resultDetails, isLoading } = useGetExamResultDetails(resultId);
   if (isLoading) {
     return <Pageloaderspinner />;

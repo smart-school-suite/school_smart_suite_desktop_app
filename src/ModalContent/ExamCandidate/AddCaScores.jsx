@@ -19,7 +19,7 @@ function AddCaScores({ handleClose, rowData }) {
   const formData = useSelector((state) => state.createCaScore.examScores);
   const maxGpa = useSelector((state) => state.createCaScore.maxGpa);
   const resultSummary = useSelector((state) => state.createCaScore.resultSummary);
-
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -108,8 +108,8 @@ const scoresData = formData
           { isPending ? <SingleSpinner /> : "Submit Score" }
         </button>
       </div>
-      <div className="card grades-box rounded-3 border">
-        <table className="table table-responsive font-size-sm">
+      <div className={`card grades-box rounded-3 ${darkMode ? 'dark-bg gainsboro-color' : 'bg-white  border'}`}>
+        <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
           <thead className="grades-thead">
             <tr>
               <th className="text-start">Course</th>
@@ -142,7 +142,7 @@ const scoresData = formData
                       <input
                         type="number"
                         step="0.01"
-                        className="form-control font-size-sm p-2"
+                        className={`form-control w-100 font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null}`}
                         value={items.score}
                         onChange={(e) => handleScoreChange(e, index)}
                       />

@@ -16,7 +16,7 @@ import {
   autoUpdate,
 } from "@floating-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
-
+import { useSelector } from "react-redux";
 const CustomDropdown = forwardRef(
   (
     {
@@ -40,7 +40,7 @@ const CustomDropdown = forwardRef(
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredData, setFilteredData] = useState(data);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
-
+    const darkMode = useSelector((state) => state.theme.darkMode);
     const inputRef = useRef(null);
 
     // Floating UI positioning
@@ -144,7 +144,7 @@ const CustomDropdown = forwardRef(
             aria-expanded={isToggled}
           >
             <div
-              className={`d-flex border flex-row justify-content-between bg-white rounded-2 pointer-cursor align-items-center
+              className={`${darkMode ? ' dark-mode-text dark-mode-border dark-bg-light' : 'bg-white border'} d-flex  flex-row justify-content-between rounded-2 pointer-cursor align-items-center
               ${
                 error
                   ? "border-danger text-danger"
@@ -190,12 +190,12 @@ const CustomDropdown = forwardRef(
               onAnimationComplete={() => {
                     inputRef.current?.focus();
               }}
-              className="d-flex flex-column bg-white p-2 rounded-3 border shadow"
+              className={`${darkMode ? 'dark-bg dark-mode-border' : 'bg-white border'} d-flex flex-column  p-2 rounded-3 shadow`}
             >
               <input
                 ref={inputRef}
                 type="text"
-                className="rounded-2 my-2 white-smoke-bg form-control font-size-sm"
+                className={`rounded-2 my-2 p-2 form-control font-size-sm ${darkMode ? 'dark-mode-input' : null}`}
                 placeholder="Search for anything"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -263,7 +263,7 @@ export const MultiSelectDropdown = forwardRef(
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredData, setFilteredData] = useState(data);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
-
+    const darkMode = useSelector((state) => state.theme.darkMode);
     const inputRef = useRef(null);
 
     const { x, y, strategy, refs, update } = useFloating({
@@ -432,7 +432,7 @@ export const MultiSelectDropdown = forwardRef(
             aria-expanded={isToggled}
           >
             <div
-              className={`d-flex border flex-row justify-content-between bg-white rounded-2 pointer-cursor align-items-center
+              className={`${darkMode ? ' dark-mode-text dark-mode-border dark-bg-light' : 'bg-white border'} d-flex  flex-row justify-content-between rounded-2 pointer-cursor align-items-center
               ${
                 error
                   ? "border-danger text-danger"
@@ -476,12 +476,12 @@ export const MultiSelectDropdown = forwardRef(
               onAnimationComplete={() => {
                 inputRef.current?.focus();
               }}
-              className="d-flex flex-column bg-white p-2 rounded-3 border shadow"
+              className={`${darkMode ? 'dark-bg dark-mode-border' : 'bg-white border'} d-flex flex-column  p-2 rounded-3 shadow`}
             >
               <input
                 ref={inputRef}
                 type="text"
-                className="rounded-2 my-2 white-smoke-bg form-control font-size-sm"
+                className={`rounded-2 my-2 p-2 form-control font-size-sm ${darkMode ? 'dark-mode-input' : null}`}
                 placeholder="Search for anything"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -501,7 +501,7 @@ export const MultiSelectDropdown = forwardRef(
                             type="checkbox"
                             checked={isSelectAllChecked}
                             readOnly
-                            className="form-check-input my-0"
+                            className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input my-0`}
                         />
                         <span className="my-0 font-size-sm">Select All</span>
                     </div>
@@ -535,7 +535,7 @@ export const MultiSelectDropdown = forwardRef(
                               type="checkbox"
                               checked={isSelected}
                               readOnly
-                              className="form-check-input my-0"
+                              className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input my-0`}
                             />
                           </div>
                         );

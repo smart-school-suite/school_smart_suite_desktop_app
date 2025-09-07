@@ -31,7 +31,7 @@ function UpdateTeacher({ handleClose, rowData }) {
   };
   return (
     <>
-      <div className="card w-100 border-none">
+      <div>
         <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
           <span className="m-0">Update Teacher</span>
           <span

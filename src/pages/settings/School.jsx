@@ -11,6 +11,7 @@ import { formatDate, timeSince } from "../../utils/functions";
 import UpdateEstablishedDate from "../../ModalContent/School/UpdateEstablishedDate";
 function School() {
   const userData = useSelector((state) => state.auth.user);
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const { data:schoolDetails, isLoading } = useGetSchoolDetails();
   if(isLoading){
     return <Pageloaderspinner />
@@ -38,16 +39,16 @@ function School() {
                 School Details
               </span>
               <div
-                className="card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1"
+                className={`${darkMode ? 'dark-bg' : 'white-bg'} card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1`}
                 style={{ fontSize: "0.87rem" }}
               >
                <ModalButton
-                   classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
+                   classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
                    action={{ modalContent:UpdateSchoolName }}
                >
-                <div className="d-flex flex-column">
+                <div className={`${darkMode ? 'gainsboro-color' : null} d-flex flex-column`}>
                     <span className="fw-semibold text-start">School Name</span>
-                    <span className="gainsboro-color fw-light">
+                    <span className="fw-light">
                       {schoolDetails.data.name}
                     </span>
                   </div>
@@ -57,7 +58,7 @@ function School() {
                </ModalButton>
                 <hr />
                 <ModalButton
-                  classname="d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"
+                  classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
                   action={{ modalContent:UpdateEstablishedDate }}
                 >
                  <div className="d-flex flex-column text-start">
@@ -73,8 +74,8 @@ function School() {
                   </div>
                 </ModalButton>
                 <hr />
-                <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor remove-button-style">
-                  <div className="d-flex flex-column">
+                <div className={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between pointer-cursor remove-button-style`}>
+                  <div className={`${darkMode ? 'gainsboro-color' : null} d-flex flex-column`}>
                     <span className="fw-semibold">School Type</span>
                     <span className="gainsboro-color fw-light">
                       {schoolDetails.data.type === null
@@ -88,7 +89,7 @@ function School() {
                 </div>
                 <hr />
                 <ModalButton
-                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
+                  classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
                   action={{ modalContent:UpdateSchoolMotor }}
                 >
                   <div className="d-flex flex-column text-start">
@@ -105,7 +106,7 @@ function School() {
                 </ModalButton>
                 <hr />
                 <ModalButton
-                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
+                  classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
                   action={{ modalContent:UploadSchoolLogo }}
                 >
                   <div className="d-flex flex-row align-item-center">
@@ -149,12 +150,12 @@ function School() {
               {
                 schoolDetails.data.schoolbranches.map((items) => (
                   <div
-                className="card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1"
+                className={`${darkMode ? 'dark-bg' : 'white-bg'} card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1`}
                 style={{ fontSize: "0.87rem" }}
                 key={items.id}
               >
                 <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
-                  <div className="d-flex flex-column">
+                  <div className={`${darkMode ? 'gainsboro-color' : null} d-flex flex-column`}>
                     <span className="fw-semibold">School Branch Name</span>
                     <span className="gainsboro-color fw-light">
                       {items.name == null ? "N/A" : items.name}
@@ -163,7 +164,7 @@ function School() {
                 </div>
                 <hr />
                 <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
-                  <div className="d-flex flex-column">
+                  <div className={`${darkMode ? 'gainsboro-color' : null} d-flex flex-column`}>
                     <span className="fw-semibold">Abbrevaition</span>
                     <span className="gainsboro-color fw-light">
                       {items.abbreviation == null ? "N/A" : items.abbreviation}
@@ -172,7 +173,7 @@ function School() {
                 </div>
                 <hr />
                 <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
-                  <div className="d-flex flex-column">
+                  <div className={`${darkMode ? 'gainsboro-color' : null} d-flex flex-column`}>
                     <span className="fw-semibold">State</span>
                     <span className="gainsboro-color fw-light">
                       {items.state == null ? "N/A" : items.state}
@@ -191,7 +192,7 @@ function School() {
                 Danger Zone
               </span>
               <div
-                className="card p-2 border-danger rounded-4 w-100 d-flex flex-column gap-1"
+                className={`${darkMode ? 'dark-bg' : 'white-bg'} card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1`}
                 style={{ fontSize: "0.87rem" }}
               >
                 <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
@@ -212,7 +213,7 @@ function School() {
                 <hr />
                 <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
                   <div className="d-flex flex-row align-items-center w-100 justify-content-between">
-                    <div className="d-flex flex-column">
+                    <div className={`${darkMode ? 'gainsboro-color' : null} d-flex flex-column`}>
                     <span className="fw-semibold">Suspend School</span>
                     <span className="gainsboro-color fw-light">
                       {schoolDetails.data.name}

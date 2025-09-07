@@ -18,8 +18,10 @@ import ActivateTeacher from "../../ModalContent/Teacher/ActivateTeacher";
 import Specialtypreference from "../../ModalContent/Teacher/SpecialtyPreference";
 import { DeleteIcon, DetailsIcon, UpdateIcon, ChoiceIcon, SuspendIcon, ActivateIcon } from "../../icons/ActionIcons";
 import { TeacherIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
 function Teachers() {
   const { data: teachers, isLoading } = useGetTeachers();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const memoizedColDefs = useMemo(() => {
     return teacherTableConfig({
       DropdownComponent,
@@ -39,7 +41,7 @@ function Teachers() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",

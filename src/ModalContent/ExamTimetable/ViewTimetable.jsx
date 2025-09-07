@@ -2,8 +2,10 @@ import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetExamTimetable } from "../../hooks/examTimetable/useGetExamTimetable";
 import { formatDate } from "../../utils/functions";
+import { useSelector } from "react-redux";
 function ViewTimetable({ handleClose, rowData }){
    const {id:examId} = rowData;
+   const darkMode = useSelector((state) => state.theme.darkMode);
    const { data:timetableData, isFetching } = useGetExamTimetable(examId);
    if(isFetching){
     return <SingleSpinner />
@@ -20,11 +22,11 @@ function ViewTimetable({ handleClose, rowData }){
                    <Icon icon="charm:cross" width="22" height="22" />
                  </span>
                </div>
-           <div className="card grades-box rounded-3">
-          <table className="table table-responsive">
+           <div className={`${darkMode ? 'border-none dark-bg' : 'bg-white border'}  card grades-box rounded-3`}>
+          <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
             <thead className="grades-thead">
               <tr>
-                <th className="font-size-sm">Day</th>
+                <th className="font-size-sm" >Day</th>
                 <th className="font-size-sm">Courses</th>
               </tr>
             </thead>
@@ -71,9 +73,10 @@ function SlotCard({
   duration,
   courseCredit,
 }) {
+   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
-      <div className="card p-2 w-100 rounded-3 d-flex flex-column gap-5 primary-background-50 primary-color-dark border-none ">
+      <div className={`${darkMode ? 'dark-bg gainsboro-color' : 'primary-background-50 primary-color-dark'} card p-2 w-100 rounded-3 d-flex flex-column gap-5  border-none `}>
         <div className="font-size-sm d-flex flex-column gap-1">
           <div className="d-flex flex-row align-items-center w-100 justify-content-between">
             <span className="fw-semibold">{courseTitle}</span>

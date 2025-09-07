@@ -19,8 +19,10 @@ import { useState } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { DepartmentIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
 function Departments() {
   const { data: departments, isLoading } = useGetDepartments();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const memoizedColDefs = useMemo(() => {
     return DepartmentTableConfig({
       DropdownComponent,
@@ -40,7 +42,7 @@ function Departments() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -61,9 +63,10 @@ function Departments() {
             <ModalButton
               action={{ modalContent: CreateDepartment }}
               classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+                "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
               }
             >
+              <Icon icon="icons8:plus" className="font-size-md" />
               <span className="font-size-sm">Create Department</span>
             </ModalButton>
           </div>

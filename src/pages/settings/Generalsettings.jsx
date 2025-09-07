@@ -1,11 +1,13 @@
 import { Icon } from "@iconify/react";
+import { useSelector } from "react-redux";
 function Generalsettings() {
+   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
       <div className="d-flex flex-column gap-2">
            <div>
             <span style={{ fontSize: "0.87rem" }} className="fw-semibold">Country Details</span>
-            <div className="card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2"
+            <div className={`${darkMode ? 'dark-bg gainsboro-color' : 'white-bg'} card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2`}
              style={{ fontSize: "0.87rem" }}
             >
                <div className="d-flex flex-column">
@@ -26,7 +28,7 @@ function Generalsettings() {
            </div>
            <div>
             <span style={{ fontSize: "0.87rem" }} className="fw-semibold">Application Details</span>
-             <div className="card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2"
+             <div className={`${darkMode ? 'dark-bg gainsboro-color' : 'white-bg'} card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2`}
              style={{ fontSize: "0.87rem" }}
             >
                <div className="d-flex flex-column">

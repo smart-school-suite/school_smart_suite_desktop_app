@@ -5,6 +5,7 @@ import { useAddTeacherSpecialtyPreference } from "../../hooks/teacher/useAddTeac
 import { useGetAvialableSpecialtyPreference } from "../../hooks/teacher/useGetAvailableSpecialtyPreference";
 import { useGetTeacherSpecialtyPreference } from "../../hooks/teacher/useGetTeacherSpecialtyPreference";
 import { useRemoveSpecialtyPreference } from "../../hooks/teacher/useRemoveSpecialtyPreference";
+import { useSelector } from "react-redux";
 function Specialtypreference({ handleClose, rowData }) {
   const [toggle, setToggle] = useState({
     addablePreferences: true,
@@ -31,7 +32,7 @@ function Specialtypreference({ handleClose, rowData }) {
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
           <span>Manage Teacher Specialty Preferences</span>
           <span onClick={handleClose} style={{ cursor: "pointer" }}>
-            <Icon icon="proicons:cancel" width="24" height="24" />
+            <Icon icon="proicons:cancel" />
           </span>
         </div>
         <div className="d-flex gap-2 flex-row my-4">
@@ -63,6 +64,7 @@ function Specialtypreference({ handleClose, rowData }) {
 export default Specialtypreference;
 
 function AddablePreferences({ teacherId }) {
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const {
     data: specialtiesData,
     isFetching,
@@ -152,7 +154,7 @@ function AddablePreferences({ teacherId }) {
           <div>
             <input
               type="checkbox"
-              className="form-check-input"
+              className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input`}
               checked={areAllSpecialtiesSelected}
               onChange={handleSelectAll}
               ref={selectAllCheckboxRef}
@@ -160,10 +162,10 @@ function AddablePreferences({ teacherId }) {
           </div>
         </div>
       </div>
-      <div>
+      <div className="my-2">
         <input
           type="search"
-          className="w-100 form-control my-2"
+          className={`${darkMode ? 'dark-mode-input' : 'null' } w-100 form-control font-size-sm`}
           placeholder="Search Specialty"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -194,7 +196,7 @@ function AddablePreferences({ teacherId }) {
                 <div>
                   <input
                     type="checkbox"
-                    className="form-check-input"
+                    className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input`}
                     checked={selectedSpecialtyIds.has(item.id)}
                     onChange={(e) => handleSelectSpecialty(item.id, e)}
                   />
@@ -228,6 +230,7 @@ function RemovablePreferences({ teacherId }) {
     isFetching,
     error,
   } = useGetTeacherSpecialtyPreference(teacherId);
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const { mutate:removePreference, isPending } = useRemoveSpecialtyPreference(teacherId);
   const [selectedSpecialtyIds, setSelectedSpecialtyIds] = useState(new Set());
 
@@ -311,7 +314,7 @@ function RemovablePreferences({ teacherId }) {
           <div>
             <input
               type="checkbox"
-              className="form-check-input"
+              className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input`}
               checked={areAllSpecialtiesSelected}
               onChange={handleSelectAll}
               ref={selectAllCheckboxRef}
@@ -319,10 +322,10 @@ function RemovablePreferences({ teacherId }) {
           </div>
         </div>
       </div>
-      <div>
+      <div className="my-2">
         <input
           type="search"
-          className="w-100 form-control my-2"
+          className={`${darkMode ? 'dark-mode-input' : 'null' } w-100 form-control font-size-sm`}
           placeholder="Search Specialty"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -353,7 +356,7 @@ function RemovablePreferences({ teacherId }) {
                 <div>
                   <input
                     type="checkbox"
-                    className="form-check-input"
+                    className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input`}
                     checked={selectedSpecialtyIds.has(item.id)}
                     onChange={(e) => handleSelectSpecialty(item.id, e)}
                   />
@@ -387,7 +390,7 @@ function AddedPreferences({ teacherId }) {
     isFetching,
     error: fetchError,
   } = useGetTeacherSpecialtyPreference(teacherId);
-
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -423,10 +426,10 @@ function AddedPreferences({ teacherId }) {
 
   return (
     <>
-      <div>
+      <div className="my-2">
         <input
           type="search"
-          className="w-100 form-control my-2"
+          className={`${darkMode ? 'dark-mode-input' : 'null' } w-100 form-control font-size-sm`}
           placeholder="Search Specialty"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

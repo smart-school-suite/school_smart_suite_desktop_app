@@ -1,16 +1,11 @@
-import { useFetchTeacherDetailsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { formatNumber } from "../../utils/functions";
-function TeacherDetails({ row_id, handleClose }) {
-  const {
-    data: teacherDetails,
-    isLoading,
-    error,
-  } = useFetchTeacherDetailsQuery({
-    teacher_id: row_id,
-  });
+import { useGetTeacherDetails } from "../../hooks/teacher/useGetTeacherDetails";
+function TeacherDetails({ rowData, handleClose }) {
+  const {id:teacherId} = rowData;
+  const { data:teacherDetails, isLoading } = useGetTeacherDetails(teacherId);
   const currency = useSelector((state) => state.auth.user);
   if (isLoading) {
     return <Pageloaderspinner />;
@@ -33,10 +28,10 @@ function TeacherDetails({ row_id, handleClose }) {
           <div className="card border-none pb-4 shadow-sm rounded-3 profile-section white-bg d-flex flex-column">
             <div className="top-section rounded-top-4 px-4">
               <div className="d-flex flex-row profile-picture-group z-5 justify-content-between align-items-center">
-              {teacherDetails.data.profile_picture === null || "" ? (
+              {teacherDetails?.data?.profile_picture === null || "" ? (
                 <div className="profile-img">
                   <img
-                    src={`http://127.0.0.1:8000/storage/SchoolAdminAvatars/${teacherDetails.data.profile_picture}`}
+                    src={`http://127.0.0.1:8000/storage/SchoolAdminAvatars/${teacherDetails?.data?.profile_picture}`}
                     alt=""
                   />
                 </div>
@@ -57,7 +52,7 @@ function TeacherDetails({ row_id, handleClose }) {
             </div>
             <div className="ms-2 mt-auto">
               <div className="d-block">
-                <h5 className="fw-bold">{teacherDetails.data.name}</h5>
+                <h5 className="fw-bold">{teacherDetails?.data?.name}</h5>
                 <div className="d-flex flex-row my-1 gainsboro-color">
                   <span>Yaounde, Cameroon</span>
                 </div>
@@ -67,11 +62,11 @@ function TeacherDetails({ row_id, handleClose }) {
                   </span>
                   <div className="divider-pill"></div>
                   <span className="font-size-sm fw-medium">
-                    {teacherDetails.data.field_of_study}
+                    {teacherDetails?.data?.field_of_study}
                   </span>
                   <div className="divider-pill"></div>
                   <span className="font-size-sm gainsboro-color">
-                    {teacherDetails.data.employment_status}
+                    {teacherDetails?.data?.employment_status}
                   </span>
                 </div>
               </div>
@@ -93,12 +88,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="clarity:email-line" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.email}</p>
+            <p className="my-0">{teacherDetails?.data?.email}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Email
             </p>
@@ -116,12 +108,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="ph:phone" />
           </button>
           <div className="border-bottom py-2 d-block" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.phone_one}</p>
+            <p className="my-0">{teacherDetails?.data?.phone_one}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Contact one
             </p>
@@ -139,12 +128,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="ph:phone" />
           </button>
           <div className="border-bottom py-2 d-block" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.phone_two}</p>
+            <p className="my-0">{teacherDetails?.data?.phone_two}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Contact two
             </p>
@@ -165,12 +151,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="icon-park-outline:address-book" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.address}</p>
+            <p className="my-0">{teacherDetails?.data?.address}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Home Address
             </p>
@@ -191,12 +174,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="carbon:education" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.highest_qualification}</p>
+            <p className="my-0">{teacherDetails?.data?.highest_qualification}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Highest School Certificate
             </p>
@@ -214,12 +194,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="fluent-mdl2:calendar-year" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.field_of_study}</p>
+            <p className="my-0">{teacherDetails?.data?.field_of_study}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Field Of Study
             </p>
@@ -240,12 +217,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="tabler:gender-male" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.cultural_background}</p>
+            <p className="my-0">{teacherDetails?.data?.cultural_background}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Cultural Background
             </p>
@@ -263,12 +237,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="solar:calendar-date-linear" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.religion}</p>
+            <p className="my-0">{teacherDetails?.data?.religion}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Religion
             </p>
@@ -286,12 +257,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="solar:calendar-date-linear" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.date_of_birth}</p>
+            <p className="my-0">{teacherDetails?.data?.date_of_birth}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Date of Birth
             </p>
@@ -312,12 +280,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="tabler:gender-male" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.employment_status}</p>
+            <p className="my-0">{teacherDetails?.data?.employment_status}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Employment Status
             </p>
@@ -335,12 +300,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="solar:calendar-date-linear" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.hire_date}</p>
+            <p className="my-0">{teacherDetails?.data?.hire_date}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Hire Date
             </p>
@@ -358,12 +320,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="solar:calendar-date-linear" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{formatNumber(parseFloat(teacherDetails.data.salary))} {currency.schoolDetails.school.country.currency}</p>
+            <p className="my-0">{formatNumber(parseFloat(teacherDetails?.data?.salary))} {currency.schoolDetails.school.country.currency}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Salary
             </p>
@@ -381,12 +340,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="solar:calendar-date-linear" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.highest_qualification}</p>
+            <p className="my-0">{teacherDetails?.data?.highest_qualification}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Qualification
             </p>
@@ -405,13 +361,10 @@ function TeacherDetails({ row_id, handleClose }) {
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
             <p className="my-0">
-              {Number(teacherDetails.data.years_experience)}
+              {Number(teacherDetails?.data?.years_experience)}
             </p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Years of Experience
             </p>
@@ -432,12 +385,9 @@ function TeacherDetails({ row_id, handleClose }) {
             <Icon icon="carbon:education" />
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
-            <p className="my-0">{teacherDetails.data.emergency_contact_name}</p>
+            <p className="my-0">{teacherDetails?.data?.emergency_contact_name}</p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Emergency Contact Name
             </p>
@@ -456,13 +406,10 @@ function TeacherDetails({ row_id, handleClose }) {
           </button>
           <div className="border-bottom py-2" style={{ width: "87%" }}>
             <p className="my-0">
-              {teacherDetails.data.emergency_contact_phone}
+              {teacherDetails?.data?.emergency_contact_phone}
             </p>
             <p
               className="my-0 font-size-sm gainsboro-color"
-              onClick={() => {
-                handleShow();
-              }}
             >
               Emergency Contact Phone
             </p>

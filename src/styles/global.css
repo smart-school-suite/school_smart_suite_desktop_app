@@ -72,7 +72,6 @@
 
 .container {
     max-width: 2500px !important;
-
 }
 
 .profile-actions:hover {
@@ -88,10 +87,33 @@
     flex-direction: row;
     align-items: center;
     height: 2.3rem;
-    background-color: var(--primary-color-50);
+    background-color: var(--primary-color-100);
     font-size: var(--font-size-sm);
     padding-inline: 0.5rem;
     color: var(--primary-color);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    border-radius: 0.5rem;
+}
+.dark-mode-active{
+   background-color: var(--primary-color);
+   color: var(--acent-color-five);
+   transition: all 0.3s;
+}
+.light-mode-active{
+     background-color: var(--primary-color-50);
+   color: var(--primary-color);
+   transition: all 0.3s;
+}
+.nav-items-box-active-dark{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 2.3rem;
+    background-color: var(--primary-color);
+    font-size: var(--font-size-sm);
+    padding-inline: 0.5rem;
+    color: var(--acent-color-five);
     transition: all 0.2s ease-in-out;
     cursor: pointer;
     border-radius: 0.5rem;
@@ -149,6 +171,11 @@
 .sidebar-active {
     background-color: var(--primary-color-100);
     color: #0ea7e9;
+    transition: all 0.2s;
+}
+.sidebar-active-dark{
+    background-color: var(--primary-color);
+    color: var(--primary-color-100);
     transition: all 0.2s;
 }
 
@@ -301,10 +328,30 @@ aside {
 
 .box-nav {
     height: 2.5rem;
-    border-bottom: 2.5px solid #f9f9f9;
-    border-radius: 0 0 0 15px;
+    border-bottom: 0.001rem solid #f9f9f9;
     width: 2rem;
     position: relative;
+}
+
+.drop-down-container {
+    height: auto;
+    max-height: 80%;
+    border-left: 0.01rem solid #f9f9f9;
+    transition: all 0.3s;
+}
+
+.box-nav-dark{
+    height: 2.5rem;
+    border-bottom: 0.001rem solid #1e1e1e;
+    width: 2rem;
+    position: relative;  
+}
+
+.drop-down-container-dark {
+    height: auto;
+    max-height: 80%;
+    border-left: 0.01rem solid #1e1e1e;
+    transition: all 0.3s;
 }
 
 .subbox-container-nav {
@@ -324,12 +371,7 @@ aside {
     transition: max-height 0.3s ease-out, opacity 0.4s ease-out;
 }
 
-.drop-down-container {
-    height: auto;
-    max-height: 80%;
-    border-left: 2.5px solid #f9f9f9;
-    transition: all 0.3s;
-}
+
 
 .rotate-icon {
     transform: rotate(180deg);
@@ -534,7 +576,7 @@ aside {
 
 .image-container {
     width: 40%;
-    height: 18dvh;
+    height: 20dvh;
     position: relative;
 }
 
@@ -958,50 +1000,6 @@ thead {
     display: block;
 }
 
-.timeinput-dropdown {
-    height: auto;
-    max-height: 20dvh;
-    overflow-y: auto;
-}
-
-.time {
-    font-size: 1.5rem;
-    font-variant-numeric: tabular-nums;
-}
-
-.timeinput-dropdown {
-    cursor: pointer;
-}
-
-.timeinput-dropdown span {
-    text-align: center;
-}
-
-.timeinput-dropdown span:hover {
-    background-color: var(--primary-color-50);
-}
-
-.am-input {
-    height: 10.5dvh;
-}
-
-.am-input span:hover {
-    background-color: var(--primary-color-50);
-}
-
-.timeinput-dropdown::-webkit-scrollbar {
-    width: 1px;
-}
-
-.timeinput-dropdown::-webkit-scrollbar-thumb {
-    background-color: #fff;
-    border-radius: 10px;
-}
-
-.timeinput-dropdown::-webkit-scrollbar-thumb:hover {
-    background: #fff;
-}
-
 .notifcation-container {
     height: auto;
     overflow-x: hidden;
@@ -1077,7 +1075,7 @@ thead {
 }
 
 .grades-box::-webkit-scrollbar {
-    width: 1px;
+    width: 0px;
 }
 
 .side-bar-item-active {
@@ -1205,6 +1203,15 @@ thead {
     height: 5dvh;
     padding-inline: 0.5rem;
     text-align: center;
+    transition: all 0.3s;
+}
+.setting-active-dark{
+    background-color: var(--primary-color);
+    height: 5dvh;
+    padding-inline: 0.5rem;
+    text-align: center; 
+    color: var(--acent-color-five);
+    transition: all 0.3s;
 }
 
 .setting-inactive {
@@ -1239,6 +1246,14 @@ thead {
     padding-inline: 0.5rem;
     text-align: center;
     color: var(--primary-color);
+}
+
+.schoolexpenses-active-dark{
+    background-color: var(--primary-color);
+    height: 5dvh;
+    padding-inline: 0.5rem;
+    text-align: center;
+    color: var(--primary-color-50);
 }
 
 hr {
@@ -1320,8 +1335,21 @@ hr {
     max-height: 55dvh;
     overflow-x: hidden;
     overflow-y: auto;
-
 }
+
+.modal-content-child::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 10px;
+}
+
+.modal-content-child::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+.modal-content-child::-webkit-scrollbar {
+    width: 5px;
+}
+
 
 .pill-success {
     background: #e3f5e3;
@@ -1394,7 +1422,25 @@ hr {
 input {
     caret-color: var(--primary-color);
 }
-
+.dark-mode-border{
+    border: 1px solid #333;
+}
+.dark-mode-input{
+    background: #222;
+    border-color: #555;
+    color: #999 !important;
+}
+.dark-mode-input::placeholder{
+    color: #999 ;
+}
+.dark-mode-input:focus{
+    background-color: #222;
+}
+.input-group-text-dark{
+    color: #999;
+    background-color: #222;
+    border-color: #555;
+}
 .login-logo {
     width: 5rem;
     height: 5rem;

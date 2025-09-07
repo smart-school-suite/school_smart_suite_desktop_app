@@ -13,8 +13,10 @@ import TextDisplay from "../TextComponents/TextDisplay";
 import { useGetNotifications } from "../../hooks/notification/useGetNotification";
 import { useMarkAllNotificationsAsRead } from "../../hooks/notification/useMarkAllNotifcationAsRead";
 import { formatISOTimeSince } from "../../utils/functions";
+import { useSelector } from "react-redux";
 function NotificationDropdown() {
   const [isToggled, setIsToggeled] = useState(false);
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const { data: notifications, isLoading } = useGetNotifications();
   const { refs, floatingStyles } = useFloating({
     placement: "bottom-end",
@@ -42,7 +44,7 @@ function NotificationDropdown() {
   return (
     <>
       <div
-        className="bg-white gainsboro-color fs-4 z-0 d-flex position-relative flex-row justify-content-center align-items-center"
+        className={`${darkMode ? 'dark-bg' : "bg-white"} gainsboro-color fs-4 d-flex flex-row justify-content-center align-items-center` }
         style={{
           width: "3.0rem",
           height: "3.0rem",

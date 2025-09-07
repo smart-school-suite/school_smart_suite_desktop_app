@@ -1,6 +1,9 @@
 import { Icon } from "@iconify/react";
-import SettingSideBar from "../../components/SideBars/SetttingSideBar";
+import { useSelector, useDispatch } from "react-redux";
+import { setDarkMode } from "../../Slices/Asynslices/ThemeSlice";
 function Display() {
+  const darkMode = useSelector((state) => state.theme.darkMode);
+    const dispatch = useDispatch();
   return (
     <>
      <div className="d-flex flex-column gap-2">
@@ -9,21 +12,23 @@ function Display() {
                 Theme Selection
               </span>
               <div
-                className="card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2"
+                className={`${darkMode ? 'dark-bg gainsboro-color ' : 'white-bg'} card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2`}
                 style={{ fontSize: "0.87rem" }}
               >
                 <div className="d-flex flex-row align-items-center justify-content-between">
                   <div className="d-flex flex-column">
                     <span className="fw-semibold">Dark Mode</span>
-                    <span className="gainsboro-color fw-light">Off</span>
+                    <span className="gainsboro-color fw-light">{darkMode ? 'On' : 'Off'}</span>
                   </div>
                   <div>
                     <div className="form-check form-switch">
                       <input
-                        class="form-check-input"
+                        class="form-check-input px-3 py-2"
                         type="checkbox"
                         role="switch"
                         id="switchCheckDefault"
+                        checked={darkMode}
+                        onChange={() => {dispatch(setDarkMode())}}
                       />
                     </div>
                   </div>
@@ -32,15 +37,17 @@ function Display() {
                 <div className="d-flex flex-row align-items-center justify-content-between">
                   <div className="d-flex flex-column">
                     <span className="fw-semibold">Light Mode</span>
-                    <span className="gainsboro-color fw-light">On</span>
+                    <span className="gainsboro-color fw-light">{darkMode ? 'Off' :  'On'}</span>
                   </div>
                   <div>
                     <div className="form-check form-switch">
                       <input
-                        class="form-check-input"
+                        class="form-check-input px-3 py-2"
                         type="checkbox"
                         role="switch"
+                        checked={!darkMode}
                         id="switchCheckDefault"
+                        onChange={() => {dispatch(setDarkMode())}}
                       />
                     </div>
                   </div>

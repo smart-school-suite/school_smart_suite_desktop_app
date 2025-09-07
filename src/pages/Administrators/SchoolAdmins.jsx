@@ -16,7 +16,7 @@ import Table from "../../components/Tables/Tables";
 import { useGetSchoolAdmins } from "../../hooks/schoolAdmin/useGetSchoolAdmins";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { ActivateIcon, CreateIcon, DeleteIcon, DetailsIcon, PermissionIcon, RoleIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { ActivateIcon, DeleteIcon, DetailsIcon, PermissionIcon, RoleIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
 import DeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Deactivate";
 import ActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Activate";
@@ -24,9 +24,11 @@ import SchoolAdminDetails from "../../ModalContent/SchoolAdmin/SchoolAdminDetail
 import UpdateSchoolAdmin from "../../ModalContent/SchoolAdmin/UpdateSchoolAdmin";
 import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { SchoolAdminIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
 function SchoolAdmins() {
   const tableRef = useRef();
   const { data: schoolAdmins, isLoading } = useGetSchoolAdmins();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);
   const [selectedAdmins, setSelectedAdmins] = useState([]);
   const handleReset = () => {
@@ -63,7 +65,7 @@ function SchoolAdmins() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -91,7 +93,7 @@ function SchoolAdmins() {
                 "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center text-white"
               }
             >
-              <CreateIcon />
+              <Icon icon="icons8:plus" className="font-size-md" />
               <span className="font-size-sm">Create Admin</span>
             </ModalButton>
           </div>

@@ -1,5 +1,4 @@
 import Table from "../../components/Tables/Tables";
-import { useFetchExamsQuery } from "../../Slices/Asynslices/fetchSlice";
 import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
@@ -18,8 +17,10 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { useGetExams } from "../../hooks/exam/useGetExams";
 import { ExamIcon, GradeIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
 function Exam() {
   const { data: data, isLoading } = useGetExams();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -29,7 +30,7 @@ function Exam() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",

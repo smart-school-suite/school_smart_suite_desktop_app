@@ -17,6 +17,7 @@ function Dashboard() {
   const { data, isLoading } = useGetSchoolFinancialStats(currentYear);
   const schoolData = useSelector((state) => state.auth.user);
   const currency = schoolData.schoolDetails.school.country.currency;
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if (isLoading) {
     return (
       <>
@@ -30,9 +31,9 @@ function Dashboard() {
       <div>
        <div className="dashboard-content-box px-2">
          <div className="d-flex flex-row justify-content-between align-items-end mt-2">
-          <div className="d-block">
+          <div className="d-block gainsboro-color">
             <div>
-              <p className="my-0 fs-6">Revenue</p>
+              <p className="m-0 fs-6">Revenue</p>
             </div>
             <div className="d-flex flex-row align-items-center gap-2">
               <div>
@@ -65,13 +66,13 @@ function Dashboard() {
               </div>*/}
             </div>
           </div>
-          <div className="d-flex flex-row gap-2 align-items-end">
+          <div className="d-flex flex-row gap-2 align-items-end gainsboro-color">
             <CustomTooltip tooltipText="Download Monthly Report">
               <button className="border-none rounded-circle px-2 py-1 light-skyblue-bg">
                 <Icon icon="line-md:download-loop" className="fs-6" />
               </button>
             </CustomTooltip>
-            <CustomTooltip tooltipText=" Date of today Tuesday 3rd January 2024">
+            <CustomTooltip tooltipText={formatDateWithSuffix(new Date())}>
               <button className="border-none rounded-circle px-2 py-1 light-skyblue-bg ">
                 <Icon icon="mynaui:calendar" className="fs-6" />
               </button>
@@ -103,14 +104,14 @@ function Dashboard() {
           <div className="d-flex flex-row gap-3 w-100 justify-content-between">
             <div
               style={{ width: "65%", height: "40dvh" }}
-              className="bg-white  rounded-4 p-2"
+              className={`${darkMode ? 'dark-bg': "bg-white" } gainsboro-color  rounded-4 p-2`}
             >
               <div className="d-flex font-size-sm flex-row justify-content-between px-2 pt-2">
                 <div className="text-start mb-1">
                   <span className="fw-semibold">
                     School Expenses Over Months
                   </span>
-                  <p className="gainsboro-color">
+                  <p className="fw-light">
                     Shows monthly distribution of school-related costs over the
                     year.
                   </p>
@@ -133,13 +134,13 @@ function Dashboard() {
             </div>
             <div
               style={{ width: "35%", height: "40dvh" }}
-              className="bg-white   rounded-4 p-2 pt-2"
+              className={`${darkMode ? 'dark-bg': "bg-white" }   rounded-4 p-2`}
             >
-              <div className="mb-3">
+              <div className="mb-3 gainsboro-color">
                 <p className="text-start font-size-sm m-0 fw-semibold">
                   School Expenses By Category
                 </p>
-                <p className="text-start font-size-sm gainsboro-color m-0">
+                <p className="text-start fw-light font-size-sm  m-0">
                   A visual breakdown of spending across different categories.
                 </p>
               </div>
@@ -155,13 +156,13 @@ function Dashboard() {
           <div className="d-flex flex-row gap-3 w-100 justify-content-between">
             <div
               style={{ width: "31.5%", height: "45dvh" }}
-              className="bg-white  rounded-4 p-2"
+              className={`${darkMode ? 'dark-bg': "bg-white" } border-none card   rounded-4 p-2`}
             >
-              <div>
+              <div className=" gainsboro-color">
                 <p className="text-start font-size-sm fw-semibold m-0">
                   School Revenue Source
                 </p>
-                <p className="text-start font-size-sm m-0 gainsboro-color">
+                <p className="text-start fw-light font-size-sm m-0 gainsboro-color">
                   Displays the different sources of income for the school.
                 </p>
               </div>
@@ -176,12 +177,12 @@ function Dashboard() {
             </div>
             <div
               style={{ width: "75%", height: "45dvh" }}
-              className="bg-white  rounded-4 p-2"
+              className={`${darkMode ? 'dark-bg': "bg-white" } border-none gainsboro-color card rounded-4 p-2`}
             >
               <p className="text-start font-size-sm my-0 fw-bold">
                 Tuition Fees Paid Over the Last 12 Months
               </p>
-              <p className="text-wrap font-size-sm gainsboro-color m-0">
+              <p className="text-wrap fw-light font-size-sm gainsboro-color m-0">
                 A chart illustrating the total tuition fees collected each month
                 over the past year.
               </p>
@@ -201,14 +202,14 @@ function Dashboard() {
         <section className="mt-2">
           <div className="d-flex flex-row gap-3 w-100 justify-content-between">
             <div
-              className="card p-2 rounded-4 border-none"
+              className={`${darkMode ? 'dark-bg': "bg-white" } card border-none rounded-4 gainsboro-color p-2`}
               style={{ width: "50%", height: "40dvh" }}
             >
-              <div>
+              <div className="mb-1">
                 <p className="text-start font-size-sm m-0 fw-semibold">
                   Registration Fees Collected Over a 5-Year Period
                 </p>
-                <p className="text-start font-size-sm m-0 gainsboro-color">
+                <p className="text-start font-size-sm m-0 fw-light">
                   A graph showing the annual registration fees received by the
                   school over the past five years.
                 </p>
@@ -223,7 +224,7 @@ function Dashboard() {
               />
             </div>
             <div
-              className="card p-2 rounded-4 border-none"
+              className={`${darkMode ? 'dark-bg': "bg-white" } border-none card rounded-4  gainsboro-color p-2`}
               style={{ width: "50%", height: "40dvh" }}
             >
               <p className="text-start font-size-sm my-0">
@@ -252,7 +253,7 @@ export function CardOne({ data }) {
   return (
     <>
       <div className="rounded-box d-flex flex-row align-items-center justify-content-center light-skyblue-bg">
-        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" />
+        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" style={{ color:"#142e3d" }}/>
       </div>
       <img
         src="./images/card-one.png"
@@ -263,22 +264,22 @@ export function CardOne({ data }) {
         <div className="z-3 position-absolute d-flex flex-column h-100 pb-2 pt-1">
           <div className="d-flex flex-row align-items-center gap-3 mt-1">
             <button
-              className="border-none rounded-circle"
+              className="border-none rounded-circle d-flex flex-row align-items-center justify-content-center"
               style={{
-                width: "2rem",
-                height: "2rem",
+                width: "2.5rem",
+                height: "2.5rem",
                 borderRadius: "2rem",
                 backgroundColor: "#C6E3F1",
-                color:"#1f6385"
+                color:"#257ca4"
               }}
             >
               <TuitionFeeIcon />
             </button>
-            <span >Tuition Fees Paid</span>
+            <span style={{ color:"#142e3d" }}>Tuition Fees Paid</span>
           </div>
           <div className="mt-auto">
             <div>
-              <h4 className="fw-semibold ms-1 dark-slate-gray-color">
+              <h4 className="fw-semibold ms-1" style={{ color:"#142e3d" }}>
                  <span>{data.currency}</span> <NumberFlow value={data.tuitionFeePaid} />
               </h4>
             </div>
@@ -308,7 +309,7 @@ export function CardTwo({data}) {
   return (
     <>
       <div className="rounded-box d-flex flex-row align-items-center justify-content-center light-peach-bg">
-        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" />
+        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" style={{ color:"#430707" }}/>
       </div>
       <img
         src="./images/card-two.png"
@@ -319,10 +320,10 @@ export function CardTwo({data}) {
         <div className="z-3 position-absolute d-flex flex-column h-100 pb-2 pt-1">
           <div className="d-flex flex-row align-items-center gap-3 mt-1">
             <button
-              className="border-none rounded-circle"
+              className="border-none rounded-circle d-flex flex-row align-items-center justify-content-center"
               style={{
-                width: "2rem",
-                height: "2rem",
+                width: "2.5rem",
+                height: "2.5rem",
                 borderRadius: "2rem",
                 backgroundColor: "#FFE4D5",
                 color:"#fd9d74"
@@ -330,11 +331,11 @@ export function CardTwo({data}) {
             >
               <ExpensesIcon />
             </button>
-            <span>Total Expenses</span>
+            <span style={{ color:"#430707" }}>Total Expenses</span>
           </div>
           <div className="mt-auto">
             <div>
-              <h4 className="fw-semibold ms-1 dark-slate-gray-color">
+              <h4 className="fw-semibold ms-1" style={{ color:"#430707" }}>
                <span>{data.currency}</span> <NumberFlow value={data.totalExpenses} />
               </h4>
             </div>
@@ -364,7 +365,7 @@ export function CardThree({data}) {
   return (
     <>
       <div className="rounded-box d-flex flex-row align-items-center justify-content-center cornflower-blue-bg">
-        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" />
+        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" style={{ color:"#272f44" }}/>
       </div>
       <img
         src="./images/card-three.png"
@@ -375,10 +376,10 @@ export function CardThree({data}) {
         <div className="z-3 position-absolute d-flex flex-column h-100 pb-2 pt-1">
           <div className="d-flex flex-row align-items-center gap-3 mt-1">
             <button
-              className="border-none rounded-circle"
+              className="border-none rounded-circle d-flex flex-row align-items-center justify-content-center"
               style={{
-                width: "2rem",
-                height: "2rem",
+                width: "2.5rem",
+                height: "2.5rem",
                 borderRadius: "2rem",
                 backgroundColor: "#9DBFDC",
                 color:"#4d6ba8"
@@ -386,11 +387,11 @@ export function CardThree({data}) {
             >
              <AdditionalFeeIcon />
             </button>
-            <span>Total Additional Fee Paid</span>
+            <span style={{ color:"#272f44" }}>Total Additional Fee Paid</span>
           </div>
           <div className="mt-auto">
             <div>
-              <h4 className="fw-semibold ms-1 dark-slate-gray-color">
+              <h4 className="fw-semibold ms-1 dark-slate-gray-color" style={{ color:"#272f44" }}>
                <span>{data.currency}</span> <NumberFlow value={data.additionalFeePaid} />
               </h4>
             </div>
@@ -424,11 +425,11 @@ const FormattedCurrency = ({ value, currency, className = '' }) => {
   const formattedValue = !isNaN(parsedValue) ? parsedValue.toFixed(2) : '0.00';
   
   const [integerPart, decimalPart] = formattedValue.split('.');
-  
+  const darkMode = useSelector((state) => state.theme.darkMode);
   return (
-    <h2 className={`fw-bold my-0 primary-color-dark ${className}`}>
+    <h2 className={`fw-bold my-0 ${darkMode ? 'light-skyblue-color' : 'primary-color-dark'} ${className}`}>
       <span className="me-2">{currency}</span>
-      <span className="primary-color-dark">
+      <span className={`${darkMode ? 'light-skyblue-color' : 'primary-color-dark'}`}>
         <NumberFlow value={integerPart} />
       </span>
       <span className="light-skyblue-color">.{<NumberFlow value={decimalPart}/>}</span>

@@ -20,8 +20,8 @@ function CreateStudentBatch({ handleClose }) {
   });
   const { mutate: createBatch, isPending } = useCreateStudentBatch(handleClose);
   const handlePrevalidation = async () => {
-      const batchTitle = batchTitleRef.current.triggerValidation();
-      const batchDescription = batchDescriptionRef.current.triggerValidation();
+      const batchTitle = await batchTitleRef.current.triggerValidation();
+      const batchDescription = await batchDescriptionRef.current.triggerValidation();
       return {
           batchTitle,
           batchDescription

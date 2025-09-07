@@ -12,8 +12,10 @@ import { TimetableIcon } from "../../icons/Icons";
 import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
 import AutomaticCreateTimetable from "../../ModalContent/SpecialtyTimetable/AutomaticCreateTimetable";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
+import { useSelector } from "react-redux";
 function SpecialtyTimetable() {
   const { data:schoolSemesters, isLoading } = useGetActiveSchoolSemesters();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -22,7 +24,7 @@ function SpecialtyTimetable() {
     <div className="my-2">
             <div className="d-flex align-items-center gap-2">
               <div
-                className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+                className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
                 style={{
                   width: "2.5rem",
                   height: "2.5rem",

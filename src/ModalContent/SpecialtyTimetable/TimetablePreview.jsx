@@ -6,14 +6,17 @@ import { useEffect, useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { motion } from "framer-motion";
 import { resetAll } from "../../Slices/Asynslices/AutoGenTimetableSlice";
+import { Link } from "react-router-dom";
 function TimetablePreview({ handleStateChange, data, handleClose }) {
   const { id: schoolSemesterId } = data;
   const dispatch = useDispatch();
   const formDataState = useSelector((state) => state.autoGenTimetable);
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const [genTimetable, setGenTimetable] = useState([]);
   const { mutateAsync: autoGenerateTimetable, isPending } =
     useAutoGenerateTimetable();
-  const { mutate:createTimetable, isPending:isCreating } = useCreateTimetable(); 
+  const { mutate: createTimetable, isPending: isCreating } =
+    useCreateTimetable();
   const handleGenerateTimetable = async () => {
     try {
       const payload = {
@@ -47,7 +50,7 @@ function TimetablePreview({ handleStateChange, data, handleClose }) {
     }
   }, [schoolSemesterId]);
   function flattenCourseData(scheduleData) {
-  return Object.values(scheduleData).flat();
+    return Object.values(scheduleData).flat();
   }
 
   return (
@@ -56,7 +59,7 @@ function TimetablePreview({ handleStateChange, data, handleClose }) {
         <span>Timetable Preview</span>
         <span
           onClick={() => {
-            dispatch(resetAll())
+            dispatch(resetAll());
             handleClose();
           }}
         >
@@ -72,33 +75,33 @@ function TimetablePreview({ handleStateChange, data, handleClose }) {
           <Icon icon="oui:generate" width="16" height="16" />
           <span> Regenerate</span>
         </button>
-        <button 
-         className="font-size-sm border-none rounded-2 px-3 py-2 primary-background text-white"
-         onClick={() => {
-          const gentimetableData = flattenCourseData(genTimetable);
-          const formattedData = gentimetableData.map((items) => ({
-              specialty_id:data.specialty_id,
-              level_id:data.level_id,
-              semester_id:data.id,
-              student_batch_id:data.student_batch_id,
-              teacher_id:items.teacher_id,
-              course_id:items.course_id,
-              start_time:items.start_time,
-              end_time:items.end_time,
-              day_of_week:items.day
-          }))
-          createTimetable({ scheduleEntries:formattedData })
-         }}
-         disabled={isCreating || isPending}
+        <button
+          className="font-size-sm border-none rounded-2 px-3 py-2 primary-background text-white"
+          onClick={() => {
+            const gentimetableData = flattenCourseData(genTimetable);
+            const formattedData = gentimetableData.map((items) => ({
+              specialty_id: data.specialty_id,
+              level_id: data.level_id,
+              semester_id: data.id,
+              student_batch_id: data.student_batch_id,
+              teacher_id: items.teacher_id,
+              course_id: items.course_id,
+              start_time: items.start_time,
+              end_time: items.end_time,
+              day_of_week: items.day,
+            }));
+            createTimetable({ scheduleEntries: formattedData });
+          }}
+          disabled={isCreating || isPending}
         >
           Create Timetable
         </button>
       </div>
-      <div className="card grades-box rounded-3">
+      <div className={`${darkMode ? 'border-none dark-bg' : 'bg-white border'}  card grades-box rounded-3`}>
         {isPending ? (
           <SingleSpinner />
         ) : (
-          <table className="table table-responsive">
+          <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
             <thead>
               <tr>
                 <th className="font-size-sm">Day</th>
@@ -106,44 +109,81 @@ function TimetablePreview({ handleStateChange, data, handleClose }) {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(genTimetable).map(([day, courses], index) => (
-                <motion.tr
-                  key={day}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <td className="font-size-sm" style={{ width: "10%" }}>
-                    {day}
-                  </td>
-                  <td style={{ width: "90%" }}>
-                    <div className="d-flex flex-row align-items-center gap-2 w-100 flex-wrap">
-                      {courses.map((course, courseIndex) => (
-                        <motion.div
-                          key={course.course_code}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{
-                            duration: 0.4,
-                            delay: index * 0.1 + courseIndex * 0.05,
-                          }}
-                          style={{ width: "32%" }}
-                        >
-                          <SlotCard
-                            courseTitle={course.course_title}
-                            courseCode={course.course_code}
-                            teacherName={course.teacher_name}
-                            startTime={course.start_time}
-                            endTime={course.end_time}
-                            duration={course.duration}
-                            courseCredit={course.course_credit}
-                          />
-                        </motion.div>
-                      ))}
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
+              {genTimetable.length <= 0 ? (
+                <div className="alert alert-warning w-100 p-2 w-100">
+                  <div className="text-center">
+                    <h5>Something Isn't Right ⚠️</h5>
+                    <p className="font-size-sm">
+                      It looks like we can't perform this action yet. This is
+                      likely because some required data is missing. Please
+                      follow these steps to resolve the issue:
+                    </p>
+                  </div>
+                  <ul style={{ listStyleType: "decimal" }} className="ps-4">
+                    <li>
+                      <p className="font-size-sm">
+                        Ensure **all courses** for this specialty have been
+                        added and are active.
+                        <Link to={"/courses"}> Manage Courses</Link>
+                      </p>
+                    </li>
+                    <li>
+                      <p className="font-size-sm">
+                        Verify that **teachers have been assigned** to this
+                        specialty.
+                        <Link to={"/teachers"}> Manage Teachers</Link>
+                      </p>
+                    </li>
+                    <li>
+                      <p className="font-size-sm">
+                        Confirm that the assigned **teachers are available** and
+                        not over-occupied with other duties.
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                <>
+                  {Object.entries(genTimetable).map(([day, courses], index) => (
+                    <motion.tr
+                      key={day}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                    >
+                      <td className="font-size-sm" style={{ width: "10%" }}>
+                        {day}
+                      </td>
+                      <td style={{ width: "90%" }}>
+                        <div className="d-flex flex-row align-items-center gap-2 w-100 flex-wrap">
+                          {courses.map((course, courseIndex) => (
+                            <motion.div
+                              key={course.course_code}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{
+                                duration: 0.4,
+                                delay: index * 0.1 + courseIndex * 0.05,
+                              }}
+                              style={{ width: "32%" }}
+                            >
+                              <SlotCard
+                                courseTitle={course.course_title}
+                                courseCode={course.course_code}
+                                teacherName={course.teacher_name}
+                                startTime={course.start_time}
+                                endTime={course.end_time}
+                                duration={course.duration}
+                                courseCredit={course.course_credit}
+                              />
+                            </motion.div>
+                          ))}
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </>
+              )}
             </tbody>
           </table>
         )}

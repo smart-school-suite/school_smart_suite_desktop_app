@@ -1,4 +1,3 @@
-import { Icon } from "@iconify/react";
 import { useGetResitCandidates } from "../../hooks/resitCandidate/useGetResitCandidates";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import React from "react";
@@ -7,12 +6,14 @@ import CustomModal from "../../components/Modals/Modal";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import Table from "../../components/Tables/Tables";
 import { ExamCandidateTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { CreateIcon } from "../../icons/ActionIcons";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import SummitScores from "../../ModalContent/ResitCandidate/SubmitScores";
 import { ExamCandidateIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
 function ResitCandidates() {
   const { data: resitCandidates, isLoading } = useGetResitCandidates();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -21,7 +22,7 @@ function ResitCandidates() {
       <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+            className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
             style={{
               width: "2.5rem",
               height: "2.5rem",

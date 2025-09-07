@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 import { Icon } from "@iconify/react";
 import { CSSTransition } from "react-transition-group";
+import { useSelector } from "react-redux";
 function YearPicker({
   minYear = 1900,
   maxYear = new Date().getFullYear() + 50,
@@ -113,7 +114,7 @@ export const SchoolYearSelector = forwardRef(
     const [isShowing, setIsShowing] = useState(false);
     const [touched, setTouched] = useState(false);
     const schoolYearRef = useRef(null);
-
+    const darkMode = useSelector((state) => state.theme.darkMode);
     const handle_toggle = () => {
       setIsShowing((prev) => !prev);
       setTouched(true);
@@ -180,7 +181,7 @@ export const SchoolYearSelector = forwardRef(
       <div className="input-container">
         <div className="position-relative" ref={schoolYearRef}>
           <div
-            className={`bg-white d-flex border flex-row align-items-center justify-content-between rounded-2 z-0 pointer-cursor ${
+            className={`${darkMode ? ' dark-mode-text dark-mode-border dark-bg-light' : 'bg-white border'} d-flex  flex-row align-items-center justify-content-between rounded-2 z-0 pointer-cursor ${
               touched
                 ? error
                   ? "border-danger text-danger"
@@ -223,12 +224,12 @@ export const SchoolYearSelector = forwardRef(
             classNames="dropdown"
             unmountOnExit
           >
-            <div className="p-2 bg-white d-flex flex-column border gap-1 mt-1 rounded-3 position-absolute w-100 z-3">
+            <div className={`${darkMode ? 'dark-bg gainsboro-color dark-mode-border' : 'bg-white'} p-2 d-flex flex-column gap-1 mt-1 rounded-3 position-absolute w-100 z-3`}>
               <div className="scrollable-dropdown d-flex flex-column gap-1">
                 {schoolYears.map((year, index) => (
                   <button
                     key={index}
-                    className={`border-none m-1 year-dropdown-item rounded-1 font-size-sm px-1 py-2 transparent-bg text-start ${
+                    className={`border-none m-1 gainsboro-color year-dropdown-item rounded-1 font-size-sm px-1 py-2 transparent-bg text-start ${
                       year === selectedYear ? "selected-school-year" : ""
                     } ${isYearDisabled(year) ? "disabled" : ""}`}
                     onClick={() => handleYearSelect(year)}

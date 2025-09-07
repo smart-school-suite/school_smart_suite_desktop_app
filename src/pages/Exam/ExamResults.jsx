@@ -9,8 +9,10 @@ import ActionButtonDropdown from "../../components/DataTableComponents/ActionCom
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { CreateIcon, DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import ExamResultDetails from "../../ModalContent/ExamResults/ResultDetails";
+import { useSelector } from "react-redux";
 function ExamResults(){
  const { data:examResults, isLoading } = useGetExamResults();
+ const darkMode = useSelector((state) => state.theme.darkMode);
  if(isLoading){
     return(
         <DataTableNavLoader />
@@ -21,7 +23,7 @@ function ExamResults(){
         <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+            className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
             style={{
               width: "2.5rem",
               height: "2.5rem",

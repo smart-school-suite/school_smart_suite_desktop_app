@@ -12,6 +12,7 @@ function Navbar() {
   const { data:schoolBranchDetails, isLoading } = useGetSchoolBranchDetails();
   const userData = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const queryClient = useQueryClient();
   const userId = userData.id;
   const echo = createEcho(token);
@@ -43,7 +44,7 @@ function Navbar() {
             >
               EY
             </div>
-            <div className="d-block font-size-sm">
+            <div className="d-block font-size-sm gainsboro-color">
               <p className="my-0 fw-semibold">
                 {
                   isLoading ? "N/A" : schoolBranchDetails.data.abbreviation || "N/A"
@@ -57,13 +58,13 @@ function Navbar() {
             </div>
           </div>
           <div
-            className="d-flex flex-row align-items-center justify-content-between  rounded-pill bg-white"
+            className={`${darkMode ? "dark-bg" : "bg-white"} d-flex flex-row align-items-center justify-content-between  rounded-pill`}
             style={{ width: "68%", gap: "4rem", padding: "0.35rem" }}
           >
             <button
               className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center ${
                 location.pathname === "/"
-                  ? "primary-background-100 color-primary"
+                  ? `${darkMode ? 'dark-mode-active' : 'light-mode-active'}`
                   : "transparent-bg gainsboro-color"
               }  gap-1 rounded-pill`}
               style={{
@@ -83,7 +84,7 @@ function Navbar() {
             <button
               className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center disable-cursor ${
                 location.pathname === "/operational-analysis"
-                  ? "primary-background-100 color-primary"
+                  ? `${darkMode ? 'dark-mode-active' : 'light-mode-active'}`
                   : "transparent-bg gainsboro-color"
               }  gap-1 rounded-pill`}
               style={{
@@ -103,7 +104,7 @@ function Navbar() {
             <button
               className={`d-flex fw-medium flex-row justify-content-between border-none align-items-center disable-cursor ${
                 location.pathname === "/academic-analysis"
-                  ? "primary-background-100 color-primary"
+                  ? `${darkMode ? 'dark-mode-active' : 'light-mode-active'}`
                   : "transparent-bg gainsboro-color"
               }  gap-1 rounded-pill`}
               style={{
@@ -123,7 +124,7 @@ function Navbar() {
           </div>
           <div className="d-flex flex-row align-items-center gap-2">
             <div
-              className="bg-white gainsboro-color fs-4 d-flex flex-row justify-content-center align-items-center"
+              className={`${darkMode ? 'dark-bg' : "bg-white"} gainsboro-color fs-4 d-flex flex-row justify-content-center align-items-center` }
               style={{
                 width: "3.0rem",
                 height: "3.0rem",
@@ -134,7 +135,7 @@ function Navbar() {
             </div>
             <NotificationDropdown />
             <div
-              className="bg-white gainsboro-color fs-5 d-flex flex-row justify-content-center align-items-center"
+              className={`${darkMode ? 'dark-bg' : "bg-white"} gainsboro-color fs-4 d-flex flex-row justify-content-center align-items-center` }
               style={{
                 width: "3.0rem",
                 height: "3.0rem",

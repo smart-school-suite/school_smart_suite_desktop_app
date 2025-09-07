@@ -15,6 +15,7 @@ import UpdateSchoolBranchCity from "../../ModalContent/SchoolBranch/UpdateBranch
 import UpdateBranchPostalCode from "../../ModalContent/SchoolBranch/UpdateBranchPostalCode";
 function SchoolBranch() {
   const userData = useSelector((state) => state.auth.user);
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const { data:schoolBranch, isLoading } = useGetSchoolBranchDetails();
   if(isLoading){
     return <Pageloaderspinner />
@@ -31,11 +32,11 @@ function SchoolBranch() {
                 School Branch Details
               </span>
               <div
-                className="card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1"
+                className={`${darkMode ? 'dark-bg' : 'white-bg'} card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1`}
                 style={{ fontSize: "0.87rem" }}
               >
                 <ModalButton
-                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
+                  classname={`${darkMode ? 'gainsboro-color' : null} w-100 d-flex flex-row align-items-center justify-content-between w-100 remove-button-style`}
                   action={{ modalContent:UpdateSchoolBranchName }}
                 >
                  <div className="d-flex flex-column text-start">
@@ -52,7 +53,7 @@ function SchoolBranch() {
                 <div >
                   <ModalButton
                     action={{ modalContent:UpdateSchoolBranchAbbreviation }}
-                    classname={"d-flex flex-row w-100 align-items-center justify-content-between w-100 remove-button-style"}
+                    classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row w-100 align-items-center justify-content-between w-100 remove-button-style`}
                    >
                     <div className="d-flex flex-column text-start">
                     <span className="fw-semibold">School Branch Abbreviation</span>
@@ -75,11 +76,11 @@ function SchoolBranch() {
                 Location Details
               </span>
               <div
-                className="card border-none p-2 rounded-4 w-100 d-flex flex-column gap-1"
+                className={`${darkMode ? 'dark-bg' : 'white-bg'} card border-none px-2 py-3 rounded-4 w-100 d-flex flex-column gap-1`}
                 style={{ fontSize: "0.87rem" }}
               >
                 <ModalButton
-                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
+                  classname={`${darkMode ? 'gainsboro-color' : null} w-100 d-flex flex-row align-items-center justify-content-between w-100 remove-button-style`}
                   action={{
                      modalContent:UpdateSchoolBranchAddress
                   }}
@@ -98,7 +99,7 @@ function SchoolBranch() {
                 </ModalButton>
                 <hr />
                 <ModalButton
-                  classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
+                  classname={`${darkMode ? 'gainsboro-color' : null} w-100 d-flex flex-row align-items-center justify-content-between w-100 remove-button-style`}
                   action={{ modalContent:UpdateSchoolBranchState }}
                 >
                   <div className="d-flex flex-column text-start">
@@ -115,7 +116,7 @@ function SchoolBranch() {
                 </ModalButton>
                 <hr />
                 <ModalButton
-                 classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
+                 classname={`${darkMode ? 'gainsboro-color' : null} w-100 d-flex flex-row align-items-center justify-content-between w-100 remove-button-style`}
                  action={{ modalContent:UpdateSchoolBranchCity }}
                 >
                   <div className="d-flex flex-column text-start">
@@ -132,7 +133,7 @@ function SchoolBranch() {
                 </ModalButton>
                 <hr />
                  <ModalButton
-                 classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
+                 classname={`${darkMode ? 'gainsboro-color' : null} w-100 d-flex flex-row align-items-center justify-content-between w-100 remove-button-style`}
                  action={{ modalContent:UpdateBranchPostalCode }}
                 >
                    <div className="d-flex flex-column text-start">
@@ -157,11 +158,11 @@ function SchoolBranch() {
                 Contact Details
               </span>
               <div
-                className="card border-none p-2 rounded-4 w-100 d-flex flex-column gap-1"
+                className={`${darkMode ? 'dark-bg' : 'white-bg'} card border-none px-2 py-3 rounded-4 w-100 d-flex flex-column gap-1`}
                 style={{ fontSize: "0.87rem" }}
               >
                   <ModalButton
-                    classname={"d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"}
+                    classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
                     action={{ modalContent:UpdateSchoolBranchContactOne }}
                   >
                     <div className="d-flex flex-column text-start">
@@ -180,7 +181,7 @@ function SchoolBranch() {
                   </ModalButton>
                 <hr />
                 <ModalButton
-                  classname="w-100 d-flex flex-row align-items-center justify-content-between w-100 remove-button-style"
+                  classname={`${darkMode ? 'gainsboro-color' : null} w-100 d-flex flex-row align-items-center justify-content-between w-100 remove-button-style`}
                   action={{ modalContent:UpdateSchoolBranchContactTwo }}
                 >
                   <div className="d-flex flex-column text-start">
@@ -200,7 +201,7 @@ function SchoolBranch() {
                 <hr />
                 <div >
                   <ModalButton
-                    classname="d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style"
+                    classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
                     action={{ modalContent:UpdateSchoolBranchEmail }}
                   >
                     <div className="d-flex flex-column text-start">
@@ -219,7 +220,7 @@ function SchoolBranch() {
                 <hr />
                 <div >
                   <ModalButton
-                   classname="d-flex flex-row align-item-center justify-content-between pointer-cursor w-100 remove-button-style"
+                   classname={`d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style ${darkMode ? 'gainsboro-color' : null}`}
                    action={{ modalContent:UpdateSchoolBranchWebsite }}
                   >
                     <div className="d-flex flex-column text-start">
@@ -245,7 +246,7 @@ function SchoolBranch() {
                 Danger Zone
               </span>
               <div
-                className="card p-2 border-danger rounded-4 w-100 d-flex flex-column gap-1"
+                className={`${darkMode ? 'dark-bg': 'white-bg'  } card px-2 py-3 border-danger rounded-4 w-100 d-flex flex-column gap-1`}
                 style={{ fontSize: "0.87rem" }}
               >
                 <div className="d-flex flex-row align-items-center justify-content-between">

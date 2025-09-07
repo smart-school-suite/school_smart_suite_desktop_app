@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useImperativeHandle, forwardRef } from "react";
 import { Icon } from "@iconify/react";
 import InputMask from "react-input-mask";
-
+import { useSelector } from "react-redux";
 function PhoneNumberInputComponent(
   { onChange, value, onValidationChange, validationSchema, optional = false },
   ref
@@ -9,7 +9,7 @@ function PhoneNumberInputComponent(
   const [phoneNumber, setPhoneNumber] = useState(value || "");
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
-
+  const darkMode = useSelector((state) => state.theme.darkMode);
   useEffect(() => {
     setPhoneNumber(value || "");
   }, [value]);
@@ -102,12 +102,12 @@ function PhoneNumberInputComponent(
   return (
     <div className="input-container">
       <div className="input-group position-relative z-0 has-validation">
-        <span className="input-group-text" id="basic-addon1">
+        <span className={`${darkMode ? 'input-group-text-dark' : null} input-group-text font-size-sm  fw-semibold `}  id="basic-addon1">
           <Icon icon="twemoji:flag-cameroon" width="24" height="24" />
         </span>
         <input
           type="tel"
-          className={`form-control font-size-sm p-2 ${
+          className={`form-control font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null}   ${
             isTouched && error ? "is-invalid" : ""
           } ${isTouched && !error && phoneNumber ? "is-valid" : ""}`}
           placeholder="6XX-XXX-XXX"
@@ -130,10 +130,11 @@ export const PhoneNumberInput = forwardRef(PhoneNumberInputComponent);
 
 export const TextInput = forwardRef(
   ({ onChange, onValidationChange, value, placeholder, validationSchema, type = "text" }, ref) => {
+    const darkMode = useSelector((state) => state.theme.darkMode);
     const [inputValue, setInputValue] = useState(value || "");
     const [inputError, setInputError] = useState("");
     const [isInputTouched, setIsInputTouched] = useState(false);
-
+    
     const validateInput = async (currentValue) => {
       if (!validationSchema) {
         onValidationChange(true);
@@ -206,7 +207,7 @@ export const TextInput = forwardRef(
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           placeholder={placeholder}
-          className={`form-control font-size-sm p-2 ${
+          className={`form-control font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null} ${
             isInputTouched && inputError ? "is-invalid" : ""
           } ${isInputTouched && !inputError && inputValue ? "is-valid" : ""}`}
         />
@@ -232,7 +233,7 @@ export const TextAreaInput = forwardRef(
     const [inputValue, setInputValue] = useState(value || "");
     const [inputError, setInputError] = useState("");
     const [isInputTouched, setIsInputTouched] = useState(false);
-
+    const darkMode = useSelector((state) => state.theme.darkMode);
 
     useEffect(() => {
       setInputValue(value || "");
@@ -330,7 +331,7 @@ export const TextAreaInput = forwardRef(
           onBlur={handleInputBlur}
           placeholder={placeholder}
           rows={rows}
-          className={`form-control font-size-sm p-2 ${
+          className={`form-control font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null} ${
             isInputTouched && inputError ? "is-invalid" : ""
           } ${isInputTouched && !inputError && inputValue ? "is-valid" : ""}`}
         />
@@ -356,7 +357,7 @@ export const NumberInput = forwardRef(function NumberInput(
   const [inputValue, setInputValue] = useState(value || "");
   const [inputError, setInputError] = useState("");
   const [isInputTouched, setIsInputTouched] = useState(false);
-
+  const darkMode = useSelector((state) => state.theme.darkMode);
   useEffect(() => {
     setInputValue(value || "");
 
@@ -455,7 +456,7 @@ export const NumberInput = forwardRef(function NumberInput(
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         placeholder={placeholder}
-        className={`form-control font-size-sm p-2 ${
+        className={`form-control font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null} ${
           isInputTouched && inputError ? "is-invalid" : ""
         } ${
           isInputTouched && !inputError && inputValue !== "" ? "is-valid" : ""
@@ -648,7 +649,7 @@ export const InputGroup = forwardRef(
     const [inputValue, setInputValue] = useState(value || "");
     const [inputError, setInputError] = useState("");
     const [isInputTouched, setIsInputTouched] = useState(false);
-
+    const darkMode = useSelector((state) => state.theme.darkMode);
     useEffect(() => {
       setInputValue(value || "");
       if (isInputTouched) {
@@ -744,13 +745,13 @@ export const InputGroup = forwardRef(
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             placeholder={placeholder}
-            className={`form-control font-size-sm p-2 ${
+            className={`form-control font-size-sm p-2  ${darkMode ? 'dark-mode-input' : null} ${
               isInputTouched && inputError ? "is-invalid" : ""
             } ${
               isInputTouched && !inputError && inputValue !== "" ? "is-valid" : ""
             }`}
           />
-          <span className="input-group-text font-size-sm  fw-semibold" id="basic-addon1">
+          <span className={`${darkMode ? 'input-group-text-dark' : null} input-group-text font-size-sm  fw-semibold `} id="basic-addon1">
             {InputGroupText}
           </span>
           <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
@@ -776,6 +777,7 @@ export const DateRangeInput = forwardRef(
     },
     ref
   ) => {
+    const darkMode = useSelector((state) => state.theme.darkMode);
     const [dates, setDates] = useState({
       start_date: startValue || "",
       end_date: endValue || "",
@@ -918,7 +920,7 @@ export const DateRangeInput = forwardRef(
             onFocus={handleFocus("start_date")}
             onBlur={handleFocus("start_date")}
             placeholder={placeholderStart}
-            className={`form-control w-100 font-size-sm p-2 ${
+            className={`form-control w-100 font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null} ${
               touched.start_date && errors.start_date ? "is-invalid" : ""
             } ${
               touched.start_date && !errors.start_date && dates.start_date
@@ -946,7 +948,7 @@ export const DateRangeInput = forwardRef(
             onFocus={handleFocus("end_date")}
             onBlur={handleFocus("end_date")}
             placeholder={placeholderEnd}
-            className={`form-control w-100 p-2 font-size-sm ${
+            className={`form-control w-100 p-2 font-size-sm ${darkMode ? 'dark-mode-input' : null} ${
               touched.end_date && errors.end_date ? "is-invalid" : ""
             } ${
               touched.end_date && !errors.end_date && dates.end_date
@@ -981,6 +983,7 @@ export const TimeRangeInput = forwardRef(
     },
     ref
   ) => {
+    const darkMode = useSelector((state) => state.theme.darkMode);
     const [times, setTimes] = useState({
       start_time: startValue || "",
       end_time: endValue || "",
@@ -1119,7 +1122,7 @@ export const TimeRangeInput = forwardRef(
             onFocus={handleFocus("start_time")}
             onBlur={handleFocus("start_time")}
             placeholder={placeholderStart}
-            className={`form-control w-100 font-size-sm p-2 ${
+            className={`form-control w-100 font-size-sm ${darkMode ? 'dark-mode-input' : null} p-2 ${
               touched.start_time && errors.start_time ? "is-invalid" : ""
             } ${
               touched.start_time && !errors.start_time && times.start_time
@@ -1146,7 +1149,7 @@ export const TimeRangeInput = forwardRef(
             onFocus={handleFocus("end_time")}
             onBlur={handleFocus("end_time")}
             placeholder={placeholderEnd}
-            className={`form-control w-100 p-2 font-size-sm ${
+            className={`form-control w-100 p-2 font-size-sm ${darkMode ? 'dark-mode-input' : null} ${
               touched.end_time && errors.end_time ? "is-invalid" : ""
             } ${
               touched.end_time && !errors.end_time && times.end_time

@@ -3,9 +3,12 @@ import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-mod
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { AgGridReact } from "@ag-grid-community/react";
 import { themeQuartz } from "@ag-grid-community/theming";
+import { useSelector } from 'react-redux';
 
 const Table = forwardRef((props, ref) => {
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const gridRef = useRef();
+
   const defaultColDef = {
     flex: 3,
   };
@@ -14,13 +17,24 @@ const Table = forwardRef((props, ref) => {
     mode: "multiRow",
   }), []);
 
-  const myTheme = themeQuartz.withParams({
+  // Define themes for light and dark
+  const lightTheme = themeQuartz.withParams({
     browserColorScheme: "light",
     headerFontSize: 14,
-    fontFamily: {
-      googleFont: "Poppins",
-    },
+    fontFamily: { googleFont: "Poppins" },
   });
+
+  const darkTheme = themeQuartz.withParams({
+    browserColorScheme: "dark",
+    headerFontSize: 14,
+    fontFamily: { googleFont: "Poppins" },
+    backgroundColor: "#111", 
+    foregroundColor: "#666",  
+    headerBackgroundColor: "#111",
+    headerForegroundColor: "#f5f5f5",
+  });
+
+  const appliedTheme = darkMode ? darkTheme : lightTheme;
 
   const onSelectionChanged = useCallback((event) => {
     const selectedNodes = event.api.getSelectedNodes();
@@ -62,7 +76,7 @@ const Table = forwardRef((props, ref) => {
         rowSelection={rowSelection}
         onSelectionChanged={onSelectionChanged}
         onGridReady={gridReady}
-        theme={myTheme}
+        theme={appliedTheme}   // 👈 dynamic theme applied here
       />
     </div>
   );

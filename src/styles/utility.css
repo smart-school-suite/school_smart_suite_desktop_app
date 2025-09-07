@@ -64,7 +64,21 @@
     --breakpoint-lg: 992px;
     --breakpoint-xl: 1200px;
 }
-
+.dark-mode-text{
+    color: #999;
+}
+.dark-bg{
+    background-color: #111;
+}
+.dark-bg-light{
+    background-color: #222;
+}
+.table-dark-bg{
+   background-color: #111 !important ; 
+}
+.table-dark-bg-light{
+  background-color: #222 !important ;  
+}
 .color-primary{
     color: var(--primary-color);
 }

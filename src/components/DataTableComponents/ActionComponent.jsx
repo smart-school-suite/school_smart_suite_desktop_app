@@ -10,12 +10,14 @@ import {
   size,
   autoUpdate,
 } from "@floating-ui/react";
+import { useSelector } from "react-redux";
 function ActionButtonDropdown({
   children,
   style,
   buttonContent
 }) {
   const [isToggled, setIsToggeled] = useState(false);
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const { refs, floatingStyles } = useFloating({
     placement: "bottom-end",
     middleware: [
@@ -69,7 +71,7 @@ function ActionButtonDropdown({
           <div
             ref={refs.setFloating}
             style={floatingStyles}
-            className="dropdown-menu show position-absolute shadow-sm border p-1 rounded-3 d-flex flex-column gap-1"
+            className={`${darkMode ? 'dark-bg dark-mode-border' : 'border'} dropdown-menu show position-absolute shadow-sm p-1 rounded-3 d-flex flex-column gap-1`}
           >
           {children}
           </div>

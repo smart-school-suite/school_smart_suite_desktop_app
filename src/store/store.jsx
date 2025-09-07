@@ -18,8 +18,8 @@ import createExamScoreReducer from "../Slices/Asynslices/ExamScoreSlice";
 import resitExamTimetableReducer from "../Slices/Asynslices/ResitExamTimetableSlice";
 import createResitExamScoreReducer from "../Slices/Asynslices/ResitScoreSlice";
 import announcementReducer from "../Slices/Asynslices/AnnouncementSlice";
-import appSettingReducer  from "../Slices/Asynslices/AppSetting";
 import autoGenTimetableSliceReducer from "../Slices/Asynslices/AutoGenTimetableSlice";
+import themeReducer from "../Slices/Asynslices/ThemeSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -51,8 +51,8 @@ const rootReducer = combineReducers({
   resitExamTimetable:resitExamTimetableReducer,
   createResitExamScore:createResitExamScoreReducer,
   announcement:announcementReducer,
-  appSetting:appSettingReducer,
-  autoGenTimetable:autoGenTimetableSliceReducer
+  autoGenTimetable:autoGenTimetableSliceReducer,
+  theme:themeReducer
 });
 
 

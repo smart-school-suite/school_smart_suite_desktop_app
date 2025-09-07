@@ -14,8 +14,10 @@ import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { ParentIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
 function Parents() {
   const { data: guardians, isLoading } = useGetAllParents();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -25,7 +27,7 @@ function Parents() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",

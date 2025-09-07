@@ -17,8 +17,10 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import ActivateStudent from "../../ModalContent/Student/ActivateStudent";
 import { DetailsIcon, UpdateIcon, DeleteIcon, SuspendIcon, ActivateIcon,  } from "../../icons/ActionIcons";
 import { StudentIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
 function Students() {
   const { data: students, isLoading } = useGetStudents();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -28,7 +30,7 @@ function Students() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",

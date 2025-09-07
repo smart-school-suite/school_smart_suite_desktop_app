@@ -13,6 +13,7 @@ import {
 import NumberFlow from "@number-flow/react";
 import { Icon } from "@iconify/react";
 function AddExamScores({ handleClose, rowData }) {
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const { student_id: studentId, exam_id: examId, id: candidateId } = rowData;
   const { data: helperData, isFetching } = useGetExamEvaluationHelperData(
     examId,
@@ -113,8 +114,8 @@ function AddExamScores({ handleClose, rowData }) {
           { isPending ? <SingleSpinner /> : "Submit Score"}
         </button>
       </div>
-      <div className="card grades-box rounded-3 border">
-        <table className="table table-responsive font-size-sm">
+      <div className="grades-box rounded-3">
+        <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
           <thead className="grades-thead">
             <tr>
               <th className="text-start">Course</th>
@@ -151,7 +152,7 @@ function AddExamScores({ handleClose, rowData }) {
                       <input
                         type="number"
                         step="0.01"
-                        className="form-control font-size-sm p-2"
+                        className={`form-control w-100 font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null}`}
                         value={items.score}
                         onChange={(e) => handleScoreChange(e, index)}
                       />

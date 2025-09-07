@@ -17,8 +17,11 @@ import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "
 import ActivateCourse from "../../ModalContent/Course/ActivateCourse";
 import DeleteCourse from "../../ModalContent/Course/DeleteCourse";
 import { CourseIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
+import { Icon } from "@iconify/react";
 function Courses() {
   const { data: specialty, isLoading } = useGetCourses();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -28,7 +31,7 @@ function Courses() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -49,10 +52,11 @@ function Courses() {
             <ModalButton
               action={{ modalContent: CreateCourse }}
               classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+                "border-none green-bg font-size-sm rounded-3  gap-2 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
               }
               size={"lg"}
             >
+              <Icon icon="icons8:plus" className="font-size-md" />
               <span className="font-size-sm">Create Course</span>
             </ModalButton>
           </div>

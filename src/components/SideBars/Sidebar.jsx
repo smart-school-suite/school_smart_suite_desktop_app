@@ -24,13 +24,15 @@ import {
 } from "../../utils/paths";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import Logout from "../../ModalContent/Auth/Logout";
+import { useSelector } from "react-redux";
 function Sidebar() {
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
   const location = useLocation();
   return (
     <>
       <div className="col-lg-2 col-sm-2 col-md-2 pe-0 gx-lg-0">
-        <aside className=" white-bg d-flex flex-column ps-2  pt-2 pb-2">
+        <aside className={`${darkMode ? 'dark-bg d-flex flex-column ps-2  pt-2 pb-2' : 'white-bg  d-flex flex-column ps-2  pt-2 pb-2'}`}>
           <div className="logo-area mb-3">
             <div className="d-flex justify-content-start flex-row gap-2 ps-2 align-items-center">
               <div className="app-logo">
@@ -46,8 +48,8 @@ function Sidebar() {
                 <div
                   className={
                     IsPathInRoutes(dashboardRoutes)
-                      ? "nav-item-box-active fw-medium text-decoration-none pointer-cursor"
-                      : "nav-item-box-inactive text-decoration-none pointer-cursor"
+                      ? `${darkMode ? 'nav-items-box-active-dark' : 'nav-item-box-active' }`
+                      : "nav-item-box-inactive"
                   }
                   onClick={() => navigate("/")}
                 >
@@ -65,7 +67,7 @@ function Sidebar() {
                   <div
                   className={
                     IsPathInRoutes(adminRoutes)
-                      ? "nav-item-box-active fw-medium"
+                      ? `${darkMode ? 'nav-items-box-active-dark' : 'nav-item-box-active' }`
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -96,8 +98,8 @@ function Sidebar() {
                       : "subbox-container-nav-inactive"
                   }
                 >
-                  <div className="drop-down-container">
-                    <div className="box-nav">
+                  <div className={`${darkMode ? 'drop-down-container-dark' : 'drop-down-container' }`}>
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/school-admins"
@@ -111,7 +113,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/departments"
@@ -125,7 +127,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/specialties"
@@ -139,7 +141,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/teachers"
@@ -163,7 +165,7 @@ function Sidebar() {
                     <div
                   className={
                     IsPathInRoutes(academicRoutes)
-                      ? "nav-item-box-active fw-medium"
+                      ? `${darkMode ? 'nav-items-box-active-dark' : 'nav-item-box-active' }`
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -197,8 +199,8 @@ function Sidebar() {
                       : "subbox-container-nav-inactive"
                   }
                 >
-                  <div className="drop-down-container">
-                    <div className="box-nav">
+                  <div className={`${darkMode ? 'drop-down-container-dark' : 'drop-down-container' }`}>
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <p
                           onClick={() => {
@@ -214,7 +216,7 @@ function Sidebar() {
                         </p>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/semesters"
@@ -228,7 +230,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/courses"
@@ -242,7 +244,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/time-table"
@@ -266,7 +268,7 @@ function Sidebar() {
                   <div
                   className={
                     IsPathInRoutes(examRoutes)
-                      ? "nav-item-box-active fw-medium"
+                      ? `${darkMode ? 'nav-items-box-active-dark' : 'nav-item-box-active' }`
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -297,8 +299,8 @@ function Sidebar() {
                       : "subbox-container-nav-inactive"
                   }
                 >
-                  <div className="drop-down-container">
-                    <div className="box-nav">
+                  <div className={`${darkMode ? 'drop-down-container-dark' : 'drop-down-container' }`}>
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/exam"
@@ -312,7 +314,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/exam-candidate"
@@ -326,7 +328,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/exam-timetable"
@@ -340,7 +342,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/exam-results"
@@ -364,7 +366,7 @@ function Sidebar() {
                   <div
                   className={
                     IsPathInRoutes(resitRoutes)
-                      ? "nav-item-box-active fw-medium"
+                      ? `${darkMode ? 'nav-items-box-active-dark' : 'nav-item-box-active' }`
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -395,8 +397,8 @@ function Sidebar() {
                       : "subbox-container-nav-inactive"
                   }
                 >
-                  <div className="drop-down-container">
-                    <div className="box-nav">
+                  <div className={`${darkMode ? 'drop-down-container-dark' : 'drop-down-container' }`}>
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/resit-exams"
@@ -410,7 +412,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/resit-candidate"
@@ -424,7 +426,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/resit-timetable"
@@ -438,7 +440,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/student-resit"
@@ -462,7 +464,7 @@ function Sidebar() {
                   <div
                   className={
                     IsPathInRoutes(StudentRoutes)
-                      ? "nav-item-box-active fw-medium"
+                      ? `${darkMode ? 'nav-items-box-active-dark' : 'nav-item-box-active' }`
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -493,8 +495,8 @@ function Sidebar() {
                       : "subbox-container-nav-inactive"
                   }
                 >
-                  <div className="drop-down-container">
-                    <div className="box-nav">
+                  <div className={`${darkMode ? 'drop-down-container-dark' : 'drop-down-container' }`}>
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/students"
@@ -508,7 +510,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/studentDropout"
@@ -522,7 +524,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/parents"
@@ -536,7 +538,7 @@ function Sidebar() {
                         </NavLink>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <NavLink
                           to="/student-batches"
@@ -560,7 +562,7 @@ function Sidebar() {
                   <div
                   className={
                     IsPathInRoutes(financialRoutes)
-                      ? "nav-item-box-active fw-medium"
+                      ? `${darkMode ? 'nav-items-box-active-dark' : 'nav-item-box-active' }`
                       : "nav-item-box-inactive"
                   }
                   onClick={() => {
@@ -591,8 +593,8 @@ function Sidebar() {
                       : "subbox-container-nav-inactive"
                   }
                 >
-                  <div className="drop-down-container">
-                    <div className="box-nav">
+                  <div className={`${darkMode ? 'drop-down-container-dark' : 'drop-down-container' }`}>
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <div
                           onClick={() => {
@@ -607,7 +609,7 @@ function Sidebar() {
                         </div>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <div
                           onClick={() => {
@@ -622,7 +624,7 @@ function Sidebar() {
                         </div>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <div
                           onClick={() => {
@@ -635,7 +637,7 @@ function Sidebar() {
                         </div>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <div
                           onClick={() => {
@@ -650,7 +652,7 @@ function Sidebar() {
                         </div>
                       </div>
                     </div>
-                    <div className="box-nav">
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
                       <div className="subbox-nav">
                         <div
                           onClick={() => {
@@ -675,7 +677,7 @@ function Sidebar() {
           <div className="mt-auto d-flex gap-2 flex-column justify-content-center align-items-center w-100 px-2">
             {/*Settings*/}
             <div
-              className={`${IsPathInRoutes(settingRoutes) ? "sidebar-active" : ""} sidebar-item`}
+              className={`${IsPathInRoutes(settingRoutes) ? `${darkMode ? 'sidebar-active-dark' : 'sidebar-active'}` : ""} sidebar-item`}
               onClick={() => {
                 navigate("/settings/general-settings");
               }}

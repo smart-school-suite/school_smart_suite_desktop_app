@@ -11,8 +11,10 @@ import { StudentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
 import { StudentIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
 function StudentDropOuts() {
   const { data:dropoutStudents, isFetching } = useGetDropdoutStudents();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if (isFetching) {
     return <DataTableNavLoader />;
   }
@@ -22,7 +24,7 @@ function StudentDropOuts() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",

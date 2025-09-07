@@ -5,7 +5,9 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetSchoolAdminPermissions } from "../../hooks/permission/useGetSchoolAdminPermissions";
 import { useRevokeSchoolAdminPermissions } from "../../hooks/permission/useRevokeSchoolAdminPermission";
 import { useGivePermissionSchoolAdmin } from "../../hooks/permission/useGivePermissionSchoolAdmin";
+import { useSelector } from "react-redux";
 function RemovePermissions({ schoolAdminId }) {
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const {
     data: permissionData,
     isFetching,
@@ -141,7 +143,7 @@ function RemovePermissions({ schoolAdminId }) {
             <div>
               <input
                 type="checkbox"
-                className="form-check-input"
+                className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input`}
                 checked={areAllPermissionsSelected}
                 onChange={handleSelectAll}
                 ref={selectAllCheckboxRef}
@@ -152,7 +154,7 @@ function RemovePermissions({ schoolAdminId }) {
         <div>
           <input
             type="search"
-            className="w-100 form-control my-2"
+            className={`${darkMode ? 'dark-mode-input' : 'null' } w-100 form-control font-size-sm`}
             placeholder="Search Permission"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -188,7 +190,7 @@ function RemovePermissions({ schoolAdminId }) {
                     <div>
                       <input
                         type="checkbox"
-                        className="form-check-input"
+                        className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input`}
                         checked={checked}
                         onChange={(e) =>
                           handleSelectCategory(
@@ -215,7 +217,7 @@ function RemovePermissions({ schoolAdminId }) {
                       <div>
                         <input
                           type="checkbox"
-                          className="form-check-input"
+                          className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input`}
                           checked={selectedPermissionIds.has(permission.id)}
                           onChange={(e) =>
                             handleSelectPermission(permission.id, e)
@@ -305,6 +307,7 @@ function AssignedPermissions({ schoolAdminId }) {
 }
 
 function AssignablePermissions({ schoolAdminId }) {
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const {
     data: permissionData,
     isFetching,
@@ -439,10 +442,10 @@ function AssignablePermissions({ schoolAdminId }) {
         <div className="d-flex flex-row align-items-center justify-content-end">
           <div className="d-flex align-items-center gap-2">
             <span className="font-size-sm">Select All</span>
-            <div>
+            <div className="pe-2">
               <input
                 type="checkbox"
-                className="form-check-input"
+                className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input`}
                 checked={areAllPermissionsSelected}
                 onChange={handleSelectAll}
                 ref={selectAllCheckboxRef}
@@ -450,16 +453,16 @@ function AssignablePermissions({ schoolAdminId }) {
             </div>
           </div>
         </div>
-        <div>
+        <div className="px-2 my-2">
           <input
             type="search"
-            className="w-100 form-control my-2"
+            className={`${darkMode ? 'dark-mode-input' : 'null' } w-100 form-control font-size-sm`}
             placeholder="Search Permission"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="modal-content-child">
+        <div className="modal-content-child px-2">
           {filteredPermissions.length === 0 && !isFetching ? (
             <div className="text-center mt-4">
               {debouncedSearchTerm
@@ -489,7 +492,7 @@ function AssignablePermissions({ schoolAdminId }) {
                     <div>
                       <input
                         type="checkbox"
-                        className="form-check-input"
+                        className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input`}
                         checked={checked}
                         onChange={(e) =>
                           handleSelectCategory(
@@ -516,7 +519,7 @@ function AssignablePermissions({ schoolAdminId }) {
                       <div>
                         <input
                           type="checkbox"
-                          className="form-check-input"
+                          className={`${darkMode ? 'dark-bg-light dark-mode-border' : null } form-check-input`}
                           checked={selectedPermissionIds.has(permission.id)}
                           onChange={(e) =>
                             handleSelectPermission(permission.id, e)
@@ -588,7 +591,7 @@ function ManagePermission({ rowData, handleClose }) {
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
           <span>Manage School Admin Permissions</span>
           <span onClick={handleClose} style={{ cursor: "pointer" }}>
-            <Icon icon="proicons:cancel" width="24" height="24" />
+            <Icon icon="proicons:cancel" />
           </span>
         </div>
         <div className="d-flex gap-2 flex-row my-4">

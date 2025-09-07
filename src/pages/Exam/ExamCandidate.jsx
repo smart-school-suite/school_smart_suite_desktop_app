@@ -11,8 +11,10 @@ import DeleteExamCandidate from "../../ModalContent/ExamCandidate/DeleteCandidat
 import AddCaScores from "../../ModalContent/ExamCandidate/AddCaScores";
 import AddExamScores from "../../ModalContent/ExamCandidate/AddExamScores";
 import { ExamCandidateIcon } from "../../icons/Icons";
+import { useSelector } from "react-redux";
 function ExamCandidates() {
   const { data: examCandidates, isLoading } = useGetExamCandidates();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -21,7 +23,7 @@ function ExamCandidates() {
       <div className="my-2">
         <div className="d-flex align-items-center gap-2">
           <div
-            className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+            className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
             style={{
               width: "2.5rem",
               height: "2.5rem",

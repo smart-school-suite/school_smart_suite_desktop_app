@@ -11,9 +11,11 @@ import {
 import TimeInput from "../../components/FormComponents/TimeInput";
 import { useGetExamTimetableHelperData } from "../../hooks/examTimetable/useGetExamTimetableHelperData";
 import { useCreateExamTimetable } from "../../hooks/examTimetable/useCreateExamTimetable";
+import { useSelector } from "react-redux";
 function CreateTimetable({ handleClose, rowData }) {
   const { id, start_date, end_date, exam_name, batchId, school_year } = rowData;
   const dispatch = useDispatch();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const { mutate, isPending } =
     useCreateExamTimetable(handleClose);
   const formData = useSelector((state) => state.examtimetable.formData);
@@ -117,7 +119,7 @@ const timeTableData = formData
         </div>
       </div>
       <div className="card grades-box rounded-3 border">
-        <table className="table table-responsive font-size-sm">
+        <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
           <thead className="grades-thead">
             <tr>
               <th className="text-center">Course</th>

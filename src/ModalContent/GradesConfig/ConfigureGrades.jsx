@@ -9,9 +9,11 @@ import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { examRemarks, passFailOptions, resitOptions } from "../../data/data";
+import { useSelector } from "react-redux";
 function ConfigureGrades({ handleClose, rowData }) {
   const scoreRef = useRef();
   const {grades_category_id:gradesCategoryId} = rowData;
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const [formData, setFormData] = useState([]);
   const [maxScore, setMaxScore] = useState(null);
   const [isValid, setIsValid] = useState(null);
@@ -149,8 +151,8 @@ function ConfigureGrades({ handleClose, rowData }) {
          </button>
           </div>
         </div>
-        <div className="card border grades-box rounded-3">
-          <table className="table table-responsive">
+        <div className=" grades-box rounded-3">
+          <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
             <thead className="grades-thead">
               <tr>
                 <th className="text-center">Letter Grade</th>

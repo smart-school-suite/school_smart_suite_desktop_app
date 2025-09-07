@@ -1,7 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import { useSelector } from "react-redux";
 function SettingSideBar() {
   const navigate = useNavigate();
+  const darkMode = useSelector((state) => state.theme.darkMode);
+
   return (
     <>
       <div className="d-flex flex-column justify-content-start gap-2" style={{ height:"97.5dvh" }}>
@@ -12,22 +15,19 @@ function SettingSideBar() {
               height: "2.5rem",
               borderRadius: "0.5rem",
             }}
-            className="primary-background-100 d-flex flex-row align-items-center justify-content-center"
+            className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex flex-row align-items-center justify-content-center`}
           >
             <Icon
               icon="lsicon:setting-outline"
-              width="24"
-              height="24"
-              className="color-primary"
             />
           </div>
           <span className="fw-semibold">Settings</span>
         </div>
-        <div className="card border-none rounded-4 d-flex  w-100 p-2 gap-4 flex-column" style={{ height:"95%" }}>
+        <div className={`${darkMode ? 'dark-bg' : 'white-bg'} card border-none rounded-4 d-flex  w-100 p-2 gap-4 flex-column`} style={{ height:"95%" }}>
           <div
             className={
               location.pathname === "/settings/general-settings"
- ? "setting-active border-none  font-size-sm rounded-3 setting-active  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3"
+                ? `${darkMode ? 'setting-active-dark' : 'setting-active' } border-none  font-size-sm rounded-3  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3`
                 : "gainsboro-color border-none font-size-sm transparent-bg d-flex align-items-center gap-3 transition-four-sec pointer-cursor setting-inactive"
             }
             onClick={() => {
@@ -39,7 +39,7 @@ function SettingSideBar() {
           <div
             className={
               location.pathname === "/settings/display"
-                 ? "setting-active border-none  font-size-sm rounded-3 setting-active  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3"
+                 ? `${darkMode ? 'setting-active-dark' : 'setting-active' } border-none  font-size-sm rounded-3  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3`
                 : "gainsboro-color border-none font-size-sm transparent-bg d-flex align-items-center gap-3 transition-four-sec pointer-cursor setting-inactive"
             }
             onClick={() => {
@@ -51,7 +51,7 @@ function SettingSideBar() {
           <div
             className={
               location.pathname === "/settings/profile"
-                ? "setting-active border-none  font-size-sm rounded-3 setting-active  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3"
+                ? `${darkMode ? 'setting-active-dark' : 'setting-active' } border-none  font-size-sm rounded-3  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3`
                 : "gainsboro-color border-none font-size-sm transparent-bg d-flex align-items-center gap-3 transition-four-sec pointer-cursor setting-inactive"
             }
             onClick={() => {
@@ -63,7 +63,7 @@ function SettingSideBar() {
           <div
             className={
               location.pathname === "/settings/security"
-                 ? "setting-active border-none  font-size-sm rounded-3 setting-active  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3"
+                 ? `${darkMode ? 'setting-active-dark' : 'setting-active' } border-none  font-size-sm rounded-3  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3`
                 : "gainsboro-color border-none font-size-sm transparent-bg d-flex align-items-center gap-3 transition-four-sec pointer-cursor setting-inactive"
             }
             onClick={() => {
@@ -75,7 +75,7 @@ function SettingSideBar() {
           <div
             className={
               location.pathname === "/settings/school"
-                 ? "setting-active border-none  font-size-sm rounded-3 setting-active  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3"
+                 ? `${darkMode ? 'setting-active-dark' : 'setting-active' } border-none  font-size-sm rounded-3  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3`
                 : "gainsboro-color border-none font-size-sm transparent-bg d-flex align-items-center gap-3 transition-four-sec pointer-cursor setting-inactive"
             }
             onClick={() => {
@@ -87,7 +87,7 @@ function SettingSideBar() {
           <div
             className={
               location.pathname === "/settings/subscription"
-                 ? "setting-active border-none  font-size-sm rounded-3 setting-active  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3"
+                 ? `${darkMode ? 'setting-active-dark' : 'setting-active' } border-none  font-size-sm rounded-3  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3`
                 : "gainsboro-color border-none font-size-sm transparent-bg d-flex align-items-center gap-3 transition-four-sec pointer-cursor setting-inactive"
             }
             onClick={() => {
@@ -99,7 +99,7 @@ function SettingSideBar() {
           <div
             className={
               location.pathname === "/settings/school-branch"
-                ? "setting-active border-none  font-size-sm rounded-3 setting-active  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3"
+                ? `${darkMode ? 'setting-active-dark' : 'setting-active' } border-none  font-size-sm rounded-3  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3`
                 : "gainsboro-color border-none font-size-sm transparent-bg d-flex align-items-center gap-3 transition-four-sec pointer-cursor setting-inactive"
             }
             onClick={() => {
@@ -111,7 +111,7 @@ function SettingSideBar() {
           <div
             className={
               location.pathname === "/settings/app-settings"
-                ? "setting-active border-none  font-size-sm rounded-3 setting-active  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3"
+                ? `${darkMode ? 'setting-active-dark' : 'setting-active' } border-none  font-size-sm rounded-3  transition-four-sec pointer-cursor color-primary d-flex align-items-center gap-3`
                 : "gainsboro-color  border-none font-size-sm transparent-bg d-flex align-items-center gap-3 transition-four-sec pointer-cursor setting-inactive"
             }
             onClick={() => {

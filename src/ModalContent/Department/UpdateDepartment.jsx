@@ -55,7 +55,7 @@ function UpdateDepartment({ handleClose, rowData }) {
   };
   return (
     <>
-      <div className="card w-100 border-none">
+      <div>
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
           <span className="m-0">Update Department</span>
           <span

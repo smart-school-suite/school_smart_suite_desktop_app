@@ -15,8 +15,10 @@ import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/use
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { GradeIcon } from "../../icons/Icons";
 import AutoConfigureGrades from "../../ModalContent/GradesConfig/AutoConfigGrades";
+import { useSelector } from "react-redux";
 function Gradesconfiguration() {
   const { data:gradeCategory, isLoading } = useGetSchoolGradeCategories();
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -26,7 +28,7 @@ function Gradesconfiguration() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className="d-flex justify-content-center align-items-center primary-background-100 color-primary"
+              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",

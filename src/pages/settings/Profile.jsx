@@ -12,16 +12,18 @@ import UpdateEmail from "../../ModalContent/Profile/UpdateEmail";
 import UpdateContactOne from "../../ModalContent/Profile/UpdateContactOne";
 import UpdateContactTwo from "../../ModalContent/Profile/UpdateContactTwo";
 import UpdateAddress from "../../ModalContent/Profile/UpdateAddress";
+
 function Profile() {
   const { data:schoolAdmin, isLoading } = useGetAuthSchoolAdmin();
   const userData = useSelector((state) => state.auth.user);
+  const darkMode = useSelector((state) => state.theme.darkMode);
   if(isLoading){
      return <Pageloaderspinner />
   }
   return (
     <>
       <div>
-        <div className="card border-none pb-4  rounded-4 profile-section white-bg d-flex flex-column">
+        <div className={`${darkMode ? 'dark-bg' : 'white-bg'} card border-none pb-4  rounded-4 profile-section d-flex flex-column`}>
           <div className="top-section rounded-top-4 px-4">
             <div className="d-flex flex-row profile-picture-group z-5 justify-content-between align-items-center">
               {schoolAdmin.data.authSchoolAdmin.profile_picture !== null ? (
@@ -39,8 +41,8 @@ function Profile() {
             </div>
           </div>
           <div className="ms-4 mt-auto">
-            <div className="d-block">
-              <h5 className="fw-bold">
+            <div className={`${darkMode ? 'gainsboro-color' : null} d-block`}>
+              <h5 className="fw-bold text-capitalize">
                 {schoolAdmin.data.authSchoolAdmin.name}
               </h5>
               <div className="d-flex flex-row my-1 gainsboro-color">
@@ -54,9 +56,9 @@ function Profile() {
         </div>
         <div>
           <span className="font-size-sm my-1">Personal Details</span>
-          <div className="card border-none p-2">
+          <div className={`${darkMode ? 'dark-bg' : 'white-bg'} card border-none px-2 py-3 rounded-4`}>
               <ModalButton 
-                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
+                classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style`}
                 action={{ modalContent:UpdateFullNames }}
               >
                 <div className="d-flex flex-column text-start">
@@ -74,7 +76,7 @@ function Profile() {
               </ModalButton>
             <hr />
               <ModalButton
-               classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
+               classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style`}
               >
                 <div className="d-flex flex-column text-start">
                 <span className="fw-semibold">First Name</span>
@@ -91,7 +93,7 @@ function Profile() {
               </ModalButton>
             <hr />
               <ModalButton
-               classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
+               classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style`}
                action={{ modalContent:UpdateLastName }}
               >
                 <div className="d-flex flex-column text-start">
@@ -109,7 +111,7 @@ function Profile() {
               </ModalButton>
              <hr />
              <ModalButton
-              classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
+              classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style`}
               action={{ modalContent:UpdateDOB }}
              >
               <div className="d-flex flex-column text-start">
@@ -127,7 +129,7 @@ function Profile() {
              </ModalButton>
             <hr />
               <ModalButton
-                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
+                classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style`}
                 action={{ modalContent:UpdateCulturalBackground }}
               >
                 <div className="d-flex flex-column text-start">
@@ -147,9 +149,9 @@ function Profile() {
         </div>
         <div>
           <span className="font-size-sm my-1">Contact Details</span>
-          <div className="card border-none p-2">
+          <div className={`${darkMode ? 'dark-bg' : 'white-bg'} card border-none rounded-4 px-2 py-3`}>
             <ModalButton
-                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
+                classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style`}
                 action={{ modalContent:UpdateEmail }}
               >
                  <div className="d-flex flex-column text-start">
@@ -168,7 +170,7 @@ function Profile() {
             <hr />
             <ModalButton
                 action={{ modalContent:UpdateContactOne }}
-                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
+                classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style`}
               >
                 <div className="d-flex flex-column text-start">
                 <span className="fw-semibold">Contact One</span>
@@ -185,7 +187,7 @@ function Profile() {
               </ModalButton>
             <hr />
             <ModalButton
-              classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
+              classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style`}
               action={{ modalContent:UpdateContactTwo }}
             >
               <div className="d-flex flex-column text-start">
@@ -205,9 +207,9 @@ function Profile() {
         </div>
         <div>
           <span className="font-size-sm my-1">Location Details</span>
-          <div className="card border-none p-2">
+          <div className={`${darkMode ? 'dark-bg' : 'white-bg'} card border-none rounded-4 px-2 py-3`}>
               <ModalButton
-                classname={"d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"}
+                classname={`${darkMode ? 'gainsboro-color' : null} d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style`}
                 action={{ modalContent:UpdateAddress }}
               >
                  <div className="d-flex flex-column text-start">
