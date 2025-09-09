@@ -1,35 +1,10 @@
-import { useState } from "react";
-import { useDeleteExamGradeMutation } from "../../Slices/Asynslices/deleteSlice";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import toast from "react-hot-toast";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function DeleteGradesConfig({ handleClose, row_id:examId }){
-    const [deleteExamGrade] = useDeleteExamGradeMutation();
-    const [isDeleting, setIsDeleting] = useState(false);
+import { useDeleteGradeConfig } from "../../hooks/schoolGradeCategory/useDeleteGradeConfig";
+function DeleteGradesConfig({ handleClose, rowData }){
+    const { id:configId } = rowData;
+    const { mutate:deleteGradeConfig, isPending } = useDeleteGradeConfig(handleClose)
     const handleDeleteExamGrades = async () => {
-        setIsDeleting(true);
-         try{
-             await deleteExamGrade(examId).unwrap();
-             setIsDeleting(false);
-             handleClose();
-             toast.custom(
-                <ToastSuccess
-                  title={"Delete Successfull ✅"}
-                  description={"The exam grades has been deleted successfully "}
-                />
-              );
-            } catch (e) {
-              setIsDeleting(false);
-              toast.custom(
-                <ToastDanger
-                  title={"Delete Failed ❌"}
-                  description={
-                    "❌ Something went wrong! The Exam Grades deleting failed due to an error. Please try again later."
-                  }
-                />
-              );
-            }
+       deleteGradeConfig(configId);
     }
     return(
         <>
@@ -42,19 +17,19 @@ function DeleteGradesConfig({ handleClose, row_id:examId }){
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button
-              className="border-none px-3 py-2 text-primary rounded-3 font-size-sm"
+              className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
               onClick={handleClose}
             >
               Cancel
             </button>
             <button
-              className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+              className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
                 handleDeleteExamGrades();
               }}
-              disabled={isDeleting}
+              disabled={isPending}
             >
-              {isDeleting ? <SingleSpinner /> : "Delete Exam Grades"}
+              {isPending ? <SingleSpinner /> : "Yes, Delete"}
             </button>
           </div>
         </div>

@@ -137,7 +137,7 @@ function ActionButtons({ selectedAdmins, resetAll }) {
   return (
     <>
       <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
         action={{ modalContent: BulkDelete }}
         bulkData={selectedAdmins}
         resetAll={resetAll}
@@ -160,8 +160,9 @@ function DropdownItems({ selectedAdmins, resetAll }) {
         bulkData={selectedAdmins}
         resetAll={resetAll}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
         </div>
       </ModalButton>
       <ModalButton
@@ -170,8 +171,9 @@ function DropdownItems({ selectedAdmins, resetAll }) {
         bulkData={selectedAdmins}
         resetAll={resetAll}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
         </div>
       </ModalButton>
       <ModalButton
@@ -180,8 +182,9 @@ function DropdownItems({ selectedAdmins, resetAll }) {
         bulkData={selectedAdmins}
         resetAll={resetAll}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item">
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
         </div>
       </ModalButton>
     </>

@@ -101,7 +101,7 @@
    transition: all 0.3s;
 }
 .light-mode-active{
-     background-color: var(--primary-color-50);
+     background-color: var(--primary-color-100);
    color: var(--primary-color);
    transition: all 0.3s;
 }
@@ -1139,13 +1139,13 @@ thead {
 
 .dropdown-content-sm {
     height: auto;
-    max-height: 15dvh;
+    max-height: 18dvh;
     overflow-y: auto;
     scroll-behavior: smooth;
 }
 
 .dropdown-content-sm::-webkit-scrollbar-thumb {
-    background-color: var(--primary-color);
+    background-color: #888;
     border-radius: 10px;
 }
 
@@ -1154,12 +1154,13 @@ thead {
 }
 
 .dropdown-content-sm::-webkit-scrollbar {
-    width: 2px;
+    width: 4px;
 }
 
 .dropdown-content-item:hover {
     background: var(--primary-color);
     color: var(--acent-color-five);
+    transition: all 0.2s;
 }
 
 .signup-app-logo {

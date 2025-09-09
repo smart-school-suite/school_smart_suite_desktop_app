@@ -44,7 +44,7 @@ function NotificationDropdown() {
   return (
     <>
       <div
-        className={`${darkMode ? 'dark-bg' : "bg-white"} gainsboro-color fs-4 d-flex flex-row justify-content-center align-items-center` }
+        className={`${darkMode ? 'dark-bg' : "bg-white"} gainsboro-color fs-4 d-flex flex-row justify-content-center align-items-center position-relative` }
         style={{
           width: "3.0rem",
           height: "3.0rem",
@@ -67,7 +67,7 @@ function NotificationDropdown() {
         unmountOnExit
       >
         <div
-          className="px-3 py-2 card border-none shadow-sm rounded-4 position-absolute"
+          className={`${darkMode ? 'dark-bg dark-mode-border dark-mode-text' : "bg-white border-none"} px-3 py-2 card shadow-sm rounded-4 position-absolute`}
           ref={refs.setFloating}
           style={{ ...floatingStyles, zIndex: 1000, width: "27%" }}
         >
@@ -101,7 +101,7 @@ function Notifications({ notificationData, isLoading }) {
             <>
               <div className="d-flex flex-row align-items-center gap-2 w-100 px-1">
                 <div className="blue-pill"></div>
-                <div className="flex flex-column w-100 gap-1">
+                <div className="d-flex flex-column w-100 gap-2">
                   <div className="d-flex flex-row align-items-center justify-content-between">
                     <span className="font-size-sm fw-semibold">
                       {items.data.title}
@@ -118,7 +118,7 @@ function Notifications({ notificationData, isLoading }) {
                   />
                 </div>
               </div>
-              <div className="px-3">
+              <div className="px-1">
                 <hr />
               </div>
             </>
@@ -126,8 +126,8 @@ function Notifications({ notificationData, isLoading }) {
           {notificationData?.read.map((items) => (
             <>
               <div className="d-flex flex-row align-items-center gap-2 w-100 px-1">
-                <div className="flex flex-column w-100 gap-1">
-                  <div className="d-flex flex-row align-items-center justify-content-between">
+                <div className="d-flex flex-column w-100 gap-2">
+                  <div className="d-flex flex-row align-items-center  justify-content-between">
                     <span className="font-size-sm fw-semibold">
                       {items.data.title}
                     </span>
@@ -135,15 +135,17 @@ function Notifications({ notificationData, isLoading }) {
                       {formatISOTimeSince(items.created_at)}
                     </span>
                   </div>
-                  <TextDisplay
+                 <div>
+                   <TextDisplay
                     content={items.data.body || items.data.message}
                     maxLength={100}
                     textStyle={"font-size-sm fw-light gainsboro-color"}
                     readMeStyle={"font-size-sm fw-semibold"}
                   />
+                 </div>
                 </div>
               </div>
-              <div className="px-3">
+              <div className="px-1">
                 <hr />
               </div>
             </>

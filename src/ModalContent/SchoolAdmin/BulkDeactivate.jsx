@@ -12,7 +12,7 @@ function BulkDeactivateSchoolAdmin({ handleClose, bulkData, resetAll }) {
     <>
       <div className="w-100">
         <h4 className="fw-semibold">
-          Are you absolutely sure about deactivating {bulkData.length} admins?
+          Are you absolutely sure about deactivating admins?
         </h4>
         <p className="my-3" style={{ fontSize: "0.85rem" }}>
           This action cannot be undone. This will permanently delete this

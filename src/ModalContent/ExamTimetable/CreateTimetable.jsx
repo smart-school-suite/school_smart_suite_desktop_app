@@ -11,7 +11,6 @@ import {
 import TimeInput from "../../components/FormComponents/TimeInput";
 import { useGetExamTimetableHelperData } from "../../hooks/examTimetable/useGetExamTimetableHelperData";
 import { useCreateExamTimetable } from "../../hooks/examTimetable/useCreateExamTimetable";
-import { useSelector } from "react-redux";
 function CreateTimetable({ handleClose, rowData }) {
   const { id, start_date, end_date, exam_name, batchId, school_year } = rowData;
   const dispatch = useDispatch();

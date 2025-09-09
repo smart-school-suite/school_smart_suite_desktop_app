@@ -7,12 +7,12 @@ function Layout() {
   return (
     <>
       <Toaster position="bottom-right" reverseOrder={false}></Toaster>
-      <div className={`${darkMode ? 'dark-bg-light container' : 'container gainsboro-color'}`}>
+      <div className={`${darkMode ? 'dark-bg-light container' : 'container'}`}>
         <div className="row">
           <Sidebar />
           <div className="col-lg-10 col-sm-10 col-md-10">
-            <div className="container">
-              <main className={`${darkMode ? 'text-white' : 'gainsboro-color'}`}>
+            <div>
+              <main className={`${darkMode ? 'text-white' : null}`}>
                 <Outlet />
               </main>
             </div>

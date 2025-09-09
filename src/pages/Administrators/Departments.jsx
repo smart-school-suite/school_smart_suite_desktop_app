@@ -8,21 +8,41 @@ import CreateDepartment from "../../ModalContent/Department/CreateDepartment";
 import UpdateDepartment from "../../ModalContent/Department/UpdateDepartment";
 import DeactivateDepartment from "../../ModalContent/Department/DeactivateDepartment";
 import { DepartmentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import { useMemo } from "react";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
 import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import ActivateDepartment from "../../ModalContent/Department/ActivateDepartment";
 import React from "react";
-import { useState } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { DepartmentIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
+import BulkActivateDepartment from "../../ModalContent/Department/BulkActivateDepartment";
+import BulkDeactivateDepartment from "../../ModalContent/Department/BulkDeactivateDepartment";
+import BulkDeleteDepartment from "../../ModalContent/Department/BulkDeleteDepartment";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
 function Departments() {
+  const tableRef = useRef();
   const { data: departments, isLoading } = useGetDepartments();
   const darkMode = useSelector((state) => state.theme.darkMode);
+    const [rowCount, setRowCount] = useState(0);
+    const [selectedDepartments, setSelectedDepartments] = useState([]);
+    const handleReset = () => {
+      if (tableRef.current) {
+        tableRef.current.deselectAll();
+        setRowCount(0);
+        setSelectedDepartments([]);
+      }
+    };
+    const handleRowDataFromChild = useCallback((Data) => {
+      setSelectedDepartments(Data);
+    }, []);
+    const handleRowCountFromChild = useCallback((count) => {
+      setRowCount(count);
+    }, []);
   const memoizedColDefs = useMemo(() => {
     return DepartmentTableConfig({
       DropdownComponent,
@@ -72,7 +92,30 @@ function Departments() {
           </div>
         </div>
         <div>
-          <Table colDefs={memoizedColDefs} rowData={memoizedRowData} />
+          <Table 
+           colDefs={memoizedColDefs} 
+           rowData={memoizedRowData} 
+           ref={tableRef}
+           handleRowCountFromChild={handleRowCountFromChild}
+           handleRowDataFromChild={handleRowDataFromChild}
+           />
+          <BulkActionsToast
+            rowCount={rowCount}
+            label={"Department Selected"}
+            resetAll={handleReset}
+            dropDownItems={
+              <DropdownItems
+                selectedDepartments={selectedDepartments}
+                resetAll={handleReset}
+              />
+            }
+            actionButton={
+              <ActionButtons
+                selectedDepartments={selectedDepartments}
+                resetAll={handleReset}
+              />
+            }
+          />
         </div>
       </div>
     </>
@@ -188,6 +231,64 @@ export function DropdownComponent(props) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+
+function ActionButtons({ selectedDepartments, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        action={{ modalContent: BulkDeleteDepartment }}
+        bulkData={selectedDepartments}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedDepartments, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkDeleteDepartment }}
+        bulkData={selectedDepartments}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkDeactivateDepartment }}
+        bulkData={selectedDepartments}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkActivateDepartment }}
+        bulkData={selectedDepartments}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }

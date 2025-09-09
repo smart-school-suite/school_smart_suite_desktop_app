@@ -50,3 +50,13 @@ export const autoGenExamGrades = async (data) => {
    const response = await axiosInstance.post("grade/auto-gen-grading", data);
    return response.data;
 }
+
+export const deleteGradeConfig = async (configId) => {
+   const response = await axiosInstance.delete(`grade/grade-config/delete/${configId}`);
+   return response.data;
+}
+
+export const getGradeConfigDetails = async (configId) => {
+   const response = await axiosInstance.get(`grade/grades-config/details/${configId}`);
+   return response.data;
+}
