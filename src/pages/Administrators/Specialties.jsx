@@ -11,18 +11,44 @@ import ActionButtonDropdown, {
 } from "../../components/DataTableComponents/ActionComponent";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
-import { useMemo } from "react";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
-import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
-import React from "react";
-import { useState } from "react";
+import {
+  ActivateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  SuspendIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import ActivateSpecialty from "../../ModalContent/Specialty/ActivateSpecialty";
 import { SpecialtyIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import BulkDeleteSpecialty from "../../ModalContent/Specialty/BulkDeleteSpecialty";
+import BulkDeactivateDepartment from "../../ModalContent/Department/BulkDeactivateDepartment";
+import BulkActivateSpecialty from "../../ModalContent/Specialty/BulkActivateSpecialty";
+import BulkDeactivateSpecialty from "../../ModalContent/Specialty/BulkDeactivateSpecialty";
 function Specialties() {
   const { data: specialty, isLoading } = useGetSpecialties();
+  const tableRef = useRef();
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedSpecialties, setSelectedSpecialties] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedSpecialties([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedSpecialties(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
   const memoizedColDefs = useMemo(() => {
     return SpecialtyTableConfig({
       DropdownComponent,
@@ -41,7 +67,9 @@ function Specialties() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -71,7 +99,30 @@ function Specialties() {
             </ModalButton>
           </div>
         </div>
-        <Table colDefs={memoizedColDefs} rowData={memoizedRowData} />
+        <Table
+          colDefs={memoizedColDefs}
+          rowData={memoizedRowData}
+          ref={tableRef}
+          handleRowCountFromChild={handleRowCountFromChild}
+          handleRowDataFromChild={handleRowDataFromChild}
+        />
+        <BulkActionsToast
+            rowCount={rowCount}
+            label={`${rowCount > 0 ? 'Specialty Selected' : 'Specialties Selected' }`}
+            resetAll={handleReset}
+            dropDownItems={
+              <DropdownItems
+                selectedSpecialties={selectedSpecialties}
+                resetAll={handleReset}
+              />
+            }
+            actionButton={
+              <ActionButtons
+                selectedSpecialties={selectedSpecialties}
+                resetAll={handleReset}
+              />
+            }
+          />
       </div>
     </>
   );
@@ -186,6 +237,64 @@ export function DropdownComponent(props) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+
+function ActionButtons({ selectedSpecialties, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        action={{ modalContent: BulkDeleteSpecialty }}
+        bulkData={selectedSpecialties}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedSpecialties, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkDeleteSpecialty }}
+        bulkData={selectedSpecialties}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkDeactivateSpecialty }}
+        bulkData={selectedSpecialties}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkActivateSpecialty }}
+        bulkData={selectedSpecialties}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }
