@@ -82,11 +82,27 @@ function ActionButtonDropdown({
 }
 export default React.memo(ActionButtonDropdown);
 
-export function ModalButton({  action, children, classname, rowData, resetAll, size, bulkData }) {
+export function ModalButton({
+  action,
+  children,
+  classname,
+  rowData,
+  resetAll,
+  size,
+  bulkData,
+}) {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
+
   const handleShow = (Component) => {
-    setModalContent(<Component  handleClose={handleClose} rowData={rowData} resetAll={resetAll}  bulkData={bulkData} />);
+    setModalContent(
+      <Component
+        handleClose={handleClose}
+        rowData={rowData}
+        resetAll={resetAll}
+        bulkData={bulkData}
+      />
+    );
     setShowModal(true);
   };
 
@@ -98,14 +114,15 @@ export function ModalButton({  action, children, classname, rowData, resetAll, s
   return (
     <>
       <div>
-        <button
-          className={`${classname} `}
-          onClick={() => {
+        <div
+          className={`${classname} pointer-cursor`}
+          onClick={(e) => {
+            e.stopPropagation();
             handleShow(action.modalContent);
           }}
         >
           {children}
-        </button>
+        </div>
       </div>
       <CustomModal show={showModal} handleClose={handleClose} size={size}>
         {modalContent}

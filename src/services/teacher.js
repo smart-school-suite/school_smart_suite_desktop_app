@@ -80,3 +80,13 @@ export const getTeachersBySpecialty = async (specialtyId) => {
      return response.data;
 }
 
+export const bulkAddTeacherSpecialtyPreference = async (data) => {
+     const response = await axiosInstance.post('teacher-preference/bulk-add-preference', data);
+     return response.data;
+}
+
+export const bulkRemoveTeacherSpecialtyPreference = async (data) => {
+      const response = await axiosInstance.post('teacher-preference/bulk-remove-preference', data);
+      return response.data;
+}
+

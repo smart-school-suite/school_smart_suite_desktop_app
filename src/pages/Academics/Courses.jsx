@@ -9,8 +9,7 @@ import UpdateCourse from "../../ModalContent/Course/UpdateCourse";
 import { CoursesTable } from "../../ComponentConfig/AgGridTableConfig";
 import { useGetCourses } from "../../hooks/course/useGetCourses";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
-import React from "react";
-import { useState } from "react";
+import React, { useState, useCallback, useRef,  } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
@@ -19,9 +18,30 @@ import DeleteCourse from "../../ModalContent/Course/DeleteCourse";
 import { CourseIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import BulkDeleteCourse from "../../ModalContent/Course/BulkDeleteCourse";
+import BulkDeactivateCourse from "../../ModalContent/Course/BulkDeactivateCourse";
+import BulkActivateCourse from "../../ModalContent/Course/BulkActivateCourse";
 function Courses() {
   const { data: specialty, isLoading } = useGetCourses();
+  const tableRef = useRef();
   const darkMode = useSelector((state) => state.theme.darkMode);
+      const [rowCount, setRowCount] = useState(0);
+      const [selectedCourses, setSelectedCourses] = useState([]);
+      const handleReset = () => {
+        if (tableRef.current) {
+          tableRef.current.deselectAll();
+          setRowCount(0);
+          setSelectedCourses([]);
+        }
+      };
+      const handleRowDataFromChild = useCallback((Data) => {
+        setSelectedCourses(Data);
+      }, []);
+      const handleRowCountFromChild = useCallback((count) => {
+        setRowCount(count);
+      }, []);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -64,7 +84,27 @@ function Courses() {
         <Table
           colDefs={CoursesTable({ DropdownComponent })}
           rowData={specialty.data}
+          ref={tableRef}
+          handleRowCountFromChild={handleRowCountFromChild}
+          handleRowDataFromChild={handleRowDataFromChild}
         />
+        <BulkActionsToast
+            rowCount={rowCount}
+            label={`${rowCount >= 1 ? 'Course Selected' : rowCount >= 2 ?  'Courses Selected' : null }`}
+            resetAll={handleReset}
+            dropDownItems={
+              <DropdownItems
+                selectedCourses={selectedCourses}
+                resetAll={handleReset}
+              />
+            }
+            actionButton={
+              <ActionButtons
+                selectedCourses={selectedCourses}
+                resetAll={handleReset}
+              />
+            }
+          />
       </div>
     </>
   );
@@ -179,6 +219,64 @@ export function DropdownComponent(props) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+
+function ActionButtons({ selectedCourses, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        //action={{ modalContent: BulkDeleteTeacher }}
+        bulkData={selectedCourses}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedCourses, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkDeleteCourse }}
+        bulkData={selectedCourses}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent:BulkDeactivateCourse }}
+        bulkData={selectedCourses}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkActivateCourse }}
+        bulkData={selectedCourses}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }

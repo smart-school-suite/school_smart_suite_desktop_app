@@ -56,7 +56,7 @@ function BulkActionsToast({rowCount, label, dropDownItems, actionButton, resetAl
         <div className={`${darkMode ? 'dark-bg-light dark-mode-text dark-mode-border' : 'bg-white gainsboro-color border'} w-50 p-2 rounded-3 d-flex flex-row justify-content-between align-item-center table-toast shadow-sm`}>
           <div className="d-flex flex-row align-items-center gap-3">
             <input type="checkbox" className="form-check-input m-0 p-2" checked />
-            <span className="font-size-sm"> {label} {rowCount} </span>
+            <span className="font-size-sm">  {rowCount} {label}</span>
           </div>
           <div className={`d-flex flex-row gap-1`}>
              {

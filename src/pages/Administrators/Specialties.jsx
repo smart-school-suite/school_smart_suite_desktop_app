@@ -27,7 +27,6 @@ import { useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkDeleteSpecialty from "../../ModalContent/Specialty/BulkDeleteSpecialty";
-import BulkDeactivateDepartment from "../../ModalContent/Department/BulkDeactivateDepartment";
 import BulkActivateSpecialty from "../../ModalContent/Specialty/BulkActivateSpecialty";
 import BulkDeactivateSpecialty from "../../ModalContent/Specialty/BulkDeactivateSpecialty";
 function Specialties() {
