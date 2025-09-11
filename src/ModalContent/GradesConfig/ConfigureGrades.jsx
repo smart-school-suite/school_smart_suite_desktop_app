@@ -165,6 +165,7 @@ function ConfigureGrades({ handleClose, rowData }) {
               </tr>
             </thead>
             <tbody>
+              {console.table(formData)}
               {letterGrades.data.map((item, index) => (
                 <tr key={item.id} className="grades-tr">
                   <td style={{ width: "10%" }}>
@@ -188,7 +189,7 @@ function ConfigureGrades({ handleClose, rowData }) {
                          optional={true}
                          direction={"down"}
                          placeholder={"Select Grade Status"}
-                         onChange={(value) => handleInputChange(index, 'grade_status', value)}
+                         onSelect={(value) => handleInputChange(index, 'grade_status', value.value)}
                        />
                     </div>
                     </div>
@@ -203,7 +204,7 @@ function ConfigureGrades({ handleClose, rowData }) {
                         optional={true}
                         direction={"down"}
                         placeholder={"Select Resit Status"}
-                        onChange={(value) => handleInputChange(index, "resit_status", value)}
+                        onSelect={(value) => handleInputChange(index, "resit_status", value.value)}
                       />
                     </div>
                     </div>
@@ -218,7 +219,7 @@ function ConfigureGrades({ handleClose, rowData }) {
                           optional={true}
                           direction="down"
                           placeholder={'Select Remark'}
-                          onSelect={(value) => handleInputChange(index, "determinant", value)}
+                          onSelect={(value) => handleInputChange(index, "determinant", value.value)}
                         />
                       </div>
                     </div>

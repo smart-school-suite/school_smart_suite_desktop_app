@@ -2,8 +2,9 @@ import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useGetGradeConfigDetails } from "../../hooks/schoolGradeCategory/useGetGradeConfigDetails";
 function ViewGradesConfig({ handleClose, rowData }) {
-  const { id:configId } = rowData;
-  const { data:gradeConfigDetails, isLoading } = useGetGradeConfigDetails(configId);
+  const { id: configId } = rowData;
+  const { data: gradeConfigDetails, isLoading } =
+    useGetGradeConfigDetails(configId);
   if (isLoading) {
     return <Pageloaderspinner />;
   }
@@ -24,19 +25,28 @@ function ViewGradesConfig({ handleClose, rowData }) {
           </div>
         </div>
       </div>
-     <div className="modal-content-container">
-     {
-         gradeConfigDetails.data.map((items) => (
-            <div className="d-flex align-items-center justify-content-between my-1 w-100">
-            <div className="py-2">
-              <p className="my-0 font-size-sm text-capitalize">{items.grade_status}</p>
-              <p className="my-0 font-size-sm fw-semibold">{items.minimum_score} - {items.maximum_score}</p>
+      <div className="modal-content-container px-2">
+        {gradeConfigDetails.data.map((items) => (
+          <div>
+            <div className="d-flex align-items-center justify-content-between my-2 w-100">
+              <div>
+                <p className="my-0 font-size-sm text-capitalize">
+                  {items.grade_status}
+                </p>
+                <p className="my-0 font-size-sm fw-semibold">
+                  {items.minimum_score} - {items.maximum_score}
+                </p>
+              </div>
+              <div>
+                <span className="font-size-sm">
+                  {items.lettergrade.letter_grade}
+                </span>
+              </div>
             </div>
-            
+            <hr />
           </div>
-         ))
-     }
-     </div>
+        ))}
+      </div>
     </>
   );
 }

@@ -60,3 +60,8 @@ export const getGradeConfigDetails = async (configId) => {
    const response = await axiosInstance.get(`grade/grades-config/details/${configId}`);
    return response.data;
 }
+
+export const  bulkUpdateExamGrades = async (data) => {
+   const response = await axiosInstance.patch("grade/exam-grades/update ", data);
+   return response.data;
+}
