@@ -6,28 +6,77 @@ import PayAdditionalFees from "../../ModalContent/AdditionalFees/PayAdditionalFe
 import UpdateAdditionalFees from "../../ModalContent/AdditionalFees/UpdateAdditionalFees";
 import AdditionalFeeDetail from "../../ModalContent/AdditionalFees/AdditionalFeesDetails";
 import { useGetAdditionalFees } from "../../hooks/additionalFee/useGetAdditionalFees";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
-import React from "react";
-import { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { CreateIcon, DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
-
+import {
+  CreateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { Icon } from "@iconify/react";
+import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 function AdditionalFees() {
   const { data: additionalFee, isLoading } = useGetAdditionalFees();
+  const tableRef = useRef();
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedAdditionalFee, setSelectedAdditionalFee] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedAdditionalFee([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedAdditionalFee(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
   if (isLoading) {
-    return <DataTableNavLoader />;
+    return <DataTablePageLoader />;
   }
   return (
     <>
       <div>
         <div className="d-flex flex-row align-items-center mb-2 w-100">
-          <span className="font-size-sm fw-semibold">Addition Fee Payments</span>
+          <span className="fw-semibold">Addition Fee Payments</span>
         </div>
         <div>
           <Table
             colDefs={additionalFeesTableConfig({ DropdownComponent })}
             rowData={additionalFee.data}
+            ref={tableRef}
+            handleRowCountFromChild={handleRowCountFromChild}
+            handleRowDataFromChild={handleRowDataFromChild}
+          />
+          <BulkActionsToast
+            rowCount={rowCount}
+            label={`${
+              rowCount >= 1
+                ? "Additional Fee Selected"
+                : rowCount >= 2
+                ? "Additional Fees Selected"
+                : null
+            }`}
+            resetAll={handleReset}
+            dropDownItems={
+              <DropdownItems
+                selectedAdditionalFee={selectedAdditionalFee}
+                resetAll={handleReset}
+              />
+            }
+            actionButton={
+              <ActionButtons
+                selectedAdditionalFee={selectedAdditionalFee}
+                resetAll={handleReset}
+              />
+            }
           />
         </div>
       </div>
@@ -127,6 +176,64 @@ export function DropdownComponent(props) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+
+function ActionButtons({ selectedAdditionalFee, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        //action={{ modalContent: BulkDeleteTeacher }}
+        bulkData={selectedAdditionalFee}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedAdditionalFee, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent: BulkDeleteCourse }}
+        bulkData={selectedAdditionalFee}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent:BulkDeactivateCourse }}
+        bulkData={selectedAdditionalFee}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        // action={{ modalContent: BulkActivateCourse }}
+        bulkData={selectedAdditionalFee}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }

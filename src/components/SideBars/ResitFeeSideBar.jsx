@@ -40,8 +40,8 @@ export const sideBarData = [
     title: "Resit Payments",
     path: "/resit-payments",
   },
-//  {
-  //  title: "Transactions",
-   // path: "/resitfee-transaction",
-  //},
+  {
+    title: "Transactions",
+    path: "/resitfee-transaction",
+  },
 ];

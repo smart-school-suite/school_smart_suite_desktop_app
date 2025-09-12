@@ -73,7 +73,7 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
   };
   return (
     <>
-      <div className="card w-100 border-none">
+      <div className="w-100 border-none">
         <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
             <span className="m-0">Create Additional Fee</span>
             <span
@@ -111,14 +111,12 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
         <div>
            <label htmlFor="category" className="font-size-sm">Category</label>
             <CustomDropdown
-              data={category.data}
+              data={category?.data ? category.data : []}
               displayKey={["title"]}
               valueKey={["id"]}
-              filter_array_keys={["id", "title"]}
-              renameMapping={{ id: "id", title: "title" }}
               isLoading={isFetching}
               direction="up"
-              onSelect={(value) => handleStateChange('additional_fee_category', value, setFormData)}
+              onSelect={(value) => handleStateChange('additionalfee_category_id', value.id, setFormData)}
               onError={(value) => handleStateChange('additionalfee_category_id', value, setErrors)}
               error={errors.additionalfee_category_id}
               errorMessage="Additional Fee Category Required"

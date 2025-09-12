@@ -113,6 +113,7 @@ function UpdateSemester({ handleClose, rowData }) {
             errorMessage="Semester Required"
             onError={(msg) => handleStateChange("semester_id", msg, setErrors)}
             optional={true}
+            placeholder={rowData.semester_name ? rowData.semester_name : "Select Semester"}
            />
         </div>
         <div>
@@ -128,6 +129,7 @@ function UpdateSemester({ handleClose, rowData }) {
             errorMessage="Specialty Required"
             onError={(msg) => handleStateChange("specialty_id", msg, setErrors)}
             optional={true}
+            placeholder={rowData.specialty_name ? `${rowData.specialty_name}, ${rowData.level_name}` : "Select Specialty"}
           />
         </div>
         <div>
@@ -145,8 +147,10 @@ function UpdateSemester({ handleClose, rowData }) {
             errorMessage="Student Batch Required"
             onError={(msg) => handleStateChange("student_batch_id", msg, setErrors)}
             optional={true}
+            placeholder={rowData.student_batch ? rowData.student_batch : 'Select Student Batch'}
           />
         </div>
+        {console.table(rowData)}
       </div>
       <div className="d-flex mt-3 flex-row align-items-center justify-content-end gap-2 w-100">
         <button

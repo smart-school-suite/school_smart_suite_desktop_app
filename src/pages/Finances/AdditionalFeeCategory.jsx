@@ -1,28 +1,45 @@
 import { useGetAdditionalFeeCategory } from "../../hooks/additionalFee/useGetAdditionalFeeCategories";
 import Table from "../../components/Tables/Tables";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import CreateCategory from "../../ModalContent/AdditionalFees/CreateCategory";
 import UpdateCategory from "../../ModalContent/AdditionalFees/UpdateCategory";
 import DeleteCategory from "../../ModalContent/AdditionalFees/DeleteCategory";
-import React from "react";
-import { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import ActionButtonDropdown, {
   DropDownMenuItem,
 } from "../../components/DataTableComponents/ActionComponent";
 import { AdditionalFeeCategoryTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { Icon } from "@iconify/react";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 function AdditionalFeeCategory() {
   const { data: categories, isLoading } = useGetAdditionalFeeCategory();
+    const tableRef = useRef();
+    const [rowCount, setRowCount] = useState(0);
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const handleReset = () => {
+      if (tableRef.current) {
+        tableRef.current.deselectAll();
+        setRowCount(0);
+        setSelectedCategories([]);
+      }
+    };
+    const handleRowDataFromChild = useCallback((Data) => {
+      setSelectedCategories(Data);
+    }, []);
+    const handleRowCountFromChild = useCallback((count) => {
+      setRowCount(count);
+    }, []);
   if (isLoading) {
-    return <DataTableNavLoader />;
+    return <DataTablePageLoader />;
   }
   return (
     <>
       <div>
         <div className="d-flex flex-row align-items-center justify-content-between mb-2 w-100">
-          <span className="font-size-sm fw-semibold">Addition Fee Category</span>
+          <span className="fw-semibold">Addition Fee Category</span>
           <ModalButton
             classname={
               "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
@@ -37,6 +54,32 @@ function AdditionalFeeCategory() {
           <Table
             colDefs={AdditionalFeeCategoryTableConfig({ DropdownComponent })}
             rowData={categories.data}
+            ref={tableRef}
+            handleRowCountFromChild={handleRowCountFromChild}
+            handleRowDataFromChild={handleRowDataFromChild}
+          />
+          <BulkActionsToast
+            rowCount={rowCount}
+            label={`${
+              rowCount >= 1
+                ? "Category Selected"
+                : rowCount >= 2
+                ? "Categories Selected"
+                : null
+            }`}
+            resetAll={handleReset}
+            dropDownItems={
+              <DropdownItems
+                selectedCategories={selectedCategories}
+                resetAll={handleReset}
+              />
+            }
+            actionButton={
+              <ActionButtons
+                selectedCategories={selectedCategories}
+                resetAll={handleReset}
+              />
+            }
           />
         </div>
       </div>
@@ -108,6 +151,64 @@ export function DropdownComponent(props) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+
+function ActionButtons({ selectedCategories, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        //action={{ modalContent: BulkDeleteTeacher }}
+        bulkData={selectedCategories}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedCategories, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent: BulkDeleteCourse }}
+        bulkData={selectedCategories}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent:BulkDeactivateCourse }}
+        bulkData={selectedCategories}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        // action={{ modalContent: BulkActivateCourse }}
+        bulkData={selectedCategories}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }

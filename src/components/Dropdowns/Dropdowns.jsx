@@ -155,7 +155,7 @@ const CustomDropdown = forwardRef(
             `}
               style={{ padding: "0.35rem" }}
             >
-              <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm">
+              <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm text-capitalize">
                 {selectedItem ? selectedItem[displayKey[0]] : placeholder}
               </span>
               <span>

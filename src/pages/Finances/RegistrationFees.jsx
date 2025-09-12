@@ -5,28 +5,73 @@ import DeleteRegistrationFee from "../../ModalContent/RegistrationFees/DeleteReg
 import PayRegistrationFees from "../../ModalContent/RegistrationFees/PayRegistrationFees";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { useGetRegistrationFees } from "../../hooks/feePayment/useGetRegistrationFees";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
-import React from "react";
-import { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { Icon } from "@iconify/react";
+import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 function RegistrationFees() {
   const { data: registrationFees, isLoading } = useGetRegistrationFees();
+   const tableRef = useRef();
+    const [rowCount, setRowCount] = useState(0);
+    const [selectedRegistrationFee, setSelectedRegistrationFee] = useState([]);
+    const handleReset = () => {
+      if (tableRef.current) {
+        tableRef.current.deselectAll();
+        setRowCount(0);
+        setSelectedRegistrationFee([]);
+      }
+    };
+    const handleRowDataFromChild = useCallback((Data) => {
+      setSelectedRegistrationFee(Data);
+    }, []);
+    const handleRowCountFromChild = useCallback((count) => {
+      setRowCount(count);
+    }, []);
   if (isLoading) {
-    return <DataTableNavLoader />;
+    return < DataTablePageLoader />;
   }
 
   return (
     <>
       <div>
         <div>
-          <span className="font-size-sm">Registration Fees</span>
+          <span className="fw-semibold">Registration Fees</span>
         </div>
         <div>
           <Table
             colDefs={registrationFeeTableConfig({ DropdownComponent })}
             rowData={registrationFees.data}
+            ref={tableRef}
+            handleRowCountFromChild={handleRowCountFromChild}
+            handleRowDataFromChild={handleRowDataFromChild}
+          />
+           <BulkActionsToast
+            rowCount={rowCount}
+            label={`${
+              rowCount >= 1
+                ? "Registration Fee Selected"
+                : rowCount >= 2
+                ? "Registration Fees Selected"
+                : null
+            }`}
+            resetAll={handleReset}
+            dropDownItems={
+              <DropdownItems
+                selectedRegistrationFee={selectedRegistrationFee}
+                resetAll={handleReset}
+              />
+            }
+            actionButton={
+              <ActionButtons
+                selectedRegistrationFee={selectedRegistrationFee}
+                resetAll={handleReset}
+              />
+            }
           />
         </div>
       </div>
@@ -116,3 +161,62 @@ export function DropdownComponent(props) {
     </>
   );
 }
+
+function ActionButtons({ selectedRegistrationFee, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        //action={{ modalContent: BulkDeleteTeacher }}
+        bulkData={selectedRegistrationFee}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedRegistrationFee, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent: BulkDeleteCourse }}
+        bulkData={selectedRegistrationFee}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent:BulkDeactivateCourse }}
+        bulkData={selectedRegistrationFee}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        // action={{ modalContent: BulkActivateCourse }}
+        bulkData={selectedRegistrationFee}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
+    </>
+  );
+}
+

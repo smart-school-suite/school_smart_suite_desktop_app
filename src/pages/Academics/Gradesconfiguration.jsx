@@ -9,16 +9,41 @@ import { ExamGradingCongfig } from "../../ComponentConfig/AgGridTableConfig";
 import ConfigureByOtherGrades from "../../ModalContent/GradesConfig/ConfigureByOtherGrades";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import React, { useState } from "react";
-import { CreateIcon, DeleteIcon,  GenerateIcon, ReuseIcon, UpdateIcon } from "../../icons/ActionIcons";
+import React, { useState, useCallback, useRef } from "react";
+import {
+  CreateIcon,
+  DeleteIcon,
+  GenerateIcon,
+  ReuseIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
 import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { GradeIcon } from "../../icons/Icons";
 import AutoConfigureGrades from "../../ModalContent/GradesConfig/AutoConfigGrades";
 import { useSelector } from "react-redux";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 function Gradesconfiguration() {
-  const { data:gradeCategory, isLoading } = useGetSchoolGradeCategories();
+  const { data: gradeCategory, isLoading } = useGetSchoolGradeCategories();
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const tableRef = useRef();
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedGradeConfigs, setSelectedGradeConfigs] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedGradeConfigs([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedGradeConfigs(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -28,7 +53,9 @@ function Gradesconfiguration() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -47,14 +74,34 @@ function Gradesconfiguration() {
           </div>
         </div>
         {gradeCategory?.data?.length > 0 ? (
+          <>
           <Table
             colDefs={ExamGradingCongfig({ DropdownComponent })}
             rowData={gradeCategory.data}
+            ref={tableRef}
+            handleRowCountFromChild={handleRowCountFromChild}
+            handleRowDataFromChild={handleRowDataFromChild}
           />
+           <BulkActionsToast
+            rowCount={rowCount}
+            label={`${rowCount >= 1 ? 'Grade Configuration Selected' : rowCount >= 2 ?  'Grades Configuration Selected' : null }`}
+            resetAll={handleReset}
+            dropDownItems={
+              <DropdownItems
+                selectedGradeConfigs={selectedGradeConfigs}
+                resetAll={handleReset}
+              />
+            }
+            actionButton={
+              <ActionButtons
+                selectedGradeConfigs={selectedGradeConfigs}
+                resetAll={handleReset}
+              />
+            }
+          />
+          </>
         ) : (
-          <div className="alert alert-warning">
-            No Grades Found
-          </div>
+          <div className="alert alert-warning">No Grades Found</div>
         )}
       </div>
     </>
@@ -93,11 +140,11 @@ function DropdownComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-         <DropDownMenuItem
+        <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(AutoConfigureGrades, 'md')}
+          onClick={() => handleShowModal(AutoConfigureGrades, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -110,7 +157,7 @@ function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ConfigureGrades, 'xl')}
+          onClick={() => handleShowModal(ConfigureGrades, "xl")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -123,7 +170,7 @@ function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateGradeConfig, 'xl')}
+          onClick={() => handleShowModal(UpdateGradeConfig, "xl")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -136,7 +183,7 @@ function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ViewGradesConfig, 'md')}
+          onClick={() => handleShowModal(ViewGradesConfig, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -162,7 +209,7 @@ function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteGradesConfig, 'md')}
+          onClick={() => handleShowModal(DeleteGradesConfig, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -180,6 +227,64 @@ function DropdownComponent(props) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+
+function ActionButtons({ selectedGradeConfigs, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        //action={{ modalContent: BulkDeleteTeacher }}
+        bulkData={selectedGradeConfigs}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedGradeConfigs, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent: BulkDeleteCourse }}
+        bulkData={selectedGradeConfigs}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent:BulkDeactivateCourse }}
+        bulkData={selectedGradeConfigs}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+       // action={{ modalContent: BulkActivateCourse }}
+        bulkData={selectedGradeConfigs}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }

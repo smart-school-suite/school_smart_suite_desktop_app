@@ -9,15 +9,34 @@ import ParentDetails from "../../ModalContent/Parent/ParentDetails";
 import UpdateParent from "../../ModalContent/Parent/UpdateParent";
 import CreateParent from "../../ModalContent/Parent/CreateParent";
 import { useGetAllParents } from "../../hooks/parent/useGetParents";
-import React, { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { ParentIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { Icon } from "@iconify/react";
 function Parents() {
   const { data: guardians, isLoading } = useGetAllParents();
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const tableRef = useRef();
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedParents, setSelectedParents] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedParents([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedParents(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -27,7 +46,9 @@ function Parents() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -59,6 +80,32 @@ function Parents() {
         <Table
           colDefs={ParentsTableConfig({ DropdownComponent })}
           rowData={guardians.data}
+          ref={tableRef}
+          handleRowCountFromChild={handleRowCountFromChild}
+          handleRowDataFromChild={handleRowDataFromChild}
+        />
+        <BulkActionsToast
+          rowCount={rowCount}
+          label={`${
+            rowCount >= 1
+              ? "Parent Selected"
+              : rowCount >= 2
+              ? "Parents Selected"
+              : null
+          }`}
+          resetAll={handleReset}
+          dropDownItems={
+            <DropdownItems
+              selectedParents={selectedParents}
+              resetAll={handleReset}
+            />
+          }
+          actionButton={
+            <ActionButtons
+              selectedParents={selectedParents}
+              resetAll={handleReset}
+            />
+          }
         />
       </div>
     </>
@@ -144,6 +191,63 @@ export function DropdownComponent(props) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+function ActionButtons({ selectedParents, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        //action={{ modalContent: BulkDeleteTeacher }}
+        bulkData={selectedParents}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedParents, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent: BulkDeleteCourse }}
+        bulkData={selectedParents}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent:BulkDeactivateCourse }}
+        bulkData={selectedParents}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        // action={{ modalContent: BulkActivateCourse }}
+        bulkData={selectedParents}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }

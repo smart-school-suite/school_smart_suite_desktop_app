@@ -8,8 +8,7 @@ import DeleteTimetable from "../../ModalContent/ExamTimetable/DeleteTimetable";
 import ViewTimetable from "../../ModalContent/ExamTimetable/ViewTimetable";
 import { useGetExams } from "../../hooks/exam/useGetExams";
 import { Icon } from "@iconify/react";
-import React from "react";
-import { useState } from "react";
+import  React,  { useState, useCallback, useRef } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import {
@@ -22,9 +21,28 @@ import {
 import { TimetableIcon } from "../../icons/Icons";
 import AutoGenerateTimetable from "../../ModalContent/ExamTimetable/AutoGenerateTimetable";
 import { useSelector } from "react-redux";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 function ExamTimetable() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const { data: exams, isLoading: isExamLoading } = useGetExams();
+  const tableRef = useRef();
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedTimetable, setSelectedTimetable] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedTimetable([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedTimetable(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
   if (isExamLoading) {
     return <DataTableNavLoader />;
   }
@@ -34,7 +52,9 @@ function ExamTimetable() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -53,10 +73,38 @@ function ExamTimetable() {
           </div>
         </div>
         {exams?.data?.length > 0 ? (
-          <Table
-            colDefs={ExamTimetableConfig({ DropdownComponent })}
-            rowData={exams.data}
-          />
+          <>
+            <Table
+              colDefs={ExamTimetableConfig({ DropdownComponent })}
+              rowData={exams.data}
+              ref={tableRef}
+              handleRowCountFromChild={handleRowCountFromChild}
+              handleRowDataFromChild={handleRowDataFromChild}
+            />
+            <BulkActionsToast
+              rowCount={rowCount}
+              label={`${
+                rowCount >= 1
+                  ? "Exam Timetable Selected"
+                  : rowCount >= 2
+                  ? "Exam Timetable Selected"
+                  : null
+              }`}
+              resetAll={handleReset}
+              dropDownItems={
+                <DropdownItems
+                  selectedTimetable={selectedTimetable}
+                  resetAll={handleReset}
+                />
+              }
+              actionButton={
+                <ActionButtons
+                  selectedTimetable={selectedTimetable}
+                  resetAll={handleReset}
+                />
+              }
+            />
+          </>
         ) : (
           <div className="alert alert-warning">
             Oops, looks like you don't have any teachers.
@@ -70,7 +118,6 @@ export default ExamTimetable;
 
 function DropdownComponent(props) {
   const rowData = props.data;
-
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [modalSize, setModalSize] = useState("md");
@@ -104,12 +151,12 @@ function DropdownComponent(props) {
         }
       >
         <DropDownMenuItem
-         className={
+          className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(AutoGenerateTimetable, 'xl')}
+          onClick={() => handleShowModal(AutoGenerateTimetable, "xl")}
         >
-           <div>
+          <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Auto Generate Timetable</span>
               <GenerateIcon />
@@ -178,6 +225,63 @@ function DropdownComponent(props) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+function ActionButtons({ selectedTimetable, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        //action={{ modalContent: BulkDeleteTeacher }}
+        bulkData={selectedTimetable}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedTimetable, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent: BulkDeleteCourse }}
+        bulkData={selectedTimetable}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent:BulkDeactivateCourse }}
+        bulkData={selectedTimetable}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        // action={{ modalContent: BulkActivateCourse }}
+        bulkData={selectedTimetable}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }

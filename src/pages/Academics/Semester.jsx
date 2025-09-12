@@ -9,16 +9,33 @@ import SemeseterDetails from "../../ModalContent/Semesters/SemesterDetails";
 import CreateSemester from "../../ModalContent/Semesters/CreateSemester";
 import { useGetActiveSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
-import React from "react";
-import { useState } from "react";
+import  React, { useState, useCallback, useRef } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DetailsIcon, UpdateIcon, DeleteIcon } from "../../icons/ActionIcons";
 import { SemesterIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
 function Semester() {
   const { data: schoolSemesters, isLoading } = useGetActiveSchoolSemesters();
   const darkMode = useSelector((state) => state.theme.darkMode);
+    const tableRef = useRef();
+    const [rowCount, setRowCount] = useState(0);
+    const [selectedSemesters, setSelectedSemesters] = useState([]);
+    const handleReset = () => {
+      if (tableRef.current) {
+        tableRef.current.deselectAll();
+        setRowCount(0);
+        setSelectedSemesters([]);
+      }
+    };
+    const handleRowDataFromChild = useCallback((Data) => {
+      setSelectedSemesters(Data);
+    }, []);
+    const handleRowCountFromChild = useCallback((count) => {
+      setRowCount(count);
+    }, []);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -66,7 +83,27 @@ function Semester() {
           })}
           rowData={schoolSemesters.data}
           rowHeight={55}
+          ref={tableRef}
+          handleRowCountFromChild={handleRowCountFromChild}
+          handleRowDataFromChild={handleRowDataFromChild}
         />
+         <BulkActionsToast
+            rowCount={rowCount}
+            label={`${rowCount >= 1 ? 'Semester Selected' : rowCount >= 2 ?  'Semesters Selected' : null }`}
+            resetAll={handleReset}
+            dropDownItems={
+              <DropdownItems
+                selectedSemesters={selectedSemesters}
+                resetAll={handleReset}
+              />
+            }
+            actionButton={
+              <ActionButtons
+                selectedSemesters={selectedSemesters}
+                resetAll={handleReset}
+              />
+            }
+          />
       </div>
     </>
   );
@@ -151,6 +188,63 @@ function ActionButtonGroup(props) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+function ActionButtons({ selectedSemesters, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        //action={{ modalContent: BulkDeleteTeacher }}
+        bulkData={selectedSemesters}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedSemesters, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent: BulkDeleteCourse }}
+        bulkData={selectedSemesters}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent:BulkDeactivateCourse }}
+        bulkData={selectedSemesters}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+       // action={{ modalContent: BulkActivateCourse }}
+        bulkData={selectedSemesters}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }

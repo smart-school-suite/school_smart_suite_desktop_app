@@ -165,7 +165,6 @@ function ConfigureGrades({ handleClose, rowData }) {
               </tr>
             </thead>
             <tbody>
-              {console.table(formData)}
               {letterGrades.data.map((item, index) => (
                 <tr key={item.id} className="grades-tr">
                   <td style={{ width: "10%" }}>

@@ -41,6 +41,6 @@ export const sideBarData = [
   },
   {
     title: "Transactions",
-    path: "/registrationFee-transactions",
+    path: "/registrationfee-transactions",
   },
 ];

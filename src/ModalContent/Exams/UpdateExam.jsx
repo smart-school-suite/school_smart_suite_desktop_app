@@ -14,6 +14,7 @@ import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateExam({ handleClose, rowData }) {
     const {id:examId, start_date, end_date, weighted_mark, school_year } = rowData;
     const { mutate:updateExam, isPending } = useUpdateExam(handleClose)
+    console.table(rowData);
     const [formData, setFormData] = useState({
       start_date: "",
       end_date: "",
@@ -133,11 +134,11 @@ function UpdateExam({ handleClose, rowData }) {
             isLoading={isExamTypeLoading}
             direction="up"
             onSelect={(value) => handleStateChange('exam_type_id', value, setFormData)}
-            placeholder={"Select Exam Type"}
             errorMessage="Exam Type Required"
             onError={(value) => handleStateChange('exam_type_id', value, setErrors)}
             error={errors.exam_type_id}
-            optional={false}
+            optional={true}
+            placeholder={rowData.exam_name ? rowData.exam_name : "Select Exam Type"}
           />
       </div>
       <div>
@@ -149,11 +150,11 @@ function UpdateExam({ handleClose, rowData }) {
             isLoading={isSpecailtyLoading}
             direction="up"
             onSelect={(value) => handleStateChange('specialty_id', value, setFormData)}
-            placeholder="Select Specialty"
+            placeholder={rowData.specailty_name ? `${rowData.specailty_name}, ${rowData.level_name}` : 'Select Specialty'}
             onError={(value) => handleStateChange('specialty_id', value, setErrors)}
             errorMessage="Specialty Required"
             error={errors.specialty_id}
-            optional={false}
+            optional={true}
           />
       </div>
       </div>

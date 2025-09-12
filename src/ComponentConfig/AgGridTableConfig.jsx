@@ -2748,8 +2748,6 @@ export function AnnouncementTagTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-
-
 export function ExamResultsTableConfig({ DropdownComponent }){
   const tableConfig = [
     {
@@ -2809,4 +2807,59 @@ export function ExamResultsTableConfig({ DropdownComponent }){
     },
   ]
   return tableConfig
+}
+
+export function resitFeeTransacTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "trasaction_id",
+      headerName: "Transaction Id",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "amount",
+      headerName: "Amount",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "payment_method",
+      headerName: "Payment Method",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "course_title",
+      headerName: "Course",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "student_name",
+      headerName: "Student",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: CurrencyComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
 }

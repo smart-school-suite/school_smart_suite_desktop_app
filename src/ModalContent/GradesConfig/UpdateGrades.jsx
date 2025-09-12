@@ -93,8 +93,7 @@ function UpdateGradeConfig({ handleClose, rowData }) {
  
   return (
     <>
-            <div className="w-100">
-        {console.table(formData)}
+       <div className="w-100">
         <div className="d-flex flex-row align-items-center">
           <div className="block w-100">
             <div className="d-flex flex-row align-items-center justify-content-between w-100 mb-3">

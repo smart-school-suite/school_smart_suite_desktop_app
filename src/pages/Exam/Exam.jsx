@@ -10,17 +10,34 @@ import UpdateExam from "../../ModalContent/Exams/UpdateExam";
 import AddExamGrading from "../../ModalContent/Exams/AddExamGrading";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
-import React from "react";
-import { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { useGetExams } from "../../hooks/exam/useGetExams";
 import { ExamIcon, GradeIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
 function Exam() {
   const { data: data, isLoading } = useGetExams();
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const tableRef = useRef();
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedExams, setSelectedExams] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedExams([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedExams(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
   if (isLoading) {
     return <DataTableNavLoader />;
   }
@@ -30,15 +47,16 @@ function Exam() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
                 borderRadius: "0.5rem",
-                
               }}
             >
-              <ExamIcon iconStyle={{ fontSize:"2rem" }} />
+              <ExamIcon iconStyle={{ fontSize: "2rem" }} />
             </div>
             <span className="my-0 fw-semibold">Manage Exam</span>
           </div>
@@ -58,15 +76,42 @@ function Exam() {
             >
               <Icon icon="icons8:plus" className="font-size-md" />
               <span className="font-size-sm">Create Exam</span>
-              
             </ModalButton>
           </div>
         </div>
         {data?.data?.length > 0 ? (
-          <Table
-            colDefs={ExamsTableConfig({ DropdownComponent })}
-            rowData={data.data}
-          />
+          <>
+            <Table
+              colDefs={ExamsTableConfig({ DropdownComponent })}
+              rowData={data.data}
+              ref={tableRef}
+              handleRowCountFromChild={handleRowCountFromChild}
+              handleRowDataFromChild={handleRowDataFromChild}
+            />
+            <BulkActionsToast
+              rowCount={rowCount}
+              label={`${
+                rowCount >= 1
+                  ? "Exam Selected"
+                  : rowCount >= 2
+                  ? "Exams Selected"
+                  : null
+              }`}
+              resetAll={handleReset}
+              dropDownItems={
+                <DropdownItems
+                  selectedExams={selectedExams}
+                  resetAll={handleReset}
+                />
+              }
+              actionButton={
+                <ActionButtons
+                  selectedExams={selectedExams}
+                  resetAll={handleReset}
+                />
+              }
+            />
+          </>
         ) : (
           <div className="alert alert-warning">No Exams Found</div>
         )}
@@ -159,7 +204,7 @@ export function DropdownComponent(props) {
           </div>
         </DropDownMenuItem>
       </ActionButtonDropdown>
-            <CustomModal
+      <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}
@@ -167,6 +212,64 @@ export function DropdownComponent(props) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+
+function ActionButtons({ selectedExams, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        //action={{ modalContent: BulkDeleteTeacher }}
+        bulkData={selectedExams}
+        resetAll={resetAll}
+      >
+        <CustomTooltip tooltipText={"Delete All"}>
+          <span className="pointer-cursor">
+            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+          </span>
+        </CustomTooltip>
+      </ModalButton>
+    </>
+  );
+}
+function DropdownItems({ selectedExams, resetAll }) {
+  return (
+    <>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent: BulkDeleteCourse }}
+        bulkData={selectedExams}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Delete All</span>
+          <DeleteIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent:BulkDeactivateCourse }}
+        bulkData={selectedExams}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        // action={{ modalContent: BulkActivateCourse }}
+        bulkData={selectedExams}
+        resetAll={resetAll}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }

@@ -482,7 +482,7 @@ function DateInputComponent(
   const [displayValue, setDisplayValue] = useState(value || "");
   const [inputError, setInputError] = useState("");
   const [isInputTouched, setIsInputTouched] = useState(false);
-
+  const darkMode = useSelector((state) => state.theme.darkMode);
   useEffect(() => {
     setDisplayValue(value || "");
   }, [value]);
@@ -578,7 +578,7 @@ function DateInputComponent(
         name={name}
         placeholder={placeholder}
         aria-describedby={`${id}-hint`}
-        className={`form-control date-input-field p-2 font-size-sm ${
+        className={`form-control date-input-field p-2 font-size-sm ${darkMode && 'dark-mode-input'} ${
           isInputTouched && inputError
             ? "is-invalid"
             : isInputTouched && !inputError && displayValue

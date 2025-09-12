@@ -19,7 +19,7 @@ function ResitFee() {
     <>
       <div>
         <div className="mb-2">
-          <span className="font-size-sm">Tuition Fees</span>
+          <span className="fw-semibold">Resit Fees Payment</span>
         </div>
         <div>
           <Table
