@@ -7,7 +7,7 @@ import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
 import ManagePermission from "../../ModalContent/SchoolAdmin/ManagePermission";
 import ManageRoles from "../../ModalContent/SchoolAdmin/ManageRole";
 import CreateSchoolAdmin from "../../ModalContent/SchoolAdmin/CreateSchoolAdmin";
-import { useMemo, useCallback, useState, useRef } from "react";
+import { useMemo, useCallback, useState, useRef, useEffect } from "react";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkActivate";
 import BulkDeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkDeactivate";
@@ -151,42 +151,70 @@ function ActionButtons({ selectedAdmins, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedAdmins, resetAll }) {
+function DropdownItems({ selectedAdmins, resetAll, onModalStateChange }) {
+    const [showModal, setShowModal] = useState(false);
+    const [modalContent, setModalContent] = useState(null);
+    const [modalSize, setModalSize] = useState("lg");
+    const modalRef = useRef(null);
+    useEffect(() => {
+      onModalStateChange(showModal, modalRef);
+    }, [showModal, onModalStateChange]);
+  
+    const handleCloseModal = () => {
+      setShowModal(false);
+      setModalContent(null);
+    };
+  
+    const handleShowModal = (ContentComponent, size = "lg") => {
+      setModalContent(
+        React.createElement(ContentComponent, {
+          handleClose: handleCloseModal,
+          resetAll,
+          bulkData: selectedAdmins,
+        })
+      );
+      setModalSize(size);
+      setShowModal(true);
+    };
+  
   return (
     <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDelete }}
-        bulkData={selectedAdmins}
-        resetAll={resetAll}
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDelete, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeactivateSchoolAdmin }}
-        bulkData={selectedAdmins}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeactivateSchoolAdmin, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Deactivate All</span>
           <SuspendIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkActivateSchoolAdmin }}
-        bulkData={selectedAdmins}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkActivateSchoolAdmin, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Activate All</span>
           <ActivateIcon />
         </div>
-      </ModalButton>
+      </DropDownMenuItem>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+        ref={modalRef}
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

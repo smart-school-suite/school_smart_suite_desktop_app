@@ -19,7 +19,13 @@ import {
   SuspendIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import React, { useState, useMemo, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
 import CustomModal from "../../components/Modals/Modal";
 import ActivateSpecialty from "../../ModalContent/Specialty/ActivateSpecialty";
 import { SpecialtyIcon } from "../../icons/Icons";
@@ -106,22 +112,24 @@ function Specialties() {
           handleRowDataFromChild={handleRowDataFromChild}
         />
         <BulkActionsToast
-            rowCount={rowCount}
-            label={`${rowCount > 0 ? 'Specialty Selected' : 'Specialties Selected' }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedSpecialties={selectedSpecialties}
-                resetAll={handleReset}
-              />
-            }
-            actionButton={
-              <ActionButtons
-                selectedSpecialties={selectedSpecialties}
-                resetAll={handleReset}
-              />
-            }
-          />
+          rowCount={rowCount}
+          label={`${
+            rowCount > 0 ? "Specialty Selected" : "Specialties Selected"
+          }`}
+          resetAll={handleReset}
+          dropDownItems={
+            <DropdownItems
+              selectedSpecialties={selectedSpecialties}
+              resetAll={handleReset}
+            />
+          }
+          actionButton={
+            <ActionButtons
+              selectedSpecialties={selectedSpecialties}
+              resetAll={handleReset}
+            />
+          }
+        />
       </div>
     </>
   );
@@ -258,42 +266,69 @@ function ActionButtons({ selectedSpecialties, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedSpecialties, resetAll }) {
+function DropdownItems({ selectedSpecialties, resetAll, onModalStateChange }) {
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedSpecialties,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeleteSpecialty }}
-        bulkData={selectedSpecialties}
-        resetAll={resetAll}
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeleteSpecialty, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeactivateSpecialty }}
-        bulkData={selectedSpecialties}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeactivateSpecialty, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Deactivate All</span>
           <SuspendIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkActivateSpecialty }}
-        bulkData={selectedSpecialties}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkActivateSpecialty, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Activate All</span>
           <ActivateIcon />
         </div>
-      </ModalButton>
+      </DropDownMenuItem>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+        ref={modalRef}
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

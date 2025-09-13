@@ -7,7 +7,13 @@ import TeacherDetails from "../../ModalContent/Teacher/TeacherDetails";
 import UpdateTeacher from "../../ModalContent/Teacher/UpdateTeacher";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import CreateTeacher from "../../ModalContent/Teacher/CreateTeacher";
-import React, { useMemo, useState, useCallback, useRef } from "react";
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
 import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
@@ -15,7 +21,15 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import CustomModal from "../../components/Modals/Modal";
 import ActivateTeacher from "../../ModalContent/Teacher/ActivateTeacher";
 import Specialtypreference from "../../ModalContent/Teacher/SpecialtyPreference";
-import { DeleteIcon, DetailsIcon, UpdateIcon, ChoiceIcon, SuspendIcon, ActivateIcon } from "../../icons/ActionIcons";
+import {
+  DeleteIcon,
+  DetailsIcon,
+  UpdateIcon,
+  ChoiceIcon,
+  SuspendIcon,
+  ActivateIcon,
+  CreateIcon,
+} from "../../icons/ActionIcons";
 import { TeacherIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
@@ -24,25 +38,26 @@ import BulkDeleteTeacher from "../../ModalContent/Teacher/BulkDeleteTeacher";
 import BulkDeactivateTeacher from "../../ModalContent/Teacher/BulkDeactivateTeacher";
 import BulkActivateTeacher from "../../ModalContent/Teacher/BulkActivateTeacher";
 import BulkAddTeacherSpecialtyPreference from "../../ModalContent/Teacher/BulkAddTeacherSpecialtyPreference";
+import BulkRemoveTeacherSpecialtyPreference from "../../ModalContent/Teacher/BulkRemoveTeacherSpecialtyPreference";
 function Teachers() {
   const { data: teachers, isLoading } = useGetTeachers();
   const tableRef = useRef();
   const darkMode = useSelector((state) => state.theme.darkMode);
-    const [rowCount, setRowCount] = useState(0);
-    const [selectedTeachers, setSelectedTeachers] = useState([]);
-    const handleReset = () => {
-      if (tableRef.current) {
-        tableRef.current.deselectAll();
-        setRowCount(0);
-        setSelectedTeachers([]);
-      }
-    };
-    const handleRowDataFromChild = useCallback((Data) => {
-      setSelectedTeachers(Data);
-    }, []);
-    const handleRowCountFromChild = useCallback((count) => {
-      setRowCount(count);
-    }, []);
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedTeachers, setSelectedTeachers] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedTeachers([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedTeachers(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
   const memoizedColDefs = useMemo(() => {
     return teacherTableConfig({
       DropdownComponent,
@@ -62,7 +77,9 @@ function Teachers() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -84,7 +101,7 @@ function Teachers() {
               classname={
                 "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
               }
-              action={{ modalContent:CreateTeacher }}
+              action={{ modalContent: CreateTeacher }}
               size={"lg"}
             >
               <Icon icon="icons8:plus" className="font-size-md" />
@@ -93,17 +110,17 @@ function Teachers() {
           </div>
         </div>
         <div>
-         <Table  
-          colDefs={memoizedColDefs} 
-          rowData={memoizedRowData}
-          rowHeight={55}
-          ref={tableRef}
-          handleRowCountFromChild={handleRowCountFromChild}
-          handleRowDataFromChild={handleRowDataFromChild}
+          <Table
+            colDefs={memoizedColDefs}
+            rowData={memoizedRowData}
+            rowHeight={55}
+            ref={tableRef}
+            handleRowCountFromChild={handleRowCountFromChild}
+            handleRowDataFromChild={handleRowDataFromChild}
           />
           <BulkActionsToast
             rowCount={rowCount}
-            label={`${rowCount > 1 ? 'Teacher Selected' : 'Teachers Selected' }`}
+            label={`${rowCount > 1 ? "Teacher Selected" : "Teachers Selected"}`}
             resetAll={handleReset}
             dropDownItems={
               <DropdownItems
@@ -152,54 +169,62 @@ export function DropdownComponent(props) {
       <ActionButtonDropdown
         buttonContent={"Edit Actions"}
         style={
-        "tableActionButton primary-background text-white font-size-sm px-2"
-       }
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
       >
-       <DropDownMenuItem
-           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
-          onClick={() => handleShowModal(UpdateTeacher, 'lg')}
-       >
-            <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Update</span>
-            <UpdateIcon />
-          </div>
-        </div>
-       </DropDownMenuItem>
         <DropDownMenuItem
-           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(UpdateTeacher, "lg")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Update</span>
+              <UpdateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
           onClick={() => handleShowModal(DeleteTeacher, "md")}
-       >
-            <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Delete</span>
-            <DeleteIcon />
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete</span>
+              <DeleteIcon />
+            </div>
           </div>
-        </div>
-       </DropDownMenuItem>
-       <DropDownMenuItem
-           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
           onClick={() => handleShowModal(Specialtypreference, "lg")}
-       >
-            <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Specialty Preference</span>
-            <ChoiceIcon />
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Specialty Preference</span>
+              <ChoiceIcon />
+            </div>
           </div>
-        </div>
-       </DropDownMenuItem>
-       <DropDownMenuItem
-           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
           onClick={() => handleShowModal(TeacherDetails, "md")}
-       >
-            <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Details</span>
-            <DetailsIcon />
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Details</span>
+              <DetailsIcon />
+            </div>
           </div>
-        </div>
-       </DropDownMenuItem>
-           {rowData.status == "active" ? (
+        </DropDownMenuItem>
+        {rowData.status == "active" ? (
           <DropDownMenuItem
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -229,7 +254,7 @@ export function DropdownComponent(props) {
           </DropDownMenuItem>
         )}
       </ActionButtonDropdown>
-       <CustomModal
+      <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}
@@ -259,53 +284,88 @@ function ActionButtons({ selectedTeachers, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedTeachers, resetAll }) {
+function DropdownItems({ selectedTeachers, resetAll, onModalStateChange }) {
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedTeachers,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
+
   return (
     <>
-    <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkAddTeacherSpecialtyPreference }}
-        bulkData={selectedTeachers}
-        resetAll={resetAll}
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkAddTeacherSpecialtyPreference, "md")}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Add Specialty Preference</span>
+          <CreateIcon />
+        </div>
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkRemoveTeacherSpecialtyPreference, "md")}
+      >
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Remove Specialty Preference</span>
           <DeleteIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeleteTeacher }}
-        bulkData={selectedTeachers}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeleteTeacher, "md")}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeactivateTeacher }}
-        bulkData={selectedTeachers}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeactivateTeacher, "md")}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Deactivate All</span>
           <SuspendIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkActivateTeacher }}
-        bulkData={selectedTeachers}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkActivateTeacher, "md")}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Activate All</span>
           <ActivateIcon />
         </div>
-      </ModalButton>
+      </DropDownMenuItem>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+        ref={modalRef}
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

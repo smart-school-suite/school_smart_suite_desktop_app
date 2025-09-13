@@ -9,13 +9,14 @@ import { ExamGradingCongfig } from "../../ComponentConfig/AgGridTableConfig";
 import ConfigureByOtherGrades from "../../ModalContent/GradesConfig/ConfigureByOtherGrades";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   CreateIcon,
   DeleteIcon,
   GenerateIcon,
   ReuseIcon,
   UpdateIcon,
+  SuspendIcon, ActivateIcon
 } from "../../icons/ActionIcons";
 import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
@@ -25,6 +26,9 @@ import { useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import BulkCreateGrades from "../../ModalContent/GradesConfig/BulkCreateGrades";
+import BulkDeleteGradesByCategory from "../../ModalContent/GradesConfig/BulkDeleteGradesByCategory";
+import BulkCreateGradesByTargetCategory from "../../ModalContent/GradesConfig/BulkCreateGradesByTargetCategory";
 function Gradesconfiguration() {
   const { data: gradeCategory, isLoading } = useGetSchoolGradeCategories();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -75,30 +79,36 @@ function Gradesconfiguration() {
         </div>
         {gradeCategory?.data?.length > 0 ? (
           <>
-          <Table
-            colDefs={ExamGradingCongfig({ DropdownComponent })}
-            rowData={gradeCategory.data}
-            ref={tableRef}
-            handleRowCountFromChild={handleRowCountFromChild}
-            handleRowDataFromChild={handleRowDataFromChild}
-          />
-           <BulkActionsToast
-            rowCount={rowCount}
-            label={`${rowCount >= 1 ? 'Grade Configuration Selected' : rowCount >= 2 ?  'Grades Configuration Selected' : null }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedGradeConfigs={selectedGradeConfigs}
-                resetAll={handleReset}
-              />
-            }
-            actionButton={
-              <ActionButtons
-                selectedGradeConfigs={selectedGradeConfigs}
-                resetAll={handleReset}
-              />
-            }
-          />
+            <Table
+              colDefs={ExamGradingCongfig({ DropdownComponent })}
+              rowData={gradeCategory.data}
+              ref={tableRef}
+              handleRowCountFromChild={handleRowCountFromChild}
+              handleRowDataFromChild={handleRowDataFromChild}
+            />
+            <BulkActionsToast
+              rowCount={rowCount}
+              label={`${
+                rowCount >= 1
+                  ? "Grade Configuration Selected"
+                  : rowCount >= 2
+                  ? "Grades Configuration Selected"
+                  : null
+              }`}
+              resetAll={handleReset}
+              dropDownItems={
+                <DropdownItems
+                  selectedGradeConfigs={selectedGradeConfigs}
+                  resetAll={handleReset}
+                />
+              }
+              actionButton={
+                <ActionButtons
+                  selectedGradeConfigs={selectedGradeConfigs}
+                  resetAll={handleReset}
+                />
+              }
+            />
           </>
         ) : (
           <div className="alert alert-warning">No Grades Found</div>
@@ -236,7 +246,7 @@ function ActionButtons({ selectedGradeConfigs, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        //action={{ modalContent: BulkDeleteTeacher }}
+        action={{ modalContent: BulkDeleteGradesByCategory }}
         bulkData={selectedGradeConfigs}
         resetAll={resetAll}
       >
@@ -249,42 +259,60 @@ function ActionButtons({ selectedGradeConfigs, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedGradeConfigs, resetAll }) {
+function DropdownItems({ selectedGradeConfigs, resetAll, onModalStateChange }) {
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedGradeConfigs,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        //action={{ modalContent: BulkDeleteCourse }}
-        bulkData={selectedGradeConfigs}
-        resetAll={resetAll}
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeleteGradesByCategory, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Delete All</span>
+          <span className="font-size-sm">Delete All Grades</span>
           <DeleteIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        //action={{ modalContent:BulkDeactivateCourse }}
-        bulkData={selectedGradeConfigs}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkCreateGradesByTargetCategory, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Deactivate All</span>
-          <SuspendIcon />
+          <span className="font-size-sm">Configure All By Target Category</span>
+          <ReuseIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-       // action={{ modalContent: BulkActivateCourse }}
-        bulkData={selectedGradeConfigs}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+        ref={modalRef}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Activate All</span>
-          <ActivateIcon />
-        </div>
-      </ModalButton>
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

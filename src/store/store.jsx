@@ -31,16 +31,23 @@ const authPersistConfig = {
     "apiKey",
     "passwordResetOtpToken",
     "passwordResetToken",
-    "schoolAuthData"
+    "schoolAuthData",
   ], 
 };
-
+const themePersistConfig = {
+   key:"theme",
+   storage,
+   whitelist:[
+     "darkMode"
+   ]
+}
 const rootReducer = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer,
   [postSlice.reducerPath]: postSlice.reducer,
   [updateSlice.reducerPath]: updateSlice.reducer,
   [deleteSlice.reducerPath]: deleteSlice.reducer,
   auth: persistReducer(authPersistConfig, authReducer), 
+  theme: persistReducer(themePersistConfig, themeReducer),
   pricing: pricingReducer,
   timetable: timetableReducer,
   examtimetable: examtimetableReducer,

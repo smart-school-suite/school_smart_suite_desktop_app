@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { bulkAddTeacherSpecialtyPreference } from "../../services/teacher";
 import { useMutation } from "@tanstack/react-query";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-
+import ToastDanger from "../../components/Toast/ToastDanger";
 export const useBulkAddTeacherSpecialtyPreference = (handleClose, resetAll) => {
      return useMutation({
           mutationFn:bulkAddTeacherSpecialtyPreference,
@@ -23,7 +23,7 @@ export const useBulkAddTeacherSpecialtyPreference = (handleClose, resetAll) => {
           },
           onError:() => {
               toast.custom(
-                 <ToastSuccess 
+                 <ToastDanger
                    title={"Preference Addition Failed"}
                    description={"Failed to add teacher specialty Preference Due to an error, please check internet connection and try again"}
                  />

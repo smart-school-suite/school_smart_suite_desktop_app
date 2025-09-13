@@ -14,9 +14,15 @@ import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import ActivateDepartment from "../../ModalContent/Department/ActivateDepartment";
 import React from "react";
-import { useState, useRef, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import CustomModal from "../../components/Modals/Modal";
-import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
+import {
+  ActivateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  SuspendIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
 import { DepartmentIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
 import BulkActivateDepartment from "../../ModalContent/Department/BulkActivateDepartment";
@@ -28,21 +34,21 @@ function Departments() {
   const tableRef = useRef();
   const { data: departments, isLoading } = useGetDepartments();
   const darkMode = useSelector((state) => state.theme.darkMode);
-    const [rowCount, setRowCount] = useState(0);
-    const [selectedDepartments, setSelectedDepartments] = useState([]);
-    const handleReset = () => {
-      if (tableRef.current) {
-        tableRef.current.deselectAll();
-        setRowCount(0);
-        setSelectedDepartments([]);
-      }
-    };
-    const handleRowDataFromChild = useCallback((Data) => {
-      setSelectedDepartments(Data);
-    }, []);
-    const handleRowCountFromChild = useCallback((count) => {
-      setRowCount(count);
-    }, []);
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedDepartments, setSelectedDepartments] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedDepartments([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedDepartments(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
   const memoizedColDefs = useMemo(() => {
     return DepartmentTableConfig({
       DropdownComponent,
@@ -62,7 +68,9 @@ function Departments() {
         <div className="my-2">
           <div className="d-flex align-items-center gap-2">
             <div
-              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -92,13 +100,13 @@ function Departments() {
           </div>
         </div>
         <div>
-          <Table 
-           colDefs={memoizedColDefs} 
-           rowData={memoizedRowData} 
-           ref={tableRef}
-           handleRowCountFromChild={handleRowCountFromChild}
-           handleRowDataFromChild={handleRowDataFromChild}
-           />
+          <Table
+            colDefs={memoizedColDefs}
+            rowData={memoizedRowData}
+            ref={tableRef}
+            handleRowCountFromChild={handleRowCountFromChild}
+            handleRowDataFromChild={handleRowDataFromChild}
+          />
           <BulkActionsToast
             rowCount={rowCount}
             label={"Department Selected"}
@@ -253,42 +261,69 @@ function ActionButtons({ selectedDepartments, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedDepartments, resetAll }) {
+function DropdownItems({ selectedDepartments, resetAll, onModalStateChange }) {
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedDepartments,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeleteDepartment }}
-        bulkData={selectedDepartments}
-        resetAll={resetAll}
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeleteDepartment, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeactivateDepartment }}
-        bulkData={selectedDepartments}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeactivateDepartment, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Deactivate All</span>
           <SuspendIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkActivateDepartment }}
-        bulkData={selectedDepartments}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkActivateDepartment, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Activate All</span>
           <ActivateIcon />
         </div>
-      </ModalButton>
+      </DropDownMenuItem>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+        ref={modalRef}
+      >
+        {modalContent}
+      </CustomModal>
     </>
   );
 }
