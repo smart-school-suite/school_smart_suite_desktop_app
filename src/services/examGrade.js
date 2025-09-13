@@ -65,3 +65,8 @@ export const  bulkUpdateExamGrades = async (data) => {
    const response = await axiosInstance.patch("grade/exam-grades/update ", data);
    return response.data;
 }
+
+export const bulkAddExamGrades = async (data) => {
+   const response = await axiosInstance.post("exam/bulk-add-grading-configs", data);
+   return response.data;
+}

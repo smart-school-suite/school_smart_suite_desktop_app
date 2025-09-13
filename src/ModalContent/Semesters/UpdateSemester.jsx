@@ -150,7 +150,6 @@ function UpdateSemester({ handleClose, rowData }) {
             placeholder={rowData.student_batch ? rowData.student_batch : 'Select Student Batch'}
           />
         </div>
-        {console.table(rowData)}
       </div>
       <div className="d-flex mt-3 flex-row align-items-center justify-content-end gap-2 w-100">
         <button

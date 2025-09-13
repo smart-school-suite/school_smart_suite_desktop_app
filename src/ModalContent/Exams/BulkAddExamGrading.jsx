@@ -1,23 +1,25 @@
+import { useBulkAddExamGradingConfigs } from "../../hooks/exam/useBulkAddExamGrading";
 import { useRef, useState } from "react";
 import Pageloaderspinner, {
   SingleSpinner,
 } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
-import { useAddExamGrading } from "../../hooks/exam/useAddExamGrading";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import toast from "react-hot-toast";
 import { allFieldsValid } from "../../utils/functions";
-function AddExamGrading({ handleClose, rowData }) {
-  const { id: examId } = rowData;
+function BulkAddExamGrading({ handleClose, resetAll, bulkData }) {
   const gradeConfigRef = useRef();
   const [errors, setErrors] = useState({
     grade_config: "",
   });
   const { data: schoolGradesConfig, isLoading } = useGetSchoolGradeCategories();
   const [gradeConfig, setGradeConfig] = useState(null);
-  const { mutate: addExamGrading, isPending } = useAddExamGrading(handleClose);
+  const { mutate: addExamGrading, isPending } = useBulkAddExamGradingConfigs(
+    handleClose,
+    resetAll
+  );
   const handlePrevalidation = async () => {
     const gradeConfig = await gradeConfigRef.current.triggerValidation();
     return {
@@ -37,12 +39,15 @@ function AddExamGrading({ handleClose, rowData }) {
       );
       return;
     }
-    addExamGrading({ examId, gradesConfig: gradeConfig });
+    const formattedData = bulkData.map((items) => ({
+      exam_id: items.id,
+      grades_config_Id: gradeConfig,
+    }));
+    addExamGrading({ exam_grading: formattedData });
   };
   if (isLoading) {
     return <Pageloaderspinner />;
   }
-
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between mb-3">
@@ -66,7 +71,7 @@ function AddExamGrading({ handleClose, rowData }) {
             displayKey={["grade_title", "max_score"]}
             valueKey={["id"]}
             errorMessage={"Grade Config Required"}
-            onSelect={(value) => setGradeConfig(value)}
+            onSelect={(value) => setGradeConfig(value.id)}
             ref={gradeConfigRef}
             onError={(value) =>
               setErrors((prev) => ({ ...prev, grade_config: value }))
@@ -85,5 +90,4 @@ function AddExamGrading({ handleClose, rowData }) {
     </>
   );
 }
-
-export default AddExamGrading;
+export default BulkAddExamGrading;

@@ -14,7 +14,6 @@ import ToastWarning from "../../components/Toast/ToastWarning";
 function UpdateExam({ handleClose, rowData }) {
     const {id:examId, start_date, end_date, weighted_mark, school_year } = rowData;
     const { mutate:updateExam, isPending } = useUpdateExam(handleClose)
-    console.table(rowData);
     const [formData, setFormData] = useState({
       start_date: "",
       end_date: "",
