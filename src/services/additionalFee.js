@@ -94,3 +94,8 @@ export const getAdditionalFeeDetails = async (feeId) => {
      const response = await axiosInstance.get(`additional-fees/details/${feeId}`);
      return response.data;
 }
+
+export const bulkUpdateAdditionalFee = async (updateData) => {
+     const response = await axiosInstance.patch("additional-fees/bulk-update", updateData);
+     return response.data;
+}

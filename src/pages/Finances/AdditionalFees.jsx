@@ -6,7 +6,7 @@ import PayAdditionalFees from "../../ModalContent/AdditionalFees/PayAdditionalFe
 import UpdateAdditionalFees from "../../ModalContent/AdditionalFees/UpdateAdditionalFees";
 import AdditionalFeeDetail from "../../ModalContent/AdditionalFees/AdditionalFeesDetails";
 import { useGetAdditionalFees } from "../../hooks/additionalFee/useGetAdditionalFees";
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import {
@@ -20,6 +20,9 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
 import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import BulkPayAdditionalFee from "../../ModalContent/AdditionalFees/BulkPayAdditionalFee";
+import BulkDeleteAdditionalFee from "../../ModalContent/AdditionalFees/BulkDeleteAdditionalFee";
+import BulkUpdateAdditionalFee from "../../ModalContent/AdditionalFees/BulkUpdateAdditionalFee";
 function AdditionalFees() {
   const { data: additionalFee, isLoading } = useGetAdditionalFees();
   const tableRef = useRef();
@@ -185,7 +188,7 @@ function ActionButtons({ selectedAdditionalFee, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        //action={{ modalContent: BulkDeleteTeacher }}
+        action={{ modalContent: BulkPayAdditionalFee }}
         bulkData={selectedAdditionalFee}
         resetAll={resetAll}
       >
@@ -198,42 +201,73 @@ function ActionButtons({ selectedAdditionalFee, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedAdditionalFee, resetAll }) {
+function DropdownItems({
+  selectedAdditionalFee,
+  resetAll,
+  onModalStateChange,
+}) {
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedAdditionalFee,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        //action={{ modalContent: BulkDeleteCourse }}
-        bulkData={selectedAdditionalFee}
-        resetAll={resetAll}
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkPayAdditionalFee, "md")}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Pay All</span>
+          <CreateIcon />
+        </div>
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkUpdateAdditionalFee, "md")}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Update All</span>
+          <UpdateIcon />
+        </div>
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeleteAdditionalFee, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        //action={{ modalContent:BulkDeactivateCourse }}
-        bulkData={selectedAdditionalFee}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+        ref={modalRef}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Deactivate All</span>
-          <SuspendIcon />
-        </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        // action={{ modalContent: BulkActivateCourse }}
-        bulkData={selectedAdditionalFee}
-        resetAll={resetAll}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Activate All</span>
-          <ActivateIcon />
-        </div>
-      </ModalButton>
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

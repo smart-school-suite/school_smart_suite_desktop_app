@@ -21,6 +21,7 @@ import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
+import UpdateCaScores from "../../ModalContent/ExamCandidate/UpdateCaScores";
 function ExamCandidates() {
   const { data: examCandidates, isLoading } = useGetExamCandidates();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -169,11 +170,11 @@ export function DropdownComponent(props) {
                 </div>
               </div>
             </DropDownMenuItem>
-            {/* <DropDownMenuItem
+             <DropDownMenuItem
               className={
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
-              
+              onClick={() => handleShowModal(UpdateCaScores, 'xl')}
             >
               <div>
                 <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -181,7 +182,7 @@ export function DropdownComponent(props) {
                   <UpdateIcon />
                 </div>
               </div>
-            </DropDownMenuItem>*/}
+            </DropDownMenuItem>
           </>
         ) : (
           <>
@@ -198,7 +199,7 @@ export function DropdownComponent(props) {
                 </div>
               </div>
             </DropDownMenuItem>
-            {/* <DropDownMenuItem
+            <DropDownMenuItem
               className={
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
@@ -210,7 +211,7 @@ export function DropdownComponent(props) {
                   <UpdateIcon />
                 </div>
               </div>
-            </DropDownMenuItem>*/}
+            </DropDownMenuItem>
           </>
         )}
       </ActionButtonDropdown>

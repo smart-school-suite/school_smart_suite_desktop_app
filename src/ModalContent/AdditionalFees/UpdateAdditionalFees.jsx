@@ -63,7 +63,7 @@ function UpdateAdditionalFees({ rowData, handleClose }) {
   };
   return (
     <>
-      <div className="card w-100 border-none">
+      <div className="w-100 border-none">
         <div className="block">
           <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
             <span className="m-0">Update Additional Fee</span>
