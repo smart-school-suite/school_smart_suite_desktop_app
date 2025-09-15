@@ -66,7 +66,7 @@ function AddExamGrading({ handleClose, rowData }) {
             displayKey={["grade_title", "max_score"]}
             valueKey={["id"]}
             errorMessage={"Grade Config Required"}
-            onSelect={(value) => setGradeConfig(value)}
+            onSelect={(value) => setGradeConfig(value.id)}
             ref={gradeConfigRef}
             onError={(value) =>
               setErrors((prev) => ({ ...prev, grade_config: value }))
