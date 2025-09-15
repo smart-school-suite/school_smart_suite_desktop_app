@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { Icon } from "@iconify/react";
-import { useUpdateExpense } from "../../hooks/schoolExpenses/useUpdateSchoolExpense";
+import { useBulkUpdateSchoolExpenses } from "../../hooks/schoolExpenses/useBulkUpdateSchoolExpenses";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetExpensesCategories } from "../../hooks/expenseCategory/useGetExpensesCategories";
 import {
@@ -21,7 +21,7 @@ import {
 } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
-function UpdateExpense({ handleClose, rowData }) {
+function BulkUpdateExpense({ handleClose, resetAll, bulkData }) {
   const [formData, setFormData] = useState({
     date: "",
     amount: "",
@@ -39,8 +39,10 @@ function UpdateExpense({ handleClose, rowData }) {
   const currencyState = useSelector((state) => state.auth.user);
   const userCurrencySymbol =
     currencyState?.schoolDetails?.school?.country?.currency || "";
-  const { id: expenseId, date, amount, description } = rowData;
-  const { mutate: updateExpense, isPending } = useUpdateExpense(handleClose);
+  const { mutate: updateExpense, isPending } = useBulkUpdateSchoolExpenses(
+    handleClose,
+    resetAll
+  );
   const { data: expenseCategory, isFetching } = useGetExpensesCategories();
 
   const handleStateChange = (field, value, stateFn) => {
@@ -67,11 +69,18 @@ function UpdateExpense({ handleClose, rowData }) {
       );
       return;
     }
-    updateExpense({ expenseId: expenseId, updateData: formData });
+    const formattedData = bulkData.map((items) => ({
+      expense_id: items.id,
+      expenses_category_id: formData.expenses_category_id,
+      date: formData.date,
+      amount: formData.amount,
+      description: formData.description,
+    }));
+    updateExpense({ school_expenses: formattedData });
   };
   return (
     <>
-      <div className="w-100 border-none">
+      <div className=" w-100 border-none">
         <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
           <span className="m-0">Update Expenses</span>
           <span
@@ -92,8 +101,6 @@ function UpdateExpense({ handleClose, rowData }) {
             onValidationChange={(value) =>
               handleStateChange("date", value, setIsValid)
             }
-            placeholder={date}
-            value={formData.date}
             validationSchema={dateValidationSchema({
               required: false,
             })}
@@ -107,7 +114,7 @@ function UpdateExpense({ handleClose, rowData }) {
             onChange={(value) =>
               handleStateChange("amount", value, setFormData)
             }
-            placeholder={amount}
+            placeholder="Enter Amount"
             validationSchema={numberSchema({
               min: 1,
               max: 1000000,
@@ -166,7 +173,7 @@ function UpdateExpense({ handleClose, rowData }) {
                 min: "Reason Must Be Atleast 5 Characters Long",
               },
             })}
-            placeholder={description}
+            placeholder={"Enter The Reason for the spending"}
           />
         </div>
       </div>
@@ -184,4 +191,4 @@ function UpdateExpense({ handleClose, rowData }) {
     </>
   );
 }
-export default UpdateExpense;
+export default BulkUpdateExpense;
