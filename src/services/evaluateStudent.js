@@ -47,3 +47,12 @@ export const getExamEvaluationHelperData = async (examId, studentId) => {
    return response.data;
 }
 
+export const getCaExamScoresByCandidate = async (candidateId) => {
+   const response = await axiosInstance.get(`mark/ca-marks/exam-candidate/${candidateId}`);
+   return response.data;
+}
+
+export const getExamScoresByCandidate = async (candidateId) => {
+   const response = await axiosInstance.get(`mark/exam-marks/exam-candidate/${candidateId}`);
+   return response.data;
+}

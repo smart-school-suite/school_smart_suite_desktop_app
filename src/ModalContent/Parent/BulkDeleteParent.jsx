@@ -1,14 +1,13 @@
-import { useBulkMarkStudentAsDropout } from "../../hooks/student/useBulkMarkStudentAsDropout";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function BulkMarkStudentAsDropout({ resetAll, handleClose, bulkData }) {
-  const formattedData = bulkData.map((items) => ({ student_id: items.id }));
-  const { mutate: bulkMarkStudentAsDropout, isPending } =
-    useBulkMarkStudentAsDropout(resetAll, handleClose);
-  const handleBulkMarkStudentAsDropdout = () => {
-    bulkMarkStudentAsDropout({ dropout_list: formattedData });
-  };
-  return (
-    <>
+import { useBulkDeleteParents } from "../../hooks/parent/useBulkDeleteParents";
+function BulkDeleteParent({ handleClose, resetAll, bulkData }){
+ const formattedData = bulkData.map((items) => ({ parent_id:items.id }))
+ const { muate:bulkDeleteParent, isPending } = useBulkDeleteParents(resetAll, handleClose);
+ const handleBulkDeleteParent = () => {
+     bulkDeleteParent({ parentIds:formattedData })
+ }
+    return(
+        <>
       <div className="w-100">
         <h4 className="fw-semibold">Are you Absolutely sure ?</h4>
         <p className="my-3" style={{ fontSize: "0.85rem" }}>
@@ -26,7 +25,7 @@ function BulkMarkStudentAsDropout({ resetAll, handleClose, bulkData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleBulkMarkStudentAsDropdout();
+                handleBulkDeleteParent();
               }}
             >
               {isPending ? <SingleSpinner /> : "Yes, Delete"}
@@ -34,7 +33,7 @@ function BulkMarkStudentAsDropout({ resetAll, handleClose, bulkData }) {
           </div>
         </div>
       </div>
-    </>
-  );
+        </>
+    )
 }
-export default BulkMarkStudentAsDropout;
+export default BulkDeleteParent;

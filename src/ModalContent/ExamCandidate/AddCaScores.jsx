@@ -46,7 +46,7 @@ function AddCaScores({ handleClose, rowData }) {
         letterGrade: items.lettergrade.letter_grade,
       }));
       dispatch(setExamGrading(examGrading));
-      dispatch(setExamScores(examScores));
+      dispatch(setExamScores({ examScores, recalculate:false }));
       dispatch(setMaxGpa(helperData.data.max_gpa));
     }
   }, [helperData?.data, studentId, candidateId, dispatch]);

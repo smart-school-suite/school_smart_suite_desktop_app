@@ -38,7 +38,7 @@ function AddExamScores({ handleClose, rowData }) {
         resitStatus: "",
         determinant: "",
         letterGrade: "",
-        score: 0,
+        score: parseFloat(items.score),
         caScore: parseFloat(items.score),
         examScore: 0,
       }));
@@ -52,7 +52,7 @@ function AddExamScores({ handleClose, rowData }) {
         letterGrade: items.lettergrade.letter_grade,
       }));
       dispatch(setExamGrading(examGrading));
-      dispatch(setExamScores(examScores));
+      dispatch(setExamScores({ examScores, recalculate:false }));
       dispatch(setMaxGpa(helperData.data.max_gpa));
     }
   }, [helperData?.data, studentId, candidateId, dispatch]);
@@ -153,8 +153,9 @@ function AddExamScores({ handleClose, rowData }) {
                         type="number"
                         step="0.01"
                         className={`form-control w-100 font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null}`}
-                        value={items.score}
+                        value={items.examScore}
                         onChange={(e) => handleScoreChange(e, index)}
+                        placeholder={"Enter Score"}
                       />
                       <span style={{ fontSize: "0.65rem", opacity: 0 }}>
                         Error
@@ -184,7 +185,7 @@ function AddExamScores({ handleClose, rowData }) {
                   >
                     <div className="d-flex flex-column">
                       <span>
-                        {<NumberFlow value={parseFloat(items.examScore).toFixed(2)} />}
+                        {<NumberFlow value={parseFloat(items.score).toFixed(2)} />}
                       </span>
                       <span style={{ fontSize: "0.65rem", opacity: 0 }}>
                         Error

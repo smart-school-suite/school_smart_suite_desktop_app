@@ -72,3 +72,8 @@ export const createStudent = async (studentData) => {
      const response = await axiosInstance.post("auth/student/register", studentData);
      return response.data;
 }
+
+export const bulkReinstateDropoutStudent = async (data) => {
+      const response = await axiosInstance.post("student/bulk-reinstate/dropout", data);
+      return response.data;
+}

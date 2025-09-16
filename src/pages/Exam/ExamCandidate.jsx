@@ -22,6 +22,9 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
 import UpdateCaScores from "../../ModalContent/ExamCandidate/UpdateCaScores";
+import UpdateExamScores from "../../ModalContent/ExamCandidate/UpdateExamScores";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function ExamCandidates() {
   const { data: examCandidates, isLoading } = useGetExamCandidates();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -142,26 +145,25 @@ export function DropdownComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(DeleteExamCandidate, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Candidate</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
+
         {rowData.exam_type === "ca" ? (
           <>
             <DropDownMenuItem
               className={
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
-              onClick={() => handleShowModal(AddCaScores, "xl")}
+              onClick={() => {
+                 if(rowData.student_accessed == 'accessed'){
+                     toast.custom(
+                       <ToastWarning 
+                         title={"Opps Something Not Right"}
+                         description={"Looks like this student has been accessed for further changes you can update the student scores"}
+                       />
+                     )
+                     return
+                 }
+                 handleShowModal(AddCaScores, "xl")
+              }}
             >
               <div>
                 <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -174,7 +176,17 @@ export function DropdownComponent(props) {
               className={
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
-              onClick={() => handleShowModal(UpdateCaScores, 'xl')}
+              onClick={() => {
+                  if(rowData.student_accessed !== 'accessed'){
+                     toast.custom(
+                       <ToastWarning 
+                         title={"Opps Something Not Right"}
+                         description={"Looks like this student has not been accessed you will need to create student scores before updating"}
+                       />
+                     )
+                  }
+                  handleShowModal(UpdateCaScores, 'xl')
+              }}
             >
               <div>
                 <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -190,7 +202,19 @@ export function DropdownComponent(props) {
               className={
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
-              onClick={() => handleShowModal(AddExamScores, "xl")}
+              onClick={() => {
+                 if(rowData.student_accessed == 'accessed'){
+                     toast.custom(
+                       <ToastWarning 
+                         title={"Opps Something Not Right"}
+                         description={"Looks like this student has been accessed for further changes you can update the student scores"}
+                       />
+                     )
+                     return
+                  }
+                 handleShowModal(AddExamScores, "xl")
+                 
+              }}
             >
               <div>
                 <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -203,7 +227,18 @@ export function DropdownComponent(props) {
               className={
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
-              
+              onClick={() => {
+                  if(rowData.student_accessed !== 'accessed'){
+                     toast.custom(
+                       <ToastWarning 
+                         title={"Opps Something Not Right"}
+                         description={"Looks like this student has not been accessed add student exam marks before updating"}
+                       />
+                     )
+                    return;
+                 }
+                 handleShowModal(UpdateExamScores, 'xl')
+              }}
             >
               <div>
                 <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -214,6 +249,19 @@ export function DropdownComponent(props) {
             </DropDownMenuItem>
           </>
         )}
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteExamCandidate, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Candidate</span>
+              <DeleteIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
       </ActionButtonDropdown>
       <CustomModal
         show={showModal}

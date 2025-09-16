@@ -58,8 +58,7 @@ const rootReducer = combineReducers({
   resitExamTimetable:resitExamTimetableReducer,
   createResitExamScore:createResitExamScoreReducer,
   announcement:announcementReducer,
-  autoGenTimetable:autoGenTimetableSliceReducer,
-  theme:themeReducer
+  autoGenTimetable:autoGenTimetableSliceReducer
 });
 
 

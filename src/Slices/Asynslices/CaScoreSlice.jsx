@@ -17,7 +17,17 @@ const CaScoreSlice = createSlice({
   },
   reducers: {
     setExamScores: (state, action) => {
-      state.examScores = [...action.payload];
+      const { examScores, recalculate = false } = action.payload;
+      state.examScores = [...examScores];
+
+      if (recalculate) {
+        // Recalculate resultSummary
+        const { coursesPassed, coursesFailed, gpa, examStatus } = calculateResultSummary(state.examScores);
+        state.resultSummary.coursesPassed = coursesPassed;
+        state.resultSummary.coursesFailed = coursesFailed;
+        state.resultSummary.examStatus = examStatus;
+        state.resultSummary.gpa = gpa;
+      }
     },
     setExamGrading: (state, action) => {
       state.examGrading = [...action.payload];
@@ -25,8 +35,6 @@ const CaScoreSlice = createSlice({
     setMaxGpa: (state, action) => {
       state.maxGpa = action.payload;
     },
-    // This reducer handles all the logic for a score change, including
-    // updating the specific course and recalculating the overall summary
     updateScore: (state, action) => {
       const { index, score } = action.payload;
       // Ensure the score is a number; default to 0 if not
@@ -60,48 +68,47 @@ const CaScoreSlice = createSlice({
       }
 
       // 2. Recalculate the result summary based on the updated examScores array
-      let coursesPassed = 0;
-      let coursesFailed = 0;
-      let totalGradePoints = 0; // Sum of grade points for normal GPA calculation
-      
-      const totalCourses = state.examScores.length; // Total number of courses
-
-      state.examScores.forEach((course) => {
-        // Increment pass/fail counts based on gradeStatus
-        if (course.gradeStatus === "passed") {
-          coursesPassed++;
-        } else if (course.gradeStatus === "failed") {
-          coursesFailed++;
-        }
-
-        // Accumulate grade points for GPA calculation
-        totalGradePoints += course.gradePoints;
-      });
-
-      // Calculate the simple average GPA
-      const gpa = totalCourses > 0 ? totalGradePoints / totalCourses : 0;
-      
-      // Determine the overall exam status
-      const examStatus = coursesFailed > 0 ? "Failed" : "Passed";
-
-      // 3. Update the resultSummary object in the state
+      const { coursesPassed, coursesFailed, gpa, examStatus } = calculateResultSummary(state.examScores);
       state.resultSummary.coursesPassed = coursesPassed;
       state.resultSummary.coursesFailed = coursesFailed;
       state.resultSummary.examStatus = examStatus;
-      state.resultSummary.gpa = gpa; // Assign the calculated simple average GPA
+      state.resultSummary.gpa = gpa;
     },
-    resetCaScoreState: (state) => {
-       return CaScoreSlice.initialState;
-    }
+    resetCaScoreState: () => {
+      return CaScoreSlice.initialState;
+    },
   },
 });
+
+// Helper function to calculate resultSummary
+const calculateResultSummary = (examScores) => {
+  let coursesPassed = 0;
+  let coursesFailed = 0;
+  let totalGradePoints = 0;
+
+  const totalCourses = examScores.length;
+
+  examScores.forEach((course) => {
+    if (course.gradeStatus === "passed") {
+      coursesPassed++;
+    } else if (course.gradeStatus === "failed") {
+      coursesFailed++;
+    }
+    totalGradePoints += course.gradePoints;
+  });
+
+  const gpa = totalCourses > 0 ? totalGradePoints / totalCourses : 0;
+  const examStatus = coursesFailed > 0 ? "Failed" : "Passed";
+
+  return { coursesPassed, coursesFailed, gpa, examStatus };
+};
 
 export const {
   setExamScores,
   setExamGrading,
   setMaxGpa,
   updateScore,
-  resetCaScoreState
+  resetCaScoreState,
 } = CaScoreSlice.actions;
 
 export default CaScoreSlice.reducer;

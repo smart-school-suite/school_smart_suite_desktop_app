@@ -9,7 +9,7 @@ import ParentDetails from "../../ModalContent/Parent/ParentDetails";
 import UpdateParent from "../../ModalContent/Parent/UpdateParent";
 import CreateParent from "../../ModalContent/Parent/CreateParent";
 import { useGetAllParents } from "../../hooks/parent/useGetParents";
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
+import BulkDeleteParent from "../../ModalContent/Parent/BulkDeleteParent";
 function Parents() {
   const { data: guardians, isLoading } = useGetAllParents();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -199,7 +200,7 @@ function ActionButtons({ selectedParents, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        //action={{ modalContent: BulkDeleteTeacher }}
+        action={{ modalContent: BulkDeleteParent }}
         bulkData={selectedParents}
         resetAll={resetAll}
       >
@@ -212,42 +213,51 @@ function ActionButtons({ selectedParents, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedParents, resetAll }) {
+function DropdownItems({ selectedParents, resetAll, onModalStateChange }) {
+        const [showModal, setShowModal] = useState(false);
+        const [modalContent, setModalContent] = useState(null);
+        const [modalSize, setModalSize] = useState("lg");
+        const modalRef = useRef(null);
+        useEffect(() => {
+          onModalStateChange(showModal, modalRef);
+        }, [showModal, onModalStateChange]);
+      
+        const handleCloseModal = () => {
+          setShowModal(false);
+          setModalContent(null);
+        };
+      
+        const handleShowModal = (ContentComponent, size = "lg") => {
+          setModalContent(
+            React.createElement(ContentComponent, {
+              handleClose: handleCloseModal,
+              resetAll,
+              bulkData: selectedParents,
+            })
+          );
+          setModalSize(size);
+          setShowModal(true);
+        };
   return (
     <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        //action={{ modalContent: BulkDeleteCourse }}
-        bulkData={selectedParents}
-        resetAll={resetAll}
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeleteParent, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        //action={{ modalContent:BulkDeactivateCourse }}
-        bulkData={selectedParents}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+        ref={modalRef}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Deactivate All</span>
-          <SuspendIcon />
-        </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        // action={{ modalContent: BulkActivateCourse }}
-        bulkData={selectedParents}
-        resetAll={resetAll}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Activate All</span>
-          <ActivateIcon />
-        </div>
-      </ModalButton>
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

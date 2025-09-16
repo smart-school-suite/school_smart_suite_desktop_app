@@ -1,15 +1,15 @@
-import { useBulkMarkStudentAsDropout } from "../../hooks/student/useBulkMarkStudentAsDropout";
+import { useBulkReinstateDropoutStudent } from "../../hooks/student/useBulkReinstateDropoutStudent";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function BulkMarkStudentAsDropout({ resetAll, handleClose, bulkData }) {
-  const formattedData = bulkData.map((items) => ({ student_id: items.id }));
-  const { mutate: bulkMarkStudentAsDropout, isPending } =
-    useBulkMarkStudentAsDropout(resetAll, handleClose);
-  const handleBulkMarkStudentAsDropdout = () => {
-    bulkMarkStudentAsDropout({ dropout_list: formattedData });
-  };
-  return (
-    <>
-      <div className="w-100">
+
+function BulkReinstateDropoutStudent({ handleClose, resetAll, bulkData }){
+ const formattedData = bulkData.map((items) =>  ({ student_id:items.id }))
+ const { mutate:bulkReinstateStudent, isPending } = useBulkReinstateDropoutStudent(handleClose, resetAll);
+ const handleBulkReinstateDropoutStudent = () => {
+     bulkReinstateStudent({ studentIds: formattedData })
+ }
+      return(
+        <>
+              <div className="w-100">
         <h4 className="fw-semibold">Are you Absolutely sure ?</h4>
         <p className="my-3" style={{ fontSize: "0.85rem" }}>
           This action cannot be undone. This will Permanently delete This
@@ -26,15 +26,15 @@ function BulkMarkStudentAsDropout({ resetAll, handleClose, bulkData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleBulkMarkStudentAsDropdout();
+                handleBulkReinstateDropoutStudent();
               }}
             >
-              {isPending ? <SingleSpinner /> : "Yes, Delete"}
+              {isPending ? <SingleSpinner /> : "Yes, Reinstate"}
             </button>
           </div>
         </div>
       </div>
-    </>
-  );
+        </>
+      )
 }
-export default BulkMarkStudentAsDropout;
+export default BulkReinstateDropoutStudent;
