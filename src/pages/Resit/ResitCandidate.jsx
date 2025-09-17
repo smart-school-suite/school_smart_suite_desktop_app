@@ -6,11 +6,15 @@ import CustomModal from "../../components/Modals/Modal";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import Table from "../../components/Tables/Tables";
 import { ExamCandidateTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import { CreateIcon } from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import SummitScores from "../../ModalContent/ResitCandidate/SubmitScores";
 import { ExamCandidateIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
+import UpdateResitScore from "../../ModalContent/ResitCandidate/UpdateResitScores";
+import DeleteCandidate from "../../ModalContent/ResitCandidate/DeleteCandidate";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function ResitCandidates() {
   const { data: resitCandidates, isLoading } = useGetResitCandidates();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -86,7 +90,18 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(SummitScores, 'xl')}
+          onClick={() => {
+             if(props.student_accessed == 'Not Accessed'){
+                 toast.custom(
+                   <ToastWarning 
+                     title={"Candidate Already Accessed"}
+                     description={"Candidate Has Already Been Accessed Try Updating the resit scores to make changes to the resit scores"}
+                   />
+                 )
+                 return;
+             }
+             handleShowModal(SummitScores, 'xl')
+          }}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -95,10 +110,22 @@ export function DropdownComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-       {/*  <DropDownMenuItem
+        <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
+          onClick={() => {
+             if(props.student_accessed !== 'Not Accessed'){
+                toast.custom(
+                   <ToastWarning 
+                     title={"Candidate Not Accessed"}
+                     description={"Candidate Has Not Been Accessed so you can't update the candidate's scores please try creating scores first and try again"}
+                   />
+                 )
+                 return;
+              }
+            handleShowModal(UpdateResitScore, 'xl')
+          }}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -111,6 +138,7 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
+          onClick={() => handleShowModal(DeleteCandidate, 'md')}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -118,7 +146,7 @@ export function DropdownComponent(props) {
               <DeleteIcon />
             </div>
           </div>
-        </DropDownMenuItem>*/}
+        </DropDownMenuItem>
       </ActionButtonDropdown>
       <CustomModal
         show={showModal}

@@ -224,7 +224,7 @@ export const SchoolYearSelector = forwardRef(
             classNames="dropdown"
             unmountOnExit
           >
-            <div className={`${darkMode ? 'dark-bg gainsboro-color dark-mode-border' : 'bg-white'} p-2 d-flex flex-column gap-1 mt-1 rounded-3 position-absolute w-100 z-3`}>
+            <div className={`${darkMode ? 'dark-bg gainsboro-color dark-mode-border' : 'bg-white border shadow-sm'} p-2 d-flex flex-column gap-1 mt-1 rounded-3 position-absolute w-100 z-3`}>
               <div className="scrollable-dropdown d-flex flex-column gap-1">
                 {schoolYears.map((year, index) => (
                   <button

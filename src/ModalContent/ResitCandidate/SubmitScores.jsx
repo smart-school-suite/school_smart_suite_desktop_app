@@ -2,54 +2,70 @@ import { useGetResitEvaluationHelperData } from "../../hooks/resitEvaluation/use
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useEffect } from "react";
-import { setExamScores, setExamGrading, updateScore, resetResitScoreState } from "../../Slices/Asynslices/ResitScoreSlice";
+import {
+  setExamScores,
+  setExamGrading,
+  updateScore,
+  resetResitScoreState,
+} from "../../Slices/Asynslices/ResitScoreSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateResitScore } from "../../hooks/resitEvaluation/useCreateResitScores";
 import NumberFlow from "@number-flow/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function SummitScores({ handleClose, rowData }){
-   const { exam_id:resitExamId, id:candidateId, student_id:studentId, specialty_id:specialtyId, reference_exam_id:refExamId } = rowData;
-   const dispatch = useDispatch();
-   const { data:helperData, isFetching } = useGetResitEvaluationHelperData(resitExamId, candidateId);
-    const formData = useSelector((state) => state.createResitExamScore.examScores);
-     const  { mutate:createScore, isPending } = useCreateResitScore(handleClose); 
-     const darkMode = useSelector((state) => state.theme.darkMode);
-     const resultSummary = useSelector(
-       (state) => state.createResitExamScore.resultSummary
-     );
-      useEffect(() => {
-         if (helperData?.data) {
-           const examScores = helperData.data.course_data.map((items) => ({
-             studentId: studentId,
-             candidateId: candidateId,
-             courseId: items.id,
-             courseName: items.course_title,
-             gradePoints: 0,
-             gradeStatus: "",
-             resitStatus: "",
-             determinant: "",
-             letterGrade: "",
-             score: 0,
-           }));
-           const examGrading = helperData.data.exam_grading.map((items) => ({
-             gradePoints: parseFloat(items.grade_points),
-             gradeStatus: items.grade_status,
-             resitStatus: items.resit_status,
-             minimumScore: parseFloat(items.minimum_score),
-             maximumScore: parseFloat(items.maximum_score),
-             determinant: items.determinant,
-             letterGrade: items.lettergrade.letter_grade,
-           }));
-           dispatch(setExamGrading(examGrading));
-           dispatch(setExamScores(examScores));
-         }
-       }, [helperData?.data, studentId, candidateId, dispatch]);
-     
-       const handleScoreChange = (e, index) => {
-         const newScore = parseFloat(e.target.value);
-         dispatch(updateScore({ index, score: newScore }));
-       };
-     
+function SummitScores({ handleClose, rowData }) {
+  const {
+    exam_id: resitExamId,
+    id: candidateId,
+    student_id: studentId,
+    specialty_id: specialtyId,
+    reference_exam_id: refExamId,
+  } = rowData;
+  const dispatch = useDispatch();
+  const { data: helperData, isFetching } = useGetResitEvaluationHelperData(
+    resitExamId,
+    candidateId
+  );
+  const formData = useSelector(
+    (state) => state.createResitExamScore.examScores
+  );
+  const { mutate: createScore, isPending } = useCreateResitScore(handleClose);
+  const darkMode = useSelector((state) => state.theme.darkMode);
+  const resultSummary = useSelector(
+    (state) => state.createResitExamScore.resultSummary
+  );
+  useEffect(() => {
+    if (helperData?.data) {
+      const examScores = helperData.data.course_data.map((items) => ({
+        studentId: studentId,
+        candidateId: candidateId,
+        courseId: items.id,
+        courseName: items.course_title,
+        gradePoints: 0,
+        gradeStatus: "",
+        resitStatus: "",
+        determinant: "",
+        letterGrade: "",
+        score: 0,
+      }));
+      const examGrading = helperData.data.exam_grading.map((items) => ({
+        gradePoints: parseFloat(items.grade_points),
+        gradeStatus: items.grade_status,
+        resitStatus: items.resit_status,
+        minimumScore: parseFloat(items.minimum_score),
+        maximumScore: parseFloat(items.maximum_score),
+        determinant: items.determinant,
+        letterGrade: items.lettergrade.letter_grade,
+      }));
+      dispatch(setExamGrading(examGrading));
+      dispatch(setExamScores(examScores));
+    }
+  }, [helperData?.data, studentId, candidateId, dispatch]);
+
+  const handleScoreChange = (e, index) => {
+    const newScore = parseFloat(e.target.value);
+    dispatch(updateScore({ index, score: newScore }));
+  };
+
   const handleCreateExamScores = () => {
     const isEmpty = (value) =>
       value === null || value === undefined || value.toString().trim() === "";
@@ -68,43 +84,49 @@ function SummitScores({ handleClose, rowData }){
         course_id: item.courseId,
         accessment_id: item.candidateId,
         exam_id: refExamId,
-        specialty_id:specialtyId
+        specialty_id: specialtyId,
       }));
 
     const formattedData = {
       entries: scoresData,
     };
 
-    createScore({candidateId:candidateId, updateData:formattedData});
+    createScore({ candidateId: candidateId, updateData: formattedData });
   };
-   if(isFetching){
-      return <Pageloaderspinner />
-   }
-    return(
-        <>
-              <div className="d-flex flex-row align-items-center justify-content-between mb-4 ">
-                <span>Create Resit Exam Scores</span>
-                <span
-                  onClick={() => {
-                    handleClose();
-                  }}
-                >
-                  <Icon icon="charm:cross" width="22" height="22" />
-                </span>
-              </div>
-              <div className="d-flex flex-row align-items-center justify-content-end gap-2 mb-2">
-                <button 
-                  className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"
-                  onClick={() => {
-                       handleCreateExamScores();
-                       dispatch(resetResitScoreState());
-                      }}
-                  >
-                  { isPending ? <SingleSpinner /> : "Submit Score"}
-                </button>
-              </div>
-              <div className={`card grades-box rounded-3 ${darkMode ? 'dark-bg gainsboro-color' : 'bg-white  border'}`}>
-        <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
+  if (isFetching) {
+    return <Pageloaderspinner />;
+  }
+  return (
+    <>
+      <div className="d-flex flex-row align-items-center justify-content-between mb-4 ">
+        <span>Create Resit Exam Scores</span>
+        <span
+          onClick={() => {
+            handleClose();
+          }}
+        >
+          <Icon icon="charm:cross" width="22" height="22" />
+        </span>
+      </div>
+      <div className="d-flex flex-row align-items-center justify-content-end gap-2 mb-2">
+        <button
+          className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"
+          onClick={() => {
+            handleCreateExamScores();
+            dispatch(resetResitScoreState());
+          }}
+        >
+          {isPending ? <SingleSpinner /> : "Submit Score"}
+        </button>
+      </div>
+      <div
+        className={`card grades-box rounded-3 ${
+          darkMode ? "dark-bg gainsboro-color" : "bg-white  border"
+        }`}
+      >
+        <table
+          className={`${darkMode ? "table-dark" : null} table-responsive table`}
+        >
           <thead className="grades-thead">
             <tr className="font-size-sm">
               <th className="text-start">Course</th>
@@ -119,9 +141,7 @@ function SummitScores({ handleClose, rowData }){
             {formData.map((items, index) => (
               <tr className="grades-tr" key={index}>
                 <td style={{ width: "20%" }}>
-                  <div
-                    className="w-100 h-100 d-flex flex-row align-items-center justify-content-center"
-                  >
+                  <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center">
                     <div className="d-flex flex-column w-100 font-size-sm">
                       <span>{items.courseName}</span>
                       <span style={{ fontSize: "0.65rem", opacity: 0 }}>
@@ -139,7 +159,9 @@ function SummitScores({ handleClose, rowData }){
                       <input
                         type="number"
                         step="0.01"
-                        className={`form-control w-100 font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null}`}
+                        className={`form-control w-100 font-size-sm p-2 ${
+                          darkMode ? "dark-mode-input" : null
+                        }`}
                         value={items.score}
                         onChange={(e) => handleScoreChange(e, index)}
                       />
@@ -155,7 +177,9 @@ function SummitScores({ handleClose, rowData }){
                     style={{ fontSize: "0.85rem" }}
                   >
                     <div className="d-flex flex-column">
-                      <span>{<NumberFlow value={items.gradePoints.toFixed(2)}  />}</span>
+                      <span>
+                        {<NumberFlow value={items.gradePoints.toFixed(2)} />}
+                      </span>
                       <span style={{ fontSize: "0.65rem", opacity: 0 }}>
                         Error
                       </span>
@@ -207,17 +231,20 @@ function SummitScores({ handleClose, rowData }){
         </table>
         <div className="d-flex flex-row align-items-center justify-content-end gap-3 py-2 font-size-sm pe-2">
           <span>
-            Exam-Status: <span className="fw-semibold">{resultSummary.examStatus} </span>
+            Exam-Status:{" "}
+            <span className="fw-semibold">{resultSummary.examStatus} </span>
           </span>
           <span>
-            Courses Passed: <span className="fw-semibold">{resultSummary.coursesPassed}</span>
+            Courses Passed:{" "}
+            <span className="fw-semibold">{resultSummary.coursesPassed}</span>
           </span>
           <span>
-            Courses Failed: <span className="fw-semibold">{resultSummary.coursesFailed}</span>
+            Courses Failed:{" "}
+            <span className="fw-semibold">{resultSummary.coursesFailed}</span>
           </span>
         </div>
       </div>
-        </>
-    )
+    </>
+  );
 }
 export default SummitScores;

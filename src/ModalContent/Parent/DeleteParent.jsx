@@ -17,13 +17,13 @@ function DeleteParent({ handleClose, rowData}) {
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button
-              className="border-none px-3 py-2 text-primary rounded-3 font-size-sm"
+              className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
               onClick={handleClose}
             >
               Cancel
             </button>
             <button
-              className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white"
+              className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
                 handleDeleteParent();
               }}

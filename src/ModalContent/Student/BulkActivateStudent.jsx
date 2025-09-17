@@ -2,7 +2,7 @@ import { useBulkActivateStudent } from "../../hooks/student/useBulkActivateStude
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 function BulkActivateStudent({ handleClose, resetAll, bulkData }) {
   const formattedData = bulkData.map((items) => ({ student_id: items.id }));
-  const { mutate: bulkActivate } = useBulkActivateStudent(
+  const { mutate: bulkActivate, isPending } = useBulkActivateStudent(
     handleClose,
     resetAll
   );

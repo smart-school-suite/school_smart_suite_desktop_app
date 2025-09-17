@@ -1,9 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import { apiSlice } from "../Slices/Asynslices/fetchSlice";
-import { postSlice } from "../Slices/Asynslices/postSlice";
-import { updateSlice } from "../Slices/Asynslices/updateSlice";
-import { deleteSlice } from "../Slices/Asynslices/deleteSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; 
@@ -42,10 +38,6 @@ const themePersistConfig = {
    ]
 }
 const rootReducer = combineReducers({
-  [apiSlice.reducerPath]: apiSlice.reducer,
-  [postSlice.reducerPath]: postSlice.reducer,
-  [updateSlice.reducerPath]: updateSlice.reducer,
-  [deleteSlice.reducerPath]: deleteSlice.reducer,
   auth: persistReducer(authPersistConfig, authReducer), 
   theme: persistReducer(themePersistConfig, themeReducer),
   pricing: pricingReducer,
@@ -64,15 +56,6 @@ const rootReducer = combineReducers({
 
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }).concat(
-      apiSlice.middleware,
-      postSlice.middleware,
-      updateSlice.middleware,
-      deleteSlice.middleware
-    ),
 });
 
 

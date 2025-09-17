@@ -48,8 +48,6 @@ function UpdateResitExam({ handleClose, rowData }) {
           )
           return;
       }
-      console.log(examId)
-      console.table(formData)
       updateExam({resitExamId:examId, updateData:formData})
   }
   return (

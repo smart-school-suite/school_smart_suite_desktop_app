@@ -1,5 +1,4 @@
 import Pageloaderspinner from "../../components/Spinners/Spinners";
-import { useFetchSchoolSemesterDetaislQuery } from "../../Slices/Asynslices/fetchSlice";
 import { Icon } from "@iconify/react";
 import { formatDate } from "../../utils/functions";
 import { useGetSchoolSemesterDetails } from "../../hooks/schoolSemester/useGetSchoolSemesterDetails"
