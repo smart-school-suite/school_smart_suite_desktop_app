@@ -954,22 +954,12 @@ button.disabled {
     width: 4px;
 }
 
-.toast-danger {
-    width: 20vw;
-    background: #fff0f0;
-    border: 1px solid #ff9494;
-    color: #500000;
-}
 
 .toast-custom {
     width: 20vw;
     border-radius: 0.75rem;
 }
 
-.toast-success {
-    width: 23.5vw;
-    background: #fff;
-}
 
 .custom-modal .modal-content {
     border-radius: 0.9rem !important;

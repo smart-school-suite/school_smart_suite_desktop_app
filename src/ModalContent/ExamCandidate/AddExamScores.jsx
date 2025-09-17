@@ -75,7 +75,7 @@ function AddExamScores({ handleClose, rowData }) {
           !isEmpty(item.courseId)
       )
       .map((item) => ({
-        score: item.score,
+        score: item.examScore,
         student_id: item.studentId,
         course_id: item.courseId,
         accessment_id: item.candidateId,

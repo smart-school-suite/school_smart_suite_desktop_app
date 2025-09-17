@@ -1,15 +1,6 @@
 import { Icon } from "@iconify/react";
-import { useFetchAnnouncementStatsQuery } from "../../Slices/Asynslices/fetchSlice";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
 import TextDisplay from "../../components/TextComponents/TextDisplay";
 function Annoucements() {
-  const year = new Date().getFullYear();
-  const { data, isLoading } = useFetchAnnouncementStatsQuery({
-    year: year,
-  });
-  if (isLoading) {
-    return <Pageloaderspinner />;
-  }
   return (
     <>
       <div className="w-100 ">

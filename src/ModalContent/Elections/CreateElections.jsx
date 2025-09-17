@@ -1,4 +1,4 @@
-import { useCreateElectionMutation } from "../../Slices/Asynslices/postSlice";
+import { useCreateElection } from "../../hooks/election/useCreateElection";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -18,7 +18,7 @@ function CreateElections(){
     const handleInputChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
       };
-      const [createElections] = useCreateElectionMutation();
+      const [createElections] = useCreateElection();
       const handleSubmit = async () => {
         setIsLoading(true);
         try {

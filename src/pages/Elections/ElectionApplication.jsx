@@ -1,4 +1,4 @@
-import { useFetchElectionApplicationsQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useGetElectionApplications } from "../../hooks/electionApplication/useGetElectionApplications";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables/Tables";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
@@ -9,7 +9,7 @@ function ElectionApplication() {
     data: application,
     isLoading,
     error,
-  } = useFetchElectionApplicationsQuery();
+  } = useGetElectionApplications();
   const filter_array_keys = [
     "id",
     "student.name",

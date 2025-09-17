@@ -1,11 +1,11 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useFetchTransactionDetailQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useGetTuitionFeeTransactionDetails } from "../../hooks/feePayment/useGetTuitionFeeTransactionDetails";
 function TransactionDetails({ row_id: tansactionId, handleClose }) {
   const {
     data: transactionDetails,
     isLoading,
     error,
-  } = useFetchTransactionDetailQuery({
+  } = useGetTuitionFeeTransactionDetails({
     transactionId: tansactionId,
   });
   if (isLoading) {

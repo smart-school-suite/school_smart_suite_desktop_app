@@ -1,5 +1,5 @@
 import Pageloaderspinner from "../../components/Spinners/Spinners";
-import { useFetchElectionRolesQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useGetElectionRoles } from "../../hooks/electionRole/useGetElectionRoles";
 import { electionRolesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown, {ModalButton} from "../../components/DataTableComponents/ActionComponent";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
@@ -14,7 +14,7 @@ function ElectionRoles() {
     data: electionRoles,
     isLoading,
     error,
-  } = useFetchElectionRolesQuery();
+  } = useGetElectionRoles();
   const filter_array_keys = [
     "id",
     "name",

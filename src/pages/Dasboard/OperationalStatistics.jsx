@@ -1,4 +1,4 @@
-import { useFetchOperationalStatsQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useGetSchoolOperationalStats } from "../../hooks/operationalStats.js/useGetOperationalStats";
 import DashboardPageLoader from "../../components/PageLoaders/DashboardPageLoader";
 import { Icon } from "@iconify/react";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import NumberFlow from "@number-flow/react";
 function OperationalStatistics() {
   const currentYear = new Date().getFullYear();
-  const { isLoading, error } = useFetchOperationalStatsQuery({
+  const { isLoading, error } = useGetSchoolOperationalStats({
     year: currentYear,
   });
   const schoolData = useSelector((state) => state.auth.user);

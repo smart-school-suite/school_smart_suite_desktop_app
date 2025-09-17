@@ -1,4 +1,5 @@
-import { useFetchAnnouncementByStatusQuery } from "../../Slices/Asynslices/fetchSlice";
+
+import { useGetAnnouncementByStatus } from "../../hooks/announcement/useGetAnnouncementByStatus";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import Table from "../../components/Tables/Tables";
 import { AnnouncementTableConfig } from "../../ComponentConfig/AgGridTableConfig";
@@ -8,7 +9,7 @@ import AnnouncementDetails from "../../ModalContent/Announcement/AnnouncementDet
 import DeleteAnnouncement from "../../ModalContent/Announcement/DeleteAnnouncement";
 import UpdateAnnouncementContent from "../../ModalContent/Announcement/UpdateAnnouncementContent";
 function ViewAnnoucements() {
-  const { data:announcement, isLoading } = useFetchAnnouncementByStatusQuery({
+  const { data:announcement, isLoading } = useGetAnnouncementByStatus({
      status:"active"
   })
   const memoizedColDefs = useMemo(() => {

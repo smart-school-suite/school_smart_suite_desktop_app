@@ -1,13 +1,13 @@
 import Navbar from "../../components/NavBars/Navbar";
 import DashboardPageLoader from "../../components/PageLoaders/DashboardPageLoader";
-import { useFetchAcademicStatsQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useGetSchoolAcademicStats } from "../../hooks/academicStats/useGetSchoolAcadmicStats";
 import CardGroup from "../../components/Cardgroup";
 import { Icon } from "@iconify/react";
 import BarChart from "../../components/ChartComponents/BarChart";
 import LineChart from "../../components/chartcomponents/Linecharts";
 import GaugeChart from "../../components/ChartComponents/GaugeChart";
 function AcademicStatistics() {
-  const { data:data, isLoading} = useFetchAcademicStatsQuery({
+  const { data:data, isLoading} = useGetSchoolAcademicStats({
     year: 2025,
   });
   const labelsConfig = {

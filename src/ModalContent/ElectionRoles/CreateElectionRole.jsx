@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { useFetchElectionsQuery } from "../../Slices/Asynslices/fetchSlice";
+import { useGetElections } from "../../hooks/election/useGetElections";
 import toast from "react-hot-toast";
-import { useCreateElectionRoleMutation } from "../../Slices/Asynslices/postSlice";
+import { useCreateElectionRole } from "../../hooks/electionRole/useCreateElectionRole";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 function CreateElectionRole({ handleClose }) {
-  const { data: electionRoles, isLoading, error } = useFetchElectionsQuery();
+  const { data: electionRoles, isLoading, error } = useGetElections();
   const [formData, setFormData] = useState({
     title: "",
     election_id: "",
     description: "",
   });
   const [isCreating, setIsCreating] = useState(false);
-  const [createElectionRole] = useCreateElectionRoleMutation();
+  const [createElectionRole] = useCreateElectionRole();
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };

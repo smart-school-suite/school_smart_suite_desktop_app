@@ -184,6 +184,7 @@ export function DropdownComponent(props) {
                          description={"Looks like this student has not been accessed you will need to create student scores before updating"}
                        />
                      )
+                     return
                   }
                   handleShowModal(UpdateCaScores, 'xl')
               }}

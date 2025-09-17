@@ -1,11 +1,11 @@
 import Table from "../../components/Tables/Tables";
-import { useFetchElectionsQuery } from "../../Slices/Asynslices/fetchSlice";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { electionTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import CleanArrayData, { renameKeys } from "../../utils/functions";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import { useGetElections } from "../../hooks/election/useGetElections";
 function ViewElections() {
-  const { data: elections, isLoading, error } = useFetchElectionsQuery();
+  const { data: elections, isLoading, error } = useGetElections();
   const filter_array_keys = [
     "id",
     "title",
