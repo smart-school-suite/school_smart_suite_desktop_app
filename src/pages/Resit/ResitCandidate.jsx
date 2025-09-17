@@ -55,9 +55,8 @@ function ResitCandidates() {
 }
 export default ResitCandidates;
 
-export function DropdownComponent(props) {
+ function DropdownComponent(props) {
   const rowData = props.data;
-
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [modalSize, setModalSize] = useState("md");
@@ -85,26 +84,25 @@ export function DropdownComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() => {
-             if(props.student_accessed == 'Not Accessed'){
-                 toast.custom(
-                   <ToastWarning 
-                     title={"Candidate Already Accessed"}
-                     description={"Candidate Has Already Been Accessed Try Updating the resit scores to make changes to the resit scores"}
-                   />
-                 )
-                 return;
-             }
-             handleShowModal(SummitScores, 'xl')
+            if (rowData.student_accessed == 'accessed') {
+              toast.custom(
+                <ToastWarning
+                  title={"Candidate Already Accessed"}
+                  description={"Candidate has already been accessed. Please update the resit scores instead."}
+                />
+              )
+              return;
+            }
+            handleShowModal(SummitScores, 'xl')
           }}
         >
           <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Add Resit Scores</span>
               <CreateIcon />
             </div>
@@ -115,20 +113,20 @@ export function DropdownComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() => {
-             if(props.student_accessed !== 'Not Accessed'){
-                toast.custom(
-                   <ToastWarning 
-                     title={"Candidate Not Accessed"}
-                     description={"Candidate Has Not Been Accessed so you can't update the candidate's scores please try creating scores first and try again"}
-                   />
-                 )
-                 return;
-              }
+            if (rowData.student_accessed !== 'accessed') {
+              toast.custom(
+                <ToastWarning
+                  title={"Candidate Not Accessed"}
+                  description={"Candidate has not been accessed. Please add scores first and try again."}
+                />
+              )
+              return;
+            }
             handleShowModal(UpdateResitScore, 'xl')
           }}
         >
           <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Update Resit Scores</span>
               <UpdateIcon />
             </div>
@@ -141,7 +139,7 @@ export function DropdownComponent(props) {
           onClick={() => handleShowModal(DeleteCandidate, 'md')}
         >
           <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Delete Candidate</span>
               <DeleteIcon />
             </div>

@@ -961,11 +961,9 @@ button.disabled {
     color: #500000;
 }
 
-.toast-warning {
+.toast-custom {
     width: 20vw;
-    background: #fffceb;
-    border: 1px solid #ffda46;
-    color: #481a00;
+    border-radius: 0.75rem;
 }
 
 .toast-success {
