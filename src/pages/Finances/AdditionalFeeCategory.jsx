@@ -57,6 +57,7 @@ function AdditionalFeeCategory() {
             ref={tableRef}
             handleRowCountFromChild={handleRowCountFromChild}
             handleRowDataFromChild={handleRowDataFromChild}
+            tableHeight={89}
           />
           <BulkActionsToast
             rowCount={rowCount}

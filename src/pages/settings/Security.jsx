@@ -3,77 +3,10 @@ import { useSelector } from "react-redux";
 import { useAuth } from "../../context/authContext";
 import { useState } from "react";
 function Security() {
+   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
-      <div className="pt-3">
-        <span className="my-2 fw-semibold">Password Management</span>
-        <div
-          className="card border-none shadow-sm rounded-4 py-2 px-3 d-flex flex-column gap-2"
-          style={{ fontSize: "0.87rem" }}
-        >
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <div className="d-flex align-items-center flex-row gap-2">
-              <div className="d-flex flex-column">
-                <span className=" fw-semibold my-0 text-start">
-                  Change Password
-                </span>
-                <span className="gainsboro-color font-size-sm my-0">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Nihil explicabo soluta harum vitae incidunt, eum repudiandae
-                </span>
-              </div>
-            </div>
-            <div>
-              <Icon
-                icon="weui:arrow-filled"
-                className=" gainsboro-color"
-                width={20}
-                height={20}
-              />
-            </div>
-          </div>
-          <hr />
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <div className="d-flex align-items-center flex-row gap-2">
-              <div className="d-block">
-                <p className=" fw-semibold my-0">Password Strength</p>
-                <p className="gainsboro-color font-size-sm my-0">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Nihil explicabo soluta harum vitae incidunt, eum repudiandae
-                </p>
-              </div>
-            </div>
-            <div>
-              <Icon
-                icon="weui:arrow-filled"
-                className=" gainsboro-color"
-                width={20}
-                height={20}
-              />
-            </div>
-          </div>
-          <hr />
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <div className="d-flex align-items-center flex-row gap-2">
-              <div className="d-flex flex-column">
-                <span className=" fw-semibold my-0">Two Step Verification</span>
-                <span className="gainsboro-color font-size-sm my-0">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Nihil explicabo soluta harum vitae incidunt, eum repudiandae
-                </span>
-              </div>
-            </div>
-            <div>
-              <Icon
-                icon="weui:arrow-filled"
-                className=" gainsboro-color"
-                width={20}
-                height={20}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+   
     </>
   );
 }

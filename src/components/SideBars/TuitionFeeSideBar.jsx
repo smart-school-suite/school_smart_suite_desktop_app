@@ -4,7 +4,9 @@ function TuitionFeeSideBar(){
     const darkMode = useSelector((state) => state.theme.darkMode);
     return(
           <>
-              <div className={`${darkMode ? 'dark-bg' : "white-bg"} card border-none width-20 p-2 rounded-3 d-flex flex-column gap-3`}>
+              <div className={`${darkMode ? 'dark-bg' : "white-bg"} card border-none width-20 p-2 rounded-4 d-flex flex-column gap-3`}
+               style={{ height:"92.5dvh" }}
+              >
                 {sideBarData.map((item) => (
                   <SideBarComponent title={item.title} path={item.path} />
                 ))}

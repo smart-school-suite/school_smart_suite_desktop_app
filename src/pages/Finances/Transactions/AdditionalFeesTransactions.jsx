@@ -44,7 +44,7 @@ function AdditionalFeeTransactions() {
   return (
     <>
       <div>
-        <div className="d-flex flex-row align-items-center mb-2 w-100">
+        <div className="d-flex flex-row align-items-center mb-1 w-100">
           <div>
             <span className="fw-semibold">Transactions</span>
           </div>
@@ -58,6 +58,7 @@ function AdditionalFeeTransactions() {
             ref={tableRef}
             handleRowCountFromChild={handleRowCountFromChild}
             handleRowDataFromChild={handleRowDataFromChild}
+            tableHeight={89}
           />
           <BulkActionsToast
             rowCount={rowCount}

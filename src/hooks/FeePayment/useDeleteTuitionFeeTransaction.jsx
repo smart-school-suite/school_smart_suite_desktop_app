@@ -7,9 +7,8 @@ export const useDeleteTuitionFeeTransaction = (handleClose) => {
     const queryClient = useQueryClient();
     return useMutation({
          mutationFn:deleteTuitionFeeTransaction,
-         onSuccess:(transactionId) => {
-            queryClient.invalidateQueries({queryKey:["tuitionFeesTransactions"]})
-            queryClient.removeQueries({ queryKey:["tuitionFeeTransaction", transactionId] })
+         onSuccess:() => {
+            queryClient.invalidateQueries({queryKey:["tuitionFeeTransactions"]})
             if(handleClose){
                 handleClose();
             }

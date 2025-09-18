@@ -17,6 +17,7 @@ import { useAutoGenExamTimetable } from "../../hooks/examTimetable/useAutoGenExa
 import { useCreateExamTimetable } from "../../hooks/examTimetable/useCreateExamTimetable";
 import { motion } from "framer-motion";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useSelector } from "react-redux";
 function AutoGenerateTimetable({ handleClose, rowData }) {
   const [isActive, setIsActive] = useState("timetableConfig");
   const [formData, setFormData] = useState({
@@ -250,6 +251,7 @@ function TimetablePreview({
   formData,
   rowData,
 }) {
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const { mutateAsync: autoGenTimetable, isPending: isGenerating } =
     useAutoGenExamTimetable();
   const { mutate: createTimetable, isPending: isCreating } =
@@ -321,11 +323,12 @@ function TimetablePreview({
           {isCreating ? <SingleSpinner /> : <span>Create Timetable</span>}
         </button>
       </div>
-      <div className="card grades-box rounded-3">
+      <div className={`${darkMode ? 'dark-theme-border dark-bg' : 'bg-white border'}  card grades-box rounded-3`}>
+          
         {isGenerating ? (
           <SingleSpinner />
         ) : (
-          <table className="table table-responsive">
+          <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
             <thead>
               <tr>
                 <th className="font-size-sm">Day</th>
@@ -400,9 +403,10 @@ function SlotCard({
   duration,
   courseCredit,
 }) {
+  const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
-      <div className="card p-2 w-100 rounded-3 d-flex flex-column gap-5 primary-background-50 primary-color-dark border-none ">
+      <div className={`${darkMode ? 'dark-bg gainsboro-color' : 'primary-background-50 primary-color-dark'} card p-2 w-100 rounded-3 d-flex flex-column gap-5  border-none `}>
         <div className="font-size-sm d-flex flex-column gap-1">
           <div className="d-flex flex-row align-items-center w-100 justify-content-between">
             <span className="fw-semibold">{courseTitle}</span>

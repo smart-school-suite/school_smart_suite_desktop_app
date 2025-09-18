@@ -18,13 +18,14 @@ function ResitFee() {
   return (
     <>
       <div>
-        <div className="mb-2">
+        <div className="mb-1">
           <span className="fw-semibold">Resit Fees Payment</span>
         </div>
         <div>
           <Table
             colDefs={ResitFeeTableConfig({ DropdownComponent })}
             rowData={studentResit.data}
+            tableHeight={89}
           />
         </div>
       </div>

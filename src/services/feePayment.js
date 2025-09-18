@@ -96,3 +96,8 @@ export const getTuitionFees = async () => {
   const response = await axiosInstance.get("fee-payment/tuition-fees");
   return response.data;
 };
+
+export const getTuitionFeeDetails = async (feeId) => {
+   const response = await axiosInstance.get(`fee-payment/tuition-fee/${feeId}`);
+   return response.data;
+}

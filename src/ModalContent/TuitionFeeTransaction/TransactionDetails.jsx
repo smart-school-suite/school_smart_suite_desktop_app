@@ -1,43 +1,88 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetTuitionFeeTransactionDetails } from "../../hooks/feePayment/useGetTuitionFeeTransactionDetails";
-function TransactionDetails({ row_id: tansactionId, handleClose }) {
-  const {
-    data: transactionDetails,
-    isLoading,
-    error,
-  } = useGetTuitionFeeTransactionDetails({
-    transactionId: tansactionId,
-  });
-  if (isLoading) {
+import { Icon } from "@iconify/react";
+import { formatISODate } from "../../utils/functions";
+import { useSelector } from "react-redux";
+function TransactionDetails({ rowData, handleClose }) {
+   const currencyState = useSelector((state) => state.auth.user);
+  const userCurrencySymbol =
+    currencyState?.schoolDetails?.school?.country?.currency || "";
+  const { id: transactionId } = rowData;
+  const { data: transactionDetails, isFetching } =
+    useGetTuitionFeeTransactionDetails(transactionId);
+  if (isFetching) {
     return <SingleSpinner />;
   }
   return (
     <>
-      <div className="d-flex flex-row align-items-center justify-content-between mb-3 px-2">
-        <h5 className="fw-semibold">Transation Details</h5>
-        <button
-          className="border-none text-white primary-background"
-          onClick={() => {
-            handleClose();
-          }}
-          style={{
-            width: "2rem",
-            height: "2rem",
-            borderRadius: "2rem",
-            fontSize: "0.75rem",
-          }}
-        >
-          <span>IC</span>
-        </button>
-      </div>
-      <div className="d-flex flex-row align-items-center gap-4">
-        <div className="w-100 border-bottom">
-          <div className="d-block">
-            <p className="my-0">{transactionDetails.data.amount}</p>
-            <span className="font-size-sm gainsboro-color">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aperiam,
-              iure facilis. Officiis placea
+      <div className="d-flex flex-row align-items-center">
+        <div className="w-100">
+          <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+            <span className="m-0">Transaction Details</span>
+            <span
+              className="m-0"
+              onClick={() => {
+                handleClose();
+              }}
+            >
+              <Icon icon="charm:cross" width="22" height="22" />
             </span>
+          </div>
+        </div>
+      </div>
+      <div className="modal-content-container">
+        <div className="d-flex flex-row align-items-center justify-content-end">
+          <div className="d-flex flex-row align-items-center font-size-sm fw-semibold gap-1">
+            <span>#</span>
+            <span>{transactionDetails?.data?.transaction_id}</span>
+          </div>
+        </div>
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
+          <div className="py-2">
+            <p className="my-0 font-size-sm">Amount</p>
+            <p className="my-0 gainsboro-color font-size-sm">{parseFloat(transactionDetails?.data?.amount).toFixed(2)} {userCurrencySymbol}</p>
+          </div>
+        </div>
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
+          <div className="py-2">
+            <p className="my-0 font-size-sm">Payment Method</p>
+            <p className="my-0 gainsboro-color font-size-sm">{transactionDetails?.data?.payment_method}</p>
+          </div>
+        </div>
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
+          <div className="py-2">
+            <p className="my-0 font-size-sm">Student Name</p>
+            <p className="my-0 gainsboro-color font-size-sm">{transactionDetails?.data?.tuition?.student?.name}</p>
+          </div>
+        </div>
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
+          <div className="py-2">
+            <p className="my-0 font-size-sm">Specialty</p>
+            <p className="my-0 gainsboro-color font-size-sm">{transactionDetails?.data?.tuition?.specialty?.specialty_name}</p>
+          </div>
+        </div>
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
+          <div className="py-2">
+            <p className="my-0 font-size-sm">Level</p>
+            <p className="my-0 gainsboro-color font-size-sm">{transactionDetails?.data?.tuition?.level?.name}</p>
+          </div>
+        </div>
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
+          <div className="py-2">
+            <p className="my-0 font-size-sm">Create At</p>
+            <p className="my-0 gainsboro-color font-size-sm">{formatISODate(transactionDetails?.data?.created_at)}</p>
+          </div>
+        </div>
+        <hr />
+        <div className="d-flex align-items-center justify-content-between my-1 w-100">
+          <div className="py-2">
+            <p className="my-0 font-size-sm">Updated At</p>
+            <p className="my-0 gainsboro-color font-size-sm">{formatISODate(transactionDetails?.data?.updated_at)}</p>
           </div>
         </div>
       </div>

@@ -64,7 +64,7 @@ const Table = forwardRef((props, ref) => {
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
   return (
-    <div style={{ width: "100%", height: "78vh" }}>
+    <div style={{ width: "100%", height: props.tableHeight ? `${props.tableHeight}dvh` : '78dvh' }}>
       <AgGridReact
         rowHeight={props.rowHeight}
         rowData={props.rowData}
@@ -76,7 +76,7 @@ const Table = forwardRef((props, ref) => {
         rowSelection={rowSelection}
         onSelectionChanged={onSelectionChanged}
         onGridReady={gridReady}
-        theme={appliedTheme}   // 👈 dynamic theme applied here
+        theme={appliedTheme} 
       />
     </div>
   );

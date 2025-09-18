@@ -1,11 +1,11 @@
-import { useDeleteTuitionFeeTransaction } from "../../hooks/feePayment/useDeleteTuitionFeeTransaction";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function DeleteTransaction({ handleClose, rowData }) {
-  const { id: transactionId } = rowData;
-  const { mutate: deleteTransaction, isPending } =
-    useDeleteTuitionFeeTransaction(handleClose);
-  const handleDeleteTransaction = () => {
-    deleteTransaction(transactionId);
+import { useBulkReverseTuitionFeeTransactions } from "../../hooks/feePayment/useBulkReverseTuitionFeeTransactions";
+function BulkDeleteTuitionFeeTransaction({ handleClose, bulkData, resetAll }) {
+  const formattedData = bulkData.map((items) => ({ transaction_id: items.id }));
+  const { mutate: deleteTransactions, isPending } =
+    useBulkReverseTuitionFeeTransactions(handleClose, resetAll);
+  const handleBulkDeleteTuitionFeeTransaction = () => {
+    deleteTransactions(formattedData);
   };
   return (
     <>
@@ -26,10 +26,10 @@ function DeleteTransaction({ handleClose, rowData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeleteTransaction();
+                handleBulkDeleteTuitionFeeTransaction();
               }}
             >
-              {isPending ? <SingleSpinner /> : "Yes, Delete"}
+              {isPending ? <SingleSpinner /> : "Yes, Delete All"}
             </button>
           </div>
         </div>
@@ -37,4 +37,4 @@ function DeleteTransaction({ handleClose, rowData }) {
     </>
   );
 }
-export default DeleteTransaction;
+export default BulkDeleteTuitionFeeTransaction;

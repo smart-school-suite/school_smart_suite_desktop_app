@@ -45,9 +45,10 @@ function SchoolExpensesCategory() {
             <ModalButton
               action={{ modalContent: CreateCategory }}
               classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+                "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
               }
             >
+              <Icon icon="icons8:plus" className="font-size-md" />
               <span className="font-size-sm">Create Category</span>
             </ModalButton>
           </div>
@@ -58,6 +59,7 @@ function SchoolExpensesCategory() {
           ref={tableRef}
           handleRowCountFromChild={handleRowCountFromChild}
           handleRowDataFromChild={handleRowDataFromChild}
+          tableHeight={89}
         />
         <BulkActionsToast
             rowCount={rowCount}

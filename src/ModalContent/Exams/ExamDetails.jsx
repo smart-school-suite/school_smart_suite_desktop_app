@@ -27,7 +27,7 @@ function ExamDetails({ rowData, handleClose }) {
           </div>
         </div>
       <div className="modal-content-container">
-                <div className="d-flex align-items-center justify-content-between my-1 w-100">
+          <div className="d-flex align-items-center justify-content-between my-1 w-100">
           <div className="py-2">
             <p className="my-0 font-size-sm">Exam Title</p>
             <p className="my-0 gainsboro-color font-size-sm">{examDetails.data.examtype.exam_name}</p>

@@ -37,7 +37,7 @@ function RegistrationFeeTransactions() {
   return (
     <>
       <div>
-        <div className="d-flex flex-row align-items-center mb-2 w-100">
+        <div className="d-flex flex-row align-items-center mb-1 w-100">
           <span className="fw-semibold">Registration Fee Transactions</span>
         </div>
         <div>
@@ -49,6 +49,7 @@ function RegistrationFeeTransactions() {
             ref={tableRef}
             handleRowCountFromChild={handleRowCountFromChild}
             handleRowDataFromChild={handleRowDataFromChild}
+            tableHeight={89}
           />
           <BulkActionsToast
             rowCount={rowCount}

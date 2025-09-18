@@ -40,7 +40,7 @@ function RegistrationFees() {
     <>
       <div>
         <div>
-          <span className="fw-semibold">Registration Fees</span>
+          <span className="fw-semibold mb-1">Registration Fees</span>
         </div>
         <div>
           <Table
@@ -49,6 +49,7 @@ function RegistrationFees() {
             ref={tableRef}
             handleRowCountFromChild={handleRowCountFromChild}
             handleRowDataFromChild={handleRowDataFromChild}
+            tableHeight={89.5}
           />
            <BulkActionsToast
             rowCount={rowCount}
@@ -199,7 +200,7 @@ function DropdownItems({ selectedRegistrationFee, resetAll, onModalStateChange }
         React.createElement(ContentComponent, {
           handleClose: handleCloseModal,
           resetAll,
-          bulkData: selectedAdditionalFee,
+          bulkData: selectedRegistrationFee,
         })
       );
       setModalSize(size);
