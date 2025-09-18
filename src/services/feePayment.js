@@ -101,3 +101,23 @@ export const getTuitionFeeDetails = async (feeId) => {
    const response = await axiosInstance.get(`fee-payment/tuition-fee/${feeId}`);
    return response.data;
 }
+
+export const getRegistrationFeeTransactionDetails = async (transactionId) => {
+   const response = await axiosInstance.get(`fee-payment/registration-fee/transaction/${transactionId}`);
+   return response.data;
+}
+
+export const deleteRegistrationFeeTransaction = async (transactionId) => {
+   const response = await axiosInstance.delete(`fee-payment/tuition-fee-transactions/${transactionId}`);
+   return response.data;
+}
+
+export const bulkDeleteRegistrationFee = async (deleteData) => {
+   const response = await axiosInstance.post("fee-payment/registration-fee/bulk-delete", deleteData);
+   return response.data;
+}
+
+export const deleteRegistrationFee = async (feeId) => {
+   const response = await axiosInstance.delete(`fee-payment/registration-fee/${feeId}`);
+   return response.data;
+}

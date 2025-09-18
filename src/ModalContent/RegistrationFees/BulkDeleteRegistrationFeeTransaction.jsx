@@ -1,14 +1,19 @@
+import { useBulkDeleteRegistrationFeeTransactions } from "../../hooks/feePayment/useBulkDeleteRegistrationFeeTransactions";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useDeleteRegistrationFee } from "../../hooks/feePayment/useDeleteRegistrationFee";
-function DeleteRegistrationFee({ rowData, handleClose }){
-  const { id:registrationFeeId } = rowData;
-  const { mutate:deleteRegistrationFee, isPending } = useDeleteRegistrationFee(handleClose);
-  const handleDeleteRegistrationFee = () => {
-      deleteRegistrationFee(registrationFeeId)
-  }
-    return(
-        <>
-        <div className="w-100">
+function BulkDeleteRegistrationFeeTransaction({
+  handleClose,
+  bulkData,
+  resetAll,
+}) {
+  const formattedData = bulkData.map((items) => ({ transaction_id: items.id }));
+  const { mutate: bulkDeleteTransaction, isPending } =
+    useBulkDeleteRegistrationFeeTransactions(handleClose, resetAll);
+  const handleBulkDelete = () => {
+    bulkDeleteTransaction({ transactionIds: formattedData });
+  };
+  return (
+    <>
+      <div className="w-100">
         <h4 className="fw-semibold">Are you Absolutely sure ?</h4>
         <p className="my-3" style={{ fontSize: "0.85rem" }}>
           This action cannot be undone. This will Permanently delete This
@@ -25,15 +30,16 @@ function DeleteRegistrationFee({ rowData, handleClose }){
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeleteRegistrationFee();
+                handleBulkDelete();
               }}
             >
-              {isPending ? <SingleSpinner /> : "Yes, Delete"}
+              {isPending ? <SingleSpinner /> : "Yes, Reverse"}
             </button>
           </div>
         </div>
       </div>
-        </>
-    ) 
+    </>
+  );
 }
-export default DeleteRegistrationFee;
+
+export default BulkDeleteRegistrationFeeTransaction;

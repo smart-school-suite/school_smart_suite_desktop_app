@@ -4,7 +4,7 @@ import ActionButtonDropdown from "../../../components/DataTableComponents/Action
 import DataTableNavLoader from "../../../components/PageLoaders/DataTableNavLoader";
 import { useGetRegistrationFeeTransations } from "../../../hooks/feePayment/useGetRegistrationFeeTransations";
 import ReverseTransaction from "../../../ModalContent/RegistrationFees/ReverseTransaction";
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../../components/DataTableComponents/ActionComponent";
 import DeleteTransaction from "../../../ModalContent/RegistrationFees/DeleteTransaction";
@@ -13,6 +13,9 @@ import BulkActionsToast from "../../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
+import BulkDeleteRegistrationFeeTransaction from "../../../ModalContent/RegistrationFees/BulkDeleteRegistrationFeeTransaction";
+import { DeleteIcon, DetailsIcon, ReverseIcon } from "../../../icons/ActionIcons";
+import BulkReverseRegistrationFeeTransaction from "../../../ModalContent/RegistrationFees/BulkReverseRegistrationFeeTransaction";
 function RegistrationFeeTransactions() {
   const { data:transactions, isLoading } = useGetRegistrationFeeTransations();
     const tableRef = useRef();
@@ -119,6 +122,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Reverse Transaction</span>
+              <ReverseIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -131,6 +135,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Transaction</span>
+              <DeleteIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -143,6 +148,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span> Transaction Details</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -164,7 +170,7 @@ export function DropdownComponent(props) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        //action={{ modalContent: BulkDeleteTeacher }}
+        action={{ modalContent:BulkDeleteRegistrationFeeTransaction }}
         bulkData={selectedTransactions}
         resetAll={resetAll}
       >
@@ -177,40 +183,60 @@ export function DropdownComponent(props) {
     </>
   );
 }
-function DropdownItems({ selectedTransactions, resetAll }) {
+function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
+    const [showModal, setShowModal] = useState(false);
+    const [modalContent, setModalContent] = useState(null);
+    const [modalSize, setModalSize] = useState("lg");
+    const modalRef = useRef(null);
+    useEffect(() => {
+      onModalStateChange(showModal, modalRef);
+    }, [showModal, onModalStateChange]);
+  
+    const handleCloseModal = () => {
+      setShowModal(false);
+      setModalContent(null);
+    };
+  
+    const handleShowModal = (ContentComponent, size = "lg") => {
+      setModalContent(
+        React.createElement(ContentComponent, {
+          handleClose: handleCloseModal,
+          resetAll,
+          bulkData: selectedTransactions,
+        })
+      );
+      setModalSize(size);
+      setShowModal(true);
+    };
   return (
     <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        //action={{ modalContent: BulkDeleteCourse }}
-        bulkData={selectedTransactions}
-        resetAll={resetAll}
+      <DropDownMenuItem
+         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkReverseRegistrationFeeTransaction, "md")}
+      >
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Reverse All</span>
+          <ReverseIcon />
+        </div>
+      </DropDownMenuItem>
+      <DropDownMenuItem
+         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeleteRegistrationFeeTransaction, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        //action={{ modalContent:BulkDeactivateCourse }}
-        bulkData={selectedTransactions}
-        resetAll={resetAll}
+      </DropDownMenuItem>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalSize}
+        centered
+        ref={modalRef}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Deactivate All</span>
-        </div>
-      </ModalButton>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        // action={{ modalContent: BulkActivateCourse }}
-        bulkData={selectedTransactions}
-        resetAll={resetAll}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Activate All</span>
-        </div>
-      </ModalButton>
+        {modalContent}
+      </CustomModal>
     </>
   );
 }

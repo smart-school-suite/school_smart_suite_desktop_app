@@ -18,7 +18,6 @@ export const useBulkDeleteRegistrationFeeTransactions = (handleClose, resetAll) 
              if(resetAll){
                 resetAll();
              }
-
              toast.custom(
                  <ToastSuccess 
                    title={"Delete Successfull"}

@@ -14,6 +14,8 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
 import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import BulkPayRegistrationFee from "../../ModalContent/RegistrationFees/BulkPayRegistrationFees";
+import BulkDeleteRegistrationFee from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFee";
 function RegistrationFees() {
   const { data: registrationFees, isLoading } = useGetRegistrationFees();
    const tableRef = useRef();
@@ -168,7 +170,7 @@ function ActionButtons({ selectedRegistrationFee, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        //action={{ modalContent: BulkDeleteTeacher }}
+        action={{ modalContent: BulkDeleteRegistrationFee }}
         bulkData={selectedRegistrationFee}
         resetAll={resetAll}
       >
@@ -210,7 +212,7 @@ function DropdownItems({ selectedRegistrationFee, resetAll, onModalStateChange }
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal()}
+        onClick={() => handleShowModal(BulkPayRegistrationFee, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Pay All</span>
@@ -219,7 +221,7 @@ function DropdownItems({ selectedRegistrationFee, resetAll, onModalStateChange }
       </DropDownMenuItem>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal()}
+        onClick={() => handleShowModal(BulkDeleteRegistrationFee, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
