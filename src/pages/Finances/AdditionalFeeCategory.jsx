@@ -38,7 +38,7 @@ function AdditionalFeeCategory() {
   return (
     <>
       <div>
-        <div className="d-flex flex-row align-items-center justify-content-between mb-2 w-100">
+        <div className="d-flex flex-row align-items-center justify-content-between mb-1 w-100">
           <span className="fw-semibold">Addition Fee Category</span>
           <ModalButton
             classname={
@@ -57,7 +57,7 @@ function AdditionalFeeCategory() {
             ref={tableRef}
             handleRowCountFromChild={handleRowCountFromChild}
             handleRowDataFromChild={handleRowDataFromChild}
-            tableHeight={89}
+            tableHeight={85.5}
           />
           <BulkActionsToast
             rowCount={rowCount}

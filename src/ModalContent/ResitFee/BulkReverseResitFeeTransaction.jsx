@@ -1,12 +1,13 @@
-import { useDeleteStudentResit } from "../../hooks/studentResit/useDeleteResit";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function DeleteResitFee({ handleClose, rowData }) {
-  const { id: feeId } = rowData;
-  const { mutate: deleteStudentResit, isPending } =
-    useDeleteStudentResit(handleClose);
-  const handleDeleteResitFee = () => {
-    deleteStudentResit(feeId);
+import { useBulkReverserResitTransactions } from "../../hooks/studentResit/useBulkReverseTransactions";
+function BulkReverseResitFeeTransaction({ handleClose, resetAll, bulkData }) {
+  const formattedData = bulkData.map((items) => ({ transaction_id: items.id }));
+  const { mutate: reverseTransaction, isPending } =
+    useBulkReverserResitTransactions(handleClose, resetAll);
+  const handleReverseTransaction = () => {
+    reverseTransaction({ transactionIds: formattedData });
   };
+
   return (
     <>
       <div className="w-100">
@@ -28,13 +29,13 @@ function DeleteResitFee({ handleClose, rowData }) {
           </button>
           <button
             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
-            onClick={handleDeleteResitFee}
+            onClick={handleReverseTransaction}
           >
-            {isPending ? <SingleSpinner /> : "Yes, Delete All"}
+            {isPending ? <SingleSpinner /> : "Yes, Reverse All"}
           </button>
         </div>
       </div>
     </>
   );
 }
-export default DeleteResitFee;
+export default BulkReverseResitFeeTransaction;

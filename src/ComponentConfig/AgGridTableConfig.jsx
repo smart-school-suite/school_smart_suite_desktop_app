@@ -2816,7 +2816,7 @@ export function resitFeeTransacTableConfig({ DropdownComponent }) {
       hide: true,
     },
     {
-      field: "trasaction_id",
+      field: "transaction_id",
       headerName: "Transaction Id",
       filter: true,
       floatingFilter: true,
@@ -2828,7 +2828,7 @@ export function resitFeeTransacTableConfig({ DropdownComponent }) {
       headerName: "Amount",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: CurrencyComponent,
       cellStyle: cellStyle,
     },
     {
@@ -2852,7 +2852,7 @@ export function resitFeeTransacTableConfig({ DropdownComponent }) {
       headerName: "Student",
       filter: true,
       floatingFilter: true,
-      cellRenderer: CurrencyComponent,
+      cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {

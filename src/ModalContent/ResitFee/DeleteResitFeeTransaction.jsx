@@ -1,11 +1,10 @@
-import { useDeleteStudentResit } from "../../hooks/studentResit/useDeleteResit";
+import { useDeleteResitTransaction } from "../../hooks/studentResit/useDeleteResitTransaction";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function DeleteResitFee({ handleClose, rowData }) {
-  const { id: feeId } = rowData;
-  const { mutate: deleteStudentResit, isPending } =
-    useDeleteStudentResit(handleClose);
-  const handleDeleteResitFee = () => {
-    deleteStudentResit(feeId);
+function DeleteResitFeeTransaction({ handleClose, rowData }) {
+  const { id: transactionId } = rowData;
+  const { mutate: deleteTransaction, isPending } = useDeleteResitTransaction();
+  const handleDeleteTransaction = () => {
+    deleteTransaction(transactionId);
   };
   return (
     <>
@@ -28,7 +27,7 @@ function DeleteResitFee({ handleClose, rowData }) {
           </button>
           <button
             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
-            onClick={handleDeleteResitFee}
+            onClick={handleDeleteTransaction}
           >
             {isPending ? <SingleSpinner /> : "Yes, Delete All"}
           </button>
@@ -37,4 +36,4 @@ function DeleteResitFee({ handleClose, rowData }) {
     </>
   );
 }
-export default DeleteResitFee;
+export default DeleteResitFeeTransaction;

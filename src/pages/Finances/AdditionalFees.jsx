@@ -47,7 +47,7 @@ function AdditionalFees() {
   return (
     <>
       <div>
-        <div className="d-flex flex-row align-items-center mb-2 w-100">
+        <div className="d-flex flex-row align-items-center mb-1 w-100">
           <span className="fw-semibold">Addition Fee Payments</span>
         </div>
         <div>

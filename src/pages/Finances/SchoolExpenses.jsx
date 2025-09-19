@@ -63,7 +63,7 @@ function SchoolExpenses() {
           ref={tableRef}
           handleRowCountFromChild={handleRowCountFromChild}
           handleRowDataFromChild={handleRowDataFromChild}
-          tableHeight={89}
+          tableHeight={85.5}
         />
          <BulkActionsToast
             rowCount={rowCount}
