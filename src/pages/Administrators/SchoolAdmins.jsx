@@ -2,7 +2,9 @@ import { Icon } from "@iconify/react";
 import { SchoolAdminTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import React from "react";
 import { ImageComponent } from "../../components/DataTableComponents/ImageComponent";
-import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
 import ManagePermission from "../../ModalContent/SchoolAdmin/ManagePermission";
 import ManageRoles from "../../ModalContent/SchoolAdmin/ManageRole";
@@ -16,7 +18,15 @@ import Table from "../../components/Tables/Tables";
 import { useGetSchoolAdmins } from "../../hooks/schoolAdmin/useGetSchoolAdmins";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { ActivateIcon, DeleteIcon, DetailsIcon, PermissionIcon, RoleIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
+import {
+  ActivateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  PermissionIcon,
+  RoleIcon,
+  SuspendIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
 import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
 import DeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Deactivate";
 import ActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Activate";
@@ -25,9 +35,11 @@ import UpdateSchoolAdmin from "../../ModalContent/SchoolAdmin/UpdateSchoolAdmin"
 import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { SchoolAdminIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 function SchoolAdmins() {
   const tableRef = useRef();
-  const { data: schoolAdmins, isLoading } = useGetSchoolAdmins();
+  const { data: schoolAdmins, isLoading, error } = useGetSchoolAdmins();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);
   const [selectedAdmins, setSelectedAdmins] = useState([]);
@@ -61,11 +73,13 @@ function SchoolAdmins() {
 
   return (
     <>
-      <div>
-        <div className="my-2">
+      <main className="main-container gap-2">
+        <div style={{ height: "15%" }} className="d-flex flex-column gap-3">
           <div className="d-flex align-items-center gap-2">
             <div
-              className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
               style={{
                 width: "2.5rem",
                 height: "2.5rem",
@@ -76,58 +90,68 @@ function SchoolAdmins() {
             </div>
             <span className="my-0 fw-semibold">School Administrator</span>
           </div>
-        </div>
+          <div className="d-flex flex-row align-items-center w-100">
+            <div className="d-flex flex-row align-items-end gap-2">
+              <div className="d-block">
+                <p className="font-size-xs my-0">Total Number administrators</p>
+                <h1 className="fw-bold my-0">{memoizedRowData?.length || 0}</h1>
+              </div>
+            </div>
 
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-flex flex-row align-items-end gap-2">
-            <div className="d-block">
-              <p className="font-size-xs my-0">Total Number administrators</p>
-              <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
+            <div className="end-block d-flex flex-row ms-auto justify-content-end gap-3">
+              <ModalButton
+                action={{ modalContent: CreateSchoolAdmin }}
+                classname={
+                  "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center text-white"
+                }
+              >
+                <Icon icon="icons8:plus" className="font-size-md" />
+                <span className="font-size-sm">Create Admin</span>
+              </ModalButton>
             </div>
           </div>
-
-          <div className="end-block d-flex flex-row ms-auto justify-content-end gap-3">
-            <ModalButton
-              action={{ modalContent: CreateSchoolAdmin }}
-              classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center text-white"
-              }
-            >
-              <Icon icon="icons8:plus" className="font-size-md" />
-              <span className="font-size-sm">Create Admin</span>
-            </ModalButton>
-          </div>
         </div>
-        <div className="position-relative">
-          <div className="pt-3 position-relative z-1">
-            <Table
-              ref={tableRef}
-              colDefs={memoizedColDefs}
-              rowData={memoizedRowData}
-              handleRowCountFromChild={handleRowCountFromChild}
-              handleRowDataFromChild={handleRowDataFromChild}
-              rowHeight={55}
-            />
-          </div>
-          <BulkActionsToast
-            rowCount={rowCount}
-            label={"Selected Admins"}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedAdmins={selectedAdmins}
-                resetAll={handleReset}
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                ref={tableRef}
+                colDefs={memoizedColDefs}
+                rowData={memoizedRowData}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+                rowHeight={55}
               />
-            }
-            actionButton={
-              <ActionButtons
-                selectedAdmins={selectedAdmins}
-                resetAll={handleReset}
-              />
-            }
-          />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={"Selected Admins"}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedAdmins={selectedAdmins}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedAdmins={selectedAdmins}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
         </div>
-      </div>
+      </main>
     </>
   );
 }
@@ -152,31 +176,31 @@ function ActionButtons({ selectedAdmins, resetAll }) {
   );
 }
 function DropdownItems({ selectedAdmins, resetAll, onModalStateChange }) {
-    const [showModal, setShowModal] = useState(false);
-    const [modalContent, setModalContent] = useState(null);
-    const [modalSize, setModalSize] = useState("lg");
-    const modalRef = useRef(null);
-    useEffect(() => {
-      onModalStateChange(showModal, modalRef);
-    }, [showModal, onModalStateChange]);
-  
-    const handleCloseModal = () => {
-      setShowModal(false);
-      setModalContent(null);
-    };
-  
-    const handleShowModal = (ContentComponent, size = "lg") => {
-      setModalContent(
-        React.createElement(ContentComponent, {
-          handleClose: handleCloseModal,
-          resetAll,
-          bulkData: selectedAdmins,
-        })
-      );
-      setModalSize(size);
-      setShowModal(true);
-    };
-  
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedAdmins,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
+
   return (
     <>
       <DropDownMenuItem
@@ -219,7 +243,7 @@ function DropdownItems({ selectedAdmins, resetAll, onModalStateChange }) {
   );
 }
 function ActionButtonGroup(props) {
-   const rowData = props.data;
+  const rowData = props.data;
 
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -227,117 +251,125 @@ function ActionButtonGroup(props) {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null); 
+    setModalContent(null);
   };
 
   const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(React.createElement(ContentComponent, { rowData, handleClose: handleCloseModal }));
+    setModalContent(
+      React.createElement(ContentComponent, {
+        rowData,
+        handleClose: handleCloseModal,
+      })
+    );
     setModalSize(size);
     setShowModal(true);
   };
 
   return (
     <>
-    <ActionButtonDropdown
-      buttonContent={"Edit Actions"}
-      style={
-        "tableActionButton primary-background text-white font-size-sm px-2"
-      }
-    >
-       <DropDownMenuItem
-           className={"remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"}
+      <ActionButtonDropdown
+        buttonContent={"Edit Actions"}
+        style={
+          "tableActionButton primary-background text-white font-size-sm px-2"
+        }
+      >
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
           onClick={() => handleShowModal(ManagePermission, "lg")}
-       >
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Manage Permission</span>
+              <PermissionIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(ManageRoles, "lg")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Manage Role</span>
+              <RoleIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        {rowData.status == "active" ? (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor "
+            }
+            onClick={() => handleShowModal(DeactivateSchoolAdmin, "md")}
+          >
             <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Manage Permission</span>
-            <PermissionIcon />
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
+                <span>Deactivate</span>
+                <SuspendIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        ) : (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor "
+            }
+            onClick={() => handleShowModal(ActivateSchoolAdmin, "md")}
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
+                <span>Activate</span>
+                <ActivateIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        )}
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          size={"lg"}
+          onClick={() => handleShowModal(DeleteSchoolAdmin, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete</span>
+              <DeleteIcon />
+            </div>
           </div>
-        </div>
-       </DropDownMenuItem>
-      <DropDownMenuItem
-        className={
-          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-        }
-        onClick={() => handleShowModal(ManageRoles, "lg")}
-      >
-        <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Manage Role</span>
-            <RoleIcon />
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(UpdateSchoolAdmin, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Update</span>
+              <UpdateIcon />
+            </div>
           </div>
-        </div>
-      </DropDownMenuItem>
-      {
-         rowData.status == 'active' ? <DropDownMenuItem
-        className={
-          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor "
-        }
-        onClick={() => handleShowModal(DeactivateSchoolAdmin, 'md')}
-      >
-        <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
-            <span>Deactivate</span>
-            <SuspendIcon />
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(SchoolAdminDetails, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Details</span>
+              <DetailsIcon />
+            </div>
           </div>
-        </div>
-      </DropDownMenuItem> : 
-      <DropDownMenuItem
-        className={
-          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor "
-        }
-        onClick={() => handleShowModal(ActivateSchoolAdmin, 'md')}
-      >
-        <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
-            <span>Activate</span>
-            <ActivateIcon />
-          </div>
-        </div>
-      </DropDownMenuItem>
-      }
-      <DropDownMenuItem
-        className={
-          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-        }
-        size={"lg"}
-        onClick={() => handleShowModal(DeleteSchoolAdmin, 'md')}
-      >
-        <div>
-          <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-            <span>Delete</span>
-            <DeleteIcon />
-          </div>
-        </div>
-      </DropDownMenuItem>
-      <DropDownMenuItem
-       className={
-          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-        }
-        onClick={() => handleShowModal(UpdateSchoolAdmin, 'md')}
-      >
-        <div>
-        <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-          <span>Update</span>
-          <UpdateIcon />
-        </div>
-      </div>
-      </DropDownMenuItem>
-      <DropDownMenuItem
-        className={
-          "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-        }
-        onClick={() => handleShowModal(SchoolAdminDetails, 'md')}
-      >
-        <div>
-        <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-          <span>Details</span>
-          <DetailsIcon />
-        </div>
-      </div>
-      </DropDownMenuItem>
-    </ActionButtonDropdown>
-          <CustomModal
+        </DropDownMenuItem>
+      </ActionButtonDropdown>
+      <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}

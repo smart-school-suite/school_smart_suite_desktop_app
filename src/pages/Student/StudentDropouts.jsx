@@ -17,9 +17,15 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import BulkReinstateDropoutStudent from "../../ModalContent/Student/BulkReinstateDropoutStudent";
 import BulkDeleteStudent from "../../ModalContent/Student/BulkDeleteStudent";
-import { DeleteIcon, DetailsIcon, ReinstateIcon } from "../../icons/ActionIcons";
+import {
+  DeleteIcon,
+  DetailsIcon,
+  ReinstateIcon,
+} from "../../icons/ActionIcons";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function StudentDropOuts() {
-  const { data: dropoutStudents, isLoading } = useGetDropdoutStudents();
+  const { data: dropoutStudents, isLoading, error } = useGetDropdoutStudents();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
@@ -37,13 +43,10 @@ function StudentDropOuts() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <main className="pt-2">
-        <div className="my-2">
+      <main className="main-container gap-2">
+        <div className="d-flex flex-column gap-3" style={{ height: "15%" }}>
           <div className="d-flex align-items-center gap-2">
             <div
               className={`${
@@ -59,43 +62,56 @@ function StudentDropOuts() {
             </div>
             <span className="my-0 fw-semibold">Manage Student Dropout</span>
           </div>
+          <div className="d-block">
+            <p className="font-size-xs my-0">Total Dropouts</p>
+            <h1 className="fw-bold my-0">{dropoutStudents?.data?.length || 0}</h1>
+          </div>
         </div>
-        <div className="d-block">
-          <p className="font-size-xs my-0">Total Dropouts</p>
-          <h1 className="fw-bold my-0">{dropoutStudents.data.length}</h1>
-        </div>
-        <div className="mt-2">
-          <Table
-            colDefs={StudentTableConfig({ DropdownComponent })}
-            rowData={dropoutStudents.data}
-            rowHeight={55}
-            ref={tableRef}
-            handleRowCountFromChild={handleRowCountFromChild}
-            handleRowDataFromChild={handleRowDataFromChild}
-          />
-          <BulkActionsToast
-            rowCount={rowCount}
-            label={`${
-              rowCount >= 1
-                ? "Student Selected"
-                : rowCount >= 2
-                ? "Students Selected"
-                : null
-            }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedStudents={selectedStudents}
-                resetAll={handleReset}
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.8} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={StudentTableConfig({ DropdownComponent })}
+                rowData={dropoutStudents.data}
+                rowHeight={55}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
               />
-            }
-            actionButton={
-              <ActionButtons
-                selectedStudents={selectedStudents}
-                resetAll={handleReset}
-              />
-            }
-          />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Student Selected"
+                      : rowCount >= 2
+                      ? "Students Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedStudents={selectedStudents}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedStudents={selectedStudents}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
         </div>
       </main>
     </>
@@ -189,7 +205,7 @@ function ActionButtons({ selectedStudents, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        action={{ modalContent:BulkDeleteStudent }}
+        action={{ modalContent: BulkDeleteStudent }}
         bulkData={selectedStudents}
         resetAll={resetAll}
       >
@@ -203,30 +219,30 @@ function ActionButtons({ selectedStudents, resetAll }) {
   );
 }
 function DropdownItems({ selectedStudents, resetAll, onModalStateChange }) {
-      const [showModal, setShowModal] = useState(false);
-      const [modalContent, setModalContent] = useState(null);
-      const [modalSize, setModalSize] = useState("lg");
-      const modalRef = useRef(null);
-      useEffect(() => {
-        onModalStateChange(showModal, modalRef);
-      }, [showModal, onModalStateChange]);
-    
-      const handleCloseModal = () => {
-        setShowModal(false);
-        setModalContent(null);
-      };
-    
-      const handleShowModal = (ContentComponent, size = "lg") => {
-        setModalContent(
-          React.createElement(ContentComponent, {
-            handleClose: handleCloseModal,
-            resetAll,
-            bulkData: selectedStudents,
-          })
-        );
-        setModalSize(size);
-        setShowModal(true);
-      };
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedStudents,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
       <DropDownMenuItem
@@ -239,7 +255,7 @@ function DropdownItems({ selectedStudents, resetAll, onModalStateChange }) {
         </div>
       </DropDownMenuItem>
       <DropDownMenuItem
-         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
         onClick={() => handleShowModal(BulkDeleteStudent, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
@@ -247,7 +263,7 @@ function DropdownItems({ selectedStudents, resetAll, onModalStateChange }) {
           <DeleteIcon />
         </div>
       </DropDownMenuItem>
-                  <CustomModal
+      <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}

@@ -110,3 +110,8 @@ export const daysOfWeek = [
   { id: 6, value: "saturday", label: "Saturday" },
   { id: 7, value: "sunday", label: "Sunday" },
 ];
+
+export const schoolTypes = [
+  { id: 1, name: "Private" },
+  { id: 2, name: "Government" }
+]

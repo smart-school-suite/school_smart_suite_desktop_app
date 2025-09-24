@@ -16,8 +16,16 @@ import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
+import { useNavigate } from "react-router-dom";
 function SpecialtyTimetable() {
-  const { data: schoolSemesters, isLoading } = useGetActiveSchoolSemesters();
+  const navigate = useNavigate();
+  const {
+    data: schoolSemesters,
+    isLoading,
+    error,
+  } = useGetActiveSchoolSemesters();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
@@ -35,69 +43,92 @@ function SpecialtyTimetable() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div className="my-2">
-        <div className="d-flex align-items-center gap-2">
-          <div
-            className={`${
-              darkMode ? "dark-mode-active" : "light-mode-active"
-            } d-flex justify-content-center align-items-center`}
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "0.5rem",
-            }}
-          >
-            <TimetableIcon />
+      <main className="main-container gap-2">
+        <div className="d-flex flex-column gap-3" style={{ height: "15%" }}>
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <TimetableIcon />
+            </div>
+            <span className="my-0 fw-semibold">Manage Specialty Timetable</span>
           </div>
-          <span className="my-0 fw-semibold">Manage Specialty Timetable</span>
-        </div>
-      </div>
-      <div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
+          <div className="d-flex flex-column">
             <p className="font-size-xs my-0">Number of semesters</p>
-            <h1 className="fw-bold my-0">{schoolSemesters.data.length}</h1>
+            <h1 className="fw-bold my-0">
+              {schoolSemesters?.data?.length || 0}
+            </h1>
           </div>
         </div>
-        <Table
-          colDefs={SpecialtyTimetableTableConfig({
-            ActionButtonGroup,
-          })}
-          rowData={schoolSemesters.data}
-          rowHeight={55}
-          ref={tableRef}
-          handleRowCountFromChild={handleRowCountFromChild}
-          handleRowDataFromChild={handleRowDataFromChild}
-        />
-        <BulkActionsToast
-          rowCount={rowCount}
-          label={`${
-            rowCount >= 1
-              ? "Timetable Selected"
-              : rowCount >= 2
-              ? "Timetables Selected"
-              : null
-          }`}
-          resetAll={handleReset}
-          dropDownItems={
-            <DropdownItems
-              selectedTimetable={selectedTimetable}
-              resetAll={handleReset}
-            />
-          }
-          actionButton={
-            <ActionButtons
-              selectedTimetable={selectedTimetable}
-              resetAll={handleReset}
-            />
-          }
-        />
-      </div>
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title="No Semesters Found"
+              description="We couldn’t find any semesters for this branch. Please create a semester before setting up a timetable."
+            >
+              <button 
+               className="border-none rounded-2 p-2 font-size-sm primary-background-100"
+               onClick={() => {
+                 navigate("/semesters")
+               }}
+              >
+                Go To Semesters
+              </button>
+            </NotFoundError>
+          ) : schoolSemesters.data.length > 0 ? (
+            <>
+              <Table
+                colDefs={SpecialtyTimetableTableConfig({
+                  ActionButtonGroup,
+                })}
+                rowData={schoolSemesters.data}
+                rowHeight={55}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Timetable Selected"
+                      : rowCount >= 2
+                      ? "Timetables Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedTimetable={selectedTimetable}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedTimetable={selectedTimetable}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          ) : (
+            <div className="alert alert-warning">No Semester Added Found</div>
+          )}
+        </div>
+      </main>
     </>
   );
 }

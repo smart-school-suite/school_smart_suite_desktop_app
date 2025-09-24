@@ -15,47 +15,59 @@ import UpdateResitScore from "../../ModalContent/ResitCandidate/UpdateResitScore
 import DeleteCandidate from "../../ModalContent/ResitCandidate/DeleteCandidate";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function ResitCandidates() {
-  const { data: resitCandidates, isLoading } = useGetResitCandidates();
+  const { data: resitCandidates, isLoading, error } = useGetResitCandidates();
   const darkMode = useSelector((state) => state.theme.darkMode);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div className="my-2">
-        <div className="d-flex align-items-center gap-2">
-          <div
-            className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "0.5rem",
-            }}
-          >
-            <ExamCandidateIcon />
+      <main className="main-container gap-2">
+        <div className="d-flex flex-column gap-3" style={{ height: "15%" }}>
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <ExamCandidateIcon />
+            </div>
+            <span className="my-0 fw-semibold">Resit Candidate Management</span>
           </div>
-          <span className="my-0 fw-semibold">Resit Candidate Management</span>
+          <div className="d-flex flex-column">
+            <p className="font-size-xs my-0">Total Number of Candidates</p>
+            <h1 className="fw-bold my-0">{resitCandidates?.data?.length || 0}</h1>
+          </div>
         </div>
-      </div>
-      <div className="d-flex flex-column my-3">
-        <div className="d-block">
-          <p className="font-size-xs my-0">Total Number of Candidates</p>
-          <h1 className="fw-bold my-0">{resitCandidates.data.length}</h1>
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={ExamCandidateTableConfig({ DropdownComponent })}
+                rowData={resitCandidates.data}
+              />
+            </>
+          )}
         </div>
-      </div>
-      <div>
-          <Table
-            colDefs={ExamCandidateTableConfig({ DropdownComponent })}
-            rowData={resitCandidates.data}
-          />
-      </div>
+      </main>
     </>
   );
 }
 export default ResitCandidates;
 
- function DropdownComponent(props) {
+function DropdownComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -89,16 +101,18 @@ export default ResitCandidates;
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() => {
-            if (rowData.student_accessed == 'accessed') {
+            if (rowData.student_accessed == "accessed") {
               toast.custom(
                 <ToastWarning
                   title={"Candidate Already Accessed"}
-                  description={"Candidate has already been accessed. Please update the resit scores instead."}
+                  description={
+                    "Candidate has already been accessed. Please update the resit scores instead."
+                  }
                 />
-              )
+              );
               return;
             }
-            handleShowModal(SummitScores, 'xl')
+            handleShowModal(SummitScores, "xl");
           }}
         >
           <div>
@@ -113,16 +127,18 @@ export default ResitCandidates;
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() => {
-            if (rowData.student_accessed !== 'accessed') {
+            if (rowData.student_accessed !== "accessed") {
               toast.custom(
                 <ToastWarning
                   title={"Candidate Not Accessed"}
-                  description={"Candidate has not been accessed. Please add scores first and try again."}
+                  description={
+                    "Candidate has not been accessed. Please add scores first and try again."
+                  }
                 />
-              )
+              );
               return;
             }
-            handleShowModal(UpdateResitScore, 'xl')
+            handleShowModal(UpdateResitScore, "xl");
           }}
         >
           <div>
@@ -136,7 +152,7 @@ export default ResitCandidates;
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteCandidate, 'md')}
+          onClick={() => handleShowModal(DeleteCandidate, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">

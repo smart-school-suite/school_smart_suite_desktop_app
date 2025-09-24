@@ -15,8 +15,14 @@ import DeleteCategory from "../../ModalContent/ExpenseCategory/DeleteCategory";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function SchoolExpensesCategory() {
-  const { data: expenseCategories, isLoading } = useGetExpensesCategories();
+  const {
+    data: expenseCategories,
+    isLoading,
+    error,
+  } = useGetExpensesCategories();
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -33,14 +39,12 @@ function SchoolExpensesCategory() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="my-2">
-          <div className="d-flex flex-row align-items-center justify-content-between">
+      <div className="h-100 d-flex flex-column gap-2">
+        <div className="d-flex flex-row align-items-center justify-content-between"
+         style={{ height:"5%" }}
+        >
             <span className="fw-semibold">Expense Categories</span>
             <ModalButton
               action={{ modalContent: CreateCategory }}
@@ -52,32 +56,51 @@ function SchoolExpensesCategory() {
               <span className="font-size-sm">Create Category</span>
             </ModalButton>
           </div>
+        <div style={{ height:"95%" }}>
+          {isLoading ? (
+          <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+        ) : error ? (
+          <NotFoundError
+            title={error.response.data.errors.title}
+            description={error.response.data.errors.description}
+          ></NotFoundError>
+        ) : (
+          <>
+            <Table
+              colDefs={ExpensesCategoryTableConfig({ DropdownComponent })}
+              rowData={expenseCategories.data}
+              ref={tableRef}
+              handleRowCountFromChild={handleRowCountFromChild}
+              handleRowDataFromChild={handleRowDataFromChild}
+            />
+            {rowCount > 0 && (
+              <BulkActionsToast
+                rowCount={rowCount}
+                label={`${
+                  rowCount >= 1
+                    ? "Category Selected"
+                    : rowCount >= 2
+                    ? "Categories Selected"
+                    : null
+                }`}
+                resetAll={handleReset}
+                dropDownItems={
+                  <DropdownItems
+                    selectedCategories={selectedCategories}
+                    resetAll={handleReset}
+                  />
+                }
+                actionButton={
+                  <ActionButtons
+                    selectedCategories={selectedCategories}
+                    resetAll={handleReset}
+                  />
+                }
+              />
+            )}
+          </>
+        )}
         </div>
-        <Table
-          colDefs={ExpensesCategoryTableConfig({ DropdownComponent })}
-          rowData={expenseCategories.data}
-          ref={tableRef}
-          handleRowCountFromChild={handleRowCountFromChild}
-          handleRowDataFromChild={handleRowDataFromChild}
-          tableHeight={85.5}
-        />
-        <BulkActionsToast
-            rowCount={rowCount}
-            label={`${rowCount >= 1 ? 'Category Selected' : rowCount >= 2 ?  'Categories Selected' : null }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedCategories={selectedCategories}
-                resetAll={handleReset}
-              />
-            }
-            actionButton={
-              <ActionButtons
-                selectedCategories={selectedCategories}
-                resetAll={handleReset}
-              />
-            }
-          />
       </div>
     </>
   );
@@ -197,7 +220,7 @@ function DropdownItems({ selectedCategories, resetAll }) {
       </ModalButton>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-       // action={{ modalContent: BulkActivateCourse }}
+        // action={{ modalContent: BulkActivateCourse }}
         bulkData={selectedCategories}
         resetAll={resetAll}
       >

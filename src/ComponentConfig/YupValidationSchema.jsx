@@ -107,6 +107,15 @@ export const emailValidationSchema = ({
   return schema;
 };
 
+export const passwordSchema = ({
+  min = 8,
+  messages = {}
+} = {}) => {
+  return Yup.string()
+    .required(messages.required || "Password is required.")
+    .min(min, messages.min || `Password must be at least ${min} characters long.`);
+};
+
 export const courseCodeSchema = ({
   min = 4,
   max = 10,

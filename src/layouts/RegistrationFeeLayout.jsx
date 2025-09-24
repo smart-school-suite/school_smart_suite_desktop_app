@@ -6,7 +6,8 @@ function RegistrationFeeLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
-      <div className="my-2">
+      <main className="main-container gap-2">
+        <div style={{ height:"5%" }}>
         <div className="d-flex align-items-center gap-2">
           <div
             className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
@@ -21,12 +22,15 @@ function RegistrationFeeLayout() {
           <span className="my-0 fw-semibold">Manage Registration Fees</span>
         </div>
       </div>
-      <div className="d-flex flex-row align-items-start gap-2 w-100">
+      <div style={{ height:"95%" }}>
+        <div className="d-flex flex-row align-items-start gap-2 w-100 h-100">
         <RegistrationFeeSideBar />
-        <div className="width-80">
+        <div className="width-80 h-100">
           <Outlet />
         </div>
       </div>
+      </div>
+      </main>
     </>
   );
 }

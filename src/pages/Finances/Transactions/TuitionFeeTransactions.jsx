@@ -20,8 +20,14 @@ import { Icon } from "@iconify/react";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
 import BulkDeleteTuitionFeeTransaction from "../../../ModalContent/TuitionFeeTransaction/BulkDeleteTuitionFeeTransaction";
 import BulkReverseTuitionFeeTransaction from "../../../ModalContent/TuitionFeeTransaction/BulkReverseTuitionFeeTransaction";
+import { NotFoundError } from "../../../components/errors/Error";
+import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 function TuitionFeeTransactions() {
-  const { data: tuitionFees, isLoading } = useGetTuitionFeeTransactions();
+  const {
+    data: tuitionFees,
+    isLoading,
+    error,
+  } = useGetTuitionFeeTransactions();
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
   const [selectedTransactions, setSelectedTransactions] = useState([]);
@@ -38,51 +44,61 @@ function TuitionFeeTransactions() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="d-flex flex-row align-items-center mb-1 w-100">
-          <div>
-            <span className="fw-semibold">Tuition Fee Transactions</span>
-          </div>
+      <div className="d-flex flex-column gap-2 h-100">
+        <div
+          className="d-flex flex-row align-items-center"
+          style={{ height: "5%" }}
+        >
+          <span className="fw-semibold">Tuition Fee Transactions</span>
         </div>
-        <div>
-          <Table
-            colDefs={tuitionFeesTransactionTableConfig({
-              DropdownComponent,
-            })}
-            rowData={tuitionFees.data}
-            ref={tableRef}
-            handleRowCountFromChild={handleRowCountFromChild}
-            handleRowDataFromChild={handleRowDataFromChild}
-            tableHeight={89}
-          />
-          <BulkActionsToast
-            rowCount={rowCount}
-            label={`${
-              rowCount >= 1
-                ? "Transaction Selected"
-                : rowCount >= 2
-                ? "Transactions Selected"
-                : null
-            }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedTransactions={selectedTransactions}
-                resetAll={handleReset}
+        <div style={{ height: "95%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={tuitionFeesTransactionTableConfig({
+                  DropdownComponent,
+                })}
+                rowData={tuitionFees.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
               />
-            }
-            actionButton={
-              <ActionButtons
-                selectedTransactions={selectedTransactions}
-                resetAll={handleReset}
-              />
-            }
-          />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Transaction Selected"
+                      : rowCount >= 2
+                      ? "Transactions Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedTransactions={selectedTransactions}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedTransactions={selectedTransactions}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
         </div>
       </div>
     </>

@@ -11,11 +11,9 @@ function Layout() {
         <div className="row">
           <Sidebar />
           <div className="col-lg-10 col-sm-10 col-md-10">
-            <div>
-              <main className={`${darkMode ? 'text-white' : null}`}>
+            <main className={`${darkMode ? 'text-white' : null} pt-1`}>
                 <Outlet />
               </main>
-            </div>
           </div>
         </div>
       </div>

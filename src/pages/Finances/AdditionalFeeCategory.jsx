@@ -13,32 +13,33 @@ import { AdditionalFeeCategoryTableConfig } from "../../ComponentConfig/AgGridTa
 import { Icon } from "@iconify/react";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function AdditionalFeeCategory() {
-  const { data: categories, isLoading } = useGetAdditionalFeeCategory();
-    const tableRef = useRef();
-    const [rowCount, setRowCount] = useState(0);
-    const [selectedCategories, setSelectedCategories] = useState([]);
-    const handleReset = () => {
-      if (tableRef.current) {
-        tableRef.current.deselectAll();
-        setRowCount(0);
-        setSelectedCategories([]);
-      }
-    };
-    const handleRowDataFromChild = useCallback((Data) => {
-      setSelectedCategories(Data);
-    }, []);
-    const handleRowCountFromChild = useCallback((count) => {
-      setRowCount(count);
-    }, []);
-  if (isLoading) {
-    return <DataTablePageLoader />;
-  }
+  const { data: categories, isLoading, error } = useGetAdditionalFeeCategory();
+  const tableRef = useRef();
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedCategories([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedCategories(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
   return (
     <>
-      <div>
-        <div className="d-flex flex-row align-items-center justify-content-between mb-1 w-100">
+      <div className="d-flex flex-column gap-2 h-100">
+        <div
+          className="d-flex flex-row align-items-center justify-content-between w-100"
+          style={{ height: "5%" }}
+        >
           <span className="fw-semibold">Addition Fee Category</span>
           <ModalButton
             classname={
@@ -50,38 +51,52 @@ function AdditionalFeeCategory() {
             <span className="font-size-sm">Create Category</span>
           </ModalButton>
         </div>
-        <div>
-          <Table
-            colDefs={AdditionalFeeCategoryTableConfig({ DropdownComponent })}
-            rowData={categories.data}
-            ref={tableRef}
-            handleRowCountFromChild={handleRowCountFromChild}
-            handleRowDataFromChild={handleRowDataFromChild}
-            tableHeight={85.5}
-          />
-          <BulkActionsToast
-            rowCount={rowCount}
-            label={`${
-              rowCount >= 1
-                ? "Category Selected"
-                : rowCount >= 2
-                ? "Categories Selected"
-                : null
-            }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedCategories={selectedCategories}
-                resetAll={handleReset}
+        <div style={{ height: "95%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={AdditionalFeeCategoryTableConfig({
+                  DropdownComponent,
+                })}
+                rowData={categories.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
               />
-            }
-            actionButton={
-              <ActionButtons
-                selectedCategories={selectedCategories}
-                resetAll={handleReset}
-              />
-            }
-          />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Category Selected"
+                      : rowCount >= 2
+                      ? "Categories Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedCategories={selectedCategories}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedCategories={selectedCategories}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
         </div>
       </div>
     </>

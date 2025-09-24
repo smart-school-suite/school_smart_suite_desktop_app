@@ -25,8 +25,10 @@ import UpdateCaScores from "../../ModalContent/ExamCandidate/UpdateCaScores";
 import UpdateExamScores from "../../ModalContent/ExamCandidate/UpdateExamScores";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function ExamCandidates() {
-  const { data: examCandidates, isLoading } = useGetExamCandidates();
+  const { data: examCandidates, isLoading, error } = useGetExamCandidates();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
@@ -44,72 +46,80 @@ function ExamCandidates() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div className="my-2">
-        <div className="d-flex align-items-center gap-2">
-          <div
-            className={`${
-              darkMode ? "dark-mode-active" : "light-mode-active"
-            } d-flex justify-content-center align-items-center`}
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "0.5rem",
-            }}
-          >
-            <ExamCandidateIcon />
+      <main className="main-container gap-2">
+        <div style={{ height: "15%" }} className="d-flex flex-column gap-3">
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <ExamCandidateIcon />
+            </div>
+            <span className="my-0 fw-semibold">Manage Exam Candidates</span>
           </div>
-          <span className="my-0 fw-semibold">Manage Exam Candidates</span>
+          <div className="d-flex flex-column">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Number of Candidates</p>
+              <h1 className="fw-bold my-0">{examCandidates?.data?.length || 0}</h1>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="d-flex flex-column my-3">
-        <div className="d-block">
-          <p className="font-size-xs my-0">Total Number of Candidates</p>
-          <h1 className="fw-bold my-0">{examCandidates?.data?.length}</h1>
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : examCandidates?.data?.length > 0 ? (
+            <>
+              <Table
+                colDefs={ExamCandidateTableConfig({ DropdownComponent })}
+                rowData={examCandidates.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Exam Candidate Selected"
+                      : rowCount >= 2
+                      ? "Exam Candidates Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedExamCandidates={selectedExamCandidates}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedExamCandidates={selectedExamCandidates}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          ) : (
+            <div className="alert alert-warning">No Canidates Added Found</div>
+          )}
         </div>
-      </div>
-      <div>
-        {examCandidates?.data?.length > 0 ? (
-          <>
-            <Table
-              colDefs={ExamCandidateTableConfig({ DropdownComponent })}
-              rowData={examCandidates.data}
-              ref={tableRef}
-              handleRowCountFromChild={handleRowCountFromChild}
-              handleRowDataFromChild={handleRowDataFromChild}
-            />
-            <BulkActionsToast
-              rowCount={rowCount}
-              label={`${
-                rowCount >= 1
-                  ? "Exam Candidate Selected"
-                  : rowCount >= 2
-                  ? "Exam Candidates Selected"
-                  : null
-              }`}
-              resetAll={handleReset}
-              dropDownItems={
-                <DropdownItems
-                  selectedExamCandidates={selectedExamCandidates}
-                  resetAll={handleReset}
-                />
-              }
-              actionButton={
-                <ActionButtons
-                  selectedExamCandidates={selectedExamCandidates}
-                  resetAll={handleReset}
-                />
-              }
-            />
-          </>
-        ) : (
-          <div className="alert alert-warning">No Canidates Added Found</div>
-        )}
-      </div>
+      </main>
     </>
   );
 }
@@ -145,7 +155,6 @@ export function DropdownComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-
         {rowData.exam_type === "ca" ? (
           <>
             <DropDownMenuItem
@@ -153,16 +162,18 @@ export function DropdownComponent(props) {
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
               onClick={() => {
-                 if(rowData.student_accessed == 'accessed'){
-                     toast.custom(
-                       <ToastWarning 
-                         title={"Opps Something Not Right"}
-                         description={"Looks like this student has been accessed for further changes you can update the student scores"}
-                       />
-                     )
-                     return
-                 }
-                 handleShowModal(AddCaScores, "xl")
+                if (rowData.student_accessed == "accessed") {
+                  toast.custom(
+                    <ToastWarning
+                      title={"Opps Something Not Right"}
+                      description={
+                        "Looks like this student has been accessed for further changes you can update the student scores"
+                      }
+                    />
+                  );
+                  return;
+                }
+                handleShowModal(AddCaScores, "xl");
               }}
             >
               <div>
@@ -172,21 +183,23 @@ export function DropdownComponent(props) {
                 </div>
               </div>
             </DropDownMenuItem>
-             <DropDownMenuItem
+            <DropDownMenuItem
               className={
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
               onClick={() => {
-                  if(rowData.student_accessed !== 'accessed'){
-                     toast.custom(
-                       <ToastWarning 
-                         title={"Opps Something Not Right"}
-                         description={"Looks like this student has not been accessed you will need to create student scores before updating"}
-                       />
-                     )
-                     return
-                  }
-                  handleShowModal(UpdateCaScores, 'xl')
+                if (rowData.student_accessed !== "accessed") {
+                  toast.custom(
+                    <ToastWarning
+                      title={"Opps Something Not Right"}
+                      description={
+                        "Looks like this student has not been accessed you will need to create student scores before updating"
+                      }
+                    />
+                  );
+                  return;
+                }
+                handleShowModal(UpdateCaScores, "xl");
               }}
             >
               <div>
@@ -204,17 +217,18 @@ export function DropdownComponent(props) {
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
               onClick={() => {
-                 if(rowData.student_accessed == 'accessed'){
-                     toast.custom(
-                       <ToastWarning 
-                         title={"Opps Something Not Right"}
-                         description={"Looks like this student has been accessed for further changes you can update the student scores"}
-                       />
-                     )
-                     return
-                  }
-                 handleShowModal(AddExamScores, "xl")
-                 
+                if (rowData.student_accessed == "accessed") {
+                  toast.custom(
+                    <ToastWarning
+                      title={"Opps Something Not Right"}
+                      description={
+                        "Looks like this student has been accessed for further changes you can update the student scores"
+                      }
+                    />
+                  );
+                  return;
+                }
+                handleShowModal(AddExamScores, "xl");
               }}
             >
               <div>
@@ -229,16 +243,18 @@ export function DropdownComponent(props) {
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
               onClick={() => {
-                  if(rowData.student_accessed !== 'accessed'){
-                     toast.custom(
-                       <ToastWarning 
-                         title={"Opps Something Not Right"}
-                         description={"Looks like this student has not been accessed add student exam marks before updating"}
-                       />
-                     )
-                    return;
-                 }
-                 handleShowModal(UpdateExamScores, 'xl')
+                if (rowData.student_accessed !== "accessed") {
+                  toast.custom(
+                    <ToastWarning
+                      title={"Opps Something Not Right"}
+                      description={
+                        "Looks like this student has not been accessed add student exam marks before updating"
+                      }
+                    />
+                  );
+                  return;
+                }
+                handleShowModal(UpdateExamScores, "xl");
               }}
             >
               <div>

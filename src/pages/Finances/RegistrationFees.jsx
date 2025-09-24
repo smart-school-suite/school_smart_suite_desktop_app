@@ -12,70 +12,80 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
-import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import BulkPayRegistrationFee from "../../ModalContent/RegistrationFees/BulkPayRegistrationFees";
 import BulkDeleteRegistrationFee from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFee";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function RegistrationFees() {
-  const { data: registrationFees, isLoading } = useGetRegistrationFees();
-   const tableRef = useRef();
-    const [rowCount, setRowCount] = useState(0);
-    const [selectedRegistrationFee, setSelectedRegistrationFee] = useState([]);
-    const handleReset = () => {
-      if (tableRef.current) {
-        tableRef.current.deselectAll();
-        setRowCount(0);
-        setSelectedRegistrationFee([]);
-      }
-    };
-    const handleRowDataFromChild = useCallback((Data) => {
-      setSelectedRegistrationFee(Data);
-    }, []);
-    const handleRowCountFromChild = useCallback((count) => {
-      setRowCount(count);
-    }, []);
-  if (isLoading) {
-    return < DataTablePageLoader />;
-  }
+  const { data: registrationFees, isLoading, error } = useGetRegistrationFees();
+  const tableRef = useRef();
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedRegistrationFee, setSelectedRegistrationFee] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedRegistrationFee([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedRegistrationFee(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
 
   return (
     <>
-      <div>
-        <div>
+      <div className="d-flex flex-column gap-2 h-100">
+        <div style={{ height: "5%" }}>
           <span className="fw-semibold mb-1">Registration Fees</span>
         </div>
-        <div>
-          <Table
-            colDefs={registrationFeeTableConfig({ DropdownComponent })}
-            rowData={registrationFees.data}
-            ref={tableRef}
-            handleRowCountFromChild={handleRowCountFromChild}
-            handleRowDataFromChild={handleRowDataFromChild}
-            tableHeight={89}
-          />
-           <BulkActionsToast
-            rowCount={rowCount}
-            label={`${
-              rowCount >= 1
-                ? "Registration Fee Selected"
-                : rowCount >= 2
-                ? "Registration Fees Selected"
-                : null
-            }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedRegistrationFee={selectedRegistrationFee}
-                resetAll={handleReset}
+        <div style={{ height: "95%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={registrationFeeTableConfig({ DropdownComponent })}
+                rowData={registrationFees.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
               />
-            }
-            actionButton={
-              <ActionButtons
-                selectedRegistrationFee={selectedRegistrationFee}
-                resetAll={handleReset}
-              />
-            }
-          />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Registration Fee Selected"
+                      : rowCount >= 2
+                      ? "Registration Fees Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedRegistrationFee={selectedRegistrationFee}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedRegistrationFee={selectedRegistrationFee}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
         </div>
       </div>
     </>
@@ -153,7 +163,7 @@ export function DropdownComponent(props) {
           </div>
         </DropDownMenuItem>
       </ActionButtonDropdown>
-        <CustomModal
+      <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}
@@ -183,31 +193,35 @@ function ActionButtons({ selectedRegistrationFee, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedRegistrationFee, resetAll, onModalStateChange }) {
-    const [showModal, setShowModal] = useState(false);
-    const [modalContent, setModalContent] = useState(null);
-    const [modalSize, setModalSize] = useState("lg");
-    const modalRef = useRef(null);
-    useEffect(() => {
-      onModalStateChange(showModal, modalRef);
-    }, [showModal, onModalStateChange]);
-  
-    const handleCloseModal = () => {
-      setShowModal(false);
-      setModalContent(null);
-    };
-  
-    const handleShowModal = (ContentComponent, size = "lg") => {
-      setModalContent(
-        React.createElement(ContentComponent, {
-          handleClose: handleCloseModal,
-          resetAll,
-          bulkData: selectedRegistrationFee,
-        })
-      );
-      setModalSize(size);
-      setShowModal(true);
-    };
+function DropdownItems({
+  selectedRegistrationFee,
+  resetAll,
+  onModalStateChange,
+}) {
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedRegistrationFee,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
       <DropDownMenuItem
@@ -228,7 +242,7 @@ function DropdownItems({ selectedRegistrationFee, resetAll, onModalStateChange }
           <DeleteIcon />
         </div>
       </DropDownMenuItem>
-      
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
@@ -241,4 +255,3 @@ function DropdownItems({ selectedRegistrationFee, resetAll, onModalStateChange }
     </>
   );
 }
-

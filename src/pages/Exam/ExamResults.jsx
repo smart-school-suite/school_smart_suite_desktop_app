@@ -3,47 +3,52 @@ import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader"
 import { GradeIcon } from "../../icons/Icons";
 import { useGetExamResults } from "../../hooks/examResults/useGetExamResults";
 import { ExamResultsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import  React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { CreateIcon, DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import {
+  CreateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
 import ExamResultDetails from "../../ModalContent/ExamResults/ResultDetails";
 import { useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
-function ExamResults(){
- const { data:examResults, isLoading } = useGetExamResults();
- const darkMode = useSelector((state) => state.theme.darkMode);
-   const tableRef = useRef();
-   const [rowCount, setRowCount] = useState(0);
-   const [selectedExamResults, setSelectedExamResults] = useState([]);
-   const handleReset = () => {
-     if (tableRef.current) {
-       tableRef.current.deselectAll();
-       setRowCount(0);
-       setSelectedExamResults([]);
-     }
-   };
-   const handleRowDataFromChild = useCallback((Data) => {
-     setSelectedExamResults(Data);
-   }, []);
-   const handleRowCountFromChild = useCallback((count) => {
-     setRowCount(count);
-   }, []);
- if(isLoading){
-    return(
-        <DataTableNavLoader />
-    )
- }
-    return(
-        <>
-        <div className="my-2">
-        <div className="d-flex align-items-center gap-2">
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
+function ExamResults() {
+  const { data: examResults, isLoading, error } = useGetExamResults();
+  const darkMode = useSelector((state) => state.theme.darkMode);
+  const tableRef = useRef();
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedExamResults, setSelectedExamResults] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedExamResults([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedExamResults(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
+  return (
+    <>
+      <main className="main-container gap-2">
+        <div style={{ height: "15%" }} className="d-flex flex-column gap-3">
+          <div className="d-flex align-items-center gap-3">
           <div
-            className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
+            className={`${
+              darkMode ? "dark-mode-active" : "light-mode-active"
+            } d-flex justify-content-center align-items-center`}
             style={{
               width: "2.5rem",
               height: "2.5rem",
@@ -54,53 +59,61 @@ function ExamResults(){
           </div>
           <span className="my-0 fw-semibold">Exam Results</span>
         </div>
-      </div>
-      <div className="d-flex flex-column my-3">
-        <div className="d-block">
-          <p className="font-size-xs my-0">Total Number of Results</p>
-          <h1 className="fw-bold my-0">{examResults?.data?.length}</h1>
+        <div className="d-flex flex-column">
+            <p className="font-size-xs my-0">Total Number of Results</p>
+            <h1 className="fw-bold my-0">{examResults?.data?.length || 0}</h1>
         </div>
-      </div>
-      <div>
-        {examResults?.data?.length > 0 ? (
-          <>
-          <Table
-            colDefs={ExamResultsTableConfig({ DropdownComponent })}
-            rowData={examResults?.data}
-              ref={tableRef}
-              handleRowCountFromChild={handleRowCountFromChild}
-              handleRowDataFromChild={handleRowDataFromChild}
-          />
-          <BulkActionsToast
-              rowCount={rowCount}
-              label={`${
-                rowCount >= 1
-                  ? "Exam Result Selected"
-                  : rowCount >= 2
-                  ? "Exam Results Selected"
-                  : null
-              }`}
-              resetAll={handleReset}
-              dropDownItems={
-                <DropdownItems
-                  selectedExamResults={selectedExamResults}
-                  resetAll={handleReset}
-                />
-              }
-              actionButton={
-                <ActionButtons
-                  selectedExamResults={selectedExamResults}
-                  resetAll={handleReset}
-                />
-              }
+        </div>
+        <div style={{ height:"85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={1} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
             />
+          ) : examResults?.data?.length > 0 ? (
+            <>
+              <Table
+                colDefs={ExamResultsTableConfig({ DropdownComponent })}
+                rowData={examResults?.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {
+                rowCount > 0 && <BulkActionsToast
+                rowCount={rowCount}
+                label={`${
+                  rowCount >= 1
+                    ? "Exam Result Selected"
+                    : rowCount >= 2
+                    ? "Exam Results Selected"
+                    : null
+                }`}
+                resetAll={handleReset}
+                dropDownItems={
+                  <DropdownItems
+                    selectedExamResults={selectedExamResults}
+                    resetAll={handleReset}
+                  />
+                }
+                actionButton={
+                  <ActionButtons
+                    selectedExamResults={selectedExamResults}
+                    resetAll={handleReset}
+                  />
+                }
+              />
+              }
             </>
-        ) : (
-          <div className="alert alert-warning">No Exam Results Added</div>
-        )}
-      </div>
-        </>
-    )
+          ) : (
+            <div className="alert alert-warning">No Exam Results Added</div>
+          )}
+        </div>
+      </main>
+    </>
+  );
 }
 export default ExamResults;
 
@@ -134,7 +147,7 @@ export function DropdownComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-         <DropDownMenuItem
+        <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -151,7 +164,7 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-         // onClick={() => handleShowModal(DeleteExamCandidate, "md")}
+          // onClick={() => handleShowModal(DeleteExamCandidate, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -160,7 +173,6 @@ export function DropdownComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-
       </ActionButtonDropdown>
       <CustomModal
         show={showModal}

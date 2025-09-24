@@ -8,7 +8,6 @@ import DeactivateCourse from "../../ModalContent/Course/DeactivateCourse";
 import UpdateCourse from "../../ModalContent/Course/UpdateCourse";
 import { CoursesTable } from "../../ComponentConfig/AgGridTableConfig";
 import { useGetCourses } from "../../hooks/course/useGetCourses";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
@@ -29,8 +28,10 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkDeleteCourse from "../../ModalContent/Course/BulkDeleteCourse";
 import BulkDeactivateCourse from "../../ModalContent/Course/BulkDeactivateCourse";
 import BulkActivateCourse from "../../ModalContent/Course/BulkActivateCourse";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 function Courses() {
-  const { data: specialty, isLoading } = useGetCourses();
+  const { data: courses, isLoading, error } = useGetCourses();
   const tableRef = useRef();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);
@@ -48,14 +49,11 @@ function Courses() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="my-2">
-          <div className="d-flex align-items-center gap-2">
+      <main className="main-container gap-2">
+        <div style={{ height: "15%" }} className="d-flex flex-column gap-3">
+          <div className="d-flex align-items-center gap-3">
             <div
               className={`${
                 darkMode ? "dark-mode-active" : "light-mode-active"
@@ -70,56 +68,76 @@ function Courses() {
             </div>
             <span className="my-0 fw-semibold">Course Management</span>
           </div>
-        </div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number of Courses</p>
-            <h1 className="fw-bold my-0">{specialty.data.length}</h1>
+          <div className="d-flex flex-row align-items-center w-100">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Number of Courses</p>
+              <h1 className="fw-bold my-0">{courses?.data?.length || 0}</h1>
+            </div>
+            <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+              <ModalButton
+                action={{ modalContent: CreateCourse }}
+                classname={
+                  "border-none green-bg font-size-sm rounded-3  gap-2 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
+                }
+                size={"lg"}
+              >
+                <Icon icon="icons8:plus" className="font-size-md" />
+                <span className="font-size-sm">Create Course</span>
+              </ModalButton>
+            </div>
           </div>
-          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModalButton
-              action={{ modalContent: CreateCourse }}
-              classname={
-                "border-none green-bg font-size-sm rounded-3  gap-2 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
-              }
-              size={"lg"}
-            >
-              <Icon icon="icons8:plus" className="font-size-md" />
-              <span className="font-size-sm">Create Course</span>
-            </ModalButton>
-          </div>
         </div>
-        <Table
-          colDefs={CoursesTable({ DropdownComponent })}
-          rowData={specialty.data}
-          ref={tableRef}
-          handleRowCountFromChild={handleRowCountFromChild}
-          handleRowDataFromChild={handleRowDataFromChild}
-        />
-        <BulkActionsToast
-          rowCount={rowCount}
-          label={`${
-            rowCount >= 1
-              ? "Course Selected"
-              : rowCount >= 2
-              ? "Courses Selected"
-              : null
-          }`}
-          resetAll={handleReset}
-          dropDownItems={
-            <DropdownItems
-              selectedCourses={selectedCourses}
-              resetAll={handleReset}
-            />
-          }
-          actionButton={
-            <ActionButtons
-              selectedCourses={selectedCourses}
-              resetAll={handleReset}
-            />
-          }
-        />
-      </div>
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={1} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : courses.data.length > 0 ? (
+            <>
+              <Table
+                colDefs={CoursesTable({ DropdownComponent })}
+                rowData={courses.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Course Selected"
+                      : rowCount >= 2
+                      ? "Courses Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedCourses={selectedCourses}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedCourses={selectedCourses}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          ) : (
+            <div className="alert alert-danger">
+              Something is wrong with our servers dont worry our engineers are
+              working on it
+            </div>
+          )}
+        </div>
+      </main>
     </>
   );
 }

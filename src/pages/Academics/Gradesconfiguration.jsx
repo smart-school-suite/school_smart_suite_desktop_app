@@ -16,7 +16,8 @@ import {
   GenerateIcon,
   ReuseIcon,
   UpdateIcon,
-  SuspendIcon, ActivateIcon
+  SuspendIcon,
+  ActivateIcon,
 } from "../../icons/ActionIcons";
 import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
@@ -29,8 +30,14 @@ import { ModalButton } from "../../components/DataTableComponents/ActionComponen
 import BulkCreateGrades from "../../ModalContent/GradesConfig/BulkCreateGrades";
 import BulkDeleteGradesByCategory from "../../ModalContent/GradesConfig/BulkDeleteGradesByCategory";
 import BulkCreateGradesByTargetCategory from "../../ModalContent/GradesConfig/BulkCreateGradesByTargetCategory";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function Gradesconfiguration() {
-  const { data: gradeCategory, isLoading } = useGetSchoolGradeCategories();
+  const {
+    data: gradeCategory,
+    isLoading,
+    error,
+  } = useGetSchoolGradeCategories();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
@@ -48,13 +55,10 @@ function Gradesconfiguration() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="my-2">
+      <main className="main-container gap-2">
+        <div className="d-flex flex-column gap-3" style={{ height: "15%" }}>
           <div className="d-flex align-items-center gap-2">
             <div
               className={`${
@@ -70,50 +74,63 @@ function Gradesconfiguration() {
             </div>
             <span className="my-0 fw-semibold">Manage Exam Grading</span>
           </div>
-        </div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Grades Config</p>
-            <h1 className="fw-bold my-0">{gradeCategory.data.length}</h1>
+          <div className="d-flex flex-row align-items-center  w-100">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Grades Config</p>
+              <h1 className="fw-bold my-0">
+                {gradeCategory?.data?.length || 0}
+              </h1>
+            </div>
           </div>
         </div>
-        {gradeCategory?.data?.length > 0 ? (
-          <>
-            <Table
-              colDefs={ExamGradingCongfig({ DropdownComponent })}
-              rowData={gradeCategory.data}
-              ref={tableRef}
-              handleRowCountFromChild={handleRowCountFromChild}
-              handleRowDataFromChild={handleRowDataFromChild}
-            />
-            <BulkActionsToast
-              rowCount={rowCount}
-              label={`${
-                rowCount >= 1
-                  ? "Grade Configuration Selected"
-                  : rowCount >= 2
-                  ? "Grades Configuration Selected"
-                  : null
-              }`}
-              resetAll={handleReset}
-              dropDownItems={
-                <DropdownItems
-                  selectedGradeConfigs={selectedGradeConfigs}
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton height="100%" width="100%" speed={1} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : gradeCategory?.data?.length > 0 ? (
+            <>
+              <Table
+                colDefs={ExamGradingCongfig({ DropdownComponent })}
+                rowData={gradeCategory.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Grade Configuration Selected"
+                      : rowCount >= 2
+                      ? "Grades Configuration Selected"
+                      : null
+                  }`}
                   resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedGradeConfigs={selectedGradeConfigs}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedGradeConfigs={selectedGradeConfigs}
+                      resetAll={handleReset}
+                    />
+                  }
                 />
-              }
-              actionButton={
-                <ActionButtons
-                  selectedGradeConfigs={selectedGradeConfigs}
-                  resetAll={handleReset}
-                />
-              }
-            />
-          </>
-        ) : (
-          <div className="alert alert-warning">No Grades Found</div>
-        )}
-      </div>
+              )}
+            </>
+          ) : (
+            <div className="alert alert-warning">No Grades Found</div>
+          )}
+        </div>
+      </main>
     </>
   );
 }

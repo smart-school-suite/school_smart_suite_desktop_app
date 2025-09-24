@@ -13,7 +13,12 @@ import { Icon } from "@iconify/react";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { CreateIcon, DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import {
+  CreateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
 import { useGetExams } from "../../hooks/exam/useGetExams";
 import { ExamIcon, GradeIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
@@ -22,8 +27,10 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkDeleteExam from "../../ModalContent/Exams/BulkDeleteExam";
 import BulkUpdateExam from "../../ModalContent/Exams/BulkUpdateExam";
 import BulkAddExamGrading from "../../ModalContent/Exams/BulkAddExamGrading";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function Exam() {
-  const { data: data, isLoading } = useGetExams();
+  const { data: data, isLoading, error } = useGetExams();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
@@ -41,13 +48,11 @@ function Exam() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
+
   return (
     <>
-      <div>
-        <div className="my-2">
+      <main className="main-container gap-2">
+        <div style={{ height: "15%" }} className="d-flex flex-column gap-2">
           <div className="d-flex align-items-center gap-2">
             <div
               className={`${
@@ -63,62 +68,73 @@ function Exam() {
             </div>
             <span className="my-0 fw-semibold">Manage Exam</span>
           </div>
-        </div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number of Exams</p>
-            <h1 className="fw-bold my-0">{data.data.length}</h1>
+          <div className="d-flex flex-row align-items-center  w-100">
+            <div>
+              <p className="font-size-xs my-0">Total Number of Exams</p>
+              <h1 className="fw-bold my-0">{data?.data?.length || 0}</h1>
+            </div>
+            <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+              <ModalButton
+                classname={
+                  "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
+                }
+                action={{ modalContent: CreateExam }}
+                size={"lg"}
+              >
+                <Icon icon="icons8:plus" className="font-size-md" />
+                <span className="font-size-sm">Create Exam</span>
+              </ModalButton>
+            </div>
           </div>
-          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModalButton
-              classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
-              }
-              action={{ modalContent: CreateExam }}
-              size={"lg"}
-            >
-              <Icon icon="icons8:plus" className="font-size-md" />
-              <span className="font-size-sm">Create Exam</span>
-            </ModalButton>
-          </div>
         </div>
-        {data?.data?.length > 0 ? (
-          <>
-            <Table
-              colDefs={ExamsTableConfig({ DropdownComponent })}
-              rowData={data.data}
-              ref={tableRef}
-              handleRowCountFromChild={handleRowCountFromChild}
-              handleRowDataFromChild={handleRowDataFromChild}
-            />
-            <BulkActionsToast
-              rowCount={rowCount}
-              label={`${
-                rowCount >= 1
-                  ? "Exam Selected"
-                  : rowCount >= 2
-                  ? "Exams Selected"
-                  : null
-              }`}
-              resetAll={handleReset}
-              dropDownItems={
-                <DropdownItems
-                  selectedExams={selectedExams}
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : data?.data?.length > 0 ? (
+            <>
+              <Table
+                colDefs={ExamsTableConfig({ DropdownComponent })}
+                rowData={data.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount === 1
+                      ? "Exam Selected"
+                      : rowCount > 1
+                      ? "Exams Selected"
+                      : ""
+                  }`}
                   resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedExams={selectedExams}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedExams={selectedExams}
+                      resetAll={handleReset}
+                    />
+                  }
                 />
-              }
-              actionButton={
-                <ActionButtons
-                  selectedExams={selectedExams}
-                  resetAll={handleReset}
-                />
-              }
-            />
-          </>
-        ) : (
-          <div className="alert alert-warning">No Exams Found</div>
-        )}
-      </div>
+              )}
+            </>
+          ) : (
+            <div className="alert alert-warning mt-3">No Exams Found</div>
+          )}
+        </div>
+      </main>
     </>
   );
 }
@@ -239,30 +255,30 @@ function ActionButtons({ selectedExams, resetAll }) {
 }
 
 function DropdownItems({ selectedExams, resetAll, onModalStateChange }) {
-      const [showModal, setShowModal] = useState(false);
-      const [modalContent, setModalContent] = useState(null);
-      const [modalSize, setModalSize] = useState("lg");
-      const modalRef = useRef(null);
-      useEffect(() => {
-        onModalStateChange(showModal, modalRef);
-      }, [showModal, onModalStateChange]);
-    
-      const handleCloseModal = () => {
-        setShowModal(false);
-        setModalContent(null);
-      };
-    
-      const handleShowModal = (ContentComponent, size = "lg") => {
-        setModalContent(
-          React.createElement(ContentComponent, {
-            handleClose: handleCloseModal,
-            resetAll,
-            bulkData: selectedExams,
-          })
-        );
-        setModalSize(size);
-        setShowModal(true);
-      };
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedExams,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
       <DropDownMenuItem
@@ -292,7 +308,7 @@ function DropdownItems({ selectedExams, resetAll, onModalStateChange }) {
           <UpdateIcon />
         </div>
       </DropDownMenuItem>
-        <CustomModal
+      <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}

@@ -8,7 +8,7 @@ import DeleteTimetable from "../../ModalContent/ExamTimetable/DeleteTimetable";
 import ViewTimetable from "../../ModalContent/ExamTimetable/ViewTimetable";
 import { useGetExams } from "../../hooks/exam/useGetExams";
 import { Icon } from "@iconify/react";
-import  React,  { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import {
@@ -24,9 +24,10 @@ import { useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function ExamTimetable() {
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const { data: exams, isLoading: isExamLoading } = useGetExams();
+  const { data: exams, isLoading, error } = useGetExams();
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
   const [selectedTimetable, setSelectedTimetable] = useState([]);
@@ -43,13 +44,10 @@ function ExamTimetable() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isExamLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="my-2">
+      <main className="main-container gap-2">
+        <div className="d-flex flex-column gap-3" style={{ height: "15%" }}>
           <div className="d-flex align-items-center gap-2">
             <div
               className={`${
@@ -65,52 +63,61 @@ function ExamTimetable() {
             </div>
             <span className="my-0 fw-semibold">Manage Exams Timetable</span>
           </div>
-        </div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number of Exams</p>
-            <h1 className="fw-bold my-0">{exams.data.length}</h1>
+          <div className="d-flex flex-row align-items-center w-100">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Number of Exams</p>
+              <h1 className="fw-bold my-0">{exams?.data?.length || 0}</h1>
+            </div>
           </div>
         </div>
-        {exams?.data?.length > 0 ? (
-          <>
-            <Table
-              colDefs={ExamTimetableConfig({ DropdownComponent })}
-              rowData={exams.data}
-              ref={tableRef}
-              handleRowCountFromChild={handleRowCountFromChild}
-              handleRowDataFromChild={handleRowDataFromChild}
-            />
-            <BulkActionsToast
-              rowCount={rowCount}
-              label={`${
-                rowCount >= 1
-                  ? "Exam Timetable Selected"
-                  : rowCount >= 2
-                  ? "Exam Timetable Selected"
-                  : null
-              }`}
-              resetAll={handleReset}
-              dropDownItems={
-                <DropdownItems
-                  selectedTimetable={selectedTimetable}
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : exams?.data?.length > 0 ? (
+            <>
+              <Table
+                colDefs={ExamTimetableConfig({ DropdownComponent })}
+                rowData={exams.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Exam Timetable Selected"
+                      : rowCount >= 2
+                      ? "Exam Timetable Selected"
+                      : null
+                  }`}
                   resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedTimetable={selectedTimetable}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedTimetable={selectedTimetable}
+                      resetAll={handleReset}
+                    />
+                  }
                 />
-              }
-              actionButton={
-                <ActionButtons
-                  selectedTimetable={selectedTimetable}
-                  resetAll={handleReset}
-                />
-              }
-            />
-          </>
-        ) : (
-          <div className="alert alert-warning">
-            Oops, looks like you don't have any teachers.
-          </div>
-        )}
-      </div>
+              )}
+            </>
+          ) : (
+            <div className="alert alert-warning">No Canidates Added Found</div>
+          )}
+        </div>
+      </main>
     </>
   );
 }

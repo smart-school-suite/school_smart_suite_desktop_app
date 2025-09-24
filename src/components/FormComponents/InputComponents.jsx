@@ -129,7 +129,7 @@ export const PhoneNumberInput = forwardRef(PhoneNumberInputComponent);
 
 
 export const TextInput = forwardRef(
-  ({ onChange, onValidationChange, value, placeholder, validationSchema, type = "text" }, ref) => {
+  ({ onChange, onValidationChange, value, placeholder, validationSchema, className, type = "text" }, ref) => {
     const darkMode = useSelector((state) => state.theme.darkMode);
     const [inputValue, setInputValue] = useState(value || "");
     const [inputError, setInputError] = useState("");
@@ -207,7 +207,7 @@ export const TextInput = forwardRef(
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           placeholder={placeholder}
-          className={`form-control font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null} ${
+          className={`${className} form-control font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null} ${
             isInputTouched && inputError ? "is-invalid" : ""
           } ${isInputTouched && !inputError && inputValue ? "is-valid" : ""}`}
         />

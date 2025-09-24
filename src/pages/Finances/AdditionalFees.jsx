@@ -23,8 +23,10 @@ import { ModalButton } from "../../components/DataTableComponents/ActionComponen
 import BulkPayAdditionalFee from "../../ModalContent/AdditionalFees/BulkPayAdditionalFee";
 import BulkDeleteAdditionalFee from "../../ModalContent/AdditionalFees/BulkDeleteAdditionalFee";
 import BulkUpdateAdditionalFee from "../../ModalContent/AdditionalFees/BulkUpdateAdditionalFee";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function AdditionalFees() {
-  const { data: additionalFee, isLoading } = useGetAdditionalFees();
+  const { data: additionalFee, isLoading, error } = useGetAdditionalFees();
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
   const [selectedAdditionalFee, setSelectedAdditionalFee] = useState([]);
@@ -41,47 +43,60 @@ function AdditionalFees() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTablePageLoader />;
-  }
+
   return (
     <>
-      <div>
-        <div className="d-flex flex-row align-items-center mb-1 w-100">
+      <div className="d-flex flex-column gap-2 h-100">
+        <div
+          className="d-flex flex-row align-items-center w-100"
+          style={{ height: "5%" }}
+        >
           <span className="fw-semibold">Addition Fee Payments</span>
         </div>
-        <div>
-          <Table
-            colDefs={additionalFeesTableConfig({ DropdownComponent })}
-            rowData={additionalFee.data}
-            ref={tableRef}
-            handleRowCountFromChild={handleRowCountFromChild}
-            handleRowDataFromChild={handleRowDataFromChild}
-            tableHeight={89}
-          />
-          <BulkActionsToast
-            rowCount={rowCount}
-            label={`${
-              rowCount >= 1
-                ? "Additional Fee Selected"
-                : rowCount >= 2
-                ? "Additional Fees Selected"
-                : null
-            }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedAdditionalFee={selectedAdditionalFee}
-                resetAll={handleReset}
+        <div style={{ height: "95%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={additionalFeesTableConfig({ DropdownComponent })}
+                rowData={additionalFee.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
               />
-            }
-            actionButton={
-              <ActionButtons
-                selectedAdditionalFee={selectedAdditionalFee}
-                resetAll={handleReset}
-              />
-            }
-          />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Additional Fee Selected"
+                      : rowCount >= 2
+                      ? "Additional Fees Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedAdditionalFee={selectedAdditionalFee}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedAdditionalFee={selectedAdditionalFee}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
         </div>
       </div>
     </>

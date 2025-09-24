@@ -8,8 +8,7 @@ import DeleteSemester from "../../ModalContent/Semesters/DeleteSemester";
 import SemeseterDetails from "../../ModalContent/Semesters/SemesterDetails";
 import CreateSemester from "../../ModalContent/Semesters/CreateSemester";
 import { useGetActiveSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
-import  React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DetailsIcon, UpdateIcon, DeleteIcon } from "../../icons/ActionIcons";
@@ -19,94 +18,124 @@ import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkDeleteSemester from "../../ModalContent/Semesters/BulkDeleteSemester";
 import BulkUpdateSemester from "../../ModalContent/Semesters/BulkUpdateSemester";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 function Semester() {
-  const { data: schoolSemesters, isLoading } = useGetActiveSchoolSemesters();
+  const {
+    data: schoolSemesters,
+    isLoading,
+    error,
+  } = useGetActiveSchoolSemesters();
   const darkMode = useSelector((state) => state.theme.darkMode);
-    const tableRef = useRef();
-    const [rowCount, setRowCount] = useState(0);
-    const [selectedSemesters, setSelectedSemesters] = useState([]);
-    const handleReset = () => {
-      if (tableRef.current) {
-        tableRef.current.deselectAll();
-        setRowCount(0);
-        setSelectedSemesters([]);
-      }
-    };
-    const handleRowDataFromChild = useCallback((Data) => {
-      setSelectedSemesters(Data);
-    }, []);
-    const handleRowCountFromChild = useCallback((count) => {
-      setRowCount(count);
-    }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
+  const tableRef = useRef();
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedSemesters, setSelectedSemesters] = useState([]);
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedSemesters([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedSemesters(Data);
+  }, []);
+  const handleRowCountFromChild = useCallback((count) => {
+    setRowCount(count);
+  }, []);
   return (
     <>
-      <div className="my-2">
-        <div className="d-flex align-items-center gap-2">
-          <div
-            className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "0.5rem",
-            }}
-          >
-          <SemesterIcon />
+      <main className="main-container gap-2">
+        <div className="d-flex flex-column gap-3" style={{ height: "15%" }}>
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <SemesterIcon />
+            </div>
+            <span className="my-0 fw-semibold">Semester Management</span>
           </div>
-          <span className="my-0 fw-semibold">Semester Management</span>
-        </div>
-      </div>
-      <div className="d-flex flex-row align-items-center mt-4 w-100">
-        <div className="d-flex flex-row align-items-end gap-2">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Created Semesters</p>
-            <h1 className="fw-bold my-0">{schoolSemesters.data.length}</h1>
+          <div className="d-flex flex-row align-items-center w-100">
+            <div className="d-flex flex-row align-items-end gap-2">
+              <div className="d-block">
+                <p className="font-size-xs my-0">Created Semesters</p>
+                <h1 className="fw-bold my-0">
+                  {schoolSemesters?.data?.length || 0}
+                </h1>
+              </div>
+            </div>
+            <div className="end-block d-flex flex-row ms-auto justify-content-end gap-3">
+              <ModalButton
+                classname={
+                  "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
+                }
+                action={{ modalContent: CreateSemester }}
+                size={"lg"}
+              >
+                <Icon icon="icons8:plus" className="font-size-md" />
+                <span className="font-size-sm">Create Semester</span>
+              </ModalButton>
+            </div>
           </div>
         </div>
-        <div className="end-block d-flex flex-row ms-auto justify-content-end gap-3">
-          <ModalButton
-            classname={
-              "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
-            }
-            action={{ modalContent: CreateSemester }}
-            size={"lg"}
-          >
-            <Icon icon="icons8:plus" className="font-size-md" />
-            <span className="font-size-sm">Create Semester</span>
-          </ModalButton>
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : schoolSemesters?.data?.length > 0 ? (
+            <>
+              <Table
+                colDefs={semesterTableConfig({
+                  ActionButtonGroup,
+                })}
+                rowData={schoolSemesters.data}
+                rowHeight={55}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Semester Selected"
+                      : rowCount >= 2
+                      ? "Semesters Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedSemesters={selectedSemesters}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedSemesters={selectedSemesters}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          ) : (
+            <div className="alert alert-warning">No Semester Added Found</div>
+          )}
         </div>
-      </div>
-      <div>
-        <Table
-          colDefs={semesterTableConfig({
-            ActionButtonGroup,
-          })}
-          rowData={schoolSemesters.data}
-          rowHeight={55}
-          ref={tableRef}
-          handleRowCountFromChild={handleRowCountFromChild}
-          handleRowDataFromChild={handleRowDataFromChild}
-        />
-         <BulkActionsToast
-            rowCount={rowCount}
-            label={`${rowCount >= 1 ? 'Semester Selected' : rowCount >= 2 ?  'Semesters Selected' : null }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedSemesters={selectedSemesters}
-                resetAll={handleReset}
-              />
-            }
-            actionButton={
-              <ActionButtons
-                selectedSemesters={selectedSemesters}
-                resetAll={handleReset}
-              />
-            }
-          />
-      </div>
+      </main>
     </>
   );
 }
@@ -155,7 +184,7 @@ function ActionButtonGroup(props) {
             </div>
           </div>
         </DropDownMenuItem>
-         <DropDownMenuItem
+        <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -198,7 +227,7 @@ function ActionButtons({ selectedSemesters, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        action={{ modalContent:BulkDeleteSemester }}
+        action={{ modalContent: BulkDeleteSemester }}
         bulkData={selectedSemesters}
         resetAll={resetAll}
       >
@@ -212,30 +241,30 @@ function ActionButtons({ selectedSemesters, resetAll }) {
   );
 }
 function DropdownItems({ selectedSemesters, resetAll, onModalStateChange }) {
-      const [showModal, setShowModal] = useState(false);
-      const [modalContent, setModalContent] = useState(null);
-      const [modalSize, setModalSize] = useState("lg");
-      const modalRef = useRef(null);
-      useEffect(() => {
-        onModalStateChange(showModal, modalRef);
-      }, [showModal, onModalStateChange]);
-    
-      const handleCloseModal = () => {
-        setShowModal(false);
-        setModalContent(null);
-      };
-    
-      const handleShowModal = (ContentComponent, size = "lg") => {
-        setModalContent(
-          React.createElement(ContentComponent, {
-            handleClose: handleCloseModal,
-            resetAll,
-            bulkData: selectedSemesters,
-          })
-        );
-        setModalSize(size);
-        setShowModal(true);
-      };
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedSemesters,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
       <DropDownMenuItem

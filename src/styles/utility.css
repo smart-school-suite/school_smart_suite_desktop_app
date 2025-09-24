@@ -67,6 +67,9 @@
 .dark-mode-text{
     color: #999;
 }
+.outline-none{
+    outline: none !important;
+}
 .dark-bg{
     background-color: #111;
 }
@@ -255,6 +258,9 @@
 }
 .rotate-180{
     transform: rotate(180deg);
+}
+.p-md{
+    padding: 0.75rem !important;
 }
 .width-10{
   width: var(--width-10);

@@ -19,8 +19,10 @@ import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
 import BulkDeleteParent from "../../ModalContent/Parent/BulkDeleteParent";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function Parents() {
-  const { data: guardians, isLoading } = useGetAllParents();
+  const { data: guardians, isLoading, error } = useGetAllParents();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
@@ -38,13 +40,10 @@ function Parents() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="my-2">
+      <main className="main-container gap-2">
+        <div className="d-flex flex-column gap-3" style={{ height: "15%" }}>
           <div className="d-flex align-items-center gap-2">
             <div
               className={`${
@@ -60,55 +59,71 @@ function Parents() {
             </div>
             <span className="my-0 fw-semibold">Manage Parents</span>
           </div>
-        </div>
-        <div className="d-flex flex-row align-items-center mb-1 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number of Parents</p>
-            <h1 className="fw-bold my-0">{guardians.data.length}</h1>
+          <div className="d-flex flex-row align-items-center mb-1 w-100">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Number of Parents</p>
+              <h1 className="fw-bold my-0">{guardians?.data?.length || 0}</h1>
+            </div>
+            <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+              <ModalButton
+                action={{ modalContent: CreateParent }}
+                classname={
+                  "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
+                }
+                size={"lg"}
+              >
+                <Icon icon="icons8:plus" className="font-size-md" />
+                <span className="font-size-sm">Create Parent</span>
+              </ModalButton>
+            </div>
           </div>
-          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModalButton
-              action={{ modalContent: CreateParent }}
-              classname="border-none rounded-3 green-bg font-size-sm text-white px-3 py-2"
-              size={"lg"}
-            >
-              <span className="font-size-sm">Create Parent</span>
-            </ModalButton>
-          </div>
         </div>
-      </div>
-      <div className="pt-2">
-        <Table
-          colDefs={ParentsTableConfig({ DropdownComponent })}
-          rowData={guardians.data}
-          ref={tableRef}
-          handleRowCountFromChild={handleRowCountFromChild}
-          handleRowDataFromChild={handleRowDataFromChild}
-        />
-        <BulkActionsToast
-          rowCount={rowCount}
-          label={`${
-            rowCount >= 1
-              ? "Parent Selected"
-              : rowCount >= 2
-              ? "Parents Selected"
-              : null
-          }`}
-          resetAll={handleReset}
-          dropDownItems={
-            <DropdownItems
-              selectedParents={selectedParents}
-              resetAll={handleReset}
-            />
-          }
-          actionButton={
-            <ActionButtons
-              selectedParents={selectedParents}
-              resetAll={handleReset}
-            />
-          }
-        />
-      </div>
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={ParentsTableConfig({ DropdownComponent })}
+                rowData={guardians.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Parent Selected"
+                      : rowCount >= 2
+                      ? "Parents Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedParents={selectedParents}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedParents={selectedParents}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
+        </div>
+      </main>
     </>
   );
 }
@@ -214,30 +229,30 @@ function ActionButtons({ selectedParents, resetAll }) {
   );
 }
 function DropdownItems({ selectedParents, resetAll, onModalStateChange }) {
-        const [showModal, setShowModal] = useState(false);
-        const [modalContent, setModalContent] = useState(null);
-        const [modalSize, setModalSize] = useState("lg");
-        const modalRef = useRef(null);
-        useEffect(() => {
-          onModalStateChange(showModal, modalRef);
-        }, [showModal, onModalStateChange]);
-      
-        const handleCloseModal = () => {
-          setShowModal(false);
-          setModalContent(null);
-        };
-      
-        const handleShowModal = (ContentComponent, size = "lg") => {
-          setModalContent(
-            React.createElement(ContentComponent, {
-              handleClose: handleCloseModal,
-              resetAll,
-              bulkData: selectedParents,
-            })
-          );
-          setModalSize(size);
-          setShowModal(true);
-        };
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedParents,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
       <DropDownMenuItem

@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 function Hero() {
   const navigate = useNavigate();
+  const darkMode = useSelector((state) => state.theme.darkMode);
    return (
     <>
-      <div className="w-100 height-100  pb-5 d-flex flex-column">
+      <div className={`${darkMode ? 'dark-bg text-white': 'white-bg'} w-100 height-100  pb-5 d-flex flex-column`}>
         <div className=" login-container-logo-box d-flex flex-row align-items-center justify-content-between px-4">
           <img src="./logo/blue_logo.png" className="login-logo" />
-          <button className="rounded-pill px-3 py-2 font-size-sm transparent-bg" style={{ border:"1px solid #ccc" }}>
+          <button className={`${darkMode ? 'dark-bg-light dark-mode-text border-none' : 'transparent-bg'} rounded-pill px-3 py-2 font-size-sm`}>
             Customer Support
           </button>
         </div>
@@ -121,7 +122,7 @@ function Hero() {
           </div>
         </div>
         <div className="d-flex flex-row align-items-center gap-3 mt-auto px-3">
-          <div className="card d-flex rotate-5  border-none p-2 rounded-3 shadow-sm hero-footer-card">
+          <div className={`${darkMode ? 'dark-bg-light gainsboro-color' : 'white-bg'} card d-flex rotate-5  border-none p-2 rounded-3 shadow-sm hero-footer-card`}>
             <div className="d-flex flex-row align-items-center gap-2">
               <div
                 className="hero-footer-icon-box"
@@ -136,7 +137,7 @@ function Hero() {
               </span>
             </div>
           </div>
-          <div className="card d-flex rotate-reverse-5  border-none p-2 rounded-3 shadow-sm hero-footer-card">
+          <div className={`${darkMode ? 'dark-bg-light gainsboro-color': 'white-bg'} card d-flex rotate-reverse-5  border-none p-2 rounded-3 shadow-sm hero-footer-card`}>
             <div className="d-flex flex-row align-items-center gap-2">
               <div
                 className="hero-footer-icon-box"
@@ -151,7 +152,7 @@ function Hero() {
               </span>
             </div>
           </div>
-          <div className="card d-flex rotate-5  border-none p-2 rounded-3 shadow-sm hero-footer-card">
+          <div className={`${darkMode ? 'dark-bg-light gainsboro-color' : 'white-bg'} card d-flex rotate-5  border-none p-2 rounded-3 shadow-sm hero-footer-card`}>
             <div className="d-flex flex-row align-items-center gap-2">
               <div
                 className="hero-footer-icon-box"
@@ -166,7 +167,7 @@ function Hero() {
               </span>
             </div>
           </div>
-          <div className="card d-flex rotate-reverse-5  border-none p-2 rounded-3 shadow-sm hero-footer-card">
+          <div className={`${darkMode ? 'dark-bg-light gainsboro-color': 'white-bg'} card d-flex rotate-reverse-5  border-none p-2 rounded-3 shadow-sm hero-footer-card`}>
             <div className="d-flex flex-row align-items-center gap-2 w-100">
               <div
                 className="hero-footer-icon-box"
@@ -179,7 +180,7 @@ function Hero() {
               </span>
             </div>
           </div>
-          <div className="card d-flex rotate-5  border-none p-2 rounded-3 shadow-sm hero-footer-card">
+          <div className={`${darkMode ? 'dark-bg-light gainsboro-color' : 'white-bg'} card d-flex rotate-5  border-none p-2 rounded-3 shadow-sm hero-footer-card`}>
             <div className="d-flex flex-row align-items-center gap-2">
               <div
                 className="hero-footer-icon-box"

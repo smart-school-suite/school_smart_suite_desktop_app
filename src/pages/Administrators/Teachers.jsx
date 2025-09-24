@@ -14,7 +14,6 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
 import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
@@ -39,8 +38,10 @@ import BulkDeactivateTeacher from "../../ModalContent/Teacher/BulkDeactivateTeac
 import BulkActivateTeacher from "../../ModalContent/Teacher/BulkActivateTeacher";
 import BulkAddTeacherSpecialtyPreference from "../../ModalContent/Teacher/BulkAddTeacherSpecialtyPreference";
 import BulkRemoveTeacherSpecialtyPreference from "../../ModalContent/Teacher/BulkRemoveTeacherSpecialtyPreference";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 function Teachers() {
-  const { data: teachers, isLoading } = useGetTeachers();
+  const { data: teachers, isLoading, error } = useGetTeachers();
   const tableRef = useRef();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);
@@ -68,13 +69,10 @@ function Teachers() {
     return teachers?.data ?? [];
   }, [teachers]);
 
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="my-2">
+      <main className="main-container gap-2">
+        <div style={{ height: "15%" }} className="d-flex flex-column gap-3">
           <div className="d-flex align-items-center gap-2">
             <div
               className={`${
@@ -90,53 +88,68 @@ function Teachers() {
             </div>
             <span className="my-0 fw-semibold">Teacher Management</span>
           </div>
-        </div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number Teachers</p>
-            <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
+          <div className="d-flex flex-row align-items-center w-100">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Number Teachers</p>
+              <h1 className="fw-bold my-0">{memoizedRowData?.length || 0}</h1>
+            </div>
+            <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+              <ModalButton
+                classname={
+                  "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
+                }
+                action={{ modalContent: CreateTeacher }}
+                size={"lg"}
+              >
+                <Icon icon="icons8:plus" className="font-size-md" />
+                <span>Create Teacher</span>
+              </ModalButton>
+            </div>
           </div>
-          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModalButton
-              classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
-              }
-              action={{ modalContent: CreateTeacher }}
-              size={"lg"}
-            >
-              <Icon icon="icons8:plus" className="font-size-md" />
-              <span>Create Teacher</span>
-            </ModalButton>
-          </div>
         </div>
-        <div>
-          <Table
-            colDefs={memoizedColDefs}
-            rowData={memoizedRowData}
-            rowHeight={55}
-            ref={tableRef}
-            handleRowCountFromChild={handleRowCountFromChild}
-            handleRowDataFromChild={handleRowDataFromChild}
-          />
-          <BulkActionsToast
-            rowCount={rowCount}
-            label={`${rowCount > 1 ? "Teacher Selected" : "Teachers Selected"}`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedTeachers={selectedTeachers}
-                resetAll={handleReset}
+        <div style={{ height:"85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={memoizedColDefs}
+                rowData={memoizedRowData}
+                rowHeight={55}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
               />
-            }
-            actionButton={
-              <ActionButtons
-                selectedTeachers={selectedTeachers}
-                resetAll={handleReset}
-              />
-            }
-          />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount > 1 ? "Teacher Selected" : "Teachers Selected"
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedTeachers={selectedTeachers}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedTeachers={selectedTeachers}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
         </div>
-      </div>
+      </main>
     </>
   );
 }
@@ -323,7 +336,9 @@ function DropdownItems({ selectedTeachers, resetAll, onModalStateChange }) {
       </DropDownMenuItem>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkRemoveTeacherSpecialtyPreference, "md")}
+        onClick={() =>
+          handleShowModal(BulkRemoveTeacherSpecialtyPreference, "md")
+        }
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Remove Specialty Preference</span>

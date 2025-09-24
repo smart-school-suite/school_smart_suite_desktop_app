@@ -135,7 +135,7 @@ const CustomDropdown = forwardRef(
     );
 
     return (
-      <div className="input-container">
+      <div className="input-container w-100">
         <div className="dropdown-box z-1" ref={refs.setReference}>
           <div
             className="selected-box"

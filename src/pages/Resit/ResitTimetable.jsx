@@ -12,47 +12,55 @@ import CreateTimetable from "../../ModalContent/ExamResitTimetable/CreateTimetab
 import { TimetableIcon } from "../../icons/Icons";
 import AutoGenResitExamTimetable from "../../ModalContent/ExamResitTimetable/AutoGenResitExamTimetable";
 import { useSelector } from "react-redux";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function ResitTimetable() {
-  const { data: resitExams, isLoading } = useGetAllResitExams();
+  const { data: resitExams, isLoading, error } = useGetAllResitExams();
   const darkMode = useSelector((state) => state.theme.darkMode);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div className="my-2">
-        <div className="d-flex align-items-center gap-2">
-          <div
-            className={`${darkMode ? 'dark-mode-active' : 'light-mode-active'} d-flex justify-content-center align-items-center`}
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "0.5rem",
-            }}
-          >
-          <TimetableIcon />
+      <main className="main-container gap-2">
+        <div className="d-flex flex-column gap-3" style={{ height: "15%" }}>
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className={`${
+                darkMode ? "dark-mode-active" : "light-mode-active"
+              } d-flex justify-content-center align-items-center`}
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <TimetableIcon />
+            </div>
+            <span className="my-0 fw-semibold">
+              Resit Exam Timetable Management
+            </span>
           </div>
-          <span className="my-0 fw-semibold">
-            Resit Exam Timetable Management
-          </span>
+          <div className="d-flex flex-row align-items-center w-100">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Number of Exams</p>
+              <h1 className="fw-bold my-0">{resitExams?.data?.length || 0}</h1>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="d-flex flex-row align-items-center mt-4 w-100">
-        <div className="d-block">
-          <p className="font-size-xs my-0">Total Number of Exams</p>
-          <h1 className="fw-bold my-0">{resitExams.data.length}</h1>
+         <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <Table
+              colDefs={ResitTimetableConfig({ DropdownComponent })}
+              rowData={resitExams.data}
+            />
+          )}
         </div>
-      </div>
-      <div>
-        {resitExams.data.length > 0 ? (
-          <Table
-            colDefs={ResitTimetableConfig({ DropdownComponent })}
-            rowData={resitExams.data}
-          />
-        ) : (
-          <div className="alert alert-warning">No Exams Found</div>
-        )}
-      </div>
+      </main>
     </>
   );
 }

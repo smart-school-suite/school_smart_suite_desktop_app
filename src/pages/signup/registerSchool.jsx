@@ -4,9 +4,14 @@ import { Icon } from "@iconify/react";
 import { setSchoolAuthData } from "../../Slices/Asynslices/AuthSlice";
 import { useGetCountries } from "../../hooks/country/useGetCountry";
 import { motion, AnimatePresence } from "framer-motion";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { schoolTypes } from "../../data/data";
+import { TextInput } from "../../components/FormComponents/InputComponents";
+import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
 function RegisterSchool() {
   const { data: country, isPending: isLoading } = useGetCountries();
   const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -26,17 +31,17 @@ function RegisterSchool() {
   const isStepComplete = fieldsFilled === totalSteps;
 
   return (
-    <div className="container w-100 height-100 pt-3 d-flex flex-column pb-5">
+    <div className={`${darkMode ? 'dark-bg dark-mode-text' : 'white-bg'} container w-100 height-100 pt-3 d-flex flex-column pb-5`}>
       <div className="w-100">
         <div className="d-flex flex-row align-items-center w-100 justify-content-between px-3">
           <div className="signup-app-logo">
             <img src="/logo/blue_logo.png" alt="" className="signup-app-logo" />
           </div>
           <div className="d-flex flex-row gap-4">
-            <button className="border-none rounded-pill px-3 py-2 border bg-white font-size-sm">
+            <button className={`${darkMode ? 'dark-bg-light dark-mode-text border-none' : 'bg-white border'}  rounded-pill px-3 py-2  font-size-sm`}>
               Save And Exit
             </button>
-            <button className="border-none rounded-pill px-3 py-2 border bg-white font-size-sm">
+            <button className={`${darkMode ? 'dark-bg-light dark-mode-text border-none' : 'bg-white border'}  rounded-pill px-3 py-2  font-size-sm`}>
               Questions?
             </button>
           </div>
@@ -49,64 +54,41 @@ function RegisterSchool() {
             </div>
 
             <div className="mt-5">
-              <label htmlFor="school_name">School Name</label>
-              <div className="w-100 align-items-center d-flex gap-2">
-                <div className="w-100">
-                  <input
-                  type="text"
+              <label htmlFor="schoolName" className="font-size-sm">School Name</label>
+                <TextInput 
                   placeholder="Enter School Name"
-                  className="form-control p-2 w-100"
-                  name="school_name"
-                  value={schoolCredentials.school_name}
-                  onChange={(value) => handleChange("school_name", value)}
+                  validationSchema={nameSchema({
+                     required:true,
+                     min:5,
+                     max:150,
+                     messages:{
+                       required:"School Name Is Required",
+                       min:"School Name Must Be At Least 5 Characters Long"
+                     }
+                  })}
                 />
-                </div>
-              </div>
             </div>
 
-            <div className="d-flex flex-row gap-2 w-100">
-              {isLoading ? (
-                <div className="my-1 w-100">
-                  <span>Country</span>
-                  <select name="country_id" className="form-select w-100" disabled>
-                    <option value="">Loading...</option>
-                  </select>
-                </div>
-              ) : (
-                <div className="my-1 w-100">
-                  <span>Country</span>
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <select
-                      name="country_id"
-                      className="form-select w-100"
-                      value={schoolCredentials.country_id}
-                      onChange={(value) => handleChange("country_id", value)}
-                    >
-                      <option value="">Select Country</option>
-                      {country?.data?.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.country}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              )}
+            <div className="d-flex flex-column gap-1 w-100 my-1">
+              <label htmlFor="country" className="font-size-sm">Country</label>
+              <CustomDropdown 
+                data={country?.data || []}
+                isLoading={isLoading}
+                displayKey={['country']}
+                valueKey={['id']}
+                placeholder={"Select Country"}
+              />
             </div>
 
             <div className="my-1">
-              <label htmlFor="type">School Type</label>
+              <label htmlFor="type" className="font-size-sm">School Type</label>
               <div className="d-flex flex-row align-items-center gap-2">
-                <select
-                  name="type"
-                  className="form-select p-2"
-                  value={schoolCredentials.type}
-                  onChange={(value) => handleChange("type", value)}
-                >
-                  <option value="">Select School Type</option>
-                  <option value="private">Private School</option>
-                  <option value="government">Government School</option>
-                </select>
+                <CustomDropdown 
+                  data={schoolTypes}
+                  displayKey={['name']}
+                  valueKey={['name']}
+                  placeholder={"Select School Type"}
+                />
               </div>
             </div>
           </div>

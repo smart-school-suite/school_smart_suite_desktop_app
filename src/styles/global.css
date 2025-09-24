@@ -73,7 +73,13 @@
 .container {
     max-width: 2500px !important;
 }
-
+.main-container{
+    width: 100%;
+    height: calc(100dvh - 1rem);
+    box-sizing: content-box;
+    display: flex;
+    flex-direction: column;
+}
 .profile-actions:hover {
     background-color: var(--primary-color);
     color: var(--acent-color-five);

@@ -31,8 +31,10 @@ import BulkActivateStudent from "../../ModalContent/Student/BulkActivateStudent"
 import BulkDeactivateStudent from "../../ModalContent/Student/BulkDeactivateStudent";
 import BulkMarkStudentAsDropout from "../../ModalContent/Student/BulkMarkStudentAsDropout";
 import BulkDeleteStudent from "../../ModalContent/Student/BulkDeleteStudent";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function Students() {
-  const { data: students, isLoading } = useGetStudents();
+  const { data: students, isLoading, error } = useGetStudents();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
@@ -50,13 +52,10 @@ function Students() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="my-2">
+      <main className="main-container gap-2">
+        <div className="d-flex flex-column gap-3" style={{ height: "15%" }}>
           <div className="d-flex align-items-center gap-2">
             <div
               className={`${
@@ -72,54 +71,72 @@ function Students() {
             </div>
             <span className="my-0 fw-semibold">Manage Students</span>
           </div>
-        </div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Students</p>
-            <h1 className="fw-bold my-0">{students.data.length}</h1>
+          <div className="d-flex flex-row align-items-center w-100">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Students</p>
+              <h1 className="fw-bold my-0">{students?.data?.length || 0}</h1>
+            </div>
+            <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+              <ModalButton
+                action={{ modalContent: CreateStudent }}
+                classname={
+                  "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
+                }
+                size={"lg"}
+              >
+                <Icon icon="icons8:plus" className="font-size-md" />
+                <span className="font-size-sm">Create Student</span>
+              </ModalButton>
+            </div>
           </div>
-          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModalButton
-              action={{ modalContent: CreateStudent }}
-              classname="border-none rounded-3 green-bg font-size-sm text-white px-3 py-2"
-              size={"lg"}
-            >
-              <span className="font-size-sm">Create Student</span>
-            </ModalButton>
-          </div>
         </div>
-      </div>
-      <Table
-        colDefs={StudentTableConfig({ DropdownComponent })}
-        rowData={students.data}
-        rowHeight={55}
-        ref={tableRef}
-        handleRowCountFromChild={handleRowCountFromChild}
-        handleRowDataFromChild={handleRowDataFromChild}
-      />
-      <BulkActionsToast
-        rowCount={rowCount}
-        label={`${
-          rowCount >= 1
-            ? "Student Selected"
-            : rowCount >= 2
-            ? "Students Selected"
-            : null
-        }`}
-        resetAll={handleReset}
-        dropDownItems={
-          <DropdownItems
-            selectedStudents={selectedStudents}
-            resetAll={handleReset}
-          />
-        }
-        actionButton={
-          <ActionButtons
-            selectedStudents={selectedStudents}
-            resetAll={handleReset}
-          />
-        }
-      />
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={StudentTableConfig({ DropdownComponent })}
+                rowData={students.data}
+                rowHeight={55}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Student Selected"
+                      : rowCount >= 2
+                      ? "Students Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedStudents={selectedStudents}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedStudents={selectedStudents}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
+        </div>
+      </main>
     </>
   );
 }
@@ -266,30 +283,30 @@ function ActionButtons({ selectedStudents, resetAll }) {
   );
 }
 function DropdownItems({ selectedStudents, resetAll, onModalStateChange }) {
-    const [showModal, setShowModal] = useState(false);
-    const [modalContent, setModalContent] = useState(null);
-    const [modalSize, setModalSize] = useState("lg");
-    const modalRef = useRef(null);
-    useEffect(() => {
-      onModalStateChange(showModal, modalRef);
-    }, [showModal, onModalStateChange]);
-  
-    const handleCloseModal = () => {
-      setShowModal(false);
-      setModalContent(null);
-    };
-  
-    const handleShowModal = (ContentComponent, size = "lg") => {
-      setModalContent(
-        React.createElement(ContentComponent, {
-          handleClose: handleCloseModal,
-          resetAll,
-          bulkData: selectedStudents,
-        })
-      );
-      setModalSize(size);
-      setShowModal(true);
-    };
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedStudents,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
       <DropDownMenuItem
@@ -324,11 +341,11 @@ function DropdownItems({ selectedStudents, resetAll, onModalStateChange }) {
         onClick={() => handleShowModal(BulkDeleteStudent, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Delete  All</span>
+          <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
       </DropDownMenuItem>
-            <CustomModal
+      <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}

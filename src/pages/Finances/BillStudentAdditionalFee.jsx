@@ -11,12 +11,13 @@ import CreateStudentAdditionalFee from "../../ModalContent/AdditionalFees/Create
 import { Icon } from "@iconify/react";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
 import BulkBillStudent from "../../ModalContent/AdditionalFees/BulkBillStudent";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function BillStudentAdditionalFee() {
-  const { data: students, isLoading } = useGetStudents();
+  const { data: students, isLoading, error } = useGetStudents();
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
   const [selectedStudents, setSelectedStudents] = useState([]);
@@ -33,48 +34,60 @@ function BillStudentAdditionalFee() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTablePageLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="d-flex flex-row align-items-center mb-1 w-100">
+      <div className="d-flex flex-column gap-2 h-100">
+        <div
+          className="d-flex flex-row align-items-center w-100"
+          style={{ height: "5%" }}
+        >
           <span className="fw-semibold">Addition Fee Billing</span>
         </div>
-        <div>
-          <Table
-            colDefs={StudentTableConfig({ DropdownComponent })}
-            rowData={students.data}
-            rowHeight={55}
-            ref={tableRef}
-            handleRowCountFromChild={handleRowCountFromChild}
-            handleRowDataFromChild={handleRowDataFromChild}
-            tableHeight={89}
-          />
-          <BulkActionsToast
-            rowCount={rowCount}
-            label={`${
-              rowCount >= 1
-                ? "Student Selected"
-                : rowCount >= 2
-                ? "Students Selected"
-                : null
-            }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedStudents={selectedStudents}
-                resetAll={handleReset}
+        <div style={{ height: "95%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={StudentTableConfig({ DropdownComponent })}
+                rowData={students.data}
+                rowHeight={55}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
               />
-            }
-            actionButton={
-              <ActionButtons
-                selectedStudents={selectedStudents}
-                resetAll={handleReset}
-              />
-            }
-          />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Student Selected"
+                      : rowCount >= 2
+                      ? "Students Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedStudents={selectedStudents}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedStudents={selectedStudents}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
         </div>
       </div>
     </>

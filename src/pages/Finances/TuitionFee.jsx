@@ -9,26 +9,32 @@ import React, { useState, useRef } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
-import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function TuitionFees() {
-  const { data: tuitionFees, isLoading } = useGetTuitionFees();
+  const { data: tuitionFees, isLoading, error } = useGetTuitionFees();
   const tableRef = useRef();
-  if (isLoading) {
-    return <DataTablePageLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="mb-1">
+      <div className="d-flex flex-column gap-2 h-100">
+        <div style={{ height: "5%" }}>
           <span className="fw-semibold">Tuition Fees</span>
         </div>
-        <div>
-          <Table
-            colDefs={tuitionFeeTableConfig({ DropdownComponent })}
-            rowData={tuitionFees.data}
-            ref={tableRef}
-            tableHeight={89}
-          />
+        <div style={{ height: "95%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <Table
+              colDefs={tuitionFeeTableConfig({ DropdownComponent })}
+              rowData={tuitionFees.data}
+              ref={tableRef}
+            />
+          )}
         </div>
       </div>
     </>
@@ -79,7 +85,7 @@ export function DropdownComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-       <DropDownMenuItem
+        <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -117,4 +123,3 @@ export function DropdownComponent(props) {
     </>
   );
 }
-

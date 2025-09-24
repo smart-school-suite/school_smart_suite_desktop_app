@@ -25,8 +25,10 @@ import { BatchIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function StudentBatches() {
-  const { data: studentBatches, isLoading } = useGetBatches();
+  const { data: studentBatches, isLoading, error } = useGetBatches();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
@@ -44,13 +46,10 @@ function StudentBatches() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="my-2">
+      <main className="main-container gap-2">
+        <div className="d-flex flex-column gap-3" style={{ height: "15%" }}>
           <div className="d-flex align-items-center gap-2">
             <div
               className={`${
@@ -66,48 +65,70 @@ function StudentBatches() {
             </div>
             <span className="my-0 fw-semibold">Student Batch Management</span>
           </div>
-        </div>
-      </div>
-      <div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number of batches</p>
-            <h1 className="fw-bold my-0">{studentBatches.data.length}</h1>
+          <div className="d-flex flex-row align-items-center w-100">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Number of batches</p>
+              <h1 className="fw-bold my-0">{studentBatches?.data?.length || 0}</h1>
+            </div>
+            <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+              <ModalButton
+                action={{ modalContent: CreateStudentBatch }}
+               classname={
+                  "border-none green-bg font-size-sm rounded-3 px-3 gap-2 py-2 d-flex flex-row align-items-center d-flex text-white"
+                }
+              >
+                <Icon icon="icons8:plus" className="font-size-md" />
+                <span className="font-size-sm">Create Batch</span>
+              </ModalButton>
+            </div>
           </div>
-          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModalButton
-              action={{ modalContent: CreateStudentBatch }}
-              classname="border-none rounded-3 green-bg font-size-sm text-white px-3 py-2"
-            >
-              <span className="font-size-sm">Create Batch</span>
-            </ModalButton>
-          </div>
         </div>
-        <Table
-          colDefs={StudentBatchesTableConfig({ DropdownComponent })}
-          rowData={studentBatches.data}
-          ref={tableRef}
-          handleRowCountFromChild={handleRowCountFromChild}
-          handleRowDataFromChild={handleRowDataFromChild}
-        />
-        <BulkActionsToast
-            rowCount={rowCount}
-            label={`${rowCount >= 1 ? 'Student Batch Selected' : rowCount >= 2 ?  'Student Batches Selected' : null }`}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedBatches={selectedBatches}
-                resetAll={handleReset}
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={StudentBatchesTableConfig({ DropdownComponent })}
+                rowData={studentBatches.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
               />
-            }
-            actionButton={
-              <ActionButtons
-                selectedBatches={selectedBatches}
-                resetAll={handleReset}
-              />
-            }
-          />
-      </div>
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Student Batch Selected"
+                      : rowCount >= 2
+                      ? "Student Batches Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedBatches={selectedBatches}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedBatches={selectedBatches}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
+        </div>
+      </main>
     </>
   );
 }
@@ -255,7 +276,7 @@ function DropdownItems({ selectedBatches, resetAll }) {
       </ModalButton>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-       // action={{ modalContent: BulkActivateCourse }}
+        // action={{ modalContent: BulkActivateCourse }}
         bulkData={selectedBatches}
         resetAll={resetAll}
       >

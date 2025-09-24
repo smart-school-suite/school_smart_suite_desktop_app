@@ -5,8 +5,7 @@ function SchoolExpensesSideBar() {
   return (
     <>
       <div
-        className={`${darkMode ? 'dark-bg' : "white-bg"} card border-none width-20 p-2 rounded-4 d-flex flex-column gap-3`}
-         style={{ height:"92.5dvh" }}
+        className={`${darkMode ? 'dark-bg' : "white-bg"} card border-none width-20 p-2 rounded-4 d-flex flex-column gap-3 d-flex h-100`}
         >
         {
             sideBarData.map((item) => (

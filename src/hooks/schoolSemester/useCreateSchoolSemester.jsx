@@ -9,7 +9,8 @@ export const useCreateSchoolSemester = (handleClose) => {
          mutationFn:createSchoolSemester,
          onSuccess:() => {
             queryClient.invalidateQueries({ queryKey:["schoolSemesters"]})
-
+            queryClient.invalidateQueries({queryKey:["examCandidates"]})
+            queryClient.invalidateQueries({queryKey:["exams"]});
             if(handleClose){
                 handleClose();
             }

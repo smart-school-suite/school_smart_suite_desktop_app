@@ -35,8 +35,10 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkDeleteSpecialty from "../../ModalContent/Specialty/BulkDeleteSpecialty";
 import BulkActivateSpecialty from "../../ModalContent/Specialty/BulkActivateSpecialty";
 import BulkDeactivateSpecialty from "../../ModalContent/Specialty/BulkDeactivateSpecialty";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 function Specialties() {
-  const { data: specialty, isLoading } = useGetSpecialties();
+  const { data: specialty, isLoading, error } = useGetSpecialties();
   const tableRef = useRef();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);
@@ -63,13 +65,10 @@ function Specialties() {
   const memoizedRowData = useMemo(() => {
     return specialty?.data ?? [];
   }, [specialty]);
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="my-2">
+      <main className="main-container gap-2">
+        <div style={{ height: "15%" }} className="d-flex flex-column gap-3">
           <div className="d-flex align-items-center gap-2">
             <div
               className={`${
@@ -85,52 +84,67 @@ function Specialties() {
             </div>
             <span className="my-0 fw-semibold">Manage Specialties</span>
           </div>
-        </div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number specialties</p>
-            <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
+          <div className="d-flex flex-row align-items-center w-100">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Number specialties</p>
+              <h1 className="fw-bold my-0">{memoizedRowData?.length || 0}</h1>
+            </div>
+            <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+              <ModalButton
+                action={{ modalContent: CreateSpecialty }}
+                size={"lg"}
+                classname={
+                  "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
+                }
+              >
+                <Icon icon="icons8:plus" className="font-size-md" />
+                <span>Create Specialty</span>
+              </ModalButton>
+            </div>
           </div>
-          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModalButton
-              action={{ modalContent: CreateSpecialty }}
-              size={"lg"}
-              classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
+        </div>
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={1} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={memoizedColDefs}
+                rowData={memoizedRowData}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {
+                 rowCount > 0 && <BulkActionsToast
+                rowCount={rowCount}
+                label={`${
+                  rowCount > 0 ? "Specialty Selected" : "Specialties Selected"
+                }`}
+                resetAll={handleReset}
+                dropDownItems={
+                  <DropdownItems
+                    selectedSpecialties={selectedSpecialties}
+                    resetAll={handleReset}
+                  />
+                }
+                actionButton={
+                  <ActionButtons
+                    selectedSpecialties={selectedSpecialties}
+                    resetAll={handleReset}
+                  />
+                }
+              />
               }
-            >
-              <Icon icon="icons8:plus" className="font-size-md" />
-              <span>Create Specialty</span>
-            </ModalButton>
-          </div>
+            </>
+          )}
         </div>
-        <Table
-          colDefs={memoizedColDefs}
-          rowData={memoizedRowData}
-          ref={tableRef}
-          handleRowCountFromChild={handleRowCountFromChild}
-          handleRowDataFromChild={handleRowDataFromChild}
-        />
-        <BulkActionsToast
-          rowCount={rowCount}
-          label={`${
-            rowCount > 0 ? "Specialty Selected" : "Specialties Selected"
-          }`}
-          resetAll={handleReset}
-          dropDownItems={
-            <DropdownItems
-              selectedSpecialties={selectedSpecialties}
-              resetAll={handleReset}
-            />
-          }
-          actionButton={
-            <ActionButtons
-              selectedSpecialties={selectedSpecialties}
-              resetAll={handleReset}
-            />
-          }
-        />
-      </div>
+      </main>
     </>
   );
 }

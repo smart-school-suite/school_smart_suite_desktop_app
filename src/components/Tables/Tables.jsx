@@ -64,7 +64,7 @@ const Table = forwardRef((props, ref) => {
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
   return (
-    <div style={{ width: "100%", height: props.tableHeight ? `${props.tableHeight}dvh` : '78dvh' }}>
+    <div style={{ width: "100%", height: props.tableHeight ? `${props.tableHeight}dvh` : '100%' }}>
       <AgGridReact
         rowHeight={props.rowHeight}
         rowData={props.rowData}

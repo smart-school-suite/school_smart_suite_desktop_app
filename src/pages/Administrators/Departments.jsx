@@ -30,9 +30,11 @@ import BulkDeactivateDepartment from "../../ModalContent/Department/BulkDeactiva
 import BulkDeleteDepartment from "../../ModalContent/Department/BulkDeleteDepartment";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 function Departments() {
   const tableRef = useRef();
-  const { data: departments, isLoading } = useGetDepartments();
+  const { data: departments, isLoading, error } = useGetDepartments();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
@@ -59,14 +61,11 @@ function Departments() {
     return departments?.data ?? [];
   }, [departments]);
 
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="my-2">
-          <div className="d-flex align-items-center gap-2">
+      <main className="main-container gap-2">
+        <div style={{ height: "15%" }} className="d-flex flex-column gap-3">
+          <div className="d-flex align-items-center gap-3">
             <div
               className={`${
                 darkMode ? "dark-mode-active" : "light-mode-active"
@@ -81,51 +80,64 @@ function Departments() {
             </div>
             <span className="my-0 fw-semibold">Manage Departments</span>
           </div>
-        </div>
-        <div className="d-flex flex-row align-items-center mt-4 w-100">
-          <div className="d-block">
-            <p className="font-size-xs my-0">Total Number of Departments</p>
-            <h1 className="fw-bold my-0">{memoizedRowData.length}</h1>
+          <div className="d-flex flex-row align-items-center w-100">
+            <div className="d-block">
+              <p className="font-size-xs my-0">Total Number of Departments</p>
+              <h1 className="fw-bold my-0">{memoizedRowData?.length || 0}</h1>
+            </div>
+            <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
+              <ModalButton
+                action={{ modalContent: CreateDepartment }}
+                classname={
+                  "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
+                }
+              >
+                <Icon icon="icons8:plus" className="font-size-md" />
+                <span className="font-size-sm">Create Department</span>
+              </ModalButton>
+            </div>
           </div>
-          <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
-            <ModalButton
-              action={{ modalContent: CreateDepartment }}
-              classname={
-                "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
-              }
-            >
-              <Icon icon="icons8:plus" className="font-size-md" />
-              <span className="font-size-sm">Create Department</span>
-            </ModalButton>
-          </div>
         </div>
-        <div>
-          <Table
-            colDefs={memoizedColDefs}
-            rowData={memoizedRowData}
-            ref={tableRef}
-            handleRowCountFromChild={handleRowCountFromChild}
-            handleRowDataFromChild={handleRowDataFromChild}
-          />
-          <BulkActionsToast
-            rowCount={rowCount}
-            label={"Department Selected"}
-            resetAll={handleReset}
-            dropDownItems={
-              <DropdownItems
-                selectedDepartments={selectedDepartments}
-                resetAll={handleReset}
+        <div style={{ height: "85%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={memoizedColDefs}
+                rowData={memoizedRowData}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
               />
-            }
-            actionButton={
-              <ActionButtons
-                selectedDepartments={selectedDepartments}
-                resetAll={handleReset}
-              />
-            }
-          />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={"Department Selected"}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedDepartments={selectedDepartments}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedDepartments={selectedDepartments}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
         </div>
-      </div>
+      </main>
     </>
   );
 }

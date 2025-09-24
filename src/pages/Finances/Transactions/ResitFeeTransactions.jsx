@@ -21,8 +21,10 @@ import ResitFeeTransactionDetails from "../../../ModalContent/ResitFee/ResitFeeT
 import { bulkDeleteStudentResitTransactions } from "../../../services/studentResit";
 import BulkReverseResitFeeTransaction from "../../../ModalContent/ResitFee/BulkReverseResitFeeTransaction";
 import BulkDeleteResitFeeTransaction from "../../../ModalContent/ResitFee/BulkDeleteResitFeeTransaction";
+import { NotFoundError } from "../../../components/errors/Error";
+import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 function ResitFeeTransactions() {
-  const { data: transactions, isLoading } = useGetResitTransactions();
+  const { data: transactions, isLoading, error } = useGetResitTransactions();
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
   const [selectedTransactions, setSelectedTransactions] = useState([]);
@@ -39,50 +41,62 @@ function ResitFeeTransactions() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  if (isLoading) {
-    return <DataTablePageLoader />;
-  }
   return (
     <>
-      <div>
-        <div className="d-flex flex-row align-items-center mb-1 w-100">
-          <div>
-            <span className="fw-semibold">Resit Fee Transactions</span>
-          </div>
+      <div className="d-flex flex-column gap-2 h-100">
+        <div
+          className="d-flex flex-row align-items-center w-100"
+          style={{ height: "5%" }}
+        >
+          <span className="fw-semibold">Resit Fee Transactions</span>
         </div>
-        <Table
-          colDefs={resitFeeTransacTableConfig({
-            DropdownComponent,
-          })}
-          rowData={transactions.data}
-          ref={tableRef}
-          handleRowCountFromChild={handleRowCountFromChild}
-          handleRowDataFromChild={handleRowDataFromChild}
-          tableHeight={89}
-        />
-        <BulkActionsToast
-          rowCount={rowCount}
-          label={`${
-            rowCount >= 1
-              ? "Transaction Selected"
-              : rowCount >= 2
-              ? "Transactions Selected"
-              : null
-          }`}
-          resetAll={handleReset}
-          dropDownItems={
-            <DropdownItems
-              selectedTransactions={selectedTransactions}
-              resetAll={handleReset}
-            />
-          }
-          actionButton={
-            <ActionButtons
-              selectedTransactions={selectedTransactions}
-              resetAll={handleReset}
-            />
-          }
-        />
+        <div style={{ height: "95%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={resitFeeTransacTableConfig({
+                  DropdownComponent,
+                })}
+                rowData={transactions.data}
+                ref={tableRef}
+                handleRowCountFromChild={handleRowCountFromChild}
+                handleRowDataFromChild={handleRowDataFromChild}
+              />
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount >= 1
+                      ? "Transaction Selected"
+                      : rowCount >= 2
+                      ? "Transactions Selected"
+                      : null
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedTransactions={selectedTransactions}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedTransactions={selectedTransactions}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
+            </>
+          )}
+        </div>
       </div>
     </>
   );
@@ -190,35 +204,35 @@ function ActionButtons({ selectedTransactions, resetAll }) {
   );
 }
 function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
-      const [showModal, setShowModal] = useState(false);
-      const [modalContent, setModalContent] = useState(null);
-      const [modalSize, setModalSize] = useState("lg");
-      const modalRef = useRef(null);
-      useEffect(() => {
-        onModalStateChange(showModal, modalRef);
-      }, [showModal, onModalStateChange]);
-    
-      const handleCloseModal = () => {
-        setShowModal(false);
-        setModalContent(null);
-      };
-    
-      const handleShowModal = (ContentComponent, size = "lg") => {
-        setModalContent(
-          React.createElement(ContentComponent, {
-            handleClose: handleCloseModal,
-            resetAll,
-            bulkData: selectedTransactions,
-          })
-        );
-        setModalSize(size);
-        setShowModal(true);
-      };
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("lg");
+  const modalRef = useRef(null);
+  useEffect(() => {
+    onModalStateChange(showModal, modalRef);
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "lg") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        handleClose: handleCloseModal,
+        resetAll,
+        bulkData: selectedTransactions,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
-     <DropDownMenuItem
-         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-         onClick={() => handleShowModal(BulkReverseResitFeeTransaction, "md")}
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkReverseResitFeeTransaction, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Reverse All</span>
@@ -226,8 +240,8 @@ function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
         </div>
       </DropDownMenuItem>
       <DropDownMenuItem
-         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-         onClick={() => handleShowModal(BulkDeleteResitFeeTransaction, "md")}
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => handleShowModal(BulkDeleteResitFeeTransaction, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
