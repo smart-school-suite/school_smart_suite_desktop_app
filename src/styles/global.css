@@ -1599,3 +1599,9 @@ textarea::-webkit-scrollbar-thumb:hover {
     font-size: var(--font-size-sm);
     vertical-align: center;
 }
+.box-path{
+    height: 10dvh;
+    border-left: 1px dashed #999;
+    display: flex;
+    align-items: center;
+}

@@ -556,6 +556,91 @@ function Sidebar() {
                 </div>
                 </div>
                 {/*student*/}
+                
+                 {/*media*/}
+                <div>
+                  <div
+                  className={
+                    IsPathInRoutes(schoolActivities)
+                      ? `${darkMode ? 'nav-items-box-active-dark' : 'nav-item-box-active' }`
+                      : "nav-item-box-inactive"
+                  }
+                  onClick={() => {
+                    navigate("/announcement-overview");
+                  }}
+                >
+                  <div className="nav-item w-100 d-flex flex-row gap-2">
+                    <span>
+                      <Icon icon="healthicons:money-bag-outline" />
+                    </span>
+                    <p>School Activities</p>
+                  </div>
+                  <span>
+                    <Icon
+                      icon="octicon:chevron-down-24"
+                      className={
+                        IsPathInRoutes(schoolActivities)
+                          ? "rotate-icon nav-dropdown-icon"
+                          : "nav-dropdown-icon"
+                      }
+                    />
+                  </span>
+                </div>
+                <div
+                  className={
+                    IsPathInRoutes(schoolActivities)
+                      ? "subbox-container-nav ps-3"
+                      : "subbox-container-nav-inactive"
+                  }
+                >
+                  <div className={`${darkMode ? 'drop-down-container-dark' : 'drop-down-container' }`}>
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
+                      <div className="subbox-nav">
+                        <div
+                          onClick={() => {
+                             navigate("/announcement-overview")
+                          }}
+                          className={IsPathInRoutes(announcementRoutes)
+                            ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"
+                          }
+                        >
+                          <p>Announcements</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
+                      <div className="subbox-nav">
+                        <div
+                          onClick={() => {
+                             navigate("/election-overview")
+                          }}
+                          className={IsPathInRoutes(electionRoutes) 
+                            ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"
+                          }
+                        >
+                          <p>School Elections</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`${darkMode ? 'box-nav-dark' : 'box-nav'}`}>
+                      <div className="subbox-nav">
+                        <div
+                          onClick={() => {
+                             navigate("/events")
+                          }}
+                          className={IsPathInRoutes(eventRoutes) ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                              : "text-decoration-none gainsboro-color pointer-cursor"}
+                        >
+                          <p>School Events</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                {/*media*/}
 
                 {/*School Expenses*/}
                 <div>
@@ -670,7 +755,8 @@ function Sidebar() {
                 </div>
                 </div>
                 {/*School Expenses*/}
-
+                 
+               
               </div>
             </div>
           </div>

@@ -6,7 +6,7 @@ import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useCreateFeeScheduleSlots = (handleClose) => {
     const queryClient = useQueryClient();
     return useMutation({
-         mutationFn:createFeeScheduleSlots,
+         mutationFn:({ feeScheduleId, scheduleData }) => createFeeScheduleSlots(feeScheduleId, scheduleData),
          onSuccess:() => {
             queryClient.invalidateQueries({ queryKey:["feeSchedules"] })
 

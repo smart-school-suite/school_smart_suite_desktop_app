@@ -8,3 +8,4 @@ export const useGetExamDetails = (examId) => {
          enabled:!!examId
     })
 }
+

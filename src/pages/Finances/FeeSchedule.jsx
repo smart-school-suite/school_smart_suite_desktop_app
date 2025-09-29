@@ -1,5 +1,4 @@
 import Table from "../../components/Tables/Tables";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { useGetFeeSchedule } from "../../hooks/feeSchedule/useGetFeeSchedule";
 import React from "react";
 import { useState } from "react";
@@ -9,53 +8,64 @@ import ActionButtonDropdown from "../../components/DataTableComponents/ActionCom
 import { tuitionFeeScheduleTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DeleteFeeScheduleSlot from "../../ModalContent/FeeSchedule/DeleteFeeSchedule";
 import UpdateFeeScheduleSlot from "../../ModalContent/FeeSchedule/UpdateFeeSchedule";
-import CreateFeeScheduleSlots from "../../ModalContent/FeeSchedule/CreateFeeSchedule";
+import AutoGenerateFeeSchedule from "../../ModalContent/FeeSchedule/AutoGenerateFeeSchedule";
 import FeeScheduleSlots from "../../ModalContent/FeeSchedule/FeeScheduleSlots";
-function FeeSchedule(){
-    const  { data:feeSchedule, isLoading } = useGetFeeSchedule();
-    if(isLoading){
-        return <DataTableNavLoader />
-    }
-    return(
-        <>
-         <div>
-        <div className="mb-2">
-          <span className="font-size-sm">Tuition Fees Schedule</span>
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { CreateIcon, DeleteIcon, DetailsIcon, GenerateIcon, UpdateIcon } from "../../icons/ActionIcons";
+function FeeSchedule() {
+  const { data: feeSchedule, isLoading, error } = useGetFeeSchedule();
+  return (
+    <>
+      <div className="d-flex flex-column gap-2 h-100">
+        <div style={{ height: "5%" }}>
+          <span className="fw-semibold">Tuition Fees Schedule</span>
         </div>
-        <div>
-          <Table
-            colDefs={tuitionFeeScheduleTableConfig({ DropdownComponent })}
-            rowData={feeSchedule.data}
-          />
+        <div style={{ height: "95%" }}>
+          {isLoading ? (
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={tuitionFeeScheduleTableConfig({ DropdownComponent })}
+                rowData={feeSchedule.data}
+              />
+            </>
+          )}
         </div>
       </div>
-        </>
-    )
+    </>
+  );
 }
 export default FeeSchedule;
 
 export function DropdownComponent(props) {
-    const rowData = props.data;
-  
-    const [showModal, setShowModal] = useState(false);
-    const [modalContent, setModalContent] = useState(null);
-    const [modalSize, setModalSize] = useState("md");
-  
-    const handleCloseModal = () => {
-      setShowModal(false);
-      setModalContent(null);
-    };
-  
-    const handleShowModal = (ContentComponent, size = "md") => {
-      setModalContent(
-        React.createElement(ContentComponent, {
-          rowData,
-          handleClose: handleCloseModal,
-        })
-      );
-      setModalSize(size);
-      setShowModal(true);
-    };
+  const rowData = props.data;
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalSize, setModalSize] = useState("md");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleShowModal = (ContentComponent, size = "md") => {
+    setModalContent(
+      React.createElement(ContentComponent, {
+        rowData,
+        handleClose: handleCloseModal,
+      })
+    );
+    setModalSize(size);
+    setShowModal(true);
+  };
   return (
     <>
       <ActionButtonDropdown
@@ -68,11 +78,12 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(CreateFeeScheduleSlots, "lg")}
+          onClick={() => handleShowModal(AutoGenerateFeeSchedule, "lg")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Create Schedule</span>
+              <span>Auto Generate Schedule</span>
+              <GenerateIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -85,6 +96,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Schedule</span>
+              <UpdateIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -96,7 +108,8 @@ export function DropdownComponent(props) {
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Schedule</span>
+              <span>View Schedule</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -109,11 +122,12 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Schedule</span>
+              <DeleteIcon />
             </div>
           </div>
         </DropDownMenuItem>
       </ActionButtonDropdown>
-        <CustomModal
+      <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}

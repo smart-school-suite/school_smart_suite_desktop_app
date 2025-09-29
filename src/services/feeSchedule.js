@@ -26,3 +26,8 @@ export const getFeeScheduleSlots = async (feeScheduleId) => {
   const response = await axiosInstance.get(`fee-schedule/${feeScheduleId}/slots`);
   return response.data;
 };
+
+export const autoGenerateFeeSchedule = async (data) => {
+   const response = await axiosInstance.post('fee-schedule/auto-generate', data);
+   return response.data;
+}

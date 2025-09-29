@@ -16,18 +16,14 @@ import {
   GenerateIcon,
   ReuseIcon,
   UpdateIcon,
-  SuspendIcon,
-  ActivateIcon,
 } from "../../icons/ActionIcons";
 import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { GradeIcon } from "../../icons/Icons";
 import AutoConfigureGrades from "../../ModalContent/GradesConfig/AutoConfigGrades";
 import { useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import BulkCreateGrades from "../../ModalContent/GradesConfig/BulkCreateGrades";
 import BulkDeleteGradesByCategory from "../../ModalContent/GradesConfig/BulkDeleteGradesByCategory";
 import BulkCreateGradesByTargetCategory from "../../ModalContent/GradesConfig/BulkCreateGradesByTargetCategory";
 import { NotFoundError } from "../../components/errors/Error";

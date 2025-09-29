@@ -8,18 +8,61 @@ import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { schoolTypes } from "../../data/data";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
+import { updateSchoolAuthError } from "../../Slices/Asynslices/AuthSlice";
+import { useRef } from "react";
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function RegisterSchool() {
   const { data: country, isPending: isLoading } = useGetCountries();
+  const countryRef = useRef();
+  const schoolNameRef = useRef();
+  const schoolTypeRef = useRef();
   const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
+  const schoolAuthError = useSelector((state) => state.auth.schoolAuthError);
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleChange = (field, event) => {
-    const value = event.target.value;
+  const handlePrevalidation = async () => {
+      const country = await  countryRef.current.triggerValidation();
+      const schoolName = await schoolNameRef.current.triggerValidation();
+      const schoolType = await schoolTypeRef.current.triggerValidation();
+      return {
+         country,
+         schoolName,
+         schoolType
+      }
+  }
+  const handleNext = async () => {
+     const prevalidation = await handlePrevalidation();
+     if(!allFieldsValid(prevalidation)){
+        toast.custom(
+           <ToastWarning 
+              title={"Invalid Fields"}
+              description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
+           />
+        )
+        return
+    }
+    if(!allFieldsValid({ school_name:schoolAuthError.school_name.isValid })){
+        toast.custom(
+           <ToastWarning 
+              title={"Invalid Fields"}
+              description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
+           />
+        )
+        return
+    }
+    navigate("/create-schoolbranch");
+  }
+  const handleChange = (field, value) => {
     dispatch(setSchoolAuthData({ field, value }));
   };
 
+  const handleSchoolAuthError = (field, isValid, error) => {
+     dispatch(updateSchoolAuthError({ field, isValid, error }));
+  }
   const totalSteps = 3;
   const fieldsFilled = [
     schoolCredentials.school_name,
@@ -66,6 +109,10 @@ function RegisterSchool() {
                        min:"School Name Must Be At Least 5 Characters Long"
                      }
                   })}
+                  onChange={(value) => handleChange('school_name', value)}
+                  onValidationChange={(value) => handleSchoolAuthError('school_name', value, null)}
+                  value={schoolCredentials.school_name}
+                  ref={schoolNameRef}
                 />
             </div>
 
@@ -77,6 +124,11 @@ function RegisterSchool() {
                 displayKey={['country']}
                 valueKey={['id']}
                 placeholder={"Select Country"}
+                onSelect={(value) => handleChange('country_id', value.id)}
+                onError={(value) => handleSchoolAuthError('country_id', null, value)}
+                error={schoolAuthError.country_id.error}
+                errorMessage={"Country Required"}
+                ref={countryRef}
               />
             </div>
 
@@ -88,6 +140,11 @@ function RegisterSchool() {
                   displayKey={['name']}
                   valueKey={['name']}
                   placeholder={"Select School Type"}
+                  onSelect={(value) => handleChange('type', value.name)}
+                  onError={(value) => handleSchoolAuthError('type', null, value)}
+                  error={schoolAuthError.type.error}
+                  errorMessage={"School Type Required"}
+                  ref={schoolTypeRef}
                 />
               </div>
             </div>
@@ -160,9 +217,7 @@ function RegisterSchool() {
           <div>
             <button
               className="border-none p-2 rounded-2 font-size-sm px-4 primary-background text-white"
-              onClick={() => {
-                navigate("/create-schoolbranch");
-              }}
+              onClick={handleNext}
               disabled={!isStepComplete}
             >
               Next

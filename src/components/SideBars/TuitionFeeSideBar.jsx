@@ -46,8 +46,8 @@ export const sideBarData = [
     title: "Transactions",
     path: "/fee-payment-transactions",
   },
-  //{
-    //title: "Payment Schedule",
-    //path: "/fee-payment/schedule",
-  //}
+  {
+    title: "Payment Schedule",
+    path: "/fee-payment-schedule",
+  }
 ];

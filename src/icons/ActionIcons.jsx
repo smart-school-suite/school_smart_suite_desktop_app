@@ -89,4 +89,10 @@ const ReinstateIcon = ({ iconStyle }) => {
         <Icon icon="material-symbols:undo-rounded" style={{...iconStyle, fontSize:"1rem"}} />
     )
 }
-export {ReinstateIcon, GenerateIcon, RepeatIcon, ReverseIcon, ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }
+
+const AnnouncementIcon = ({ iconStyle }) => {
+     return (
+        <Icon icon="streamline-plump:announcement-megaphone" style={{...iconStyle, fontSize:"1rem"}} />
+     )
+}
+export {AnnouncementIcon, ReinstateIcon, GenerateIcon, RepeatIcon, ReverseIcon, ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }

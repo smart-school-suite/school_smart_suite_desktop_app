@@ -7,34 +7,48 @@ import Table from "../../components/Tables/Tables";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
 import React, { useState } from "react";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import CustomModal from "../../components/Modals/Modal";
 import { useGetAnnouncementCategories } from "../../hooks/announcement/useGetAnnouncementCategories";
 import { DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function AnnouncementCategory() {
-  const { data: category, isLoading } = useGetAnnouncementCategories();
-  if (isLoading) {
-    return <DataTableNavLoader />;
-  }
+  const { data: category, isLoading, error } = useGetAnnouncementCategories();
   return (
     <>
-      <div className="pt-3">
-        <div className="d-flex flex-row align-items-center w-100 justify-content-between">
+      <div className="d-flex flex-column gap-2 h-100">
+        <div
+          className="d-flex flex-row align-items-center w-100 justify-content-between"
+          style={{ height: "5%" }}
+        >
           <span className="font-size-sm">Announcement Category</span>
           <ModalButton
             action={{ modalContent: CreateAnnouncementCategory }}
-            classname={"border-none rounded-3 px-2 d-flex align-items-center gap-2 py-2 font-size-sm primary-background-100"}
+            classname={
+              "border-none rounded-3 px-2 d-flex align-items-center gap-2 py-2 font-size-sm primary-background-100"
+            }
           >
             <Icon icon="icons8:plus" className="font-size-md" />
             <span>Create Category</span>
           </ModalButton>
         </div>
-        <div className="mt-3">
-            <Table 
-              colDefs={AnnouncementCategoryTableConfig({ DropdownComponent })}
-              rowData={category.data}
-            />
+        <div style={{ height: "95%" }}>
+          {isLoading ? (
+            <RectangleSkeleton />
+          ) : error ? (
+            <NotFoundError
+              title={error.response.data.errors.title}
+              description={error.response.data.errors.description}
+            ></NotFoundError>
+          ) : (
+            <>
+              <Table
+                colDefs={AnnouncementCategoryTableConfig({ DropdownComponent })}
+                rowData={category.data}
+              />
+            </>
+          )}
         </div>
       </div>
     </>
@@ -66,7 +80,7 @@ export function DropdownComponent(props) {
   };
   return (
     <>
-            <ActionButtonDropdown
+      <ActionButtonDropdown
         buttonContent={"Edit Actions"}
         style={
           "tableActionButton primary-background text-white font-size-sm px-2"

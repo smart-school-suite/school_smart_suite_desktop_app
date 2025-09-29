@@ -20,23 +20,18 @@ const initialState = {
   schoolAuthError: {
     school_name: {
       isValid: null,
-      error: null,
     },
     country_id: {
-      isValid: null,
       error: null,
     },
     type: {
-      isValid: null,
       error: null,
     },
     school_branch_name: {
       isValid: null,
-      error: null,
     },
     abbreviation: {
       isValid: null,
-      error: null,
     },
   },
 };
@@ -93,11 +88,12 @@ const authSlice = createSlice({
       const { field, value } = action.payload;
       state.schoolAuthData[field] = value;
     },
-    setSchoolAuthError: (state, action) => {
-      const { field, key, value } = action.payload;
+    updateSchoolAuthError: (state, action) => {
+      const { field, isValid, error } = action.payload;
 
-      if (state.schoolAuthError[field]) {
-        state.schoolAuthError[field][key] = value;
+      if (state.schoolAuthError.hasOwnProperty(field)) {
+        state.schoolAuthError[field].isValid = isValid;
+        state.schoolAuthError[field].error = error;
       }
     },
     resetSchoolAuthData: (state) => {
@@ -121,6 +117,6 @@ export const {
   handleSetChangePassword,
   setSchoolAuthData,
   resetSchoolAuthData,
-  setSchoolAuthError,
+  updateSchoolAuthError
 } = authSlice.actions;
 export default authSlice.reducer;

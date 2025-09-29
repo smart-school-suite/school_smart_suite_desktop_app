@@ -1,40 +1,17 @@
 
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 function AnnoucementSideBar() {
+    const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
-      <div
-        className="d-flex flex-column justify-content-start gap-2"
-        style={{ height: "97.5dvh" }}
-      >
-        <div className="d-flex flex-row align-items-center gap-2">
-          <div
-            style={{
-              width: "2.5rem",
-              height: "2.5rem",
-              borderRadius: "0.5rem",
-              background: "#fff3ed",
-              color: "#fd9d74",
-            }}
-            className="d-flex flex-row align-items-center justify-content-center"
-          >
-            <Icon icon="fluent:speaker-0-20-regular" width="24" height="24" />
-          </div>
-          <span className="fw-semibold">Announcement</span>
-        </div>
-        <div
-          className="card border-none rounded-4 d-flex  w-100 p-2 gap-4 flex-column"
-          style={{ height: "95%" }}
-          
-        >
-         {
-           sideBarData.map((items) => {
-            return  <SideBarComponent  title={items.title} path={items.path}/>
-           })
-         }
-        </div>
-      </div>
+      <div className={`${darkMode ? 'dark-bg' : "white-bg"} card border-none width-20 p-2 rounded-4 d-flex flex-column gap-3 h-100`}
+                >
+                  {sideBarData.map((item) => (
+                    <SideBarComponent title={item.title} path={item.path} />
+                  ))}
+                </div>
     </>
   );
 }

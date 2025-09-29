@@ -3,16 +3,19 @@ import TextDisplay from "../../components/TextComponents/TextDisplay";
 function Annoucements() {
   return (
     <>
-      <div className="w-100 ">
-        <div className="d-flex flex-row gap-2 font-size-sm my-2">
+      <div className="w-100 h-100">
+        <section style={{ height:"5%" }}>
+          <div className="d-flex flex-row gap-2 font-size-sm my-2">
           <span><Icon icon="octicon:info-24" width="20" height="20" /></span>
           <span>Overview</span>
         </div>
-        <div className="announcement-card">
+        </section>
+        <section style={{ height:"25%" }} className="d-flex flex-row align-items-center w-100">
           <div
             className="card border-none rounded-4 p-2 d-flex flex-column annoucement-stat-card"
             style={{
               background: "#ffe4d5",
+              width:"33%"
             }}
           >
             <div>
@@ -26,6 +29,7 @@ function Annoucements() {
             className="card border-none rounded-4 p-2 d-flex flex-column annoucement-stat-card"
             style={{
               background: "#e4e9fb",
+              width:"33%"
             }}
           >
             <div>
@@ -41,6 +45,7 @@ function Annoucements() {
             className="card border-none rounded-4 p-2 d-flex flex-column annoucement-stat-card"
             style={{
               background: "#f3ecf2",
+              width:"33%"
             }}
           >
             <div>
@@ -52,8 +57,8 @@ function Annoucements() {
               <span style={{ fontSize: "2rem" }}>1000</span>
             </div>
           </div>
-        </div>
-        <section className="mt-2">
+        </section>
+        <section style={{ height:"50%" }}>
           <div className="d-flex flex-row gap-3 w-100 justify-content-between">
             <div style={{ width: "50%", height: "52dvh" }}>
               <div className="d-flex font-size-sm flex-row justify-content-between">
@@ -161,7 +166,7 @@ function Annoucements() {
             </div>
           </div>
         </section>
-        <section className="mt-5">
+        <section style={{ height:"20%" }}>
           <span className="font-size-sm fw-semibold">Announcement Stats By Type</span>
           <div className="announcement-grid-two mt-2">
               <div className="card border-none d-flex flex-row font-size-sm p-2 rounded-2">

@@ -3,13 +3,66 @@ import { useDispatch, useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
 import { setSchoolAuthData } from "../../Slices/Asynslices/AuthSlice";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRef } from "react";
+import { TextInput } from "../../components/FormComponents/InputComponents";
+import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
+import { updateSchoolAuthError } from "../../Slices/Asynslices/AuthSlice";
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 function RegisterSchoolBranch() {
   const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
+  const schoolAuthError = useSelector((state) => state.auth.schoolAuthError);
+  const darkMode = useSelector((state) => state.theme.darkMode);
+  const schoolBranchNameRef = useRef();
+  const abbreviationRef = useRef();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handleChange = (field, event) => {
-    const value = event.target.value;
+  const handlePrevalidation = async () => {
+    const schoolBranchName =
+      await schoolBranchNameRef.current.triggerValidation();
+    const abbreviation = await abbreviationRef.current.triggerValidation();
+    return {
+      schoolBranchName,
+      abbreviation,
+    };
+  };
+  const handleNext = async () => {
+    const prevalidation = await handlePrevalidation();
+    if (!allFieldsValid(prevalidation)) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={
+            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
+          }
+        />
+      );
+      return;
+    }
+    if (
+      !allFieldsValid({
+        school_branch_name: schoolAuthError.school_branch_name.isValid,
+        abbreviation: schoolAuthError.abbreviation.isValid,
+      })
+    ) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={
+            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
+          }
+        />
+      );
+      return;
+    }
+    navigate("/subcription/plan");
+  };
+  const handleChange = (field, value) => {
     dispatch(setSchoolAuthData({ field, value }));
+  };
+  const handleSchoolAuthError = (field, isValid, error) => {
+    dispatch(updateSchoolAuthError({ field, isValid, error }));
   };
   const branchName = schoolCredentials.school_branch_name
     ? schoolCredentials.school_branch_name.trim()
@@ -24,7 +77,11 @@ function RegisterSchoolBranch() {
   const isStepComplete = fieldsFilled === totalSteps;
   return (
     <>
-      <div className="container w-100 height-100 pt-3 d-flex flex-column pb-5">
+      <div
+        className={`${
+          darkMode ? "dark-bg dark-mode-text" : "white-bg"
+        } container w-100 height-100 pt-3 d-flex flex-column pb-5`}
+      >
         <div className="d-flex flex-row align-items-center w-100 justify-content-between px-3">
           <div className="signup-app-logo">
             <img
@@ -34,10 +91,22 @@ function RegisterSchoolBranch() {
             />
           </div>
           <div className="d-flex flex-row gap-4">
-            <button className="border-none rounded-pill px-3 py-2 border bg-white font-size-sm">
+            <button
+              className={`${
+                darkMode
+                  ? "dark-bg-light dark-mode-text border-none"
+                  : "bg-white border"
+              }  rounded-pill px-3 py-2  font-size-sm`}
+            >
               Save And Exit
             </button>
-            <button className="border-none rounded-pill px-3 py-2 border bg-white  font-size-sm">
+            <button
+              className={`${
+                darkMode
+                  ? "dark-bg-light dark-mode-text border-none"
+                  : "bg-white border"
+              }  rounded-pill px-3 py-2  font-size-sm`}
+            >
               Questions?
             </button>
           </div>
@@ -48,25 +117,47 @@ function RegisterSchoolBranch() {
               <h1 className="fw-bold">Create School Branch</h1>
             </div>
             <div className="my-3">
-              <label htmlFor="school branch name">School Branch Name</label>
-              <input
-                type="text"
-                name="school_branch_name"
+              <label htmlFor="school branch name" className="font-size-sm">School Branch Name</label>
+              <TextInput
                 placeholder="Enter School Branch Name"
-                value={schoolCredentials.school_branch_name}
+                validationSchema={nameSchema({
+                  required: true,
+                  min: 5,
+                  max: 150,
+                  messages: {
+                    required: "School Branch Name Required",
+                    min: "School Branch Name Must Be At Least 5 Characters Long",
+                    max: "School Branch Name Must Not Exceed 150 Characters",
+                  },
+                })}
                 onChange={(value) => handleChange("school_branch_name", value)}
-                className="form-control p-2 "
+                onValidationChange={(value) =>
+                  handleSchoolAuthError("school_branch_name", value, null)
+                }
+                value={schoolCredentials.school_branch_name}
+                ref={schoolBranchNameRef}
               />
             </div>
             <div className="my-3">
-              <label htmlFor="school branch Abbreviation">Abbreviation</label>
-              <input
-                type="text"
-                placeholder="Enter School Branch Abbreviation"
-                name="abbreviation"
-                value={schoolCredentials.abbreviation}
+              <label htmlFor="school branch Abbreviation" className="font-size-sm">Abbreviation</label>
+              <TextInput
+                placeholder="Enter School Branch Name"
+                validationSchema={nameSchema({
+                  required: true,
+                  min: 2,
+                  max: 10,
+                  messages: {
+                    required: "School Branch Abbreviation Name Required",
+                    min: "School Branch Abbreviation  Name Must Be At Least 2 Characters Long",
+                    max: "School Branch Abbreviation Must Not Exceed 10 Characters",
+                  },
+                })}
                 onChange={(value) => handleChange("abbreviation", value)}
-                className="form-control p-2"
+                onValidationChange={(value) =>
+                  handleSchoolAuthError("abbreviation", value, null)
+                }
+                value={schoolCredentials.abbreviation}
+                ref={abbreviationRef}
               />
             </div>
           </div>
@@ -148,9 +239,7 @@ function RegisterSchoolBranch() {
             <div>
               <button
                 className="border-none p-2 rounded-2 font-size-sm px-4 primary-background text-white"
-                onClick={() => {
-                  navigate("/subcription/plan");
-                }}
+                onClick={handleNext}
                 disabled={!isStepComplete}
               >
                 Next

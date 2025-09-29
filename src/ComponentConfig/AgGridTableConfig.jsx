@@ -17,6 +17,7 @@ import TimetableBadge from "../components/Badges/TimetableBadge";
 import AccessmentStatus from "../components/Badges/AccessmentStatus";
 import GradeSubmittedStatus from "../components/Badges/GradeSubmittedStatus";
 import ISODateComponent from "../components/DataTableComponents/ISODateComponent"
+import ConfigStatusBadge from "../components/Badges/ConfigStatusBadge";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -1910,23 +1911,7 @@ export function tuitionFeeScheduleTableConfig({ DropdownComponent }){
       field: "id",
       hide: true,
     },
-    {
-      field: "config_status",
-      headerName: "Configuration Status",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
+        {
       field: "specialty_name",
       headerName: "Specialty Name",
       filter: true,
@@ -1945,6 +1930,22 @@ export function tuitionFeeScheduleTableConfig({ DropdownComponent }){
     {
       field: "semester",
       headerName: "Semester",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "config_status",
+      headerName: "Configuration Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: ConfigStatusBadge,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "status",
+      headerName: "Status",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
