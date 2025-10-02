@@ -104,4 +104,10 @@ const DepartmentIcon = ({ iconStyle }) => {
       <Icon icon="la:university"  style={{ ...iconStyle, fontSize: "1rem" }} />
     )
 }
-export { DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };
+
+const StatsIcon = ({ iconStyle }) => {
+   return (
+     <Icon icon="iconoir:stats-down-square" style={{ ...iconStyle, fontSize: "1rem" }}  />
+   )
+}
+export { StatsIcon, DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };

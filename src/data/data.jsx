@@ -115,3 +115,24 @@ export const schoolTypes = [
   { id: 1, name: "Private" },
   { id: 2, name: "Government" }
 ]
+
+export const announcementStatus = [
+  {
+    id: 1,
+    name: "Publish Now",
+    value: "active",
+    description: "Immediately publishes the announcement and makes it visible to the intended audience."
+  },
+  {
+    id: 2,
+    name: "Set As Draft",
+    value: "draft",
+    description: "Saves the announcement as a draft for future editing. It won’t be visible to the audience until published."
+  },
+  {
+    id: 3,
+    name: "Schedule For Later",
+    value: "scheduled",
+    description: "Allows you to set a specific date and time for the announcement to be automatically published."
+  }
+];

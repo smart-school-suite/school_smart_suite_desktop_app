@@ -222,6 +222,62 @@ export const dateValidationSchema = ({
   return schema;
 };
 
+export const timeValidationSchema = ({
+  required = true,
+  futureOrNow = false,
+  messages = {}
+} = {}) => {
+  let schema = Yup.string()
+    .trim()
+    .matches(
+      /^([01]\d|2[0-3]):([0-5]\d)$/,
+      messages.format || "Invalid time format (HH:MM)"
+    )
+    .test(
+      "is-valid-time",
+      messages.invalid || "Invalid time",
+      (val) => {
+        if (!val) return true;
+        const parts = val.split(":");
+        if (parts.length !== 2) return false;
+        const [h, m] = parts.map(Number);
+        return (
+          Number.isInteger(h) &&
+          Number.isInteger(m) &&
+          h >= 0 &&
+          h <= 23 &&
+          m >= 0 &&
+          m <= 59
+        );
+      }
+    )
+    .transform((val) => (val === "" ? null : val));
+
+  if (futureOrNow) {
+    schema = schema.test(
+      "is-future-or-now",
+      messages.futureOrNow || "Time must be now or in the future",
+      (val) => {
+        if (!val) return true;
+        const [h, m] = val.split(":").map(Number);
+        const now = new Date();
+        const inputDate = new Date();
+        inputDate.setHours(h, m, 0, 0);
+        return inputDate >= now;
+      }
+    );
+  }
+
+  if (required) {
+    schema = schema.required(messages.required || "Time is required");
+  } else {
+    schema = schema.nullable();
+  }
+
+  return schema;
+};
+
+
 export const dateRangeValidationSchema = ({
   optional = false,
   futureOnly = false,

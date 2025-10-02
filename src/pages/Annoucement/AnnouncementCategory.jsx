@@ -22,7 +22,7 @@ function AnnouncementCategory() {
           className="d-flex flex-row align-items-center w-100 justify-content-between"
           style={{ height: "5%" }}
         >
-          <span className="font-size-sm">Announcement Category</span>
+          <span className="fw-semibold">Announcement Category</span>
           <ModalButton
             action={{ modalContent: CreateAnnouncementCategory }}
             classname={
@@ -35,7 +35,7 @@ function AnnouncementCategory() {
         </div>
         <div style={{ height: "95%" }}>
           {isLoading ? (
-            <RectangleSkeleton />
+            <RectangleSkeleton width="100%" height="100%" speed={0.5} />
           ) : error ? (
             <NotFoundError
               title={error.response.data.errors.title}

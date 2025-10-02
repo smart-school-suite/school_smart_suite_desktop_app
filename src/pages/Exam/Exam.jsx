@@ -8,7 +8,6 @@ import DeleteExam from "../../ModalContent/Exams/DeleteExam";
 import ExamDetails from "../../ModalContent/Exams/ExamDetails";
 import UpdateExam from "../../ModalContent/Exams/UpdateExam";
 import AddExamGrading from "../../ModalContent/Exams/AddExamGrading";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../components/Modals/Modal";

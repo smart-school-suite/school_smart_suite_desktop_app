@@ -3,7 +3,9 @@ import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
+import { useRef } from "react";
 function ResetPassword() {
+  const emailRef = useRef();
   const [email, setEmail] = useState("");
   const { handlePasswordReset, loading, authError } = useAuth();
   const navigate = useNavigate();
@@ -36,7 +38,7 @@ function ResetPassword() {
                 />
               </div>
              <button
-                className="w-100 mt-2 border-none rounded-3 p-2 primary-background text-white"
+                className="w-100 mt-2 border-none rounded-3 p-2 primary-background text-white font-size-sm"
                 type="submit"
                 disabled={loading.passwordReset}
               >

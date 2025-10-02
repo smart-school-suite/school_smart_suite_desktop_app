@@ -74,3 +74,11 @@ export const getTargetAudience = async () => {
      const response = await axiosInstance.get('target-audience');
      return response.data;
 } 
+export const getAnnouncementEngagementStats = async (announcementId) => {
+      const response = await axiosInstance.get(`announcement/engagement-stats/${announcementId}`);
+      return response.data;
+}
+export const getAnnouncementReadUnreadList = async (announcementId) => {
+      const response = await axiosInstance.get(`announcement/read-uread/list/${announcementId}`);
+      return response.data;
+}

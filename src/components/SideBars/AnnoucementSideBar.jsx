@@ -66,10 +66,5 @@ export const sideBarData = [
     title: "Announcement Category",
     icon: "stash:engagement",
     path: "/announcement-category",
-  },
-  {
-     title:"Announcement Tags",
-     icon:"",
-     path:"/announcement-tag"
   }
 ];

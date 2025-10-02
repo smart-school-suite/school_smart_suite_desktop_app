@@ -592,44 +592,139 @@ function DateInputComponent(
 }
 export const DateInput = forwardRef(DateInputComponent);
 
-export function TimeInput({
-  value,
-  onChange,
-  id,
-  name,
-  placeholder = "HH:MM",
-}) {
-  const [displayValue, setDisplayValue] = useState(value);
-  const handleChange = useCallback(
-    (e) => {
-      const rawValue = e.target.value;
-      setDisplayValue(rawValue);
-      const unmaskedValue = rawValue.replace(/[^0-9]/g, "");
-      if (unmaskedValue.length === 4) {
-        onChange(rawValue);
-      } else if (unmaskedValue.length < 4 && value !== "") {
-        onChange("");
-      }
+export const TimeInput = forwardRef(function TimeInput(
+  {
+    value,
+    onChange,
+    id,
+    name,
+    placeholder = "HH:MM",
+    validationSchema,
+    optional = false,
+    onValidationChange, // ✅ added
+  },
+  ref
+) {
+  const [displayValue, setDisplayValue] = useState(value || "");
+  const [inputError, setInputError] = useState("");
+  const [isInputTouched, setIsInputTouched] = useState(false);
+  const darkMode = useSelector((state) => state.theme.darkMode);
+
+  useEffect(() => {
+    setDisplayValue(value || "");
+    if (isInputTouched) {
+      validateInput(value || "");
+    } else if (!value && optional) {
+      setInputError("");
+      onValidationChange?.(true);
+    }
+  }, [value, isInputTouched, optional]);
+
+  const validateInput = async (currentValue) => {
+    if (optional && (currentValue === "" || currentValue == null)) {
+      setInputError("");
+      onValidationChange?.(true); 
+      return true;
+    }
+    if (!validationSchema) {
+      setInputError("");
+      onValidationChange?.(true); 
+      return true;
+    }
+    try {
+      await validationSchema.validate(currentValue);
+      setInputError("");
+      onValidationChange?.(true);
+      return true;
+    } catch (err) {
+      setInputError(err.message);
+      onValidationChange?.(false);
+      return false;
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    triggerValidation: () => {
+      setIsInputTouched(true);
+      return validateInput(displayValue);
     },
-    [onChange, value]
-  );
+    resetField: () => {
+      setDisplayValue("");
+      setInputError("");
+      setIsInputTouched(false);
+      onValidationChange?.(optional ? true : false);
+    },
+  }));
+
+  const handleChange = (e) => {
+    const rawValue = e.target.value;
+    setDisplayValue(rawValue);
+    const unmaskedValue = rawValue.replace(/[^0-9]/g, "");
+    if (unmaskedValue.length === 4) {
+      onChange(rawValue);
+      if (isInputTouched) {
+        validateInput(rawValue);
+      }
+    } else {
+      onChange("");
+      onValidationChange?.(false); 
+    }
+  };
+
+  const handleFocus = () => {
+    setIsInputTouched(true);
+    validateInput(displayValue);
+  };
+
+  const handleBlur = () => {
+    validateInput(displayValue);
+  };
+
+  const feedbackContent =
+    isInputTouched && inputError
+      ? inputError
+      : isInputTouched && !inputError && displayValue !== ""
+      ? "Looks Good!"
+      : null;
+
+  const feedbackClasses = [
+    "transition-all font-size-sm",
+    isInputTouched && inputError
+      ? "invalid-feedback"
+      : isInputTouched && !inputError && displayValue !== ""
+      ? "valid-feedback"
+      : null,
+    isInputTouched && (inputError || (!inputError && displayValue !== ""))
+      ? "opacity-100"
+      : "opacity-0",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className="input-container">
       <InputMask
         mask="99:99"
         maskChar="_"
-        value={value}
+        value={displayValue}
         onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         id={id}
         name={name}
         placeholder={placeholder}
-        aria-describedby={`${id}-hint`}
-        className="form-control time-input-field is-invalid"
+        className={`form-control font-size-sm p-2 ${
+          darkMode ? "dark-mode-input" : null
+        } ${isInputTouched && inputError ? "is-invalid" : ""} ${
+          isInputTouched && !inputError && displayValue !== "" ? "is-valid" : ""
+        }`}
       />
+      <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
     </div>
   );
-}
+});
+
+
 
 export const InputGroup = forwardRef(
   (
@@ -1167,3 +1262,5 @@ export const TimeRangeInput = forwardRef(
     );
   }
 );
+
+

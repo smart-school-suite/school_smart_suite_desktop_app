@@ -2582,9 +2582,10 @@ export function AnnouncementTableConfig({ DropdownComponent }) {
       cellStyle: cellStyle,
     },
     {
-      field: "label",
+      field: "label_name",
       headerName: "label",
       filter: true,
+      floatingFilter: true,
       cellRenderer: TextComponent,
     },
     {

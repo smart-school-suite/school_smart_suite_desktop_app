@@ -253,7 +253,7 @@ export function sumAttribute(arr, attribute) {
 export function formatDate(dateString) {
     const date = new Date(dateString);
     if (isNaN(date)) {
-        throw new Error("Invalid date format. Please use YYYY-MM-DD.");
+        return "N/A";
     }
     const options = {
         weekday: 'long',
@@ -718,4 +718,18 @@ export function convertToMySQLTimeHHMM(timeStr) {
   const mm = String(minutes).padStart(2, '0');
 
   return `${hh}:${mm}`;
+}
+export function formatToMySQLDateTime(dateString, timeString) {
+    const combinedDateTime = `${dateString} ${timeString}`;
+
+    const dateObject = new Date(combinedDateTime);
+
+    if (isNaN(dateObject.getTime())) {
+        console.error("Invalid date or time string provided.");
+        return "";
+    }
+
+    const mysqlDateTime = combinedDateTime.trim();
+
+    return mysqlDateTime;
 }
