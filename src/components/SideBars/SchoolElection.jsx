@@ -3,7 +3,7 @@ function SchoolElectionSideBar() {
   return (
     <>
 <div
-        className="card border-none width-20 p-2 rounded-3 d-flex flex-column gap-3">
+        className="card border-none width-20 p-2 rounded-4 d-flex flex-column gap-3 h-100">
         {
             sideBarData.map((item) => (
                  <SideBarComponent 
@@ -40,34 +40,38 @@ function SideBarComponent({ title,  path }) {
 export const sideBarData = [
   {
     title: "Overview",
-    path: "/schoolElections",
+    path: "/election-overview",
   },
   {
     title: "Elections",
-    path: "/viewElections",
+    path: "/elections",
+  },
+  {
+    title:"Election Type",
+    path:"/election-type"
   },
   {
     title: "Election Roles",
-    path: "/electionRoles",
+    path: "/election-roles",
   },
   {
     title: "Election Candidates",
-    path: "/electionCandidates",
+    path: "/election-candidates",
   },
   {
     title: "Election Applications",
-    path: "/electionApplication",
+    path: "/election-application",
   },
   {
     title: "Election Results",
-    path: "/electionResults",
+    path: "/election-results",
   },
   {
     title: "Past Winners",
-    path: "/passWinners",
+    path: "/past-winners",
   },
   {
     title: "Past Elections",
-    path: "/passElection",
+    path: "/past-election",
   },
 ];

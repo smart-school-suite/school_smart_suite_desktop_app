@@ -110,4 +110,10 @@ const StatsIcon = ({ iconStyle }) => {
      <Icon icon="iconoir:stats-down-square" style={{ ...iconStyle, fontSize: "1rem" }}  />
    )
 }
-export { StatsIcon, DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };
+
+const ElectionIcon = ({ iconStyle }) => {
+   return(
+     <Icon icon="fluent:vote-24-regular" style={{ ...iconStyle, fontSize: "1rem" }} />
+   )
+}
+export { ElectionIcon, StatsIcon, DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };

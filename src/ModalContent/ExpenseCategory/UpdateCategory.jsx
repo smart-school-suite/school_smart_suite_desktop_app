@@ -48,8 +48,7 @@ function UpdateCategory({ handleClose, rowData }) {
   return (
     <>
       <div>
-        <div className="block">
-          <div className="d-flex flex-row align-items-center justify-content-between mb-3">
+       <div className="d-flex flex-row align-items-center justify-content-between mb-3">
             <span className="m-0">Update Expenses Category</span>
             <span
               className="m-0"
@@ -60,7 +59,6 @@ function UpdateCategory({ handleClose, rowData }) {
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
-        </div>
         <div>
           <label htmlFor="categoryName" className="font-size-sm">Category Name</label>
           <TextInput 

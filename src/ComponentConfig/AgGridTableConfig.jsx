@@ -2095,182 +2095,7 @@ export function resitFeeTransactionsTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
-export function electionTableConfig({ DropdownComponent }) {
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "title",
-      headerName: "Title",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "start_date",
-      headerName: "Start Date",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "end_date",
-      headerName: "End Date",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "start_time",
-      headerName: "Start Time",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "end_time",
-      headerName: "End Time",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "description",
-      headerName: "Description",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Action",
-      cellRenderer: DropdownComponent,
-      cellStyle: {
-        width: "20rem",
-      },
-    },
-  ];
-  return tableConfig;
-}
-export function electionApplicationTableConfig({ DropdownComponent }) {
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "student_name",
-      headerName: "Student Name",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "election_title",
-      headerName: "Election Title",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "election_role",
-      headerName: "Role",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "personal_vision",
-      headerName: "Personal Vision",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "commitment_statement",
-      headerName: "Commitment Statement",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Action",
-      cellRenderer: DropdownComponent,
-      cellStyle: {
-        width: "20rem",
-      },
-    },
-  ];
-  return tableConfig;
-}
-export function electionRolesTableConfig({ DropdownComponent }) {
-  const tableConfig = [
-    {
-      field: "id",
-      hide: true,
-    },
-    {
-      field: "name",
-      headerName: "Role Title",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "election_title",
-      headerName: "Election Title",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "description",
-      headerName: "Description",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "Action",
-      cellRenderer: DropdownComponent,
-      cellStyle: {
-        width: "20rem",
-      },
-    },
-  ];
-  return tableConfig;
-}
+
 export function hodTableConfig({ ActionButtonGroup }) {
   const tableConfig = [
     {
@@ -2689,7 +2514,7 @@ export function AnnouncementCategoryTableConfig({ DropdownComponent }) {
       headerName: "Created At",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ISODateComponent,
       cellStyle: cellStyle,
     },
     {
@@ -2697,7 +2522,7 @@ export function AnnouncementCategoryTableConfig({ DropdownComponent }) {
       headerName: "Updated At",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ISODateComponent,
       cellStyle: cellStyle,
     },
     {
@@ -2810,7 +2635,6 @@ export function ExamResultsTableConfig({ DropdownComponent }){
   ]
   return tableConfig
 }
-
 export function resitFeeTransacTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
@@ -2861,6 +2685,238 @@ export function resitFeeTransacTableConfig({ DropdownComponent }) {
       field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
+export function electionApplicationTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "student_name",
+      headerName: "Student Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "election_title",
+      headerName: "Election Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "election_role",
+      headerName: "Role",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "personal_vision",
+      headerName: "Personal Vision",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "commitment_statement",
+      headerName: "Commitment Statement",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+export function electionRolesTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "name",
+      headerName: "Role Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "election_title",
+      headerName: "Election Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+export function electionTypeTableConfig({ DropdownComponent }){
+    const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "election_title",
+      headerName: "Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+     {
+      field: "status",
+      headerName: "Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: SemesterBadge,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "created_at",
+      headerName: "Created At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: ISODateComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "updated_at",
+      headerName: "Updated At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: ISODateComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+export function electionTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "title",
+      headerName: "Title",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "start_date",
+      headerName: "Start Date",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "end_date",
+      headerName: "End Date",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "start_time",
+      headerName: "Start Time",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "end_time",
+      headerName: "End Time",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
     },
   ];
   return tableConfig;

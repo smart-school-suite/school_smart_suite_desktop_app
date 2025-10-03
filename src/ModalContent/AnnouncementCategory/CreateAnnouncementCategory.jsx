@@ -43,7 +43,6 @@ function CreateAnnouncementCategory({ handleClose }) {
         return
     }
     if(!allFieldsValid(isValid)){
-      console.table(isValid)
         toast.custom(
            <ToastWarning 
               title={"Invalid Fields 2"}

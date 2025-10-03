@@ -7,13 +7,19 @@ const ElectionCandidate = React.lazy(()  => import("../../pages/Elections/Electi
 const ViewElections = React.lazy(() => import("../../pages/Elections/ViewElections"));
 const PassWinners = React.lazy(() => import("../../pages/Elections/PassWinners"));
 const ElectionResults = React.lazy(() => import("../../pages/Elections/ElectionResults"))
-const ElectionRoles = React.lazy(() => import("../../pages/Elections/ElectionRoles"))
+const ElectionRoles = React.lazy(() => import("../../pages/Elections/ElectionRoles"));
+const ElectionType = React.lazy(() => import("../../pages/Elections/ElectionType"))
 import SchoolElectionLayout from "../../layouts/SchoolElectionLayout";
 const SchoolElectionRoutes = [
     <Route key={"schoolElection"} element={<SchoolElectionLayout />}>
           <Route key="schoolElection" path="/election-overview" element={
         <Suspense>
             <ElectionOverview />
+        </Suspense>
+    } />,
+    <Route key="electionType" path="/election-type" element={
+        <Suspense>
+            <ElectionType />
         </Suspense>
     } />,
     <Route 
@@ -45,7 +51,7 @@ const SchoolElectionRoutes = [
       }
     />,
     <Route 
-      key="passWinners" path="/past-Winners" element={
+      key="passWinners" path="/past-winners" element={
          <Suspense>
             <PassWinners />
          </Suspense>

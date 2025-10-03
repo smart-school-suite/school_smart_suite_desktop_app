@@ -45,13 +45,14 @@ export const StudentRoutes = [
 
 export const electionRoutes = [
   "/election-overview",
+  "/elections",
   "/past-election",
   "/election-application",
-  "/election-candidates",
-  "/view-elections",
-  "/pass-winners",
+  "/election-candidate",
+  "/past-winners",
   "/election-results",
   "/election-roles",
+  "/election-type"
 ];
 
 export const eventRoutes = [

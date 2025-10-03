@@ -1,5 +1,4 @@
 import { useGetStudentResits } from "../../hooks/studentResit/useGetStudentResits";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { ResitFeeTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
