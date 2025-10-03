@@ -16,12 +16,13 @@ import {
 } from "../../icons/ActionIcons";
 import React, {useState} from "react";
 import CustomModal from "../../components/Modals/Modal";
-function ScheduleAnnouncement() {
+import UpdateAnnouncementDraft from "../../ModalContent/Announcement/UpdateAnnouncementDraft";
+function DraftAnnouncement() {
   const {
     data: announcement,
     isLoading,
     error,
-  } = useGetAnnouncementByStatus("scheduled");
+  } = useGetAnnouncementByStatus("draft");
   const memoizedColDefs = useMemo(() => {
     return AnnouncementTableConfig({
       DropdownComponent,
@@ -36,7 +37,7 @@ function ScheduleAnnouncement() {
     <>
       <div className="d-flex flex-column gap-2 h-100">
         <div style={{ height: "5%" }}>
-          <span className="fw-semibold">Scheduled Announcements</span>
+          <span className="fw-semibold">Draft Announcements</span>
         </div>
         <div style={{ height: "95%" }}>
           {isLoading ? (
@@ -54,7 +55,7 @@ function ScheduleAnnouncement() {
     </>
   );
 }
-export default ScheduleAnnouncement;
+export default DraftAnnouncement;
 
 export function DropdownComponent(props) {
   const rowData = props.data;
@@ -86,6 +87,19 @@ export function DropdownComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(UpdateAnnouncementDraft, "xl")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Continue Editing</span>
+              <UpdateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"

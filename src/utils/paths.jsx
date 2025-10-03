@@ -65,12 +65,11 @@ export const eventRoutes = [
 
 export const announcementRoutes = [
   "/announcement-overview",
-  "/archieveAnnoucement",
+  "/draft-annoucement",
   "/announcement-category",
   "/expired-annoucement",
   "/scheduled-annoucement",
   "/announcement",
-  "/announcement-tag",
 ];
 
 

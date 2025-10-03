@@ -82,3 +82,13 @@ export const getAnnouncementReadUnreadList = async (announcementId) => {
       const response = await axiosInstance.get(`announcement/read-uread/list/${announcementId}`);
       return response.data;
 }
+
+export const updateDraftAnnouncement = async (data) => {
+     const response = await axiosInstance.put("announcement/daft/update", data);
+     return response.data;
+}
+
+export const getAnnouncementStats = async (year) => {
+     const response = await axiosInstance.get(`announcement/stat/${year}`);
+     return response.data;
+}

@@ -28,22 +28,25 @@ function AnnouncementLayout() {
           <span className="my-0 fw-semibold">Manage Announcements</span>
           </div>
           <div>
-            <ModalButton
-              action={{ modalContent:CreateAnnouncement }}
-              size={"xl"}
-            >
-              <button className="border-none rounded-3 font-size-sm d-flex flex-row gap-2 align-items-center" 
-            style={{ background:"#fd9d74", padding:"0.7rem", color:"#ffe4d5" }}>
-              <span><Icon icon="icons8:plus" className="font-size-md" /></span>
-              <span>Create Announcement</span>
-            </button>
-            </ModalButton>
+            
           </div>
           </div>
         </div>
         <div style={{ height: "95%" }}>
           <div className="d-flex flex-row align-items-start gap-2 w-100 h-100">
-            <AnnoucementSideBar />
+            <div className="d-flex flex-column width-20 h-100 gap-2">
+              <ModalButton
+              action={{ modalContent:CreateAnnouncement }}
+              size={"xl"}
+            >
+              <button className="border-none rounded-3 justify-content-between w-100 font-size-sm d-flex flex-row gap-2 align-items-center" 
+            style={{ background:"#fd9d74", padding:"0.7rem", color:"#ffe4d5" }}>
+              <span>Create Announcement</span>
+              <span><Icon icon="icons8:plus" className="font-size-md" /></span>
+            </button>
+            </ModalButton>
+              <AnnoucementSideBar />
+            </div>
             <div className="width-80 h-100">
               <Outlet />
             </div>

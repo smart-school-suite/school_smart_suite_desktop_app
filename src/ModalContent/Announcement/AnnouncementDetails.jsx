@@ -103,7 +103,7 @@ function AnnouncementDetails({ handleClose, rowData }) {
               <div className="d-flex flex-column font-size-sm">
                 <span>Published At</span>
                 <span className="fw-semibold">
-                  {formatISODate(announcementDetails.data.published_at)}
+                  {announcementDetails.data.published_at ? formatISODate(announcementDetails.data.published_at) : "N/A"}
                 </span>
               </div>
             </div>
@@ -112,7 +112,7 @@ function AnnouncementDetails({ handleClose, rowData }) {
               <div className="d-flex flex-column font-size-sm">
                 <span>Published At</span>
                 <span className="fw-semibold">
-                  {formatISODate(announcementDetails.data.expires_at)}
+                  {announcementDetails.data.expires_at ? formatISODate(announcementDetails.data.expires_at) : "N/A"}
                 </span>
               </div>
             </div>

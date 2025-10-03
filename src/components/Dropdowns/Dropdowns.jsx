@@ -237,7 +237,6 @@ const CustomDropdown = forwardRef(
     );
   }
 );
-
 export default CustomDropdown;
 
 export const MultiSelectDropdown = forwardRef(
@@ -275,9 +274,7 @@ export const MultiSelectDropdown = forwardRef(
     useImperativeHandle(ref, () => ({
       triggerValidation: () => {
         if (!optional && selectedItems.length === 0 && onError) {
-          console.log("i ran");
           onError(errorMessage);
-          console.log(error);
           return false;
         }
         onError?.("");
@@ -431,18 +428,14 @@ export const MultiSelectDropdown = forwardRef(
             aria-haspopup="true"
             aria-expanded={isToggled}
           >
-            <div
-              className={`${darkMode ? ' dark-mode-text dark-mode-border dark-bg-light' : 'bg-white border'} d-flex  flex-row justify-content-between rounded-2 pointer-cursor align-items-center
-              ${
-                error
-                  ? "border-danger text-danger"
-                  : selectedItems.length > 0
-                  ? "border-success text-success"
-                  : ""
-              }
-            `}
-              style={{ padding: "0.35rem" }}
-            >
+           <div
+  className={`${darkMode ? 'dark-mode-text dark-mode-border dark-bg-light' : 'bg-white border'} 
+    d-flex flex-row justify-content-between rounded-2 pointer-cursor align-items-center
+    ${error ? "border-danger text-danger" : ""}
+    ${!error && selectedItems.length > 0 ? "border-success text-success" : ""}
+  `}
+  style={{ padding: "0.35rem" }}
+>
               {renderSelectedItems()}
               <span>
                 <Icon

@@ -221,6 +221,24 @@
 .dashboard-content-box::-webkit-scrollbar {
     width: 5px;
 }
+
+.announcement-dashboard-content{
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.announcement-dashboard-content::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+.announcement-dashboard-content::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+.announcement-dashboard-content::-webkit-scrollbar {
+    width: 2px;
+}
 .section-one {
     width: 15%;
 }

@@ -65,7 +65,7 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
     if (announcementDetails?.data) {
       setFormData((prev) => ({
         ...prev,
-        title: announcementDetails?.data?.title || "hello world",
+        title: announcementDetails?.data?.title,
         content: announcementDetails?.data?.content,
         category_id: announcementDetails?.data?.category_id,
         label_id: announcementDetails?.data?.label_id,
@@ -133,7 +133,6 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
       ) : (
         <div className="d-flex flex-row align-items-start gap-2 w-100">
           <div className="d-flex flex-column gap-1 w-50">
-            {console.table(formData.tags)}
             <div>
               <label htmlFor="title" className="font-size-sm">
                 Title
@@ -164,10 +163,10 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                 Label
               </label>
               <CustomDropdown
-                data={labels?.data || []}
+                data={labels?.data.filter((items) => items.name !== 'All') || []}
                 displayKey={["name"]}
                 valueKey={["id"]}
-                direction="up"
+                direction="down"
                 onSelect={(value) =>
                   handleStateChange("label_id", value.id, setFormData)
                 }

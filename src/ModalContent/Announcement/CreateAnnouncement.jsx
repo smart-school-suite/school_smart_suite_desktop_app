@@ -157,6 +157,7 @@ function AnnouncementCreate({
   };
 
   const handleCreateAnnouncement = async () => {
+    if (formData.status == "scheduled") {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
       toast.custom(
@@ -169,7 +170,6 @@ function AnnouncementCreate({
       );
       return;
     }
-    if (formData.status == "scheduled") {
       if (
         !allFieldsValid({
           published_date: isValid.published_date,
@@ -464,7 +464,7 @@ function AnnouncementCreate({
           </div>
         </div>
       </div>
-      <div className="d-flex flex-row justify-content-between w-100">
+      <div className="d-flex flex-row justify-content-between w-100 mt-2">
         <div
           className="d-flex flex-row align-items-center gap-2 color-primary font-size-sm pointer-cursor"
           onClick={() => {
@@ -603,7 +603,7 @@ function AnnouncementContent({
               Label
             </label>
             <CustomDropdown
-              data={labelData || []}
+              data={labelData.filter((items) => items.name !== 'All') || []}
               displayKey={["name"]}
               valueKey={["id"]}
               direction="up"
@@ -666,7 +666,7 @@ function AnnouncementContent({
                 }
                 handleStateChange("tags", value, setFormData);
               }}
-              onError={(error) => handleStateChange("tags", error, setErrors)}
+              onError={(error) => handleStateChange("tag_ids", error, setErrors)}
               error={errors.tag_ids}
               ref={tagRef}
             />
