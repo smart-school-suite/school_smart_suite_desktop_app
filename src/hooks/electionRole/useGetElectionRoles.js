@@ -4,6 +4,6 @@ import { getElectionRoles } from "../../services/electionRole";
 export const useGetElectionRoles = () => {
     return useQuery({
         queryKey: ['electionRoles'],
-        queryFn: getElectionRoles,
+        queryFn: () =>  getElectionRoles(),
       });
 }

@@ -1,14 +1,14 @@
+import { useActivateElectionRole } from "../../hooks/electionRole/useActivateElectionRole";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useDeactivateElectionRole } from "../../hooks/electionRole/useDeactivateElectionRole";
-function DeactivateRole({ handleClose, rowData }){
-   const { id:electionRoleId } = rowData;
-   const { mutate:deactivateElectionRole, isPending } = useDeactivateElectionRole(handleClose);
-   const handleDeactivateElectionRole = () => {
-      deactivateElectionRole(electionRoleId);
-   }
-    return(
-        <>
-              <div className="w-100">
+function ActivateElectionRole({ handleClose, rowData }){
+    const { id:electionRoleId } = rowData;
+    const { mutate:activateElectionRole, isPending } = useActivateElectionRole(handleClose);
+    const handleActivateElectionRole = () => { 
+        activateElectionRole(electionRoleId);
+    }
+    return (
+         <>
+        <div className="w-100">
         <h4 className="fw-semibold">Are you Absolutely sure ?</h4>
         <p className="my-3" style={{ fontSize: "0.85rem" }}>
           This action cannot be undone. This will Permanently delete This
@@ -25,16 +25,17 @@ function DeactivateRole({ handleClose, rowData }){
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeactivateElectionRole();
+                handleActivateElectionRole();
               }}
               disabled={isPending}
             >
-              {isPending ? <SingleSpinner /> : "Yes, Deactivate"}
+              {isPending ? <SingleSpinner /> : "Yes, Activate"}
             </button>
           </div>
         </div>
       </div>
-        </>
+         </>
     )
 }
-export default DeactivateRole;
+
+export default ActivateElectionRole;

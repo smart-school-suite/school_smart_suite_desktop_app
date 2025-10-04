@@ -38,8 +38,8 @@ export const getActiveRolesForElection = async (electionId) => {
 };
 
 
-export const getElectionRoles = async (electionId) => {
-  const response = await axiosInstance.get(`election-role/elections/${electionId}/roles`);
+export const getElectionRoles = async () => {
+  const response = await axiosInstance.get("election-role");
   return response.data;
 };
 

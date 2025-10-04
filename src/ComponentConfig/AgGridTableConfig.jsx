@@ -2760,7 +2760,7 @@ export function electionRolesTableConfig({ DropdownComponent }) {
       hide: true,
     },
     {
-      field: "name",
+      field: "role_title",
       headerName: "Role Title",
       filter: true,
       floatingFilter: true,
@@ -2768,8 +2768,8 @@ export function electionRolesTableConfig({ DropdownComponent }) {
       cellStyle: cellStyle,
     },
     {
-      field: "election_title",
-      headerName: "Election Title",
+      field: "election_type_name",
+      headerName: "Election Type",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
@@ -2780,7 +2780,7 @@ export function electionRolesTableConfig({ DropdownComponent }) {
       headerName: "Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: SemesterBadge,
       cellStyle: cellStyle,
     },
     {

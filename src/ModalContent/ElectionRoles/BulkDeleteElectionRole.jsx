@@ -1,12 +1,12 @@
+import { useBulkDeleteElectionRole } from "../../hooks/electionRole/useBulkDeleteElectionRole";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useDeactivateElectionRole } from "../../hooks/electionRole/useDeactivateElectionRole";
-function DeactivateRole({ handleClose, rowData }){
-   const { id:electionRoleId } = rowData;
-   const { mutate:deactivateElectionRole, isPending } = useDeactivateElectionRole(handleClose);
-   const handleDeactivateElectionRole = () => {
-      deactivateElectionRole(electionRoleId);
-   }
-    return(
+function BulkDeleteElectionRole({ handleClose, bulkData, resetAll }){
+  const { mutate:bulkDeleteElectionRole, isPending } = useBulkDeleteElectionRole(handleClose, resetAll);
+  const handleBulkDeleteElectionRole = () => {
+      const formattedData = bulkData.map((items) => ({ election_role_id:items.id }))
+      bulkDeleteElectionRole({ electionRoleIds:formattedData })
+  }
+      return(
         <>
               <div className="w-100">
         <h4 className="fw-semibold">Are you Absolutely sure ?</h4>
@@ -15,26 +15,27 @@ function DeactivateRole({ handleClose, rowData }){
           account and remove this account data from our servers
         </p>
         <div className="mt-4">
-          <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
+          <div className="d-flex flex-row align-items-center gap-2 w-100">
             <button
               className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
-              onClick={handleClose}
+              onClick={() => {
+                handleClose();
+              }}
             >
               Cancel
             </button>
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeactivateElectionRole();
+                 handleBulkDeleteElectionRole();
               }}
-              disabled={isPending}
             >
-              {isPending ? <SingleSpinner /> : "Yes, Deactivate"}
+              {isPending ? <SingleSpinner /> : <>Yes, Delete All</>}
             </button>
           </div>
         </div>
       </div>
         </>
-    )
+      )
 }
-export default DeactivateRole;
+export default BulkDeleteElectionRole
