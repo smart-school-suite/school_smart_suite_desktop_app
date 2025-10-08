@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteDepartment } from "../../services/department";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-
+import ToastDanger from "../../components/Toast/ToastDanger";
 export const useDeleteDepartment = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({

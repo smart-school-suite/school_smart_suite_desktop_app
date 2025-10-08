@@ -64,7 +64,7 @@ export const addAllowedParticipants = async (electionId, participantData) => {
 };
 
 
-export const addAllowedParticipantsByOtherElection = async (electionId, targetElectionId) => {
+export const addAllowedParticipantsByElection = async (electionId, targetElectionId) => {
   const response = await axiosInstance.post(`election/${electionId}/allowed-participants/from/${targetElectionId}`);
   return response.data;
 };
@@ -74,3 +74,8 @@ export const getElectionCandidates = async (electionId) => {
   const response = await axiosInstance.get(`election/${electionId}/candidates`);
   return response.data;
 };
+
+export const getElectionStats = async (year) => {
+   const response = await axiosInstance.get(`election/stats/${year}`);
+   return response.data;
+}

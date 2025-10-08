@@ -1247,6 +1247,20 @@ thead {
     color: #fd9d74;
 }
 
+.election-active {
+     background-color: #e6efd8;
+     height: 5dvh;
+     padding-inline: 0.5rem;
+     text-align: center;
+     color: #769946;
+}
+
+.election-inactive {
+     height: 5dvh;
+     padding-inline: 0.5rem;
+     text-align: center;
+}
+
 .schoolexpenses-inactive {
     height: 5dvh;
     padding-inline: 0.5rem;

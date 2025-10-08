@@ -4,6 +4,6 @@ import { getPastElectionWinners } from "../../services/election";
 export const useGetPastElectionWinners = () => {
     return useQuery({
         queryKey: ["pastElectionWinners"],
-        queryFn: getPastElectionWinners,
+        queryFn: () => getPastElectionWinners(),
       });
 }

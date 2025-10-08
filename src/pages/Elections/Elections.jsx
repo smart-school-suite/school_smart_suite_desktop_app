@@ -1,15 +1,18 @@
-import { useGetElectionCandidates } from "../../hooks/electionCandidate/useGetElectionCandidates";
+import Table from "../../components/Tables/Tables";
+import { electionTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import { useGetElections } from "../../hooks/election/useGetElections";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import Table from "../../components/Tables/Tables";
-import { electionCandidateTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import React, { useState } from "react";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import CustomModal from "../../components/Modals/Modal";
 import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-function ElectionCandidate() {
-  const { data:electionCandidates, isLoading, error } = useGetElectionCandidates();
+import ElectionDetails from "../../ModalContent/Elections/ElectionDetails";
+import DeleteElection from "../../ModalContent/Elections/DeleteElection";
+import UpdateElection from "../../ModalContent/Elections/UpdateElection";
+function Elections() {
+  const { data: elections, isLoading, error } = useGetElections();
   return (
     <>
       <div className="d-flex flex-column gap-2 h-100">
@@ -18,7 +21,7 @@ function ElectionCandidate() {
           style={{ height: "5%" }}
         >
           <div className="d-flex flex-row align-items-center">
-            <span className="fw-semibold">Election Candidates</span>
+            <span className="fw-semibold">Manage Elections</span>
           </div>
         </div>
         <div style={{ height: "95%" }}>
@@ -31,10 +34,10 @@ function ElectionCandidate() {
             ></NotFoundError>
           ) : (
             <Table
-              colDefs={electionCandidateTableConfig({
+              colDefs={electionTableConfig({
                 DropdownComponent,
               })}
-              rowData={electionCandidates?.data}
+              rowData={elections?.data}
             />
           )}
         </div>
@@ -42,8 +45,7 @@ function ElectionCandidate() {
     </>
   );
 }
-export default ElectionCandidate;
-
+export default Elections;
 export function DropdownComponent(props) {
   const rowData = props.data;
 
@@ -78,7 +80,7 @@ export function DropdownComponent(props) {
          className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-           //onClick={() => handleShowModal(ElectionDetails, "md")}
+           onClick={() => handleShowModal(ElectionDetails, "md")}
         >
         <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -91,7 +93,7 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          // onClick={() => handleShowModal(UpdateElection, "md")}
+           onClick={() => handleShowModal(UpdateElection, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -104,7 +106,7 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          //onClick={() => handleShowModal(DeleteElection, "md")}
+          onClick={() => handleShowModal(DeleteElection, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -125,3 +127,4 @@ export function DropdownComponent(props) {
     </>
   );
 }
+

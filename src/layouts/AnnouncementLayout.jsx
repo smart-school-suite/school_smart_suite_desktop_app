@@ -27,9 +27,6 @@ function AnnouncementLayout() {
           </div>
           <span className="my-0 fw-semibold">Manage Announcements</span>
           </div>
-          <div>
-            
-          </div>
           </div>
         </div>
         <div style={{ height: "95%" }}>

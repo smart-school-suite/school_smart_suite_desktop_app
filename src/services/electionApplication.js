@@ -25,3 +25,8 @@ export const approveApplication = async (applicationId) => {
   const response = await axiosInstance.put(`election-application/${applicationId}/approve`);
   return response.data;
 };
+
+export const getApplicationDetails = async (applicationId) =>{
+   const response = await axiosInstance.get(`election-application/${applicationId}`);
+   return response.data;
+}

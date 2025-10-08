@@ -10,10 +10,8 @@ function ExamDetails({ rowData, handleClose }) {
   }
   return (
     <>
-      <div className="w-100 mt-2">
-        <div className="d-flex flex-row align-items-center">
-          <div className="w-100">
-            <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+      <div className="w-100 ">
+       <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
               <span className="m-0">Exam Details</span>
               <span
                 className="m-0"
@@ -24,8 +22,6 @@ function ExamDetails({ rowData, handleClose }) {
                 <Icon icon="charm:cross" width="22" height="22" />
               </span>
             </div>
-          </div>
-        </div>
       <div className="modal-content-container">
           <div className="d-flex align-items-center justify-content-between my-1 w-100">
           <div className="py-2">

@@ -4,6 +4,6 @@ import { getActiveElectionTypes } from "../../services/electionType";
 export const useGetActiveElectionTypes = () => {
   return useQuery({
     queryKey: ["activeElectionTypes"],
-    queryFn: getActiveElectionTypes,
+    queryFn: () => getActiveElectionTypes(),
   });
 };

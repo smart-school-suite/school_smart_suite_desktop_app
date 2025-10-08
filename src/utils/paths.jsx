@@ -48,7 +48,7 @@ export const electionRoutes = [
   "/elections",
   "/past-election",
   "/election-application",
-  "/election-candidate",
+  "/election-candidates",
   "/past-winners",
   "/election-results",
   "/election-roles",
