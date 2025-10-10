@@ -32,9 +32,14 @@ export const getElectionDetails = async (electionId) => {
 };
 
 export const getElectionResults = async (electionId) => {
-  const response = await axiosInstance.get(`election/election/${electionId}/results`);
+  const response = await axiosInstance.get(`election/${electionId}/results`);
   return response.data;
 };
+
+export const getLiveElectionResults = async (electionId) => {
+   const response = await axiosInstance.get(`election/${electionId}/live-results`);
+   return response.data;
+}
 
 export const getPastElectionWinners = async () => {
   const response = await axiosInstance.get("election/past-election-winners");
@@ -71,11 +76,16 @@ export const addAllowedParticipantsByElection = async (electionId, targetElectio
 
 
 export const getElectionCandidates = async (electionId) => {
-  const response = await axiosInstance.get(`election/${electionId}/candidates`);
+  const response = await axiosInstance.get(`election-candidate/${electionId}`);
   return response.data;
 };
 
 export const getElectionStats = async (year) => {
    const response = await axiosInstance.get(`election/stats/${year}`);
+   return response.data;
+}
+
+export const castVote = async (data) => {
+   const response = await axiosInstance.post("election/cast-vote", data);
    return response.data;
 }

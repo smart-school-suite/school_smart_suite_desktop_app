@@ -4,7 +4,7 @@ import { getElectionCandidates } from "../../services/electionCandidate";
 export const useGetElectionCandidates = () => {
       return useQuery({ 
         queryKey:["electionCandidates"],
-        queryFn:getElectionCandidates
+        queryFn:() => getElectionCandidates()
       })
 }
 

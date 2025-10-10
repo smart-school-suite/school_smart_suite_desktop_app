@@ -116,4 +116,9 @@ const ElectionIcon = ({ iconStyle }) => {
      <Icon icon="fluent:vote-24-regular" style={{ ...iconStyle, fontSize: "1rem" }} />
    )
 }
-export { ElectionIcon, StatsIcon, DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };
+const LiveIcon = ({ iconStyle }) => {
+     return (
+        <Icon icon="fluent:live-24-filled" style={{...iconStyle, fontSize:"1rem"}} />
+     )
+}
+export { LiveIcon, ElectionIcon, StatsIcon, DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };

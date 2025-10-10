@@ -18,6 +18,7 @@ import AccessmentStatus from "../components/Badges/AccessmentStatus";
 import GradeSubmittedStatus from "../components/Badges/GradeSubmittedStatus";
 import ISODateComponent from "../components/DataTableComponents/ISODateComponent"
 import ConfigStatusBadge from "../components/Badges/ConfigStatusBadge";
+import ElectionPill from "../components/Badges/ElectionPill";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -2724,7 +2725,7 @@ export function electionApplicationTableConfig({ DropdownComponent }) {
       headerName: "Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ElectionPill,
       cellStyle: cellStyle,
     },
     {
@@ -2841,7 +2842,7 @@ export function electionTypeTableConfig({ DropdownComponent }){
   ];
   return tableConfig;
 }
-export function electionTableConfig({ DropdownComponent }) {
+export function electionTableConfig({ DropdownComponent, setLiveElection }) {
   const tableConfig = [
     {
       field: "id",
@@ -2860,7 +2861,7 @@ export function electionTableConfig({ DropdownComponent }) {
       headerName: "Vote Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ElectionPill,
       cellStyle: cellStyle,
     },
     {
@@ -2868,7 +2869,7 @@ export function electionTableConfig({ DropdownComponent }) {
       headerName: "Application Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ElectionPill,
       cellStyle: cellStyle,
     },
     {
@@ -2876,7 +2877,7 @@ export function electionTableConfig({ DropdownComponent }) {
       headerName: "Election Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ElectionPill,
       cellStyle: cellStyle,
     },
     {
@@ -2889,7 +2890,10 @@ export function electionTableConfig({ DropdownComponent }) {
     },
     {
       field: "Action",
-      cellRenderer: DropdownComponent,
+      cellRenderer: (params) =>  <DropdownComponent 
+           data={params.data}
+           setLiveElection={setLiveElection}
+         />,
       cellStyle: {
         width: "20rem",
       },
@@ -2940,7 +2944,7 @@ export function electionCandidateTableConfig({ DropdownComponent }){
       headerName: "Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: ActiveInactiveBadge,
+      cellRenderer: ElectionPill,
       cellStyle: cellStyle,
     },
     {

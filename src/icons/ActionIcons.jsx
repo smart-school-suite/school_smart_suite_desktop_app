@@ -95,4 +95,5 @@ const AnnouncementIcon = ({ iconStyle }) => {
         <Icon icon="streamline-plump:announcement-megaphone" style={{...iconStyle, fontSize:"1rem"}} />
      )
 }
+
 export {AnnouncementIcon, ReinstateIcon, GenerateIcon, RepeatIcon, ReverseIcon, ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }

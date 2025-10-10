@@ -7,11 +7,36 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import React, { useState } from "react";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import CustomModal from "../../components/Modals/Modal";
-import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import ElectionDetails from "../../ModalContent/Elections/ElectionDetails";
 import DeleteElection from "../../ModalContent/Elections/DeleteElection";
 import UpdateElection from "../../ModalContent/Elections/UpdateElection";
+import LiveElection from "./LiveElection";
+import { LiveIcon } from "../../icons/Icons";
 function Elections() {
+  const [liveElection, setLiveElection] = useState({
+    election_id: null,
+  });
+  return (
+    <>
+      {
+        liveElection.election_id ? (
+           <LiveElection 
+             setLiveElection={setLiveElection}
+             liveElection={liveElection}
+           />
+        ) : (
+           <ElectionTable 
+        liveElection={liveElection}
+        setLiveElection={setLiveElection}
+      />
+        )
+      }
+    </>
+  );
+}
+
+function ElectionTable({ liveElection, setLiveElection }) {
   const { data: elections, isLoading, error } = useGetElections();
   return (
     <>
@@ -21,7 +46,7 @@ function Elections() {
           style={{ height: "5%" }}
         >
           <div className="d-flex flex-row align-items-center">
-            <span className="fw-semibold">Manage Elections</span>
+            <span className="fw-semibold">Manage Elections {liveElection.election_id}</span>
           </div>
         </div>
         <div style={{ height: "95%" }}>
@@ -36,6 +61,7 @@ function Elections() {
             <Table
               colDefs={electionTableConfig({
                 DropdownComponent,
+                setLiveElection
               })}
               rowData={elections?.data}
             />
@@ -48,7 +74,7 @@ function Elections() {
 export default Elections;
 export function DropdownComponent(props) {
   const rowData = props.data;
-
+  const setLiveElection = props.setLiveElection;
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [modalSize, setModalSize] = useState("lg");
@@ -77,12 +103,12 @@ export function DropdownComponent(props) {
         }
       >
         <DropDownMenuItem
-         className={
+          className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-           onClick={() => handleShowModal(ElectionDetails, "md")}
+          onClick={() => handleShowModal(ElectionDetails, "md")}
         >
-        <div>
+          <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Election Details</span>
               <DetailsIcon />
@@ -93,7 +119,22 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-           onClick={() => handleShowModal(UpdateElection, "md")}
+          onClick={() => {
+              setLiveElection((prev) => ({...prev, ['election_id']:rowData.id}))
+          }}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Follow Life Election</span>
+              <LiveIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(UpdateElection, "lg")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -127,4 +168,3 @@ export function DropdownComponent(props) {
     </>
   );
 }
-
