@@ -20,8 +20,8 @@ function SchoolElectionLayout() {
                 width: "2.5rem",
                 height: "2.5rem",
                 borderRadius: "0.5rem",
-                background: "#e6efd8",
-              color: "#769946",
+                background: darkMode ? "#769946" : "#e6efd8",
+                color: darkMode ? "#f5f8ed" : "#769946",
               }}
             >
               <ElectionIcon />

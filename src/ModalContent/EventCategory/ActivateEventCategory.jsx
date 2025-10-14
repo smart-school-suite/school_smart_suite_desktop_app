@@ -1,11 +1,11 @@
-import { useDeleteEventCategory } from "../../hooks/eventCategory/useDeleteEventCategory";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function DeleteCategory({ handleClose, rowData }) {
+import { useActivateEventCategory } from "../../hooks/eventCategory/useActivateEventCategory";
+function ActivateEventCategory({ handleClose, rowData }) {
   const { id: categoryId } = rowData;
-  const { mutate: deleteEventCategory, isPending } =
-    useDeleteEventCategory(handleClose);
-  const handleDeleteEventCategory = () => {
-    deleteEventCategory(categoryId);
+  const { mutate: activeEventCategory, isPending } =
+    useActivateEventCategory(handleClose);
+  const handleActivateEventCategory = () => {
+    activeEventCategory(categoryId);
   };
   return (
     <>
@@ -26,11 +26,11 @@ function DeleteCategory({ handleClose, rowData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeleteEventCategory();
+                handleActivateEventCategory();
               }}
               disabled={isPending}
             >
-              {isPending ? <SingleSpinner /> : "Yes, Delete"}
+              {isPending ? <SingleSpinner /> : "Yes, Activate"}
             </button>
           </div>
         </div>
@@ -38,4 +38,4 @@ function DeleteCategory({ handleClose, rowData }) {
     </>
   );
 }
-export default DeleteCategory;
+export default ActivateEventCategory;

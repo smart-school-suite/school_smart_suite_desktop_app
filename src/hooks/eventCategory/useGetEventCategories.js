@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getEventCategoryByStatus } from "../../services/eventCategory";
-export const useGetEventCategoryByStatus = (status) => {
+import { getEventCategories } from "../../services/eventCategory";
+export const useGetEventCategories = () => {
     return useQuery({
-         queryKey: ["eventCategories", status],
-         queryFn: () => getEventCategoryByStatus(status),
-         enabled: !!status,
+         queryKey: ["eventCategories"],
+         queryFn:getEventCategories
     })
 }

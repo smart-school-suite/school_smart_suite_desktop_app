@@ -1,24 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createEventCategory } from "../../services/eventCategory";
+import { deactivateEventCategory } from "../../services/eventCategory";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
-export const useCreateEventCategory = (handleClose) => {
+export const useDeactivateEventCategory = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: createEventCategory,
+    mutationFn: deactivateEventCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["eventCategories"] });
       queryClient.invalidateQueries({ queryKey: ["activeEventCategories"]});
-
       if (handleClose) {
         handleClose();
       }
 
       toast.custom(
         <ToastSuccess
-          title={"Event Category Created"}
-          description={"Event Created Successfully"}
+          title={"Deactivation Successfull"}
+          description={"Event Category Deactivated Successfully"}
         />
       );
     },

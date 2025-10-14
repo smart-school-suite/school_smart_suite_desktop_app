@@ -1,7 +1,7 @@
+import { useGetPastElections } from "../../hooks/election/useGetPastElections";
 import Table from "../../components/Tables/Tables";
-import { electionTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import { pastElectionTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { useGetElections } from "../../hooks/election/useGetElections";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import React, { useState } from "react";
@@ -9,44 +9,19 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import CustomModal from "../../components/Modals/Modal";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import ElectionDetails from "../../ModalContent/Elections/ElectionDetails";
-import DeleteElection from "../../ModalContent/Elections/DeleteElection";
-import UpdateElection from "../../ModalContent/Elections/UpdateElection";
-import LiveElection from "./LiveElection";
-import { LiveIcon } from "../../icons/Icons";
-function Elections() {
-  const [liveElection, setLiveElection] = useState({
-    election_id: null,
-  });
-  return (
-    <>
-      {
-        liveElection.election_id ? (
-           <LiveElection 
-             setLiveElection={setLiveElection}
-             liveElection={liveElection}
-           />
-        ) : (
-           <ElectionTable 
-        liveElection={liveElection}
-        setLiveElection={setLiveElection}
-      />
-        )
-      }
-    </>
-  );
-}
-
-function ElectionTable({ liveElection, setLiveElection }) {
-  const { data: elections, isLoading, error } = useGetElections();
-  return (
-    <>
-      <div className="d-flex flex-column gap-2 h-100">
+import { StatsIcon } from "../../icons/Icons";
+import PastElectionResults from "../../ModalContent/ElectionHistory/PastElectionResults";
+function ElectionHistory(){
+  const { data:pastElections, isLoading, error } = useGetPastElections();
+     return(
+        <>
+         <div className="d-flex flex-column gap-2 h-100">
         <div
           className="d-flex flex-row align-items-center justify-content-between"
           style={{ height: "5%" }}
         >
           <div className="d-flex flex-row align-items-center">
-            <span className="fw-semibold">Manage Elections</span>
+            <span className="fw-semibold">Past Elections</span>
           </div>
         </div>
         <div style={{ height: "95%" }}>
@@ -59,22 +34,21 @@ function ElectionTable({ liveElection, setLiveElection }) {
             ></NotFoundError>
           ) : (
             <Table
-              colDefs={electionTableConfig({
-                DropdownComponent,
-                setLiveElection
+              colDefs={pastElectionTableConfig({
+                DropdownComponent
               })}
-              rowData={elections?.data}
+              rowData={pastElections?.data}
             />
           )}
         </div>
       </div>
-    </>
-  );
+        </>
+     )
 }
-export default Elections;
+export default ElectionHistory;
+
 export function DropdownComponent(props) {
   const rowData = props.data;
-  const setLiveElection = props.setLiveElection;
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [modalSize, setModalSize] = useState("lg");
@@ -115,48 +89,16 @@ export function DropdownComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        {
-           rowData.voting_status == "ongoing" && (
-            <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => {
-              setLiveElection((prev) => ({...prev, ['election_id']:rowData.id}))
-          }}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Follow Life Election</span>
-              <LiveIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-           )
-        }
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateElection, "lg")}
+          onClick={() => handleShowModal(PastElectionResults, "xl")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update</span>
-              <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(DeleteElection, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete</span>
-              <DeleteIcon />
+              <span>Election Results</span>
+              <StatsIcon />
             </div>
           </div>
         </DropDownMenuItem>

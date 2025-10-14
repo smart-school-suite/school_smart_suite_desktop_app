@@ -1,18 +1,14 @@
-import { useGetElectionRoleDetails } from "../../hooks/electionRole/useGetElectionRoleDetails";
+import { useGetEventCategoryDetails } from "../../hooks/eventCategory/useGetEventCategoryDetails";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { Icon } from "@iconify/react";
 import { formatISODate } from "../../utils/functions";
-function ElectionRoleDetails({ handleClose, rowData }) {
-  const { id: electionRoleId } = rowData;
-  const {
-    data: electionRoleDetails,
-    isLoading,
-    error,
-  } = useGetElectionRoleDetails(electionRoleId);
-  return (
-    <>
-      <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
-        <span className="m-0">Election Role Details</span>
+function EventCategoryDetails({ handleClose, rowData }){
+    const { id:categoryId } = rowData;
+    const { data:eventCategoryDetails, isLoading, error } = useGetEventCategoryDetails(categoryId);
+     return(
+        <>
+        <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
+        <span className="m-0">Event Category Details</span>
         <span
           className="m-0"
           onClick={() => {
@@ -43,43 +39,35 @@ function ElectionRoleDetails({ handleClose, rowData }) {
           <div>
             <div className="d-flex align-items-center justify-content-between my-1 w-100">
               <div className="py-2">
-                <p className="my-0 font-size-sm">Election Role Name</p>
-                <p className="my-0 gainsboro-color font-size-sm">
-                  {electionRoleDetails.data.name}
-                </p>
+                <p className="my-0 font-size-sm">Title</p>
+                <p className="my-0 gainsboro-color font-size-sm">{eventCategoryDetails.data.name}</p>
               </div>
             </div>
             <hr />
             <div className="d-flex align-items-center justify-content-between my-1 w-100">
               <div className="py-2">
                 <p className="my-0 font-size-sm">Description</p>
-                <p className="my-0 gainsboro-color font-size-sm">
-                  {electionRoleDetails.data.description}
-                </p>
+                <p className="my-0 gainsboro-color font-size-sm">{eventCategoryDetails.data.description}</p>
               </div>
             </div>
             <hr />
             <div className="d-flex align-items-center justify-content-between my-1 w-100">
               <div className="py-2">
                 <p className="my-0 font-size-sm">Created At</p>
-                <p className="my-0 gainsboro-color font-size-sm">
-                  {formatISODate(electionRoleDetails.data.created_at)}
-                </p>
+                <p className="my-0 gainsboro-color font-size-sm">{formatISODate(eventCategoryDetails.data.created_at)}</p>
               </div>
             </div>
             <hr />
             <div className="d-flex align-items-center justify-content-between my-1 w-100">
               <div className="py-2">
                 <p className="my-0 font-size-sm">Updated At</p>
-                <p className="my-0 gainsboro-color font-size-sm">
-                  {formatISODate(electionRoleDetails.data.updated_at)}
-                </p>
+                <p className="my-0 gainsboro-color font-size-sm">{formatISODate(eventCategoryDetails.data.updated_at)}</p>
               </div>
             </div>
           </div>
         )}
       </div>
-    </>
-  );
+        </>
+     )
 }
-export default ElectionRoleDetails;
+export default EventCategoryDetails;

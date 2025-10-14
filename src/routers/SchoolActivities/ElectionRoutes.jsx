@@ -3,20 +3,11 @@ import { Route } from "react-router-dom";
 const ElectionOverview = React.lazy(() =>
   import("../../pages/Elections/ElectionOverview")
 );
-const PassElections = React.lazy(() =>
-  import("../../pages/Elections/PassElections")
-);
 const ElectionApplication = React.lazy(() =>
   import("../../pages/Elections/ElectionApplication")
 );
 const ElectionCandidate = React.lazy(() =>
   import("../../pages/Elections/ElectionCandidates")
-);
-const PassWinners = React.lazy(() =>
-  import("../../pages/Elections/PassWinners")
-);
-const ElectionResults = React.lazy(() =>
-  import("../../pages/Elections/ElectionResults")
 );
 const ElectionRoles = React.lazy(() =>
   import("../../pages/Elections/ElectionRoles")
@@ -25,6 +16,7 @@ const ElectionType = React.lazy(() =>
   import("../../pages/Elections/ElectionType")
 );
 const Elections = React.lazy(() => import("../../pages/Elections/Elections"));
+const ElectionHistory = React.lazy(() => import("../../pages/Elections/ElectionHistory"));
 import SchoolElectionLayout from "../../layouts/SchoolElectionLayout";
 const SchoolElectionRoutes = [
   <Route key={"schoolElection"} element={<SchoolElectionLayout />}>
@@ -34,6 +26,16 @@ const SchoolElectionRoutes = [
       element={
         <Suspense>
           <ElectionOverview />
+        </Suspense>
+      }
+    />
+    ,
+    <Route
+      key="electionHistory"
+      path="/election-history"
+      element={
+        <Suspense>
+          <ElectionHistory />
         </Suspense>
       }
     />
@@ -59,16 +61,6 @@ const SchoolElectionRoutes = [
     />
     ,
     <Route
-      key="passElections"
-      path="/past-election"
-      element={
-        <Suspense>
-          <PassElections />
-        </Suspense>
-      }
-    />
-    ,
-    <Route
       key="electionApplication"
       path="/election-application"
       element={
@@ -84,26 +76,6 @@ const SchoolElectionRoutes = [
       element={
         <Suspense>
           <ElectionCandidate />
-        </Suspense>
-      }
-    />
-    ,
-    <Route
-      key="passWinners"
-      path="/past-winners"
-      element={
-        <Suspense>
-          <PassWinners />
-        </Suspense>
-      }
-    />
-    ,
-    <Route
-      key="electionResults"
-      path="/election-results"
-      element={
-        <Suspense>
-          <ElectionResults />
         </Suspense>
       }
     />

@@ -836,7 +836,23 @@ export function CategoryTableConfig({ DropdownComponent }) {
       headerName: "Status",
       filter: true,
       floatingFilter: true,
-      cellRenderer: TextComponent,
+      cellRenderer: ActiveInactiveBadge,
+      cellStyle: cellStyle,
+    },
+     {
+      field: "created_at",
+      headerName: "Created At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: ISODateComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "updated_at",
+      headerName: "Updated At",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: ISODateComponent,
       cellStyle: cellStyle,
     },
     {
@@ -2945,6 +2961,62 @@ export function electionCandidateTableConfig({ DropdownComponent }){
       filter: true,
       floatingFilter: true,
       cellRenderer: ElectionPill,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: {
+        width: "20rem",
+      },
+    },
+  ];
+  return tableConfig;
+}
+export function pastElectionTableConfig({ DropdownComponent }){
+    const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "election_title",
+      headerName: "Election Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "voting_status",
+      headerName: "Vote Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: ElectionPill,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "application_status",
+      headerName: "Application Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: ElectionPill,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "status",
+      headerName: "Election Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: ElectionPill,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "school_year",
+      headerName: "School Year",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {

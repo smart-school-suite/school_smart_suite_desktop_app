@@ -10,11 +10,12 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import CustomModal from "../../components/Modals/Modal";
 import CreateElectionType from "../../ModalContent/ElectionType/CreateElectionType";
 import { electionTypeTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import { ActivateIcon, DeleteIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { ActivateIcon, DeleteIcon, DetailsIcon, SuspendIcon, UpdateIcon } from "../../icons/ActionIcons";
 import UpdateElectionType from "../../ModalContent/ElectionType/UpdateElectionType";
 import DeleteElectionType from "../../ModalContent/ElectionType/DeleteElectionType";
 import DeactivateElectionType from "../../ModalContent/ElectionType/DeactivateElectionType";
 import ActivateElectionType from "../../ModalContent/ElectionType/ActivateElectionType";
+import ElectionTypeDetails from "../../ModalContent/ElectionType/ElectionTypeDetails";
 function ElectionType() {
   const { data: electionTypes, isLoading, error } = useGetElectionTypes();
   return (
@@ -126,6 +127,19 @@ export function DropdownComponent(props) {
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Activate Election Type</span>
               <ActivateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+           onClick={() => handleShowModal(ElectionTypeDetails, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Election Type Details</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>

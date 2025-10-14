@@ -1,24 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createEventCategory } from "../../services/eventCategory";
 import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
-export const useCreateEventCategory = (handleClose) => {
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import { deleteEventCategory } from "../../services/eventCategory";
+export const useDeleteEventCategory = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: createEventCategory,
+    mutationFn: deleteEventCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["eventCategories"] });
       queryClient.invalidateQueries({ queryKey: ["activeEventCategories"]});
-
       if (handleClose) {
         handleClose();
       }
 
       toast.custom(
         <ToastSuccess
-          title={"Event Category Created"}
-          description={"Event Created Successfully"}
+          title={"Delete Successfull"}
+          description={"Event Category Deleted Successfully"}
         />
       );
     },

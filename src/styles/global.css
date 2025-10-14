@@ -70,6 +70,18 @@
     --breakpoint-xl: 1200px;
 }
 
+.school-event-active {
+    background-color: #eadcf8;
+    height: 5dvh;
+    padding-inline: 0.5rem;
+    text-align: center;
+    color: #a572da;
+}
+.school-event-inactive {
+    height: 5dvh;
+    padding-inline: 0.5rem;
+    text-align: center;
+}
 .container {
     max-width: 2500px !important;
 }

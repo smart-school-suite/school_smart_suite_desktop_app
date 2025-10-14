@@ -7,9 +7,11 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetAnnouncementReadUnreadList } from "../../hooks/announcement/useGetAnnouncementReadUnreadList";
 import { formatISODate } from "../../utils/functions";
+import { useSelector } from "react-redux";
 function AnnouncementEngagementStats({ handleClose, rowData }) {
   const { id: announcementId } = rowData;
   const [tab, setTab] = useState("overview");
+   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
@@ -23,7 +25,7 @@ function AnnouncementEngagementStats({ handleClose, rowData }) {
           <Icon icon="charm:cross" width="22" height="22" />
         </span>
       </div>
-      <div className="d-flex flex-row primary-background-50 rounded-2 w-100 p-1 gap-2">
+      <div className={`d-flex flex-row ${darkMode ? 'dark-bg-light' : 'primary-background-50'} rounded-2 w-100 p-1 gap-2`}>
         <button
           className={`border-none rounded-2 
            ${
@@ -65,6 +67,7 @@ function Overview({ announcementId }) {
     isLoading,
     error,
   } = useGetAnnouncementEngagementStats(announcementId);
+     const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
       {isLoading ? (
@@ -131,7 +134,7 @@ function Overview({ announcementId }) {
             <div className="d-flex flex-row gap-2">
               <div className="col-6">
                 <div
-                  className="card rounded-4 border p-2 d-flex flex-column gap-2"
+                  className={`${darkMode ? 'dark-bg dark-mode-text dark-mode-border' : "white-bg border"} card rounded-4  p-2 d-flex flex-column gap-2`}
                   style={{ height: "33dvh" }}
                 >
                   <div className="d-flex flex-column">
@@ -150,7 +153,7 @@ function Overview({ announcementId }) {
               </div>
               <div className="col">
                 <div
-                  className="card rounded-4 border p-2 d-flex flex-column gap-2"
+                  className={`${darkMode ? 'dark-bg dark-mode-text dark-mode-border' : "white-bg border"} card rounded-4  p-2 d-flex flex-column gap-2`}
                   style={{ height: "33dvh" }}
                 >
                   <div className="d-flex flex-column">

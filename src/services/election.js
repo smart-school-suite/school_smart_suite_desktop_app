@@ -89,3 +89,14 @@ export const castVote = async (data) => {
    const response = await axiosInstance.post("election/cast-vote", data);
    return response.data;
 }
+
+export const getPastElections = async () => {
+   const response = await axiosInstance.get("election/past");
+   return response.data;
+}
+
+export const getPastElectionsResults = async (electionId) => {
+   const response = await axiosInstance.get(`election/${electionId}/past-results`);
+   return response.data;
+}
+

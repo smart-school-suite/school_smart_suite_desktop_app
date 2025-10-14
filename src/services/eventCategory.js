@@ -31,28 +31,17 @@ export const updateEventCategory = async (categoryId, updateData) => {
   return response.data;
 };
 
-export const getEventCategoryByStatus = async (status) => {
-  const response = await axiosInstance.get(`event-category/${status}`);
-  return response.data;
-};
+export const getEventCategories = async () => {
+   const response = await axiosInstance.get("event-category");
+   return response.data;
+}
 
+export const getActiveEventCategories = async () => { 
+   const response = await axiosInstance.get("event-category/active");
+   return response.data;
+}
 
-export const createEventTag = async (data) => {
-  const response = await axiosInstance.post("event-tag", data);
+export const getEventCategoryDetails = async (eventCategoryId) => {
+  const response = await axiosInstance.get(`event-category/details/${eventCategoryId}`);
   return response.data;
-};
-
-export const getEventTags = async () => {
-  const response = await axiosInstance.get("event-tag");
-  return response.data;
-};
-
-export const updateEventTag = async (tagId, data) => {
-  const response = await axiosInstance.put(`event-tag/${tagId}`, data);
-  return response.data;
-};
-
-export const deleteEventTag = async (tagId) => {
-  const response = await axiosInstance.delete(`event-tag/${tagId}`);
-  return response.data;
-};
+}

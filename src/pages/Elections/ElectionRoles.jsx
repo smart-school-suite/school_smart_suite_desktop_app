@@ -12,6 +12,7 @@ import CustomModal from "../../components/Modals/Modal";
 import {
   ActivateIcon,
   DeleteIcon,
+  DetailsIcon,
   SuspendIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
@@ -25,6 +26,7 @@ import BulkDeleteElectionRole from "../../ModalContent/ElectionRoles/BulkDeleteE
 import BulkDeactivateElectionRole from "../../ModalContent/ElectionRoles/BulkDeactivateElectionRole";
 import BulkActivateElectionRole from "../../ModalContent/ElectionRoles/BulkActivateElectionRole";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
+import ElectionRoleDetails from "../../ModalContent/ElectionRoles/ElectionRoleDetails";
 function ElectionRoles() {
   const { data: electionRoles, isLoading, error } = useGetElectionRoles();
     const tableRef = useRef();
@@ -154,6 +156,19 @@ export function DropdownComponent(props) {
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Role</span>
               <UpdateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(ElectionRoleDetails, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Election Role Details</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>

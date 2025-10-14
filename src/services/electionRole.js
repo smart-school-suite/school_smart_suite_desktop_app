@@ -66,3 +66,8 @@ export const deactivateRole = async (electionRoleId) => {
   const response = await axiosInstance.post(`election-role/${electionRoleId}/deactivate`);
   return response.data;
 };
+
+export const getElectionRoleDetails = async (electionRoleId) => {
+   const response = await axiosInstance.get(`election-role/${electionRoleId}`);
+   return response.data;
+}

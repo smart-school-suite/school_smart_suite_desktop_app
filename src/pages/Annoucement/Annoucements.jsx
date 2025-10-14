@@ -4,8 +4,10 @@ import { useGetAnnouncementStatus } from "../../hooks/announcement/useGetAnnounc
 import { NotFoundError } from "../../components/errors/Error";
 import AnnouncementDashboardLoader from "../../components/PageLoaders/AnnouncementLoader";
 import { formatISODate } from "../../utils/functions";
+import { useSelector } from "react-redux";
 function Annoucements() {
   const currentYear = new Date().getFullYear();
+   const darkMode = useSelector((state) => state.theme.darkMode);
   const {
     data: announcementStats,
     isLoading,
@@ -91,7 +93,7 @@ function Annoucements() {
                <div className="announcement-dashboard-content d-flex flex-column gap-2 px-1">
                  {
                   announcementStats.data.recent_announcements_by_status.active_announcement.map((items) => (
-                    <div className="card border-none shadow-sm font-size-sm bg-white rounded-4 p-2 d-flex flex-column gap-2"
+                    <div className={`${darkMode ? 'dark-bg dark-mode-text' : "white-bg"} card border-none shadow-sm font-size-sm rounded-4 p-2 d-flex flex-column gap-2`}
                      key={items.id}
                     >
                   <span className="fw-semibold">{items.title}</span>
@@ -129,7 +131,7 @@ function Annoucements() {
                <div className="announcement-dashboard-content d-flex flex-column gap-2 px-1">
                  {
                   announcementStats.data.recent_announcements_by_status.scheduled_announcement.map((items) => (
-                    <div className="card border-none shadow-sm font-size-sm bg-white rounded-4 p-2 d-flex flex-column gap-2"
+                    <div className={`${darkMode ? 'dark-bg dark-mode-text' : "white-bg"} card border-none shadow-sm font-size-sm rounded-4 p-2 d-flex flex-column gap-2`}
                      key={items.id}
                     >
                   <span className="fw-semibold">{items.title}</span>
@@ -169,7 +171,7 @@ function Annoucements() {
               Announcement Stats By Type
             </span>
             <div className="d-flex flex-row align-items-center gap-2">
-              <div className="card border-none d-flex flex-row font-size-sm p-2 rounded-2 w-25">
+              <div className={`${darkMode ? 'dark-bg dark-mode-text' : 'white-bg'} card border-none d-flex flex-row font-size-sm p-2 rounded-2 w-25`}>
                 <div className="d-flex flex-row gap-2">
                   <div
                     style={{ width: "3rem", height: "3rem" }}
@@ -187,7 +189,7 @@ function Annoucements() {
                   </div>
                 </div>
               </div>
-              <div className="card border-none d-flex flex-row font-size-sm p-2 rounded-2 w-25">
+              <div className={`${darkMode ? 'dark-bg dark-mode-text' : 'white-bg'} card border-none d-flex flex-row font-size-sm p-2 rounded-2 w-25`}>
                 <div className="d-flex flex-row gap-2">
                   <div
                     style={{
@@ -210,7 +212,7 @@ function Annoucements() {
                   </div>
                 </div>
               </div>
-              <div className="card border-none d-flex flex-row font-size-sm p-2 rounded-2 w-25">
+              <div className={`${darkMode ? 'dark-bg dark-mode-text' : 'white-bg'} card border-none d-flex flex-row font-size-sm p-2 rounded-2 w-25`}>
                 <div className="d-flex flex-row gap-2">
                   <div
                     style={{
@@ -229,7 +231,7 @@ function Annoucements() {
                   </div>
                 </div>
               </div>
-              <div className="card border-none d-flex flex-row font-size-sm p-2 rounded-2 w-25">
+              <div className={`${darkMode ? 'dark-bg dark-mode-text' : 'white-bg'} card border-none d-flex flex-row font-size-sm p-2 rounded-2 w-25`}>
                 <div className="d-flex flex-row gap-2">
                   <div
                     style={{
