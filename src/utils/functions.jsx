@@ -733,3 +733,9 @@ export function formatToMySQLDateTime(dateString, timeString) {
 
     return mysqlDateTime;
 }
+
+export function removeKeyFromObject(obj, keyToRemove) {
+  const newObj = { ...obj };
+  delete newObj[keyToRemove];
+  return newObj;
+}

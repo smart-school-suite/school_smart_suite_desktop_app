@@ -121,4 +121,10 @@ const LiveIcon = ({ iconStyle }) => {
         <Icon icon="fluent:live-24-filled" style={{...iconStyle, fontSize:"1rem"}} />
      )
 }
-export { LiveIcon, ElectionIcon, StatsIcon, DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };
+
+const EventIcon = ({ iconStyle }) => {
+   return(
+    <Icon icon="clarity:event-line" style={{...iconStyle, fontSize:"1rem"}}  />
+   )
+}
+export { EventIcon, LiveIcon, ElectionIcon, StatsIcon, DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };

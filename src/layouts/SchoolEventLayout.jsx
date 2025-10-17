@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import CreateEvent from "../ModalContent/Events/CreateEvent";
+import { EventIcon } from "../icons/Icons";
 function SchoolEventLayout() {
    const darkMode = useSelector((state) => state.theme.darkMode);
   return (
@@ -19,14 +20,11 @@ function SchoolEventLayout() {
                 width: "2.5rem",
                 height: "2.5rem",
                 borderRadius: "0.5rem",
-                background: darkMode ? "#a572da" : "#e1cff4",
-                color: darkMode ? "#e1cff4" : "#a572da",
+                background: darkMode ? "#a572da" : "#f3ecfb",
+                color: darkMode ? "#f3ecfb" : "#a572da",
               }}
           >
-            <Icon
-              icon="grommet-icons:user-admin"
-              className="font-size-md primary-color"
-            />
+          <EventIcon />
           </div>
           <span className="my-0 fw-semibold">Manage School Events</span>
         </div>
@@ -36,7 +34,7 @@ function SchoolEventLayout() {
             <div className="d-flex flex-column width-20 h-100 gap-2">
               <ModalButton
               action={{ modalContent:CreateEvent }}
-              size={"lg"}
+              fullscreen={true}
             >
               <button className="border-none rounded-3 justify-content-between w-100 font-size-sm d-flex flex-row gap-2 align-items-center" 
             style={{ background:"#a572da", padding:"0.7rem", color:"#eadcf8" }}>

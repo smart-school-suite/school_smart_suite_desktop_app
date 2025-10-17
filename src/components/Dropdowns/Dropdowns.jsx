@@ -31,11 +31,13 @@ const CustomDropdown = forwardRef(
       error,
       errorMessage = "Field Required",
       optional = false,
-      dropdownWidth = "30vw", // NEW PROP
+      dropdownWidth = "30vw",
+      value = null,
+      defaultValue = null,
     },
     ref
   ) => {
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(defaultValue ?? null);
     const [isToggled, setIsToggled] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredData, setFilteredData] = useState(data);
@@ -43,19 +45,13 @@ const CustomDropdown = forwardRef(
     const darkMode = useSelector((state) => state.theme.darkMode);
     const inputRef = useRef(null);
 
-    // Floating UI positioning
-    const {
-      x,
-      y,
-      strategy,
-      refs,
-      update,
-    } = useFloating({
+    const { x, y, strategy, refs, update } = useFloating({
       placement: direction === "up" ? "top-start" : "bottom-start",
       middleware: [offset(6), flip(), shift()],
       whileElementsMounted: autoUpdate,
     });
 
+    /** ========== Validation & Control from Parent ========== **/
     useImperativeHandle(ref, () => ({
       triggerValidation: () => {
         if (!optional && !selectedItem && onError) {
@@ -70,12 +66,13 @@ const CustomDropdown = forwardRef(
         setSearchTerm("");
         onError?.("");
       },
+      setValue: (item) => {
+        setSelectedItem(item);
+        onError?.("");
+      },
     }));
 
-    useEffect(() => {
-      setFilteredData(data);
-    }, [data]);
-
+    /** ========== Filter Logic ========== **/
     useEffect(() => {
       const timer = setTimeout(() => {
         if (searchTerm) {
@@ -92,6 +89,29 @@ const CustomDropdown = forwardRef(
       return () => clearTimeout(timer);
     }, [searchTerm, data, displayKey]);
 
+    useEffect(() => {
+      setFilteredData(data);
+    }, [data]);
+
+    /** ========== Controlled Value Sync ========== **/
+    useEffect(() => {
+      if (value === null) {
+        setSelectedItem(null);
+        return;
+      }
+
+      if (value !== undefined && data?.length > 0) {
+        const matched = data.find((item) => {
+          if (typeof value === "object") {
+            return valueKey.every((key) => item[key] === value[key]);
+          }
+          return item[valueKey[0]] === value;
+        });
+        if (matched) setSelectedItem(matched);
+      }
+    }, [value, data, valueKey]);
+
+    /** ========== Click Outside Close ========== **/
     useEffect(() => {
       if (!isToggled) return;
 
@@ -112,6 +132,7 @@ const CustomDropdown = forwardRef(
         document.removeEventListener("pointerdown", handleClickOutside, true);
     }, [isToggled, selectedItem, onError, errorMessage, optional, refs]);
 
+    /** ========== Handlers ========== **/
     const toggleDropdown = useCallback(() => {
       setIsToggled((prev) => !prev);
       update();
@@ -121,19 +142,20 @@ const CustomDropdown = forwardRef(
       (item) => {
         setSelectedItem(item);
         setSearchTerm("");
-        if (onError) onError("");
+        onError?.("");
         setIsToggled(false);
         if (onSelect) {
           const selectedValues = valueKey.reduce((acc, key) => {
             acc[key] = item[key];
             return acc;
           }, {});
-          onSelect(selectedValues);
+          onSelect(selectedValues, item); // pass both
         }
       },
       [onSelect, valueKey, onError]
     );
 
+    /** ========== Render ========== **/
     return (
       <div className="input-container w-100">
         <div className="dropdown-box z-1" ref={refs.setReference}>
@@ -144,15 +166,15 @@ const CustomDropdown = forwardRef(
             aria-expanded={isToggled}
           >
             <div
-              className={`${darkMode ? ' dark-mode-text dark-mode-border dark-bg-light' : 'bg-white border'} d-flex  flex-row justify-content-between rounded-2 pointer-cursor align-items-center
+              className={`${darkMode ? "dark-mode-text dark-mode-border dark-bg-light" : "bg-white border"} 
+              d-flex flex-row justify-content-between rounded-2 pointer-cursor align-items-center
               ${
                 error
                   ? "border-danger text-danger"
                   : selectedItem
                   ? "border-success text-success"
                   : ""
-              }
-            `}
+              }`}
               style={{ padding: "0.35rem" }}
             >
               <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm text-capitalize">
@@ -180,7 +202,7 @@ const CustomDropdown = forwardRef(
                 position: strategy,
                 top: y ?? 0,
                 left: x ?? 0,
-                width: dropdownWidth, // controlled by prop
+                width: dropdownWidth,
                 zIndex: 9999,
               }}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -188,19 +210,22 @@ const CustomDropdown = forwardRef(
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
               onAnimationComplete={() => {
-                    inputRef.current?.focus();
+                inputRef.current?.focus();
               }}
-              className={`${darkMode ? 'dark-bg dark-mode-border' : 'bg-white border'} d-flex flex-column  p-2 rounded-3 shadow`}
+              className={`${darkMode ? "dark-bg dark-mode-border" : "bg-white border"} 
+                d-flex flex-column p-2 rounded-3 shadow`}
             >
               <input
                 ref={inputRef}
                 type="text"
-                className={`rounded-2 my-2 p-2 form-control font-size-sm ${darkMode ? 'dark-mode-input' : null}`}
+                className={`rounded-2 my-2 p-2 form-control font-size-sm ${
+                  darkMode ? "dark-mode-input" : ""
+                }`}
                 placeholder="Search for anything"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ padding: "0.5rem" }}
               />
+
               <div className="scrollable-dropdown d-flex flex-column">
                 {isLoading ? (
                   <SingleSpinner />
@@ -237,6 +262,7 @@ const CustomDropdown = forwardRef(
     );
   }
 );
+
 export default CustomDropdown;
 
 export const MultiSelectDropdown = forwardRef(

@@ -45,7 +45,12 @@ export const updateSchoolEventContent = async (eventId, data) => {
   return response.data;
 };
 
-export const getSchoolEventByCategory = async (categoryId) => {
-  const response = await axiosInstance.get(`school-event/${categoryId}`);
+export const getSchoolEventByCategory = async (eventCategoryId) => {
+  const response = await axiosInstance.get(`school-event/event-category/${eventCategoryId}`);
   return response.data;
 };
+
+export const getEventTags = async () => {
+   const response = await axiosInstance.get("event-tag");
+   return response.data;
+}

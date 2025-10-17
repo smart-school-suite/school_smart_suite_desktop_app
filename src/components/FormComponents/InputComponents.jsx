@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback, useImperativeHandle, forwardRef } from "react";
+import { useState, useEffect, useCallback, useImperativeHandle, forwardRef, useRef } from "react";
 import { Icon } from "@iconify/react";
 import InputMask from "react-input-mask";
 import { useSelector } from "react-redux";
+import { motion, AnimatePresence } from 'framer-motion';
 function PhoneNumberInputComponent(
   { onChange, value, onValidationChange, validationSchema, optional = false },
   ref
@@ -724,8 +725,6 @@ export const TimeInput = forwardRef(function TimeInput(
   );
 });
 
-
-
 export const InputGroup = forwardRef(
   (
     {
@@ -1263,4 +1262,523 @@ export const TimeRangeInput = forwardRef(
   }
 );
 
+export const DateTimeInput = forwardRef(function DateTimeInput(
+  {
+    value,
+    onChange,
+    id,
+    name,
+    placeholder = "YYYY-MM-DD HH:MM",
+    validationSchema,
+    optional = false,
+    onValidationChange,
+  },
+  ref
+) {
+  const [displayValue, setDisplayValue] = useState(value || "");
+  const [inputError, setInputError] = useState("");
+  const [isInputTouched, setIsInputTouched] = useState(false);
+  const darkMode = useSelector((state) => state.theme.darkMode);
 
+  useEffect(() => {
+    setDisplayValue(value || "");
+    if (isInputTouched) {
+      validateInput(value || "");
+    } else if (!value && optional) {
+      setInputError("");
+      onValidationChange(true);
+    }
+  }, [value, isInputTouched, optional]);
+
+  const validateInput = useCallback(
+    async (currentValue) => {
+      if (optional && (currentValue === "" || currentValue == null)) {
+        setInputError("");
+        onValidationChange(true);
+        return true;
+      }
+      if (!validationSchema) {
+        setInputError("");
+        onValidationChange(true);
+        return true;
+      }
+      try {
+        await validationSchema.validate(currentValue);
+        setInputError("");
+        onValidationChange(true);
+        return true;
+      } catch (err) {
+        setInputError(err.message);
+        onValidationChange(false);
+        return false;
+      }
+    },
+    [optional, validationSchema, onValidationChange]
+  );
+
+  useImperativeHandle(ref, () => ({
+    triggerValidation: async () => {
+      setIsInputTouched(true);
+      return validateInput(displayValue);
+    },
+    resetField: () => {
+      setDisplayValue("");
+      setInputError("");
+      setIsInputTouched(false);
+      onValidationChange(optional ? true : false);
+    },
+  }));
+
+  const handleChange = (e) => {
+  const rawValue = e.target.value;
+  setDisplayValue(rawValue);
+
+  const unmaskedValue = rawValue.replace(/[^0-9]/g, "");
+
+  onChange(rawValue);
+
+  if (unmaskedValue.length === 12) {
+    if (isInputTouched) {
+      validateInput(rawValue);
+    }
+  } else {
+    if (isInputTouched) {
+      onValidationChange(false);
+    }
+  }
+};
+
+
+  const handleFocus = () => {
+    setIsInputTouched(true);
+    validateInput(displayValue);
+  };
+
+  const handleBlur = () => {
+    validateInput(displayValue);
+  };
+
+  const feedbackContent =
+    isInputTouched && inputError
+      ? inputError
+      : isInputTouched && !inputError && displayValue !== ""
+      ? "Looks Good!"
+      : null;
+
+  const feedbackClasses = [
+    "transition-all font-size-sm",
+    isInputTouched && inputError
+      ? "invalid-feedback"
+      : isInputTouched && !inputError && displayValue !== ""
+      ? "valid-feedback"
+      : null,
+    isInputTouched && (inputError || (!inputError && displayValue !== ""))
+      ? "opacity-100"
+      : "opacity-0",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <div className="input-container">
+      <InputMask
+        mask="9999-99-99 99:99"
+        maskChar="_"
+        value={displayValue}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        id={id}
+        name={name}
+        placeholder={placeholder}
+        className={`form-control font-size-sm p-2 ${
+          darkMode ? "dark-mode-input" : ""
+        } ${isInputTouched && inputError ? "is-invalid" : ""} ${
+          isInputTouched && !inputError && displayValue !== "" ? "is-valid" : ""
+        }`}
+      />
+      <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
+    </div>
+  );
+});
+
+export const DateTimeRangeInput = forwardRef(
+  (
+    {
+      startValue,
+      endValue,
+      onChange,
+      onStartDateTimeChange,
+      onEndDateTimeChange,
+      onStartDateTimeValidationChange,
+      onEndDateTimeValidationChange,
+      validationSchema,
+      placeholderStart = "YYYY-MM-DD HH:MM",
+      placeholderEnd = "YYYY-MM-DD HH:MM",
+    },
+    ref
+  ) => {
+    const darkMode = useSelector((state) => state.theme.darkMode);
+
+    const [values, setValues] = useState({
+      start_date: startValue || "",
+      end_date: endValue || "",
+    });
+
+    const [errors, setErrors] = useState({
+      start_date: "",
+      end_date: "",
+    });
+
+    const [touched, setTouched] = useState({
+      start_date: false,
+      end_date: false,
+    });
+
+    // 🔹 Validate start datetime
+    const validateStart = useCallback(
+      async (value) => {
+        if (!validationSchema) {
+          onStartDateTimeValidationChange?.(true);
+          return true;
+        }
+        try {
+          await validationSchema.fields.start_date.validate(value);
+          setErrors((prev) => ({ ...prev, start_date: "" }));
+          onStartDateTimeValidationChange?.(true);
+          return true;
+        } catch (err) {
+          setErrors((prev) => ({
+            ...prev,
+            start_date: err.message || "Invalid start date & time",
+          }));
+          onStartDateTimeValidationChange?.(false);
+          return false;
+        }
+      },
+      [validationSchema, onStartDateTimeValidationChange]
+    );
+
+    // 🔹 Validate end datetime (depends on start)
+    const validateEnd = useCallback(
+      async (value) => {
+        if (!validationSchema) {
+          onEndDateTimeValidationChange?.(true);
+          return true;
+        }
+        try {
+          await validationSchema.validate(
+            { start_date: values.start_date, end_date: value },
+            { abortEarly: false }
+          );
+          setErrors((prev) => ({ ...prev, end_date: "" }));
+          onEndDateTimeValidationChange?.(true);
+          return true;
+        } catch (err) {
+          const endError = err.inner?.find((e) => e.path === "end_date");
+          setErrors((prev) => ({
+            ...prev,
+            end_date: endError ? endError.message : "Invalid end date & time",
+          }));
+          onEndDateTimeValidationChange?.(false);
+          return false;
+        }
+      },
+      [validationSchema, values.start_date, onEndDateTimeValidationChange]
+    );
+
+    // 🔹 Input change handler
+    const handleChange = (field) => (e) => {
+      const rawValue = e.target.value;
+      setValues((prev) => ({ ...prev, [field]: rawValue }));
+      onChange?.({ ...values, [field]: rawValue });
+
+      if (field === "start_date") {
+        onStartDateTimeChange?.(rawValue);
+        if (touched.start_date) validateStart(rawValue);
+      }
+      if (field === "end_date") {
+        onEndDateTimeChange?.(rawValue);
+        if (touched.end_date) validateEnd(rawValue);
+      }
+    };
+
+    // 🔹 Focus & blur handlers
+    const handleFocus = (field) => () => {
+      setTouched((prev) => ({ ...prev, [field]: true }));
+      if (field === "start_date") validateStart(values.start_date);
+      if (field === "end_date") validateEnd(values.end_date);
+    };
+
+    const handleBlur = (field) => () => {
+      if (field === "start_date") validateStart(values.start_date);
+      if (field === "end_date") validateEnd(values.end_date);
+    };
+
+    // 🔹 Expose imperative validation triggers
+    useImperativeHandle(ref, () => ({
+      async preValidateStart() {
+        if (!values.start_date) {
+          setTouched((prev) => ({ ...prev, start_date: true }));
+        }
+        return await validateStart(values.start_date);
+      },
+      async preValidateEnd() {
+        if (!values.end_date) {
+          setTouched((prev) => ({ ...prev, end_date: true }));
+        }
+        return await validateEnd(values.end_date);
+      },
+    }));
+
+    // 🔹 Feedback helpers
+    const feedbackClasses = (field) =>
+      [
+        "transition-all font-size-sm",
+        touched[field] && errors[field]
+          ? "invalid-feedback"
+          : touched[field] && !errors[field] && values[field]
+          ? "valid-feedback"
+          : null,
+        touched[field] && (errors[field] || (!errors[field] && values[field]))
+          ? "opacity-100"
+          : "opacity-0",
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+    const feedbackMessage = (field) =>
+      touched[field] && errors[field]
+        ? errors[field]
+        : touched[field] && !errors[field] && values[field]
+        ? "Looks Good!"
+        : "";
+
+    return (
+      <div
+        className="d-flex flex-row align-items-center gap-2 w-100"
+        style={{ height: "11dvh" }}
+      >
+        {/* Start DateTime */}
+        <div className="input-container w-50">
+          <label htmlFor="startDateTime" className="font-size-sm">
+            Start Date & Time
+          </label>
+          <InputMask
+            mask="9999-99-99 99:99"
+            maskChar="_"
+            value={values.start_date}
+            onChange={handleChange("start_date")}
+            onFocus={handleFocus("start_date")}
+            onBlur={handleBlur("start_date")}
+            placeholder={placeholderStart}
+            className={`form-control w-100 font-size-sm p-2 ${
+              darkMode ? "dark-mode-input" : ""
+            } ${
+              touched.start_date && errors.start_date ? "is-invalid" : ""
+            } ${
+              touched.start_date && !errors.start_date && values.start_date
+                ? "is-valid"
+                : ""
+            }`}
+          />
+          <div
+            className={`${feedbackClasses("start_date")} font-size-sm mt-auto`}
+          >
+            {feedbackMessage("start_date")}
+          </div>
+        </div>
+
+        {/* End DateTime */}
+        <div className="input-container w-50">
+          <label htmlFor="endDateTime" className="font-size-sm">
+            End Date & Time
+          </label>
+          <InputMask
+            mask="9999-99-99 99:99"
+            maskChar="_"
+            value={values.end_date}
+            onChange={handleChange("end_date")}
+            onFocus={handleFocus("end_date")}
+            onBlur={handleBlur("end_date")}
+            placeholder={placeholderEnd}
+            className={`form-control w-100 font-size-sm p-2 ${
+              darkMode ? "dark-mode-input" : ""
+            } ${
+              touched.end_date && errors.end_date ? "is-invalid" : ""
+            } ${
+              touched.end_date && !errors.end_date && values.end_date
+                ? "is-valid"
+                : ""
+            }`}
+          />
+          <div
+            className={`${feedbackClasses("end_date")} font-size-sm mt-auto`}
+          >
+            {feedbackMessage("end_date")}
+          </div>
+        </div>
+      </div>
+    );
+  }
+);
+
+
+export const ImageUploadComponent = ({
+  onImageUpload,
+  onImagePreview,
+  maxFileSize = 5 * 1024 * 1024,
+  accept = 'image/*',
+  uploadText = 'Click Here To Upload Event Image',
+  progressBarColor = 'green-bg',
+}) => {
+  const [fileName, setFileName] = useState('');
+  const [progress, setProgress] = useState(0);
+  const [fileSize, setFileSize] = useState(0);
+  const [error, setError] = useState('');
+  const fileInputRef = useRef(null);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file size
+    if (file.size > maxFileSize) {
+      setError(`File size exceeds ${formatFileSize(maxFileSize)} limit`);
+      return;
+    }
+
+    setError('');
+    setFileName(file.name);
+    setFileSize(file.size);
+
+    // Simulate upload progress
+    let currentProgress = 0;
+    const interval = setInterval(() => {
+      currentProgress += 10;
+      setProgress(currentProgress);
+
+      if (currentProgress >= 100) {
+        clearInterval(interval);
+        onImageUpload?.(file);
+      }
+    }, 200);
+
+    // Generate preview URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      onImagePreview?.(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleCancel = () => {
+    setFileName('');
+    setProgress(0);
+    setFileSize(0);
+    setError('');
+    fileInputRef.current.value = '';
+    onImagePreview?.(null); // Clear preview
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1048576).toFixed(1) + ' MB';
+  };
+
+  return (
+    <div className="image-input-container">
+      <label htmlFor="eventImage" className="font-size-sm">
+        Event Image (optional)
+      </label>
+      <div 
+        className="custom-image-input-container"
+        onClick={handleClick}
+      >
+        <div className="d-flex flex-column justify-content-center align-items-center gap-2 w-100  rounded">
+          <Icon icon="mage:image-plus" style={{ fontSize: '2rem' }} />
+          <span className="font-size-sm">{uploadText}</span>
+          <input
+            type="file"
+            id="eventImage"
+            ref={fileInputRef}
+            accept={accept}
+            className="d-none"
+            onChange={handleFileChange}
+          />
+        </div>
+      </div>
+      {error && (
+        <motion.div
+          className="text-danger font-size-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          {error}
+        </motion.div>
+      )}
+      <AnimatePresence>
+        {fileName && !error && (
+          <motion.div
+            className="d-flex flex-row align-items-center"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="d-flex flex-column w-100">
+              <span className="font-size-sm fw-medium text-capitalize">{fileName}</span>
+              <div className="progress">
+                <motion.div
+                  className={`progress-bar ${progressBarColor}`}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                ></motion.div>
+              </div>
+              <div className="d-flex flex-row align-items-center justify-content-between">
+                <span className="font-size-sm text-success">Looks Good</span>
+                <motion.div
+                className="d-flex flex-row align-items-center gap-1 font-size-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1, duration: 0.3 }}
+              >
+                <span>{formatFileSize(fileSize)}</span>
+                <Icon icon="ph:line-vertical" />
+                <span>{progress}%</span>
+              </motion.div>
+              </div>
+            </div>
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <button
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  fontSize: '0.8rem',
+                  textAlign: 'center',
+                  outline: 'none',
+                }}
+                onClick={handleCancel}
+              >
+                <Icon
+                  icon="material-symbols-light:cancel-outline"
+                  className="fs-6"
+                />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};

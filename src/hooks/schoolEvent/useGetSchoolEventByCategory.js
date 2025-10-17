@@ -4,6 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 export const useGetSchoolEventsByCategory = (categoryId) => {
      return useQuery({
          queryKey:["schoolEventByCategory", categoryId],
-         queryFn:getSchoolEventByCategory(categoryId)
+         queryFn:() => getSchoolEventByCategory(categoryId)
      })
 }

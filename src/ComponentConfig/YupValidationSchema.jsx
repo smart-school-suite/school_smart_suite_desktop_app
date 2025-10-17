@@ -523,3 +523,142 @@ export const timeRangeSchema = ({ optional = false, messages = {} } = {}) => {
   
   return schema;
 };
+
+function isValidMySQLDateTime(val) {
+  if (!val) return false;
+  const regex =
+    /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]) ([01]\d|2[0-3]):([0-5]\d)$/;
+  if (!regex.test(val)) return false;
+
+  const [datePart, timePart] = val.split(" ");
+  const [year, month, day] = datePart.split("-").map(Number);
+  const [hour, minute] = timePart.split(":").map(Number);
+
+  const date = new Date(year, month - 1, day, hour, minute);
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day &&
+    date.getHours() === hour &&
+    date.getMinutes() === minute
+  );
+}
+
+export const dateTimeValidationSchema = ({
+  required = true,
+  futureOrToday = false,
+  messages = {},
+} = {}) => {
+  let schema = Yup.string()
+    .trim()
+    .matches(
+      /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]) ([01]\d|2[0-3]):([0-5]\d)$/,
+      messages.format || "Invalid format (YYYY-MM-DD HH:MM)"
+    )
+    .test(
+      "is-valid-datetime",
+      messages.invalid || "Invalid date/time",
+      (val) => !val || isValidMySQLDateTime(val)
+    )
+    .transform((val) => (val === "" ? null : val));
+
+  if (futureOrToday) {
+    schema = schema.test(
+      "is-future-or-today",
+      messages.futureOrToday ||
+        "Date and time must be in the future or today",
+      (val) => {
+        if (!val) return true;
+        if (!isValidMySQLDateTime(val)) return false;
+        const now = new Date();
+        const input = new Date(val.replace(" ", "T"));
+        return input >= now;
+      }
+    );
+  }
+
+  if (required) {
+    schema = schema.required(messages.required || "Date and time is required");
+  } else {
+    schema = schema.nullable();
+  }
+
+  return schema;
+};
+
+
+export const dateTimeRangeValidationSchema = ({
+  required = true,
+  futureOrNow = false,
+  allowPast = true,
+  messages = {},
+} = {}) => {
+  const {
+    startRequired = "Start date & time is required",
+    endRequired = "End date & time is required",
+    invalidFormat = "Invalid date & time format (YYYY-MM-DD HH:MM)",
+    endAfterStart = "End must be after start date & time",
+    startInFuture = "Start must be now or in the future",
+    endInFuture = "End must be now or in the future",
+  } = messages;
+
+  const formatRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+
+  let start_date = Yup.string()
+    .trim()
+    .matches(formatRegex, invalidFormat);
+
+  let end_date = Yup.string()
+    .trim()
+    .matches(formatRegex, invalidFormat);
+
+  if (required) {
+    start_date = start_date.required(startRequired);
+    end_date = end_date.required(endRequired);
+  } else {
+    start_date = start_date.nullable();
+    end_date = end_date.nullable();
+  }
+
+  if (futureOrNow) {
+    const now = new Date();
+    start_date = start_date.test(
+      "future-or-now-start",
+      startInFuture,
+      (value) => !value || new Date(value) >= now
+    );
+    end_date = end_date.test(
+      "future-or-now-end",
+      endInFuture,
+      (value) => !value || new Date(value) >= now
+    );
+  }
+
+  if (!allowPast) {
+    const now = new Date();
+    start_date = start_date.test(
+      "no-past-start",
+      "Start date cannot be in the past",
+      (value) => !value || new Date(value) >= now
+    );
+    end_date = end_date.test(
+      "no-past-end",
+      "End date cannot be in the past",
+      (value) => !value || new Date(value) >= now
+    );
+  }
+
+  end_date = end_date.test(
+    "is-after-start",
+    endAfterStart,
+    function (value) {
+      const { start_date } = this.parent;
+      if (!start_date || !value) return true;
+      return new Date(value) > new Date(start_date);
+    }
+  );
+
+  return Yup.object().shape({ start_date, end_date });
+};
+
+

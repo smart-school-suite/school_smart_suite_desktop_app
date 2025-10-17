@@ -90,6 +90,7 @@ export function ModalButton({
   resetAll,
   size,
   bulkData,
+  fullscreen
 }) {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -124,7 +125,7 @@ export function ModalButton({
           {children}
         </div>
       </div>
-      <CustomModal show={showModal} handleClose={handleClose} size={size}>
+      <CustomModal show={showModal} handleClose={handleClose} size={size} fullscreen={fullscreen}>
         {modalContent}
       </CustomModal>
     </>

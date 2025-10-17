@@ -97,7 +97,7 @@ function ChangeProfilePicture({ handleClose }) {
               accept="image/*"
               ref={fileInputRef}
               onChange={handleFileChange}
-              style={{ opacity: "0" }} // Hide default input
+              style={{ opacity: "0" }} 
             />
             <div className="mt-auto text-center">
               <span className="font-size-sm gainsboro-color">
