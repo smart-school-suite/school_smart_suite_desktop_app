@@ -221,7 +221,7 @@ function CreateContent({
         <div className="d-flex flex-row w-100 gap-2" style={{ height: "90%" }}>
           <div
             style={{ width: "70%" }}
-            className="d-flex flex-column justify-content-between"
+            className="d-flex flex-column jgap-2"
           >
             <div>
               <label htmlFor="title" className="font-size-sm">
@@ -289,6 +289,7 @@ function CreateContent({
                   isLoading={isEventTagLoading}
                   placeholder={"Select Tags"}
                   errorMessage={"Event Tags Required"}
+                  value={formData.tags}
                   onSelect={(value) => {
                     if (value.length > 5) {
                       toast.custom(
