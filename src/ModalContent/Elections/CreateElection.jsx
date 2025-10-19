@@ -2,14 +2,11 @@ import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionType
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useRef, useState } from "react";
 import { useCreateElection } from "../../hooks/election/useCreateElection";
-import {
-  DateInput,
-  TimeInput,
-} from "../../components/FormComponents/InputComponents";
+import { DateTimeRangeInput } from "../../components/FormComponents/InputComponents";
 import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import {
-  dateValidationSchema,
+  dateTimeRangeValidationSchema,
   timeValidationSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { Icon } from "@iconify/react";
@@ -17,27 +14,17 @@ import { allFieldsValid, formatToMySQLDateTime } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 function CreateElection({ handleClose }) {
-  const voteStartDateRef = useRef();
-  const voteStartTimeRef = useRef();
-  const voteEndDateRef = useRef();
-  const voteEndTimeRef = useRef();
-  const applicationStartDateRef = useRef();
-  const applcationStartTimeRef = useRef();
-  const applicationEndDateRef = useRef();
-  const applicationEndTimeRef = useRef();
+  const applicationDateRangeRef = useRef();
+  const votingDateRangeRef = useRef();
   const schoolYearRef = useRef();
   const electionTypeRef = useRef();
   const { data: electionType, isLoading } = useGetElectionTypes();
   const { mutate: createElection, isPending } = useCreateElection(handleClose);
   const [formData, setFormData] = useState({
-    application_start_time: "",
-    application_start_date: "",
-    application_end_date: "",
-    application_end_time: "",
-    voting_start_date: "",
-    voting_end_date: "",
-    voting_end_time: "",
-    voting_start_time: "",
+    application_start: "",
+    application_end: "",
+    voting_start: "",
+    voting_end: "",
     school_year: "",
     election_type_id: "",
   });
@@ -46,73 +33,67 @@ function CreateElection({ handleClose }) {
     election_type_id: "",
   });
   const [isValid, setIsValid] = useState({
-    application_start_time: null,
-    application_start_date: null,
-    application_end_date: null,
-    application_end_time: null,
-    voting_start_date: null,
-    voting_end_date: null,
-    voting_end_time: null,
-    voting_start_time: null,
+    application_start: null,
+    application_end: null,
+    voting_start: null,
+    voting_end: null,
   });
   const handlePrevalidation = async () => {
-      const voteStartTime = await voteStartTimeRef.current.triggerValidation();
-      const voteEndTime = await voteEndTimeRef.current.triggerValidation();
-      const voteStartDate = await voteStartDateRef.current.triggerValidation();
-      const voteEndDate = await voteEndDateRef.current.triggerValidation();
-      const applicationStartDate = await applicationStartDateRef.current.triggerValidation();
-      const applicationEndDate = await applicationEndDateRef.current.triggerValidation();
-      const applicationEndTime = await applicationEndTimeRef.current.triggerValidation();
-      const applicationStartTime = await applcationStartTimeRef.current.triggerValidation();
-      const schoolYear = await schoolYearRef.current.triggerValidation();
-      const electionType = await electionTypeRef.current.triggerValidation();
-      return {
-          voteStartTime,
-          voteEndTime,
-          voteStartDate,
-          voteEndDate,
-          applicationStartDate,
-          applicationEndDate,
-          applicationEndTime,
-          applicationStartTime,
-          schoolYear,
-          electionType
-      }
-  }
+    const applicationStart =
+      await applicationDateRangeRef.current.preValidateStart();
+    const applicationEnd =
+      await applicationDateRangeRef.current.preValidateEnd();
+    const voteStart = await votingDateRangeRef.current.preValidateStart();
+    const voteEnd = await votingDateRangeRef.current.preValidateEnd();
+    const schoolYear = await schoolYearRef.current.triggerValidation();
+    const electionType = await electionTypeRef.current.triggerValidation();
+    return {
+      applicationStart,
+      applicationEnd,
+      voteEnd,
+      voteStart,
+      schoolYear,
+      electionType,
+    };
+  };
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
-    const prevalidation =  await handlePrevalidation();
-    if(!allFieldsValid(prevalidation)){
-        toast.custom(
-           <ToastWarning 
-              title={"Invalid Fields"}
-              description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
-           />
-        )
-        return
+    const prevalidation = await handlePrevalidation();
+    if (!allFieldsValid(prevalidation)) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={
+            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
+          }
+        />
+      );
+      return;
     }
-    if(!allFieldsValid(isValid)){
-        toast.custom(
-           <ToastWarning 
-              title={"Invalid Fields"}
-              description={"Some Fields Seem To Be Invalid Please Go Through the form and try again"}
-           />
-        )
-        return
+    if (!allFieldsValid(isValid)) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={
+            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
+          }
+        />
+      );
+      return;
     }
     const payload = {
-         application_start:formatToMySQLDateTime(formData.application_start_date, formData.application_start_time),
-         application_end:formatToMySQLDateTime(formData.application_end_date, formData.application_end_time),
-         voting_start:formatToMySQLDateTime(formData.application_end_date, formData.application_end_time),
-         voting_end:formatToMySQLDateTime(formData.voting_end_date, formData.voting_end_time),
-         school_year:formData.school_year,
-         election_type_id:formData.election_type_id,
-    }     
+      application_start: formData.application_start,
+      application_end: formData.application_end,
+      voting_start: formData.voting_start,
+      voting_end: formData.voting_end,
+      school_year: formData.school_year,
+      election_type_id: formData.election_type_id.id,
+    };
     createElection(payload);
-  }
+  };
   return (
     <>
       <div className="w-100">
@@ -129,166 +110,63 @@ function CreateElection({ handleClose }) {
             </span>
           </div>
         </div>
-        <div className="d-flex flex-row align-items-center gap-2 w-100">
-          <div className="d-flex w-50 flex-column">
-            <label htmlFor="applicationStartDate" className="font-size-sm">
-              Application Start Date
-            </label>
-            <DateInput
-              onChange={(value) =>
-                handleStateChange("application_start_date", value, setFormData)
-              }
-              onValidationChange={(value) =>
-                handleStateChange("application_start_date", value, setIsValid)
-              }
-              value={formData.application_start_date}
-              validationSchema={dateValidationSchema({
-                required: true,
-                futureOrToday: true,
-              })}
-              ref={applicationStartDateRef}
-            />
-          </div>
-          <div className="d-flex w-50 flex-column">
-            <label htmlFor="applicationEndTime" className="font-size-sm">
-              Application Start Time
-            </label>
-            <TimeInput
-              onChange={(value) =>
-                handleStateChange("application_start_time", value, setFormData)
-              }
-              onValidationChange={(value) =>
-                handleStateChange("application_start_time", value, setIsValid)
-              }
-              value={formData.application_start_time}
-              validationSchema={timeValidationSchema({
-                required: true,
-                futureOrNow: true,
-              })}
-              ref={applcationStartTimeRef}
-            />
-          </div>
+        <div className=" w-100">
+          <DateTimeRangeInput
+            startValue={formData.application_start}
+            endValue={formData.application_end}
+            onStartDateTimeChange={(value) =>
+              handleStateChange("application_start", value, setFormData)
+            }
+            onEndDateTimeChange={(value) =>
+              handleStateChange("application_end", value, setFormData)
+            }
+            onStartDateTimeValidationChange={(value) =>
+              handleStateChange("application_start", value, setIsValid)
+            }
+            onEndDateTimeValidationChange={(value) =>
+              handleStateChange("application_end", value, setIsValid)
+            }
+            validationSchema={dateTimeRangeValidationSchema({
+              required: true,
+              futureOrNow: true,
+              messages: {
+                startRequired: "Election Application start time required",
+                endRequired: "Election Application end time required",
+              },
+            })}
+            ref={applicationDateRangeRef}
+            startDateLabel={"Application Start Date & Time"}
+            endDateLable={"Application End Date & Time"}
+          />
         </div>
-        <div className="d-flex flex-row align-items-center gap-2 w-100">
-          <div className="d-flex w-50 flex-column">
-            <label htmlFor="applicationStartDate" className="font-size-sm">
-              Application end Date
-            </label>
-            <DateInput
-              onChange={(value) =>
-                handleStateChange("application_end_date", value, setFormData)
-              }
-              onValidationChange={(value) =>
-                handleStateChange("application_end_date", value, setIsValid)
-              }
-              value={formData.application_end_date}
-              validationSchema={dateValidationSchema({
-                required: true,
-                futureOrToday: true,
-              })}
-              ref={applicationEndDateRef}
-            />
-          </div>
-          <div className="d-flex w-50 flex-column">
-            <label htmlFor="applicationEndTime" className="font-size-sm">
-              Application End Time
-            </label>
-            <TimeInput
-              onChange={(value) =>
-                handleStateChange("application_end_time", value, setFormData)
-              }
-              onValidationChange={(value) =>
-                handleStateChange("application_end_time", value, setIsValid)
-              }
-              value={formData.application_end_time}
-              validationSchema={timeValidationSchema({
-                required: true,
-                futureOrNow: true,
-              })}
-              ref={applicationEndTimeRef}
-            />
-          </div>
-        </div>
-        <div className="d-flex flex-row align-items-center gap-2 w-100">
-          <div className="d-flex w-50 flex-column">
-            <label htmlFor="votingStartDate" className="font-size-sm">
-              Vote Start Date
-            </label>
-            <DateInput
-              onChange={(value) =>
-                handleStateChange("voting_start_date", value, setFormData)
-              }
-              onValidationChange={(value) =>
-                handleStateChange("voting_start_date", value, setIsValid)
-              }
-              value={formData.voting_start_date}
-              validationSchema={dateValidationSchema({
-                required: true,
-                futureOrToday: true,
-              })}
-              ref={voteStartDateRef}
-              className={"w-100"}
-            />
-          </div>
-          <div className="d-flex w-50 flex-column">
-            <label htmlFor="votingEndTime" className="font-size-sm">
-              Vote Start Time
-            </label>
-            <TimeInput
-              onChange={(value) =>
-                handleStateChange("voting_start_time", value, setFormData)
-              }
-              onValidationChange={(value) =>
-                handleStateChange("voting_start_time", value, setIsValid)
-              }
-              value={formData.voting_start_time}
-              validationSchema={timeValidationSchema({
-                required: true,
-                futureOrNow: true,
-              })}
-              ref={voteStartTimeRef}
-            />
-          </div>
-        </div>
-        <div className="d-flex flex-row align-items-center gap-2 w-100">
-          <div className="d-flex w-50 flex-column">
-            <label htmlFor="votingEndDate" className="font-size-sm">
-              Vote End Date
-            </label>
-            <DateInput
-              onChange={(value) =>
-                handleStateChange("voting_end_date", value, setFormData)
-              }
-              onValidationChange={(value) =>
-                handleStateChange("voting_end_date", value, setIsValid)
-              }
-              value={formData.voting_end_date}
-              validationSchema={dateValidationSchema({
-                required: true,
-                futureOrToday: true,
-              })}
-              ref={voteEndDateRef}
-            />
-          </div>
-          <div className="d-flex w-50 flex-column">
-            <label htmlFor="votingEndTime" className="font-size-sm">
-              Vote End Time
-            </label>
-            <TimeInput
-              onChange={(value) =>
-                handleStateChange("voting_end_time", value, setFormData)
-              }
-              onValidationChange={(value) =>
-                handleStateChange("voting_end_time", value, setIsValid)
-              }
-              value={formData.voting_end_time}
-              validationSchema={timeValidationSchema({
-                required: true,
-                futureOrNow: true,
-              })}
-              ref={voteEndTimeRef}
-            />
-          </div>
+        <div className="w-100">
+          <DateTimeRangeInput
+            startValue={formData.voting_start}
+            endValue={formData.voting_end}
+            onStartDateTimeChange={(value) =>
+              handleStateChange("voting_start", value, setFormData)
+            }
+            onEndDateTimeChange={(value) =>
+              handleStateChange("voting_end", value, setFormData)
+            }
+            onStartDateTimeValidationChange={(value) =>
+              handleStateChange("voting_start", value, setIsValid)
+            }
+            onEndDateTimeValidationChange={(value) =>
+              handleStateChange("voting_end", value, setIsValid)
+            }
+            validationSchema={dateTimeRangeValidationSchema({
+              required: true,
+              futureOrNow: true,
+              messages: {
+                startRequired: "Election Vote start time required",
+                endRequired: "Election Vote end time required",
+              },
+            })}
+            ref={votingDateRangeRef}
+            startDateLabel={"Vote Start Date & Time"}
+            endDateLable={"Vote End Date & Time"}
+          />
         </div>
         <div>
           <label htmlFor="schoolYear" className="font-size-sm">
@@ -312,7 +190,7 @@ function CreateElection({ handleClose }) {
             data={electionType?.data || []}
             isLoading={isLoading}
             onSelect={(value) =>
-              handleStateChange("election_type_id", value.id, setFormData)
+              handleStateChange("election_type_id", value, setFormData)
             }
             displayKey={["election_title"]}
             valueKey={["id"]}
@@ -323,6 +201,7 @@ function CreateElection({ handleClose }) {
             onError={(msg) =>
               handleStateChange("election_type_id", msg, setError)
             }
+            value={formData.election_type_id}
             ref={electionTypeRef}
           />
         </div>

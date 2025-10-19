@@ -67,8 +67,8 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
         ...prev,
         title: announcementDetails?.data?.title,
         content: announcementDetails?.data?.content,
-        category_id: announcementDetails?.data?.category_id,
-        label_id: announcementDetails?.data?.label_id,
+        category_id: {id:announcementDetails?.data?.category_id},
+        label_id: {id:announcementDetails?.data?.label_id},
         tags: JSON.parse(announcementDetails?.data?.tags).map((items) => ({
           id: items.id,
         })),
@@ -153,7 +153,7 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                 onValidationChange={(value) =>
                   handleStateChange("title", value, setIsValid)
                 }
-                value={formData.value}
+                value={formData.title}
                 placeholder={formData.title || title}
                 optional={true}
               />
@@ -168,7 +168,7 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                 valueKey={["id"]}
                 direction="down"
                 onSelect={(value) =>
-                  handleStateChange("label_id", value.id, setFormData)
+                  handleStateChange("label_id", value, setFormData)
                 }
                 placeholder="Select Announcement Label"
                 error={errors.label_id}
@@ -176,6 +176,7 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                 errorMessage="Announcement Label Required"
                 onError={(msg) => handleStateChange("label_id", msg, setErrors)}
                 optional={true}
+                value={formData.label_id}
               />
             </div>
 
@@ -189,7 +190,7 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                 valueKey={["id"]}
                 direction="up"
                 onSelect={(value) =>
-                  handleStateChange("category_id", value.id, setFormData)
+                  handleStateChange("category_id", value, setFormData)
                 }
                 placeholder="Select Announcement Category"
                 error={errors.category_id}
@@ -199,6 +200,7 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                   handleStateChange("category_id", msg, setErrors)
                 }
                 optional={true}
+                value={formData.category_id}
               />
             </div>
             <div>
@@ -214,7 +216,7 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                 placeholder={"Select Tags"}
                 errorMessage={"Announcement Tags Required"}
                 onSelect={(value) => {
-                  if (value.length > 5) {
+                  if (value.length >= 5) {
                     toast.custom(
                       <ToastSuccess
                         title={"Max Amount Reached"}
@@ -230,6 +232,7 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                 onError={(error) => handleStateChange("tags", error, setErrors)}
                 error={errors.tag_ids}
                 optional={true}
+                value={formData.tags}
               />
             </div>
             <div>
@@ -275,20 +278,20 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                       className="py-1 px-2 d-flex align-items-center gap-1 font-size-xs primary-background-50 rounded-pill"
                       style={{
                         backgroundColor: labels.data.find(
-                          (label) => label.id === formData.label_id
+                          (label) => label.id === formData.label_id.id
                         )
                           ? JSON.parse(
                               labels.data.find(
-                                (label) => label.id === formData.label_id
+                                (label) => label.id === formData.label_id.id
                               ).color
                             ).color_light
                           : null,
                         color: labels.data.find(
-                          (label) => label.id === formData.label_id
+                          (label) => label.id === formData.label_id.id
                         )
                           ? JSON.parse(
                               labels.data.find(
-                                (label) => label.id === formData.label_id
+                                (label) => label.id === formData.label_id.id
                               ).color
                             ).color_thick
                           : null,
@@ -298,10 +301,10 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                         <Icon
                           icon={
                             labels.data.find(
-                              (label) => label.id === formData.label_id
+                              (label) => label.id === formData.label_id.id
                             )
                               ? labels.data.find(
-                                  (label) => label.id === formData.label_id
+                                  (label) => label.id === formData.label_id.id
                                 ).icon
                               : ""
                           }
@@ -310,10 +313,10 @@ function UpdateAnnouncementContent({ handleClose, rowData }) {
                       </span>
                       <span>
                         {labels.data.find(
-                          (label) => label.id === formData.label_id
+                          (label) => label.id === formData.label_id.id
                         )
                           ? labels.data.find(
-                              (label) => label.id === formData.label_id
+                              (label) => label.id === formData.label_id.id
                             ).name
                           : "N/A"}
                       </span>

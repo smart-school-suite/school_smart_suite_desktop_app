@@ -1,16 +1,14 @@
 import { Icon } from "@iconify/react";
 import {
-  TimeInput,
   TextAreaInput,
   TextInput,
-  DateInput,
+  DateTimeInput,
 } from "../../components/FormComponents/InputComponents";
 import { useState, useCallback, useRef, useEffect } from "react";
 import {
-  dateValidationSchema,
+  dateTimeValidationSchema,
   nameSchema,
   textareaSchema,
-  timeValidationSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { useGetAnnouncementTags } from "../../hooks/announcement/useGetAnnouncementTags";
 import { useGetAnnouncementLabels } from "../../hooks/announcement/useGetAnnouncementLabels";
@@ -23,8 +21,7 @@ import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { useSelector } from "react-redux";
 import {
   allFieldsValid,
-  formatDate,
-  formatToMySQLDateTime,
+  formatDate
 } from "../../utils/functions";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
@@ -59,20 +56,18 @@ function UpdateAnnouncementDraft({ handleClose, rowData }) {
     student_audience: [],
     teacher_ids: [],
     school_admin_ids: [],
-    published_date: "",
-    published_time: "",
+    published_at:""
   });
 
   const [errors, setErrors] = useState({
     specialty_id: "",
     semester_id: "",
-    tags: "",
-    published_date: null,
-    published_time: null,
+    tags: ""
   });
   const [isValid, setIsValid] = useState({
-    label_id: "",
-    category_id: "",
+    label_id:null,
+    category_id:null,
+    published_at:null
   });
   const handleStateChange = useCallback((field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
@@ -84,8 +79,8 @@ function UpdateAnnouncementDraft({ handleClose, rowData }) {
         ...prev,
         title: announcementDetails?.data?.title,
         content: announcementDetails?.data?.content,
-        category_id: announcementDetails?.data?.category_id,
-        label_id: announcementDetails?.data?.label_id,
+        category_id: {id:announcementDetails?.data?.category_id},
+        label_id: {id:announcementDetails?.data?.label_id},
         tags: JSON.parse(announcementDetails?.data?.tags).map((items) => ({
           id: items.id,
         })),
@@ -295,7 +290,7 @@ function UpdateContent({
               valueKey={["id"]}
               direction="down"
               onSelect={(value) =>
-                handleStateChange("label_id", value.id, setFormData)
+                handleStateChange("label_id", value, setFormData)
               }
               placeholder="Select Announcement Label"
               error={errors?.label_id}
@@ -303,6 +298,7 @@ function UpdateContent({
               errorMessage="Announcement Label Required"
               onError={(msg) => handleStateChange("label_id", msg, setErrors)}
               ref={labelRef}
+              value={formData.label_id}
             />
           </div>
 
@@ -316,7 +312,7 @@ function UpdateContent({
               valueKey={["id"]}
               direction="up"
               onSelect={(value) =>
-                handleStateChange("category_id", value.id, setFormData)
+                handleStateChange("category_id", value, setFormData)
               }
               placeholder="Select Announcement Category"
               error={errors.category_id}
@@ -326,6 +322,7 @@ function UpdateContent({
                 handleStateChange("category_id", msg, setErrors)
               }
               ref={categoryRef}
+              value={formData.category_id}
             />
           </div>
           <div>
@@ -359,6 +356,7 @@ function UpdateContent({
               }
               error={errors.tag_ids}
               ref={tagRef}
+              value={formData.tag_ids}
             />
           </div>
           <div>
@@ -405,20 +403,20 @@ function UpdateContent({
                     className="py-1 px-2 d-flex align-items-center gap-1 font-size-xs primary-background-50 rounded-pill"
                     style={{
                       backgroundColor: labels.data.find(
-                        (label) => label.id === formData.label_id
+                        (label) => label.id === formData.label_id.id
                       )
                         ? JSON.parse(
                             labels.data.find(
-                              (label) => label.id === formData.label_id
+                              (label) => label.id === formData.label_id.id
                             ).color
                           ).color_light
                         : null,
                       color: labels.data.find(
-                        (label) => label.id === formData.label_id
+                        (label) => label.id === formData.label_id.id
                       )
                         ? JSON.parse(
                             labels.data.find(
-                              (label) => label.id === formData.label_id
+                              (label) => label.id === formData.label_id.id
                             ).color
                           ).color_thick
                         : null,
@@ -428,10 +426,10 @@ function UpdateContent({
                       <Icon
                         icon={
                           labels.data.find(
-                            (label) => label.id === formData.label_id
+                            (label) => label.id === formData.label_id.id
                           )
                             ? labels.data.find(
-                                (label) => label.id === formData.label_id
+                                (label) => label.id === formData.label_id.id
                               ).icon
                             : ""
                         }
@@ -440,10 +438,10 @@ function UpdateContent({
                     </span>
                     <span>
                       {labels.data.find(
-                        (label) => label.id === formData.label_id
+                        (label) => label.id === formData.label_id.id
                       )
                         ? labels.data.find(
-                            (label) => label.id === formData.label_id
+                            (label) => label.id === formData.label_id.id
                           ).name
                         : "N/A"}
                     </span>
@@ -567,12 +565,9 @@ function CreateAnnouncement({
       content: formData.content,
       status: formData?.status,
       announcement_id:announcementId,
-      published_at: formatToMySQLDateTime(
-        formData.published_date,
-        formData.published_time
-      ),
-      category_id: formData.category_id,
-      label_id: formData.label_id,
+      published_at: formData.published_at,
+      category_id: formData.category_id.id,
+      label_id: formData.label_id.id,
       tag_ids: formData.tags.map((tag) => ({
         tag_id: tag.id,
       })),
@@ -619,6 +614,7 @@ function CreateAnnouncement({
               }
               error={errors.student_audience}
               optional={true}
+              value={formData.student_audience}
             />
           </div>
           <div>
@@ -641,6 +637,7 @@ function CreateAnnouncement({
               }
               error={errors.teacher_ids}
               optional={true}
+              value={formData.teacher_ids}
             />
           </div>
           <div>
@@ -663,6 +660,7 @@ function CreateAnnouncement({
               }
               error={errors.school_admin_ids}
               optional={true}
+              value={formData.school_admin_ids}
             />
           </div>
           <div>
@@ -682,6 +680,7 @@ function CreateAnnouncement({
               }
               placeholder="Select Announcement Status"
               ref={statusRef}
+              value={formData.status}
             />
           </div>
           {formData.status === "scheduled" && (
@@ -693,43 +692,24 @@ function CreateAnnouncement({
                 Schedule Announcement To Be Published at the specified datetime
                 mentioned below
               </label>
-              <div className="d-flex flex-row align-items-center gap-2 w-100">
-                <div className="w-50">
-                  <label htmlFor="date" className="font-size-sm">
-                    Date
-                  </label>
-                  <DateInput
-                    onChange={(value) =>
-                      handleStateChange("published_date", value, setFormData)
-                    }
-                    onValidationChange={(value) =>
-                      handleStateChange("published_date", value, setIsValid)
-                    }
-                    validationSchema={dateValidationSchema({
-                      futureOrToday: true,
-                      required: true,
-                    })}
-                    ref={dateRef}
-                  />
-                </div>
-                <div className="w-50">
-                  <label htmlFor="time" className="font-size-sm">
-                    Time
-                  </label>
-                  <TimeInput
-                    onChange={(value) =>
-                      handleStateChange("published_time", value, setFormData)
-                    }
-                    onValidationChange={(value) =>
-                      handleStateChange("published_time", value, setIsValid)
-                    }
-                    validationSchema={timeValidationSchema({
-                      futureOrNow: true,
-                      required: true,
-                    })}
-                    ref={timeRef}
-                  />
-                </div>
+                <div className="w-100">
+                <DateTimeInput
+                  onChange={(value) =>
+                    handleStateChange("published_at", value, setFormData)
+                  }
+                  onValidationChange={(value) =>
+                    handleStateChange("published_at", value, setIsValid)
+                  }
+                  value={formData.value}
+                  validationSchema={dateTimeValidationSchema({
+                    required: true,
+                    futureOrToday: true,
+                    messages: {
+                      required: "Published Date Required",
+                    },
+                  })}
+                  ref={publishedAtRef}
+                />
               </div>
             </div>
           )}
@@ -751,20 +731,20 @@ function CreateAnnouncement({
                     className="py-1 px-2 d-flex align-items-center gap-1 font-size-xs primary-background-50 rounded-pill"
                     style={{
                       backgroundColor: labels.data.find(
-                        (label) => label.id === formData.label_id
+                        (label) => label.id === formData.label_id.id
                       )
                         ? JSON.parse(
                             labels.data.find(
-                              (label) => label.id === formData.label_id
+                              (label) => label.id === formData.label_id.id
                             ).color
                           ).color_light
                         : null,
                       color: labels.data.find(
-                        (label) => label.id === formData.label_id
+                        (label) => label.id === formData.label_id.id
                       )
                         ? JSON.parse(
                             labels.data.find(
-                              (label) => label.id === formData.label_id
+                              (label) => label.id === formData.label_id.id
                             ).color
                           ).color_thick
                         : null,
@@ -774,10 +754,10 @@ function CreateAnnouncement({
                       <Icon
                         icon={
                           labels.data.find(
-                            (label) => label.id === formData.label_id
+                            (label) => label.id === formData.label_id.id
                           )
                             ? labels.data.find(
-                                (label) => label.id === formData.label_id
+                                (label) => label.id === formData.label_id.id
                               ).icon
                             : ""
                         }
@@ -786,10 +766,10 @@ function CreateAnnouncement({
                     </span>
                     <span>
                       {labels.data.find(
-                        (label) => label.id === formData.label_id
+                        (label) => label.id === formData.label_id.id
                       )
                         ? labels.data.find(
-                            (label) => label.id === formData.label_id
+                            (label) => label.id === formData.label_id.id
                           ).name
                         : "N/A"}
                     </span>

@@ -1,16 +1,14 @@
 import { Icon } from "@iconify/react";
 import {
-  TimeInput,
   TextAreaInput,
   TextInput,
-  DateInput,
+  DateTimeInput,
 } from "../../components/FormComponents/InputComponents";
 import { useState, useCallback, useRef } from "react";
 import {
-  dateValidationSchema,
+  dateTimeValidationSchema,
   nameSchema,
   textareaSchema,
-  timeValidationSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { useGetAnnouncementTags } from "../../hooks/announcement/useGetAnnouncementTags";
 import { useGetAnnouncementLabels } from "../../hooks/announcement/useGetAnnouncementLabels";
@@ -23,8 +21,7 @@ import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { useSelector } from "react-redux";
 import {
   allFieldsValid,
-  formatDate,
-  formatToMySQLDateTime,
+  formatDate
 } from "../../utils/functions";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
@@ -36,7 +33,8 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 function CreateAnnouncement({ handleClose }) {
   const [toggle, setToggle] = useState("createContent");
   const { data: tags, isLoading: isTagLoading } = useGetAnnouncementTags();
-  const { data: labels, isLoading: isLabelLoading } = useGetAnnouncementLabels();
+  const { data: labels, isLoading: isLabelLoading } =
+    useGetAnnouncementLabels();
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -47,14 +45,12 @@ function CreateAnnouncement({ handleClose }) {
     student_audience: [],
     teacher_ids: [],
     school_admin_ids: [],
-    published_date: "",
-    published_time: "",
+    published_at: "",
   });
   const [isValid, setIsValid] = useState({
     title: null,
     content: null,
-    published_date: null,
-    published_time: null,
+    published_at: null,
   });
   const [errors, setErrors] = useState({
     tag_ids: "",
@@ -64,7 +60,6 @@ function CreateAnnouncement({ handleClose }) {
     student_audience: "",
     teacher_ids: "",
     school_admin_ids: "",
-    published_at: "",
   });
   const handleStateChange = useCallback((field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
@@ -130,8 +125,7 @@ function AnnouncementCreate({
   const { mutate: createAnnouncement, isPending } =
     useCreateAnnouncement(handleClose);
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const dateRef = useRef();
-  const timeRef = useRef();
+  const publishedAtRef = useRef();
   const handlePrevalidation = async () => {
     if (
       formData.student_audience.length === 0 &&
@@ -150,35 +144,31 @@ function AnnouncementCreate({
     }
     const result = {};
     if (formData.status == "scheduled") {
-      const date = await dateRef.current.triggerValidation();
-      const time = await timeRef.current.triggerValidation();
-      return { ...result, date, time };
+      const publishedAt = await publishedAtRef.current.triggerValidation();
+      return { ...result, publishedAt };
     }
   };
 
   const handleCreateAnnouncement = async () => {
     if (formData.status == "scheduled") {
-    const prevalidation = await handlePrevalidation();
-    if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />
-      );
-      return;
-    }
+      const prevalidation = await handlePrevalidation();
+      if (!allFieldsValid(prevalidation)) {
+        toast.custom(
+          <ToastWarning
+            title={"1Invalid Fields"}
+            description={
+              "Some Fields Seem To Be Invalid Please Go Through the form and try again"
+            }
+          />
+        );
+        return;
+      }
       if (
-        !allFieldsValid({
-          published_date: isValid.published_date,
-          published_time: isValid.published_time,
-        })
+        !allFieldsValid({...isValid.published_at})
       ) {
         toast.custom(
           <ToastWarning
-            title={"Invalid Fields"}
+            title={"2Invalid Fields"}
             description={
               "Some Fields Seem To Be Invalid Please Go Through the form and try again"
             }
@@ -191,12 +181,9 @@ function AnnouncementCreate({
       title: formData.title,
       content: formData.content,
       status: formData?.status || "draft",
-      published_at: formatToMySQLDateTime(
-        formData.published_date,
-        formData.published_time
-      ),
-      category_id: formData.category_id,
-      label_id: formData.label_id,
+      published_at: formData.published_at,
+      category_id: formData.category_id.id,
+      label_id: formData.label_id.id,
       tag_ids: formData.tags.map((tag) => ({
         tag_id: tag.id,
       })),
@@ -254,6 +241,7 @@ function AnnouncementCreate({
               }
               error={errors.student_audience}
               optional={true}
+              value={formData.student_audience}
             />
           </div>
           <div>
@@ -276,6 +264,7 @@ function AnnouncementCreate({
               }
               error={errors.teacher_ids}
               optional={true}
+              value={formData.teacher_ids}
             />
           </div>
           <div>
@@ -298,6 +287,7 @@ function AnnouncementCreate({
               }
               error={errors.school_admin_ids}
               optional={true}
+              value={formData.school_admin_ids}
             />
           </div>
           <div>
@@ -327,43 +317,24 @@ function AnnouncementCreate({
                 Schedule Announcement To Be Published at the specified datetime
                 mentioned below
               </label>
-              <div className="d-flex flex-row align-items-center gap-2 w-100">
-                <div className="w-50">
-                  <label htmlFor="date" className="font-size-sm">
-                    Date
-                  </label>
-                  <DateInput
-                    onChange={(value) =>
-                      handleStateChange("published_date", value, setFormData)
-                    }
-                    onValidationChange={(value) =>
-                      handleStateChange("published_date", value, setIsValid)
-                    }
-                    validationSchema={dateValidationSchema({
-                      futureOrToday: true,
-                      required: true,
-                    })}
-                    ref={dateRef}
-                  />
-                </div>
-                <div className="w-50">
-                  <label htmlFor="time" className="font-size-sm">
-                    Time
-                  </label>
-                  <TimeInput
-                    onChange={(value) =>
-                      handleStateChange("published_time", value, setFormData)
-                    }
-                    onValidationChange={(value) =>
-                      handleStateChange("published_time", value, setIsValid)
-                    }
-                    validationSchema={timeValidationSchema({
-                      futureOrNow: true,
-                      required: true,
-                    })}
-                    ref={timeRef}
-                  />
-                </div>
+              <div className="w-100">
+                <DateTimeInput
+                  onChange={(value) =>
+                    handleStateChange("published_at", value, setFormData)
+                  }
+                  onValidationChange={(value) =>
+                    handleStateChange("published_at", value, setIsValid)
+                  }
+                  value={formData.value}
+                  validationSchema={dateTimeValidationSchema({
+                    required: true,
+                    futureOrToday: true,
+                    messages: {
+                      required: "Published Date Required",
+                    },
+                  })}
+                  ref={publishedAtRef}
+                />
               </div>
             </div>
           )}
@@ -385,20 +356,20 @@ function AnnouncementCreate({
                     className="py-1 px-2 d-flex align-items-center gap-1 font-size-xs primary-background-50 rounded-pill"
                     style={{
                       backgroundColor: labelData.find(
-                        (label) => label.id === formData.label_id
+                        (label) => label.id === formData.label_id.id
                       )
                         ? JSON.parse(
                             labelData.find(
-                              (label) => label.id === formData.label_id
+                              (label) => label.id === formData.label_id.id
                             ).color
                           ).color_light
                         : null,
                       color: labelData.find(
-                        (label) => label.id === formData.label_id
+                        (label) => label.id === formData.label_id.id
                       )
                         ? JSON.parse(
                             labelData.find(
-                              (label) => label.id === formData.label_id
+                              (label) => label.id === formData.label_id.id
                             ).color
                           ).color_thick
                         : null,
@@ -408,10 +379,10 @@ function AnnouncementCreate({
                       <Icon
                         icon={
                           labelData.find(
-                            (label) => label.id === formData.label_id
+                            (label) => label.id === formData.label_id.id
                           )
                             ? labelData.find(
-                                (label) => label.id === formData.label_id
+                                (label) => label.id === formData.label_id.id
                               ).icon
                             : ""
                         }
@@ -419,9 +390,11 @@ function AnnouncementCreate({
                       />
                     </span>
                     <span>
-                      {labelData.find((label) => label.id === formData.label_id)
+                      {labelData.find(
+                        (label) => label.id === formData.label_id.id
+                      )
                         ? labelData.find(
-                            (label) => label.id === formData.label_id
+                            (label) => label.id === formData.label_id.id
                           ).name
                         : "N/A"}
                     </span>
@@ -430,8 +403,10 @@ function AnnouncementCreate({
               </div>
               <div className="font-size-sm">{formData.content}</div>
               <div className="d-flex flex-row flex-wrap gap-2">
-                  {formData.tags.map((item) => {
-                  const matchingTag = tagData?.find((tag) => tag.id === item.id);
+                {formData.tags.map((item) => {
+                  const matchingTag = tagData?.find(
+                    (tag) => tag.id === item.id
+                  );
                   return (
                     <div
                       className="font-size-sm primary-background-50 px-4 py-2 rounded-pill color-primary"
@@ -486,9 +461,7 @@ function AnnouncementCreate({
           }}
           disabled={isPending}
         >
-         {
-           isPending ? <SingleSpinner /> :  <span>Submit</span>
-         }
+          {isPending ? <SingleSpinner /> : <span>Submit</span>}
         </button>
       </div>
     </>
@@ -507,7 +480,7 @@ function AnnouncementContent({
   labelData,
   tagData,
   isLabelLoading,
-  isTagLoading
+  isTagLoading,
 }) {
   const titleRef = useRef();
   const contentRef = useRef();
@@ -603,12 +576,12 @@ function AnnouncementContent({
               Label
             </label>
             <CustomDropdown
-              data={labelData.filter((items) => items.name !== 'All') || []}
+              data={labelData.filter((items) => items.name !== "All") || []}
               displayKey={["name"]}
               valueKey={["id"]}
               direction="up"
               onSelect={(value) =>
-                handleStateChange("label_id", value.id, setFormData)
+                handleStateChange("label_id", value, setFormData)
               }
               placeholder="Select Announcement Label"
               error={errors.label_id}
@@ -616,6 +589,7 @@ function AnnouncementContent({
               errorMessage="Announcement Label Required"
               onError={(msg) => handleStateChange("label_id", msg, setErrors)}
               ref={labelRef}
+              value={formData.label_id}
             />
           </div>
           <div>
@@ -628,7 +602,7 @@ function AnnouncementContent({
               valueKey={["id"]}
               direction="up"
               onSelect={(value) =>
-                handleStateChange("category_id", value.id, setFormData)
+                handleStateChange("category_id", value, setFormData)
               }
               placeholder="Select Announcement Category"
               error={errors.category_id}
@@ -638,6 +612,7 @@ function AnnouncementContent({
                 handleStateChange("category_id", msg, setErrors)
               }
               ref={categoryRef}
+              value={formData.category_id}
             />
           </div>
           <div>
@@ -666,9 +641,12 @@ function AnnouncementContent({
                 }
                 handleStateChange("tags", value, setFormData);
               }}
-              onError={(error) => handleStateChange("tag_ids", error, setErrors)}
+              onError={(error) =>
+                handleStateChange("tag_ids", error, setErrors)
+              }
               error={errors.tag_ids}
               ref={tagRef}
+              value={formData.tags}
             />
           </div>
           <div>
@@ -715,20 +693,20 @@ function AnnouncementContent({
                     className="py-1 px-2 d-flex align-items-center gap-1 font-size-xs primary-background-50 rounded-pill"
                     style={{
                       backgroundColor: labelData?.find(
-                        (label) => label.id === formData.label_id
+                        (label) => label.id === formData.label_id.id
                       )
                         ? JSON.parse(
                             labelData?.find(
-                              (label) => label.id === formData.label_id
+                              (label) => label.id === formData.label_id.id
                             ).color
                           ).color_light
                         : null,
                       color: labelData?.find(
-                        (label) => label.id === formData.label_id
+                        (label) => label.id === formData.label_id.id
                       )
                         ? JSON.parse(
                             labelData.find(
-                              (label) => label.id === formData.label_id
+                              (label) => label.id === formData.label_id.id
                             ).color
                           ).color_thick
                         : null,
@@ -738,10 +716,10 @@ function AnnouncementContent({
                       <Icon
                         icon={
                           labelData.find(
-                            (label) => label.id === formData.label_id
+                            (label) => label.id === formData.label_id.id
                           )
                             ? labelData.find(
-                                (label) => label.id === formData.label_id
+                                (label) => label.id === formData.label_id.id
                               ).icon
                             : ""
                         }
@@ -749,9 +727,9 @@ function AnnouncementContent({
                       />
                     </span>
                     <span>
-                      {labelData.find((label) => label.id === formData.label_id)
+                      {labelData.find((label) => label.id === formData.label_id.id)
                         ? labelData.find(
-                            (label) => label.id === formData.label_id
+                            (label) => label.id === formData.label_id.id
                           ).name
                         : "N/A"}
                     </span>
@@ -761,7 +739,9 @@ function AnnouncementContent({
               <div className="font-size-sm">{formData.content}</div>
               <div className="d-flex flex-row flex-wrap gap-2">
                 {formData?.tags?.map((item) => {
-                  const matchingTag = tagData?.find((tag) => tag.id === item.id);
+                  const matchingTag = tagData?.find(
+                    (tag) => tag.id === item.id
+                  );
                   return (
                     <div
                       className="font-size-sm primary-background-50 px-4 py-2 rounded-pill color-primary"

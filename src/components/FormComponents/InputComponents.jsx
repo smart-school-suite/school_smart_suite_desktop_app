@@ -1415,6 +1415,8 @@ export const DateTimeRangeInput = forwardRef(
       validationSchema,
       placeholderStart = "YYYY-MM-DD HH:MM",
       placeholderEnd = "YYYY-MM-DD HH:MM",
+      startDateLabel,
+      endDateLabel
     },
     ref
   ) => {
@@ -1562,7 +1564,7 @@ export const DateTimeRangeInput = forwardRef(
         {/* Start DateTime */}
         <div className="input-container w-50">
           <label htmlFor="startDateTime" className="font-size-sm">
-            Start Date & Time
+            {startDateLabel || "Start Date & Time"}
           </label>
           <InputMask
             mask="9999-99-99 99:99"
@@ -1592,7 +1594,7 @@ export const DateTimeRangeInput = forwardRef(
         {/* End DateTime */}
         <div className="input-container w-50">
           <label htmlFor="endDateTime" className="font-size-sm">
-            End Date & Time
+            {endDateLabel || "End Date & Time"}
           </label>
           <InputMask
             mask="9999-99-99 99:99"

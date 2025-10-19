@@ -1,18 +1,14 @@
 import { Icon } from "@iconify/react";
 import {
-  TimeInput,
   TextAreaInput,
   TextInput,
-  DateInput,
   DateTimeRangeInput,
   DateTimeInput,
 } from "../../components/FormComponents/InputComponents";
 import {
   addressSchema,
-  dateValidationSchema,
   nameSchema,
   textareaSchema,
-  timeValidationSchema,
   dateTimeValidationSchema,
   dateTimeRangeValidationSchema,
 } from "../../ComponentConfig/YupValidationSchema";
@@ -20,11 +16,9 @@ import { useGetEventTags } from "../../hooks/schoolEvent/useGetSchoolEventTags";
 import { useGetActiveEventCategories } from "../../hooks/eventCategory/useGetActiveEventCategories";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { useSelector } from "react-redux";
 import {
   allFieldsValid,
   formatDate,
-  formatToMySQLDateTime,
 } from "../../utils/functions";
 import CustomDropdown, {
   MultiSelectDropdown,
@@ -508,9 +502,6 @@ function CreateSchoolEvent({
   setFormData,
   handleStateChange,
   eventTags,
-  eventCategories,
-  isCategoryLoading,
-  isEventTagLoading,
   handleClose,
 }) {
   const { data: specialty, isLoading: isSpecialtyLoading } =
@@ -636,6 +627,7 @@ function CreateSchoolEvent({
                     level_name: items.level_name,
                   })) || []
                 }
+                value={formData.student_audience}
                 displayKey={["specialty_name", "level_name"]}
                 valueKey={["id"]}
                 direction="up"
@@ -661,6 +653,7 @@ function CreateSchoolEvent({
                 displayKey={["name"]}
                 valueKey={["id"]}
                 direction="up"
+                value={formData.teacher_ids}
                 isLoading={isTeacherLoading}
                 placeholder={"Select Teacher Reciepient"}
                 errorMessage={"Teacher Reciepient Required"}
@@ -694,6 +687,7 @@ function CreateSchoolEvent({
                 }
                 error={errors.school_admin_ids}
                 optional={true}
+                value={formData.school_admin_ids}
               />
             </div>
             <div>

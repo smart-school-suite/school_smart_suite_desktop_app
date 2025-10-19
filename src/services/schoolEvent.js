@@ -25,8 +25,8 @@ export const deleteSchoolEvent = async (eventId) => {
   return response.data;
 };
 
-export const getSchoolEventDetails = async (eventId) => {
-  const response = await axiosInstance.get(`school-event/details/${eventId}`);
+export const getSchoolEventDetails = async (eventCategoryId) => {
+  const response = await axiosInstance.get(`school-event/${eventCategoryId}`);
   return response.data;
 };
 
@@ -52,5 +52,10 @@ export const getSchoolEventByCategory = async (eventCategoryId) => {
 
 export const getEventTags = async () => {
    const response = await axiosInstance.get("event-tag");
+   return response.data;
+}
+
+export const likeSchoolEvent = async (schoolEventId, data={}) => {
+   const response = await axiosInstance.post(`school-event/${schoolEventId}/like`, data);
    return response.data;
 }
