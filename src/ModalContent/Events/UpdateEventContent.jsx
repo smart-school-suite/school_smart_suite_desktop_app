@@ -20,6 +20,7 @@ import {
   formatDate,
   optionalValidateObject,
   hasNonEmptyValue,
+  truncateSeconds,
 } from "../../utils/functions";
 import CustomDropdown, {
   MultiSelectDropdown,
@@ -80,8 +81,8 @@ function UpdateEventContent({ rowData, handleClose }) {
         event_category_id: schoolEventDetails.data.event_category_id || "",
         organizer: schoolEventDetails.data.organizer || "",
         location: schoolEventDetails.data.location || "",
-        start_date: schoolEventDetails.data.start_date || "",
-        end_date: schoolEventDetails.data.end_date || "",
+        start_date: truncateSeconds(schoolEventDetails.data.start_date) || "",
+        end_date: truncateSeconds(schoolEventDetails.data.end_date) || "",
       }));
     }
   }, [setFormData, isSchoolEventDetailsLoading, rowData]);
@@ -90,7 +91,7 @@ function UpdateEventContent({ rowData, handleClose }) {
   }, []);
 
   const { mutate: updateEventContent, isPending } =
-    useUpdateSchoolEventContent();
+    useUpdateSchoolEventContent(handleClose, schoolEventId);
   const handleUpdateContent = async () => {
     if (optionalValidateObject(isValid) == false) {
       toast.custom(
@@ -443,14 +444,13 @@ function UpdateEventContent({ rowData, handleClose }) {
               className="d-flex flex-row w-100 justify-content-end"
               style={{ height: "5%" }}
             >
-              <button className="border-none primary-background text-white px-4 py-2 font-size-sm rounded-3"
+              <button
+                className="border-none primary-background text-white px-4 py-2 font-size-sm rounded-3"
                 onClick={() => {
-                     handleUpdateContent()
+                  handleUpdateContent();
                 }}
               >
-                {
-                     isPending ? <SingleSpinner /> : "Update Event"
-                }
+                {isPending ? <SingleSpinner /> : "Update Event"}
               </button>
             </div>
           </>

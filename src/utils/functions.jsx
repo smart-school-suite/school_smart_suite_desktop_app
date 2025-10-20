@@ -252,24 +252,31 @@ export function sumAttribute(arr, attribute) {
 
 export function formatDate(dateString) {
     const date = new Date(dateString);
-    if (isNaN(date)) {
+
+    if (isNaN(date.getTime())) {
         return "N/A";
     }
     const options = {
-        weekday: 'long',
-        month: 'long',
-        year: 'numeric'
+        weekday: 'short',
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true 
     };
-    const day = date.getDate();
-    const dayWithSuffix = day + (day % 10 === 1 && day !== 11 ? 'st' :
-                       day % 10 === 2 && day !== 12 ? 'nd' :
-                       day % 10 === 3 && day !== 13 ? 'rd' : 'th');
-    const weekdayMonthYear = date.toLocaleDateString('en-US', options);
-    const parts = weekdayMonthYear.split(' ');
-    const formattedDate = `${parts[2]}, ${parts[0]} ${dayWithSuffix}, ${parts[1]}`;
+
+    const formattedDate = date.toLocaleDateString('en-US', options);
+
     return formattedDate;
 }
 
+export function truncateSeconds(dateTimeString) {
+    if (typeof dateTimeString !== 'string' || dateTimeString.length < 17) {
+        return dateTimeString; 
+    }
+    return dateTimeString.slice(0, 16);
+}
 export function formatDateWithAge(dateString) {
     const date = new Date(dateString);
     if (isNaN(date)) {

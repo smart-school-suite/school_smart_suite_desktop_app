@@ -1,19 +1,17 @@
-import { updateSchoolEventContent } from "../../services/schoolEvent";
+import { updateDraftSchoolEvent } from "../../services/schoolEvent";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-export const useUpdateSchoolEventContent = (handleClose, schoolEventId) => {
+import ToastDanger from "../../components/Toast/ToastDanger";
+export const useUpdateDraftSchoolEvent = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ schoolEventId, updateData }) =>
-      updateSchoolEventContent(schoolEventId, updateData),
+    mutationFn: updateDraftSchoolEvent,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["schoolEvents"] });
-      queryClient.removeQueries({ queryKey: ["schoolEvent", schoolEventId] });
       queryClient.invalidateQueries({ queryKey: ["draftSchoolEvent"] });
       queryClient.invalidateQueries({ queryKey: ["schoolEventsschoolEvents"] });
       queryClient.invalidateQueries({ queryKey: ["scheduledSchoolEvent"] });
+
       if (handleClose) {
         handleClose();
       }
@@ -21,7 +19,7 @@ export const useUpdateSchoolEventContent = (handleClose, schoolEventId) => {
       toast.custom(
         <ToastSuccess
           title={"Update Successfull"}
-          description={"School Event Content Updated Successfully"}
+          description={"Draft school Event has Been Updated Successfully"}
         />
       );
     },
