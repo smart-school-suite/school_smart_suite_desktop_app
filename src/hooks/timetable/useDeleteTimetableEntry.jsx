@@ -16,13 +16,13 @@ export const useDeleteTimetableEntry = (handleClose) => {
           title={"Timetable Entry Deleted Successfully"}
           description={"Your timetable entry has been deleted successfully."}
         />
-      )
+      );
     },
-    onError: () => {
+    onError: (error) => {
       toast.custom(
-        <ToastWarning
-          title={"Oops Something Went Wrong"}
-          description={"Couldn't delete timetable entry, please try again later."}
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
         />
       );
     },

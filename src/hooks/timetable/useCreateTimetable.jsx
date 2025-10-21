@@ -24,13 +24,13 @@ export const useCreateTimetable = (handleClose) => {
         />
       );
     },
-    onError:() => {
-        toast.custom(
-            <ToastWarning
-            title={"Oops Something Went Wrong"}
-            description={"Couldn't create timetable, please try again later."}
-            />
-        );
-    }
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
   });
 };

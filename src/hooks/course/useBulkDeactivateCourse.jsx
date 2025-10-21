@@ -4,35 +4,35 @@ import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 export const useBulkDeactivateCourse = (handleClose, resetAll) => {
-    const queryClient = useQueryClient();
-     return useMutation({
-         mutationFn:bulkDeactivateCourse,
-         onSuccess:() => {
-              queryClient.invalidateQueries({ queryKey:["courses"] })
-              queryClient.invalidateQueries({ queryKey:["activeCourses"] })
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: bulkDeactivateCourse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["activeCourses"] });
 
-              if(handleClose){
-                handleClose();
-              }
+      if (handleClose) {
+        handleClose();
+      }
 
-              if(resetAll){
-                 resetAll();
-              }
+      if (resetAll) {
+        resetAll();
+      }
 
-              toast.custom(
-                 <ToastSuccess 
-                   title={"Course Deactivated"}
-                   description={"Course Deactivated Successfully"}
-                 />
-              )
-         },
-         onError:() => {
-             toast.custom(
-                 <ToastDanger 
-                   title={"Course Deactivation Failed"}
-                   description={'Failed to Deactivate Course Due to an error please check internet connection and try again'}
-                 />
-             )
-         }
-     })
-}
+      toast.custom(
+        <ToastSuccess
+          title={"Course Deactivated"}
+          description={"Course Deactivated Successfully"}
+        />
+      );
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};

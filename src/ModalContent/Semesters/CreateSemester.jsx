@@ -84,7 +84,11 @@ function CreateSemester({ handleClose }) {
 
         return
      }
-    createSchoolSemester(formData);
+    createSchoolSemester({...formData, 
+          semester_id:formData.semester_id,
+          specialty_id:formData.specialty_id,
+          student_batch_id:formData.student_batch_id,
+    });
   };
   return (
     <>
@@ -138,11 +142,12 @@ function CreateSemester({ handleClose }) {
             valueKey={["id"]}
             direction="up"
             isLoading={isFetchingSemesters}
-            onSelect={(value) => handleStateChange("semester_id", value.id, setFormData)}
+            onSelect={(value) => handleStateChange("semester_id", value, setFormData)}
             error={errors.semester_id}
             errorMessage="Semester Required"
             onError={(msg) => handleStateChange("semester_id", msg, setErrors)}
             ref={semesterRef}
+            value={formData.semester_id}
           />
         </div>
         <div>
@@ -155,11 +160,12 @@ function CreateSemester({ handleClose }) {
             valueKey={["id"]}
             direction="up"
             isLoading={isFetchingSpecialties}
-            onSelect={(value) => handleStateChange("specialty_id", value.id, setFormData)}
+            onSelect={(value) => handleStateChange("specialty_id", value, setFormData)}
             error={errors.specialty_id}
             errorMessage="Specialty Required"
             onError={(msg) => handleStateChange("specialty_id", msg, setErrors)}
             ref={specialtyRef}
+            value={formData.specialty_id}
           />
         </div>
         <div>
@@ -172,13 +178,14 @@ function CreateSemester({ handleClose }) {
             valueKey={["id"]}
             direction="up"
             onSelect={(value) =>
-              handleStateChange("student_batch_id", value.id, setFormData)
+              handleStateChange("student_batch_id", value, setFormData)
             }
             isLoading={isFetchingStudentBatches}
             error={errors.student_batch_id}
             errorMessage="Student Batch Required"
             onError={(msg) => handleStateChange("student_batch_id", msg, setErrors)}
             ref={studentBatchRef}
+            value={formData.student_batch_id}
           />
         </div>
       </div>

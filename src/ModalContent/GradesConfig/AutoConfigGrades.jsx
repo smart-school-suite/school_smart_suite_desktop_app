@@ -8,6 +8,7 @@ import ToastWarning from "../../components/Toast/ToastWarning";
 import toast from "react-hot-toast";
 import { useCreateExamGrades } from "../../hooks/examGrade/useCreateExamGrades";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function AutoConfigureGrades({ handleClose, rowData }) {
   const [isActive, setIsActive] = useState('genGradesConfig');
   const [examScore, setExamScore] = useState({
@@ -143,7 +144,7 @@ function ExamGradingPreview({ handleClose, handleStateChange, maxScore, rowData 
       if(maxScore > 0){
          handleGradesGen();
       }
-   }, [])
+   }, [maxScore])
     return(
         <>
         <div className="d-flex flex-row align-items-center justify-content-between mb-3">
@@ -159,7 +160,21 @@ function ExamGradingPreview({ handleClose, handleStateChange, maxScore, rowData 
       </div>
      <div className="modal-content-container pe-2">
        {
-         isPending ? <span className="text-center">Generating.......</span> : genGrades.map((items) => (
+         isPending ? (
+           <div className="d-flex flex-column gap-4 w-100 mb-2">
+              {
+                [...Array(10)].map((_, index) => (
+                   <div className="d-flex flex-row align-items-center w-100 justify-content-between" key={index}>
+                <div className="d-flex flex-column gap-2">
+                <RectangleSkeleton width="35%" height="1dvh" speed={1} />
+                <RectangleSkeleton width="20%" height="1dvh" speed={1} />
+              </div>
+              <RectangleSkeleton width="10%" height="1dvh" speed={1} />
+              </div>
+                ))
+              }
+            </div>
+         ): genGrades.map((items) => (
              <div className="w-100 d-flex flex-column gap-2">
          <div className="w-100 d-flex flex-row align-items-center my-1 justify-content-between">
         <div className="d-flex flex-column font-size-sm gap-1">

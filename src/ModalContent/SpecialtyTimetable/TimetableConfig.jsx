@@ -66,6 +66,7 @@ function TimetableConfig({ handleStateChange, handleClose }) {
       maxDailyCourse,
     };
   };
+
   const assignRef = (name) => (el) => {
     inputRefs.current[name] = el;
   };
@@ -102,6 +103,7 @@ function TimetableConfig({ handleStateChange, handleClose }) {
             dispatch(updateValue({ key: "days", field: "error", value: error }))
           }
           error={formDataState.days.error}
+          value={formDataState.days.value}
         />
       </div>
       <div className="d-flex flex-row align-items-center gap-2 w-100">
@@ -311,9 +313,7 @@ function TimetableConfig({ handleStateChange, handleClose }) {
           <NumberInput
             placeholder="Enter Max Number of Classes Per Week"
             validationSchema={numberSchema({
-              min: formDataState.min_week_slots.value
-                ? formDataState.min_week_slots.value
-                : 10,
+              min:1,
               max: 100,
               required: true,
               messages: {
@@ -469,7 +469,7 @@ function TimetableConfig({ handleStateChange, handleClose }) {
         <button
           className="rounded-3 p-2 text-white border-none primary-background font-size-sm w-100"
           onClick={() => {
-           // handlePrevalidation();
+           handlePrevalidation();
           handleStateChange("timetablePreview");
           
           }}

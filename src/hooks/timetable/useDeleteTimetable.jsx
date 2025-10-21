@@ -9,24 +9,24 @@ export const useDeleteTimetable = (handleClose) => {
     mutationFn: deleteTimetable,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schoolSemesters"] });
-       if(handleClose){
-          handleClose();
-       }
+      if (handleClose) {
+        handleClose();
+      }
 
-       toast.custom(
-         <ToastSuccess 
-            title={"Timetable Deleted Successfully"}
-            description={"Your timetable has been deleted successfully."}
-         />
-       )
-    },
-    onError: () => {
       toast.custom(
-        <ToastWarning
-          title={"Oops Something Went Wrong"}
-          description={"Couldn't delete timetable, please try again later."}
+        <ToastSuccess
+          title={"Timetable Deleted Successfully"}
+          description={"Your timetable has been deleted successfully."}
         />
       );
-    }
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
   });
 };

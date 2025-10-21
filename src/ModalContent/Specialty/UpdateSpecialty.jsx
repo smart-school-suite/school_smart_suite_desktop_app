@@ -17,7 +17,6 @@ import {
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import {
-  formatNumber,
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
@@ -128,7 +127,7 @@ function UpdateSpecialty({ handleClose, rowData }) {
       </div>
       {isSpecialtyDetailsLoading ? (
         <div className="d-flex flex-column w-100 gap-3">
-          {[...Array(6)].map((items, index) => (
+          {[...Array(6)].map((_, index) => (
             <div className="d-flex flex-column gap-2 w-100" key={index}>
               <RectangleSkeleton width="25%" height="1dvh" />
               <RectangleSkeleton width="100%" height="5dvh" />
