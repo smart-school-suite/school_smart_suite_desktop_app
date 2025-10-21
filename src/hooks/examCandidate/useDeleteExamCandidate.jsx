@@ -1,25 +1,22 @@
+import { deleteExamCandidates } from "../../services/examCandidate";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addExamGrading } from "../../services/exam";
 import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
-
-export const useAddExamGrading = (handleClose) => {
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+export const useDeleteExamCandidate = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ examId, gradesConfig }) =>
-      addExamGrading(examId, gradesConfig),
+    mutationFn: deleteExamCandidates,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["exams"] });
-
+      queryClient.invalidateQueries({ queryKey: ["examCandidates"] });
       if (handleClose) {
         handleClose();
       }
 
       toast.custom(
         <ToastSuccess
-          title={"Grading Added"}
-          description={"Exam Grading Added Successfully"}
+          title={"Delete Successfull"}
+          description={"Exam Candidate Deleted Successfully"}
         />
       );
     },

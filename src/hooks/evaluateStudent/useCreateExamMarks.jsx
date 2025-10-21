@@ -6,33 +6,32 @@ import ToastWarning from "../../components/Toast/ToastWarning";
 import { resetExamScoreState } from "../../Slices/Asynslices/ExamScoreSlice";
 import { useDispatch } from "react-redux";
 export const useCreateExamMarks = (handleClose) => {
-    const queryClient = useQueryClient();
-    const dispatch = useDispatch();
-     return useMutation({
-         mutationFn:createExamMark,
-         onSuccess:() => {
-             
-            queryClient.invalidateQueries({ queryKey:["examCandidates"] })
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  return useMutation({
+    mutationFn: createExamMark,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["examCandidates"] });
 
-             if(handleClose){
-                handleClose();
-             }
+      if (handleClose) {
+        handleClose();
+      }
 
-             toast.custom(
-                <ToastSuccess 
-                  title={"Marks Submitted"}
-                  description={"Marks Submitted Successfully"}
-                />
-             )
-             dispatch(resetExamScoreState());
-         },
-         onError:() => {
-             toast.custom(
-                <ToastWarning 
-                  title={"Failed to Submit"}
-                  description={"Failed to submit Marks Please try again"}
-                />
-             )
-         }
-     })
-}
+      toast.custom(
+        <ToastSuccess
+          title={"Marks Submitted"}
+          description={"Marks Submitted Successfully"}
+        />
+      );
+      dispatch(resetExamScoreState());
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};

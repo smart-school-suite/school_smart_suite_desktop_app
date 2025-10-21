@@ -1,4 +1,3 @@
-import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useGetDepartmentDetails } from "../../hooks/department/useGetDepartmentDetails";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";

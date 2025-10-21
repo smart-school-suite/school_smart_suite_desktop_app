@@ -4,31 +4,31 @@ import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useCreateExam = (handleClose) => {
-    const queryClient = useQueryClient();
-    return useMutation({
-         mutationFn:createExam,
-         onSuccess:() => {
-            queryClient.invalidateQueries({ queryKey:["exams"]})
-            queryClient.invalidateQueries({ queryKey:["examCandidates"] })
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createExam,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["exams"] });
+      queryClient.invalidateQueries({ queryKey: ["examCandidates"] });
 
-            if(handleClose){
-                 handleClose();
-            }
+      if (handleClose) {
+        handleClose();
+      }
 
-            toast.custom(
-                <ToastSuccess 
-                  title={"Exam Created"}
-                  description={"Exam Created Successfully"}
-                />
-            )
-         },
-         onError:() => {
-             toast.custom(
-                <ToastDanger 
-                  title={"Create Exam Failed"}
-                  description={"Failed To Create Exam"}
-                />
-             )
-         }
-    })
-}
+      toast.custom(
+        <ToastSuccess
+          title={"Exam Created"}
+          description={"Exam Created Successfully"}
+        />
+      );
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};

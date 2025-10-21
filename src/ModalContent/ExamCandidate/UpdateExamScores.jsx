@@ -1,5 +1,4 @@
 import { useGetExamScoreByCandidate } from "../../hooks/evaluateStudent/useGetExamScoresByCandidate";
-import { useCreateExamMarks } from "../../hooks/evaluateStudent/useCreateExamMarks";
 import { useUpdateExamMarks } from "../../hooks/evaluateStudent/useUpdateExamMarks";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useEffect } from "react";
@@ -13,10 +12,12 @@ import {
 } from "../../Slices/Asynslices/ExamScoreSlice";
 import NumberFlow from "@number-flow/react";
 import { Icon } from "@iconify/react";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 function UpdateExamScores({ handleClose, rowData }){
   const darkMode = useSelector((state) => state.theme.darkMode);
   const { student_id: studentId, id: candidateId } = rowData;
-  const { data: updateData, isFetching } = useGetExamScoreByCandidate(candidateId);
+  const { data: updateData, isLoading:isUpdateDataLoading, error:updateDataError } = useGetExamScoreByCandidate(candidateId);
   const formData = useSelector((state) => state.createExamScore.examScores);
   const maxGpa = useSelector((state) => state.createExamScore.maxGpa);
   const { mutate:updateExamScores, isPending } = useUpdateExamMarks(handleClose); 
@@ -70,9 +71,6 @@ function UpdateExamScores({ handleClose, rowData }){
      }));
      updateExamScores({ scores_entries:formatedData })
   }
-  if (isFetching) {
-    return <SingleSpinner />;
-  }
      return(
         <>
       <div className="d-flex flex-row align-items-center justify-content-between mb-4 ">
@@ -85,7 +83,17 @@ function UpdateExamScores({ handleClose, rowData }){
           <Icon icon="charm:cross" width="22" height="22" />
         </span>
       </div>
-      <div className="d-flex flex-row align-items-center justify-content-end gap-2 mb-2">
+      {
+        isUpdateDataLoading ? (
+           <RectangleSkeleton height="70dvh" width="100%" />
+        ) : updateDataError ? (
+         <NotFoundError
+          title={updateDataError?.response?.data?.errors?.title}
+          description={updateDataError?.response?.data?.errors?.description}
+        ></NotFoundError>
+        ) : (
+           <div>
+        <div className="d-flex flex-row align-items-center justify-content-end gap-2 mb-2">
         <button 
           className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"
           onClick={() => {
@@ -242,6 +250,9 @@ function UpdateExamScores({ handleClose, rowData }){
           </span>
         </div>
       </div>
+      </div>
+        )
+      }
         </>
      )
 }

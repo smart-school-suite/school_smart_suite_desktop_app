@@ -12,9 +12,11 @@ import {
 import { Icon } from "@iconify/react";
 import NumberFlow from '@number-flow/react';
 import { useCreateCaMark } from "../../hooks/evaluateStudent/useCreateCaMarks";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 function AddCaScores({ handleClose, rowData }) {
   const { student_id: studentId, exam_id: examId, id: candidateId } = rowData;
-  const { data: helperData, isFetching } = useGetCaEvaluationHelperData(examId);
+  const { data: helperData, isFetching, error } = useGetCaEvaluationHelperData(examId);
   const  { mutate:createScore, isPending } = useCreateCaMark(handleClose); 
   const formData = useSelector((state) => state.createCaScore.examScores);
   const maxGpa = useSelector((state) => state.createCaScore.maxGpa);
@@ -81,10 +83,6 @@ const scoresData = formData
 
     createScore(formattedData)
   }
-  if (isFetching) {
-    return <SingleSpinner />;
-  }
-
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between mb-4 ">
@@ -97,7 +95,17 @@ const scoresData = formData
           <Icon icon="charm:cross" width="22" height="22" />
         </span>
       </div>
-      <div className="d-flex flex-row align-items-center justify-content-end gap-2 mb-2">
+      {
+         isFetching ? (
+           <RectangleSkeleton height="70dvh" width="100%" />
+         ) : error ? (
+           <NotFoundError
+            title={error?.response?.data?.errors?.title}
+            description={error?.response?.data?.errors?.description}
+          ></NotFoundError>
+         ) : ( 
+          <>
+          <div className="d-flex flex-row align-items-center justify-content-end gap-2 mb-2">
         <button 
           className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"
           onClick={() => {
@@ -211,6 +219,9 @@ const scoresData = formData
           </span>
         </div>
       </div>
+          </>
+         )
+      }
     </>
   );
 }

@@ -1,20 +1,24 @@
 import { useBulkAddExamGradingConfigs } from "../../hooks/exam/useBulkAddExamGrading";
 import { useRef, useState } from "react";
-import Pageloaderspinner, {
-  SingleSpinner,
-} from "../../components/Spinners/Spinners";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import toast from "react-hot-toast";
 import { allFieldsValid } from "../../utils/functions";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 function BulkAddExamGrading({ handleClose, resetAll, bulkData }) {
   const gradeConfigRef = useRef();
   const [errors, setErrors] = useState({
     grade_config: "",
   });
-  const { data: schoolGradesConfig, isLoading } = useGetSchoolGradeCategories();
+  const {
+    data: schoolGradesConfig,
+    isLoading,
+    error,
+  } = useGetSchoolGradeCategories();
   const [gradeConfig, setGradeConfig] = useState(null);
   const { mutate: addExamGrading, isPending } = useBulkAddExamGradingConfigs(
     handleClose,
@@ -41,13 +45,10 @@ function BulkAddExamGrading({ handleClose, resetAll, bulkData }) {
     }
     const formattedData = bulkData.map((items) => ({
       exam_id: items.id,
-      grades_config_Id: gradeConfig,
+      grades_config_Id: gradeConfig.id,
     }));
     addExamGrading({ exam_grading: formattedData });
   };
-  if (isLoading) {
-    return <Pageloaderspinner />;
-  }
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between mb-3">
@@ -56,37 +57,56 @@ function BulkAddExamGrading({ handleClose, resetAll, bulkData }) {
           <Icon icon="charm:cross" width="22" height="22" />
         </span>
       </div>
-      <div className="modalContainer">
-        <div className="w-100 my-2">
-          <CustomDropdown
-            data={
-              schoolGradesConfig?.data
-                ? schoolGradesConfig?.data.filter(
-                    (items) => items.max_score !== null
-                  )
-                : []
-            }
-            isLoading={isLoading}
-            placeholder={"Select Grade Config"}
-            displayKey={["grade_title", "max_score"]}
-            valueKey={["id"]}
-            errorMessage={"Grade Config Required"}
-            onSelect={(value) => setGradeConfig(value.id)}
-            ref={gradeConfigRef}
-            onError={(value) =>
-              setErrors((prev) => ({ ...prev, grade_config: value }))
-            }
-            error={errors.grade_config}
-          />
+      {isLoading ? (
+        <div className="d-flex flex-column w-100 gap-3">
+          {[...Array(1)].map((_, index) => (
+            <div className="d-flex flex-column gap-2 w-100" key={index}>
+              <RectangleSkeleton width="25%" height="1dvh" />
+              <RectangleSkeleton width="100%" height="5dvh" />
+            </div>
+          ))}
         </div>
-      </div>
-      <button
-        className=" w-100 p-2 font-size-sm px-3 primary-background border-none rounded-3 text-white"
-        onClick={handleSaveChanges}
-        disabled={isPending}
-      >
-        {isPending ? <SingleSpinner /> : "Save Changes"}
-      </button>
+      ) : error ? (
+        <NotFoundError
+          title={error?.response?.data?.errors?.title}
+          description={error?.response?.data?.errors?.description}
+        ></NotFoundError>
+      ) : (
+        <>
+          <div className="modalContainer">
+            <div className="w-100 my-2">
+              <CustomDropdown
+                data={
+                  schoolGradesConfig?.data
+                    ? schoolGradesConfig?.data.filter(
+                        (items) => items.max_score !== null
+                      )
+                    : []
+                }
+                isLoading={isLoading}
+                placeholder={"Select Grade Config"}
+                displayKey={["grade_title", "max_score"]}
+                valueKey={["id"]}
+                errorMessage={"Grade Config Required"}
+                onSelect={(value) => setGradeConfig(value)}
+                ref={gradeConfigRef}
+                onError={(value) =>
+                  setErrors((prev) => ({ ...prev, grade_config: value }))
+                }
+                error={errors.grade_config}
+                value={gradeConfig}
+              />
+            </div>
+          </div>
+          <button
+            className=" w-100 p-2 font-size-sm px-3 primary-background border-none rounded-3 text-white"
+            onClick={handleSaveChanges}
+            disabled={isPending}
+          >
+            {isPending ? <SingleSpinner /> : "Save Changes"}
+          </button>
+        </>
+      )}
     </>
   );
 }

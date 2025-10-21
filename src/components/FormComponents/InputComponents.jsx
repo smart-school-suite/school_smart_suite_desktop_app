@@ -636,7 +636,6 @@ function DateInputComponent(
 }
 export const DateInput = forwardRef(DateInputComponent);
 
-
 export const TimeInput = forwardRef(function TimeInput(
   {
     value,
@@ -917,133 +916,187 @@ export const DateRangeInput = forwardRef(
   ) => {
     const darkMode = useSelector((state) => state.theme.darkMode);
     const [dates, setDates] = useState({
-      start_date: startValue || "",
-      end_date: endValue || "",
+      start_date: startValue || '',
+      end_date: endValue || '',
     });
-
     const [errors, setErrors] = useState({
-      start_date: "",
-      end_date: "",
+      start_date: '',
+      end_date: '',
     });
-
     const [touched, setTouched] = useState({
       start_date: false,
       end_date: false,
     });
 
-    // 🔹 Independent field validation
-    const validateStartDate = async (value) => {
-      if (!validationSchema) {
-        onStartDateValidationChange?.(true);
-        return true; // Explicitly return true if no schema
-      }
+    // 🔹 Validate start date
+    const validateStartDate = useCallback(
+      async (value) => {
+        if (!validationSchema) {
+          onStartDateValidationChange?.(true);
+          return true;
+        }
 
-      try {
-        // Validate only start_date field
-        await validationSchema.fields.start_date.validate(value);
-        setErrors((prev) => ({ ...prev, start_date: "" }));
-        onStartDateValidationChange?.(true);
-        return true; // Validation passed
-      } catch (err) {
-        setErrors((prev) => ({
-          ...prev,
-          start_date: err.message || "Invalid start date",
-        }));
-        onStartDateValidationChange?.(false);
-        return false; // Validation failed
-      }
-    };
+        try {
+          await validationSchema.fields.start_date.validate(value);
+          setErrors((prev) => ({ ...prev, start_date: '' }));
+          onStartDateValidationChange?.(true);
+          return true;
+        } catch (err) {
+          setErrors((prev) => ({
+            ...prev,
+            start_date: err.message || 'Invalid start date',
+          }));
+          onStartDateValidationChange?.(false);
+          return false;
+        }
+      },
+      [validationSchema, onStartDateValidationChange]
+    );
 
-    const validateEndDate = async (value) => {
-      if (!validationSchema) {
-        onEndDateValidationChange?.(true);
-        return true; // Explicitly return true if no schema
-      }
+    // 🔹 Validate end date
+    const validateEndDate = useCallback(
+      async (value, startDate = dates.start_date) => {
+        if (!validationSchema) {
+          onEndDateValidationChange?.(true);
+          return true;
+        }
 
-      try {
-        // Validate end_date field, considering start_date for is-after-start test
-        await validationSchema.validate(
-          { start_date: dates.start_date, end_date: value },
-          { abortEarly: false }
-        );
-        setErrors((prev) => ({ ...prev, end_date: "" }));
-        onEndDateValidationChange?.(true);
-        return true; // Validation passed
-      } catch (err) {
-        const fieldError = err.inner.find((e) => e.path === "end_date");
-        setErrors((prev) => ({
-          ...prev,
-          end_date: fieldError ? fieldError.message : "Invalid end date",
-        }));
-        onEndDateValidationChange?.(false);
-        return false; // Validation failed
+        try {
+          await validationSchema.validate(
+            { start_date: startDate, end_date: value },
+            { abortEarly: false }
+          );
+          setErrors((prev) => ({ ...prev, end_date: '' }));
+          onEndDateValidationChange?.(true);
+          return true;
+        } catch (err) {
+          const fieldError = err.inner?.find((e) => e.path === 'end_date');
+          setErrors((prev) => ({
+            ...prev,
+            end_date: fieldError ? fieldError.message : 'Invalid end date',
+          }));
+          onEndDateValidationChange?.(false);
+          return false;
+        }
+      },
+      [validationSchema, onEndDateValidationChange, dates.start_date]
+    );
+
+    // 🔹 Sync dates with props and validate when props change
+    useEffect(() => {
+      if (startValue !== dates.start_date || endValue !== dates.end_date) {
+        setDates({
+          start_date: startValue || '',
+          end_date: endValue || '',
+        });
+
+        if (startValue && !touched.start_date) {
+          setTouched((prev) => ({ ...prev, start_date: true }));
+          validateStartDate(startValue);
+        }
+        if (endValue && !touched.end_date) {
+          setTouched((prev) => ({ ...prev, end_date: true }));
+          validateEndDate(endValue, startValue || '');
+        }
       }
-    };
+    }, [startValue, endValue, validateStartDate, validateEndDate]);
 
     // 🔹 Handle input changes
-    const handleChange = (field) => (e) => {
-      const rawValue = e.target.value;
-      setDates((prev) => ({ ...prev, [field]: rawValue }));
-      onChange?.({ ...dates, [field]: rawValue });
+    const handleChange = useCallback(
+      (field) => (e) => {
+        const rawValue = e.target.value;
+        setDates((prev) => ({ ...prev, [field]: rawValue }));
+        onChange?.({ ...dates, [field]: rawValue });
 
-      if (field === "start_date") {
-        onStartDateChange?.(rawValue);
-        if (touched.start_date) validateStartDate(rawValue);
-      }
-      if (field === "end_date") {
-        onEndDateChange?.(rawValue);
-        if (touched.end_date) validateEndDate(rawValue);
-      }
-    };
-
-    const handleFocus = (field) => () => {
-      setTouched((prev) => ({ ...prev, [field]: true }));
-      if (field === "start_date") validateStartDate(dates.start_date);
-      if (field === "end_date") validateEndDate(dates.end_date);
-    };
-
-    // 🔹 Expose granular validation to parent
-    useImperativeHandle(ref, () => ({
-      preValidateStart: async () => {
-        if (!dates.start_date) {
-          setTouched((prev) => ({ ...prev, start_date: true }));
+        if (field === 'start_date') {
+          onStartDateChange?.(rawValue);
+          if (touched.start_date) validateStartDate(rawValue);
+          // Re-validate end_date if start_date changes
+          if (touched.end_date && dates.end_date) validateEndDate(dates.end_date, rawValue);
         }
-        return await validateStartDate(dates.start_date); // Return the validation result
-      },
-      preValidateEnd: async () => {
-        if (!dates.end_date) {
-          setTouched((prev) => ({ ...prev, end_date: true }));
+        if (field === 'end_date') {
+          onEndDateChange?.(rawValue);
+          if (touched.end_date) validateEndDate(rawValue);
         }
-        return await validateEndDate(dates.end_date); // Return the validation result
       },
-    }));
+      [
+        dates,
+        onChange,
+        onStartDateChange,
+        onEndDateChange,
+        touched.start_date,
+        touched.end_date,
+        validateStartDate,
+        validateEndDate,
+      ]
+    );
 
+    // 🔹 Handle focus
+    const handleFocus = useCallback(
+      (field) => () => {
+        setTouched((prev) => ({ ...prev, [field]: true }));
+        if (field === 'start_date') validateStartDate(dates.start_date);
+        if (field === 'end_date') validateEndDate(dates.end_date);
+      },
+      [dates.start_date, dates.end_date, validateStartDate, validateEndDate]
+    );
+
+    // 🔹 Handle blur
+    const handleBlur = useCallback(
+      (field) => () => {
+        if (field === 'start_date') validateStartDate(dates.start_date);
+        if (field === 'end_date') validateEndDate(dates.end_date);
+      },
+      [dates.start_date, dates.end_date, validateStartDate, validateEndDate]
+    );
+
+    // 🔹 Expose imperative validation methods
+    useImperativeHandle(
+      ref,
+      () => ({
+        preValidateStart: async () => {
+          if (!dates.start_date) {
+            setTouched((prev) => ({ ...prev, start_date: true }));
+          }
+          return await validateStartDate(dates.start_date);
+        },
+        preValidateEnd: async () => {
+          if (!dates.end_date) {
+            setTouched((prev) => ({ ...prev, end_date: true }));
+          }
+          return await validateEndDate(dates.end_date);
+        },
+      }),
+      [dates.start_date, dates.end_date, validateStartDate, validateEndDate]
+    );
+
+    // 🔹 Feedback helpers
     const feedbackClasses = (field) =>
       [
-        "transition-all font-size-sm",
+        'transition-all font-size-sm',
         touched[field] && errors[field]
-          ? "invalid-feedback"
+          ? 'invalid-feedback'
           : touched[field] && !errors[field] && dates[field]
-          ? "valid-feedback"
-          : null,
+          ? 'valid-feedback'
+          : '',
         touched[field] && (errors[field] || (!errors[field] && dates[field]))
-          ? "opacity-100"
-          : "opacity-0",
+          ? 'opacity-100'
+          : 'opacity-0',
       ]
         .filter(Boolean)
-        .join(" ");
+        .join(' ');
 
     const feedbackMessage = (field) =>
       touched[field] && errors[field]
         ? errors[field]
         : touched[field] && !errors[field] && dates[field]
-        ? "Looks Good!"
-        : "";
+        ? 'Looks Good!'
+        : '';
 
     return (
       <div
         className="d-flex flex-row align-items-center gap-2 w-100"
-        style={{ height: "11dvh" }}
+        style={{ height: '11dvh' }}
       >
         {/* Start Date */}
         <div className="input-container w-50">
@@ -1054,22 +1107,18 @@ export const DateRangeInput = forwardRef(
             mask="9999-99-99"
             maskChar="_"
             value={dates.start_date}
-            onChange={handleChange("start_date")}
-            onFocus={handleFocus("start_date")}
-            onBlur={handleFocus("start_date")}
+            onChange={handleChange('start_date')}
+            onFocus={handleFocus('start_date')}
+            onBlur={handleBlur('start_date')}
             placeholder={placeholderStart}
-            className={`form-control w-100 font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null} ${
-              touched.start_date && errors.start_date ? "is-invalid" : ""
-            } ${
-              touched.start_date && !errors.start_date && dates.start_date
-                ? "is-valid"
-                : ""
+            className={`form-control w-100 font-size-sm p-2 ${
+              darkMode ? 'dark-mode-input' : ''
+            } ${touched.start_date && errors.start_date ? 'is-invalid' : ''} ${
+              touched.start_date && !errors.start_date && dates.start_date ? 'is-valid' : ''
             }`}
           />
-          <div
-            className={`${feedbackClasses("start_date")} font-size-sm mt-auto`}
-          >
-            {feedbackMessage("start_date")}
+          <div className={`${feedbackClasses('start_date')} font-size-sm mt-auto`}>
+            {feedbackMessage('start_date')}
           </div>
         </div>
 
@@ -1082,22 +1131,18 @@ export const DateRangeInput = forwardRef(
             mask="9999-99-99"
             maskChar="_"
             value={dates.end_date}
-            onChange={handleChange("end_date")}
-            onFocus={handleFocus("end_date")}
-            onBlur={handleFocus("end_date")}
+            onChange={handleChange('end_date')}
+            onFocus={handleFocus('end_date')}
+            onBlur={handleBlur('end_date')}
             placeholder={placeholderEnd}
-            className={`form-control w-100 p-2 font-size-sm ${darkMode ? 'dark-mode-input' : null} ${
-              touched.end_date && errors.end_date ? "is-invalid" : ""
-            } ${
-              touched.end_date && !errors.end_date && dates.end_date
-                ? "is-valid"
-                : ""
+            className={`form-control w-100 p-2 font-size-sm ${
+              darkMode ? 'dark-mode-input' : ''
+            } ${touched.end_date && errors.end_date ? 'is-invalid' : ''} ${
+              touched.end_date && !errors.end_date && dates.end_date ? 'is-valid' : ''
             }`}
           />
-          <div
-            className={`${feedbackClasses("end_date")} font-size-sm mt-auto`}
-          >
-            {feedbackMessage("end_date")}
+          <div className={`${feedbackClasses('end_date')} font-size-sm mt-auto`}>
+            {feedbackMessage('end_date')}
           </div>
         </div>
       </div>
@@ -1306,7 +1351,6 @@ export const TimeRangeInput = forwardRef(
   }
 );
 
-
 export const DateTimeInput = forwardRef(function DateTimeInput(
   {
     value,
@@ -1451,8 +1495,6 @@ export const DateTimeInput = forwardRef(function DateTimeInput(
     </div>
   );
 });
-
-
 
 export const DateTimeRangeInput = forwardRef(
   (
@@ -1695,7 +1737,6 @@ export const DateTimeRangeInput = forwardRef(
     );
   }
 );
-
 
 export const ImageUploadComponent = ({
   onImageUpload,
