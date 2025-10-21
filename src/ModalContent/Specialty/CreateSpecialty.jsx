@@ -89,7 +89,15 @@ function CreateSpecialty({ handleClose }) {
       )
       return
     }
-    createSpecialtyMutation(formData)
+     const payload = {
+      specialty_name: formData.specialty_name,
+      registration_fee: formData.registration_fee,
+      school_fee: formData.school_fee,
+      department_id: formData.department_id.id,
+      level_id: formData.level_id.id,
+      description: formData.description,
+    };
+    createSpecialtyMutation(payload);
   };
   return (
     <div className="w-100">
@@ -181,12 +189,13 @@ function CreateSpecialty({ handleClose }) {
             renameMapping={{ id: "id", department_name: "department_name" }}
             isLoading={departmentIsLoading}
             direction="up"
-            onSelect={(value) => handleStateChange('department_id', value.id, setFormData)}
+            onSelect={(value) => handleStateChange('department_id', value, setFormData)}
             placeholder="Select Department"
             error={errors.department_id}
             onError={(value) => handleStateChange('department_id', value, setErrors)}
             errorMessage="Department Required"
             ref={departmentRef}
+            value={formData.department_id}
           />
       </div>
       <div>
@@ -199,12 +208,13 @@ function CreateSpecialty({ handleClose }) {
             renameMapping={{ id: "id", name: "name", level: "level" }}
             isLoading={educationIsLoading}
             direction="up"
-            onSelect={(value) => handleStateChange('level_id', value.id, setFormData)}
+            onSelect={(value) => handleStateChange('level_id', value, setFormData)}
             placeholder="Select Level"
             error={errors.level_id}
             onError={(value) => handleStateChange('level_id', value, setErrors)}
             errorMessage="Level Required"
             ref={educationLevelRef}
+            value={formData.level_id}
           />
       </div>
       <div>

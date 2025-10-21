@@ -4,31 +4,31 @@ import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 export const useDeleteTeacher = (handleClose) => {
-     const queryClient = useQueryClient();
-     return useMutation({
-         mutationFn:deleteTeacher,
-         onSuccess: (deletedTeacherId) => {
-             queryClient.invalidateQueries({ queryKey:["teachers"] })
-             queryClient.removeQueries({ queryKey: ['teacher', deletedTeacherId] })
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteTeacher,
+    onSuccess: (deletedTeacherId) => {
+      queryClient.invalidateQueries({ queryKey: ["teachers"] });
+      queryClient.removeQueries({ queryKey: ["teacher", deletedTeacherId] });
 
-            if(handleClose){
-                handleClose();
-            }
+      if (handleClose) {
+        handleClose();
+      }
 
-            toast.custom(
-                <ToastSuccess 
-                  title={"Teacher Deleted"}
-                  description={"Teacher Deleted Successfully"}
-                />
-            )
-         },
-         onError:() => {
-            toast.custom(
-                <ToastDanger 
-                  title={"Delete Failed"}
-                  description={"Failed To Delete Teacher"}
-                />
-            )
-         }
-     })
-}
+      toast.custom(
+        <ToastSuccess
+          title={"Teacher Deleted"}
+          description={"Teacher Deleted Successfully"}
+        />
+      );
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};

@@ -67,10 +67,6 @@ function SchoolAdmins() {
     return schoolAdmins?.data ?? [];
   }, [schoolAdmins]);
 
-  if (isLoading) {
-    return <DataTablePageLoader />;
-  }
-
   return (
     <>
       <main className="main-container gap-2">
@@ -113,7 +109,7 @@ function SchoolAdmins() {
         </div>
         <div style={{ height: "85%" }}>
           {isLoading ? (
-            <RectangleSkeleton />
+            <RectangleSkeleton  width="100%" height="100%"/>
           ) : error ? (
             <NotFoundError
               title={error.response.data.errors.title}

@@ -21,13 +21,13 @@ export const useActivateSpecialty = (handleClose) => {
                 />
             )
          },
-         onError:() => {
-            toast.custom(
-                <ToastDanger
-                   title={"Activation Failed"}
-                   description={"Failed To Deactivate Specialty Due to an error please try again"}  
-                />
-            )
-         }
+         onError:(error) => {
+              toast.custom(
+                 <ToastDanger 
+                  title={error.response.data.errors.title}
+                  description={error.response.data.errors.description}
+                 />
+             )
+        }
     })
 }

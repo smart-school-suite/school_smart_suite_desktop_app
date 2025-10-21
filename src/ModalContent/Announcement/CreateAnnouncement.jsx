@@ -409,8 +409,9 @@ function AnnouncementCreate({
                   );
                   return (
                     <div
-                      className="font-size-sm primary-background-50 px-4 py-2 rounded-pill color-primary"
+                      className={`${darkMode ? "dark-bg-light" : "primary-background-50"} font-size-sm  px-2 py-1 rounded-pill color-primary`}
                       key={item.id}
+                      style={{ fontSize:"0.7rem" }}
                     >
                       <span>{matchingTag ? matchingTag.name : "N/A"}</span>
                     </div>
@@ -744,8 +745,9 @@ function AnnouncementContent({
                   );
                   return (
                     <div
-                      className="font-size-sm primary-background-50 px-4 py-2 rounded-pill color-primary"
+                      className={`${darkMode ? "dark-bg-light" : "primary-background-50"} font-size-sm  px-2 py-1 rounded-pill color-primary`}
                       key={item.id}
+                      style={{ fontSize:"0.7rem" }}
                     >
                       <span>{matchingTag ? matchingTag.name : "N/A"}</span>
                     </div>

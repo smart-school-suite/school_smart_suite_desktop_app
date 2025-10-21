@@ -1380,10 +1380,9 @@ hr {
 
 .permission-toggle {
     width: 33%;
-    padding: 0.7rem;
+    padding: 0.6rem;
     border: none;
     border-radius: 0.75rem;
-    font-size: 0.85rem;
 }
 
 .permission-toggle-inactive {
@@ -1477,7 +1476,6 @@ hr {
 
 .event-card {
     height: 35dvh;
-    background-color: var(--acent-color-five);
 }
 
 .event-card img {

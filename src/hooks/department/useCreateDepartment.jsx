@@ -21,17 +21,13 @@ export const useCreateDepartment = (handleClose) => {
         handleClose();
       }
     },
-
     onError: (error) => {
       toast.custom(
         <ToastDanger
-          title={"Something went wrong ❌"}
-          description={
-            "The department creation failed due to an error. Please try again later."
-          }
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
         />
       );
-      console.error("Department creation error:", error);
     },
   });
 };

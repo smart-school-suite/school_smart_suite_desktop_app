@@ -23,7 +23,7 @@ import {
 import CustomDropdown, {
   MultiSelectDropdown,
 } from "../../components/Dropdowns/Dropdowns";
-import { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import TextDisplay from "../../components/TextComponents/TextDisplay";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
@@ -729,7 +729,7 @@ function CreateSchoolEvent({
                     onValidationChange={(value) =>
                       handleStateChange("published_at", value, setIsValid)
                     }
-                    value={formData.value}
+                    value={formData.published_at}
                     validationSchema={dateTimeValidationSchema({
                       required: true,
                       futureOrToday: true,

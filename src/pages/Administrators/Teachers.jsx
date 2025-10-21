@@ -109,7 +109,7 @@ function Teachers() {
         </div>
         <div style={{ height:"85%" }}>
           {isLoading ? (
-            <RectangleSkeleton />
+            <RectangleSkeleton width="100%" height="100%" />
           ) : error ? (
             <NotFoundError
               title={error.response.data.errors.title}

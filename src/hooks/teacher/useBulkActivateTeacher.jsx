@@ -4,33 +4,32 @@ import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 export const useBulkActivateTeacher = (handleClose, resetAll) => {
-     const queryClient = useQueryClient();
-     return useMutation({
-         mutationFn:bulkActivateTeacher,
-         onSuccess: () => {
-              queryClient.invalidateQueries({ queryKey:["teachers"]})
-              if(handleClose){
-                 handleClose();
-              }
-              if(resetAll){
-                 resetAll();
-              }
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: bulkActivateTeacher,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teachers"] });
+      if (handleClose) {
+        handleClose();
+      }
+      if (resetAll) {
+        resetAll();
+      }
 
-              toast.custom(
-                <ToastSuccess 
-                  title={"Activation Successfull"}
-                  description={"Teacher Accounts Activated Successfully"}
-                />
-              )
-         },
-         onError:() => {
-             toast.custom(
-                <ToastDanger 
-                   title={"Activation Failed"}
-                   description={"Failed to activate Teacher Accounts Due to an error please check internet connection and try again"}
-
-                />
-             )
-         }
-     })
-}
+      toast.custom(
+        <ToastSuccess
+          title={"Activation Successfull"}
+          description={"Teacher Accounts Activated Successfully"}
+        />
+      );
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};

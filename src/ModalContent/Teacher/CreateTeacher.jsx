@@ -75,7 +75,7 @@ function CreateTeacher({ handleClose }) {
       )
       return;
     }
-    createTeacherMutation(formData);
+    createTeacherMutation({...formData, gender:formData.gender.name});
   };
   return (
     <>
@@ -183,12 +183,13 @@ function CreateTeacher({ handleClose }) {
             displayKey={["name"]}
             valueKey={["name"]}
             direction="up"
-            onSelect={(value) => handleStateChange("gender", value.name, setFormData)}
+            onSelect={(value) => handleStateChange("gender", value, setFormData)}
             onError={(value) => handleStateChange("gender", value, setErrors)}
             errorMessage="Gender Required"
             error={errors.gender}
             placeholder="Select Gender"
             ref={genderRef}
+            value={formData.gender}
           />
         </div>
         <div>

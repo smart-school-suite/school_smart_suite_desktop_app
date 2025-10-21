@@ -21,13 +21,13 @@ export const useDeleteDepartment = (handleClose) => {
         />
       );
     },
-    onError: () => {
-      <ToastDanger
-        title={"Something went wrong ❌"}
-        description={
-          "Something went wrong! The department deletion failed due to an error. Please try again later."
-        }
-      />;
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
     },
   });
 };

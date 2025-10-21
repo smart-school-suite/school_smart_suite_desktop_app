@@ -12,7 +12,6 @@ export const useUpdateSchoolEventContent = (handleClose, schoolEventId) => {
       queryClient.invalidateQueries({ queryKey: ["schoolEvents"] });
       queryClient.removeQueries({ queryKey: ["schoolEvent", schoolEventId] });
       queryClient.invalidateQueries({ queryKey: ["draftSchoolEvent"] });
-      queryClient.invalidateQueries({ queryKey: ["schoolEventsschoolEvents"] });
       queryClient.invalidateQueries({ queryKey: ["scheduledSchoolEvent"] });
       if (handleClose) {
         handleClose();

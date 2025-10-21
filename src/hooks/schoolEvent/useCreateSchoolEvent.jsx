@@ -9,6 +9,8 @@ export const useCreateSchoolEvent = (handleClose) =>  {
         mutationFn:createSchoolEvent,
         onSuccess:() => {
             queryClient.invalidateQueries({ queryKey:["schoolEvents"] })
+            queryClient.invalidateQueries({ queryKey: ["draftSchoolEvent"] });
+            queryClient.invalidateQueries({ queryKey: ["scheduledSchoolEvent"] });
             if(handleClose){
                  handleClose();
             }

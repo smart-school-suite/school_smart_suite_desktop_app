@@ -23,13 +23,13 @@ export const useBulkDeleteSpecialty = (handleClose, resetAll) => {
                 />
             )
          },
-         onError:() => {
-             toast.custom(
+         onError:(error) => {
+              toast.custom(
                  <ToastDanger 
-                   title={"Delete Failed"}
-                   description={"Delete Failed Due to an error please check internet connection and try again"}
+                  title={error.response.data.errors.title}
+                  description={error.response.data.errors.description}
                  />
              )
-         }
+        }
     })
 }

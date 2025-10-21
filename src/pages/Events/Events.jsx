@@ -25,6 +25,7 @@ import UpdateEventContent from "../../ModalContent/Events/UpdateEventContent";
 import CustomModal from "../../components/Modals/Modal";
 import DeleteEvent from "../../ModalContent/Events/DeleteEvent";
 function Events() {
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const [category, setCategory] = useState("all");
   const {
     data: activeCategories,
@@ -38,7 +39,7 @@ function Events() {
           <div className="w-50">
             <input
               type="search w-50"
-              className="form-control font-size-sm p-2"
+              className={`${darkMode ? "dark-mode-input" : ""} form-control font-size-sm p-2 `}
               placeholder="Search for An Event"
             />
           </div>
@@ -93,7 +94,7 @@ function Events() {
                 </>
               )}
             </div>
-            <div className="event-list-container">
+            <div className="event-list-container pt-2">
               {category == "all" ? (
                 <AllEvents />
               ) : (
@@ -167,7 +168,7 @@ function EventCategoryComponent({ data }) {
 
   return (
     <>
-      <div className="d-flex flex-row align-items-center gap-2 event-card w-100 rounded-3 border-none p-2">
+      <div className={`${darkMode ? "dark-mode-border dark-bg" : "border-none bg-white"} d-flex flex-row align-items-center gap-2 event-card w-100 rounded-3 p-2`}>
         <img src="./images/event-img-two.jpg" alt="event-image" />
         <div
           style={{ width: "65%", height: "100%" }}
@@ -227,7 +228,7 @@ function EventCategoryComponent({ data }) {
           <div className="d-flex flex-row gap-3 flex-wrap">
             {JSON.parse(data.tags).map((item) => (
               <div
-                className="primary-background-50 px-3 py-2 rounded-pill color-primary"
+                className={`${darkMode ? "dark-bg-light" : "primary-background-50 "} px-2 py-1 rounded-pill color-primary`}
                 key={item.id}
                 style={{ fontSize: "0.65rem" }}
               >
@@ -237,8 +238,9 @@ function EventCategoryComponent({ data }) {
           </div>
           <div className="mt-auto">
             <div className="d-flex flex-row w-100 align-items-end justify-content-between">
-              <div className="d-flex flex-column">
-                <div className="d-flex font-size-sm fw-semibold gap-2 align-items-center">
+              <div className="d-flex flex-column gap-3">
+                <div className="d-flex flex-column">
+                  <div className="d-flex font-size-sm fw-semibold gap-2 align-items-center">
                   <Icon icon="formkit:people" />
                   <span>{data.invitee_count} Invitee</span>
                 </div>
@@ -246,11 +248,17 @@ function EventCategoryComponent({ data }) {
                   <Icon icon="ion:location-outline" />
                   <span>{data.location}</span>
                 </div>
-                <div className="w-100 d-flex gap-1 font-size-sm fw-semibold align-items-center">
+                </div>
+                <div className="d-flex flex-column">
+                  <span className="font-size-xs gainsboro-color">Event Time Range</span>
+                  <div className="w-100 d-flex gap-2 font-size-sm fw-medium align-items-center">
                   <Icon icon="solar:calendar-linear" />
-                  <span>{formatISODate(data.start_date)}</span>
+                  <div className="d-flex gap-1 flex-row align-items-center">
+                    <span>{formatISODate(data.start_date)}</span>
                   <Icon icon="radix-icons:dash" />
                   <span>{formatISODate(data.end_date)}</span>
+                  </div>
+                </div>
                 </div>
               </div>
               <div className="d-flex flex-row gap-2 align-items-center pe-2">

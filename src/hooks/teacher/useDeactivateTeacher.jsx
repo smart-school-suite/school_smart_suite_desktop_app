@@ -13,23 +13,23 @@ export const useDeactivateTeacher = (handleClose) => {
       queryClient.removeQueries({
         queryKey: ["teacher", deactivatedTeacherId],
       });
-      if(handleClose){
-         handleClose();
+      if (handleClose) {
+        handleClose();
       }
       toast.custom(
         <ToastSuccess
-           title={"Deactivation Successfull"}
-           description={"Teacher Account Deactivated Successfully"}
+          title={"Deactivation Successfull"}
+          description={"Teacher Account Deactivated Successfully"}
         />
-      )
+      );
     },
-    onError:() => {
-       toast.custom(
-         <ToastDanger 
-            title={"Deactivation Failed"}
-            description={"Failed To Deactivate Teacher Account please Try Again"}
-         />
-       )
-    }
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
   });
 };

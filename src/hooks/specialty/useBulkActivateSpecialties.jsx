@@ -25,13 +25,13 @@ export const useBulkActivateSpecialty = (handleClose, resetAll) => {
                  />
             )
          },
-         onError: () => {
-             toast.custom(
-                <ToastDanger 
-                  title={"Activation Failed"}
-                  description={"Failed to Activate Specialty Due To An Internal Error, Please Check Internet Connection And Try Again"}
-                />
+        onError:(error) => {
+              toast.custom(
+                 <ToastDanger 
+                  title={error.response.data.errors.title}
+                  description={error.response.data.errors.description}
+                 />
              )
-         }
+        }
     })
 }

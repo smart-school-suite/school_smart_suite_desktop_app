@@ -27,6 +27,7 @@ import DeleteEvent from "../../ModalContent/Events/DeleteEvent";
 import { useGetScheduledSchoolEvents } from "../../hooks/schoolEvent/useGetScheduledSchoolEvents";
 import { useGetScheduledSchoolEventsByCategory } from "../../hooks/schoolEvent/useGetScheduledSchoolEventsByCategory";
 function ScheduledEvents() {
+   const darkMode = useSelector((state) => state.theme.darkMode);
         const [category, setCategory] = useState("all");
         const {
           data: activeCategories,
@@ -40,7 +41,7 @@ function ScheduledEvents() {
           <div className="w-50">
             <input
               type="search w-50"
-              className="form-control font-size-sm p-2"
+              className={`${darkMode ? "dark-mode-input" : ""} form-control font-size-sm p-2 `}
               placeholder="Search for An Event"
             />
           </div>
@@ -111,7 +112,6 @@ function ScheduledEvents() {
 export default ScheduledEvents;
 
 function EventCategoryComponent({ data }) {
-  const { mutate: likeEvent } = useLikeSchoolEvent();
   const [isToggled, setIsToggled] = useState(false);
   const darkMode = useSelector((state) => state.theme.darkMode);
 
@@ -246,41 +246,26 @@ function EventCategoryComponent({ data }) {
           </div>
           <div className="mt-auto">
             <div className="d-flex flex-row w-100 align-items-end justify-content-between">
-              <div className="d-flex flex-column">
-                <div className="d-flex font-size-sm fw-semibold gap-2 align-items-center">
+              <div className="d-flex flex-column gap-3">
+                <div className="d-flex flex-column">
+                  <div className="d-flex font-size-sm fw-medium gap-2 align-items-center">
                   <Icon icon="formkit:people" />
                   <span>{data.invitee_count} Invitee</span>
                 </div>
-                <div className="d-flex font-size-sm fw-semibold gap-2 align-items-center">
+                <div className="d-flex font-size-sm fw-medium gap-2 align-items-center">
                   <Icon icon="ion:location-outline" />
                   <span>{data.location}</span>
                 </div>
-                <div className="w-100 d-flex gap-1 font-size-sm fw-semibold align-items-center">
-                  <Icon icon="solar:calendar-linear" />
-                  <span>{formatISODate(data.start_date)}</span>
-                  <Icon icon="radix-icons:dash" />
-                  <span>{formatISODate(data.end_date)}</span>
                 </div>
-              </div>
-              <div className="d-flex flex-row gap-2 align-items-center pe-2">
-                <button
-                  style={{
-                    border: "none",
-                    background: "transparent",
-                    color: "#ff9494",
-                    borderRadius: "0.2rem",
-                  }}
-                  onClick={() => {
-                    likeEvent(data.id);
-                  }}
-                >
-                  {data.event_like_status ? (
-                    <Icon icon="mynaui:heart-solid" className="fs-5" />
-                  ) : (
-                    <Icon icon="mynaui:heart" className="fs-5" />
-                  )}
-                </button>
-                <span className="fw-semibold">{data.likes}</span>
+                <div className="d-flex flex-column">
+                  <span className="font-size-xs gainsboro-color">Publish Date</span>
+                  <div className="w-100 d-flex gap-2 font-size-sm fw-semibold align-items-center">
+                  <Icon icon="solar:calendar-linear" />
+                  <div className="d-flex flex-row align-items-center gap-1">
+                    <span>{formatISODate(data.published_at)}</span>
+                  </div>
+                </div>
+                </div>
               </div>
             </div>
           </div>
@@ -369,7 +354,7 @@ function CategorizedEvents({ categoryId }) {
   );
 }
 
-function DropdownComponent({ data, handleShowModal }) {
+function DropdownComponent({ handleShowModal }) {
   return (
     <>
       <DropDownMenuItem

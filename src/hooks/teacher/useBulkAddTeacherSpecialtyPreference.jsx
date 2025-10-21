@@ -4,30 +4,30 @@ import { useMutation } from "@tanstack/react-query";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 export const useBulkAddTeacherSpecialtyPreference = (handleClose, resetAll) => {
-     return useMutation({
-          mutationFn:bulkAddTeacherSpecialtyPreference,
-          onSuccess:() => {
-              if(handleClose){
-                 handleClose();
-              }
-              if(resetAll){
-                resetAll();
-              }
+  return useMutation({
+    mutationFn: bulkAddTeacherSpecialtyPreference,
+    onSuccess: () => {
+      if (handleClose) {
+        handleClose();
+      }
+      if (resetAll) {
+        resetAll();
+      }
 
-              toast.custom(
-                 <ToastSuccess 
-                    title={"Preference Added"}
-                    description={"Teacher Specialty Preferences Added Successfully"}
-                 />
-              )
-          },
-          onError:() => {
-              toast.custom(
-                 <ToastDanger
-                   title={"Preference Addition Failed"}
-                   description={"Failed to add teacher specialty Preference Due to an error, please check internet connection and try again"}
-                 />
-              )
-          }
-     })
-}
+      toast.custom(
+        <ToastSuccess
+          title={"Preference Added"}
+          description={"Teacher Specialty Preferences Added Successfully"}
+        />
+      );
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};
