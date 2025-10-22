@@ -4,31 +4,34 @@ import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useReverseRegistrationFeeTransaction = (handleClose) => {
-    const queryClient = useQueryClient();
-    return useMutation({
-         mutationFn:(transactionId) => reverseRegistrationFeeTransaction(transactionId),
-         onSuccess:() => {
-            queryClient.invalidateQueries({ queryKey:["registrationFeeTransactions"] })
-            queryClient.invalidateQueries({ queryKey:["registrationFees"]})
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (transactionId) =>
+      reverseRegistrationFeeTransaction(transactionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["registrationFeeTransactions"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["registrationFees"] });
 
-            if(handleClose){
-                handleClose();
-            }
+      if (handleClose) {
+        handleClose();
+      }
 
-            toast.custom(
-                <ToastSuccess 
-                   title={"Reversal Successfull"}
-                   description={"Transaction Reversal Was Successfully Completed"}
-                />
-            )
-         },
-         onError:() => {
-            toast.custom(
-                <ToastDanger 
-                  title={"Reversal Failed"}
-                  description={"Transaction Reversal Was UnSuccessfull Due To An Error"}
-                />
-            )
-         }
-    })
-}
+      toast.custom(
+        <ToastSuccess
+          title={"Reversal Successfull"}
+          description={"Transaction Reversal Was Successfully Completed"}
+        />
+      );
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};

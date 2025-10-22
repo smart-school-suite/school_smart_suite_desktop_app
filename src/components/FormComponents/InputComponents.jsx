@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useImperativeHandle, forwardRef, useRef } from "react";
+import React, { useState, useEffect, useCallback, useImperativeHandle, forwardRef, useRef } from "react";
 import { Icon } from "@iconify/react";
 import InputMask from "react-input-mask";
 import { useSelector } from "react-redux";
@@ -125,10 +125,7 @@ function PhoneNumberInputComponent(
     </div>
   );
 }
-
 export const PhoneNumberInput = forwardRef(PhoneNumberInputComponent);
-
-
 
 export const TextInput = forwardRef(
   ({ onChange, onValidationChange, value, placeholder, validationSchema, className, type = "text" }, ref) => {
@@ -523,27 +520,31 @@ function DateInputComponent(
   },
   ref
 ) {
-  const [displayValue, setDisplayValue] = useState(value || "");
-  const [inputError, setInputError] = useState("");
+  const [displayValue, setDisplayValue] = useState(value || '');
+  const [inputError, setInputError] = useState('');
   const [isInputTouched, setIsInputTouched] = useState(false);
   const darkMode = useSelector((state) => state.theme.darkMode);
-  useEffect(() => {
-    setDisplayValue(value || "");
-  }, [value]);
 
+  // 🔹 Validate input
   const validateInput = useCallback(
     async (currentValue) => {
+      if (!currentValue) {
+        setInputError('');
+        onValidationChange?.(true);
+        return true;
+      }
       if (!validationSchema) {
+        setInputError('');
         onValidationChange?.(true);
         return true;
       }
       try {
         await validationSchema.validate(currentValue);
-        setInputError("");
+        setInputError('');
         onValidationChange?.(true);
         return true;
       } catch (err) {
-        setInputError(err.message);
+        setInputError(err.message || 'Invalid date');
         onValidationChange?.(false);
         return false;
       }
@@ -551,18 +552,23 @@ function DateInputComponent(
     [validationSchema, onValidationChange]
   );
 
+  // 🔹 Sync displayValue with value prop
+  useEffect(() => {
+    if (value !== displayValue) {
+      setDisplayValue(value || '');
+      if (value && !isInputTouched) {
+        setIsInputTouched(true);
+        validateInput(value);
+      }
+    }
+  }, [value, validateInput]); // No displayValue or isInputTouched in dependencies
+
+  // 🔹 Handle input change
   const handleChange = useCallback(
     (e) => {
       const rawValue = e.target.value;
       setDisplayValue(rawValue);
-
-      const unmaskedValue = rawValue.replace(/[^0-9]/g, "");
-
-      if (unmaskedValue.length === 8) {
-        onChange(rawValue);
-      } else {
-        onChange("");
-      }
+      onChange?.(rawValue); // Pass raw value to parent, even if incomplete
 
       if (isInputTouched) {
         validateInput(rawValue);
@@ -571,43 +577,55 @@ function DateInputComponent(
     [onChange, isInputTouched, validateInput]
   );
 
-  const handleFocus = () => {
+  // 🔹 Handle focus
+  const handleFocus = useCallback(() => {
     setIsInputTouched(true);
-    validateInput(displayValue);
-  };
+    if (displayValue) {
+      validateInput(displayValue);
+    }
+  }, [displayValue, validateInput]);
 
-  const handleBlur = () => {
+  // 🔹 Handle blur
+  const handleBlur = useCallback(() => {
     validateInput(displayValue);
-  };
+  }, [displayValue, validateInput]);
 
-  useImperativeHandle(ref, () => ({
-    async triggerValidation() {
-      if (!displayValue) {
-        setIsInputTouched(true);
+  // 🔹 Expose imperative validation
+  useImperativeHandle(
+    ref,
+    () => ({
+      triggerValidation: async () => {
+        if (!displayValue) {
+          setIsInputTouched(true);
+          setInputError('Date is required');
+          onValidationChange?.(false);
+          return false;
+        }
         return validateInput(displayValue);
-      }
-      return validateInput(displayValue);
-    },
-  }));
+      },
+    }),
+    [displayValue, validateInput, onValidationChange]
+  );
 
+  // 🔹 Feedback helpers
   const feedbackContent =
     isInputTouched && inputError
       ? inputError
-      : isInputTouched && !inputError && displayValue && "Looks Good!";
+      : isInputTouched && !inputError && displayValue
+      ? 'Looks Good!'
+      : '';
 
   const feedbackClasses = [
-    "transition-all font-size-sm",
+    'transition-all font-size-sm',
     isInputTouched && inputError
-      ? "invalid-feedback"
+      ? 'invalid-feedback'
       : isInputTouched && !inputError && displayValue
-      ? "valid-feedback"
-      : null,
+      ? 'valid-feedback'
+      : '',
     isInputTouched && (inputError || (!inputError && displayValue))
-      ? "opacity-100"
-      : "opacity-0",
-  ]
-    .filter(Boolean)
-    .join(" ");
+      ? 'opacity-100'
+      : 'opacity-0',
+  ].filter(Boolean).join(' ');
 
   return (
     <div className="input-container">
@@ -622,19 +640,18 @@ function DateInputComponent(
         name={name}
         placeholder={placeholder}
         aria-describedby={`${id}-hint`}
-        className={`form-control date-input-field p-2 font-size-sm ${darkMode && 'dark-mode-input'} ${
-          isInputTouched && inputError
-            ? "is-invalid"
-            : isInputTouched && !inputError && displayValue
-            ? "is-valid"
-            : ""
+        className={`form-control date-input-field p-2 font-size-sm ${
+          darkMode ? 'dark-mode-input' : ''
+        } ${isInputTouched && inputError ? 'is-invalid' : ''} ${
+          isInputTouched && !inputError && displayValue ? 'is-valid' : ''
         }`}
       />
       <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
     </div>
   );
 }
-export const DateInput = forwardRef(DateInputComponent);
+
+export const DateInput = React.memo(forwardRef(DateInputComponent));
 
 export const TimeInput = forwardRef(function TimeInput(
   {

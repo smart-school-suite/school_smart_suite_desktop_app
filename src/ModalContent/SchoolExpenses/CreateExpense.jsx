@@ -69,7 +69,7 @@ function CreateExpense({ handleClose }) {
         )
         return;
     }
-    createExpenses(formData);
+    createExpenses({...formData, expenses_category_id:formData.expenses_category_id.id});
   };
   return (
     <>
@@ -117,6 +117,7 @@ function CreateExpense({ handleClose }) {
             placeholder={'E.g 1,00,000'}
             step="0.01"
             ref={amountRef}
+            value={formData.amount}
           />
         </div>
         <div>
@@ -127,12 +128,13 @@ function CreateExpense({ handleClose }) {
               valueKey={["id"]}
               isLoading={isFetching}
               direction="down"
-              onSelect={(value) => handleStateChange('expenses_category_id', value.id, setFormData)}
+              onSelect={(value) => handleStateChange('expenses_category_id', value, setFormData)}
               onError={(value) => handleStateChange('expenses_category_id', value, setErrors)}
               error={errors.expenses_category_id}
               errorMessage="Expenses Category Required"
               placeholder="Select Category"
               ref={categoryRef}
+              value={formData.expenses_category_id}
             />
         </div>
         <div>
@@ -152,6 +154,7 @@ function CreateExpense({ handleClose }) {
                 }
              })}
               ref={descriptionRef}
+              value={formData.description}
            />
         </div>
       </div>

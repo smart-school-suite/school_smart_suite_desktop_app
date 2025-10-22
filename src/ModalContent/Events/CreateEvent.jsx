@@ -32,6 +32,7 @@ import { useGetSchoolAdmins } from "../../hooks/schoolAdmin/useGetSchoolAdmins";
 import { announcementStatus } from "../../data/data";
 import { useCreateSchoolEvent } from "../../hooks/schoolEvent/useCreateSchoolEvent";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useSelector } from "react-redux";
 function CreateEvent({ handleClose }) {
   const [tab, setTab] = useState("createContent");
   const { data: eventTags, isLoading: isEventTagLoading } = useGetEventTags();
@@ -130,6 +131,7 @@ function CreateContent({
   isEventTagLoading,
   handleClose,
 }) {
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const titleRef = useRef();
   const descriptionRef = useRef();
   const organizerRef = useRef();
@@ -416,7 +418,7 @@ function CreateContent({
           </div>
           <div className="d-flex flex-column h-100" style={{ width: "30%" }}>
             <span className="fs-6 fw-semibold">Event Preview</span>
-            <div className="card p-2 rounded-4 d-flex flex-column gap-2 h-100">
+            <div className={`${darkMode && "dark-bg dark-mode-border dark-mode-text"} card p-2 rounded-4 d-flex flex-column gap-2 h-100`}>
               <div className="w-100" style={{ height: "40%" }}>
                 <img
                   src="./images/event-img-one.jpg"
@@ -445,12 +447,12 @@ function CreateContent({
                     );
                     return (
                       <div
-                        className=" primary-background-50 px-3 py-2 rounded-pill color-primary"
-                        key={item.id}
-                        style={{ fontSize: "0.65rem" }}
-                      >
-                        <span>{matchingTag ? matchingTag.name : "N/A"}</span>
-                      </div>
+                      className={`${darkMode ? "dark-bg-light" : "primary-background-50"} font-size-sm  px-2 py-1 rounded-pill color-primary`}
+                      key={item.id}
+                      style={{ fontSize:"0.7rem" }}
+                    >
+                      <span>{matchingTag ? matchingTag.name : "N/A"}</span>
+                    </div>
                     );
                   })}
                 </div>

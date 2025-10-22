@@ -30,8 +30,10 @@ import { useUpdateSchoolEventContent } from "../../hooks/schoolEvent/useUpdateSc
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useSelector } from "react-redux";
 function UpdateEventContent({ rowData, handleClose }) {
   const { id: schoolEventId } = rowData;
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const {
     data: schoolEventDetails,
     isLoading: isSchoolEventDetailsLoading,
@@ -90,8 +92,10 @@ function UpdateEventContent({ rowData, handleClose }) {
     stateFn((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  const { mutate: updateEventContent, isPending } =
-    useUpdateSchoolEventContent(handleClose, schoolEventId);
+  const { mutate: updateEventContent, isPending } = useUpdateSchoolEventContent(
+    handleClose,
+    schoolEventId
+  );
   const handleUpdateContent = async () => {
     if (optionalValidateObject(isValid) == false) {
       toast.custom(
@@ -380,7 +384,11 @@ function UpdateEventContent({ rowData, handleClose }) {
                 style={{ width: "30%" }}
               >
                 <span className="fs-6 fw-semibold">Event Preview</span>
-                <div className="card p-2 rounded-4 d-flex flex-column gap-2 h-100">
+                <div
+                  className={`${
+                    darkMode && "dark-bg dark-mode-border dark-mode-text"
+                  } card p-2 rounded-4 d-flex flex-column gap-2 h-100`}
+                >
                   <div className="w-100" style={{ height: "40%" }}>
                     <img
                       src="./images/event-img-one.jpg"
@@ -409,9 +417,13 @@ function UpdateEventContent({ rowData, handleClose }) {
                         );
                         return (
                           <div
-                            className=" primary-background-50 px-3 py-2 rounded-pill color-primary"
+                            className={`${
+                              darkMode
+                                ? "dark-bg-light"
+                                : "primary-background-50"
+                            } font-size-sm  px-2 py-1 rounded-pill color-primary`}
                             key={item.id}
-                            style={{ fontSize: "0.65rem" }}
+                            style={{ fontSize: "0.7rem" }}
                           >
                             <span>
                               {matchingTag ? matchingTag.name : "N/A"}

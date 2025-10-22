@@ -512,7 +512,7 @@ export const MultiSelectDropdown = forwardRef(
             {selectedItems.map((item) => (
               <span
                 key={item[valueKey[0]]}
-                className="primary-background-50 color-primary font-size-xs my-0 px-2 py-1 rounded-2"
+                className={`${darkMode ? "dark-bg color-primary" : "primary-background-50 color-primary "} font-size-xs my-0 px-2 py-1 rounded-2`}
                 style={{ height: "50%" }}
               >
                 {item[displayKey[0]]}

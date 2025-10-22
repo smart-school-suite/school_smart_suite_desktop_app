@@ -39,7 +39,7 @@ function AutoGenerateFeeSchedule({ handleClose, rowData }) {
   };
 
   return (
-    <div className="modal-content">
+    <div >
       {toggle === "schedule" ? (
         <Schedule
           setToggle={setToggle}
@@ -103,9 +103,14 @@ function Schedule({
     <div className="d-flex flex-column">
       <div className="d-flex align-items-center justify-content-between mb-2">
         <span className="m-0">Generate Fee Schedule</span>
-        <button className="btn p-0" onClick={handleClose}>
-          <Icon icon="charm:cross" width="22" height="22" />
-        </button>
+        <span
+            className="m-0"
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            <Icon icon="charm:cross" width="22" height="22" />
+          </span>
       </div>
       <div>
         <label htmlFor="installments" className="form-label font-size-sm">
@@ -137,7 +142,7 @@ function Schedule({
       </div>
       <div>
         <label htmlFor="feePercentage" className="form-label font-size-sm">
-          Fee Percentage
+          Fee Percentage (Tip: Fee Percentage Of Tuition Fee That Will Be Paid This Semester)
         </label>
         <NumberInput
           id="feePercentage"
@@ -182,6 +187,7 @@ function SchedulePreview({ handleClose, formData, feeScheduleId, setToggle }) {
   const currencyState = useSelector((state) => state.auth.user);
   const userCurrencySymbol =
     currencyState?.schoolDetails?.school?.country?.currency || "";
+    const darkMode = useSelector((state) => state.theme.darkMode);
   const { mutate: createFeeSchedule, isPending } =
     useCreateFeeScheduleSlots(handleClose);
   useEffect(() => {
@@ -233,9 +239,14 @@ function SchedulePreview({ handleClose, formData, feeScheduleId, setToggle }) {
     <div className="d-flex flex-column gap-3">
       <div className="d-flex flex-row align-items-center justify-content-between">
         <span className="m-0">Fee Schedule</span>
-        <span className="m-0" onClick={handleClose}>
-          <Icon icon="charm:cross" width="22" height="22" />
-        </span>
+        <span
+            className="m-0"
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            <Icon icon="charm:cross" width="22" height="22" />
+          </span>
       </div>
       <div className="d-flex flex-row align-items-center w-100 justify-content-end">
         <button
@@ -254,8 +265,8 @@ function SchedulePreview({ handleClose, formData, feeScheduleId, setToggle }) {
           description={error.response.data.errors.description}
         />
       ) : (
-        <div className="card grades-box rounded-3">
-          <table className="table">
+        <div className={`${darkMode ? 'dark-theme-border dark-bg' : 'bg-white border'}  card grades-box rounded-3`}>
+          <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
             <thead className="grades-thead">
               <tr>
                 <th scope="col">Installment</th>

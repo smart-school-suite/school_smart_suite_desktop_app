@@ -69,7 +69,7 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
 
         return;
     }
-    createAdditionalFee(formData);
+    createAdditionalFee({...formData, additionalfee_category_id:formData.additionalfee_category_id.id});
   };
   return (
     <>
@@ -116,12 +116,13 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
               valueKey={["id"]}
               isLoading={isFetching}
               direction="up"
-              onSelect={(value) => handleStateChange('additionalfee_category_id', value.id, setFormData)}
+              onSelect={(value) => handleStateChange('additionalfee_category_id', value, setFormData)}
               onError={(value) => handleStateChange('additionalfee_category_id', value, setErrors)}
               error={errors.additionalfee_category_id}
               errorMessage="Additional Fee Category Required"
               placeholder="Select Additional Fee Category"
               ref={categoryRef}
+              value={formData.additionalfee_category_id}
             />
         </div>
         <div>
@@ -141,6 +142,7 @@ function CreateStudentAdditionalFee({ handleClose, rowData }) {
                }
             })}
             ref={reasonRef}
+            value={formData.reason}
           />
         </div>
       </div>

@@ -60,7 +60,7 @@ function PayStudentTuitionFee({ handleClose, rowData }) {
        )
        return;
     }
-    payTuitionFee(formData);
+    payTuitionFee({...formData, payment_method:formData.payment_method.value});
   };
   return (
     <>
@@ -112,11 +112,12 @@ function PayStudentTuitionFee({ handleClose, rowData }) {
           displayKey={["label"]}
           direction="down"
           onError={(value) => handleStateChange("payment_method", value, setErrors)}
-          onSelect={(value) => handleStateChange("payment_method", value.value, setFormData)}
+          onSelect={(value) => handleStateChange("payment_method", value, setFormData)}
           error={errors.payment_method}
           errorMessage="Payment Method Required"
           placeholder="Select Payment Method"
           ref={methodRef}
+          value={formData.payment_method}
         />
       </div>
       <div className="mt-4">
