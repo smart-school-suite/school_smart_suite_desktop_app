@@ -50,3 +50,8 @@ export const deactivateStudentBatch = async (batchId) => {
   const response = await axiosInstance.post(`student-batch/${batchId}/deactivate`);
   return response.data;
 };
+
+export const getStudentBatchDetails = async (batchId) => {
+   const response = await axiosInstance.get(`student-batch/details/${batchId}`);
+   return response.data;
+}

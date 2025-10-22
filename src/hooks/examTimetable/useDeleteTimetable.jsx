@@ -1,27 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bulkDeleteStudent } from "../../services/Student";
+import { deleteTimetable } from "../../services/examTimetable";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-export const useBulkDeleteStudent = (handleClose, resetAll) => {
+import ToastDanger from "../../components/Toast/ToastDanger";
+export const useDeleteTimetable = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: bulkDeleteStudent,
+    mutationFn: deleteTimetable,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["students"] });
-
+      queryClient.invalidateQueries({ queryKey: ["exams"] });
       if (handleClose) {
         handleClose();
       }
 
-      if (resetAll) {
-        resetAll();
-      }
-
       toast.custom(
         <ToastSuccess
-          title={"Delete Successful"}
-          description={"Student Deleted Successfully"}
+          title={"Delete Successfull"}
+          description={"Exam Timetable Deleted Successfully"}
         />
       );
     },

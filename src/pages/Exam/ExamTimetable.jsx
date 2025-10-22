@@ -1,9 +1,6 @@
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import Table from "../../components/Tables/Tables";
 import { ExamTimetableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import CreateTimetable from "../../ModalContent/ExamTimetable/CreateTimetable";
-import UpdateTimetable from "../../ModalContent/ExamTimetable/UpdateTimetable";
 import DeleteTimetable from "../../ModalContent/ExamTimetable/DeleteTimetable";
 import ViewTimetable from "../../ModalContent/ExamTimetable/ViewTimetable";
 import { useGetExams } from "../../hooks/exam/useGetExams";
@@ -170,19 +167,6 @@ function DropdownComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(CreateTimetable, "xl", false)}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Create Timetable</span>
-              <CreateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
         {/* <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -196,7 +180,7 @@ function DropdownComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>*/}
-        {/*<DropDownMenuItem
+        <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -208,7 +192,7 @@ function DropdownComponent(props) {
               <DeleteIcon />
             </div>
           </div>
-        </DropDownMenuItem> */}
+        </DropDownMenuItem>
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"

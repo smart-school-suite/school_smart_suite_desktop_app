@@ -72,7 +72,7 @@ function ExamResults() {
               title={error.response.data.errors.title}
               description={error.response.data.errors.description}
             />
-          ) : examResults?.data?.length > 0 ? (
+          ) : (
             <>
               <Table
                 colDefs={ExamResultsTableConfig({ DropdownComponent })}
@@ -107,8 +107,6 @@ function ExamResults() {
               />
               }
             </>
-          ) : (
-            <div className="alert alert-warning">No Exam Results Added</div>
           )}
         </div>
       </main>

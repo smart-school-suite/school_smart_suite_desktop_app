@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetParentDetails = (parentId) => {
     return useQuery({
-         queryKey:["parentDetails"],
+         queryKey:["parentDetails", parentId],
          queryFn:() => getParentDetails(parentId)
     })
 }

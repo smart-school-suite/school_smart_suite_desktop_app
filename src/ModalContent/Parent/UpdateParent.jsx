@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useUpdateParent } from "../../hooks/parent/useUpdateParent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import {
   PhoneNumberInput,
@@ -20,16 +20,18 @@ import {
 } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { useGetParentDetails } from "../../hooks/parent/useGetParentDetails";
 function UpdateParent({ handleClose, rowData }) {
+  const { id: parentId } = rowData;
+
   const {
-    id: parentId,
-    guardian_name,
-    email,
-    phone_one,
-    phone_two,
-    address,
-    occupation,
-  } = rowData;
+    data: parentDetails,
+    isLoading: isParentDetailsLoading,
+    error: parentDetailsError,
+  } = useGetParentDetails(parentId);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -47,6 +49,24 @@ function UpdateParent({ handleClose, rowData }) {
     phone_two: "",
     address: "",
   });
+
+  useEffect(() => {
+    if (parentDetails?.data) {
+      setFormData((prev) => ({
+        ...prev,
+        name: parentDetails?.data[0].name || "",
+        email: parentDetails?.data[0].email || "",
+        phone_one: parentDetails?.data[0].phone_one || "",
+        phone_two: parentDetails?.data[0].phone_two || "",
+        address: parentDetails?.data[0].address || "",
+        relationship_to_student:
+          { name: parentDetails?.data[0].relationship_to_student } || "",
+        preferred_language:
+          { name: parentDetails?.data[0].preferred_language } || "",
+      }));
+    }
+  }, [isParentDetailsLoading, setFormData]);
+
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
@@ -73,7 +93,14 @@ function UpdateParent({ handleClose, rowData }) {
       );
       return;
     }
-    updateParent({ parentId: parentId, updateData: formData });
+    updateParent({
+      parentId: parentId,
+      updateData: {
+        ...formData,
+        relationship_to_student: formData.relationship_to_student.name,
+        preferred_language: formData.preferred_language.name,
+      },
+    });
   };
   return (
     <>
@@ -89,174 +116,170 @@ function UpdateParent({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        <div>
-          <TextInput
-            type="name"
-            placeholder={guardian_name}
-            value={formData.name}
-            onChange={(value) => handleStateChange("name", value, setFormData)}
-            onValidationChange={(value) =>
-              handleStateChange("name", value, setIsvalid)
-            }
-            validationSchema={nameSchema({
-              min: 3,
-              max: 150,
-              required: false,
-              messages: {
-                min: "Guardian Name Should Be Atleast 3 Characters",
-                max: "Guardian Name Should Not Exceed 150 Characters",
-              },
-            })}
-          />
-        </div>
-        <div>
-          <label htmlFor="email" className="font-size-sm">
-            E-mail
-          </label>
-          <TextInput
-            onChange={(value) => handleStateChange("email", value, setFormData)}
-            onValidationChange={(value) =>
-              handleStateChange("email", value, setIsvalid)
-            }
-            validationSchema={emailValidationSchema({
-              required: false,
-            })}
-            placeholder={email}
-            type="email"
-            value={formData.email}
-          />
-        </div>
-        <div className="d-flex flex-row align-items-center gap-2 w-100">
-          <div className="w-50">
-            <label htmlFor="contactOne" className="font-size-sm">
-              Contact One
-            </label>
-            <PhoneNumberInput
-              onChange={(value) =>
-                handleStateChange("phone_one", value, setFormData)
-              }
-              value={formData.phone_one}
-              onValidationChange={(value) =>
-                handleStateChange("phone_one", value, setIsvalid)
-              }
-              validationSchema={phoneValidationSchema({
-                optional: true,
-                prefixes: ["6", "2"],
-              })}
-              placeholder={phone_one || "6XX-XXX-XXX"}
-            />
+        {isParentDetailsLoading ? (
+          <div className="d-flex flex-column w-100 gap-3">
+            {[...Array(6)].map((_, index) => (
+              <div className="d-flex flex-column gap-2 w-100" key={index}>
+                <RectangleSkeleton width="25%" height="1dvh" />
+                <RectangleSkeleton width="100%" height="5dvh" />
+              </div>
+            ))}
           </div>
-          <div className="w-50">
-            <label htmlFor="contactTwo" className="font-size-sm">
-              Contact Two
-            </label>
-            <PhoneNumberInput
-              onChange={(value) =>
-                handleStateChange("phone_two", value, setFormData)
-              }
-              value={formData.phone_one}
-              onValidationChange={(value) =>
-                handleStateChange("phone_two", value, setIsvalid)
-              }
-              validationSchema={phoneValidationSchema({
-                optional: true,
-                prefixes: ["6", "2"],
-              })}
-              placeholder={phone_two || "6XX-XXX-XXX"}
-            />
-          </div>
-        </div>
-        <div className="d-flex flex-row align-items-center gap-2 w-100">
-          <div className="w-50">
-            <label htmlFor="address" className="font-size-sm">
-              Address
-            </label>
-            <TextInput
-              type="address"
-              onChange={(value) =>
-                handleStateChange("address", value, setFormData)
-              }
-              onValidationChange={(value) =>
-                handleStateChange("address", value, setIsvalid)
-              }
-              validationSchema={addressSchema({
-                required: true,
-              })}
-              placeholder={address}
-              value={formData.address}
-            />
-          </div>
-          <div className="w-50">
-            <label htmlFor="occupation" className="font-size-sm">
-              Occupation
-            </label>
-            <TextInput
-              type="occupation"
-              onChange={(value) =>
-                handleStateChange("occupation", value, setFormData)
-              }
-              onValidationChange={(value) =>
-                handleStateChange("occupation", value, setIsvalid)
-              }
-              validationSchema={nameSchema({
-                min: 3,
-                max: 150,
-                required: false,
-                message: {
-                  min: "Guardian Occupation Should Be Atleast 3 Characters",
-                  max: "Guardian Occupation Should Not Exceed 150 Characters",
-                },
-              })}
-              placeholder={occupation || "Enter Occupation"}
-              value={formData.occupation}
-            />
-          </div>
-        </div>
-        <div>
-          <label htmlFor="relationshipToStudent" className="font-size-sm">
-            RelationShip To Student
-          </label>
-          <CustomDropdown
-            data={guardianTypes}
-            displayKey={["name"]}
-            valueKey={["name"]}
-            direction="up"
-            onSelect={(value) =>
-              handleStateChange(
-                "relationship_to_student",
-                value.name,
-                setFormData
-              )
+        ) : parentDetailsError ? (
+          <NotFoundError
+            title={parentDetailsError?.response?.data?.errors?.title}
+            description={
+              parentDetailsError?.response?.data?.errors?.description
             }
-            placeholder="Select Relationship To Student"
-            option={true}
-          />
-        </div>
-        <div>
-          <label htmlFor="preferredLanguage" className="font-size-sm">
-            Preferred Language of Communication
-          </label>
-          <CustomDropdown
-            data={languages}
-            displayKey={["name"]}
-            valueKey={["name"]}
-            direction="up"
-            onSelect={(value) =>
-              handleStateChange("preferred_language", value.name, setFormData)
-            }
-            placeholder="Select Preferred Language"
-            optional={true}
-          />
-        </div>
-        <div className="mt-3">
-          <button
-            className="border-none rounded-3 primary-background w-100 text-white font-size-sm px-3 py-2"
-            onClick={handleUpdateParent}
-            disabled={isPending}
-          >
-            {isPending ? <SingleSpinner /> : "Update Guardian"}
-          </button>
-        </div>
+          ></NotFoundError>
+        ) : (
+          <div>
+            <div>
+              <TextInput
+                type="name"
+                value={formData.name}
+                onChange={(value) =>
+                  handleStateChange("name", value, setFormData)
+                }
+                onValidationChange={(value) =>
+                  handleStateChange("name", value, setIsvalid)
+                }
+                validationSchema={nameSchema({
+                  min: 3,
+                  max: 150,
+                  required: false,
+                  messages: {
+                    min: "Guardian Name Should Be Atleast 3 Characters",
+                    max: "Guardian Name Should Not Exceed 150 Characters",
+                  },
+                })}
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="font-size-sm">
+                E-mail
+              </label>
+              <TextInput
+                onChange={(value) =>
+                  handleStateChange("email", value, setFormData)
+                }
+                onValidationChange={(value) =>
+                  handleStateChange("email", value, setIsvalid)
+                }
+                validationSchema={emailValidationSchema({
+                  required: false,
+                })}
+                type="email"
+                value={formData.email}
+              />
+            </div>
+            <div className="d-flex flex-row align-items-center gap-2 w-100">
+              <div className="w-50">
+                <label htmlFor="contactOne" className="font-size-sm">
+                  Contact One
+                </label>
+                <PhoneNumberInput
+                  onChange={(value) =>
+                    handleStateChange("phone_one", value, setFormData)
+                  }
+                  value={formData.phone_one}
+                  onValidationChange={(value) =>
+                    handleStateChange("phone_one", value, setIsvalid)
+                  }
+                  validationSchema={phoneValidationSchema({
+                    optional: true,
+                    prefixes: ["6", "2"],
+                  })}
+                />
+              </div>
+              <div className="w-50">
+                <label htmlFor="contactTwo" className="font-size-sm">
+                  Contact Two
+                </label>
+                <PhoneNumberInput
+                  onChange={(value) =>
+                    handleStateChange("phone_two", value, setFormData)
+                  }
+                  value={formData.phone_one}
+                  onValidationChange={(value) =>
+                    handleStateChange("phone_two", value, setIsvalid)
+                  }
+                  validationSchema={phoneValidationSchema({
+                    optional: true,
+                    prefixes: ["6", "2"],
+                  })}
+                />
+              </div>
+            </div>
+            <div className="d-flex flex-row align-items-center gap-2 w-100">
+              <div className="w-100">
+                <label htmlFor="address" className="font-size-sm">
+                  Address
+                </label>
+                <TextInput
+                  type="address"
+                  onChange={(value) =>
+                    handleStateChange("address", value, setFormData)
+                  }
+                  onValidationChange={(value) =>
+                    handleStateChange("address", value, setIsvalid)
+                  }
+                  validationSchema={addressSchema({
+                    required: true,
+                  })}
+                  value={formData.address}
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="relationshipToStudent" className="font-size-sm">
+                RelationShip To Student
+              </label>
+              <CustomDropdown
+                data={guardianTypes}
+                displayKey={["name"]}
+                valueKey={["name"]}
+                direction="up"
+                onSelect={(value) =>
+                  handleStateChange(
+                    "relationship_to_student",
+                    value,
+                    setFormData
+                  )
+                }
+                placeholder="Select Relationship To Student"
+                option={true}
+                value={formData.relationship_to_student}
+              />
+            </div>
+            <div>
+              <label htmlFor="preferredLanguage" className="font-size-sm">
+                Preferred Language of Communication
+              </label>
+              <CustomDropdown
+                data={languages}
+                displayKey={["name"]}
+                valueKey={["name"]}
+                direction="up"
+                onSelect={(value) =>
+                  handleStateChange("preferred_language", value, setFormData)
+                }
+                placeholder="Select Preferred Language"
+                optional={true}
+                value={formData.preferred_language}
+              />
+            </div>
+            <div className="mt-3">
+              <button
+                className="border-none rounded-3 primary-background w-100 text-white font-size-sm px-3 py-2"
+                onClick={handleUpdateParent}
+                disabled={isPending}
+              >
+                {isPending ? <SingleSpinner /> : "Update Guardian"}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

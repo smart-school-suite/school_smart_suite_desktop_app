@@ -18,6 +18,8 @@ import { useCreateExamTimetable } from "../../hooks/examTimetable/useCreateExamT
 import { motion } from "framer-motion";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useSelector } from "react-redux";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 function AutoGenerateTimetable({ handleClose, rowData }) {
   const [isActive, setIsActive] = useState("timetableConfig");
   const [formData, setFormData] = useState({
@@ -252,8 +254,11 @@ function TimetablePreview({
   rowData,
 }) {
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const { mutateAsync: autoGenTimetable, isPending: isGenerating } =
-    useAutoGenExamTimetable();
+  const {
+    mutateAsync: autoGenTimetable,
+    isPending: isGenerating,
+    error: generateError,
+  } = useAutoGenExamTimetable();
   const { mutate: createTimetable, isPending: isCreating } =
     useCreateExamTimetable(handleClose);
   const [genTimetable, setGenTimetable] = useState([]);
@@ -287,110 +292,130 @@ function TimetablePreview({
           <Icon icon="charm:cross" width="22" height="22" />
         </span>
       </div>
-      <div className="d-flex flex-row align-items-center justify-content-end my-2 gap-2">
-        <button
-          className="border-none rounded-3 px-3 py-2 font-size-sm d-flex gap-2 align-items-center"
-          onClick={() => handleGenerateTimetable()}
-          disabled={isGenerating || isCreating}
-        >
-          <div className="d-flex flex-row align-items-center w-100 gap-2 justify-content-center">
-            <GenerateIcon />
-            <span> Regenerate</span>
+      {isGenerating ? (
+        <RectangleSkeleton height="70dvh" width="100%" />
+      ) : generateError ? (
+        <NotFoundError
+          title={generateError?.response?.data?.errors?.title}
+          description={generateError?.response?.data?.errors?.description}
+        ></NotFoundError>
+      ) : (
+        <div>
+          <div className="d-flex flex-row align-items-center justify-content-end my-2 gap-2">
+            <button
+              className="border-none rounded-3 px-3 py-2 font-size-sm d-flex gap-2 align-items-center"
+              onClick={() => handleGenerateTimetable()}
+              disabled={isGenerating || isCreating}
+            >
+              <div className="d-flex flex-row align-items-center w-100 gap-2 justify-content-center">
+                <GenerateIcon />
+                <span> Regenerate</span>
+              </div>
+            </button>
+            <button
+              className="font-size-sm border-none rounded-2 px-3 py-2 primary-background text-white"
+              disabled={isCreating || isGenerating}
+              onClick={() => {
+                const slots = flattenCourseData(genTimetable);
+                const payload = slots.map((items) => ({
+                  date: items.exam_date,
+                  course_id: items.course_id,
+                  start_time: convertToMySQLTimeHHMM(items.start_time),
+                  end_time: convertToMySQLTimeHHMM(items.end_time),
+                  exam_id: rowData.id,
+                  level_id: rowData.level_id,
+                  student_batch_id: rowData.batchId,
+                  school_year: rowData.school_year,
+                  specialty_id: rowData.specialty_id,
+                }));
+                createTimetable({
+                  examId: rowData.id,
+                  timetableData: { entries: payload },
+                });
+              }}
+            >
+              {isCreating ? <SingleSpinner /> : <span>Create Timetable</span>}
+            </button>
           </div>
-        </button>
-        <button
-          className="font-size-sm border-none rounded-2 px-3 py-2 primary-background text-white"
-          disabled={isCreating || isGenerating}
-          onClick={() => {
-            const slots = flattenCourseData(genTimetable);
-            const payload = slots.map((items) => ({
-              date: items.exam_date,
-              course_id: items.course_id,
-              start_time: convertToMySQLTimeHHMM(items.start_time),
-              end_time: convertToMySQLTimeHHMM(items.end_time),
-              exam_id: rowData.id,
-              level_id: rowData.level_id,
-              student_batch_id: rowData.batchId,
-              school_year: rowData.school_year,
-              specialty_id: rowData.specialty_id,
-            }));
-            createTimetable({
-              examId: rowData.id,
-              timetableData: { entries: payload },
-            });
-          }}
-        >
-          {isCreating ? <SingleSpinner /> : <span>Create Timetable</span>}
-        </button>
-      </div>
-      <div className={`${darkMode ? 'dark-theme-border dark-bg' : 'bg-white border'}  card grades-box rounded-3`}>
-          
-        {isGenerating ? (
-          <SingleSpinner />
-        ) : (
-          <table className={`${darkMode ? 'table-dark' : null} table-responsive table`}>
-            <thead>
-              <tr>
-                <th className="font-size-sm">Day</th>
-                <th className="font-size-sm">Courses</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(genTimetable).map(([date, courses], index) => (
-                <motion.tr
-                  key={date}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <td className="font-size-sm" style={{ width: "10%" }}>
-                    {date}
-                  </td>
-                  <td style={{ width: "90%" }}>
-                    <div className="d-flex flex-row align-items-center gap-2 w-100 flex-wrap">
-                      {courses.map((course, courseIndex) => (
-                        <motion.div
-                          key={course.course_code}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{
-                            duration: 0.4,
-                            delay: index * 0.1 + courseIndex * 0.05,
-                          }}
-                          style={{ width: "32%" }}
-                        >
-                          <SlotCard
-                            courseTitle={course.course_name}
-                            courseCode={course.course_code}
-                            startTime={course.start_time}
-                            endTime={course.end_time}
-                            duration={course.duration}
-                            courseCredit={course.course_credit}
-                          />
-                        </motion.div>
-                      ))}
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-      <div className="d-flex flex-row justify-content-start mt-3">
-        <button
-          className="d-flex flex-row align-items-center gap-2 font-size-sm border-none transparent-bg color-primary"
-          onClick={() => {
-            handleToggleActive("timetableConfig");
-          }}
-          disabled={isGenerating || isCreating}
-        >
-          <span>
-            <Icon icon="ion:arrow-back" />
-          </span>
-          <span>Back</span>
-        </button>
-      </div>
+          <div
+            className={`${
+              darkMode ? "dark-theme-border dark-bg" : "bg-white border"
+            }  card grades-box rounded-3`}
+          >
+            {isGenerating ? (
+              <SingleSpinner />
+            ) : (
+              <table
+                className={`${
+                  darkMode ? "table-dark" : null
+                } table-responsive table`}
+              >
+                <thead>
+                  <tr>
+                    <th className="font-size-sm">Day</th>
+                    <th className="font-size-sm">Courses</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(genTimetable).map(
+                    ([date, courses], index) => (
+                      <motion.tr
+                        key={date}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                      >
+                        <td className="font-size-sm" style={{ width: "10%" }}>
+                          {date}
+                        </td>
+                        <td style={{ width: "90%" }}>
+                          <div className="d-flex flex-row align-items-center gap-2 w-100 flex-wrap">
+                            {courses.map((course, courseIndex) => (
+                              <motion.div
+                                key={course.course_code}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{
+                                  duration: 0.4,
+                                  delay: index * 0.1 + courseIndex * 0.05,
+                                }}
+                                style={{ width: "32%" }}
+                              >
+                                <SlotCard
+                                  courseTitle={course.course_name}
+                                  courseCode={course.course_code}
+                                  startTime={course.start_time}
+                                  endTime={course.end_time}
+                                  duration={course.duration}
+                                  courseCredit={course.course_credit}
+                                />
+                              </motion.div>
+                            ))}
+                          </div>
+                        </td>
+                      </motion.tr>
+                    )
+                  )}
+                </tbody>
+              </table>
+            )}
+          </div>
+          <div className="d-flex flex-row justify-content-start mt-3">
+            <button
+              className="d-flex flex-row align-items-center gap-2 font-size-sm border-none transparent-bg color-primary"
+              onClick={() => {
+                handleToggleActive("timetableConfig");
+              }}
+              disabled={isGenerating || isCreating}
+            >
+              <span>
+                <Icon icon="ion:arrow-back" />
+              </span>
+              <span>Back</span>
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -406,7 +431,13 @@ function SlotCard({
   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
-      <div className={`${darkMode ? 'dark-bg gainsboro-color' : 'primary-background-50 primary-color-dark'} card p-2 w-100 rounded-3 d-flex flex-column gap-5  border-none `}>
+      <div
+        className={`${
+          darkMode
+            ? "dark-bg gainsboro-color"
+            : "primary-background-50 primary-color-dark"
+        } card p-2 w-100 rounded-3 d-flex flex-column gap-5  border-none `}
+      >
         <div className="font-size-sm d-flex flex-column gap-1">
           <div className="d-flex flex-row align-items-center w-100 justify-content-between">
             <span className="fw-semibold">{courseTitle}</span>

@@ -26,13 +26,11 @@ export const useBulkReinstateDropoutStudent = (handleClose, resetAll) => {
         />
       );
     },
-    onError: () => {
+    onError: (error) => {
       toast.custom(
         <ToastDanger
-          title={"Failed Mark As Dropout"}
-          description={
-            "Failed to Mark Student As Dropout Please Try Again Later"
-          }
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
         />
       );
     },

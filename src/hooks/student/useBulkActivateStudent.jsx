@@ -24,13 +24,11 @@ export const useBulkActivateStudent = (handleClose, resetAll) => {
         />
       );
     },
-    onError: () => {
+    onError: (error) => {
       toast.custom(
         <ToastDanger
-          title={"Activation Failed"}
-          description={
-            "Failed to activate student due to an error please check internet connection and try again"
-          }
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
         />
       );
     },

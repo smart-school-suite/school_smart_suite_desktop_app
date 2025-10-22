@@ -5,29 +5,29 @@ import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 
 export const useCreateStudentBatch = (handleClose) => {
-    const queryClient = useQueryClient();
-    return useMutation({
-         mutationFn:createStudentBatch,
-         onSuccess:() => {
-            queryClient.invalidateQueries({ queryKey:["studentBatches"] })
-            if(handleClose){
-                handleClose();
-            }
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createStudentBatch,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["studentBatches"] });
+      if (handleClose) {
+        handleClose();
+      }
 
-            toast.custom(
-                <ToastSuccess 
-                   title={"Batch Created"}
-                   description={"Student Batch Created Successfully"}
-                />
-            )
-         },
-         onError:() => {
-            toast.custom(
-                <ToastDanger 
-                  title={"Batch Creation Failed"}
-                  description={"Failed to Create Student Batch"}
-                 />
-            )
-         }
-    })
-}
+      toast.custom(
+        <ToastSuccess
+          title={"Batch Created"}
+          description={"Student Batch Created Successfully"}
+        />
+      );
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};
