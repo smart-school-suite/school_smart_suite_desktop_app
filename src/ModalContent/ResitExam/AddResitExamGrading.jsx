@@ -9,15 +9,22 @@ import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/use
 import ToastWarning from "../../components/Toast/ToastWarning";
 import toast from "react-hot-toast";
 import { allFieldsValid } from "../../utils/functions";
-function ResitExamGrading({ handleClose, rowData }){
- const { id: examId } = rowData;
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
+function ResitExamGrading({ handleClose, rowData }) {
+  const { id: examId } = rowData;
   const gradeConfigRef = useRef();
   const [errors, setErrors] = useState({
     grade_config: "",
   });
-  const { data: schoolGradesConfig, isLoading } = useGetSchoolGradeCategories();
+  const {
+    data: schoolGradesConfig,
+    isLoading,
+    error,
+  } = useGetSchoolGradeCategories();
   const [gradeConfig, setGradeConfig] = useState(null);
-  const { mutate: addExamGrading, isPending } = useAddResitExamGrading(handleClose);
+  const { mutate: addExamGrading, isPending } =
+    useAddResitExamGrading(handleClose);
   const handlePrevalidation = async () => {
     const gradeConfig = await gradeConfigRef.current.triggerValidation();
     return {
@@ -37,44 +44,56 @@ function ResitExamGrading({ handleClose, rowData }){
       );
       return;
     }
-    addExamGrading({ resitExamId:examId, gradesConfigId: gradeConfig });
+    addExamGrading({ resitExamId: examId, gradesConfigId: gradeConfig.id });
   };
-  if (isLoading) {
-    return <Pageloaderspinner />;
-  }
-
-    return(
-        <>
+  return (
+    <>
       <div className="d-flex flex-row align-items-center justify-content-between mb-3">
         <span className="m-0">Add Exam Grading</span>
         <span className="m-0" onClick={handleClose}>
           <Icon icon="charm:cross" width="22" height="22" />
         </span>
       </div>
-      <div className="modalContainer">
-        <div className="w-100 my-2">
-          <CustomDropdown
-            data={
-              schoolGradesConfig?.data
-                ? schoolGradesConfig?.data.filter(
-                    (items) => items.max_score !== null
-                  )
-                : []
-            }
-            isLoading={isLoading}
-            placeholder={"Select Grade Config"}
-            displayKey={["grade_title", "max_score"]}
-            valueKey={["id"]}
-            errorMessage={"Grade Config Required"}
-            onSelect={(value) => setGradeConfig(value.id)}
-            ref={gradeConfigRef}
-            onError={(value) =>
-              setErrors((prev) => ({ ...prev, grade_config: value }))
-            }
-            error={errors.grade_config}
-          />
+      {isLoading ? (
+        <div className="d-flex flex-column w-100 gap-3">
+          {[...Array(1)].map((_, index) => (
+            <div className="d-flex flex-column gap-2 w-100" key={index}>
+              <RectangleSkeleton width="25%" height="1dvh" />
+              <RectangleSkeleton width="100%" height="5dvh" />
+            </div>
+          ))}
         </div>
-      </div>
+      ) : error ? (
+        <NotFoundError
+          title={error?.response?.data?.errors?.title}
+          description={error?.response?.data?.errors?.description}
+        ></NotFoundError>
+      ) : (
+        <div className="modalContainer">
+          <div className="w-100 my-2">
+            <CustomDropdown
+              data={
+                schoolGradesConfig?.data
+                  ? schoolGradesConfig?.data.filter(
+                      (items) => items.max_score !== null
+                    )
+                  : []
+              }
+              isLoading={isLoading}
+              placeholder={"Select Grade Config"}
+              displayKey={["grade_title", "max_score"]}
+              valueKey={["id"]}
+              errorMessage={"Grade Config Required"}
+              onSelect={(value) => setGradeConfig(value)}
+              ref={gradeConfigRef}
+              onError={(value) =>
+                setErrors((prev) => ({ ...prev, grade_config: value }))
+              }
+              error={errors.grade_config}
+            />
+          </div>
+        </div>
+      )}
       <button
         className=" w-100 p-2 font-size-sm px-3 primary-background border-none rounded-3 text-white"
         onClick={handleSaveChanges}
@@ -82,8 +101,8 @@ function ResitExamGrading({ handleClose, rowData }){
       >
         {isPending ? <SingleSpinner /> : "Save Changes"}
       </button>
-        </>
-    )
+    </>
+  );
 }
 
 export default ResitExamGrading;

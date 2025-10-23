@@ -1,4 +1,3 @@
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { useGetExamCandidates } from "../../hooks/examCandidate/useGetExamCandidates";
 import Table from "../../components/Tables/Tables";
 import { ExamCandidateTableConfig } from "../../ComponentConfig/AgGridTableConfig";

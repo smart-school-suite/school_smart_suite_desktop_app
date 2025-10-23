@@ -25,13 +25,11 @@ export const useBulkDeleteParents = (resetAll, handleClose) => {
         />
       );
     },
-    onError: () => {
+    onError: (error) => {
       toast.custom(
         <ToastDanger
-          title={"Delete Failed"}
-          description={
-            "Failed to delete Parent Due to an error please try again"
-          }
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
         />
       );
     },

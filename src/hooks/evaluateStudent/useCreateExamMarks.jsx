@@ -1,8 +1,8 @@
 import { createExamMark } from "../../services/evaluateStudent";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastWarning from "../../components/Toast/ToastWarning";
+import toast from "react-hot-toast";
 import { resetExamScoreState } from "../../Slices/Asynslices/ExamScoreSlice";
 import { useDispatch } from "react-redux";
 export const useCreateExamMarks = (handleClose) => {

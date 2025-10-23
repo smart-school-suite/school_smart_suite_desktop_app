@@ -1,4 +1,3 @@
-import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { formatDate } from "../../utils/functions";
 import { useGetExamDetails } from "../../hooks/exam/useGetExamDetails";

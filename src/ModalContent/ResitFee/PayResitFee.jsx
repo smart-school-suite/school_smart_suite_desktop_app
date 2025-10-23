@@ -60,7 +60,7 @@ function PayStudentResitFee({ rowData, handleClose }) {
       );
       return;
     }
-    payResitFee(formData);
+    payResitFee({...formData, payment_method:formData.payment_method.value});
   };
   return (
     <>
@@ -109,12 +109,13 @@ function PayStudentResitFee({ rowData, handleClose }) {
               direction="down"
               onError={(value) => handleStateChange("payment_method", value, setErrors)}
               onSelect={(value) =>
-                handleStateChange("payment_method", value.value, setFormData)
+                handleStateChange("payment_method", value, setFormData)
               }
               error={errors.payment_method}
               errorMessage="Payment Method Required"
               placeholder="Select Payment Method"
               ref={methodRef}
+              value={formData.payment_method}
             />
           </div>
           <div className="mt-3 d-flex gap-2">

@@ -3,7 +3,7 @@ import { getResitEvaluationHelperData } from "../../services/resitEvaluation";
 
 export const useGetResitEvaluationHelperData = (resitExamId, candidateId) => {
     return useQuery({
-         queryKey:["resitEvaluationHelperData"],
+         queryKey:["resitEvaluationHelperData", candidateId],
          queryFn:() => getResitEvaluationHelperData(resitExamId, candidateId)
     })
 } 

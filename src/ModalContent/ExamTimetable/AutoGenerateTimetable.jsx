@@ -342,10 +342,7 @@ function TimetablePreview({
               darkMode ? "dark-theme-border dark-bg" : "bg-white border"
             }  card grades-box rounded-3`}
           >
-            {isGenerating ? (
-              <SingleSpinner />
-            ) : (
-              <table
+            <table
                 className={`${
                   darkMode ? "table-dark" : null
                 } table-responsive table`}
@@ -398,7 +395,6 @@ function TimetablePreview({
                   )}
                 </tbody>
               </table>
-            )}
           </div>
           <div className="d-flex flex-row justify-content-start mt-3">
             <button

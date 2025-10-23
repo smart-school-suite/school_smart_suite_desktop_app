@@ -4,30 +4,31 @@ import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 export const useCreateResitTimetable = (handleClose) => {
-    const queryClient = useQueryClient();
-    return useMutation({
-         mutationFn:({resitExamId, createData}) => createResitTimetable({resitExamId, createData}),
-         onSuccess:() => {
-             queryClient.invalidateQueries({ queryKey:["resitExams"] })
-             
-             if(handleClose){
-                handleClose();
-             }
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ resitExamId, createData }) =>
+      createResitTimetable({ resitExamId, createData }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["resitExams"] });
 
-             toast.custom(
-                <ToastSuccess 
-                  title={"Timetable Created"}
-                  description={"Timetable Created Successfully"}
-                />
-             )
-         },
-         onError:() => {
-             toast.custom(
-                <ToastDanger 
-                  title={"Failed to Create Timetable"}
-                  description={"Failed to Create Timetable due to an error please try again"}
-                />
-             )
-         }
-    })
-}
+      if (handleClose) {
+        handleClose();
+      }
+
+      toast.custom(
+        <ToastSuccess
+          title={"Timetable Created"}
+          description={"Timetable Created Successfully"}
+        />
+      );
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};

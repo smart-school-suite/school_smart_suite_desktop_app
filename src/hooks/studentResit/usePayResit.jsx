@@ -4,31 +4,31 @@ import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 export const usePayResit = (handleClose) => {
-    const queryClient = useQueryClient();
-    return useMutation({
-         mutationFn:payResit,
-         onSuccess:() => {
-            queryClient.invalidateQueries({ queryKey:["studentResits"] })
-            queryClient.invalidateQueries({ queryKey:["resitTransactions"] })
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: payResit,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["studentResits"] });
+      queryClient.invalidateQueries({ queryKey: ["resitTransactions"] });
 
-            if(handleClose){
-                handleClose();
-            }
+      if (handleClose) {
+        handleClose();
+      }
 
-            toast.custom(
-                <ToastSuccess 
-                  title={"Transaction Successfull"}
-                  description={"Transaction Completed Successfully"}
-                />
-            )
-         },
-         onError:() => {
-             toast.custom(
-                <ToastDanger
-                  title={"Transaction Failed"}
-                  description={"Transaction Failed Due to an error please try again later"}
-                />
-             )
-         }
-    })
-}
+      toast.custom(
+        <ToastSuccess
+          title={"Transaction Successfull"}
+          description={"Transaction Completed Successfully"}
+        />
+      );
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};

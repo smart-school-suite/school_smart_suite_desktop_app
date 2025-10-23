@@ -61,6 +61,7 @@ function UpdateExam({ handleClose, rowData }) {
           ? { id: examDetails.data.specialty_id }
           : "",
         school_year: examDetails.data.school_year,
+        student_batch_id: examDetails.data.student_batch_id ? {id:examDetails.data.student_batch_id} : ""
       }));
     }
   }, [setFormData, isLoading]);
