@@ -280,6 +280,27 @@
 .announcement-dashboard-content::-webkit-scrollbar {
     width: 2px;
 }
+
+.setting-container{
+     height: auto;
+     max-height: calc(100% - 2rem);
+     overflow-y: scroll;
+     overflow-x: hidden;
+}
+
+.setting-container::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+.setting-container::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+.setting-container::-webkit-scrollbar {
+    width: 5px;
+}
+
 .section-one {
     width: 15%;
 }

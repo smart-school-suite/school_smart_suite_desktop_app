@@ -4,8 +4,9 @@ function Generalsettings() {
    const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
-      <div className="d-flex flex-column gap-2">
-           <div>
+      <div className="d-flex flex-column gap-2 h-100">
+           <div className="setting-container d-flex flex-column gap-2 px-2">
+            <div>
             <span style={{ fontSize: "0.87rem" }} className="fw-semibold">Country Details</span>
             <div className={`${darkMode ? 'dark-bg gainsboro-color' : 'white-bg'} card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2`}
              style={{ fontSize: "0.87rem" }}
@@ -53,6 +54,7 @@ function Generalsettings() {
                </div>
                </div>
             </div>
+           </div>
            </div>
           </div>
     </>

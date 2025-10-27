@@ -124,11 +124,12 @@ function RegisterSchool() {
                 displayKey={['country']}
                 valueKey={['id']}
                 placeholder={"Select Country"}
-                onSelect={(value) => handleChange('country_id', value.id)}
+                onSelect={(value) => handleChange('country_id', value)}
                 onError={(value) => handleSchoolAuthError('country_id', null, value)}
                 error={schoolAuthError.country_id.error}
                 errorMessage={"Country Required"}
                 ref={countryRef}
+                value={schoolCredentials.country_id}
               />
             </div>
 
@@ -140,11 +141,12 @@ function RegisterSchool() {
                   displayKey={['name']}
                   valueKey={['name']}
                   placeholder={"Select School Type"}
-                  onSelect={(value) => handleChange('type', value.name)}
+                  onSelect={(value) => handleChange('type', value)}
                   onError={(value) => handleSchoolAuthError('type', null, value)}
                   error={schoolAuthError.type.error}
                   errorMessage={"School Type Required"}
                   ref={schoolTypeRef}
+                  value={schoolCredentials.type}
                 />
               </div>
             </div>

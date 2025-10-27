@@ -68,8 +68,8 @@ function SubcriptionPlan() {
     await handleSubscription(navigate, {
       school_branch_name: schoolCredentials.school_branch_name,
       school_name: schoolCredentials.school_name,
-      country_id: schoolCredentials.country_id,
-      type: schoolCredentials.type.toLowerCase(),
+      country_id: schoolCredentials.country_id.id,
+      type: schoolCredentials.type.name.toLowerCase(),
       abbreviation: schoolCredentials.abbreviation,
       rates_card_id: calculatedCost.activeRateId,
       billing_frequency: billing_type,

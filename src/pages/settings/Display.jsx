@@ -6,8 +6,9 @@ function Display() {
     const dispatch = useDispatch();
   return (
     <>
-     <div className="d-flex flex-column gap-2">
-            <div>
+     <div className="d-flex flex-column gap-2 h-100">
+            <div className="setting-container px-2">
+              <div>
               <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
                 Theme Selection
               </span>
@@ -115,6 +116,7 @@ function Display() {
                   </div>
                 </div>
               </div> */}
+            </div>
             </div>
           </div>
     </>
