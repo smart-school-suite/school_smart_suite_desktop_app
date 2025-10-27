@@ -1,4 +1,6 @@
 import UpdateAllowedGrades from "../ModalContent/SchoolBranchSetting/GradeSetting/UpdateAllowedGrades";
+import UpdateMaxAttainableGpa from "../ModalContent/SchoolBranchSetting/GradeSetting/UpdateMaxAttainableGpa";
+import UpdatePassingGpa from "../ModalContent/SchoolBranchSetting/GradeSetting/UpdatePassingGPA";
 import UpdateMaxAdditionalFeeDebt from "../ModalContent/SchoolBranchSetting/PromotionSetting/UpdateMaxAdditionalFeeDebt";
 import UpdateMaxCarryOvers from "../ModalContent/SchoolBranchSetting/PromotionSetting/UpdateMaxCarryOvers";
 import UpdateMaxTuitionFeeDebt from "../ModalContent/SchoolBranchSetting/PromotionSetting/UpdateMaxTuitionFeeDebt";
@@ -41,6 +43,16 @@ export const settinActionsConfig = [
    {
      key:"grade.allowed_letter_grades",
      modal:UpdateAllowedGrades,
+     modalSize:"md"
+   },
+   {
+     key:"grade.passing_gpa",
+     modal:UpdatePassingGpa,
+     modalSize:"md"
+   },
+   {
+     key:"grade.max_gpa",
+     modal:UpdateMaxAttainableGpa,
      modalSize:"md"
    }
    

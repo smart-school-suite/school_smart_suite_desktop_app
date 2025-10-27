@@ -10,7 +10,9 @@ export const useUpdateGradeSettings = (handleClose, schoolBranchSettingId) => {
     mutationFn: updateGradeSetting,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schoolBranchSettings"] });
-      queryClient.removeQueries(["schoolBranchSetting", schoolBranchSettingId]);
+      queryClient.invalidateQueries({
+        queryKey: ["schoolBranchSetting", schoolBranchSettingId],
+      });
       if (handleClose) {
         handleClose();
       }
