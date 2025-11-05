@@ -84,6 +84,7 @@ function AppSettings() {
                             modalContent: settingActionConfig?.modal
                           }}
                           rowData={setting}
+                          size={settingActionConfig?.modalSize}
                           
                         >
                           <div className="d-flex flex-column text-start">

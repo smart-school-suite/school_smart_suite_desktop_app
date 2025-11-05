@@ -8,6 +8,7 @@ import { Icon } from "@iconify/react";
 import ToastWarning from "../../../components/Toast/ToastWarning";
 import toast from "react-hot-toast";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
+import { NotFoundError } from "../../../components/errors/Error";
 function UpdateAllowedGrades({ handleClose, rowData }) {
   const { id: schoolBranchSettingId } = rowData;
   const [formData, setFormData] = useState({

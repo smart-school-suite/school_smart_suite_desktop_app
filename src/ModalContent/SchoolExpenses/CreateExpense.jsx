@@ -96,6 +96,7 @@ function CreateExpense({ handleClose }) {
             onChange={(value) => handleStateChange('date', value, setFormData)}
             onValidationChange={(value) => handleStateChange('date', value, setIsValid)}
             ref={dateRef}
+            value={formData.date}
            />
         </div>
         <div>

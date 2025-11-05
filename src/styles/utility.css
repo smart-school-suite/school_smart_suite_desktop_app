@@ -358,3 +358,9 @@ body{
 .z-9{
     z-index: 999;
 }
+
+
+.hover-danger:hover{
+     color: #ff0000 !important;
+     transition: all 0.3s;
+}

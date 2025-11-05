@@ -85,9 +85,9 @@ function CreateSemester({ handleClose }) {
         return
      }
     createSchoolSemester({...formData, 
-          semester_id:formData.semester_id,
-          specialty_id:formData.specialty_id,
-          student_batch_id:formData.student_batch_id,
+          semester_id:formData.semester_id.id,
+          specialty_id:formData.specialty_id.id,
+          student_batch_id:formData.student_batch_id.id,
     });
   };
   return (

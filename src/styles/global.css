@@ -91,9 +91,7 @@
     padding-inline: 0.5rem;
     text-align: center;
 }
-.container {
-    max-width: 2500px !important;
-}
+
 
 .event-category-container{
     max-width: calc(100% - 2rem);
@@ -244,10 +242,42 @@
 }
 
 .dashboard-content-box{
-    height: 91dvh;
+    height: auto;
+    max-height: 90dvh;
     width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.dashboard-nav.circle-action{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: bold;
+}
+
+.dashboard-nav.pill-tab-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 5rem;
+    width: 68%;
+    padding: 0.25rem;
+    gap: 4rem;
+}
+.dashboard-nav.pill-tab{
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   border: none;
+   width: 32%;
+   padding: 0.6rem;
+   font-size: 0.8rem;
+   outline: none;
+
 }
 
 .dashboard-content-box::-webkit-scrollbar-thumb {
@@ -1751,4 +1781,45 @@ textarea::-webkit-scrollbar-thumb:hover {
 .image-input-container{
      height: 25dvh;
      width: 100%;
+}
+.sidebar-sm.menu-tab{
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.55rem;
+    cursor: pointer;
+    outline: none;
+    border: none;
+}
+.sidebar-sm.menu-tab:hover{
+     color: var(--primary-color) !important;
+     transition: all 0.2s;
+}
+.sidebar-sm.menu-tab.active{
+   background-color: #0ea7e9;  
+   color: #FAFAFA;
+   transition: all 0.2s;
+}
+
+.sidebar-sm.menu-tab.inactive{
+    background-color: transparent;
+    color: #777;
+    transition: all 0.2s;
+}
+
+.sidebar-sm.menu{
+    width: 25vw;
+    border-radius: 0.8rem !important;
+    transform: translateX(3.5vw) !important;
+    font-size: var(--font-size-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    color: #555;
+}
+.sidebar-sm.menu-item:hover{
+    color: var(--primary-color);
+    transition: all 0.3s;
 }

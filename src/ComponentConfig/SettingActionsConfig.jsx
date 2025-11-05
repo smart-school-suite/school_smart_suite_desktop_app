@@ -54,6 +54,10 @@ export const settinActionsConfig = [
      key:"grade.max_gpa",
      modal:UpdateMaxAttainableGpa,
      modalSize:"md"
+   },
+   {
+     key:"resitFee.levelBillingFee",
+     modal:UpdateLevelResitFee,
+     modalSize:"lg"
    }
-   
 ];

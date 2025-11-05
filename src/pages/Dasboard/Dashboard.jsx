@@ -11,7 +11,11 @@ import { useSelector } from "react-redux";
 import { useGetSchoolFinancialStats } from "../../hooks/financialStat/useGetSchoolFinancialStats";
 import DashboardPageLoader from "../../components/PageLoaders/DashboardPageLoader";
 import { formatMonthlyChartData } from "../../utils/chartUtils";
-import { AdditionalFeeIcon, ExpensesIcon, TuitionFeeIcon } from "../../icons/Icons";
+import {
+  AdditionalFeeIcon,
+  ExpensesIcon,
+  TuitionFeeIcon,
+} from "../../icons/Icons";
 function Dashboard() {
   const currentYear = new Date().getFullYear();
   const { data, isLoading } = useGetSchoolFinancialStats(currentYear);
@@ -27,17 +31,16 @@ function Dashboard() {
   }
   return (
     <>
-      
       <div>
-       <div className="dashboard-content-box px-2">
-         <div className="d-flex flex-row justify-content-between align-items-end mt-2">
-          <div className="d-block gainsboro-color">
-            <div>
-              <p className="m-0 fs-6">Revenue</p>
-            </div>
+        <div className="dashboard-content-box d-flex flex-column gap-3 px-2">
+          <div className="d-flex flex-row justify-content-between align-items-center">
             <div className="d-flex flex-row align-items-center gap-2">
-              <div>
-                <FormattedCurrency value={data.data.revenue_progress.total_revenue} currency={currency}/>
+              <div className="d-flex flex-column">
+                <span className="font-size-sm m-0">Revenue</span>
+                <FormattedCurrency
+                  value={data.data.revenue_progress.total_revenue}
+                  currency={currency}
+                />
               </div>
               {/* <div className="d-flex flex-row gap-2">
                 <button
@@ -65,184 +68,231 @@ function Dashboard() {
                 </button>
               </div>*/}
             </div>
-          </div>
-          <div className="d-flex flex-row gap-2 align-items-end gainsboro-color">
-            <CustomTooltip tooltipText="Download Monthly Report">
-              <button className="border-none rounded-circle px-2 py-1 light-skyblue-bg">
-                <Icon icon="line-md:download-loop" className="fs-6" />
+            <div className="d-flex flex-row gap-2 align-items-end gainsboro-color">
+              <button className="border-none rounded-pill p-2 d-flex flex-row gap-4 align-items-center font-size-sm">
+                <div className="d-flex flex-row gap-2">
+                  <span>IC</span>
+                  <span>2025 Jan</span>
+                </div>
+                <span>IC</span>
               </button>
-            </CustomTooltip>
-            <CustomTooltip tooltipText={formatDateWithSuffix(new Date())}>
-              <button className="border-none rounded-circle px-2 py-1 light-skyblue-bg ">
-                <Icon icon="mynaui:calendar" className="fs-6" />
-              </button>
-            </CustomTooltip>
-            <span>{formatDateWithSuffix(new Date())}</span>
+            </div>
           </div>
-        </div>
-        <section className="mt-2">
-          <CardGroup
-            cardOne={<CardOne data={{
-              tuitionFeePaid:data.data.total_tuition_fees_paid,
-              currency
-            }}/>}
-            cardTwo={<CardTwo 
-              data={{
-                 totalExpenses:data.data.total_school_expenses,
-                 currency
-              }}
-            />}
-            cardThree={<CardThree 
-              data={{
-                 additionalFeePaid:data.data.additional_fee_total_amount_paids,
-                 currency
-              }}
-            />}
-          />
-        </section>
-        <section className="mt-2">
-          <div className="d-flex flex-row gap-3 w-100 justify-content-between">
-            <div
-              style={{ width: "65%", height: "40dvh" }}
-              className={`${darkMode ? 'dark-bg': "bg-white" } gainsboro-color  rounded-4 p-2`}
-            >
-              <div className="d-flex font-size-sm flex-row justify-content-between px-2 pt-2">
-                <div className="text-start mb-1">
-                  <span className="fw-semibold">
-                    School Expenses Over Months
-                  </span>
-                  <p className="fw-light">
-                    Shows monthly distribution of school-related costs over the
-                    year.
+          <section>
+            <CardGroup
+              cardOne={
+                <CardOne
+                  data={{
+                    tuitionFeePaid: data.data.total_tuition_fees_paid,
+                    currency,
+                  }}
+                />
+              }
+              cardTwo={
+                <CardTwo
+                  data={{
+                    totalExpenses: data.data.total_school_expenses,
+                    currency,
+                  }}
+                />
+              }
+              cardThree={
+                <CardThree
+                  data={{
+                    additionalFeePaid:
+                      data.data.additional_fee_total_amount_paids,
+                    currency,
+                  }}
+                />
+              }
+            />
+          </section>
+          <section>
+            <div className="d-flex flex-row gap-3 w-100 justify-content-between">
+              <div
+                style={{ width: "65%", height: "40dvh" }}
+                className={`${
+                  darkMode ? "dark-bg" : "bg-white"
+                } gainsboro-color  rounded-4 p-2`}
+              >
+                <div className="d-flex font-size-sm flex-row justify-content-between px-2 pt-2">
+                  <div className="text-start mb-1">
+                    <span className="fw-semibold">
+                      School Expenses Over Months
+                    </span>
+                    <p className="fw-light">
+                      Shows monthly distribution of school-related costs over
+                      the year.
+                    </p>
+                  </div>
+                  <div className="d-flex flex-row gap-3 align-items-center">
+                    <div
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "8px",
+                        background: "#ffe4d5",
+                      }}
+                    ></div>
+                    <span className="fw-semibold">School Expenses</span>
+                  </div>
+                </div>
+                <BarChart
+                  config={{
+                    backgroundColor: "#ffe4d5",
+                    borderColor: "#fd9d74",
+                    labels: formatMonthlyChartData(
+                      data.data.school_expenses_over_time
+                    ).labels,
+                    data: formatMonthlyChartData(
+                      data.data.school_expenses_over_time
+                    ).data,
+                  }}
+                />
+              </div>
+              <div
+                style={{ width: "35%", height: "40dvh" }}
+                className={`${
+                  darkMode ? "dark-bg" : "bg-white"
+                }   rounded-4 p-2`}
+              >
+                <div className="mb-3 gainsboro-color">
+                  <p className="text-start font-size-sm m-0 fw-semibold">
+                    School Expenses By Category
+                  </p>
+                  <p className="text-start fw-light font-size-sm  m-0">
+                    A visual breakdown of spending across different categories.
                   </p>
                 </div>
-                <div className="d-flex flex-row gap-3 align-items-center">
-                  <div
-                    style={{ width: "8px", height: "8px", borderRadius: "8px", background:"#ffe4d5" }}
-                  ></div>
-                  <span className="fw-semibold">School Expenses</span>
-                </div>
-              </div>
-              <BarChart
-                config={{
-                  backgroundColor: "#ffe4d5",
-                  borderColor: "#fd9d74",
-                  labels: formatMonthlyChartData(data.data.school_expenses_over_time).labels,
-                  data: formatMonthlyChartData(data.data.school_expenses_over_time).data,
-                }}
-              />
-            </div>
-            <div
-              style={{ width: "35%", height: "40dvh" }}
-              className={`${darkMode ? 'dark-bg': "bg-white" }   rounded-4 p-2`}
-            >
-              <div className="mb-3 gainsboro-color">
-                <p className="text-start font-size-sm m-0 fw-semibold">
-                  School Expenses By Category
-                </p>
-                <p className="text-start fw-light font-size-sm  m-0">
-                  A visual breakdown of spending across different categories.
-                </p>
-              </div>
-              <DoughnutChart 
-               compData={data.data.school_expenses_by_category.map((items) => items.total_amount)}
-               labels={data.data.school_expenses_by_category.map((items) => items.category)}
-               label={"School Expenses By Category"}
-               />
-            </div>
-          </div>
-        </section>
-        <section className="mt-2">
-          <div className="d-flex flex-row gap-3 w-100 justify-content-between">
-            <div
-              style={{ width: "31.5%", height: "45dvh" }}
-              className={`${darkMode ? 'dark-bg': "bg-white" } border-none card   rounded-4 p-2`}
-            >
-              <div className=" gainsboro-color">
-                <p className="text-start font-size-sm fw-semibold m-0">
-                  School Revenue Source
-                </p>
-                <p className="text-start fw-light font-size-sm m-0 gainsboro-color">
-                  Displays the different sources of income for the school.
-                </p>
-              </div>
-              <div className="w-100 d-flex flex-row justify-content-center h-75 mt-3">
-                <PieChart
-                  resitFees={data.data.school_revenue_source.resit_fees}
-                  tuitionFee={data.data.school_revenue_source.tuition_fees}
-                  registrationFee={data.data.school_revenue_source.registration_fees}
-                  additionalFees={data.data.school_revenue_source.additional_fees}
+                <DoughnutChart
+                  compData={data.data.school_expenses_by_category.map(
+                    (items) => items.total_amount
+                  )}
+                  labels={data.data.school_expenses_by_category.map(
+                    (items) => items.category
+                  )}
+                  label={"School Expenses By Category"}
                 />
               </div>
             </div>
-            <div
-              style={{ width: "75%", height: "45dvh" }}
-              className={`${darkMode ? 'dark-bg': "bg-white" } border-none gainsboro-color card rounded-4 p-2`}
-            >
-              <p className="text-start font-size-sm my-0 fw-bold">
-                Tuition Fees Paid Over the Last 12 Months
-              </p>
-              <p className="text-wrap fw-light font-size-sm gainsboro-color m-0">
-                A chart illustrating the total tuition fees collected each month
-                over the past year.
-              </p>
-              <div className="w-100" style={{ height: "98%" }}>
+          </section>
+          <section>
+            <div className="d-flex flex-row gap-3 w-100 justify-content-between">
+              <div
+                style={{ width: "31.5%", height: "45dvh" }}
+                className={`${
+                  darkMode ? "dark-bg" : "bg-white"
+                } border-none card   rounded-4 p-2`}
+              >
+                <div className=" gainsboro-color">
+                  <p className="text-start font-size-sm fw-semibold m-0">
+                    School Revenue Source
+                  </p>
+                  <p className="text-start fw-light font-size-sm m-0 gainsboro-color">
+                    Displays the different sources of income for the school.
+                  </p>
+                </div>
+                <div className="w-100 d-flex flex-row justify-content-center h-75 mt-3">
+                  <PieChart
+                    resitFees={data.data.school_revenue_source.resit_fees}
+                    tuitionFee={data.data.school_revenue_source.tuition_fees}
+                    registrationFee={
+                      data.data.school_revenue_source.registration_fees
+                    }
+                    additionalFees={
+                      data.data.school_revenue_source.additional_fees
+                    }
+                  />
+                </div>
+              </div>
+              <div
+                style={{ width: "75%", height: "45dvh" }}
+                className={`${
+                  darkMode ? "dark-bg" : "bg-white"
+                } border-none gainsboro-color card rounded-4 p-2`}
+              >
+                <p className="text-start font-size-sm my-0 fw-bold">
+                  Tuition Fees Paid Over the Last 12 Months
+                </p>
+                <p className="text-wrap fw-light font-size-sm gainsboro-color m-0">
+                  A chart illustrating the total tuition fees collected each
+                  month over the past year.
+                </p>
+                <div className="w-100" style={{ height: "98%" }}>
+                  <LineChart
+                    config={{
+                      label: formatMonthlyChartData(
+                        data.data.total_tuition_fees_paid_over_time
+                      ).labels,
+                      bgColor: "#e5f2f9",
+                      borderColor: "#5bb4d5",
+                      data: formatMonthlyChartData(
+                        data.data.total_tuition_fees_paid_over_time
+                      ).data,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <section>
+            <div className="d-flex flex-row gap-3 w-100 justify-content-between">
+              <div
+                className={`${
+                  darkMode ? "dark-bg" : "bg-white"
+                } card border-none rounded-4 gainsboro-color p-2`}
+                style={{ width: "50%", height: "40dvh" }}
+              >
+                <div className="mb-1">
+                  <p className="text-start font-size-sm m-0 fw-semibold">
+                    Registration Fees Collected Over a 5-Year Period
+                  </p>
+                  <p className="text-start font-size-sm m-0 fw-light">
+                    A graph showing the annual registration fees received by the
+                    school over the past five years.
+                  </p>
+                </div>
+                <BarChart
+                  config={{
+                    backgroundColor: "#ffe3e1",
+                    borderColor: "#ffa7a1",
+                    labels: data.data.total_registration_fee_over_years.map(
+                      (items) => items.year
+                    ),
+                    data: data.data.total_registration_fee_over_years.map(
+                      (items) => items.total_amount
+                    ),
+                  }}
+                />
+              </div>
+              <div
+                className={`${
+                  darkMode ? "dark-bg" : "bg-white"
+                } border-none card rounded-4  gainsboro-color p-2`}
+                style={{ width: "50%", height: "40dvh" }}
+              >
+                <p className="text-start font-size-sm my-0">
+                  Enrollment Numbers over Past Five Years
+                </p>
+                <h5 className="fw-bold">
+                  {data.data.total_student_registration}
+                </h5>
                 <LineChart
                   config={{
-                    label:formatMonthlyChartData(data.data.total_tuition_fees_paid_over_time).labels,
-                    bgColor:"#e5f2f9",
-                    borderColor:"#5bb4d5",
-                    data:formatMonthlyChartData(data.data.total_tuition_fees_paid_over_time).data,
+                    borderColor: "#38bff8",
+                    bgColor: "#e0f2fe",
+                    label: data.data.total_student_registration_over_years.map(
+                      (items) => items.year
+                    ),
+                    data: data.data.total_student_registration_over_years.map(
+                      (items) => items.total_student
+                    ),
                   }}
                 />
               </div>
             </div>
-          </div>
-        </section>
-        <section className="mt-2">
-          <div className="d-flex flex-row gap-3 w-100 justify-content-between">
-            <div
-              className={`${darkMode ? 'dark-bg': "bg-white" } card border-none rounded-4 gainsboro-color p-2`}
-              style={{ width: "50%", height: "40dvh" }}
-            >
-              <div className="mb-1">
-                <p className="text-start font-size-sm m-0 fw-semibold">
-                  Registration Fees Collected Over a 5-Year Period
-                </p>
-                <p className="text-start font-size-sm m-0 fw-light">
-                  A graph showing the annual registration fees received by the
-                  school over the past five years.
-                </p>
-              </div>
-              <BarChart
-                config={{
-                  backgroundColor: "#ffe3e1",
-                  borderColor: "#ffa7a1",
-                  labels: data.data.total_registration_fee_over_years.map((items) => items.year),
-                  data: data.data.total_registration_fee_over_years.map((items) => items.total_amount),
-                }}
-              />
-            </div>
-            <div
-              className={`${darkMode ? 'dark-bg': "bg-white" } border-none card rounded-4  gainsboro-color p-2`}
-              style={{ width: "50%", height: "40dvh" }}
-            >
-              <p className="text-start font-size-sm my-0">
-                Enrollment Numbers over Past Five Years
-              </p>
-              <h5 className="fw-bold">{data.data.total_student_registration}</h5>
-              <LineChart
-                config={{
-                  borderColor:"#38bff8",
-                  bgColor:"#e0f2fe",
-                  label: data.data.total_student_registration_over_years.map((items) => items.year),
-                  data: data.data.total_student_registration_over_years.map((items) => items.total_student),
-                }}
-              />
-            </div>
-          </div>
-        </section>
-       </div>
+          </section>
+        </div>
       </div>
     </>
   );
@@ -253,7 +303,11 @@ export function CardOne({ data }) {
   return (
     <>
       <div className="rounded-box d-flex flex-row align-items-center justify-content-center light-skyblue-bg">
-        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" style={{ color:"#142e3d" }}/>
+        <Icon
+          icon="stash:arrow-up-duotone"
+          className="rotate-45 fs-5"
+          style={{ color: "#142e3d" }}
+        />
       </div>
       <img
         src="./images/card-one.png"
@@ -270,17 +324,18 @@ export function CardOne({ data }) {
                 height: "2.5rem",
                 borderRadius: "2rem",
                 backgroundColor: "#C6E3F1",
-                color:"#257ca4"
+                color: "#257ca4",
               }}
             >
               <TuitionFeeIcon />
             </button>
-            <span style={{ color:"#142e3d" }}>Tuition Fees Paid</span>
+            <span style={{ color: "#142e3d" }}>Tuition Fees Paid</span>
           </div>
           <div className="mt-auto">
             <div>
-              <h4 className="fw-semibold ms-1" style={{ color:"#142e3d" }}>
-                 <span>{data.currency}</span> <NumberFlow value={data.tuitionFeePaid} />
+              <h4 className="fw-semibold ms-1" style={{ color: "#142e3d" }}>
+                <span>{data.currency}</span>{" "}
+                <NumberFlow value={data.tuitionFeePaid} />
               </h4>
             </div>
             {/*<div className="d-flex flex-row align-items-center gap-2">
@@ -305,11 +360,15 @@ export function CardOne({ data }) {
   );
 }
 
-export function CardTwo({data}) {
+export function CardTwo({ data }) {
   return (
     <>
       <div className="rounded-box d-flex flex-row align-items-center justify-content-center light-peach-bg">
-        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" style={{ color:"#430707" }}/>
+        <Icon
+          icon="stash:arrow-up-duotone"
+          className="rotate-45 fs-5"
+          style={{ color: "#430707" }}
+        />
       </div>
       <img
         src="./images/card-two.png"
@@ -326,20 +385,21 @@ export function CardTwo({data}) {
                 height: "2.5rem",
                 borderRadius: "2rem",
                 backgroundColor: "#FFE4D5",
-                color:"#fd9d74"
+                color: "#fd9d74",
               }}
             >
               <ExpensesIcon />
             </button>
-            <span style={{ color:"#430707" }}>Total Expenses</span>
+            <span style={{ color: "#430707" }}>Total Expenses</span>
           </div>
           <div className="mt-auto">
             <div>
-              <h4 className="fw-semibold ms-1" style={{ color:"#430707" }}>
-               <span>{data.currency}</span> <NumberFlow value={data.totalExpenses} />
+              <h4 className="fw-semibold ms-1" style={{ color: "#430707" }}>
+                <span>{data.currency}</span>{" "}
+                <NumberFlow value={data.totalExpenses} />
               </h4>
             </div>
-           {/* <div className="d-flex flex-row align-items-center gap-2">
+            {/* <div className="d-flex flex-row align-items-center gap-2">
               <button
                 className="rounded-pill px-2 py-1 d-flex gap-2 border-none font-size-sm fw-semibold"
                 style={{ backgroundColor: "#ffe4d5",  color:"#28a745" }}
@@ -361,11 +421,15 @@ export function CardTwo({data}) {
   );
 }
 
-export function CardThree({data}) {
+export function CardThree({ data }) {
   return (
     <>
       <div className="rounded-box d-flex flex-row align-items-center justify-content-center cornflower-blue-bg">
-        <Icon icon="stash:arrow-up-duotone" className="rotate-45 fs-5" style={{ color:"#272f44" }}/>
+        <Icon
+          icon="stash:arrow-up-duotone"
+          className="rotate-45 fs-5"
+          style={{ color: "#272f44" }}
+        />
       </div>
       <img
         src="./images/card-three.png"
@@ -382,17 +446,21 @@ export function CardThree({data}) {
                 height: "2.5rem",
                 borderRadius: "2rem",
                 backgroundColor: "#9DBFDC",
-                color:"#4d6ba8"
+                color: "#4d6ba8",
               }}
             >
-             <AdditionalFeeIcon />
+              <AdditionalFeeIcon />
             </button>
-            <span style={{ color:"#272f44" }}>Total Additional Fee Paid</span>
+            <span style={{ color: "#272f44" }}>Total Additional Fee Paid</span>
           </div>
           <div className="mt-auto">
             <div>
-              <h4 className="fw-semibold ms-1 dark-slate-gray-color" style={{ color:"#272f44" }}>
-               <span>{data.currency}</span> <NumberFlow value={data.additionalFeePaid} />
+              <h4
+                className="fw-semibold ms-1 dark-slate-gray-color"
+                style={{ color: "#272f44" }}
+              >
+                <span>{data.currency}</span>{" "}
+                <NumberFlow value={data.additionalFeePaid} />
               </h4>
             </div>
             {/*<div className="d-flex flex-row align-items-center gap-2">
@@ -418,21 +486,28 @@ export function CardThree({data}) {
   );
 }
 
-
-const FormattedCurrency = ({ value, currency, className = '' }) => {
+const FormattedCurrency = ({ value, currency, className = "" }) => {
   const parsedValue = parseFloat(value);
 
-  const formattedValue = !isNaN(parsedValue) ? parsedValue.toFixed(2) : '0.00';
-  
-  const [integerPart, decimalPart] = formattedValue.split('.');
+  const formattedValue = !isNaN(parsedValue) ? parsedValue.toFixed(2) : "0.00";
+
+  const [integerPart, decimalPart] = formattedValue.split(".");
   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
-    <h2 className={`fw-bold my-0 ${darkMode ? 'light-skyblue-color' : 'primary-color-dark'} ${className}`}>
+    <h2
+      className={`fw-bold m-0 ${
+        darkMode ? "light-skyblue-color" : "primary-color-dark"
+      } ${className}`}
+    >
       <span className="me-2">{currency}</span>
-      <span className={`${darkMode ? 'light-skyblue-color' : 'primary-color-dark'}`}>
+      <span
+        className={`${darkMode ? "light-skyblue-color" : "primary-color-dark"}`}
+      >
         <NumberFlow value={integerPart} />
       </span>
-      <span className="light-skyblue-color">.{<NumberFlow value={decimalPart}/>}</span>
+      <span className="light-skyblue-color">
+        .{<NumberFlow value={decimalPart} />}
+      </span>
     </h2>
   );
 };

@@ -7,12 +7,16 @@ function Layout() {
   return (
     <>
       <Toaster position="bottom-right" reverseOrder={false}></Toaster>
-      <div className={`${darkMode ? 'dark-bg-light container' : 'container'}`}>
-        <div className="row">
-          <Sidebar />
-          <div className="col-lg-10 col-sm-10 col-md-10">
-            <main className={`${darkMode ? 'text-white' : null} pt-1`}>
-                <Outlet />
+      <div className={`${darkMode && 'dark-bg-light'}`}>
+        <div className="d-flex flex-row w-100 gap-2 ">
+          <div style={{ width:"15%" }}>
+            <Sidebar />
+          </div>
+          <div style={{ width:"85%" }}>
+            <main className={`${darkMode ? 'text-white' : null} pt-1 w-100`}>
+                <div className="pe-2">
+                  <Outlet />
+                </div>
               </main>
           </div>
         </div>

@@ -3,9 +3,11 @@ import Navbar from "../components/NavBars/Navbar";
 function DashboardLayout(){
     return(
         <>
-        <Navbar />
+        <div className="d-flex flex-column gap-3">
+            <Navbar />
         <div>
             <Outlet />
+        </div>
         </div>
         </>
     )
