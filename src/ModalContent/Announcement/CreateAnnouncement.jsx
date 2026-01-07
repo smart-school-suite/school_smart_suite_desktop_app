@@ -180,7 +180,7 @@ function AnnouncementCreate({
     const payload = {
       title: formData.title,
       content: formData.content,
-      status: formData?.status || "draft",
+      status: formData?.status?.value || "draft",
       published_at: formData.published_at,
       category_id: formData.category_id.id,
       label_id: formData.label_id.id,
@@ -300,15 +300,16 @@ function AnnouncementCreate({
               valueKey={["value"]}
               direction="up"
               onSelect={(value) =>
-                handleStateChange("status", value.value, setFormData)
+                handleStateChange("status", value, setFormData)
               }
               placeholder="Select Announcement Status"
               error={errors.status}
               errorMessage="Announcement Status Required"
               onError={(msg) => handleStateChange("status", msg, setErrors)}
+              value={formData.status}
             />
           </div>
-          {formData.status === "scheduled" && (
+          {formData.status.value === "scheduled" && (
             <div className="w-100">
               <label
                 htmlFor="publishedAt"

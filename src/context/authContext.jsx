@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import axios from "../axios/axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   handleSetAuthUser,
   handleSetChangePassword,
@@ -13,7 +13,6 @@ import {
 } from "../Slices/Asynslices/AuthSlice";
 const AuthContext = createContext();
 import toast from "react-hot-toast";
-import ToastWarning from "../components/Toast/ToastWarning";
 import ToastDanger from "../components/Toast/ToastDanger";
 import ToastSuccess from "../components/Toast/ToastSuccess";
 export const useAuth = () => {
@@ -157,7 +156,7 @@ export const AuthProvider = ({ children }) => {
     setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
     try {
       const response = await axios.post(
-        "school-subscription/school-subscriptions",
+        "school-subscription/subscribe",
         subscriptionCredentials
       );
       setLoading((prevalue) => ({ ...prevalue, subscribe: false }));
@@ -303,13 +302,13 @@ export const AuthProvider = ({ children }) => {
         }
       )
       dispatch(handleSetChangePassword());
-      navigate("/login-school-admin");
       toast.success(
         <ToastSuccess 
-          title={"Password Change Successfully"}
-          description={"You've successfully Reset Your Password, You Can Now Login With the new Password"}
+        title={"Password Change Successfully"}
+        description={"You've successfully Reset Your Password, You Can Now Login With the new Password"}
         />
       )
+      navigate("/login-school-admin");
     } catch (e) {
         setAuthError((prevalue) => ({ ...prevalue,  changePassword:"Something went wrong try again"}));
         toast.custom(

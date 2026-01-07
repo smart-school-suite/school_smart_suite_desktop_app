@@ -7,11 +7,12 @@ import OtpInput from "../../components/FormComponents/StepInput";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
-
 function TwoStepVerification() {
   const [otp, setOtp] = useState("");
-  const { handleTwoStepVerification, loading, authError } = useAuth();
+  const { handleTwoStepVerification, loading } = useAuth();
   const otpTokenHeader = useSelector((state) => state.auth.otpTokenHeader);
+  const darkMode = useSelector((state) => state.theme.darkMode);
+
   const navigate = useNavigate();
   useEffect(() => {
     if (!otpTokenHeader) {
@@ -21,9 +22,9 @@ function TwoStepVerification() {
 
   const handleOtpComplete = (otpValue) => {
     setOtp(otpValue);
-     if (otpValue.length === 6 && !loading.otp) {
-       handleSubmit(null, otpValue);
-     }
+    if (otpValue.length === 6 && !loading.otp) {
+      handleSubmit(null, otpValue);
+    }
   };
 
   const handleSubmit = async (e, submittedOtp = otp) => {
@@ -31,9 +32,9 @@ function TwoStepVerification() {
 
     if (submittedOtp.length !== 6) {
       toast.custom(
-        <ToastWarning 
-         title={"OTP Error"}
-         description={"OTP must be atleast 6 digits long"}
+        <ToastWarning
+          title={"OTP Error"}
+          description={"OTP must be atleast 6 digits long"}
         />
       );
       return;
@@ -44,59 +45,65 @@ function TwoStepVerification() {
 
   return (
     <>
-      <div className="login-container px-4">
-        <div className="login-container-logo-box ps-5">
-          <img src="./logo/blue_logo.png" className="login-logo" alt="Logo" />
-        </div>
-        <div className="login-container-form" style={{ height: "70%" }}>
-          <div className="login-container-form-box-two">
-            <img src="./svg/two-factor-auth.svg" alt="Two Factor Authentication Illustration" />
+      <div
+        className={`${
+          darkMode ? "dark-bg dark-mode-text" : "white-bg"
+        } w-100 height-100 pt-3 d-flex flex-column pb-5`}
+      >
+        <div className="login-container px-4">
+          <div className="login-container-logo-box ps-5">
+            <img src="./logo/blue_logo.png" className="login-logo" alt="Logo" />
           </div>
-          <div className="login-container-form-box-one">
-            <h1 className="fw-bold my-4">Two Factor Verification</h1>
-            <div>
-              <span>Enter OTP Code</span>
-              <OtpInput
-                length={6}
-                onComplete={handleOtpComplete}
+          <div className="login-container-form" style={{ height: "70%" }}>
+            <div className="login-container-form-box-two">
+              <img
+                src="./svg/two-factor-auth.svg"
+                alt="Two Factor Authentication Illustration"
               />
             </div>
-            <button
-              className="w-100 mt-2 border-none rounded-3 p-2 primary-background text-white"
-              type="submit"
-              onClick={handleSubmit}
-              disabled={loading.otp || otp.length !== 6}
-            >
-              {loading.otp ? <SingleSpinner /> : "Submit"}
-            </button>
+            <div className="login-container-form-box-one">
+              <h1 className="fw-bold my-4 text-white">Two Factor Verification</h1>
+              <div className="d-flex flex-column gap-2">
+                <span className="text-white">Enter OTP Code</span>
+                <OtpInput length={6} onComplete={handleOtpComplete} />
+              </div>
+              <button
+                className="w-100 mt-4 border-none rounded-3 p-2 primary-background text-white font-size-sm"
+                type="submit"
+                onClick={handleSubmit}
+                disabled={loading.otp || otp.length !== 6}
+              >
+                {loading.otp ? <SingleSpinner /> : "Submit"}
+              </button>
+              <div
+                className="pointer-cursor font-size-sm mt-4"
+                onClick={() => {
+                  navigate("/reset-password");
+                }}
+              >
+                <span>
+                  Password Forgotten ?{" "}
+                  <span className="color-primary">Reset Password</span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="login-container-logo-box mt-auto ps-5">
             <div
-              className="pointer-cursor font-size-sm mt-4"
+              className="d-flex flex-row gap-2 align-items-center pointer-cursor color-primary"
               onClick={() => {
-                navigate("/reset-password");
+                navigate("/login-school-admin");
               }}
             >
               <span>
-                Password Forgotten ?{" "}
-                <span className="color-primary">Reset Password</span>
+                <Icon
+                  icon="material-symbols:arrow-back-rounded"
+                  width="18"
+                  height="18"
+                />
               </span>
+              <span className="font-size-sm fw-semibold">Back</span>
             </div>
-          </div>
-        </div>
-        <div className="login-container-logo-box mt-auto ps-5">
-          <div
-            className="d-flex flex-row gap-2 align-items-center pointer-cursor color-primary"
-            onClick={() => {
-              navigate("/login-school-admin");
-            }}
-          >
-            <span>
-              <Icon
-                icon="material-symbols:arrow-back-rounded"
-                width="18"
-                height="18"
-              />
-            </span>
-            <span className="font-size-sm fw-semibold">Back</span>
           </div>
         </div>
       </div>

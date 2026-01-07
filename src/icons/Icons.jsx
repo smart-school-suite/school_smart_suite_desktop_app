@@ -81,16 +81,33 @@ const ExpensesIcon = ({ iconStyle }) => {
     )
 }
 
+const ExpensesIconFilled = ({ iconStyle }) => {
+    return (
+      <Icon icon="fluent:money-hand-20-filled" style={{ ...iconStyle, fontSize: "1rem" }} />
+    )
+}
+
 const AdditionalFeeIcon = ({ iconStyle }) => {
     return (
       <Icon icon="fluent:person-money-24-regular" style={{ ...iconStyle, fontSize: "1rem" }} />
     )
 }
 
+const AdditionalFeeIconFilled = ({ iconStyle }) => {
+    return (
+      <Icon icon="fluent:person-money-20-filled" style={{ ...iconStyle, fontSize: "1rem" }} />
+    )
+}
 const TuitionFeeIcon = ({ iconStyle }) => {
     return (
       <Icon icon="solar:money-bag-outline" style={{ ...iconStyle, fontSize: "1rem" }} />
     )
+}
+
+const TuitionFeeIconFilled = ({ iconStyle }) => {
+     return (
+      <Icon icon="solar:money-bag-bold" style={{ ...iconStyle, fontSize: "1rem" }} />
+     )
 }
 
 const SpecialtyIcon = ({ iconStyle }) => {
@@ -127,4 +144,4 @@ const EventIcon = ({ iconStyle }) => {
     <Icon icon="clarity:event-line" style={{...iconStyle, fontSize:"1rem"}}  />
    )
 }
-export { EventIcon, LiveIcon, ElectionIcon, StatsIcon, DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };
+export { AdditionalFeeIconFilled, ExpensesIconFilled, TuitionFeeIconFilled, EventIcon, LiveIcon, ElectionIcon, StatsIcon, DepartmentIcon, SpecialtyIcon, TuitionFeeIcon, AdditionalFeeIcon, ExpensesIcon, MoneyIcon, BatchIcon, ParentIcon, StudentIcon, TeacherIcon, SchoolAdminIcon, CourseIcon, SemesterIcon, GradeIcon, TimetableIcon, ExamIcon, ExamCandidateIcon };

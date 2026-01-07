@@ -1,6 +1,4 @@
-import { useNavigate } from "react-router-dom"
-export function Error({ title, description, path, children }){
-  const navigate = useNavigate();
+export function Error({ title, description, children }){
     return(
       <>
       <div

@@ -44,7 +44,7 @@ function NotificationDropdown() {
   return (
     <>
       <div
-        className={`${darkMode ? 'dark-bg' : "bg-white"} gainsboro-color dashboard-nav circle-action pointer-cursor`}
+        className={`${darkMode ? 'dark-bg' : "bg-white"} gainsboro-color dashboard-nav circle-action pointer-cursor position-relative`}
         ref={refs.setReference}
         onClick={toggleDropdown}
       >

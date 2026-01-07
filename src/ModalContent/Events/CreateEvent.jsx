@@ -574,7 +574,7 @@ function CreateSchoolEvent({
       location: formData.location,
       start_date: formData.start_date,
       end_date: formData.end_date,
-      status: formData.status,
+      status: formData.status.value,
       published_at: formData.published_at,
       tag_ids: formData.tags.map((tag) => ({
         tag_id: tag.id,
@@ -702,7 +702,7 @@ function CreateSchoolEvent({
                 valueKey={["value"]}
                 direction="up"
                 onSelect={(value) =>
-                  handleStateChange("status", value.value, setFormData)
+                  handleStateChange("status", value, setFormData)
                 }
                 placeholder="Select School Event Status"
                 error={errors.status}
@@ -711,7 +711,7 @@ function CreateSchoolEvent({
                 value={formData.status}
               />
             </div>
-            {formData.status === "scheduled" && (
+            {formData.status.value === "scheduled" && (
               <div className="w-100 mt-1">
                 <label
                   htmlFor="publishedAt"

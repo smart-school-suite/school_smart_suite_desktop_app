@@ -9,7 +9,12 @@ import { allFieldsValid } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { TextInput } from "../../components/FormComponents/InputComponents";
-import { emailValidationSchema, nameSchema, passwordSchema } from "../../ComponentConfig/YupValidationSchema";
+import {
+  emailValidationSchema,
+  nameSchema,
+  passwordSchema,
+} from "../../ComponentConfig/YupValidationSchema";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 function RegisterSchoolAdmin() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const nameRef = useRef();
@@ -58,8 +63,7 @@ function RegisterSchoolAdmin() {
     };
   };
 
-  const handleCreateSchoolAdmin = async () => {
-    try {
+  const handleCreateSchoolAdmin = async () => {d
       const prevalidation = await handlePrevalidation();
       if (!allFieldsValid(prevalidation)) {
         toast.custom(
@@ -85,9 +89,6 @@ function RegisterSchoolAdmin() {
       }
       await handleCreateSuperAdmin(navigate, adminCredentials, apiKey);
       dispatch(resetSchoolAuthData());
-    } catch (e) {
-      console.log("an error occured");
-    }
   };
 
   const name = adminCredentials.name ? adminCredentials.name.trim() : "";
@@ -110,10 +111,10 @@ function RegisterSchoolAdmin() {
   const isStepComplete = fieldsFilled === totalSteps;
   return (
     <>
-      <div 
-      className={`${
+      <div
+        className={`${
           darkMode ? "dark-bg dark-mode-text" : "white-bg"
-        } container w-100 height-100 pt-3 d-flex flex-column pb-5`}
+        } w-100 height-100 pt-3 d-flex flex-column pb-5`}
       >
         <div className="d-flex flex-row align-items-center w-100 justify-content-between px-3">
           <div className="signup-app-logo">
@@ -146,21 +147,27 @@ function RegisterSchoolAdmin() {
               <h4 className="text-center">Create School Admin</h4>
               <div className="d-flex flex-row align-items-center w-100 gap-2">
                 <div className="my-1 w-100">
-                  <label htmlFor="fullnames" className="font-size-sm">Full Names</label>
-                  <TextInput 
+                  <label htmlFor="fullnames" className="font-size-sm">
+                    Full Names
+                  </label>
+                  <TextInput
                     placeholder={"Enter Full Names"}
                     value={adminCredentials.name}
-                    onChange={(value) => handleStateChange('name', value, setAdminCredentails)}
-                    onValidationChange={(value) => handleStateChange('name', value, setIsValid)}
+                    onChange={(value) =>
+                      handleStateChange("name", value, setAdminCredentails)
+                    }
+                    onValidationChange={(value) =>
+                      handleStateChange("name", value, setIsValid)
+                    }
                     validationSchema={nameSchema({
-                        min:3,
-                        max:150,
-                        required:true,
-                        messages:{
-                           min:"Full Names Must Be Atleast 3 Characters Long",
-                           max:"Full Names Must Not Exceed 150 Characters",
-                           required:"Full Names Required"
-                        }
+                      min: 3,
+                      max: 150,
+                      required: true,
+                      messages: {
+                        min: "Full Names Must Be Atleast 3 Characters Long",
+                        max: "Full Names Must Not Exceed 150 Characters",
+                        required: "Full Names Required",
+                      },
                     })}
                     ref={nameRef}
                   />
@@ -168,70 +175,98 @@ function RegisterSchoolAdmin() {
               </div>
               <div className="w-100 d-flex flex-row align-items-center gap-2">
                 <div className="w-50">
-                  <label htmlFor="firstname" className="font-size-sm">First Name</label>
-                  <TextInput 
+                  <label htmlFor="firstname" className="font-size-sm">
+                    First Name
+                  </label>
+                  <TextInput
                     placeholder={"Enter First Name"}
                     value={adminCredentials.first_name}
-                    onChange={(value) => handleStateChange('first_name', value, setAdminCredentails)}
-                    onValidationChange={(value) => handleStateChange('first_name', value, setIsValid)}
+                    onChange={(value) =>
+                      handleStateChange(
+                        "first_name",
+                        value,
+                        setAdminCredentails
+                      )
+                    }
+                    onValidationChange={(value) =>
+                      handleStateChange("first_name", value, setIsValid)
+                    }
                     validationSchema={nameSchema({
-                        min:3,
-                        max:50,
-                        required:true,
-                        messages:{
-                           min:"First Name Must Be Atleast 3 Characters Long",
-                           max:"First Name Must Not Exceed 50 Characters",
-                           required:"First Name Required"
-                        }
+                      min: 3,
+                      max: 50,
+                      required: true,
+                      messages: {
+                        min: "First Name Must Be Atleast 3 Characters Long",
+                        max: "First Name Must Not Exceed 50 Characters",
+                        required: "First Name Required",
+                      },
                     })}
                     ref={firstNameRef}
                   />
                 </div>
                 <div className="w-50">
-                  <label htmlFor="lastname" className="font-size-sm">Last Name</label>
-                  <TextInput 
+                  <label htmlFor="lastname" className="font-size-sm">
+                    Last Name
+                  </label>
+                  <TextInput
                     placeholder={"Enter Last Name"}
                     value={adminCredentials.last_name}
-                    onChange={(value) => handleStateChange('last_name', value, setAdminCredentails)}
-                    onValidationChange={(value) => handleStateChange('last_name', value, setIsValid)}
+                    onChange={(value) =>
+                      handleStateChange("last_name", value, setAdminCredentails)
+                    }
+                    onValidationChange={(value) =>
+                      handleStateChange("last_name", value, setIsValid)
+                    }
                     validationSchema={nameSchema({
-                        min:3,
-                        max:50,
-                        required:true,
-                        messages:{
-                           min:"Last Name Must Be Atleast 3 Characters Long",
-                           max:"Last Name Must Not Exceed 50 Characters",
-                           required:"Last Name Required"
-                        }
+                      min: 3,
+                      max: 50,
+                      required: true,
+                      messages: {
+                        min: "Last Name Must Be Atleast 3 Characters Long",
+                        max: "Last Name Must Not Exceed 50 Characters",
+                        required: "Last Name Required",
+                      },
                     })}
                     ref={lastNameRef}
                   />
                 </div>
               </div>
               <div className="my-1 w-100">
-                <label htmlFor="email" className="font-size-sm">E-mail</label>
-                <TextInput 
+                <label htmlFor="email" className="font-size-sm">
+                  E-mail
+                </label>
+                <TextInput
                   type="email"
                   placeholder={"e.g example@mail.com"}
                   value={adminCredentials.email}
-                  onChange={(value) => handleStateChange('email', value, setAdminCredentails)}
-                  onValidationChange={(value) => handleStateChange('email', value, setIsValid)}
+                  onChange={(value) =>
+                    handleStateChange("email", value, setAdminCredentails)
+                  }
+                  onValidationChange={(value) =>
+                    handleStateChange("email", value, setIsValid)
+                  }
                   validationSchema={emailValidationSchema({
-                      required:true
+                    required: true,
                   })}
                   ref={emailRef}
                 />
               </div>
               <div className="my-1 w-100">
-                <label htmlFor="password" className="font-size-sm">Password</label>
-                <TextInput 
+                <label htmlFor="password" className="font-size-sm">
+                  Password
+                </label>
+                <TextInput
                   type={"password"}
                   placeholder={"Enter Password"}
                   value={adminCredentials.password}
-                  onChange={(value) => handleStateChange('password', value, setAdminCredentails)}
-                  onValidationChange={(value) => handleStateChange('password', value, setIsValid)}
+                  onChange={(value) =>
+                    handleStateChange("password", value, setAdminCredentails)
+                  }
+                  onValidationChange={(value) =>
+                    handleStateChange("password", value, setIsValid)
+                  }
                   validationSchema={passwordSchema({
-                     min:8
+                    min: 8,
                   })}
                   ref={passwordRef}
                 />
@@ -324,7 +359,13 @@ function RegisterSchoolAdmin() {
                 }}
                 disabled={!isStepComplete || loading.admin}
               >
-                Finish
+                {loading.admin ? (
+                  <>
+                    <SingleSpinner />
+                  </>
+                ) : (
+                  <>Finish</>
+                )}
               </button>
             </div>
           </div>

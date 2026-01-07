@@ -80,10 +80,10 @@ function LoginSchoolAdmin() {
             <img src="./svg/login.svg" alt="" />
           </div>
           <div className="login-container-form-box-one">
-            <h2 className="fw-bold my-4">Login School Admin</h2>
+            <h2 className="fw-bold my-4 text-white">Login School Admin</h2>
             <div>
               <div className="mb-4">
-                <label htmlFor="email" className="font-size-sm">
+                <label htmlFor="email" className="font-size-sm text-white">
                   Email
                 </label>
                 <TextInput
@@ -104,7 +104,7 @@ function LoginSchoolAdmin() {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="password" className="font-size-sm">
+                <label htmlFor="password" className="font-size-sm text-white">
                   Password
                 </label>
                 <TextInput

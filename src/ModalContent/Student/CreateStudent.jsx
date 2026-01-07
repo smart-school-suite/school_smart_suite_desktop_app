@@ -80,7 +80,6 @@ function CreateStudent({ handleClose }) {
   const { data: parents, isFetching: isParentsLoading } = useGetAllParents();
   const handleCreateStudent = async () => {
      const prevalidation = await handlePrevalidation();
-     console.table(prevalidation);
      if(!allFieldsValid(prevalidation)){
         toast.custom(
           <ToastWarning 
@@ -99,7 +98,12 @@ function CreateStudent({ handleClose }) {
         )
         return
      }
-    createStudent(formData);
+    createStudent({...formData, 
+       specialty_id:formData.specialty_id.id,
+       student_batch_id:formData.student_batch_id.id,
+       gender:formData.gender.name,
+       guardian_id:formData.guardian_id.id
+    });
   };
   return (
     <>
@@ -203,12 +207,13 @@ function CreateStudent({ handleClose }) {
           displayKey={['name']}
           valueKey={['name']}
           direction="up"
-          onSelect={(value) => handleStateChange('gender', value.name, setFormData)}
+          onSelect={(value) => handleStateChange('gender', value, setFormData)}
           onError={(value) => handleStateChange('gender', value, setErrors)}
           errorMessage="Gender Required"
           error={errors.gender}
           placeholder="Select Gender"
           ref={genderRef}
+          value={formData.gender}
         />
       </div>
      <div className="d-flex flex-row align-items-center gap-2">
@@ -221,13 +226,14 @@ function CreateStudent({ handleClose }) {
           displayKey={["name"]}
           valueKey={["id"]}
           direction="up"
-          onSelect={(value) => handleStateChange("student_batch_id", value.id, setFormData)}
+          onSelect={(value) => handleStateChange("student_batch_id", value, setFormData)}
           isLoading={isStudentBatchLoading}
           onError={(value) => handleStateChange('student_batch_id', value, setErrors)}
           errorMessage="Student Batch Required"
           error={errors.student_batch_id}
           placeholder="Select Student Batch"
           ref={studentBatchRef}
+          value={formData.student_batch_id}
         />
       </div>
       <div className="w-50">
@@ -239,13 +245,14 @@ function CreateStudent({ handleClose }) {
           displayKey={["specialty_name", "level_name"]}
           valueKey={["id"]}
           direction="up"
-          onSelect={(value) => handleStateChange("specialty_id", value.id, setFormData)}
+          onSelect={(value) => handleStateChange("specialty_id", value, setFormData)}
           placeholder="Select Specialty"
           isLoading={isSpecialtiesLoading}
           error={errors.specialty_id}
           onError={(value) => handleStateChange('specialty_id', value, setErrors)}
           errorMessage="Specialty Required"
           ref={specialtyRef}
+          value={formData.specialty_id}
         />
       </div>
      </div>
@@ -258,13 +265,14 @@ function CreateStudent({ handleClose }) {
           displayKey={["guardian_name"]}
           valueKey={["id"]}
           direction="up"
-          onSelect={(value) => handleStateChange("guardian_id", value.id, setFormData)}
+          onSelect={(value) => handleStateChange("guardian_id", value, setFormData)}
           isLoading={isParentsLoading}
           error={errors.guardian_id}
           onError={(value) => handleStateChange('guardian_id', value, setErrors)}
           errorMessage="Guardian Required"
           placeholder="Select Guardian"
           ref={guardianRef}
+          value={formData.guardian_id}
         />
       </div>
       <div className="mt-3">

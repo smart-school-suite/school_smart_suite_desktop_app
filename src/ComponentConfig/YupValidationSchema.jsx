@@ -178,6 +178,38 @@ export const addressSchema = ({
   return schema;
 };
 
+export const promoCodeSchema = ({
+  min = 3,
+  max = 20,
+  required = false,
+  messages = {},
+} = {}) => {
+  let schema = Yup.string()
+    .trim()
+    .uppercase()
+    .min(
+      min,
+      messages.min || `Promo code must be at least ${min} characters.`
+    )
+    .max(
+      max,
+      messages.max || `Promo code cannot exceed ${max} characters.`
+    )
+    .matches(
+      /^[A-Z0-9]*$/,
+      messages.invalid || "Promo code can only contain letters and numbers."
+    )
+    .transform((val) => (val === "" ? null : val));
+
+  if (required) {
+    schema = schema.required(messages.required || "Please enter a promo code.");
+  } else {
+    schema = schema.nullable();
+  }
+
+  return schema;
+};
+
 export const dateValidationSchema = ({
   required = true,
   futureOrToday = false,

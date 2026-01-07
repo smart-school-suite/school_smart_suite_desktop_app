@@ -80,7 +80,7 @@ function RegisterSchoolBranch() {
       <div
         className={`${
           darkMode ? "dark-bg dark-mode-text" : "white-bg"
-        } container w-100 height-100 pt-3 d-flex flex-column pb-5`}
+        } w-100 height-100 pt-3 d-flex flex-column pb-5`}
       >
         <div className="d-flex flex-row align-items-center w-100 justify-content-between px-3">
           <div className="signup-app-logo">

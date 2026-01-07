@@ -38,10 +38,14 @@ import {
 } from "@floating-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
+import useScreenSize from "../../hooks/ui/useScreenSize";
 function Sidebar() {
+  const { is } = useScreenSize();
   return (
     <>
-      <SideBarLg />
+      {
+         is.sm || is.md ? <SideBarSm /> : <SideBarLg />
+      }
     </>
   );
 }
@@ -748,7 +752,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span>
-                        <Icon icon="healthicons:money-bag-outline" />
+                        <Icon icon="mynaui:activity-square"  />
                       </span>
                       <p>School Activities</p>
                     </div>

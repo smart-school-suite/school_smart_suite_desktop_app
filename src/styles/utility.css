@@ -70,6 +70,7 @@
 .dark-mode-border{
      border-color: #333 !important;
 }
+
 .outline-none{
     outline: none !important;
 }
@@ -363,4 +364,18 @@ body{
 .hover-danger:hover{
      color: #ff0000 !important;
      transition: all 0.3s;
+}
+
+
+.scroll-bar-sm::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+}
+
+.scroll-bar-sm::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+.scroll-bar-sm::-webkit-scrollbar {
+  width: 4px;
 }

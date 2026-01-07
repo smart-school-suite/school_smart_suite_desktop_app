@@ -13,8 +13,11 @@ import DashboardPageLoader from "../../components/PageLoaders/DashboardPageLoade
 import { formatMonthlyChartData } from "../../utils/chartUtils";
 import {
   AdditionalFeeIcon,
+  AdditionalFeeIconFilled,
   ExpensesIcon,
+  ExpensesIconFilled,
   TuitionFeeIcon,
+  TuitionFeeIconFilled,
 } from "../../icons/Icons";
 function Dashboard() {
   const currentYear = new Date().getFullYear();
@@ -69,12 +72,15 @@ function Dashboard() {
               </div>*/}
             </div>
             <div className="d-flex flex-row gap-2 align-items-end gainsboro-color">
-              <button className="border-none rounded-pill p-2 d-flex flex-row gap-4 align-items-center font-size-sm">
-                <div className="d-flex flex-row gap-2">
-                  <span>IC</span>
-                  <span>2025 Jan</span>
+              <button className="border-none rounded-pill p-2 d-flex flex-row gap-5 align-items-center font-size-sm">
+                <div className="d-flex flex-row gap-2 align-items-center font-size-sm">
+                    <Icon icon="solar:calendar-outline"  />
+                  <span>{currentYear}</span>
                 </div>
-                <span>IC</span>
+                <Icon icon="majesticons:chevron-down-line"/>
+              </button>
+              <button className="rounded-circle p-1 border-none">
+                <Icon icon="mynaui:download" />
               </button>
             </div>
           </div>
@@ -327,7 +333,7 @@ export function CardOne({ data }) {
                 color: "#257ca4",
               }}
             >
-              <TuitionFeeIcon />
+              <TuitionFeeIconFilled/>
             </button>
             <span style={{ color: "#142e3d" }}>Tuition Fees Paid</span>
           </div>
@@ -388,7 +394,7 @@ export function CardTwo({ data }) {
                 color: "#fd9d74",
               }}
             >
-              <ExpensesIcon />
+              <ExpensesIconFilled />
             </button>
             <span style={{ color: "#430707" }}>Total Expenses</span>
           </div>
@@ -449,7 +455,7 @@ export function CardThree({ data }) {
                 color: "#4d6ba8",
               }}
             >
-              <AdditionalFeeIcon />
+              <AdditionalFeeIconFilled />
             </button>
             <span style={{ color: "#272f44" }}>Total Additional Fee Paid</span>
           </div>
