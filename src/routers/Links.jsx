@@ -17,12 +17,20 @@ import SettingsRoutes from "./Settings/SettingsRoutes";
 import StudentRoutes from "./Student/StudentRoutes";
 import ExamRoutes from "./Exam/ExamRoutes";
 import ResitRoutes from "./Resit/ResitRoutes";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { useSelector } from "react-redux";
+import { AblyProvider, ChannelProvider } from "ably/react";
+import { createAblyClient } from "../ably/ably";
+import { useMemo } from "react";
 function Links() {
+  const token = useSelector((state) => state.auth?.token);
+  const apiKey = useSelector((state) => state.auth?.apiKey);
+  const adminId = useSelector((state) => state.auth?.user.authSchoolAdmin?.id);
+  const ablyClient = useMemo(() => {
+    if (!token || !adminId) return null;
+    return createAblyClient(token, adminId, apiKey);
+  }, [token, adminId, apiKey]);
   return (
     <BrowserRouter>
-      <TransitionGroup>
-        <CSSTransition key={location.key} classNames="fade" timeout={300}>
           <Routes>
             <Route
               element={
@@ -36,7 +44,15 @@ function Links() {
             <Route
               element={
                 <ProtectedRoute>
-                      <Layout />
+                  {ablyClient ? (
+                    <AblyProvider client={ablyClient}>
+                      <ChannelProvider channelName={`private:App.Models.Schooladmin.${adminId}`}>
+                        <Layout />
+                      </ChannelProvider>
+                    </AblyProvider>
+                  ) : (
+                    <Layout />
+                  )}
                 </ProtectedRoute>
               }
             >
@@ -55,8 +71,6 @@ function Links() {
               ]}
             </Route>
           </Routes>
-        </CSSTransition>
-      </TransitionGroup>
     </BrowserRouter>
   );
 }

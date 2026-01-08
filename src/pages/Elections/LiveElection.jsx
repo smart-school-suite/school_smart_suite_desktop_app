@@ -4,7 +4,6 @@ import { useCastVote } from "../../hooks/election/useCastVote";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
-import createEcho from "../../echo/echo";
 import NumberFlow from "@number-flow/react";
 import { useGetLiveElectionResults } from "../../hooks/election/useGetLiveElectionResult";
 import toast from "react-hot-toast";
@@ -17,37 +16,37 @@ function LiveElection({ liveElection }) {
     error,
     isLoading,
   } = useGetLiveElectionResults(liveElection.election_id);
-  const userData = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.token);
-  const echo = useMemo(() => createEcho(token), [token]);
-  useEffect(() => {
-    if (electionResults?.data?.election_result) {
-      setResults(electionResults?.data?.election_result);
-    }
-    const channel = echo.private(
-      `election.results.${userData?.schoolDetails?.id}.${liveElection?.election_id}`
-    );
-    channel.listen("VoteCastEvent", (vote) => {
-      setResults((prev) => {
-        const prevResults = [...prev];
-        const categories = prevResults.find((candidates) => candidates.role_id == vote.position_id)
-        categories.has_user_voted = true
-        const candidates = categories.candidates.find(
-            (items) =>
-              items.candidate_id == vote.candidate_id &&
-              items.position_id == vote.position_id
-          );
-        candidates.vote_count = vote.vote_count;
-        candidates.user_voted_for_candidate = true;
-        return prevResults;
-      });
-    });
-    return () => {
-      echo.leave(
-        `election.results.${userData.school_branch_id}.${liveElection.election_id}`
-      );
-    };
-  }, [liveElection.election_id, echo, electionResults]);
+  // const userData = useSelector((state) => state.auth.user);
+  // const token = useSelector((state) => state.auth.token);
+  // const echo = useMemo(() => createEcho(token), [token]);
+  // useEffect(() => {
+  //   if (electionResults?.data?.election_result) {
+  //     setResults(electionResults?.data?.election_result);
+  //   }
+  //   const channel = echo.private(
+  //     `election.results.${userData?.schoolDetails?.id}.${liveElection?.election_id}`
+  //   );
+  //   channel.listen("VoteCastEvent", (vote) => {
+  //     setResults((prev) => {
+  //       const prevResults = [...prev];
+  //       const categories = prevResults.find((candidates) => candidates.role_id == vote.position_id)
+  //       categories.has_user_voted = true
+  //       const candidates = categories.candidates.find(
+  //           (items) =>
+  //             items.candidate_id == vote.candidate_id &&
+  //             items.position_id == vote.position_id
+  //         );
+  //       candidates.vote_count = vote.vote_count;
+  //       candidates.user_voted_for_candidate = true;
+  //       return prevResults;
+  //     });
+  //   });
+  //   return () => {
+  //     echo.leave(
+  //       `election.results.${userData.school_branch_id}.${liveElection.election_id}`
+  //     );
+  //   };
+  // }, [liveElection.election_id, echo, electionResults]);
   const handleCastVote = (data) => {
     castVote(data);
   };

@@ -368,12 +368,12 @@ body{
 
 
 .scroll-bar-sm::-webkit-scrollbar-thumb {
-  background-color: #888;
+  background-color: #ccc;
   border-radius: 10px;
 }
 
 .scroll-bar-sm::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-color);
+  background: #ccc;
 }
 
 .scroll-bar-sm::-webkit-scrollbar {

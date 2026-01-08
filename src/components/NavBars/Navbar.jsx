@@ -2,7 +2,6 @@ import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import NotificationDropdown from "../Dropdowns/NotificationDropdown";
-import createEcho from "../../echo/echo";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetSchoolBranchDetails } from "../../hooks/schoolBranch/useGetSchoolBranchDetail";
@@ -14,21 +13,6 @@ function Navbar() {
   const token = useSelector((state) => state.auth.token);
   const darkMode = useSelector((state) => state.theme.darkMode);
   const queryClient = useQueryClient();
-  const userId = userData.id;
-  const echo = createEcho(token);
-
-  useEffect(() => {
-    const channel = echo.private(
-      `App.Models.Schooladmin.${userData.authSchoolAdmin.id}`
-    );
-    channel.notification((notification) => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-    });
-
-    return () => {
-      echo.leave(`App.Models.Schooladmin.${userId}`);
-    };
-  }, [userId, echo]);
   return (
     <>
       <div>
@@ -49,30 +33,34 @@ function Navbar() {
             </div>
           </div>
           <div
-            className={`${ darkMode ? "dark-bg" : "bg-white" } dashboard-nav pill-tab-container`}>
+            className={`${
+              darkMode ? "dark-bg" : "bg-white"
+            } dashboard-nav pill-tab-container`}
+          >
             <button
               className={`dashboard-nav pill-tab rounded-pill fw-medium  ${
-                location.pathname === "/" ? `${darkMode ? "dark-mode-active" : "light-mode-active"}`
+                location.pathname === "/"
+                  ? `${darkMode ? "dark-mode-active" : "light-mode-active"}`
                   : "transparent-bg gainsboro-color"
               } `}
               onClick={() => {
                 navigate("/");
               }}
             >
-              <Icon icon="healthicons:money-bag-outline" className="fs-5"/>
+              <Icon icon="healthicons:money-bag-outline" className="fs-5" />
               <span>Financial Analysis</span>
             </button>
             <button
-              className={`dashboard-nav pill-tab rounded-pill disable-cursor ${
+              className={`dashboard-nav pill-tab rounded-pill ${
                 location.pathname === "/operational-analysis"
                   ? `${darkMode ? "dark-mode-active" : "light-mode-active"}`
                   : "transparent-bg gainsboro-color"
               }`}
-              // onClick={() => {
-              //navigate("/operational-analysis");
-              // }}
+              onClick={() => {
+                navigate("/operational-analysis");
+              }}
             >
-                <Icon icon="ep:operation"  className="fs-5"/>
+              <Icon icon="ep:operation" className="fs-5" />
               <span>Operational Analysis</span>
             </button>
             <button
@@ -85,7 +73,7 @@ function Navbar() {
               //navigate("/academic-analysis");
               // }}
             >
-                <Icon icon="heroicons:academic-cap" className="fs-5"/>
+              <Icon icon="heroicons:academic-cap" className="fs-5" />
               <span>Academic Analysis</span>
             </button>
           </div>
