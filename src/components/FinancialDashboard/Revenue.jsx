@@ -11,12 +11,12 @@ function Revenue() {
     <>
       {isLoading ? (
         <div className="w-100 d-flex flex-row align-items-end justify-content-between">
-          <div className="d-flex flex-column">
+          <div className="d-flex flex-column gap-2 w-50">
             <RectangleSkeleton width="20%" height="2dvh" speed={1} />
-            <RectangleSkeleton width="35%" height="10vh" speed={1} />
+            <RectangleSkeleton width="65%" height="4dvh" speed={1} />
           </div>
-          <div>
-            <RectangleSkeleton width="25%" height="10dvh" speed={1} />
+          <div className="w-50 d-flex flex-row justify-content-end">
+            <RectangleSkeleton width="50%" height="4dvh" speed={1} />
           </div>
         </div>
       ) : error ? (
@@ -84,10 +84,11 @@ const FormattedCurrency = ({ value, currency, className = "" }) => {
   const [integerPart, decimalPart] = formattedValue.split(".");
   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
-    <h2
-      className={`fw-bold m-0 ${
+    <span
+      className={`m-0 ${
         darkMode ? "light-skyblue-color" : "primary-color-dark"
       } ${className}`}
+      style={{ fontSize:"2rem", fontWeight:500 }}
     >
       <span className="me-2">{currency}</span>
       <span
@@ -98,6 +99,6 @@ const FormattedCurrency = ({ value, currency, className = "" }) => {
       <span className="light-skyblue-color">
         .{<NumberFlow value={decimalPart} />}
       </span>
-    </h2>
+    </span>
   );
 };
