@@ -64,14 +64,14 @@ function Navbar() {
               <span>Operational Analysis</span>
             </button>
             <button
-              className={`dashboard-nav pill-tab rounded-pill disable-cursor ${
+              className={`dashboard-nav pill-tab rounded-pill ${
                 location.pathname === "/academic-analysis"
                   ? `${darkMode ? "dark-mode-active" : "light-mode-active"}`
                   : "transparent-bg gainsboro-color"
               }`}
-              // onClick={() => {
-              //navigate("/academic-analysis");
-              // }}
+              onClick={() => {
+                navigate("/academic-analysis");
+              }}
             >
               <Icon icon="heroicons:academic-cap" className="fs-5" />
               <span>Academic Analysis</span>

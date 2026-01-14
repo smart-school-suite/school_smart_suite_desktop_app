@@ -2,14 +2,27 @@ import { Icon } from "@iconify/react";
 import { useRef, useState } from "react";
 import { useCreateTeacher } from "../../hooks/teacher/useCreateTeacher";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { emailValidationSchema, nameSchema, phoneValidationSchema } from "../../ComponentConfig/YupValidationSchema";
-import { PhoneNumberInput, TextInput} from "../../components/FormComponents/InputComponents";
+import {
+  emailValidationSchema,
+  nameSchema,
+  phoneValidationSchema,
+} from "../../ComponentConfig/YupValidationSchema";
+import {
+  PhoneNumberInput,
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
 import { gender } from "../../data/data";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { allFieldsValid } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import { useGetActiveGender } from "../../hooks/gender/useGetActiveGender";
 function CreateTeacher({ handleClose }) {
+  const {
+    data: gender,
+    isLoading: isGenderLoading,
+    error,
+  } = useGetActiveGender();
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const fullNameRef = useRef();
@@ -21,18 +34,18 @@ function CreateTeacher({ handleClose }) {
     name: "",
     last_name: "",
     first_name: "",
-    gender: "",
-    phone_one: "",
+    gender_id: "",
+    phone: "",
   });
   const [isFieldValid, setFieldValid] = useState({
     email: "",
     name: "",
     last_name: "",
     first_name: "",
-    phone_one: "",
+    phone: "",
   });
   const [errors, setErrors] = useState({
-    gender: "",
+    gender_id: "",
   });
   const { mutate: createTeacherMutation, isPending } =
     useCreateTeacher(handleClose);
@@ -52,30 +65,35 @@ function CreateTeacher({ handleClose }) {
       fullName,
       email,
       gender,
-      phoneNumber
-    }
-  }
+      phoneNumber,
+    };
+  };
   const handleCreateTeacher = async () => {
     const prevalidation = await handlePrevalidation();
-    if(!allFieldsValid(prevalidation)){
-        toast.custom(
-          <ToastWarning 
-            title={"Invalid Fields"}
-            description={"Please ensure all fields are valid before creating a teacher."}
-          />
-        )
-        return;
-    }
-    if(!allFieldsValid(isFieldValid)){
+    if (!allFieldsValid(prevalidation)) {
       toast.custom(
-        <ToastWarning 
+        <ToastWarning
           title={"Invalid Fields"}
-          description={"Please ensure all fields are valid before creating a teacher."}
+          description={
+            "Please ensure all fields are valid before creating a teacher."
+          }
         />
-      )
+      );
       return;
     }
-    createTeacherMutation({...formData, gender:formData.gender.name});
+    if (!allFieldsValid(isFieldValid)) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={
+            "Please ensure all fields are valid before creating a teacher."
+          }
+        />
+      );
+      return;
+    }
+    console.log(formData.gender_id);
+    createTeacherMutation({ ...formData, gender_id: formData?.gender_id?.id });
   };
   return (
     <>
@@ -93,49 +111,57 @@ function CreateTeacher({ handleClose }) {
         </div>
         <div className="d-flex flex-row align-items-center gap-2">
           <div className="w-50">
-          <label htmlFor="firstName" className="font-size-sm">
-            First Name
-          </label>
-          <TextInput
-            placeholder={"Enter Teacher First Name"}
-            onChange={(value) => handleStateChange("first_name", value, setFormData)}
-            onValidationChange={(value) => handleStateChange("first_name", value, setFieldValid)}
-            validationSchema={nameSchema({
-              min: 3,
-              max: 50,
-              required: true,
-              message: {
-                min: "First Name Must Be Atleast 3 Characters Long",
-                max: "First Name Must Not Exceed 50 Characters",
-                required: "First Name Required",
-              },
-            })}
-            value={formData.first_name}
-            ref={firstNameRef}
-          />
-        </div>
-        <div className="w-50">
-          <label htmlFor="lastName" className="font-size-sm">
-            Last Name
-          </label>
-          <TextInput
-            placeholder={"Enter Teacher Last Name"}
-            onChange={(value) => handleStateChange("last_name", value, setFormData)}
-            onValidationChange={(value) => handleStateChange("last_name", value, setFieldValid)}
-            validationSchema={nameSchema({
-              min: 3,
-              max: 50,
-              required: true,
-              message: {
-                min: "Last Name Must Be Atleast 3 Characters Long",
-                max: "Last Name Must Not Exceed 3 Characters",
-                required: "Last Name Required",
-              },
-            })}
-            value={formData.last_name}
-            ref={lastNameRef}
-          />
-        </div>
+            <label htmlFor="firstName" className="font-size-sm">
+              First Name
+            </label>
+            <TextInput
+              placeholder={"Enter Teacher First Name"}
+              onChange={(value) =>
+                handleStateChange("first_name", value, setFormData)
+              }
+              onValidationChange={(value) =>
+                handleStateChange("first_name", value, setFieldValid)
+              }
+              validationSchema={nameSchema({
+                min: 3,
+                max: 50,
+                required: true,
+                message: {
+                  min: "First Name Must Be Atleast 3 Characters Long",
+                  max: "First Name Must Not Exceed 50 Characters",
+                  required: "First Name Required",
+                },
+              })}
+              value={formData.first_name}
+              ref={firstNameRef}
+            />
+          </div>
+          <div className="w-50">
+            <label htmlFor="lastName" className="font-size-sm">
+              Last Name
+            </label>
+            <TextInput
+              placeholder={"Enter Teacher Last Name"}
+              onChange={(value) =>
+                handleStateChange("last_name", value, setFormData)
+              }
+              onValidationChange={(value) =>
+                handleStateChange("last_name", value, setFieldValid)
+              }
+              validationSchema={nameSchema({
+                min: 3,
+                max: 50,
+                required: true,
+                message: {
+                  min: "Last Name Must Be Atleast 3 Characters Long",
+                  max: "Last Name Must Not Exceed 3 Characters",
+                  required: "Last Name Required",
+                },
+              })}
+              value={formData.last_name}
+              ref={lastNameRef}
+            />
+          </div>
         </div>
         <div>
           <label htmlFor="fullNames" className="font-size-sm">
@@ -143,7 +169,9 @@ function CreateTeacher({ handleClose }) {
           </label>
           <TextInput
             onChange={(value) => handleStateChange("name", value, setFormData)}
-            onValidationChange={(value) => handleStateChange("name", value, setFieldValid)}
+            onValidationChange={(value) =>
+              handleStateChange("name", value, setFieldValid)
+            }
             value={formData.name}
             validationSchema={nameSchema({
               min: 3,
@@ -165,10 +193,12 @@ function CreateTeacher({ handleClose }) {
           </label>
           <TextInput
             onChange={(value) => handleStateChange("email", value, setFormData)}
-            onValidationChange={(value) => handleStateChange("email", value, setFieldValid)}
+            onValidationChange={(value) =>
+              handleStateChange("email", value, setFieldValid)
+            }
             placeholder={"e.g example@gmail.com"}
             validationSchema={emailValidationSchema({
-                required:true
+              required: true,
             })}
             value={formData.email}
             ref={emailRef}
@@ -179,17 +209,21 @@ function CreateTeacher({ handleClose }) {
             Gender
           </label>
           <CustomDropdown
-            data={gender}
+            data={gender?.data || []}
             displayKey={["name"]}
-            valueKey={["name"]}
+            valueKey={["id"]}
             direction="up"
-            onSelect={(value) => handleStateChange("gender", value, setFormData)}
-            onError={(value) => handleStateChange("gender", value, setErrors)}
+            onSelect={(value) =>
+              handleStateChange("gender_id", value, setFormData)
+            }
+            onError={(value) =>
+              handleStateChange("gender_id", value, setErrors)
+            }
             errorMessage="Gender Required"
             error={errors.gender}
             placeholder="Select Gender"
             ref={genderRef}
-            value={formData.gender}
+            value={formData.gender_id}
           />
         </div>
         <div>
@@ -197,15 +231,17 @@ function CreateTeacher({ handleClose }) {
             Phone Number
           </label>
           <PhoneNumberInput
-            onChange={(value) => handleStateChange("phone_one", value, setFormData)}
-            onValidationChange={(value) => handleStateChange('phone_one', value, setFieldValid)}
+            onChange={(value) => handleStateChange("phone", value, setFormData)}
+            onValidationChange={(value) =>
+              handleStateChange("phone", value, setFieldValid)
+            }
             value={formData.phone_one}
             validationSchema={phoneValidationSchema({
-               optional:false,
-               prefixes:['6', '2'],
-               messages:{
-                 required:"Phone Number Required",
-               }
+              optional: false,
+              prefixes: ["6", "2"],
+              messages: {
+                required: "Phone Number Required",
+              },
             })}
             ref={phoneNumberRef}
           />

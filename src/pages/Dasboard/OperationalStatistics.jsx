@@ -5,7 +5,6 @@ import StudentRegistrationLevelCard from "../../components/OperationalDashboard/
 import StudentLevelDropoutRate from "../../components/OperationalDashboard/StudentLevelDropoutRate";
 import StudentDropoutRate from "../../components/OperationalDashboard/StudentDropoutRate";
 function OperationalStatistics() {
-  const currentYear = new Date().getFullYear();
   return (
     <>
       <div>

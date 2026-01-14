@@ -21,6 +21,7 @@ import {
   settingRoutes,
   StudentRoutes,
   tuitionFeeRoutes,
+  teacherRoutes,
 } from "../../utils/paths";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import Logout from "../../ModalContent/Auth/Logout";
@@ -41,13 +42,7 @@ import { useState, useCallback } from "react";
 import useScreenSize from "../../hooks/ui/useScreenSize";
 function Sidebar() {
   const { is } = useScreenSize();
-  return (
-    <>
-      {
-         is.sm || is.md ? <SideBarSm /> : <SideBarLg />
-      }
-    </>
-  );
+  return <>{is.sm || is.md ? <SideBarSm /> : <SideBarLg />}</>;
 }
 export default Sidebar;
 
@@ -56,7 +51,11 @@ function SideBarSm() {
   const navigate = useNavigate();
   return (
     <>
-      <div className={`d-flex flex-column w-100 ${darkMode ? 'dark-mode' : 'white-bg'} py-2 h-100 align-items-center`}>
+      <div
+        className={`d-flex flex-column w-100 ${
+          darkMode ? "dark-mode" : "white-bg"
+        } py-2 h-100 align-items-center`}
+      >
         <div className="d-flex flex-column gap-5">
           <div className="app-logo">
             <img
@@ -77,19 +76,22 @@ function SideBarSm() {
         </div>
         <div className="mt-auto">
           <div className="d-flex flex-column gap-3">
-            <div className={`sidebar-sm menu-tab  ${IsPathInRoutes(settingRoutes) ? 'active' : 'inactive'}`}
-             onClick={() => {
-                 navigate('/settings/general-settings')
-             }}
+            <div
+              className={`sidebar-sm menu-tab  ${
+                IsPathInRoutes(settingRoutes) ? "active" : "inactive"
+              }`}
+              onClick={() => {
+                navigate("/settings/general-settings");
+              }}
             >
               <Icon icon="uil:setting" />
             </div>
             <ModalButton
-                action={{ modalContent: Logout }}
-                classname="sidebar-sm menu-tab inactive hover-danger"
-              >
-                  <Icon icon="mynaui:logout" />
-              </ModalButton>
+              action={{ modalContent: Logout }}
+              classname="sidebar-sm menu-tab inactive hover-danger"
+            >
+              <Icon icon="mynaui:logout" />
+            </ModalButton>
           </div>
         </div>
       </div>
@@ -248,16 +250,18 @@ function SideBarLg() {
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
                         <div className="subbox-nav">
-                          <NavLink
-                            to="/teachers"
-                            className={({ isActive }) =>
-                              isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                          <div
+                            onClick={() => {
+                              navigate("/teacher");
+                            }}
+                            className={
+                              IsPathInRoutes(teacherRoutes)
+                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                                : "text-decoration-none gainsboro-color pointer-cursor"
                             }
                           >
-                            <p>Teachers</p>
-                          </NavLink>
+                            <p>Teacher</p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -752,7 +756,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span>
-                        <Icon icon="mynaui:activity-square"  />
+                        <Icon icon="mynaui:activity-square" />
                       </span>
                       <p>School Activities</p>
                     </div>
@@ -1033,7 +1037,7 @@ function SideBarSmTab({ items }) {
     whileElementsMounted: autoUpdate,
   });
 
- const click = useClick(context, { toggle: true });
+  const click = useClick(context, { toggle: true });
   const dismiss = useDismiss(context);
   const role = useRole(context);
 
@@ -1047,32 +1051,40 @@ function SideBarSmTab({ items }) {
     (e) => {
       const floatingOnClick = getReferenceProps().onClick;
       if (floatingOnClick) floatingOnClick(e);
-      if(!items.menu){
-         navigate(items.path)
+      if (!items.menu) {
+        navigate(items.path);
       }
     },
     [getReferenceProps]
   );
   const routeMap = {
-      dashboard:dashboardRoutes,
-      administrator:adminRoutes,
-      academics:academicRoutes,
-      exams:examRoutes,
-      resit:resitRoutes,
-      student:StudentRoutes,
-      schoolActivities:schoolActivities,
-      finances:financialRoutes
-  }
+    dashboard: dashboardRoutes,
+    administrator: adminRoutes,
+    academics: academicRoutes,
+    exams: examRoutes,
+    resit: resitRoutes,
+    student: StudentRoutes,
+    schoolActivities: schoolActivities,
+    finances: financialRoutes,
+  };
   return (
     <div className="position-relative inline-block">
       <button
         ref={refs.setReference}
         {...getReferenceProps()}
-        className={`sidebar-sm menu-tab ${IsPathInRoutes(routeMap[items.key]) ? 'active' : 'inactive'}`}
+        className={`sidebar-sm menu-tab ${
+          IsPathInRoutes(routeMap[items.key]) ? "active" : "inactive"
+        }`}
         aria-expanded={isOpen}
         onClick={handleTriggerClick}
       >
-        <Icon icon={`${IsPathInRoutes(routeMap[items.key]) ? items.iconFilled : items.iconOutlined}`} />
+        <Icon
+          icon={`${
+            IsPathInRoutes(routeMap[items.key])
+              ? items.iconFilled
+              : items.iconOutlined
+          }`}
+        />
       </button>
       {items.menu && (
         <AnimatePresence>
@@ -1085,7 +1097,9 @@ function SideBarSmTab({ items }) {
                 zIndex: 9999,
               }}
               {...getFloatingProps()}
-              className={`sidebar-sm  menu border p-2 ${darkMode ? 'dark-bg' : 'bg-white'} rounded shadow-lg`}
+              className={`sidebar-sm  menu border p-2 ${
+                darkMode ? "dark-bg" : "bg-white"
+              } rounded shadow-lg`}
               initial={{ opacity: 0, x: 12 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 12 }}
@@ -1099,12 +1113,12 @@ function SideBarSmTab({ items }) {
                       className="d-flex flex-row align-items-center justify-content-between px-2  pointer-cursor sidebar-sm menu-item"
                       key={index}
                       onClick={() => {
-                         navigate(item.path)
-                         setIsOpen(false)
+                        navigate(item.path);
+                        setIsOpen(false);
                       }}
                     >
                       <span>{item.title}</span>
-                      <Icon icon={item.iconOutlined} className="fs-6"/>
+                      <Icon icon={item.iconOutlined} className="fs-6" />
                     </div>
                     {!isLastElement && <hr />}
                   </>
@@ -1124,7 +1138,7 @@ const sideBarData = [
     iconOutlined: "mage:dashboard",
     menu: false,
     path: "/",
-    key:"dashboard"
+    key: "dashboard",
   },
   {
     title: "Administrator",
@@ -1132,7 +1146,7 @@ const sideBarData = [
     iconOutlined: "clarity:administrator-line",
     menu: true,
     path: "/school-admins",
-    key:"administrator",
+    key: "administrator",
     menuItems: [
       {
         title: "School Admins",
@@ -1166,7 +1180,7 @@ const sideBarData = [
     iconOutlined: "heroicons:academic-cap",
     path: "/grades-configuration",
     menu: true,
-    key:"academics",
+    key: "academics",
     menuItems: [
       {
         title: "Grades Configuration",
@@ -1200,7 +1214,7 @@ const sideBarData = [
     iconOutlined: "healthicons:i-exam-multiple-choice-outline",
     path: "/exam",
     menu: true,
-    key:"exams",
+    key: "exams",
     menuItems: [
       {
         title: "Exam",
@@ -1234,7 +1248,7 @@ const sideBarData = [
     iconOutlined: "pepicons-pop:repeat-circle",
     path: "/resit-exams",
     menu: true,
-    key:"resit",
+    key: "resit",
     menuItems: [
       {
         title: "Resit Exam",
@@ -1268,7 +1282,7 @@ const sideBarData = [
     iconFilled: "mdi:account-student",
     path: "/students",
     menu: true,
-    key:"student",
+    key: "student",
     menuItems: [
       {
         title: "Students",
@@ -1302,7 +1316,7 @@ const sideBarData = [
     iconOutlined: "mynaui:activity-square",
     path: "/announcement-overview",
     menu: true,
-    key:"schoolActivities",
+    key: "schoolActivities",
     menuItems: [
       {
         title: "Announcements",
@@ -1330,7 +1344,7 @@ const sideBarData = [
     iconOutlined: "healthicons:money-bag-outline",
     menu: true,
     path: "/school-expenses",
-    key:"finances",
+    key: "finances",
     menuItems: [
       {
         title: "School Expenses",

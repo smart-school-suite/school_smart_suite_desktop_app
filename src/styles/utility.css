@@ -1,371 +1,454 @@
+:root {
+  --primary-color: #0ea7e9;
+  --primary-color-50: #f0f9ff;
+  --primary-color-100: #e0f2fe;
+  --primary-color-200: #bae7fd;
+  --primary-color-300: #7dd4fc;
+  --primary-color-400: #38bff8;
+  --primary-color-dark: #083049;
 
-:root{
-    --primary-color:#0ea7e9;
-    --primary-color-50:#f0f9ff;
-    --primary-color-100: #e0f2fe;
-    --primary-color-200: #bae7fd;
-    --primary-color-300: #7dd4fc;
-    --primary-color-400: #38bff8;
-    --primary-color-dark: #083049;
+  /* Accent color */
+  --acent-color-one: #a0d3e8;
+  --acent-color-one-darker: #142e3d;
+  --acent-color-two: #ffccb3;
+  --acent-color-two-darker: #440706;
+  --acent-color-three: #689cc8;
+  --acent-color-three-darker: #182739;
+  --acent-color-four: #9dbfdc;
+  --acent-color-five: #fff;
+  --acent-color-six: #fafafa;
+  --acent-color-seven: #888;
+  --acent-color-eight: transparent;
+  --acent-color-nine: #bae7fd;
+  --acent-color-ten: #5cb85c;
 
-    /* Accent color */
-    --acent-color-one: #A0D3E8;
-    --acent-color-one-darker: #142E3D;
-    --acent-color-two: #FFCCB3;
-    --acent-color-two-darker: #440706;
-    --acent-color-three: #689CC8;
-    --acent-color-three-darker: #182739;
-    --acent-color-four: #9DBFDC;
-    --acent-color-five: #fff;
-    --acent-color-six: #FAFAFA;
-    --acent-color-seven: #888;
-    --acent-color-eight: transparent;
-    --acent-color-nine: #BAE7FD;
-    --acent-color-ten: #5CB85C;
+  /* Topography */
+  --primary-font-family: "Poppins, sans-serif";
+  --font-size-base: 1rem; /* 16px */
+  --scale-ratio: 1.25;
+  --font-size-xs: calc(
+    var(--font-size-base) / var(--scale-ratio) * 0.75
+  ); /* ~12px */
+  --font-size-sm: calc(var(--font-size-base) / var(--scale-ratio)); /* ~16px */
+  --font-size-md: var(--font-size-base); /* ~20px */
+  --font-size-lg: calc(var(--font-size-base) * var(--scale-ratio)); /* ~25px */
+  --font-size-xl: calc(
+    var(--font-size-base) * var(--scale-ratio) * 1.5
+  ); /* ~30px */
+  --font-size-2xl: calc(
+    var(--font-size-base) * var(--scale-ratio) * 2
+  ); /* ~40px */
 
-    /* Topography */
-    --primary-font-family:"Poppins, sans-serif";
-    --font-size-base: 1rem; /* 16px */
-    --scale-ratio: 1.25;
-    --font-size-xs: calc(var(--font-size-base) / var(--scale-ratio) * 0.75); /* ~12px */
-    --font-size-sm: calc(var(--font-size-base) / var(--scale-ratio)); /* ~16px */
-    --font-size-md: var(--font-size-base); /* ~20px */
-    --font-size-lg: calc(var(--font-size-base) * var(--scale-ratio)); /* ~25px */
-    --font-size-xl: calc(var(--font-size-base) * var(--scale-ratio) * 1.5); /* ~30px */
-    --font-size-2xl: calc(var(--font-size-base) * var(--scale-ratio) * 2); /* ~40px */
+  /* widths */
+  --width-10: 10%;
+  --width-20: 20%;
+  --width-30: 30%;
+  --width-40: 40%;
+  --width-50: 50%;
+  --width-60: 60%;
+  --width-70: 70%;
+  --width-80: 80%;
+  --width-90: 90%;
+  --width-100: 100%;
 
-    /* widths */
-    --width-10:10%;
-    --width-20:20%;
-    --width-30: 30%;
-    --width-40: 40%;
-    --width-50: 50%;
-    --width-60: 60%;
-    --width-70: 70%;
-    --width-80: 80%;
-    --width-90: 90%;
-    --width-100: 100%;
+  /* heights */
+  --height-10: 10dvh;
+  --height-20: 20dvh;
+  --height-30: 30dvh;
+  --height-40: 40dvh;
+  --height-50: 50dvh;
+  --height-60: 60dvh;
+  --height-70: 70dvh;
+  --height-80: 80dvh;
+  --height-90: 90dvh;
+  --height-100: 100dvh;
 
-    /* heights */
-    --height-10: 10dvh;
-    --height-20: 20dvh;
-    --height-30: 30dvh;
-    --height-40: 40dvh;
-    --height-50: 50dvh;
-    --height-60: 60dvh;
-    --height-70: 70dvh;
-    --height-80: 80dvh;
-    --height-90: 90dvh;
-    --height-100: 100dvh;
+  /* break points */
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
 
-    /* break points */
-    --breakpoint-sm: 576px;
-    --breakpoint-md: 768px;
-    --breakpoint-lg: 992px;
-    --breakpoint-xl: 1200px;
-}
-.dark-mode-text{
-    color: #999;
-}
-.dark-mode-border{
-     border-color: #333 !important;
-}
+  /* ─── Semantic / emotional names (most frequently used) ─────── */
+  --tracking-tighter: -0.025em; /* ≈ -0.4px @ 16px base */
+  --tracking-tight: -0.0125em; /* ≈ -0.2px – very subtle tightening */
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em; /* ≈ +0.4px – good for uppercase / labels */
+  --tracking-wider: 0.05em; /* ≈ +0.8px – nav items, buttons, short text */
+  --tracking-widest: 0.1em; /* ≈ +1.6px – display, logos, ALL CAPS */
 
-.outline-none{
-    outline: none !important;
-}
-.dark-bg{
-    background-color: #111;
-}
-.dark-bg-light{
-    background-color: #222;
-}
-.table-dark-bg{
-   background-color: #111 !important ; 
-}
-.table-dark-bg-light{
-  background-color: #222 !important ;  
-}
-.color-primary{
-    color: var(--primary-color);
-}
-.primary-background{
-    background-color: var(--primary-color);
-}
-.color-primary-50{
-    color: var(--primary-color-50);
-}
-.primary-background-50{
-    background-color: var(--primary-color-50);
-}
-.color-primary-100{
-    color: var(--primary-color-100);
-}
-.primary-background-100{
-    background-color: var(--primary-color-100);
-}
-.color-primary-200{
-    color: var(--primary-color-200);
-}
-.primary-background-200{
-    background-color: var(--primary-color-200);
-}
-.color-primary-300{
-    color: var(--primary-color-300);
-}
-.primary-background-300{
-    background-color: var(--primary-color-300);
-}
-.color-primary-400{
-    color: var(--primary-color-400);
-}
-.primary-background-400{
-    background-color: var(--primary-color-400);
-}
-.primary-color-dark{
-    color: var(--primary-color-dark);
-}
-.primary-background-dark{
-    background-color: var(--primary-color-dark);
-}
-.search-btn-color{
-    background-color: var(--acent-color-nine);
+  /* ─── Precise micro-steps (pixel-ish thinking, 0.25 px increments) ─── */
+  --tracking-0: 0;
+  --tracking-025: 0.015625em; /* 0.25px / 16 */
+  --tracking-050: 0.03125em; /* 0.5px */
+  --tracking-075: 0.046875em; /* 0.75px */
+  --tracking-100: 0.0625em; /* 1px */
+  --tracking-150: 0.09375em; /* 1.5px */
+  --tracking-200: 0.125em; /* 2px */
+  --tracking-300: 0.1875em; /* 3px — rare but useful for very spaced display */
+
+  /* ─── Negative precise steps ────────────────────────────────────── */
+  --tracking--025: -0.015625em;
+  --tracking--050: -0.03125em;
+  --tracking--075: -0.046875em;
+  --tracking--100: -0.0625em;
+  --tracking--150: -0.09375em;
+  --tracking--200: -0.125em;
+
+  /* ─── Bonus – very common “uppercase helper” values ─────────────── */
+  --tracking-caps: 0.08em; /* classic small-caps / uppercase tracking */
+  --tracking-title: 0.04em; /* slightly more open title case */
+  --tracking-button: 0.06em;
 }
 
-
-.light-skyblue-bg{
-    background-color: var(--acent-color-one);
+.dark-mode-text {
+  color: #999;
 }
-.light-skyblue-color{
-    color: var(--acent-color-one);
-}
-.dark-slate-gray-color{
-    color: var(--acent-color-one-darker);
-}
-.light-peach-bg{
-    background-color: var(--acent-color-two);
-}
-.dark-red-color{
-    color: var(--acent-color-two-darker);
-}
-.cornflower-blue-bg{
-    background-color: var(--acent-color-three);
-}
-.cornflower-blue-color{
-    color: var(--acent-color-three);
-}
-.charcoal-color{
-    color: var(--acent-color-three-darker);
-}
-.charcoal-bg{
-    background-color: var(--acent-color-three-darker);
-}
-.light-steel-blue-bg{
-    background-color: var(--acent-color-four);
-}
-.light-sky-blue-color{
-    color: var(--acent-color-four);
-}
-.white-bg{
-    background-color: var(--acent-color-five);
-}
-.white-color{
-    color: var(--acent-color-five);
-}
-.white-smoke-bg{
-    background-color: var(--acent-color-six);
-}
-.white-smoke-color{
-    color: var(--acent-color-six);
-}
-.gainsboro-bg{
-    background-color: var(--acent-color-seven);
-}
-.gainsboro-color{
-    color: var(--acent-color-seven);
-}
-.transparent-color{
-    color: var(--acent-color-eight);
-}
-.transparent-bg{
-    background-color: var(--acent-color-eight);
-}
-.green-bg{
-    background-color: var(--acent-color-ten);
-}
-.green-color{
-    color: var(--acent-color-ten);
+.dark-mode-border {
+  border-color: #333 !important;
 }
 
-.font-size-xs{
-    font-size: var(--font-size-xs);
+.outline-none {
+  outline: none !important;
 }
-.font-size-sm{
-    font-size: var(--font-size-sm);
+.dark-bg {
+  background-color: #111;
 }
-.font-size-md{
-    font-size: var(--font-size-md);
+.dark-bg-light {
+  background-color: #222;
 }
-.font-size-lg{
-    font-size: var(--font-size-lg);
+.table-dark-bg {
+  background-color: #111 !important ;
 }
-.font-size-xl{
-    font-size: var(--font-size-xl);
+.table-dark-bg-light {
+  background-color: #222 !important ;
 }
-.font-size-2xl{
-    font-size: var(--font-size-2xl);
+.color-primary {
+  color: var(--primary-color);
+}
+.primary-background {
+  background-color: var(--primary-color);
+}
+.color-primary-50 {
+  color: var(--primary-color-50);
+}
+.primary-background-50 {
+  background-color: var(--primary-color-50);
+}
+.color-primary-100 {
+  color: var(--primary-color-100);
+}
+.primary-background-100 {
+  background-color: var(--primary-color-100);
+}
+.color-primary-200 {
+  color: var(--primary-color-200);
+}
+.primary-background-200 {
+  background-color: var(--primary-color-200);
+}
+.color-primary-300 {
+  color: var(--primary-color-300);
+}
+.primary-background-300 {
+  background-color: var(--primary-color-300);
+}
+.color-primary-400 {
+  color: var(--primary-color-400);
+}
+.primary-background-400 {
+  background-color: var(--primary-color-400);
+}
+.primary-color-dark {
+  color: var(--primary-color-dark);
+}
+.primary-background-dark {
+  background-color: var(--primary-color-dark);
+}
+.search-btn-color {
+  background-color: var(--acent-color-nine);
 }
 
+.light-skyblue-bg {
+  background-color: var(--acent-color-one);
+}
+.light-skyblue-color {
+  color: var(--acent-color-one);
+}
+.dark-slate-gray-color {
+  color: var(--acent-color-one-darker);
+}
+.light-peach-bg {
+  background-color: var(--acent-color-two);
+}
+.dark-red-color {
+  color: var(--acent-color-two-darker);
+}
+.cornflower-blue-bg {
+  background-color: var(--acent-color-three);
+}
+.cornflower-blue-color {
+  color: var(--acent-color-three);
+}
+.charcoal-color {
+  color: var(--acent-color-three-darker);
+}
+.charcoal-bg {
+  background-color: var(--acent-color-three-darker);
+}
+.light-steel-blue-bg {
+  background-color: var(--acent-color-four);
+}
+.light-sky-blue-color {
+  color: var(--acent-color-four);
+}
+.white-bg {
+  background-color: var(--acent-color-five);
+}
+.white-color {
+  color: var(--acent-color-five);
+}
+.white-smoke-bg {
+  background-color: var(--acent-color-six);
+}
+.white-smoke-color {
+  color: var(--acent-color-six);
+}
+.gainsboro-bg {
+  background-color: var(--acent-color-seven);
+}
+.gainsboro-color {
+  color: var(--acent-color-seven);
+}
+.transparent-color {
+  color: var(--acent-color-eight);
+}
+.transparent-bg {
+  background-color: var(--acent-color-eight);
+}
+.green-bg {
+  background-color: var(--acent-color-ten);
+}
+.green-color {
+  color: var(--acent-color-ten);
+}
 
-.height-10{
-    height: var(--height-10);
+.font-size-xs {
+  font-size: var(--font-size-xs);
 }
-.height-20{
-    height: var(--height-20);
+.font-size-sm {
+  font-size: var(--font-size-sm);
 }
-.height-30{
-    height: var(--height-30);
+.font-size-md {
+  font-size: var(--font-size-md);
 }
-.height-40{
-    height: var(--height-40);
+.font-size-lg {
+  font-size: var(--font-size-lg);
 }
-.height-50{
-    height: var(--height-50);
+.font-size-xl {
+  font-size: var(--font-size-xl);
 }
-.height-60{
-    height: var(--height-60);
-}
-.height-70{
-    height: var(--height-70);
-}
-.height-80{
-    height: var(--height-80);
-}
-.height-90{
-    height: var(--height-90);
-}
-.height-100{
-    height: var(--height-100);
+.font-size-2xl {
+  font-size: var(--font-size-2xl);
 }
 
-.rotate-90{
-    transform: rotate(90deg);
+.height-10 {
+  height: var(--height-10);
 }
-.rotate-45{
-    transform: rotate(45deg);
+.height-20 {
+  height: var(--height-20);
 }
-.rotate-5{
-    transform: rotate(5deg);
+.height-30 {
+  height: var(--height-30);
 }
-.rotate-reverse-5{
-   transform: rotate(-5deg); 
+.height-40 {
+  height: var(--height-40);
 }
-.rotate-180{
-    transform: rotate(180deg);
+.height-50 {
+  height: var(--height-50);
 }
-.p-md{
-    padding: 0.75rem !important;
+.height-60 {
+  height: var(--height-60);
 }
-.width-10{
+.height-70 {
+  height: var(--height-70);
+}
+.height-80 {
+  height: var(--height-80);
+}
+.height-90 {
+  height: var(--height-90);
+}
+.height-100 {
+  height: var(--height-100);
+}
+
+.rotate-90 {
+  transform: rotate(90deg);
+}
+.rotate-45 {
+  transform: rotate(45deg);
+}
+.rotate-5 {
+  transform: rotate(5deg);
+}
+.rotate-reverse-5 {
+  transform: rotate(-5deg);
+}
+.rotate-180 {
+  transform: rotate(180deg);
+}
+.p-md {
+  padding: 0.75rem !important;
+}
+.width-10 {
   width: var(--width-10);
 }
-.width-20{
+.width-20 {
   width: var(--width-20);
 }
-.width-30{
+.width-30 {
   width: var(--width-30);
 }
-.width-40{
+.width-40 {
   width: var(--width-40);
 }
-.width-50{
+.width-50 {
   width: var(--width-50);
 }
-.width-60{
+.width-60 {
   width: var(--width-60);
 }
-.width-70{
+.width-70 {
   width: var(--width-70);
 }
-.width-80{
+.width-80 {
   width: var(--width-80);
 }
-.width-90{
+.width-90 {
   width: var(--width-90);
 }
-.width-100{
+.width-100 {
   width: var(--width-100);
 }
 
 .transition-all {
-    transition-property: all;
-    transition-duration: 0.3s;
-    transition-timing-function: ease-in-out;
+  transition-property: all;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
 }
 
-.duration-100 { transition-duration: 0.1s; }
-.duration-200 { transition-duration: 0.2s; }
-.duration-300 { transition-duration: 0.3s; }
-.duration-500 { transition-duration: 0.5s; }
-.duration-700 { transition-duration: 0.7s; }
-.duration-1000 { transition-duration: 1s; }
-
-.ease-in { transition-timing-function: cubic-bezier(0.4, 0, 1, 1); }
-.ease-out { transition-timing-function: cubic-bezier(0, 0, 0.2, 1); }
-.ease-in-out { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-.linear { transition-timing-function: linear; }
-
-.delay-100 { transition-delay: 0.1s; }
-.delay-300 { transition-delay: 0.3s; }
-.delay-500 { transition-delay: 0.5s; }
-.delay-1000 { transition-delay: 1s; }
-
-.opacity-0 { opacity: 0; }
-.opacity-10 { opacity: 0.1; }
-.opacity-20 { opacity: 0.2; }
-.opacity-30 { opacity: 0.3; }
-.opacity-40 { opacity: 0.4; }
-.opacity-50 { opacity: 0.5; }
-.opacity-60 { opacity: 0.6; }
-.opacity-70 { opacity: 0.7; }
-.opacity-80 { opacity: 0.8; }
-.opacity-90 { opacity: 0.9; }
-.opacity-100 { opacity: 1; }
-
-.border-none{
-    border: none;
+.duration-100 {
+  transition-duration: 0.1s;
+}
+.duration-200 {
+  transition-duration: 0.2s;
+}
+.duration-300 {
+  transition-duration: 0.3s;
+}
+.duration-500 {
+  transition-duration: 0.5s;
+}
+.duration-700 {
+  transition-duration: 0.7s;
+}
+.duration-1000 {
+  transition-duration: 1s;
 }
 
-body{
-    font-family: 'Poppins', sans-serif;
-    background-color: #f9f9f9;
+.ease-in {
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+.ease-out {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+.ease-in-out {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.linear {
+  transition-timing-function: linear;
 }
 
-.z-2000{
-    z-index: 5000 !important;
+.delay-100 {
+  transition-delay: 0.1s;
+}
+.delay-300 {
+  transition-delay: 0.3s;
+}
+.delay-500 {
+  transition-delay: 0.5s;
+}
+.delay-1000 {
+  transition-delay: 1s;
 }
 
-.remove-button-style{
-    margin: 0;
-    padding: 0;
-    border: none;
-    background-color: transparent;
+.opacity-0 {
+  opacity: 0;
 }
-.disable-cursor{
-    cursor: not-allowed;
-    pointer-events: none;
+.opacity-10 {
+  opacity: 0.1;
+}
+.opacity-20 {
+  opacity: 0.2;
+}
+.opacity-30 {
+  opacity: 0.3;
+}
+.opacity-40 {
+  opacity: 0.4;
+}
+.opacity-50 {
+  opacity: 0.5;
+}
+.opacity-60 {
+  opacity: 0.6;
+}
+.opacity-70 {
+  opacity: 0.7;
+}
+.opacity-80 {
+  opacity: 0.8;
+}
+.opacity-90 {
+  opacity: 0.9;
+}
+.opacity-100 {
+  opacity: 1;
 }
 
-.z-9{
-    z-index: 999;
+.border-none {
+  border: none;
 }
 
-
-.hover-danger:hover{
-     color: #ff0000 !important;
-     transition: all 0.3s;
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #f9f9f9;
 }
 
+.z-2000 {
+  z-index: 5000 !important;
+}
+
+.remove-button-style {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+.disable-cursor {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.z-9 {
+  z-index: 999;
+}
+
+.hover-danger:hover {
+  color: #ff0000 !important;
+  transition: all 0.3s;
+}
 
 .scroll-bar-sm::-webkit-scrollbar-thumb {
   background-color: #ccc;
@@ -379,3 +462,38 @@ body{
 .scroll-bar-sm::-webkit-scrollbar {
   width: 4px;
 }
+
+
+/* ─── Letter-spacing utilities using root variables ──────── */
+
+.tracking-tighter  { letter-spacing: var(--tracking-tighter); }
+.tracking-tight    { letter-spacing: var(--tracking-tight); }
+.tracking-normal   { letter-spacing: var(--tracking-normal); }
+.tracking-wide     { letter-spacing: var(--tracking-wide); }
+.tracking-wider    { letter-spacing: var(--tracking-wider); }
+.tracking-widest   { letter-spacing: var(--tracking-widest); }
+
+.tracking-0     { letter-spacing: var(--tracking-0); }
+.tracking-025   { letter-spacing: var(--tracking-025); }
+.tracking-050   { letter-spacing: var(--tracking-050); }
+.tracking-075   { letter-spacing: var(--tracking-075); }
+.tracking-100   { letter-spacing: var(--tracking-100); }
+.tracking-150   { letter-spacing: var(--tracking-150); }
+.tracking-200   { letter-spacing: var(--tracking-200); }
+.tracking-300   { letter-spacing: var(--tracking-300); }
+
+/* negatives */
+.-tracking-025  { letter-spacing: var(--tracking--025); }
+.-tracking-050  { letter-spacing: var(--tracking--050); }
+.-tracking-075  { letter-spacing: var(--tracking--075); }
+.-tracking-100  { letter-spacing: var(--tracking--100); }
+.-tracking-150  { letter-spacing: var(--tracking--150); }
+.-tracking-200  { letter-spacing: var(--tracking--200); }
+
+/* semantic helpers */
+.tracking-caps    { letter-spacing: var(--tracking-caps); }
+.tracking-title   { letter-spacing: var(--tracking-title); }
+.tracking-button  { letter-spacing: var(--tracking-button); }
+
+/* reset / force default */
+.tracking-reset   { letter-spacing: normal !important; }

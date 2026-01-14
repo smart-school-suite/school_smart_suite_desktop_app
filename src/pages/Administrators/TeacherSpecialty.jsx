@@ -1,12 +1,7 @@
 import Table from "../../components/Tables/Tables";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { teacherTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import DeactivateTeacher from "../../ModalContent/Teacher/DeactivateTeacher";
-import DeleteTeacher from "../../ModalContent/Teacher/DeleteTeacher";
-import TeacherDetails from "../../ModalContent/Teacher/TeacherDetails";
-import UpdateTeacher from "../../ModalContent/Teacher/UpdateTeacher";
+import { teacherSpecialtyTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import CreateTeacher from "../../ModalContent/Teacher/CreateTeacher";
 import React, {
   useMemo,
   useState,
@@ -18,22 +13,21 @@ import { Icon } from "@iconify/react";
 import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import CustomModal from "../../components/Modals/Modal";
-import ActivateTeacher from "../../ModalContent/Teacher/ActivateTeacher";
 import {
   DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-  SuspendIcon,
-  ActivateIcon,
+  ChoiceIcon,
+  CreateIcon,
 } from "../../icons/ActionIcons";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkDeleteTeacher from "../../ModalContent/Teacher/BulkDeleteTeacher";
-import BulkDeactivateTeacher from "../../ModalContent/Teacher/BulkDeactivateTeacher";
-import BulkActivateTeacher from "../../ModalContent/Teacher/BulkActivateTeacher";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
-function Teachers() {
+import BulkAddTeacherSpecialtyPreference from "../../ModalContent/TeacherSpecialty/BulkAddTeacherSpecialtyPreference";
+import BulkRemoveTeacherSpecialtyPreference from "../../ModalContent/TeacherSpecialty/BulkRemoveTeacherSpecialtyPreference";
+import ManageTeacherSpecialtyPreference from "../../ModalContent/TeacherSpecialty/ManageTeacherSpecialtyPreference";
+import DeleteTeacherSpecialtyPreference from "../../ModalContent/TeacherSpecialty/DeleteTeacherSpecialtyPreference";
+function TeacherSpecialty() {
   const { data: teachers, isLoading, error } = useGetTeachers();
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);
@@ -52,7 +46,7 @@ function Teachers() {
     setRowCount(count);
   }, []);
   const memoizedColDefs = useMemo(() => {
-    return teacherTableConfig({
+    return teacherSpecialtyTableConfig({
       DropdownComponent,
     });
   }, []);
@@ -66,17 +60,7 @@ function Teachers() {
       <main className="main-container gap-2 h-100">
         <div style={{ height: "5%" }}>
           <div className="d-flex flex-row align-items-center justify-content-between">
-            <span className="fw-semibold">Teachers</span>
-            <ModalButton
-                action={{ modalContent: CreateTeacher }}
-                size={"lg"}
-                classname={
-                  "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
-                }
-              >
-                <Icon icon="icons8:plus" className="font-size-md" />
-                <span>Create Teacher</span>
-              </ModalButton>
+            <span className="fw-semibold">Teacher Specialty</span>
           </div>
         </div>
         <div style={{ height: "95%" }}>
@@ -125,7 +109,7 @@ function Teachers() {
     </>
   );
 }
-export default Teachers;
+export default TeacherSpecialty;
 
 export function DropdownComponent(props) {
   const rowData = props.data;
@@ -161,12 +145,12 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateTeacher, "lg")}
+          onClick={() => handleShowModal(ManageTeacherSpecialtyPreference, "lg")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update</span>
-              <UpdateIcon />
+              <span>Specialty Preference</span>
+              <ChoiceIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -174,57 +158,15 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteTeacher, "md")}
+          onClick={() => handleShowModal(DeleteTeacherSpecialtyPreference, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete</span>
+              <span>Delete Specialty Preference</span>
               <DeleteIcon />
             </div>
           </div>
         </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(TeacherDetails, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Details</span>
-              <DetailsIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        {rowData.status == "active" ? (
-          <DropDownMenuItem
-            className={
-              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-            }
-            onClick={() => handleShowModal(DeactivateTeacher, "md")}
-          >
-            <div>
-              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-                <span>Deactivate</span>
-                <SuspendIcon />
-              </div>
-            </div>
-          </DropDownMenuItem>
-        ) : (
-          <DropDownMenuItem
-            className={
-              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-            }
-            onClick={() => handleShowModal(ActivateTeacher, "md")}
-          >
-            <div>
-              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-                <span>Activate</span>
-                <ActivateIcon />
-              </div>
-            </div>
-          </DropDownMenuItem>
-        )}
       </ActionButtonDropdown>
       <CustomModal
         show={showModal}
@@ -286,29 +228,22 @@ function DropdownItems({ selectedTeachers, resetAll, onModalStateChange }) {
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteTeacher, "md")}
+        onClick={() => handleShowModal(BulkAddTeacherSpecialtyPreference, "md")}
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Delete All</span>
+          <span className="font-size-sm">Add Specialty Preference</span>
+          <CreateIcon />
+        </div>
+      </DropDownMenuItem>
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() =>
+          handleShowModal(BulkRemoveTeacherSpecialtyPreference, "md")
+        }
+      >
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Remove Specialty Preference</span>
           <DeleteIcon />
-        </div>
-      </DropDownMenuItem>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeactivateTeacher, "md")}
-      >
-        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Deactivate All</span>
-          <SuspendIcon />
-        </div>
-      </DropDownMenuItem>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkActivateTeacher, "md")}
-      >
-        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Activate All</span>
-          <ActivateIcon />
         </div>
       </DropDownMenuItem>
       <CustomModal

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-function TuitionFeeSideBar() {
+import { Fragment } from "react";
+function TeacherSideBar() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
@@ -9,15 +10,16 @@ function TuitionFeeSideBar() {
           darkMode ? "dark-bg" : "white-bg"
         } card border-none width-20 p-2 rounded-4 d-flex flex-column gap-3 h-100`}
       >
-        {sideBarData.map((item) => (
-          <SideBarComponent title={item.title} path={item.path} />
+        {sideBarData.map((item, index) => (
+          <Fragment key={index}>
+            <SideBarComponent title={item.title} path={item.path} />
+          </Fragment>
         ))}
       </div>
     </>
   );
 }
-
-export default TuitionFeeSideBar;
+export default TeacherSideBar;
 
 function SideBarComponent({ title, path }) {
   const navigate = useNavigate();
@@ -46,15 +48,19 @@ function SideBarComponent({ title, path }) {
 
 export const sideBarData = [
   {
-    title: "Tuition Fees",
-    path: "/fee-payments",
+    title: "Teacher",
+    path: "/teacher",
   },
   {
-    title: "Transactions",
-    path: "/fee-payment-transactions",
+    title: "Teacher Course",
+    path: "/teacher-course",
   },
   {
-    title: "Payment Schedule",
-    path: "/fee-payment-schedule",
+    title: "Teacher Specialty",
+    path: "/teacher-specialty",
+  },
+  {
+    title: "Teacher Availability",
+    path: "/teacher-availability",
   },
 ];

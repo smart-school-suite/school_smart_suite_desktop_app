@@ -12,12 +12,18 @@ export const settingRoutes = [
   "/settings/school"
 ];
 
+export const teacherRoutes = [
+   "/teacher",
+   "/teacher-course",
+   "/teacher-specialty",
+   "/teacher-availability"
+]
 
 export const adminRoutes = [
   "/school-admins",
   "/departments",
   "/specialties",
-  "/teachers",
+  ...teacherRoutes
 ];
 
 export const academicRoutes = [

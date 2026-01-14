@@ -1,8 +1,8 @@
-import RegistrationFeeSideBar from "../components/SideBars/RegistrationFeeSideBar";
 import { Outlet } from "react-router-dom";
-import { MoneyIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
-function RegistrationFeeLayout() {
+import TeacherSideBar from "../components/SideBars/TeacherSideBar";
+import { TeacherIcon } from "../icons/Icons";
+function TeacherLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
@@ -19,14 +19,14 @@ function RegistrationFeeLayout() {
                 borderRadius: "0.5rem",
               }}
             >
-              <MoneyIcon />
+              <TeacherIcon />
             </div>
-            <span className="my-0 fw-semibold">Manage Registration Fees</span>
+            <span className="my-0 fw-semibold">Manage Teachers</span>
           </div>
         </div>
         <div style={{ height: "95%" }}>
           <div className="d-flex flex-row align-items-start gap-2 w-100 h-100">
-            <RegistrationFeeSideBar />
+            <TeacherSideBar />
             <div className="width-80 h-100">
               <Outlet />
             </div>
@@ -36,4 +36,4 @@ function RegistrationFeeLayout() {
     </>
   );
 }
-export default RegistrationFeeLayout;
+export default TeacherLayout;

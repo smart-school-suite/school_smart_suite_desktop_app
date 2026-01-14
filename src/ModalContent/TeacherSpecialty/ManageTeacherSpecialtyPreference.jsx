@@ -8,7 +8,8 @@ import { useRemoveSpecialtyPreference } from "../../hooks/teacher/useRemoveSpeci
 import { useSelector } from "react-redux";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-function Specialtypreference({ handleClose, rowData }) {
+
+function ManageTeacherSpecialtyPreference({ rowData, handleClose }) {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [toggle, setToggle] = useState({
     addablePreferences: true,
@@ -38,7 +39,13 @@ function Specialtypreference({ handleClose, rowData }) {
             <Icon icon="proicons:cancel" />
           </span>
         </div>
-        <div className={`${darkMode ? "dark-bg-light dark-mode-border" : "primary-background-50"} d-flex gap-2 flex-row my-2 rounded-2`}>
+        <div
+          className={`${
+            darkMode
+              ? "dark-bg-light dark-mode-border"
+              : "primary-background-50"
+          } d-flex gap-2 flex-row my-2 rounded-2`}
+        >
           {toggleOptions.map((option) => (
             <button
               key={option.key}
@@ -64,7 +71,7 @@ function Specialtypreference({ handleClose, rowData }) {
     </>
   );
 }
-export default Specialtypreference;
+export default ManageTeacherSpecialtyPreference;
 
 function AddablePreferences({ teacherId }) {
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -194,8 +201,8 @@ function AddablePreferences({ teacherId }) {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="modal-content-child px-2">
-            <div className="d-flex flex-column gap-2">
+          <div className="modal-content-child pe-2">
+            <div className="d-flex flex-column gap-3">
               {filteredSpecialties.length === 0 && !isFetching ? (
                 <div className="text-center mt-4">
                   {debouncedSearchTerm
@@ -208,7 +215,7 @@ function AddablePreferences({ teacherId }) {
                     className="d-flex flex-row w-100 align-items-center justify-content-between"
                     key={item.id}
                   >
-                    <div className="d-flex flex-column">
+                    <div className="d-flex flex-column gap-1">
                       <span className="font-size-sm fw-semibold">
                         {item.specialty_name}
                       </span>
@@ -467,7 +474,7 @@ function AddedPreferences({ teacherId }) {
         specialty.level_name.toLowerCase().includes(lowercasedSearchTerm)
     );
   }, [allSpecialties, debouncedSearchTerm]);
-  
+
   return (
     <>
       {isLoading ? (
