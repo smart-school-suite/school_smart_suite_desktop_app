@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { Route } from "react-router-dom";
 import TeacherLayout from "../../layouts/TeacherLayout";
+import HallLayout from "../../layouts/HallLayout";
 const Departments = React.lazy(() =>
   import("../../pages/Administrators/Departments")
 );
@@ -20,7 +21,29 @@ const TeacherAvailability = React.lazy(() =>
 const TeacherCourse = React.lazy(() =>
   import("../../pages/Administrators/TeacherCourse")
 );
+import SpecialtyHall from "../../pages/Administrators/SpecialtyHall";
+import Hall from "../../pages/Administrators/Hall";
 const AdministratorsRoutes = [
+  <Route element={<HallLayout />}>
+    <Route
+      key={"hall"}
+      path="/hall"
+      element={
+        <Suspense>
+          <Hall />
+        </Suspense>
+      }
+    />
+    <Route
+      key={"hall"}
+      path="/specialty-hall"
+      element={
+        <Suspense>
+          <SpecialtyHall />
+        </Suspense>
+      }
+    />
+  </Route>,
   <Route
     key={"deparment"}
     path="/departments"

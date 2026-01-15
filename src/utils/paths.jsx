@@ -19,11 +19,17 @@ export const teacherRoutes = [
    "/teacher-availability"
 ]
 
+export const hallRoutes = [
+   "/hall",
+   "/specialty-hall"
+]
+
 export const adminRoutes = [
   "/school-admins",
   "/departments",
   "/specialties",
-  ...teacherRoutes
+  ...teacherRoutes,
+  ...hallRoutes
 ];
 
 export const academicRoutes = [

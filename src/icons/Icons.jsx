@@ -199,9 +199,10 @@ const EventIcon = ({ iconStyle }) => {
 
 const HallIcon = ({ iconStyle }) => {
   return (
-    <Icon icon="ic:outline-room" style={{ ...iconStyle, fontSize: "1rem" }} />
+    <Icon icon="fluent:conference-room-16-regular" style={{ ...iconStyle, fontSize: "1rem" }} />
   );
 };
+
 export {
   AdditionalFeeIconFilled,
   ExpensesIconFilled,

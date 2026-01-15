@@ -255,7 +255,7 @@ function UpdateEventContent({ rowData, handleClose }) {
                       onSelect={(value) => {
                         if (value.length > 5) {
                           toast.custom(
-                            <ToastSuccess
+                            <ToastWarning
                               title={"Max Amount Reached"}
                               description={
                                 "You can only select from 1 - 5 tags maximum"

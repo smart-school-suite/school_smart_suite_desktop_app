@@ -22,6 +22,7 @@ import {
   StudentRoutes,
   tuitionFeeRoutes,
   teacherRoutes,
+  hallRoutes
 } from "../../utils/paths";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import Logout from "../../ModalContent/Auth/Logout";
@@ -261,6 +262,24 @@ function SideBarLg() {
                             }
                           >
                             <p>Teacher</p>
+                          </div>
+                        </div>
+                      </div>
+                       <div
+                        className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
+                      >
+                        <div className="subbox-nav">
+                          <div
+                            onClick={() => {
+                              navigate("/hall");
+                            }}
+                            className={
+                              IsPathInRoutes(hallRoutes)
+                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
+                                : "text-decoration-none gainsboro-color pointer-cursor"
+                            }
+                          >
+                            <p>Halls</p>
                           </div>
                         </div>
                       </div>

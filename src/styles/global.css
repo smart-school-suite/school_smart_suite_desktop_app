@@ -1919,3 +1919,12 @@ textarea::-webkit-scrollbar-thumb:hover {
 .avaibility-slot-grid div.card{
    border-radius: 0.75rem;
 }
+
+.pill-hall-state{
+   padding: 0.1rem;
+   padding-inline: 0.4rem;
+   font-size: 0.65rem;
+   border-radius: 0.5rem;
+   text-align: center;
+   width: auto;
+}

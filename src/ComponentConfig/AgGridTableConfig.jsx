@@ -3198,3 +3198,58 @@ export function teacherAvailabilityTableConfig({ DropdownComponent }) {
   ];
   return tableConfig;
 }
+
+export function hallTableConfig({DropdownComponent}){
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "name",
+      headerName: "Hall Name",
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "location",
+      headerName: "Location",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Capacity",
+      field: "capacity",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Type",
+      field: "types",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: ActiveInactiveBadge,
+    },
+    {
+      headerName: "Assignment Status",
+      field: "level_number",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: AssignmentPill,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
