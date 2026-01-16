@@ -3199,7 +3199,7 @@ export function teacherAvailabilityTableConfig({ DropdownComponent }) {
   return tableConfig;
 }
 
-export function hallTableConfig({DropdownComponent}){
+export function hallTableConfig({ DropdownComponent }) {
   const tableConfig = [
     {
       field: "id",
@@ -3249,6 +3249,61 @@ export function hallTableConfig({DropdownComponent}){
       field: "Action",
       cellRenderer: DropdownComponent,
       cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return tableConfig;
+}
+
+export function specialtyHallTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level_name",
+      headerName: "Level Name",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "level",
+      headerName: "Level Number",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "num_assigned_hall",
+      headerName: "Num Assigned Halls",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "hall_assignment_status",
+      headerName: "Assignment Status",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: AssignmentPill,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "Action",
+      cellStyle: () => ({ width: "20rem" }),
+      cellRenderer: DropdownComponent,
     },
   ];
   return tableConfig;
