@@ -1,0 +1,35 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { activateTeacherAccount } from "../../services/activationCode";
+import toast from "react-hot-toast";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import ToastDanger from "../../components/Toast/ToastDanger";
+export const useActivateTeacherAccount = (handleClose) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: activateTeacherAccount,
+    onSuccess: () => {
+      toast.custom(
+        <ToastSuccess
+          title={"Account Activated"}
+          description={"Student Account Activated Successfully"}
+        />
+      );
+      if (handleClose) {
+        handleClose();
+      }
+      queryClient.invalidateQueries({ queryKey: ["activationCodeUsage"] });
+      queryClient.invalidateQueries({ queryKey: ["activationCodes"] });
+      queryClient.invalidateQueries({
+        queryKey: ["teacherActivationCodeStatus"],
+      });
+    },
+    onError: (error) => {
+      toast.custom(
+        <ToastDanger
+          title={error.response.data.errors.title}
+          description={error.response.data.errors.description}
+        />
+      );
+    },
+  });
+};

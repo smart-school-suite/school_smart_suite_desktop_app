@@ -17,6 +17,7 @@ import SettingsRoutes from "./Settings/SettingsRoutes";
 import StudentRoutes from "./Student/StudentRoutes";
 import ExamRoutes from "./Exam/ExamRoutes";
 import ResitRoutes from "./Resit/ResitRoutes";
+import ActivationCodeRoutes from "./ActivationCode/ActivationCode";
 import { useSelector } from "react-redux";
 import { AblyProvider, ChannelProvider } from "ably/react";
 import { createAblyClient } from "../ably/ably";
@@ -24,7 +25,8 @@ import { useMemo } from "react";
 function Links() {
   const token = useSelector((state) => state.auth?.token);
   const apiKey = useSelector((state) => state.auth?.apiKey);
-  const adminId = useSelector((state) => state.auth?.user.authSchoolAdmin?.id);
+  const adminId = useSelector((state) => state.auth?.user?.authSchoolAdmin?.id);
+  const schoolBranchId = useSelector((state) => state.auth?.user?.authSchoolAdmin?.school_branch_id);
   const ablyClient = useMemo(() => {
     if (!token || !adminId) return null;
     return createAblyClient(token, adminId, apiKey);
@@ -47,7 +49,9 @@ function Links() {
                   {ablyClient ? (
                     <AblyProvider client={ablyClient}>
                       <ChannelProvider channelName={`private:App.Models.Schooladmin.${adminId}`}>
+                        <ChannelProvider channelName={`private:schoolBranch.${schoolBranchId}.schoolAdmin.${adminId}.semesterTimetable`} >
                         <Layout />
+                        </ChannelProvider>
                       </ChannelProvider>
                     </AblyProvider>
                   ) : (
@@ -68,6 +72,7 @@ function Links() {
                 ...SchoolElectionRoutes,
                 ...ExamRoutes,
                 ...ResitRoutes,
+                ...ActivationCodeRoutes
               ]}
             </Route>
           </Routes>

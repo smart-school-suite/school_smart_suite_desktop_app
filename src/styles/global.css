@@ -480,7 +480,9 @@ aside {
   overflow: hidden;
   border-left: 2.5px solid #f9f9f9;
   margin-bottom: 0.2rem;
-  transition: max-height 0.3s ease-out, opacity 0.4s ease-out;
+  transition:
+    max-height 0.3s ease-out,
+    opacity 0.4s ease-out;
 }
 
 .rotate-icon {
@@ -858,7 +860,9 @@ button.disabled {
 .dropdown-enter-active {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 300ms, transform 300ms;
+  transition:
+    opacity 300ms,
+    transform 300ms;
 }
 
 .dropdown-exit {
@@ -869,7 +873,9 @@ button.disabled {
 .dropdown-exit-active {
   opacity: 0;
   transform: translateY(-10px);
-  transition: opacity 300ms, transform 300ms;
+  transition:
+    opacity 300ms,
+    transform 300ms;
 }
 
 .timetable-cards:hover {
@@ -930,7 +936,9 @@ button.disabled {
 .slide-enter-active {
   transform: translateY(0);
   opacity: 1;
-  transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
+  transition:
+    transform 300ms ease-in-out,
+    opacity 300ms ease-in-out;
 }
 
 .slide-exit {
@@ -941,7 +949,9 @@ button.disabled {
 .slide-exit-active {
   transform: translateY(100%);
   opacity: 0;
-  transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
+  transition:
+    transform 300ms ease-in-out,
+    opacity 300ms ease-in-out;
 }
 
 .day.disabled {
@@ -1754,6 +1764,87 @@ textarea::-webkit-scrollbar-thumb:hover {
 .event-list-container::-webkit-scrollbar {
   width: 5px;
 }
+
+.semester-dd-container {
+  max-height: 30dvh;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.semester-dd-container::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+.semester-dd-container::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+.semester-dd-container::-webkit-scrollbar {
+  width: 3px;
+}
+
+.constraint-dd-container {
+  max-height: 100%;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.constraint-dd-container::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+.constraint-dd-container::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+.constraint-dd-container::-webkit-scrollbar {
+  width: 3px;
+}
+
+.diagnostic-container{
+  max-height: 95%;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+  
+.diagnostic-container::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+.diagnostic-container::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+.diagnostic-container::-webkit-scrollbar {
+  width: 3px;
+}
+
+.timetable-grid-container{
+   height: auto;
+   max-height: 95%;
+   overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.timetable-grid-container::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+.timetable-grid-container::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+.timetable-grid-container::-webkit-scrollbar {
+  width: 3px;
+}
+
+
 .custom-image-input-container {
   width: 100%;
   height: 15dvh;
@@ -1809,14 +1900,13 @@ textarea::-webkit-scrollbar-thumb:hover {
   transition: all 0.3s;
 }
 .method-card {
-  height: 40dvh;
+  height: 30dvh;
   width: 35%;
   border-radius: 0.75rem;
   display: flex;
   flex-direction: column;
   transition: all 0.3s;
   pointer-events: all;
-  border: 1px solid var(--acent-color-seven);
 }
 .method-card:hover {
   border: 1px solid #32b550;
@@ -1827,6 +1917,9 @@ textarea::-webkit-scrollbar-thumb:hover {
   max-height: 70dvh;
   overflow-x: hidden;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
 }
 
 .payment-method-selected {
@@ -1916,15 +2009,42 @@ textarea::-webkit-scrollbar-thumb:hover {
   gap: 0.75rem;
 }
 
-.avaibility-slot-grid div.card{
-   border-radius: 0.75rem;
+.avaibility-slot-grid div.card {
+  border-radius: 0.75rem;
 }
 
-.pill-hall-state{
-   padding: 0.1rem;
-   padding-inline: 0.4rem;
-   font-size: 0.65rem;
-   border-radius: 0.5rem;
-   text-align: center;
-   width: auto;
+.pill-hall-state {
+  padding: 0.1rem;
+  padding-inline: 0.4rem;
+  font-size: 0.65rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  width: auto;
+}
+
+.pill-sm-success {
+  background-color: #c9eac8;
+  color: #5cb85c;
+  padding-inline: 0.4rem;
+  border-radius: 1rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+}
+
+.pill-sm-danger {
+  background-color: #ffdddd;
+  color: #ff5757;
+  padding-inline: 0.4rem;
+  border-radius: 1rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+}
+
+.pill-sm-warning {
+  background-color: #fef9c3;
+  color: #facc15;
+  padding-inline: 0.4rem;
+  border-radius: 1rem;
+  font-size: 0.65rem;
+  font-weight: 500;
 }

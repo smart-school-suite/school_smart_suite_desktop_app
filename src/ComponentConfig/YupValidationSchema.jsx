@@ -254,6 +254,29 @@ export const dateValidationSchema = ({
   return schema;
 };
 
+export const activationCodeSchema = ({
+  required = true,
+  messages = {}
+} = {}) => {
+  let schema = Yup.string()
+    .trim()
+    .uppercase()
+    // Matches 3 letters, a hyphen, then 8 alphanumeric chars
+    .matches(
+      /^[A-Z]{3}-[A-Z0-9]{8}$/,
+      messages.format || "Invalid format. Expected: XXX-XXXXXXXX"
+    )
+    .transform((val) => (val === "" ? null : val));
+
+  if (required) {
+    schema = schema.required(messages.required || "Activation code is required");
+  } else {
+    schema = schema.nullable();
+  }
+
+  return schema;
+};
+
 export const timeValidationSchema = ({
   required = true,
   futureOrNow = false,

@@ -460,7 +460,7 @@ body {
 }
 
 .scroll-bar-sm::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 
 

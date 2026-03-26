@@ -216,11 +216,48 @@ function AddablePreferences({ teacherId }) {
                     <div className="d-flex flex-row w-100 align-items-center justify-content-between">
                       <div className="d-flex flex-column gap-1">
                         <span className="font-size-sm fw-semibold">
-                          {item.course_title}, {item.credit} credit
+                          {item.course_title}
                         </span>
-                        <span className="font-size-sm fw-light">
-                          {item.specialty_name},{item.level_name}
-                        </span>
+                        <div className="d-flex flex-row align-items-center gap-2">
+                          <div className="d-flex flex-row align-items-center gap-1">
+                            <span style={{ lineHeight: 0 }}>
+                              <Icon icon="mynaui:star" width="16" height="16" />
+                            </span>
+                            <span className="font-size-sm">
+                              {item.credit} Credit
+                            </span>
+                          </div>
+                          <span style={{ lineHeight: 0 }}>
+                            <Icon icon="bi:dot" width="16" height="16" />{" "}
+                          </span>
+                          <div className="d-flex flex-row align-items-center gap-1">
+                            <span style={{ lineHeight: 0 }}>
+                              <Icon
+                                icon="ph:graduation-cap-light"
+                                width="16"
+                                height="16"
+                              />
+                            </span>
+                            <span className="font-size-sm">
+                              {item?.specialty_name}, {item?.level_name}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="d-flex flex-row align-items-center flex-wrap gap-2">
+                          {item?.type?.map((items) => (
+                            <Fragment key={items.id}>
+                              <span
+                                className="pill-hall-state"
+                                style={{
+                                  background: `${items.background_color}`,
+                                  color: `${items.text_color}`,
+                                }}
+                              >
+                                {items.name}
+                              </span>
+                            </Fragment>
+                          ))}
+                        </div>
                       </div>
                       <div>
                         <input
@@ -243,7 +280,7 @@ function AddablePreferences({ teacherId }) {
             onClick={() => {
               const formattedData = Array.from(selectedCourseIds).map(
                 (courseId) => ({
-                      course_id:courseId
+                  course_id: courseId,
                 })
               );
 
@@ -406,11 +443,48 @@ function RemovablePreferences({ teacherId }) {
                     <div className="d-flex flex-row w-100 align-items-center justify-content-between">
                       <div className="d-flex flex-column gap-1">
                         <span className="font-size-sm fw-semibold">
-                          {item.course_title}, {item.credit} credit
+                          {item.course_title}
                         </span>
-                        <span className="font-size-sm fw-light">
-                          {item.specialty_name},{item.level_name}
-                        </span>
+                        <div className="d-flex flex-row align-items-center gap-2">
+                          <div className="d-flex flex-row align-items-center gap-1">
+                            <span style={{ lineHeight: 0 }}>
+                              <Icon icon="mynaui:star" width="16" height="16" />
+                            </span>
+                            <span className="font-size-sm">
+                              {item.credit} Credit
+                            </span>
+                          </div>
+                          <span style={{ lineHeight: 0 }}>
+                            <Icon icon="bi:dot" width="16" height="16" />{" "}
+                          </span>
+                          <div className="d-flex flex-row align-items-center gap-1">
+                            <span style={{ lineHeight: 0 }}>
+                              <Icon
+                                icon="ph:graduation-cap-light"
+                                width="16"
+                                height="16"
+                              />
+                            </span>
+                            <span className="font-size-sm">
+                              {item?.specialty_name}, {item?.level_name}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="d-flex flex-row align-items-center flex-wrap gap-2">
+                          {item?.type?.map((items) => (
+                            <Fragment key={items.id}>
+                              <span
+                                className="pill-hall-state"
+                                style={{
+                                  background: `${items.background_color}`,
+                                  color: `${items.text_color}`,
+                                }}
+                              >
+                                {items.name}
+                              </span>
+                            </Fragment>
+                          ))}
+                        </div>
                       </div>
                       <div>
                         <input
@@ -529,14 +603,49 @@ function AddedPreferences({ teacherId }) {
               <div className="d-flex flex-column gap-3">
                 {filteredCourses.map((item) => (
                   <Fragment key={item.id}>
-                    <div className="d-flex flex-row w-100 align-items-center justify-content-between">
-                      <div className="d-flex flex-column gap-1">
-                        <span className="font-size-sm fw-semibold">
-                          {item.course_title}, {item.credit} credit
+                    <div className="d-flex flex-column gap-1">
+                      <span className="font-size-sm fw-semibold">
+                        {item.course_title}
+                      </span>
+                      <div className="d-flex flex-row align-items-center gap-2">
+                        <div className="d-flex flex-row align-items-center gap-1">
+                          <span style={{ lineHeight: 0 }}>
+                            <Icon icon="mynaui:star" width="16" height="16" />
+                          </span>
+                          <span className="font-size-sm">
+                            {item.credit} Credit
+                          </span>
+                        </div>
+                        <span style={{ lineHeight: 0 }}>
+                          <Icon icon="bi:dot" width="16" height="16" />{" "}
                         </span>
-                        <span className="font-size-sm fw-light">
-                          {item.specialty_name},{item.level_name}
-                        </span>
+                        <div className="d-flex flex-row align-items-center gap-1">
+                          <span style={{ lineHeight: 0 }}>
+                            <Icon
+                              icon="ph:graduation-cap-light"
+                              width="16"
+                              height="16"
+                            />
+                          </span>
+                          <span className="font-size-sm">
+                            {item?.specialty_name}, {item?.level_name}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="d-flex flex-row align-items-center flex-wrap gap-2">
+                        {item?.type?.map((items) => (
+                          <Fragment key={items.id}>
+                            <span
+                              className="pill-hall-state"
+                              style={{
+                                background: `${items.background_color}`,
+                                color: `${items.text_color}`,
+                              }}
+                            >
+                              {items.name}
+                            </span>
+                          </Fragment>
+                        ))}
                       </div>
                     </div>
                   </Fragment>

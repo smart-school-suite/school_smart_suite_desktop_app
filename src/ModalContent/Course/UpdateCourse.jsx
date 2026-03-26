@@ -25,6 +25,8 @@ import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetCourseDetails } from "../../hooks/course/useGetCourseDetails";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
+import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
 function UpdateCourse({ handleClose, rowData }) {
   const { id: courseId } = rowData;
   const {
@@ -32,6 +34,8 @@ function UpdateCourse({ handleClose, rowData }) {
     isLoading: isCourseDetailsLoading,
     error: courseDetailError,
   } = useGetCourseDetails(courseId);
+  const { data: courseTypes, isLoading: isCourseTypeLoading } =
+    useGetCourseTypes();
   const {
     data: specialty,
     isFetching: isSpecailtyLoading,
@@ -49,6 +53,7 @@ function UpdateCourse({ handleClose, rowData }) {
     specialty_id: "",
     semester_id: "",
     description: "",
+    type: [],
   });
   const [isValid, setIsValid] = useState({
     course_code: "",
@@ -59,6 +64,7 @@ function UpdateCourse({ handleClose, rowData }) {
   const [errors, setErrors] = useState({
     specialty_id: "",
     semester_id: "",
+    type: "",
   });
   const { mutate: updateCourse, isPending } = useUpdateCourse(
     handleClose,
@@ -75,6 +81,9 @@ function UpdateCourse({ handleClose, rowData }) {
         specialty_id: courseDetails.data.specialty_id,
         semester_id: courseDetails.data.semester_id,
         description: courseDetails.data.description,
+        type: courseDetails.data.types.map((type) => ({
+          id: type.id,
+        })),
       }));
     }
   }, [setFormData, isCourseDetailsLoading]);
@@ -103,7 +112,15 @@ function UpdateCourse({ handleClose, rowData }) {
       );
       return;
     }
-    updateCourse({ courseId, updateData: formData });
+    updateCourse({
+      courseId,
+      updateData: {
+        ...formData,
+        typeIds: formData.type.map((items) => ({
+          type_id: items.id,
+        })),
+      },
+    });
   };
   return (
     <>
@@ -119,7 +136,7 @@ function UpdateCourse({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
-        {isCourseDetailsLoading ||  isSpecailtyLoading || isSemesterLoading ? (
+        {isCourseDetailsLoading || isSpecailtyLoading || isSemesterLoading ? (
           <div className="d-flex flex-column w-100 gap-3">
             {[...Array(6)].map((_, index) => (
               <div className="d-flex flex-column gap-2 w-100" key={index}>
@@ -215,6 +232,29 @@ function UpdateCourse({ handleClose, rowData }) {
                     value={formData.credit}
                   />
                 </div>
+              </div>
+              <div>
+                <label htmlFor="hallType" className="font-size-sm">
+                  Course Type
+                </label>
+                <MultiSelectDropdown
+                  data={courseTypes?.data || []}
+                  value={formData.type}
+                  displayKey={["name", "description"]}
+                  valueKey={["id"]}
+                  direction="up"
+                  isLoading={isCourseTypeLoading}
+                  placeholder={"Select Course Type"}
+                  errorMessage={"Course Type Required"}
+                  onSelect={(value) =>
+                    handleStateChange("type", value, setFormData)
+                  }
+                  onError={(error) =>
+                    handleStateChange("type", error, setErrors)
+                  }
+                  error={errors.type}
+                  optional={false}
+                />
               </div>
               <div>
                 <label htmlFor="semester" className="font-size-sm">

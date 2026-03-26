@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 
-export const useUpdateParent = () => {
+export const useUpdateParent = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ parentId, updateData }) =>
@@ -12,7 +12,9 @@ export const useUpdateParent = () => {
     onSuccess: (parentId) => {
       queryClient.invalidateQueries({ queryKey: ["parents"] });
       queryClient.removeQueries({ queryKey: ["parent", parentId] });
-
+      if (handleClose) {
+        handleClose();
+      }
       toast.custom(
         <ToastSuccess
           title={"Update Successfull"}

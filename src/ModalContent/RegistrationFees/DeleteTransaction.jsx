@@ -1,5 +1,5 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useDeleteRegistrationFeeTransaction } from "../../hooks/feePayment/useDeleteRegistrationFeeTransaction";
+import { useDeleteRegistrationFeeTransaction } from "../../hooks/registrationFee/useDeleteRegistrationFeeTransaction";
 function DeleteTransaction({ handleClose, rowData }) {
   const { id: transactionId } = rowData;
   const { mutate:deleteTransaction, isPending } = useDeleteRegistrationFeeTransaction(handleClose, transactionId);

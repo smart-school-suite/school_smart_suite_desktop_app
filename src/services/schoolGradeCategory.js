@@ -1,7 +1,7 @@
 import axiosInstance from "../axios/authAxios";
 
 export const getSchoolGradeCategories = async () => {
-    const response = await axiosInstance.get("school-grades/school-grade-config");
+    const response = await axiosInstance.get("school-grade/scale-categories");
     return response.data;
 }
 

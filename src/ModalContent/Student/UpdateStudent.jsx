@@ -11,7 +11,6 @@ import {
   emailValidationSchema,
   nameSchema,
 } from "../../ComponentConfig/YupValidationSchema";
-import { gender } from "../../data/data";
 import {
   hasNonEmptyValue,
   optionalValidateObject,
@@ -21,6 +20,9 @@ import ToastWarning from "../../components/Toast/ToastWarning";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetStudentDetails } from "../../hooks/student/useGetStudentDetails";
+import { useGetActiveGender } from "../../hooks/gender/useGetActiveGender";
+import { useGetStudentParentRelationship } from "../../hooks/student/useGetStudentParentRelationship";
+import { useGetStudentSource } from "../../hooks/student/useGetStudentSource";
 function UpdateStudent({ handleClose, rowData }) {
   const { id: studentId } = rowData;
   const {
@@ -43,6 +45,11 @@ function UpdateStudent({ handleClose, rowData }) {
     isLoading: isStudentDetailsLoading,
     error: studentDetailError,
   } = useGetStudentDetails(studentId);
+  const { data: gender, isLoading: isGenderLoading } = useGetActiveGender();
+  const { data: relationships, isLoading: isRelationshipLoading } =
+    useGetStudentParentRelationship();
+  const { data: studentSource, isLoading: isStudentSourceLoading } =
+    useGetStudentSource();
   const [formData, setFormData] = useState({
     name: "",
     first_name: "",
@@ -52,6 +59,8 @@ function UpdateStudent({ handleClose, rowData }) {
     guardian_id: "",
     gender: "",
     email: "",
+    relationship: "",
+    student_source: "",
   });
   const [isValid, setIsValid] = useState({
     name: "",
@@ -64,6 +73,9 @@ function UpdateStudent({ handleClose, rowData }) {
     specialty_id: "",
     student_batch_id: "",
     guardian_id: "",
+    gender: "",
+    relationship: "",
+    student_source: "",
   });
   const { mutate: updateStudent, isPending } = useUpdateStudent(
     handleClose,
@@ -83,7 +95,9 @@ function UpdateStudent({ handleClose, rowData }) {
         specialty_id: { id: studentDetails.data.specialty_id },
         student_batch_id: { id: studentDetails.data.student_batch_id },
         guardian_id: { id: studentDetails.data.guardian_id },
-        gender: { name: studentDetails.data.gender.toLowerCase() },
+        gender: { id: studentDetails.data.gender_id },
+        relationship: { id: studentDetails.data.relationship_id },
+        student_source: { id: studentDetails.data.student_source_id },
         email: studentDetails.data.email,
       }));
     }
@@ -116,8 +130,10 @@ function UpdateStudent({ handleClose, rowData }) {
         ...formData,
         specialty_id: formData.specialty_id.id,
         student_batch_id: formData.student_batch_id.id,
+        gender_id: formData.gender.id,
+        relationship_id: formData.relationship.id,
         guardian_id: formData.guardian_id.id,
-        gender: formData.gender.name,
+        student_source_id: formData.student_source.id,
       },
     });
   };
@@ -200,10 +216,10 @@ function UpdateStudent({ handleClose, rowData }) {
                 onChange={(value) =>
                   handleStateChange("last_name", value, setFormData)
                 }
-                 onValidationChange={(value) =>
+                onValidationChange={(value) =>
                   handleStateChange("last_name", value, setIsValid)
                 }
-                 validationSchema={nameSchema({
+                validationSchema={nameSchema({
                   min: 3,
                   max: 50,
                   required: false,
@@ -257,25 +273,53 @@ function UpdateStudent({ handleClose, rowData }) {
               type="email"
             />
           </div>
-          <div>
-            <label htmlFor="gender" className="font-size-sm">
-              Gender
-            </label>
-            <CustomDropdown
-              data={gender}
-              displayKey={["name"]}
-              valueKey={["name"]}
-              direction="up"
-              onSelect={(value) =>
-                handleStateChange("gender", value, setFormData)
-              }
-              onError={(value) => handleStateChange("gender", value, setErrors)}
-              errorMessage="Gender Required"
-              error={errors.gender}
-              placeholder="Select Gender"
-              optional={true}
-              value={formData.gender}
-            />
+          <div className="d-flex flex-row align-items-center gap-2 w-100">
+            <div className="w-50">
+              <label htmlFor="gender" className="font-size-sm">
+                Gender
+              </label>
+              <CustomDropdown
+                data={gender?.data || []}
+                displayKey={["name"]}
+                valueKey={["id"]}
+                direction="up"
+                onSelect={(value) =>
+                  handleStateChange("gender", value, setFormData)
+                }
+                onError={(value) =>
+                  handleStateChange("gender", value, setErrors)
+                }
+                isLoading={isGenderLoading}
+                errorMessage="Gender Required"
+                error={errors.gender}
+                placeholder="Select Gender"
+                value={formData.gender}
+                optional={true}
+              />
+            </div>
+            <div className="w-50">
+              <label htmlFor="studentSource" className="font-size-sm">
+                Student Source
+              </label>
+              <CustomDropdown
+                data={studentSource?.data || []}
+                displayKey={["name", "description"]}
+                valueKey={["id"]}
+                direction="up"
+                onSelect={(value) =>
+                  handleStateChange("student_source", value, setFormData)
+                }
+                onError={(value) =>
+                  handleStateChange("student_source", value, setErrors)
+                }
+                isLoading={isStudentSourceLoading}
+                errorMessage="Student Source Required"
+                error={errors.student_source}
+                placeholder="Select Student Source"
+                optional={true}
+                value={formData.student_source}
+              />
+            </div>
           </div>
           <div className="d-flex flex-row align-items-center gap-2">
             <div className="w-50">
@@ -325,28 +369,51 @@ function UpdateStudent({ handleClose, rowData }) {
               />
             </div>
           </div>
-          <div>
-            <label htmlFor="guardian" className="font-size-sm">
-              Guardian
-            </label>
-            <CustomDropdown
-              data={parents?.data || []}
-              displayKey={["guardian_name"]}
-              valueKey={["id"]}
-              isLoading={isParentsLoading}
-              direction="up"
-              onSelect={(value) =>
-                handleStateChange("guardian_id", value, setFormData)
-              }
-              onError={(value) =>
-                handleStateChange("guardian_id", value, setErrors)
-              }
-              error={errors.guardian_id}
-              errorMessage="Guardian Required"
-              placeholder="Select Specialty"
-              optional={true}
-              value={formData.guardian_id}
-            />
+          <div className="d-flex flex-row align-items-center gap-2 w-100">
+            <div className="my-1 w-50">
+              <label htmlFor="guardian" className="font-size-sm">
+                Select Guardian
+              </label>
+              <CustomDropdown
+                data={parents?.data || []}
+                displayKey={["guardian_name"]}
+                valueKey={["id"]}
+                direction="up"
+                onSelect={(value) =>
+                  handleStateChange("guardian_id", value, setFormData)
+                }
+                isLoading={isParentsLoading}
+                error={errors.guardian_id}
+                onError={(value) =>
+                  handleStateChange("guardian_id", value, setErrors)
+                }
+                placeholder="Select Guardian"
+                value={formData.guardian_id}
+                optional={true}
+              />
+            </div>
+            <div className="my-1 w-50">
+              <label htmlFor="guardian" className="font-size-sm">
+                Select Relationship
+              </label>
+              <CustomDropdown
+                data={relationships?.data || []}
+                displayKey={["name"]}
+                valueKey={["id"]}
+                direction="up"
+                onSelect={(value) =>
+                  handleStateChange("relationship", value, setFormData)
+                }
+                isLoading={isRelationshipLoading}
+                error={errors.relationship}
+                onError={(value) =>
+                  handleStateChange("relationship", value, setErrors)
+                }
+                placeholder="Select Relationship"
+                value={formData.relationship}
+                optional={true}
+              />
+            </div>
           </div>
           <div className="mt-3">
             <button

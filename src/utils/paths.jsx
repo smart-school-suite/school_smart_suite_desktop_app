@@ -32,6 +32,7 @@ export const adminRoutes = [
   ...hallRoutes
 ];
 
+
 export const academicRoutes = [
   "/time-table",
   "/courses",
@@ -89,6 +90,14 @@ export const dashboardRoutes = [
   "/academic-analysis",
   "/operational-analysis",
 ];
+
+export const activationCodeRoutes = [
+   "/activation-code",
+   "/activation-code/student",
+   "/activation-code/teacher",
+   "/activation-code/usage",
+   "/activation-code/transactions"
+]
 
 export const additionalFeeRoutes = [
   "/additional-fees",

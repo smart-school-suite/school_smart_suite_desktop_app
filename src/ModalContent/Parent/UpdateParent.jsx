@@ -13,7 +13,7 @@ import {
   emailValidationSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import { guardianTypes, languages } from "../../data/data";
+import { contactMethod, guardianTypes, languages } from "../../data/data";
 import {
   hasNonEmptyValue,
   optionalValidateObject,
@@ -25,7 +25,6 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { useGetParentDetails } from "../../hooks/parent/useGetParentDetails";
 function UpdateParent({ handleClose, rowData }) {
   const { id: parentId } = rowData;
-
   const {
     data: parentDetails,
     isLoading: isParentDetailsLoading,
@@ -34,19 +33,15 @@ function UpdateParent({ handleClose, rowData }) {
 
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
-    phone_one: "",
-    phone_two: "",
+    phone: "",
     address: "",
-    relationship_to_student: "",
+    preferred_contact_method: "",
     preferred_language: "",
   });
 
   const [isValid, setIsvalid] = useState({
     name: "",
-    email: "",
-    phone_one: "",
-    phone_two: "",
+    phone: "",
     address: "",
   });
 
@@ -55,12 +50,10 @@ function UpdateParent({ handleClose, rowData }) {
       setFormData((prev) => ({
         ...prev,
         name: parentDetails?.data[0].name || "",
-        email: parentDetails?.data[0].email || "",
-        phone_one: parentDetails?.data[0].phone_one || "",
-        phone_two: parentDetails?.data[0].phone_two || "",
+        phone: parentDetails?.data[0].phone || "",
         address: parentDetails?.data[0].address || "",
-        relationship_to_student:
-          { name: parentDetails?.data[0].relationship_to_student } || "",
+        preferred_contact_method:
+          { name: parentDetails?.data[0].preferred_contact_method } || "",
         preferred_language:
           { name: parentDetails?.data[0].preferred_language } || "",
       }));
@@ -97,7 +90,7 @@ function UpdateParent({ handleClose, rowData }) {
       parentId: parentId,
       updateData: {
         ...formData,
-        relationship_to_student: formData.relationship_to_student.name,
+        preferred_contact_method: formData.preferred_contact_method.name,
         preferred_language: formData.preferred_language.name,
       },
     });
@@ -155,61 +148,23 @@ function UpdateParent({ handleClose, rowData }) {
                 })}
               />
             </div>
-            <div>
-              <label htmlFor="email" className="font-size-sm">
-                E-mail
+            <div className="w-100">
+              <label htmlFor="contactOne" className="font-size-sm">
+                Contact
               </label>
-              <TextInput
+              <PhoneNumberInput
                 onChange={(value) =>
-                  handleStateChange("email", value, setFormData)
+                  handleStateChange("phone", value, setFormData)
                 }
+                value={formData.phone}
                 onValidationChange={(value) =>
-                  handleStateChange("email", value, setIsvalid)
+                  handleStateChange("phone", value, setIsvalid)
                 }
-                validationSchema={emailValidationSchema({
-                  required: false,
+                validationSchema={phoneValidationSchema({
+                  optional: true,
+                  prefixes: ["6", "2"],
                 })}
-                type="email"
-                value={formData.email}
               />
-            </div>
-            <div className="d-flex flex-row align-items-center gap-2 w-100">
-              <div className="w-50">
-                <label htmlFor="contactOne" className="font-size-sm">
-                  Contact One
-                </label>
-                <PhoneNumberInput
-                  onChange={(value) =>
-                    handleStateChange("phone_one", value, setFormData)
-                  }
-                  value={formData.phone_one}
-                  onValidationChange={(value) =>
-                    handleStateChange("phone_one", value, setIsvalid)
-                  }
-                  validationSchema={phoneValidationSchema({
-                    optional: true,
-                    prefixes: ["6", "2"],
-                  })}
-                />
-              </div>
-              <div className="w-50">
-                <label htmlFor="contactTwo" className="font-size-sm">
-                  Contact Two
-                </label>
-                <PhoneNumberInput
-                  onChange={(value) =>
-                    handleStateChange("phone_two", value, setFormData)
-                  }
-                  value={formData.phone_one}
-                  onValidationChange={(value) =>
-                    handleStateChange("phone_two", value, setIsvalid)
-                  }
-                  validationSchema={phoneValidationSchema({
-                    optional: true,
-                    prefixes: ["6", "2"],
-                  })}
-                />
-              </div>
             </div>
             <div className="d-flex flex-row align-items-center gap-2 w-100">
               <div className="w-100">
@@ -232,24 +187,24 @@ function UpdateParent({ handleClose, rowData }) {
               </div>
             </div>
             <div>
-              <label htmlFor="relationshipToStudent" className="font-size-sm">
-                RelationShip To Student
+              <label htmlFor="preferredContactMethod" className="font-size-sm">
+                Preferred Contact Method
               </label>
               <CustomDropdown
-                data={guardianTypes}
+                data={contactMethod}
                 displayKey={["name"]}
                 valueKey={["name"]}
                 direction="up"
                 onSelect={(value) =>
                   handleStateChange(
-                    "relationship_to_student",
+                    "preferred_contact_method",
                     value,
                     setFormData
                   )
                 }
-                placeholder="Select Relationship To Student"
-                option={true}
-                value={formData.relationship_to_student}
+                placeholder="Select Preferred Contact Method"
+                value={formData.preferred_contact_method}
+                optional={true}
               />
             </div>
             <div>

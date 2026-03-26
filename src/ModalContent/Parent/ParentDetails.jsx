@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import { useGetParentDetails } from "../../hooks/parent/useGetParentDetails";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import { format, parseISO } from "date-fns";
 function ParentDetails({ handleClose, rowData }) {
   const { id: parentId } = rowData;
   const {
@@ -41,19 +42,12 @@ function ParentDetails({ handleClose, rowData }) {
       ) : (
         <div className="modal-content-container">
           <div className="d-flex flex-column gap-2">
-            <span className="fw-semibold">Guardian Details</span>
+            <span className="font-size-sm">Guardian Details</span>
             <div>
               <div className="d-flex flex-column font-size-sm">
                 <span className="fw-medium">Guardian Name</span>
                 <span className="fw-light gainsboro-color">
                   {parentDetails?.data[0]?.name || "N/A"}
-                </span>
-              </div>
-              <hr />
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Email</span>
-                <span className="fw-light gainsboro-color">
-                  {parentDetails?.data[0]?.email || "N/A"}
                 </span>
               </div>
               <hr />
@@ -65,23 +59,16 @@ function ParentDetails({ handleClose, rowData }) {
               </div>
               <hr />
               <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Contact One</span>
+                <span className="fw-medium">Contact</span>
                 <span className="fw-light gainsboro-color">
-                  {parentDetails?.data[0]?.phone_one || "N/A"}
+                  {parentDetails?.data[0]?.phone || "N/A"}
                 </span>
               </div>
               <hr />
               <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Contact Two</span>
+                <span className="fw-medium">Preferred Language</span>
                 <span className="fw-light gainsboro-color">
-                  {parentDetails?.data[0]?.phone_two || "N/A"}
-                </span>
-              </div>
-              <hr />
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Relationship To Student</span>
-                <span className="fw-light gainsboro-color">
-                  {parentDetails?.data[0]?.relationship_to_student || "N/A"}
+                  {parentDetails?.data[0]?.preferred_language || "N/A"}
                 </span>
               </div>
               <hr />
@@ -95,31 +82,57 @@ function ParentDetails({ handleClose, rowData }) {
               <div className="d-flex flex-column font-size-sm">
                 <span className="fw-medium">Total Students</span>
                 <span className="fw-light gainsboro-color">
-                  {parentDetails?.data[0]?.student.length || "N/A"}
+                  {parentDetails?.data[0]?.student?.length || "N/A"}
                 </span>
               </div>
             </div>
-            <span className="fw-semibold">Student Details</span>
+            <span className="font-size-sm">Student Details</span>
             <div className="d-flex flex-column gap-1">
-              {parentDetails?.data[0].student.map((items) => (
+              {parentDetails?.data[0]?.student?.map((items) => (
                 <>
                   <div className="d-flex flex-column font-size-sm">
                     <span className="fw-medium">Student Name</span>
                     <span className="fw-light gainsboro-color">
-                      {items.name || "N/A"}
+                      {items?.name || "N/A"}
                     </span>
                   </div>
                   <hr />
                   <div className="d-flex flex-column font-size-sm">
                     <span className="fw-medium">Specialty</span>
                     <span className="fw-light gainsboro-color">
-                      {`${items.specialty.specialty_name}, ${items.level.name}` ||
+                      {`${items?.specialty?.specialty_name}, ${items?.level?.name}` ||
                         "N/A"}
                     </span>
                   </div>
                   <hr />
                 </>
               ))}
+            </div>
+          </div>
+          <span className="font-size-sm">System Info</span>
+          <div>
+            <div className="d-flex flex-column font-size-sm">
+              <span className="fw-medium">Created At</span>
+              <span className="fw-light gainsboro-color">
+                {parentDetails?.data[0]?.created_at
+                  ? format(
+                      parseISO(parentDetails.data[0]?.created_at),
+                      "d MMM yyyy, h:mm a"
+                    )
+                  : "N/A"}
+              </span>
+            </div>
+            <hr />
+            <div className="d-flex flex-column font-size-sm">
+              <span className="fw-medium">Updated At</span>
+              <span className="fw-light gainsboro-color">
+                {parentDetails?.data[0]?.created_at
+                  ? format(
+                      parseISO(parentDetails.data[0]?.updated_at),
+                      "d MMM yyyy, h:mm a"
+                    )
+                  : "N/A"}
+              </span>
             </div>
           </div>
         </div>

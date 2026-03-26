@@ -1,10 +1,10 @@
 import { registrationFeeTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import Table from "../../components/Tables/Tables";
-import RegistrationFeeDetail from "../../ModalContent/RegistrationFees/RegistrationFeeDetails";
+import RegistrationFeeDetail from "../../ModalContent/RegistrationFees/RegistrationFeeDetail";
 import DeleteRegistrationFee from "../../ModalContent/RegistrationFees/DeleteRegistrationFees";
 import PayRegistrationFees from "../../ModalContent/RegistrationFees/PayRegistrationFees";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { useGetRegistrationFees } from "../../hooks/feePayment/useGetRegistrationFees";
+import { useGetRegistrationFees } from "../../hooks/registrationFee/useGetRegistrationFees";
 import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../components/Modals/Modal";
@@ -133,6 +133,19 @@ export function DropdownComponent(props) {
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Pay Fees</span>
               <CreateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(RegistrationFeeDetail, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Fee Details</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>

@@ -1,0 +1,9 @@
+export const COMPLETED = "completed";
+export const PENDING = "pending";
+export const FAILED = "failed";
+export const ACTIVE = "active";
+export const INACTIVE = "inactive";
+export const DEACTIVATED = "deactivated";
+export const ACTIVATED = "activated";
+export const EXPIRED = "expired";
+export const SUBSCRIBED = "subscribed";

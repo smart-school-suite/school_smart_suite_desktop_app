@@ -2,6 +2,7 @@ import { useGetElectionRoleDetails } from "../../hooks/electionRole/useGetElecti
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { Icon } from "@iconify/react";
 import { formatISODate } from "../../utils/functions";
+import { NotFoundError } from "../../components/errors/Error";
 function ElectionRoleDetails({ handleClose, rowData }) {
   const { id: electionRoleId } = rowData;
   const {

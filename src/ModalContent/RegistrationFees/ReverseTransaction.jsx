@@ -1,5 +1,5 @@
-import { useReverseRegistrationFeeTransaction } from "../../hooks/feePayment/useReverseRegistrationFeeTransaction";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useReverseRegistrationFeeTransaction } from "../../hooks/registrationFee/useReverseRegistrationFeeTransaction";
 function ReverseTransaction({ handleClose, rowData }) {
   const transactionId = rowData.id;
   const { mutate: reverseTransaction, isPending } =

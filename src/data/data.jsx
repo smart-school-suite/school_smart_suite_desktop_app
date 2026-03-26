@@ -18,30 +18,36 @@ export const guardianTypes = [
   { id: 17, name: "Family Friend" },
   { id: 18, name: "Caretaker" },
   { id: 19, name: "Single Parent" },
-  { id: 20, name: "Godparent" }
+  { id: 20, name: "Godparent" },
 ];
 
 export const languages = [
-  { id: 1, name: 'Pigin' },
-  { id: 2, name: 'English' },
-  { id: 3, name: 'French' }
+  { id: 1, name: "Pigin" },
+  { id: 2, name: "English" },
+  { id: 3, name: "French" },
 ];
 
+export const contactMethod = [
+  { id: 1, name: "phone call" },
+  { id: 2, name: "text message" },
+];
 export const gender = [
-    {
-        id:1, name:'male',
-    },
-    {
-      id:2, name:'female'
-    }
-]
+  {
+    id: 1,
+    name: "male",
+  },
+  {
+    id: 2,
+    name: "female",
+  },
+];
 
 export const paymentMethods = [
-  { value: 'cash', label: 'Cash Payment' },
-  { value: 'cheque', label: 'cheque' },
-  { value: 'credit_card', label: 'Credit card' },
-  { value: 'debit_card', label: 'Debit card' },
-  { value: 'bank_transfer', label: 'Bank transfer' }
+  { value: "cash", label: "Cash Payment" },
+  { value: "cheque", label: "cheque" },
+  { value: "credit_card", label: "Credit card" },
+  { value: "debit_card", label: "Debit card" },
+  { value: "bank_transfer", label: "Bank transfer" },
 ];
 export const examRemarks = [
   { value: "Excellent", name: "Excellent", id: "remark1" },
@@ -62,43 +68,43 @@ export const examRemarks = [
   { value: "Inadequate", name: "Inadequate", id: "remark16" },
   { value: "Unacceptable", name: "Unacceptable", id: "remark17" },
   { value: "Below Par", name: "Below Par", id: "remark18" },
-  { value: "Reconsider", name: "Reconsider", id: "remark19" }
+  { value: "Reconsider", name: "Reconsider", id: "remark19" },
 ];
 
 export const resitOptions = [
   {
     value: "high_resit_potential",
     name: "High Resit Potential",
-    id: "option1"
+    id: "option1",
   },
   {
     value: "low_resit_potential",
     name: "Low Resit Potential",
-    id: "option2"
+    id: "option2",
   },
   {
     value: "resit",
     name: "Resit",
-    id: "option3"
+    id: "option3",
   },
   {
     value: "no_resit",
     name: "No Resit",
-    id: "option4"
-  }
+    id: "option4",
+  },
 ];
 
 export const passFailOptions = [
   {
     value: "passed",
     name: "Pass",
-    id: "option1"
+    id: "option1",
   },
   {
     value: "failed",
     name: "Fail",
-    id: "option2"
-  }
+    id: "option2",
+  },
 ];
 
 export const daysOfWeek = [
@@ -113,26 +119,29 @@ export const daysOfWeek = [
 
 export const schoolTypes = [
   { id: 1, name: "Private" },
-  { id: 2, name: "Government" }
-]
+  { id: 2, name: "Government" },
+];
 
 export const announcementStatus = [
   {
     id: 1,
     name: "Publish Now",
     value: "active",
-    description: "Immediately publishes the announcement and makes it visible to the intended audience."
+    description:
+      "Immediately publishes the announcement and makes it visible to the intended audience.",
   },
   {
     id: 2,
     name: "Set As Draft",
     value: "draft",
-    description: "Saves the announcement as a draft for future editing. It won’t be visible to the audience until published."
+    description:
+      "Saves the announcement as a draft for future editing. It won’t be visible to the audience until published.",
   },
   {
     id: 3,
     name: "Schedule For Later",
     value: "scheduled",
-    description: "Allows you to set a specific date and time for the announcement to be automatically published."
-  }
+    description:
+      "Allows you to set a specific date and time for the announcement to be automatically published.",
+  },
 ];

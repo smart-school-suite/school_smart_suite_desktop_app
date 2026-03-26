@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { usePayRegistrationFee } from "../../hooks/feePayment/usePayRegistrationFee";
+import { usePayRegistrationFee } from "../../hooks/registrationFee/usePayRegistrationFee";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { InputGroup } from "../../components/FormComponents/InputComponents";

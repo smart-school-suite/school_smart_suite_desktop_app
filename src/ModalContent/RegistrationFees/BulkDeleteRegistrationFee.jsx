@@ -1,4 +1,4 @@
-import { useBulkDeleteRegistrationFee } from "../../hooks/feePayment/useBulkDeleteRegistrationFee";
+import { useBulkDeleteRegistrationFee } from "../../hooks/registrationFee/useBulkDeleteRegistrationFee";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 function BulkDeleteRegistrationFee({ handleClose, bulkData, resetAll }) {
   const formattedData = bulkData.map((items) => ({

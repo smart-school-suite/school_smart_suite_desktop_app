@@ -1,4 +1,4 @@
-import { useBulkReverseRegistrationFeeTransactions } from "../../hooks/feePayment/useBulkReverseRegistrationFeeTransactions";
+import { useBulkReverseRegistrationFeeTransactions } from "../../hooks/registrationFee/useBulkReverseRegistrationFeeTransactions";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 function BulkReverseRegistrationFeeTransaction({
   handleClose,

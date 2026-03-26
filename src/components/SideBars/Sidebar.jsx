@@ -22,7 +22,8 @@ import {
   StudentRoutes,
   tuitionFeeRoutes,
   teacherRoutes,
-  hallRoutes
+  hallRoutes,
+  activationCodeRoutes
 } from "../../utils/paths";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import Logout from "../../ModalContent/Auth/Logout";
@@ -144,8 +145,8 @@ function SideBarLg() {
                   onClick={() => navigate("/")}
                 >
                   <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
-                    <span>
-                      <Icon icon="radix-icons:dashboard" />
+                    <span style={{ lineHeight: 0 }}>
+                      <Icon icon="radix-icons:dashboard" width={18} height={18} />
                     </span>
                     <span>Dashboard</span>
                   </div>
@@ -169,8 +170,8 @@ function SideBarLg() {
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
-                      <span>
-                        <Icon icon="ri:admin-line" />
+                      <span style={{ lineHeight: 0 }}>
+                        <Icon icon="ri:admin-line" width={18} height={18}/>
                       </span>
                       <p>Administrator</p>
                     </div>
@@ -305,10 +306,10 @@ function SideBarLg() {
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
-                      <span>
+                      <span style={{ lineHeight: 0 }}>
                         <Icon
                           icon="mdi:book-edit-outline"
-                          className="nav-dropdown-icon"
+                          width={18} height={18}
                         />
                       </span>
                       <p>Academics</p>
@@ -426,8 +427,8 @@ function SideBarLg() {
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
-                      <span>
-                        <Icon icon="healthicons:i-exam-multiple-choice-outline" />
+                      <span style={{ lineHeight: 0 }}>
+                        <Icon icon="healthicons:i-exam-multiple-choice-outline" width={18} height={18}/>
                       </span>
                       <p>Manage Exams</p>
                     </div>
@@ -542,8 +543,8 @@ function SideBarLg() {
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
-                      <span>
-                        <Icon icon="material-symbols:repeat-rounded" />
+                      <span style={{ lineHeight:0 }}>
+                        <Icon icon="material-symbols:repeat-rounded" width={18} height={18}/>
                       </span>
                       <p>Manage Resit</p>
                     </div>
@@ -658,8 +659,8 @@ function SideBarLg() {
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
-                      <span>
-                        <Icon icon="ph:student" />
+                      <span style={{ lineHeight:0 }}>
+                        <Icon icon="ph:student" width={18} height={18}/>
                       </span>
                       <p>Manage Students</p>
                     </div>
@@ -774,8 +775,8 @@ function SideBarLg() {
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
-                      <span>
-                        <Icon icon="mynaui:activity-square" />
+                      <span style={{ lineHeight: 0 }}>
+                        <Icon icon="mynaui:activity-square" width={18} height={18}/>
                       </span>
                       <p>School Activities</p>
                     </div>
@@ -880,8 +881,8 @@ function SideBarLg() {
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
-                      <span>
-                        <Icon icon="healthicons:money-bag-outline" />
+                      <span style={{ lineHeight: 0 }}>
+                        <Icon icon="healthicons:money-bag-outline" width={18} height={18} />
                       </span>
                       <p>Finances</p>
                     </div>
@@ -1004,6 +1005,25 @@ function SideBarLg() {
                   </div>
                 </div>
                 {/*School Expenses*/}
+                <div
+                  className={
+                    IsPathInRoutes(activationCodeRoutes)
+                      ? `${
+                          darkMode
+                            ? "nav-items-box-active-dark"
+                            : "nav-item-box-active"
+                        }`
+                      : "nav-item-box-inactive"
+                  }
+                  onClick={() => navigate("/activation-code")}
+                >
+                  <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
+                    <span style={{ lineHeight:0}}>
+                      <Icon icon="streamline-plump:password-lock" height={16} width={16}/>
+                    </span>
+                    <span>Account Activation</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1020,8 +1040,8 @@ function SideBarLg() {
               }}
             >
               <span>Setting</span>
-              <span>
-                <Icon icon="uil:setting" />
+              <span style={{ lineHeight: 0 }}>
+                <Icon icon="uil:setting" width={18} height={18}/>
               </span>
             </div>
             {/*Settings*/}
@@ -1031,8 +1051,8 @@ function SideBarLg() {
                 classname="sidebar-item transparent-bg"
               >
                 <span>Logout</span>
-                <span>
-                  <Icon icon="mynaui:logout" />
+                <span style={{ lineHeight: 0 }}>
+                  <Icon icon="mynaui:logout" width={18} height={18}/>
                 </span>
               </ModalButton>
             </div>

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { reinstateDropOutStudent } from "../../services/Student";
+import { reinstateDropOutStudent } from "../../services/student";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";

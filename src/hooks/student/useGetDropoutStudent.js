@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getDropoutStudents } from '../../services/Student';
+import { getDropoutStudents } from '../../services/student';
 
 export const useGetDropdoutStudents = () => {
     return useQuery({

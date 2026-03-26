@@ -1,5 +1,5 @@
-import { useBulkDeleteRegistrationFeeTransactions } from "../../hooks/feePayment/useBulkDeleteRegistrationFeeTransactions";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useBulkDeleteRegistrationFeeTransactions } from "../../hooks/registrationFee/useBulkDeleteRegistrationFeeTransactions";
 function BulkDeleteRegistrationFeeTransaction({
   handleClose,
   bulkData,

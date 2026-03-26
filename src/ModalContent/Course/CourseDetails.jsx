@@ -3,6 +3,7 @@ import { useGetCourseDetails } from "../../hooks/course/useGetCourseDetails";
 import TextDisplay from "../../components/TextComponents/TextDisplay";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import { Fragment } from "react";
 function CourseDetails({ rowData, handleClose }) {
   const { id: courseId } = rowData;
   const {
@@ -28,11 +29,11 @@ function CourseDetails({ rowData, handleClose }) {
           <div className="d-flex flex-column gap-2 modal-content-container">
             <div className="d-flex flex-column gap-4">
               {[...Array(8)].map((_, index) => (
-              <div className="d-flex gap-1 flex-column" key={index}>
-                <RectangleSkeleton height="1dvh" width="40%" />
-                <RectangleSkeleton height="1dvh" width="15%" />
-              </div>
-            ))}
+                <div className="d-flex gap-1 flex-column" key={index}>
+                  <RectangleSkeleton height="1dvh" width="40%" />
+                  <RectangleSkeleton height="1dvh" width="15%" />
+                </div>
+              ))}
             </div>
           </div>
         ) : error ? (
@@ -100,11 +101,30 @@ function CourseDetails({ rowData, handleClose }) {
             <div className="d-flex align-items-center justify-content-between">
               <div className="py-2 d-flex flex-column">
                 <span className="my-0 font-size-sm gainsboro-color">
-                  Semester Name
+                  Semester
                 </span>
                 <span className="my-0 font-size-sm">
                   {courseDetails.data.semester.name}
                 </span>
+              </div>
+            </div>
+            <hr />
+            <div className="d-flex flex-column gap-1">
+              <span className="font-size-sm gainsboro-color">Course Type</span>
+              <div className="d-flex flex-row align-items-center flex-wrap gap-2">
+                {courseDetails?.data?.types?.map((items) => (
+                  <Fragment key={items.id}>
+                    <span
+                      className="pill-hall-state"
+                      style={{
+                        background: `${items.background_color}`,
+                        color: `${items.text_color}`,
+                      }}
+                    >
+                      {items.name}
+                    </span>
+                  </Fragment>
+                ))}
               </div>
             </div>
             <hr />

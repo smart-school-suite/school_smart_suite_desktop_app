@@ -9,7 +9,7 @@ import { paymentMethods } from "../../data/data";
 import { allFieldsValid } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
-import { useBulkPayRegistrationFees } from "../../hooks/feePayment/useBulkPayRegistrationFee";
+import { useBulkPayRegistrationFees } from "../../hooks/registrationFee/useBulkPayRegistrationFee";
 function BulkPayRegistrationFee({ handleClose, resetAll, bulkData }) {
   const amountRef = useRef();
   const methodRef = useRef();

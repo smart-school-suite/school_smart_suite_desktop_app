@@ -57,6 +57,6 @@ export const bulkPayStudentResit = async (payments) => {
 };
 
 export const payResit = async (data) => {
-  const response = await axiosInstance.post("student-resit/pay-resit", data);
+  const response = await axiosInstance.post("resit-payment/pay-resit", data);
   return response.data;
 };

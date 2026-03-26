@@ -19,6 +19,8 @@ import {
 import { allFieldsValid } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
+import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
 function CreateCourse({ handleClose }) {
   const courseCodeRef = useRef();
   const courseTitleRef = useRef();
@@ -26,6 +28,9 @@ function CreateCourse({ handleClose }) {
   const specialtyRef = useRef();
   const semesterRef = useRef();
   const descriptionRef = useRef();
+  const typeRef = useRef();
+  const { data: courseTypes, isLoading: isCourseTypeLoading } =
+    useGetCourseTypes();
   const [formData, setFormData] = useState({
     course_code: "",
     course_title: "",
@@ -33,6 +38,7 @@ function CreateCourse({ handleClose }) {
     specialty_id: "",
     semester_id: "",
     description: "",
+    type: [],
   });
   const [isFieldValid, setFieldValid] = useState({
     course_code: null,
@@ -43,6 +49,7 @@ function CreateCourse({ handleClose }) {
   const [errors, setErrors] = useState({
     specialty_id: "",
     semester_id: "",
+    type: null,
   });
   const { mutate: createCourseMutation, isPending } = useCreateCourse(
     handleClose,
@@ -60,6 +67,7 @@ function CreateCourse({ handleClose }) {
     const specialty = await specialtyRef.current.triggerValidation();
     const semester = await semesterRef.current.triggerValidation();
     const description = await descriptionRef.current.triggerValidation();
+    const type = await typeRef.current.triggerValidation();
     return {
       courseCode,
       courseTitle,
@@ -67,6 +75,7 @@ function CreateCourse({ handleClose }) {
       specialty,
       semester,
       description,
+      type,
     };
   };
   const handleStateChange = (field, value, stateFn) => {
@@ -101,6 +110,9 @@ function CreateCourse({ handleClose }) {
       ...formData,
       specialty_id: formData.specialty_id.id,
       semester_id: formData.semester_id.id,
+      typeIds: formData.type.map((items) => ({
+        type_id: items.id,
+      })),
     });
   };
 
@@ -198,6 +210,26 @@ function CreateCourse({ handleClose }) {
               value={formData.credit}
             />
           </div>
+        </div>
+        <div>
+          <label htmlFor="hallType" className="font-size-sm">
+            Course Type
+          </label>
+          <MultiSelectDropdown
+            data={courseTypes?.data || []}
+            value={formData.type}
+            displayKey={["name", "description"]}
+            valueKey={["id"]}
+            direction="up"
+            isLoading={isCourseTypeLoading}
+            placeholder={"Select Course Type"}
+            errorMessage={"Course Type Required"}
+            onSelect={(value) => handleStateChange("type", value, setFormData)}
+            onError={(error) => handleStateChange("type", error, setErrors)}
+            error={errors.type}
+            optional={false}
+            ref={typeRef}
+          />
         </div>
         <div>
           <label htmlFor="semester" className="font-size-sm">

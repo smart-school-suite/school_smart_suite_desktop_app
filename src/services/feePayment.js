@@ -1,123 +1,81 @@
 import axiosInstance from "../axios/authAxios";
 
-
-export const payRegistrationFees = async (data) => {
-  const response = await axiosInstance.post("fee-payment/registration-fee-payments", data);
-  return response.data;
-};
-
-export const bulkPayRegistrationFee = async (payments) => {
-  const response = await axiosInstance.post("fee-payment/registration-fee-payments/bulk-pay", payments);
-  return response.data;
-};
-
-export const getRegistrationFeeTransactions = async () => {
-  const response = await axiosInstance.get("fee-payment/registration-fee-transactions");
-  return response.data;
-};
-
-export const bulkDeleteRegistrationFeeTransactions = async (transactionData) => {
-  const response = await axiosInstance.post("fee-payment/registration-fee-transactions/bulk-delete", transactionData);
-  return response.data;
-};
-
-export const bulkReverseRegistrationFeeTransaction = async (transactionData) => {
-  const response = await axiosInstance.post("fee-payment/registration-fee-transactions/bulk-reverse", transactionData);
-  return response.data;
-};
-
-export const reverseRegistrationFeeTransaction = async (transactionId, data={}) => {
-  const response = await axiosInstance.delete(`fee-payment/registration-fee-transactions/${transactionId}/reverse`, data);
-  return response.data;
-};
-
-export const getRegistrationFees = async () => {
-  const response = await axiosInstance.get("fee-payment/registration-fees");
-  return response.data;
-};
-
 export const getFeeDebtors = async () => {
-  const response = await axiosInstance.get("fee-payment/tuition-fee-debtors");
+  const response = await axiosInstance.get("tuition-fee/debtors");
   return response.data;
 };
 
 export const payTuitionFees = async (data) => {
-  const response = await axiosInstance.post("fee-payment/tuition-fee-payments", data);
+  const response = await axiosInstance.post(
+    "tuition-fee/pay",
+    data
+  );
   return response.data;
 };
 
 export const getFeesPaid = async () => {
-  const response = await axiosInstance.get("fee-payment/tuition-fee-payments");
+  const response = await axiosInstance.get("tuition-fee/paid");
   return response.data;
 };
 
-export const updateFeesPaid = async (feeId, data) => {
-  const response = await axiosInstance.put(`fee-payment/tuition-fee-payments/${feeId}`, data);
-  return response.data;
-};
 
 export const deleteFeePaid = async (feeId) => {
-  const response = await axiosInstance.delete(`fee-payment/tuition-fee-payments/${feeId}`);
+  const response = await axiosInstance.delete(
+    `tuition-fee/${feeId}`
+  );
   return response.data;
 };
 
 export const getTuitionFeeTransactions = async () => {
-  const response = await axiosInstance.get("fee-payment/tuition-fee-transactions");
+  const response = await axiosInstance.get(
+    "tuition-fee/transaction"
+  );
   return response.data;
 };
 
 export const bulkDeleteTuitionFeeTransactions = async (transactionData) => {
-  const response = await axiosInstance.post("fee-payment/tuition-fee-transactions/bulk-delete", transactionData);
+  const response = await axiosInstance.post(
+    "tuition-fee/transaction/bulk-delete",
+    transactionData
+  );
   return response.data;
 };
 
 export const bulkReverseTuitionFeeTransaction = async (transactionData) => {
-  const response = await axiosInstance.post("fee-payment/tuition-fee-transactions/bulk-reverse", transactionData);
+  const response = await axiosInstance.post(
+    "tuition-fee/transaction/bulk-reverse",
+    transactionData
+  );
   return response.data;
 };
 
 export const getTuitionTransactionFeeDetails = async (transactionId) => {
-  const response = await axiosInstance.get(`fee-payment/tuition-fee-transactions/${transactionId}`);
+  const response = await axiosInstance.get(
+    `tuition-fee/transaction/${transactionId}`
+  );
   return response.data;
 };
 
-
 export const deleteTuitionFeeTransaction = async (transactionId) => {
-  const response = await axiosInstance.delete(`fee-payment/tuition-fee-transactions/${transactionId}`);
+  const response = await axiosInstance.delete(
+    `tuition-fee/transaction/${transactionId}`
+  );
   return response.data;
 };
 
 export const reverseTuitionFeeTransaction = async (transactionId) => {
-  const response = await axiosInstance.delete(`fee-payment/tuition-fee-transactions/${transactionId}/reverse`);
+  const response = await axiosInstance.delete(
+    `tuition-fee/transaction/${transactionId}/reverse`
+  );
   return response.data;
 };
 
 export const getTuitionFees = async () => {
-  const response = await axiosInstance.get("fee-payment/tuition-fees");
+  const response = await axiosInstance.get("tuition-fee");
   return response.data;
 };
 
 export const getTuitionFeeDetails = async (feeId) => {
-   const response = await axiosInstance.get(`fee-payment/tuition-fee/${feeId}`);
-   return response.data;
-}
-
-export const getRegistrationFeeTransactionDetails = async (transactionId) => {
-   const response = await axiosInstance.get(`fee-payment/registration-fee/transaction/${transactionId}`);
-   return response.data;
-}
-
-export const deleteRegistrationFeeTransaction = async (transactionId) => {
-   const response = await axiosInstance.delete(`fee-payment/tuition-fee-transactions/${transactionId}`);
-   return response.data;
-}
-
-export const bulkDeleteRegistrationFee = async (deleteData) => {
-   const response = await axiosInstance.post("fee-payment/registration-fee/bulk-delete", deleteData);
-   return response.data;
-}
-
-export const deleteRegistrationFee = async (feeId) => {
-   const response = await axiosInstance.delete(`fee-payment/registration-fee/${feeId}`);
-   return response.data;
-}
+  const response = await axiosInstance.get(`fee-payment/tuition-fee/${feeId}`);
+  return response.data;
+};

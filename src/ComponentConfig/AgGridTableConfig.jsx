@@ -21,6 +21,14 @@ import ConfigStatusBadge from "../components/Badges/ConfigStatusBadge";
 import ElectionPill from "../components/Badges/ElectionPill";
 import AssignmentPill from "../components/Badges/AssignmentStatus";
 import AddedStatus from "../components/Badges/AddedStatus";
+import UsedStatus from "../components/Badges/ActivationCode/UsedStatus";
+import ExpireDate from "../components/Badges/ActivationCode/ExpireDate";
+import ActionComponent from "../components/Badges/ActivationCode/ActionComponent";
+import UsageStatus from "../components/Badges/ActivationCode/UsageStatus";
+import StudentAction from "../components/Badges/ActivationCode/StudentAction";
+import TeacherAction from "../components/Badges/ActivationCode/TeacherAction";
+import TransactionStatus from "../components/Badges/ActivationCode/TransactionStatus";
+import SubscriptionStatus from "../components/Badges/ActivationCode/SubscriptionStatus";
 const cellStyle = CoursesCellStyle;
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
@@ -922,32 +930,32 @@ export function ParentsTableConfig({ DropdownComponent }) {
       cellStyle: cellStyle,
     },
     {
-      field: "phone_one",
-      headerName: "First Reachable Number",
+      field: "phone",
+      headerName: "Contact",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
-      field: "phone_two",
-      headerName: "Second Reachable Number",
+      field: "total_students",
+      headerName: "Total Student",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
-      field: "relationship_to_student",
-      headerName: "Relationship To Student",
+      field: "language",
+      headerName: "Language",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
-      field: "preferred_contact_method",
-      headerName: "Preferred Contact Method",
+      field: "contact_method",
+      headerName: "Contact Method",
       filter: true,
       floatingFilter: true,
       cellRenderer: TextComponent,
@@ -3304,6 +3312,296 @@ export function specialtyHallTableConfig({ DropdownComponent }) {
       field: "Action",
       cellStyle: () => ({ width: "20rem" }),
       cellRenderer: DropdownComponent,
+    },
+  ];
+  return tableConfig;
+}
+
+export function activationCodesTableConfig() {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "code",
+      headerName: "Code",
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "code_type",
+      headerName: "Type",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Used Status",
+      field: "used",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: UsedStatus,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Expire Date",
+      field: "expires_at",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: ExpireDate,
+    },
+    {
+      headerName: "Action",
+      field: "duration",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+      },
+      cellRenderer: ActionComponent,
+    },
+  ];
+  return tableConfig;
+}
+
+export function activationCodeUsageTableConfig() {
+  return [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "code",
+      headerName: "Code",
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "account_type",
+      headerName: "Account Type",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: UsageStatus,
+    },
+    {
+      headerName: "User Name",
+      field: "user_name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Activation Date",
+      field: "activated_date",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: ExpireDate,
+    },
+    {
+      headerName: "Expire Date",
+      field: "expires_at",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: ExpireDate,
+    },
+  ];
+}
+
+export function studentActivationCodeStatusTableConfig() {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "student_name",
+      headerName: "Student Name",
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty Name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Level Name",
+      field: "level_name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Status",
+      field: "sub_status",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: SubscriptionStatus,
+    },
+    {
+      headerName: "Activation Code",
+      field: "activation_code",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Action",
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+      },
+      cellRenderer: StudentAction,
+    },
+  ];
+  return tableConfig;
+}
+
+export function teacherActivationCodeStatusTableConfig() {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "teacher_name",
+      headerName: "Teacher Name",
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "first_name",
+      headerName: "First Name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Last Name",
+      field: "last_name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Status",
+      field: "sub_status",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: SubscriptionStatus,
+    },
+    {
+      headerName: "Activation Code",
+      field: "activation_code",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Action",
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+      },
+      cellRenderer: TeacherAction,
+    },
+  ];
+  return tableConfig;
+}
+
+export function activationCodeTransactionTableConfig() {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "type",
+      headerName: "Type",
+      cellRenderer: TextComponent,
+      cellStyle: cellStyle,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      field: "payment_ref",
+      headerName: "Payment Reference",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "transaction_id",
+      field: "transaction_id",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Amount",
+      field: "amount",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: CurrencyComponent,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TransactionStatus,
     },
   ];
   return tableConfig;

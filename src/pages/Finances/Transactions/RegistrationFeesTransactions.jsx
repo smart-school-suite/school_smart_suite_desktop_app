@@ -1,8 +1,7 @@
 import Table from "../../../components/Tables/Tables";
 import { registrationFeeTransactionTableConfig } from "../../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../../components/DataTableComponents/ActionComponent";
-import DataTableNavLoader from "../../../components/PageLoaders/DataTableNavLoader";
-import { useGetRegistrationFeeTransations } from "../../../hooks/feePayment/useGetRegistrationFeeTransations";
+import { useGetRegistrationFeeTransations } from "../../../hooks/registrationFee/useGetRegistrationFeeTransations";
 import ReverseTransaction from "../../../ModalContent/RegistrationFees/ReverseTransaction";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../../components/Modals/Modal";

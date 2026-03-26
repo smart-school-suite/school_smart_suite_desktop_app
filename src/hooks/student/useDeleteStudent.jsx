@@ -1,4 +1,4 @@
-import { deleteStudent } from "../../services/Student";
+import { deleteStudent } from "../../services/student";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";

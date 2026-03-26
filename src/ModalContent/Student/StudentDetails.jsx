@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import { useGetStudentDetails } from "../../hooks/student/useGetStudentDetails";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import { format, parseISO } from "date-fns";
 function StudentDetails({ handleClose, rowData }) {
   const { id: studentId } = rowData;
   const {
@@ -42,103 +43,129 @@ function StudentDetails({ handleClose, rowData }) {
         <>
           <div className="modal-content-container">
             <div className="d-flex flex-row align-items-center justify-content-center my-4">
-            <div>
-              <img
-                src="./images/user.png"
-                alt=""
-                style={{ width: "5rem", height: "5rem" }}
-                className="rounded-circle"
-              />
-            </div>
-          </div>
-          <div className="d-flex flex-column gap-3">
-            <span className="fw-semibold">Student Personal Details</span>
-            <div>
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Full Names</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.name || "N/A"}
-                </span>
-              </div>
-              <hr />
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">First Name</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.first_name || "N/A"}
-                </span>
-              </div>
-              <hr />
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Last Name</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.last_name || "N/A"}
-                </span>
-              </div>
-              <hr />
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Gender</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.gender || "N/A"}
-                </span>
+              <div>
+                <img
+                  src="./images/user.png"
+                  alt=""
+                  style={{ width: "5rem", height: "5rem" }}
+                  className="rounded-circle"
+                />
               </div>
             </div>
-            <span className="fw-semibold">Level Details</span>
-            <div>
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Specialty Name</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.specialty.specialty_name || "N/A"}
-                </span>
+            <div className="d-flex flex-column gap-3">
+              <span className="font-size-sm">Student Personal Details</span>
+              <div>
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Full Names</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.name || "N/A"}
+                  </span>
+                </div>
+                <hr />
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">First Name</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.first_name || "N/A"}
+                  </span>
+                </div>
+                <hr />
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Last Name</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.last_name || "N/A"}
+                  </span>
+                </div>
+                <hr />
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Gender</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.gender?.name || "N/A"}
+                  </span>
+                </div>
               </div>
-              <hr />
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Level</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.level.name || "N/A"}
-                </span>
+              <span className="font-size-sm">Level Details</span>
+              <div>
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Specialty Name</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.specialty.specialty_name || "N/A"}
+                  </span>
+                </div>
+                <hr />
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Level</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.level.name || "N/A"}
+                  </span>
+                </div>
+              </div>
+              <span className="font-size-sm">Guardian Details</span>
+              <div>
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Guardian Name</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.guardian?.name || "N/A"}
+                  </span>
+                </div>
+                <hr />
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Relationship To Student</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.student_parent_relationship?.name ||
+                      "N/A"}
+                  </span>
+                </div>
+              </div>
+              <span className="font-size-sm">Student Contact Details</span>
+              <div>
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Email</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.email || "N/A"}
+                  </span>
+                </div>
+                <hr />
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Contact One</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.phone || "N/A"}
+                  </span>
+                </div>
+              </div>
+              <span className="font-size-sm">System Info</span>
+              <div>
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Student Source</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.student_source?.name|| "N/A"}
+                  </span>
+                </div>
+                <hr />
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Created At</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.created_at
+                      ? format(
+                          parseISO(studentDetails.data.created_at),
+                          "d MMM yyyy, h:mm a"
+                        )
+                      : "N/A"}
+                  </span>
+                </div>
+                <hr />
+                <div className="d-flex flex-column font-size-sm">
+                  <span className="fw-medium">Updated At</span>
+                  <span className="fw-light gainsboro-color">
+                    {studentDetails?.data?.created_at
+                      ? format(
+                          parseISO(studentDetails.data.updated_at),
+                          "d MMM yyyy, h:mm a"
+                        )
+                      : "N/A"}
+                  </span>
+                </div>
               </div>
             </div>
-            <span className="fw-semibold">Guardian Details</span>
-            <div>
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Guardian Name</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.guardian.name || "N/A"}
-                </span>
-              </div>
-              <hr />
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Relationship To Student</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.guardian.relationship_to_student ||
-                    "N/A"}
-                </span>
-              </div>
-            </div>
-            <span className="fw-semibold">Student Contact Details</span>
-            <div>
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Email</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.email || "N/A"}
-                </span>
-              </div>
-              <hr />
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Contact One</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.phone_one || "N/A"}
-                </span>
-              </div>
-              <hr />
-              <div className="d-flex flex-column font-size-sm">
-                <span className="fw-medium">Contact Two</span>
-                <span className="fw-light gainsboro-color">
-                  {studentDetails?.data?.phone_two || "N/A"}
-                </span>
-              </div>
-            </div>
-          </div>
           </div>
         </>
       )}

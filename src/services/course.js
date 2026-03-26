@@ -71,3 +71,8 @@ export const deactivateCourse = async (courseId) => {
   const response = await axiosInstance.post(`course/${courseId}/deactivate`);
   return response.data;
 };
+
+export const getCourseTypes = async () => {
+   const  response = await axiosInstance.get("course-type");
+   return response.data;
+}

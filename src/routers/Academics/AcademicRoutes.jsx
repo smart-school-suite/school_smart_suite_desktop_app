@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { Route } from "react-router-dom";
 const Courses = React.lazy(() => import("../../pages/Academics/Courses"));
 const Gradesconfiguration = React.lazy(() => import("../../pages/Academics/Gradesconfiguration"));
-const SpecialtyTimetable = React.lazy(() => import("../../pages/Academics/SpecialtyTimetable"));
+const SemesterTimetable = React.lazy(() => import("../../pages/Academics/SemesterTimetable"));
 const Semester = React.lazy(() => import("../../pages/Academics/Semester"));
 const AcademicRoutes = [
     <Route key="courses" path="/courses" element={
@@ -22,9 +22,9 @@ const AcademicRoutes = [
             <Gradesconfiguration />
         </Suspense>
     } />,
-    <Route key="specialtyTimetable" path="/time-table" element={
+    <Route key="semesterTitable" path="/time-table" element={
         <Suspense>
-            <SpecialtyTimetable />
+            <SemesterTimetable />
         </Suspense>
     }/>
 ]

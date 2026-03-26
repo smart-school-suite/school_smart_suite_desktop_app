@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bulkUpdateStudent } from "../../services/Student";
+import { bulkUpdateStudent } from "../../services/student";
 
 export const useBulkUpdateStudent = () => {
      const queryClient = useQueryClient();

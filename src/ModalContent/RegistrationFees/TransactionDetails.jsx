@@ -1,9 +1,9 @@
-import { useGetRegistrationFeeTransactionDetails } from "../../hooks/feePayment/useGetRegistrationFeeTransactionDetails";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { formatISODate } from "../../utils/functions";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import { useGetRegistrationFeeTransactionDetails } from "../../hooks/registrationFee/useGetRegistrationFeeTransactionDetails";
 function TransactionDetails({ handleClose, rowData }) {
   const currencyState = useSelector((state) => state.auth.user);
   const userCurrencySymbol =

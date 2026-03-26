@@ -199,7 +199,19 @@ const EventIcon = ({ iconStyle }) => {
 
 const HallIcon = ({ iconStyle }) => {
   return (
-    <Icon icon="fluent:conference-room-16-regular" style={{ ...iconStyle, fontSize: "1rem" }} />
+    <Icon
+      icon="fluent:conference-room-16-regular"
+      style={{ ...iconStyle, fontSize: "1rem" }}
+    />
+  );
+};
+
+const ActivationCodeIcon = ({ iconStyle }) => {
+  return (
+    <Icon
+      icon="streamline-plump:password-lock"
+      style={{ ...iconStyle, fontSize: "1rem" }}
+    />
   );
 };
 
@@ -228,5 +240,6 @@ export {
   TimetableIcon,
   ExamIcon,
   ExamCandidateIcon,
-  HallIcon
+  HallIcon,
+  ActivationCodeIcon
 };

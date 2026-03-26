@@ -68,11 +68,11 @@ function Gradesconfiguration() {
             >
               <GradeIcon />
             </div>
-            <span className="my-0 fw-semibold">Manage Exam Grading</span>
+            <span className="my-0 fw-semibold">Manage School Grade Scale</span>
           </div>
           <div className="d-flex flex-row align-items-center  w-100">
             <div className="d-block">
-              <p className="font-size-xs my-0">Total Grades Config</p>
+              <p className="font-size-xs my-0">Total Categories </p>
               <h1 className="fw-bold my-0">
                 {gradeCategory?.data?.length || 0}
               </h1>
@@ -154,7 +154,6 @@ function DropdownComponent(props) {
     setShowModal(true);
   };
 
-  //deleteGradesCongig configureGrades, viewGrades, updateGrades, configureByOtherGrades
   return (
     <>
       <ActionButtonDropdown
@@ -272,6 +271,7 @@ function ActionButtons({ selectedGradeConfigs, resetAll }) {
     </>
   );
 }
+
 function DropdownItems({ selectedGradeConfigs, resetAll, onModalStateChange }) {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
