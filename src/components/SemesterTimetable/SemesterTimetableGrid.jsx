@@ -1,15 +1,16 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useChannel } from 'ably/react';
+import { useChannel } from "ably/react";
 import { useState, useMemo, useEffect, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setTimetableVersion,
   setSchoolSemester,
+  setTimetableVersionStatus,
+  setGenerationStatus,
 } from "../../Slices/Asynslices/semesterTimetableSlice";
 import { checkConfiguration } from "../../utils/semesterTimetable/generateTimetable";
 import NumberFlow from "@number-flow/react";
 import { handleGenerateTimetable } from "../../utils/semesterTimetable/generateTimetable";
-import { useGetSemesterTimetableSlots } from "../../hooks/semesterTimetable/useGetSemesterTimetableSlot";
 import BreakPeriodCard from "../Card/BreakPeriodCard";
 import PeriodCard from "../Card/PeriodCard";
 import { useGenerateSemesterTimetable } from "../../hooks/semesterTimetable/useGenerateSemesterTimetable";
@@ -28,15 +29,21 @@ import {
 } from "@floating-ui/react";
 import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
 import { Error } from "../errors/Error";
+import { useGetTimetableSlots } from "../../hooks/semesterTimetable/useGetTimetableSlots";
+import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
+import { ModalButton } from "../DataTableComponents/ActionComponent";
+import GenerationFailedError from "../../ModalContent/SemesterTimetable/Errors/GenerationFailedError";
+import { SingleSpinner } from "../Spinners/Spinners";
 function TimetableGridWrapper() {
   const semesterTimetable = useSelector((state) => state.semesterTimetable);
   const schedularStatus = semesterTimetable?.timetableVersion?.scheduler_status;
+  const schoolSemester = semesterTimetable?.schoolSemester;
   const dispatch = useDispatch();
   return (
     <>
       <div
         style={{ width: "60%", height: "100%" }}
-        className="d-flex flex-column  align-items-center px-2 gap-2"
+        className="d-flex flex-column align-items-center px-2 gap-2"
       >
         <div className="d-flex flex-row justify-content-center w-100">
           <SemesterDropdown
@@ -44,15 +51,84 @@ function TimetableGridWrapper() {
             value={semesterTimetable.schoolSemester}
           />
         </div>
-        {schedularStatus == "partial" || schedularStatus == "optimal" ? (
-          <TimetableGrid />
-        ) : schedularStatus == "in_progress" ? (
-            <TimetableGridPlaceholder />
+        {schoolSemester ? (
+          semesterTimetable.timetableVersionStatus == "partial" ||
+          semesterTimetable.timetableVersionStatus == "optimal" ? (
+            <TimetableGrid />
+          ) : schedularStatus == "error" ? (
+            <div className="d-flex flex-grow-1 align-items-center justify-content-center">
+              <div className="d-flex flex-column align-items-center gap-2 text-center">
+                <img
+                  src="./sss-maskot/error.png"
+                  alt="sss-timetable-maskot"
+                  style={{
+                    height: "250px",
+                    width: "250px",
+                    objectFit: "contain",
+                  }}
+                />
+                <span className="fw-semibold font-size-sm">
+                  Timetable Generation Failed
+                </span>
+                <p className="text-muted font-size-sm mb-0">
+                  Consider the diagnostic report to identify and resolve
+                  constraint conflicts
+                </p>
+              </div>
+            </div>
+          ) : schedularStatus == "failed" ? (
+            <>
+              <div className="d-flex flex-grow-1 align-items-center justify-content-center">
+                <div className="d-flex flex-column align-items-center gap-2 text-center">
+                  <img
+                    src="./sss-maskot/error.png"
+                    alt="sss-timetable-maskot"
+                    style={{
+                      height: "250px",
+                      width: "250px",
+                      objectFit: "contain",
+                    }}
+                  />
+                  <span className="fw-semibold font-size-sm">
+                    Timetable Generation Failed
+                  </span>
+                  <p className="text-muted font-size-sm mb-0">
+                    Please click on the button below to view the list of errors
+                  </p>
+                  <ModalButton
+                    classname="border-none p-2 rounded-3 text-white primary-background font-size-sm outline-none px-3"
+                    action={{ modalContent: GenerationFailedError }}
+                  >
+                    View All Errors
+                  </ModalButton>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <TimetableGridPlaceholder />
+            </>
+          )
         ) : (
-             <Error 
-                title="Timetable Generation Unsuccessful"
-                description="Consider the diagnostic report to identify and resolve constraint conflicts"
-             />
+          <div className="d-flex flex-grow-1 align-items-center justify-content-center">
+            <div className="d-flex flex-column align-items-center gap-2 text-center">
+              <img
+                src="./sss-maskot/timetable.png"
+                alt="sss-timetable-maskot"
+                style={{
+                  height: "250px",
+                  width: "250px",
+                  objectFit: "contain",
+                }}
+              />
+              <span className="fw-semibold font-size-sm">
+                Ready To Generate Timetable ?
+              </span>
+              <p className="text-muted font-size-sm mb-0">
+                Select a semester from the dropdown above to get started.
+              </p>
+            </div>
+          </div>
         )}
       </div>
     </>
@@ -76,10 +152,45 @@ function TimetableGridPlaceholder() {
         queryKey: ["semester-timetable-versions"],
       });
       dispatch(setTimetableVersion(message.data.payload.version));
+      dispatch(
+        setTimetableVersionStatus(
+          message.data.payload.version.scheduler_status,
+        ),
+      );
+      setMessage("");
+      dispatch(setGenerationStatus(false));
+      return;
     }
     setMessage(message.data.payload);
   });
-  return (
+  return semesterTimetable.isGenerating ? (
+    <>
+      <div className="d-flex flex-column w-100 gap-2">
+        <RectangleSkeleton height="2dvh" width="25%" />
+        <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
+          {[...Array(4)].map((_items, index) => (
+            <Fragment key={index}>
+              <RectangleSkeleton height="18dvh" width="49%" />
+            </Fragment>
+          ))}
+        </div>
+      </div>
+      <div className="d-flex flex-row w-100 justify-content-start gap-2 align-items-center">
+        <SingleSpinner />
+        <div className="d-flex flex align-items-center">
+          <span className="font-size-sm fw-bold">
+            {message?.details
+              ? message?.details
+              : "Generating...................................."}
+          </span>
+          <span className="font-size-sm fw-semibold">
+            <NumberFlow value={message?.percentage ? message?.percentage : 0} />{" "}
+            %
+          </span>
+        </div>
+      </div>
+    </>
+  ) : (
     <div className="d-flex flex-grow-1 align-items-center justify-content-center">
       <div className="d-flex flex-column align-items-center gap-2">
         <img
@@ -91,12 +202,10 @@ function TimetableGridPlaceholder() {
             objectFit: "contain",
           }}
         />
-        {!semesterTimetable.schoolSemester && (
-          <span className="font-size-sm">Select A Semester To Get Started</span>
-        )}
         <div className="font-size-sm d-flex flex-row align-items-center gap-2">
           <span>
-            Configure Operational Period {semesterTimetable.timetableVersion?.scheduler_status}
+            Configure Operational Period{" "}
+            {semesterTimetable.timetableVersion?.scheduler_status}
             {
               semesterTimetable.hard_constraints.operational_period.start_time
                 .value
@@ -128,25 +237,18 @@ function TimetableGridPlaceholder() {
         {checkConfiguration(semesterTimetable.hard_constraints) && (
           <button
             className="border-none p-2 rounded-3 text-white primary-background font-size-sm outline-none px-3"
-            onClick={() =>
+            onClick={() => {
               handleGenerateTimetable(
                 semesterTimetable.hard_constraints,
                 generateTimetable,
                 semesterTimetable.schoolSemester,
-              )
-            }
-            disabled={isGeneratingTimetable}
+              );
+              dispatch(setGenerationStatus(true));
+            }}
+            disabled={isGeneratingTimetable || semesterTimetable.isGenerating}
           >
             Generate Timetable
           </button>
-        )}
-        {message && (
-          <div className="d-flex flex-row gap-2">
-            <span className="font-size-sm fw-semibold">{message.details}</span>
-            <span className="font-size-sm fw-semibold">
-              <NumberFlow value={message.percentage} />%
-            </span>
-          </div>
         )}
       </div>
     </div>
@@ -157,38 +259,47 @@ function TimetableGrid() {
     (state) => state.semesterTimetable.timetableVersion,
   );
   const { data: timetable, isLoading: isTimetableLoading } =
-    useGetSemesterTimetableSlots(timetableVersion.id);
+    useGetTimetableSlots(timetableVersion.id);
   return (
     <>
       <div className="timetable-grid-container d-flex flex-column gap-4 pb-5">
-        {isTimetableLoading ? (
-          <div>
-            <span className="font-size-sm">Loading Timetable............</span>
-          </div>
-        ) : (
-          timetable.data.timetable.map((slots, index) => (
-            <Fragment key={index}>
-              <div className="d-flex flex-column gap-2">
-                <span className="font-size-lg fw-bold text-capitalize">
-                  {slots.day}
-                </span>
-                <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
-                  {slots.slots.map((slot) =>
-                    slot.break ? (
-                      <Fragment key={slot.id}>
-                        <BreakPeriodCard slot={slot} />
+        {isTimetableLoading
+          ? [...Array(2)].map((_items, index) => (
+              <Fragment key={index}>
+                <div className="d-flex flex-column w-100 gap-2">
+                  <RectangleSkeleton height="2dvh" width="25%" />
+                  <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
+                    {[...Array(4)].map((_items, index) => (
+                      <Fragment key={index}>
+                        <RectangleSkeleton height="18dvh" width="49%" />
                       </Fragment>
-                    ) : (
-                      <Fragment key={slot.id}>
-                        <PeriodCard slot={slot} />
-                      </Fragment>
-                    ),
-                  )}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </Fragment>
-          ))
-        )}
+              </Fragment>
+            ))
+          : timetable?.data?.map((slots, index) => (
+              <Fragment key={index}>
+                <div className="d-flex flex-column gap-2">
+                  <span className="font-size-lg fw-bold text-capitalize">
+                    {slots.day}
+                  </span>
+                  <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
+                    {slots.slots.map((slot) =>
+                      slot.slot_type === "break" ? (
+                        <Fragment key={slot.id}>
+                          <BreakPeriodCard slot={slot} />
+                        </Fragment>
+                      ) : (
+                        <Fragment key={slot.id}>
+                          <PeriodCard slot={slot} />
+                        </Fragment>
+                      ),
+                    )}
+                  </div>
+                </div>
+              </Fragment>
+            ))}
       </div>
     </>
   );

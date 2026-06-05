@@ -3,7 +3,10 @@ import { useGetSemesterTimetableVersions } from "../../hooks/semesterTimetable/u
 import { useState, Fragment, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Icon } from "@iconify/react";
-import { setTimetableVersion } from "../../Slices/Asynslices/semesterTimetableSlice";
+import {
+  setTimetableVersion,
+  setTimetableVersionStatus,
+} from "../../Slices/Asynslices/semesterTimetableSlice";
 import { useCreateSemesterTimetableVersion } from "../../hooks/semesterTimetable/useCreateSemesterTimetableVersion";
 import toast from "react-hot-toast";
 import ToastWarning from "../Toast/ToastWarning";
@@ -11,6 +14,8 @@ import { useGetSemesterTimetableConstraints } from "../../hooks/semesterTimetabl
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import { constraintMap } from "../../constants/constraintMap";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { useGetTimetableStatus } from "../../hooks/semesterTimetable/useGetTimetableStatus";
 
 function ConstraintVersionWrapper() {
   const semesterTimetable = useSelector((state) => state.semesterTimetable);
@@ -55,24 +60,30 @@ function ConstraintVersionWrapper() {
 export default ConstraintVersionWrapper;
 
 function VersionDropdown({ semesterTimetable }) {
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(true);
+
+  const selectedVersion = useSelector(
+    (state) => state.semesterTimetable.timetableVersion,
+  );
+
   const {
     data: versions,
     isLoading,
-    error,
+    error: versionsError,
   } = useGetSemesterTimetableVersions(semesterTimetable?.schoolSemester?.id);
+
   useEffect(() => {
     if (versions?.data?.length > 0 && !isLoading) {
       const latestVersion = versions.data.find((version) => version.is_latest);
       if (latestVersion) {
         dispatch(setTimetableVersion(latestVersion));
+        dispatch(setTimetableVersionStatus(latestVersion.scheduler_status));
       }
     }
-  }, [versions?.data, isLoading]);
-  const selectedVersion = useSelector(
-    (state) => state.semesterTimetable.timetableVersion,
-  );
-  const dispatch = useDispatch();
+  }, [versions?.data, isLoading, dispatch]);
+
   return (
     <>
       <div className="d-flex flex-column gap-2 w-100 h-100">
@@ -103,7 +114,7 @@ function VersionDropdown({ semesterTimetable }) {
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
               style={{
-                maxheight: "100%",
+                maxHeight: "100%",
                 height: "auto",
                 overflowY: "auto",
                 overflowX: "hidden",
@@ -111,19 +122,35 @@ function VersionDropdown({ semesterTimetable }) {
             >
               {isLoading ? (
                 [...Array(6)].map((_, index) => (
-                   <RectangleSkeleton key={index} width={"100%"} height={"2rem"} borderRadius={6} />
+                  <RectangleSkeleton
+                    key={index}
+                    width={"100%"}
+                    height={"2rem"}
+                    borderRadius={6}
+                  />
                 ))
-              ) : error ? (
+              ) : versionsError ? (
                 <span className="font-size-sm text-danger">
                   Error loading versions
                 </span>
               ) : (
-                versions.data.map((version) => (
+                versions?.data?.map((version) => (
                   <Fragment key={version.id}>
                     <button
                       type="button"
                       className="border-none transparent-bg w-100 d-flex flex-row align-items-center justify-content-between"
-                      onClick={() => dispatch(setTimetableVersion(version))}
+                      onClick={() => {
+                        dispatch(setTimetableVersion(version));
+                        dispatch(
+                          setTimetableVersionStatus(version.scheduler_status),
+                        );
+                        queryClient.invalidateQueries({
+                          queryKey: [
+                            "parsed-semester-timetable-daignostics",
+                            "timetable-slots",
+                          ],
+                        });
+                      }}
                     >
                       <span>{version?.label}</span>
                       {version.is_latest ? (
@@ -165,7 +192,17 @@ function VersionDropdown({ semesterTimetable }) {
 function CreateVersion({ semesterTimetable }) {
   const { mutate: createTimetableVersion, isPending } =
     useCreateSemesterTimetableVersion();
+  const schoolSemester = semesterTimetable?.schoolSemester;
   function handleCreateVersion() {
+    if(!schoolSemester){
+       toast.custom(
+         <ToastWarning 
+           title={"Semester Required"}
+           description={"You Must Select A semester before you can create timetable versions"}
+         />
+       )
+       return;
+    }
     if (isPending) {
       toast.custom(
         <ToastWarning

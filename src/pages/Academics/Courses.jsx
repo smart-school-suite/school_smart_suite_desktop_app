@@ -95,7 +95,7 @@ function Courses() {
               title={error.response.data.errors.title}
               description={error.response.data.errors.description}
             ></NotFoundError>
-          ) : courses.data.length > 0 ? (
+          ) : courses?.data?.length > 0 ? (
             <>
               <Table
                 colDefs={CoursesTable({ DropdownComponent })}

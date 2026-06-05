@@ -92,7 +92,6 @@ function CreateTeacher({ handleClose }) {
       );
       return;
     }
-    console.log(formData.gender_id);
     createTeacherMutation({ ...formData, gender_id: formData?.gender_id?.id });
   };
   return (

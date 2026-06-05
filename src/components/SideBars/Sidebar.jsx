@@ -61,7 +61,7 @@ function SideBarSm() {
         <div className="d-flex flex-column gap-5">
           <div className="app-logo">
             <img
-              src="./logo/sss-logo-rounded.png"
+              src="./logo/logo-transparent.png"
               style={{
                 width: "2rem",
                 height: "2rem",
@@ -70,7 +70,7 @@ function SideBarSm() {
               }}
             />
           </div>
-          <div className="d-flex flex-column gap-3">
+          <div className="d-flex flex-column gap-2">
             {sideBarData.map((items, index) => (
               <SideBarSmTab items={items} key={index} />
             ))}
@@ -118,7 +118,7 @@ function SideBarLg() {
             <div className="d-flex justify-content-start flex-row gap-2 ps-2 align-items-center">
               <div className="app-logo">
                 <img
-                  src="./logo/sss-logo-rounded.png"
+                  src="./logo/logo-transparent.png"
                   alt=""
                   className="app-logo"
                 />
@@ -146,9 +146,9 @@ function SideBarLg() {
                 >
                   <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
                     <span style={{ lineHeight: 0 }}>
-                      <Icon icon="radix-icons:dashboard" width={18} height={18} />
+                      <Icon icon="radix-icons:dashboard" width={12} height={12} />
                     </span>
-                    <span>Dashboard</span>
+                    <span style={{ fontSize:"0.75rem" }}>Dashboard</span>
                   </div>
                 </div>
                 {/*Dashoard*/}
@@ -171,9 +171,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="ri:admin-line" width={18} height={18}/>
+                        <Icon icon="ri:admin-line" width={12} height={12}/>
                       </span>
-                      <p>Administrator</p>
+                      <p style={{ fontSize:"0.75rem" }}>Administrator</p>
                     </div>
                     <span>
                       <Icon
@@ -208,11 +208,11 @@ function SideBarLg() {
                             to="/school-admins"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>School Admins</p>
+                            <p style={{ fontSize:"0.75rem" }}>School Admins</p>
                           </NavLink>
                         </div>
                       </div>
@@ -224,11 +224,11 @@ function SideBarLg() {
                             to="/departments"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Departments</p>
+                            <p style={{ fontSize:"0.75rem" }}>Departments</p>
                           </NavLink>
                         </div>
                       </div>
@@ -240,11 +240,11 @@ function SideBarLg() {
                             to="/specialties"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Specialties</p>
+                            <p style={{ fontSize:"0.75rem" }}>Specialties</p>
                           </NavLink>
                         </div>
                       </div>
@@ -258,11 +258,11 @@ function SideBarLg() {
                             }}
                             className={
                               IsPathInRoutes(teacherRoutes)
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p>Teacher</p>
+                            <p style={{ fontSize:"0.75rem" }}>Teacher</p>
                           </div>
                         </div>
                       </div>
@@ -276,11 +276,11 @@ function SideBarLg() {
                             }}
                             className={
                               IsPathInRoutes(hallRoutes)
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p>Halls</p>
+                            <p style={{ fontSize:"0.75rem" }}>Halls</p>
                           </div>
                         </div>
                       </div>
@@ -309,10 +309,10 @@ function SideBarLg() {
                       <span style={{ lineHeight: 0 }}>
                         <Icon
                           icon="mdi:book-edit-outline"
-                          width={18} height={18}
+                          width={12} height={12}
                         />
                       </span>
-                      <p>Academics</p>
+                      <p style={{ fontSize:"0.75rem" }}>Academics</p>
                     </div>
                     <span>
                       <Icon
@@ -349,9 +349,10 @@ function SideBarLg() {
                             }}
                             className={
                               location.pathname === "/grades-configuration"
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
+                            style={{ fontSize:"0.75rem" }}
                           >
                             Grades Configuration
                           </p>
@@ -365,11 +366,11 @@ function SideBarLg() {
                             to="/semesters"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Semester</p>
+                            <p style={{ fontSize:"0.75rem" }}>Semester</p>
                           </NavLink>
                         </div>
                       </div>
@@ -381,11 +382,11 @@ function SideBarLg() {
                             to="/courses"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Courses</p>
+                            <p style={{ fontSize:"0.75rem" }}>Courses</p>
                           </NavLink>
                         </div>
                       </div>
@@ -397,11 +398,11 @@ function SideBarLg() {
                             to="/time-table"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Time-table</p>
+                            <p style={{ fontSize:"0.75rem" }}>Time-table</p>
                           </NavLink>
                         </div>
                       </div>
@@ -428,9 +429,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="healthicons:i-exam-multiple-choice-outline" width={18} height={18}/>
+                        <Icon icon="healthicons:i-exam-multiple-choice-outline" width={12} height={12}/>
                       </span>
-                      <p>Manage Exams</p>
+                      <p style={{ fontSize:"0.75rem" }}>Manage Exams</p>
                     </div>
                     <span>
                       <Icon
@@ -465,11 +466,11 @@ function SideBarLg() {
                             to="/exam"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Exam</p>
+                            <p style={{ fontSize:"0.75rem" }}>Exam</p>
                           </NavLink>
                         </div>
                       </div>
@@ -481,11 +482,11 @@ function SideBarLg() {
                             to="/exam-candidate"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Exam Candidate</p>
+                            <p style={{ fontSize:"0.75rem" }}>Exam Candidate</p>
                           </NavLink>
                         </div>
                       </div>
@@ -497,11 +498,11 @@ function SideBarLg() {
                             to="/exam-timetable"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Exam Timetable</p>
+                            <p style={{ fontSize:"0.75rem" }}>Exam Timetable</p>
                           </NavLink>
                         </div>
                       </div>
@@ -513,11 +514,11 @@ function SideBarLg() {
                             to="/exam-results"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Exam Results</p>
+                            <p style={{ fontSize:"0.75rem" }}>Exam Results</p>
                           </NavLink>
                         </div>
                       </div>
@@ -544,9 +545,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight:0 }}>
-                        <Icon icon="material-symbols:repeat-rounded" width={18} height={18}/>
+                        <Icon icon="material-symbols:repeat-rounded" width={12} height={12}/>
                       </span>
-                      <p>Manage Resit</p>
+                      <p style={{ fontSize:"0.75rem" }}>Manage Resit</p>
                     </div>
                     <span>
                       <Icon
@@ -581,11 +582,11 @@ function SideBarLg() {
                             to="/resit-exams"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Resit Exam</p>
+                            <p style={{ fontSize:"0.75rem" }}>Resit Exam</p>
                           </NavLink>
                         </div>
                       </div>
@@ -597,11 +598,11 @@ function SideBarLg() {
                             to="/resit-candidate"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Resit Candidate</p>
+                            <p style={{ fontSize:"0.75rem" }}>Resit Candidate</p>
                           </NavLink>
                         </div>
                       </div>
@@ -613,11 +614,11 @@ function SideBarLg() {
                             to="/resit-timetable"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Resit Timetable</p>
+                            <p style={{ fontSize:"0.75rem" }}>Resit Timetable</p>
                           </NavLink>
                         </div>
                       </div>
@@ -629,11 +630,11 @@ function SideBarLg() {
                             to="/student-resit"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Student Resit</p>
+                            <p style={{ fontSize:"0.75rem" }} >Student Resit</p>
                           </NavLink>
                         </div>
                       </div>
@@ -660,9 +661,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight:0 }}>
-                        <Icon icon="ph:student" width={18} height={18}/>
+                        <Icon icon="ph:student" width={12} height={12}/>
                       </span>
-                      <p>Manage Students</p>
+                      <p style={{ fontSize:"0.75rem" }}>Manage Students</p>
                     </div>
                     <span>
                       <Icon
@@ -697,11 +698,11 @@ function SideBarLg() {
                             to="/students"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Students</p>
+                            <p style={{ fontSize:"0.75rem" }}>Students</p>
                           </NavLink>
                         </div>
                       </div>
@@ -713,8 +714,8 @@ function SideBarLg() {
                             to="/studentDropout"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
                             <p>Student Dropouts</p>
@@ -729,11 +730,11 @@ function SideBarLg() {
                             to="/parents"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Parents</p>
+                            <p style={{ fontSize:"0.75rem" }}>Parents</p>
                           </NavLink>
                         </div>
                       </div>
@@ -745,11 +746,11 @@ function SideBarLg() {
                             to="/student-batches"
                             className={({ isActive }) =>
                               isActive
-                                ? "text-decoration-none fw-medium color-primary"
-                                : "text-decoration-none gainsboro-color"
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
                             }
                           >
-                            <p>Student Batches</p>
+                            <p style={{ fontSize:"0.75rem" }}>Student Batches</p>
                           </NavLink>
                         </div>
                       </div>
@@ -776,9 +777,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="mynaui:activity-square" width={18} height={18}/>
+                        <Icon icon="mynaui:activity-square" width={12} height={12}/>
                       </span>
-                      <p>School Activities</p>
+                      <p style={{ fontSize:"0.75rem" }}>School Activities</p>
                     </div>
                     <span>
                       <Icon
@@ -815,11 +816,11 @@ function SideBarLg() {
                             }}
                             className={
                               IsPathInRoutes(announcementRoutes)
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p>Announcements</p>
+                            <p style={{ fontSize:"0.75rem" }}>Announcements</p>
                           </div>
                         </div>
                       </div>
@@ -833,11 +834,11 @@ function SideBarLg() {
                             }}
                             className={
                               IsPathInRoutes(electionRoutes)
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p>School Elections</p>
+                            <p style={{ fontSize:"0.75rem" }}>School Elections</p>
                           </div>
                         </div>
                       </div>
@@ -851,11 +852,11 @@ function SideBarLg() {
                             }}
                             className={
                               IsPathInRoutes(eventRoutes)
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p>School Events</p>
+                            <p style={{ fontSize:"0.75rem" }}>School Events</p>
                           </div>
                         </div>
                       </div>
@@ -882,9 +883,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="healthicons:money-bag-outline" width={18} height={18} />
+                        <Icon icon="healthicons:money-bag-outline" width={12} height={12} />
                       </span>
-                      <p>Finances</p>
+                      <p style={{ fontSize:"0.75rem" }}>Finances</p>
                     </div>
                     <span>
                       <Icon
@@ -921,11 +922,11 @@ function SideBarLg() {
                             }}
                             className={
                               IsPathInRoutes(schoolExpenseRoutes)
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p>School Expenses</p>
+                            <p style={{ fontSize:"0.75rem" }}>School Expenses</p>
                           </div>
                         </div>
                       </div>
@@ -939,11 +940,11 @@ function SideBarLg() {
                             }}
                             className={
                               IsPathInRoutes(resitFeeRoutes)
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p>Resit Fees</p>
+                            <p style={{ fontSize:"0.75rem" }}>Resit Fees</p>
                           </div>
                         </div>
                       </div>
@@ -957,11 +958,11 @@ function SideBarLg() {
                             }}
                             className={
                               IsPathInRoutes(tuitionFeeRoutes)
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p>Tuition Fees</p>
+                            <p style={{ fontSize:"0.75rem" }}>Tuition Fees</p>
                           </div>
                         </div>
                       </div>
@@ -975,11 +976,11 @@ function SideBarLg() {
                             }}
                             className={
                               IsPathInRoutes(registrationFeeRoutes)
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p>Registration Fees</p>
+                            <p style={{ fontSize:"0.75rem" }}>Registration Fees</p>
                           </div>
                         </div>
                       </div>
@@ -993,11 +994,11 @@ function SideBarLg() {
                             }}
                             className={
                               IsPathInRoutes(additionalFeeRoutes)
-                                ? "text-decoration-none fw-medium color-primary pointer-cursor"
-                                : "text-decoration-none gainsboro-color pointer-cursor"
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p>Additional Fees</p>
+                            <p style={{ fontSize:"0.75rem" }}>Additional Fees</p>
                           </div>
                         </div>
                       </div>
@@ -1019,40 +1020,38 @@ function SideBarLg() {
                 >
                   <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
                     <span style={{ lineHeight:0}}>
-                      <Icon icon="streamline-plump:password-lock" height={16} width={16}/>
+                      <Icon icon="streamline-plump:password-lock" height={12} width={12}/>
                     </span>
-                    <span>Account Activation</span>
+                    <span style={{ fontSize:"0.75rem" }}>Account Activation</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div className="mt-auto d-flex gap-2 flex-column justify-content-center align-items-center w-100 px-2">
-            {/*Settings*/}
             <div
               className={`${
                 IsPathInRoutes(settingRoutes)
                   ? `${darkMode ? "sidebar-active-dark" : "sidebar-active"}`
                   : ""
-              } sidebar-item`}
+              } sidebar-item  text-dark`}
               onClick={() => {
                 navigate("/settings/general-settings");
               }}
             >
-              <span>Setting</span>
+              <span style={{ fontSize:"0.75rem" }}>Setting</span>
               <span style={{ lineHeight: 0 }}>
-                <Icon icon="uil:setting" width={18} height={18}/>
+                <Icon icon="uil:setting" width={12} height={12}/>
               </span>
             </div>
-            {/*Settings*/}
             <div className="w-100">
               <ModalButton
                 action={{ modalContent: Logout }}
-                classname="sidebar-item transparent-bg"
+                classname="sidebar-item transparent-bg  text-dark"
               >
-                <span>Logout</span>
+                <span style={{ fontSize:"0.75rem" }}>Logout</span>
                 <span style={{ lineHeight: 0 }}>
-                  <Icon icon="mynaui:logout" width={18} height={18}/>
+                  <Icon icon="mynaui:logout" width={12} height={12}/>
                 </span>
               </ModalButton>
             </div>

@@ -12,10 +12,10 @@ function Layout() {
          <Toaster position="bottom-right" reverseOrder={false}></Toaster>
         <div className={`${darkMode && "dark-bg-light"}`}>
           <div className="d-flex flex-row w-100 gap-2 ">
-            <div style={{ width: is.md || is.sm ? "5%" : "18%" }}>
+            <div style={{ width: is.md || is.sm ? "5%" : "15%" }}>
               <Sidebar />
             </div>
-            <div style={{ width: is.md || is.sm ? "95%" : "82%" }}>
+            <div style={{ width: is.md || is.sm ? "95%" : "85%" }}>
               <main className={`${darkMode ? "text-white" : null} pt-1 w-100`}>
                 <div className="pe-2">
                   <Outlet />

@@ -4,9 +4,12 @@ import CourseRequestedSlot from "../ModalContent/SemesterTimetable/constraints/C
 import RequiredJointCourse from "../ModalContent/SemesterTimetable/constraints/Course/RequiredJointCourse";
 import HallRequestedTimeSlot from "../ModalContent/SemesterTimetable/constraints/Hall/HallRequestedTimeSlot";
 import BreakPeriod from "../ModalContent/SemesterTimetable/constraints/Schedule/BreakPeriod";
+import BreakPeriodModal from "../ModalContent/SemesterTimetable/constraints/Schedule/BreakPeriod/BreakPeriodModal";
 import OperationalPeriod from "../ModalContent/SemesterTimetable/constraints/Schedule/OperationalPeriod";
+import OperationalPeriodModal from "../ModalContent/SemesterTimetable/constraints/Schedule/OperationalPeriod/OperationalPeriodModal";
 import PeriodDuration from "../ModalContent/SemesterTimetable/constraints/Schedule/PeriodDuration";
 import RequestedFreePeriod from "../ModalContent/SemesterTimetable/constraints/Schedule/RequestedFreePeriod";
+import RequestedFreePeriodModal from "../ModalContent/SemesterTimetable/constraints/Schedule/RequestedFreePeriod/RequestedFreePeriodModal";
 import ScheduleDailyFreePeriod from "../ModalContent/SemesterTimetable/constraints/Schedule/ScheduleDailyFreePeriod";
 import ScheduleDailyPeriod from "../ModalContent/SemesterTimetable/constraints/Schedule/ScheduleDailyPeriod";
 import TeacherDailyHour from "../ModalContent/SemesterTimetable/constraints/Teacher/TeacherDailyHour";
@@ -17,11 +20,11 @@ import TeacherWeeklyHour from "../ModalContent/SemesterTimetable/constraints/Tea
 const scheduleConstraintMap = [
   {
     key: "break_period",
-    modal: BreakPeriod,
+    modal: BreakPeriodModal,
   },
   {
     key: "operational_period",
-    modal: OperationalPeriod,
+    modal: OperationalPeriodModal,
   },
   {
     key: "schedule_period_duration_minutes",
@@ -29,7 +32,7 @@ const scheduleConstraintMap = [
   },
   {
     key: "requested_free_period",
-    modal: RequestedFreePeriod,
+    modal: RequestedFreePeriodModal,
   },
   {
     key: "schedule_free_periods_per_day",

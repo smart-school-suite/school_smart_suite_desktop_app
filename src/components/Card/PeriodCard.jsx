@@ -9,7 +9,7 @@ function PeriodCard({ slot }) {
         <div className="d-flex flex-column gap-1">
           <div className="d-flex flex-row align-items-center gap-2">
             <Icon icon="famicons:book-outline" width="16" height="16" />
-            <span className="fw-semibold">{slot?.course_title}</span>
+            <span className="fw-semibold">{slot?.course_name}</span>
           </div>
           <div className="d-flex flex-row align-items-center gap-1">
             <div className="d-flex flex-row align-items-center gap-2">

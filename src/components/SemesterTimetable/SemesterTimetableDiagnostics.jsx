@@ -3,12 +3,13 @@ import { Fragment } from "react";
 import { useSelector } from "react-redux";
 import { useGetSemesterTimetableDiagnostics } from "../../hooks/semesterTimetable/useGetTimetableDiagnostics";
 import { Icon } from "@iconify/react";
+import { useGetParsedDiagnostics } from "../../hooks/semesterTimetable/useGetParsedDiagnostics";
 
 function DiagnosticWrapper() {
   return (
     <>
       <div
-        className="bg-white rounded-4 px-2 py-3 d-flex flex-column gap-4 h-100"
+        className="rounded-4 px-2 py-3 d-flex flex-column gap-4 h-100"
         style={{ width: "20%", height: "100%" }}
       >
         <div className="d-flex flex-row align-items-center gap-2">
@@ -64,7 +65,7 @@ function DiagnosticComponent() {
     (state) => state.semesterTimetable.timetableVersion,
   );
   const { data: diagnostics, isLoading: isDiagnosticLoading } =
-    useGetSemesterTimetableDiagnostics(timetableVersion?.id);
+    useGetParsedDiagnostics(timetableVersion?.id);
   return (
     <>
       {isDiagnosticLoading ? (
@@ -73,51 +74,75 @@ function DiagnosticComponent() {
         <>
           <div className="diagnostic-container d-flex flex-column gap-3">
             <div className="d-flex flex-column gap-3">
-              <div className="d-flex flex-column">
-                <span className="font-size-sm gainsboro-color"></span>
-                <div className="d-flex flex-column align-items-start w-100 gap-2">
-                  <span className="font-size-sm fw-semibold">
-                    Requested Joint Course Period Violation
-                  </span>
-                  <span className="font-size-sm">
-                    The Schedular was unable to schedule Aperiam Et Blanditiis
-                    Voluptatibus Qui at 09:00 to 11:00 on friday as requested.
-                    The reasons why this happened are listed below
-                  </span>
+              <div className="d-flex flex-column font-size-sm gap-2 card p-2 rounded-3 border-none shadow-sm">
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <span className="fw-semibold">Course Requested Slot</span>
+                  <button
+                    style={{
+                      fontSize: "0.7rem",
+                      background: "#fdf3c8",
+                      color: "#d67909",
+                    }}
+                    className="border-none rounded-pill px-2"
+                  >
+                    <span>soft</span>
+                  </button>
                 </div>
-              </div>
-              <div className="d-flex flex-column align-items-start w-100">
-                <span className="font-size-sm gainsboro-color">Blockers</span>
-                <div className="d-flex flex-column gap-2">
-                  <div className="d-flex flex-column gap-2">
-                    <span className="font-size-sm fw-semibold">
-                      Course Daily Frequency Violation
+                <div className="d-flex flex-column">
+                  <span>Engineering Maths</span>
+                  <div className="d-flex flex-row align-items-center gap-1">
+                    <span>12:00 AM</span>
+                    <span style={{ lineHeight: 0 }}>
+                      <Icon icon="pajamas:dash" width="12" height="12" />
                     </span>
-                    <span className="font-size-sm">
-                      Max Daily Course Frequency Violation: The session on
-                      friday at 09:00 to 11:00 for course unknown course exceeds
-                      the maximum daily frequency of 2 sessions.
-                    </span>
+                    <span>13:00 PM</span>
                   </div>
                 </div>
+                <div className="d-flex flex-row align-items-center gap-1">
+                  <span style={{ lineHeight: 0 }}>
+                    <Icon icon="ic:baseline-block" width="12" height="12" />
+                  </span>
+                  <span>12 Blockers</span>
+                </div>
+                <div>
+                  <button className="w-100 rounded-pill p-2 font-size-sm border-none">
+                    Learn More
+                  </button>
+                </div>
               </div>
-              <div className="d-flex flex-column align-items-start w-100 gap-1">
-                <span className="font-size-sm gainsboro-color">
-                  Suggestions
-                </span>
-                <div className="d-flex flex-column gap-2">
-                  <div className="d-flex flex-column gap-2">
-                    <span className="font-size-sm fw-semibold">
-                      Course Daily Frequency Violation
+              <div className="d-flex flex-column font-size-sm gap-2 card p-2 rounded-3 border-none shadow-sm">
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <span className="fw-semibold">Required Joint Course</span>
+                  <button
+                    style={{
+                      fontSize: "0.7rem",
+                      background: "#fdf3c8",
+                      color: "#d67909",
+                    }}
+                    className="border-none rounded-pill px-2"
+                  >
+                    <span>Hard</span>
+                  </button>
+                </div>
+                <div className="d-flex flex-column">
+                  <span>Engineering Maths</span>
+                  <div className="d-flex flex-row align-items-center gap-1">
+                    <span>12:00 AM</span>
+                    <span style={{ lineHeight: 0 }}>
+                      <Icon icon="pajamas:dash" width="12" height="12" />
                     </span>
-                    <span className="font-size-sm">
-                      Max Daily Course Frequency Violation: The session on
-                      friday at 09:00 to 11:00 for course unknown course exceeds
-                      the maximum daily frequency of 2 sessions.
-                    </span>
+                    <span>13:00 PM</span>
                   </div>
-                  <button className="font-size-sm p-2 rounded-pill border-none">
-                    <span>Apply Fix</span>
+                </div>
+                <div className="d-flex flex-row align-items-center gap-1">
+                  <span style={{ lineHeight: 0 }}>
+                    <Icon icon="ic:baseline-block" width="12" height="12" />
+                  </span>
+                  <span>12 Blockers</span>
+                </div>
+                <div>
+                  <button className="w-100 rounded-pill p-2 font-size-sm border-none">
+                    Learn More
                   </button>
                 </div>
               </div>
@@ -143,7 +168,27 @@ function DiagnosticComponent() {
           </div>
         </>
       ) : (
-        <span className="font-size-sm">No Diagnostics Found</span>
+        <div className="d-flex flex-grow-1 align-items-center justify-content-center">
+          <div className="d-flex flex-column align-items-center gap-2 text-center">
+            <img
+              src="./sss-maskot/td-maskot.png"
+              alt="sss-timetable-maskot"
+              style={{
+                height: "200px",
+                width: "250px",
+                objectFit: "contain",
+              }}
+            />
+            <div>
+              <span className="fw-semibold font-size-sm">
+                No Diagnostics Found
+              </span>
+              <p className="text-muted font-size-sm mb-0">
+                Congratulations all no errors where recorded when generating timetable
+              </p>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

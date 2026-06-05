@@ -1,5 +1,4 @@
 export const settingRoutes = [
-  ,
   "/settings/general-settings",
   "/settings/display",
   "/settings/updates",

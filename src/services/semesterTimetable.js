@@ -35,7 +35,7 @@ export const generateSemesterTimetable = async (data) => {
     data,
   );
   return response.data;
-}
+};
 
 export const getSemesterTimetableSlots = async (versionId) => {
   const response = await axiosInstance.get(
@@ -55,6 +55,48 @@ export const activateTimetable = async (data) => {
   const response = await axiosInstance.post(
     "semester-timetable/create/active",
     data,
+  );
+  return response.data;
+};
+
+export const getTimetableStatus = async (versionId) => {
+  const response = await axiosInstance.get(
+    `semester-timetable/version/${versionId}/status`,
+  );
+  return response.data;
+};
+
+export const getRawDiagnostics = async (versionId) => {
+  const response = await axiosInstance.get(
+    `semester-timetable/version/${versionId}/raw-diagnostics`,
+  );
+  return response.data;
+};
+
+export const getTimetableSlots = async (versionId) => {
+  const response = await axiosInstance.get(
+    `semester-timetable/version/${versionId}/slots`,
+  );
+  return response.data;
+};
+
+export const getParsedDiagnostics = async (versionId) => {
+  const response = await axiosInstance.get(
+    `semester-timetable/version/${versionId}/parsed-diagnostics`,
+  );
+  return response.data;
+};
+
+export const getTimetablePayload = async (versionId) => {
+  const response = await axiosInstance.get(
+    `semester-timetable/version/${versionId}/payload`,
+  );
+  return response.data;
+};
+
+export const getTimetableError = async (versionId) => {
+  const response = await axiosInstance.get(
+    `semester-timetable/version/${versionId}/errors`,
   );
   return response.data;
 };

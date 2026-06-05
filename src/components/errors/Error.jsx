@@ -9,14 +9,14 @@ export function Error({ title, description, children }){
               <img
                 src="./sss-maskot/error.png"
                 style={{
-                  maxWidth: "25rem",
-                  maxHeight: "25rem",
+                  maxWidth: "250px",
+                  maxHeight: "250px",
                   objectFit: "contain",
                 }}
               />
             </div>
             <div className="gainsboro-color text-center">
-              <h5>{title}</h5>
+              <span className="font-size-sm fw-semibold">{title}</span>
               <p className="font-size-sm">
                 {description}
               </p>

@@ -130,7 +130,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 2.3rem;
+  height: 2rem;
   background-color: var(--primary-color-100);
   font-size: var(--font-size-sm);
   padding-inline: 0.5rem;
@@ -153,7 +153,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 2.3rem;
+  height: 2rem;
   background-color: var(--primary-color);
   font-size: var(--font-size-sm);
   padding-inline: 0.5rem;
@@ -171,7 +171,6 @@
   background-color: transparent;
   font-size: var(--font-size-sm);
   padding-inline: 0.5rem;
-  color: #888;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
 }
@@ -200,7 +199,6 @@
   width: 100% !important;
   height: 4.5dvh;
   font-size: var(--font-size-sm);
-  color: var(--acent-color-seven);
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -433,27 +431,26 @@ aside {
   font-size: var(--font-size-sm);
   width: 10rem;
   position: absolute;
-  top: 1.9rem;
-  left: 2.5rem;
-  color: #888;
+  top: 1.45rem;
+  left: 1.5rem;
 }
 
 .box-nav {
-  height: 2.5rem;
-  border-bottom: 0.001rem solid #f9f9f9;
-  width: 2rem;
+  height: 2rem;
+  border-bottom: 0.001rem solid #dddd;
+  width: 1rem;
   position: relative;
 }
 
 .drop-down-container {
   height: auto;
   max-height: 80%;
-  border-left: 0.01rem solid #f9f9f9;
+  border-left: 0.01rem solid #dddd;
   transition: all 0.3s;
 }
 
 .box-nav-dark {
-  height: 2.5rem;
+  height: 2rem;
   border-bottom: 0.001rem solid #1e1e1e;
   width: 2rem;
   position: relative;
@@ -1811,6 +1808,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   overflow-x: hidden;
   overflow-y: auto;
 }
+
   
 .diagnostic-container::-webkit-scrollbar-thumb {
   background-color: #ccc;
@@ -1823,6 +1821,13 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 .diagnostic-container::-webkit-scrollbar {
   width: 3px;
+}
+
+.timeslotcard-container{
+   max-height: 30dvh;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .timetable-grid-container{

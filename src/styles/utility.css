@@ -497,3 +497,35 @@ body {
 
 /* reset / force default */
 .tracking-reset   { letter-spacing: normal !important; }
+
+.over-flow-x-scroll{
+   overflow-x: scroll;
+}
+
+.over-flow-x-auto{
+   overflow-x: auto;
+}
+
+.over-flow-x-hidden{
+   overflow-x: hidden;
+}
+
+.over-flow-y-scroll{
+   overflow-y: scroll;
+}
+
+.over-flow-y-auto{
+   overflow-y: auto;
+}
+
+.over-flow-y-hidden{
+   overflow-y: hidden;
+}
+
+.width-auto{
+   width: auto;
+}
+
+.height-auto{
+   height: auto;
+}
