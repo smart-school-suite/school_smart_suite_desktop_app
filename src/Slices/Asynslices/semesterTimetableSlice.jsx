@@ -60,10 +60,8 @@ const initialState = {
       day_exceptions: [],
     },
     schedule_period_duration_minutes: {
-      duration_minutes: makeDurationField(),
-      day_exceptions: daysOfWeek.map((day) =>
-        makePeriodDurationException(day.value),
-      ),
+      duration_minutes: null,
+      day_exceptions: [],
     },
   },
   soft_constraints: {
@@ -209,6 +207,12 @@ const semesterTimetableSlice = createSlice({
         bp[field].isValid = value;
       }
     },
+    //period duration
+    setDefaultPeriodDuration(state, action) {
+      const { duration } = action.payload;
+      state.hard_constraints.schedule_period_duration_minutes.duration_minutes =
+        duration;
+    },
     setPeriodDurationField(state, action) {
       const { field, value } = action.payload;
       const periodDuration =
@@ -240,6 +244,42 @@ const semesterTimetableSlice = createSlice({
         periodDuration[field].isValid = value;
       }
     },
+    addCustomPeriodDurationDays(state, action) {
+      const { day } = action.payload;
+      const cPds =
+        state.hard_constraints.schedule_period_duration_minutes.day_exceptions;
+      const eCpd = cPds.find((cPd) => cPd.day === day);
+      if (eCpd) {
+        toast.custom(
+          <ToastWarning
+            title={"Existing Day"}
+            description={`${day} as already been added as the custom break day`}
+          />,
+        );
+        return;
+      }
+      cPds.push({
+        day: day,
+        duration_minutes: null
+      });
+    },
+    removeCustomPeriodDurationDays(state, action) {
+      const { day } = action.payload;
+      const cPds =
+        state.hard_constraints.schedule_period_duration_minutes.day_exceptions;
+      const dayIndex = cPds.findIndex((item) => item.day === day);
+      if (dayIndex !== -1) {
+        cPds.splice(dayIndex, 1);
+      }
+    },
+    setCustomPeriodDuration(state, action) {
+      const { day, value } = action.payload;
+      const cPds =
+        state.hard_constraints.schedule_period_duration_minutes.day_exceptions;
+      const eCpd = cPds.find((cPd) => cPd.day === day);
+       eCpd.duration_minutes = value;
+    },
+
     //break period
     setDefaultBreakPeriodField(state, action) {
       const { field, value } = action.payload;
@@ -499,6 +539,10 @@ export const {
   removeCustomBreakDays,
   setCustomBreakPeriodValidation,
   setCustomBreakPeriod,
+  setDefaultPeriodDuration,
+  addCustomPeriodDurationDays,
+  removeCustomPeriodDurationDays,
+  setCustomPeriodDuration
 } = semesterTimetableSlice.actions;
 
 export default semesterTimetableSlice.reducer;

@@ -145,3 +145,41 @@ export const announcementStatus = [
       "Allows you to set a specific date and time for the announcement to be automatically published.",
   },
 ];
+
+export const pdSampleLesson = [
+  {
+    minutes: 60,
+    sample: {
+      start_time: "08:00 AM",
+      end_time: "09:00 AM",
+    },
+  },
+  {
+    minutes: 45,
+    sample: {
+      start_time: "08:00 AM",
+      end_time: "08:45 AM",
+    },
+  },
+  {
+    minutes: 30,
+    sample: {
+      start_time: "08:00 AM",
+      end_time: "08:30 AM",
+    },
+  },
+  {
+    minutes: 120,
+    sample: {
+      start_time: "08:00 AM",
+      end_time: "10:00 AM",
+    },
+  },
+  {
+    minutes: 90,
+    sample: {
+      start_time: "08:00 AM",
+      end_time: "09:30 AM",
+    },
+  },
+];

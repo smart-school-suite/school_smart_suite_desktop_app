@@ -8,6 +8,7 @@ import BreakPeriodModal from "../ModalContent/SemesterTimetable/constraints/Sche
 import OperationalPeriod from "../ModalContent/SemesterTimetable/constraints/Schedule/OperationalPeriod";
 import OperationalPeriodModal from "../ModalContent/SemesterTimetable/constraints/Schedule/OperationalPeriod/OperationalPeriodModal";
 import PeriodDuration from "../ModalContent/SemesterTimetable/constraints/Schedule/PeriodDuration";
+import PeriodDurationModal from "../ModalContent/SemesterTimetable/constraints/Schedule/PeriodDuration/PeriodDurationModal";
 import RequestedFreePeriod from "../ModalContent/SemesterTimetable/constraints/Schedule/RequestedFreePeriod";
 import RequestedFreePeriodModal from "../ModalContent/SemesterTimetable/constraints/Schedule/RequestedFreePeriod/RequestedFreePeriodModal";
 import ScheduleDailyFreePeriod from "../ModalContent/SemesterTimetable/constraints/Schedule/ScheduleDailyFreePeriod";
@@ -28,7 +29,7 @@ const scheduleConstraintMap = [
   },
   {
     key: "schedule_period_duration_minutes",
-    modal: PeriodDuration,
+    modal: PeriodDurationModal,
   },
   {
     key: "requested_free_period",

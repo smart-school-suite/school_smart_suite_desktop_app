@@ -100,3 +100,10 @@ export const getTimetableError = async (versionId) => {
   );
   return response.data;
 };
+
+export const getPeriodDuration = async (versionId) => {
+   const response = await axiosInstance.get(
+      "period-duration/semester-timetable"
+   );
+   return response.data;
+}

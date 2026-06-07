@@ -142,13 +142,13 @@ function ReviewStep({
                         <TimeRangeInput
                           startValue={
                             isCustomBreak
-                              ? cBps.find((cBps) => cBps.day === day).start_time
+                              ? cBps.find((cBps) => cBps.day === opDay).start_time
                                   ?.value
                               : (breakPeriodState.start_time.value ?? "")
                           }
                           endValue={
                             isCustomBreak
-                              ? cBps.find((cBps) => cBps.day === day).end_time
+                              ? cBps.find((cBps) => cBps.day === opDay).end_time
                                   ?.value
                               : (breakPeriodState.end_time.value ?? "")
                           }
@@ -257,7 +257,7 @@ function ReviewStep({
                             <span className="fw-semibold">
                               {formatTimeToAmPm(
                                 isCustomBreak
-                                  ? cBps.find((cBps) => cBps.day === day)
+                                  ? cBps.find((cBps) => cBps.day === opDay)
                                       .start_time?.value
                                   : (breakPeriodState.start_time.value ?? ""),
                               )}
@@ -275,7 +275,7 @@ function ReviewStep({
                             <span className="fw-semibold">
                               {formatTimeToAmPm(
                                 isCustomBreak
-                                  ? cBps.find((cBps) => cBps.day === day)
+                                  ? cBps.find((cBps) => cBps.day === opDay)
                                       .end_time?.value
                                   : (breakPeriodState?.end_time?.value ?? ""),
                               )}
@@ -285,11 +285,11 @@ function ReviewStep({
                           <span className="fw-semibold">
                             {calculateBreakDurationText(
                               isCustomBreak
-                                ? cBps.find((cBps) => cBps.day === day)
+                                ? cBps.find((cBps) => cBps.day === opDay)
                                     .start_time?.value
                                 : (breakPeriodState.start_time.value ?? ""),
                               isCustomBreak
-                                ? cBps.find((cBps) => cBps.day === day).end_time
+                                ? cBps.find((cBps) => cBps.day === opDay).end_time
                                     ?.value
                                 : (breakPeriodState.end_time.value ?? ""),
                             )}
@@ -373,13 +373,13 @@ function ReviewStep({
                         <TimeRangeInput
                           startValue={
                             isCustomBreak
-                              ? cBps.find((cBps) => cBps.day === day).start_time
+                              ? cBps.find((cBps) => cBps.day === opDay).start_time
                                   ?.value
                               : (breakPeriodState.start_time.value ?? "")
                           }
                           endValue={
                             isCustomBreak
-                              ? cBps.find((cBps) => cBps.day === day).end_time
+                              ? cBps.find((cBps) => cBps.day === opDay).end_time
                                   ?.value
                               : (breakPeriodState.end_time.value ?? "")
                           }
@@ -488,7 +488,7 @@ function ReviewStep({
                             <span className="fw-semibold">
                               {formatTimeToAmPm(
                                 isCustomBreak
-                                  ? cBps.find((cBps) => cBps.day === day)
+                                  ? cBps.find((cBps) => cBps.day === opDay)
                                       .start_time?.value
                                   : (breakPeriodState.start_time.value ?? ""),
                               )}
@@ -506,7 +506,7 @@ function ReviewStep({
                             <span className="fw-semibold">
                               {formatTimeToAmPm(
                                 isCustomBreak
-                                  ? cBps.find((cBps) => cBps.day === day)
+                                  ? cBps.find((cBps) => cBps.day === opDay)
                                       .end_time?.value
                                   : (breakPeriodState?.end_time?.value ?? ""),
                               )}
@@ -516,11 +516,11 @@ function ReviewStep({
                           <span className="fw-semibold">
                             {calculateBreakDurationText(
                               isCustomBreak
-                                ? cBps.find((cBps) => cBps.day === day)
+                                ? cBps.find((cBps) => cBps.day === opDay)
                                     .start_time?.value
                                 : (breakPeriodState.start_time.value ?? ""),
                               isCustomBreak
-                                ? cBps.find((cBps) => cBps.day === day).end_time
+                                ? cBps.find((cBps) => cBps.day === opDay).end_time
                                     ?.value
                                 : (breakPeriodState.end_time.value ?? ""),
                             )}

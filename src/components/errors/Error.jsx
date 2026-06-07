@@ -1,4 +1,4 @@
-export function Error({ title, description, children }){
+export function Error({ title, description, children, maxHeight="250px", maxWidth="250px" }){
     return(
       <>
       <div
@@ -9,8 +9,8 @@ export function Error({ title, description, children }){
               <img
                 src="./sss-maskot/error.png"
                 style={{
-                  maxWidth: "250px",
-                  maxHeight: "250px",
+                  maxWidth: maxWidth,
+                  maxHeight: maxHeight,
                   objectFit: "contain",
                 }}
               />
@@ -28,7 +28,7 @@ export function Error({ title, description, children }){
 }
 
 
-export function NotFoundError({ title, description, children }){
+export function NotFoundError({ title, description, children, maxHeight="250px", maxWidth="250px" }){
     return(
       <>
       <div
@@ -39,8 +39,8 @@ export function NotFoundError({ title, description, children }){
               <img
                 src="./sss-maskot/404.png"
                 style={{
-                  maxWidth: "25rem",
-                  maxHeight: "25rem",
+                  maxWidth: maxWidth,
+                  maxHeight: maxHeight,
                   objectFit: "contain",
                 }}
               />
