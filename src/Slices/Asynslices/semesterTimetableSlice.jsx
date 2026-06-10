@@ -69,6 +69,10 @@ const initialState = {
       days: [],
       slots: [],
     },
+    requested_assignments: {
+      days: [],
+      slots: [],
+    },
   },
 };
 
@@ -260,7 +264,7 @@ const semesterTimetableSlice = createSlice({
       }
       cPds.push({
         day: day,
-        duration_minutes: null
+        duration_minutes: null,
       });
     },
     removeCustomPeriodDurationDays(state, action) {
@@ -277,7 +281,7 @@ const semesterTimetableSlice = createSlice({
       const cPds =
         state.hard_constraints.schedule_period_duration_minutes.day_exceptions;
       const eCpd = cPds.find((cPd) => cPd.day === day);
-       eCpd.duration_minutes = value;
+      eCpd.duration_minutes = value;
     },
 
     //break period
@@ -510,6 +514,141 @@ const semesterTimetableSlice = createSlice({
       const existingDaySlot = rFSlots.find((item) => item.day === day);
       existingDaySlot.slots = [];
     },
+
+    //requested assignment
+    addRequestedAssignmentDays(state, action) {
+      const { day } = action.payload;
+      const rF = state.soft_constraints.requested_assignments;
+      if (!rF.days.includes(day)) {
+        rF.days.push(day);
+      } else {
+        toast.custom(
+          <ToastWarning
+            title={"Existing Day"}
+            description={`${day} already exists you can only add days that has not been already added`}
+          />,
+        );
+      }
+    },
+    removeRequestedAssignmentDays(state, action) {
+      const { day } = action.payload;
+      const rF = state.soft_constraints.requested_assignments;
+
+      const dayIndex = rF.days.indexOf(day);
+      if (dayIndex !== -1) {
+        rF.days.splice(dayIndex, 1);
+      }
+
+      const slotIndex = rF.slots.findIndex((item) => item.day === day);
+      if (slotIndex !== -1) {
+        rF.slots.splice(slotIndex, 1);
+      }
+    },
+    addRequestedAssigmentSlot(state, action) {
+      const { day } = action.payload;
+      const rASlots = state.soft_constraints.requested_assignments.slots;
+      const rA = state.soft_constraints.requested_assignments;
+      const existingDaySlot = rASlots.find((item) => item.day === day);
+
+      if (!rA.days.includes(day)) {
+        toast.custom(
+          <ToastWarning
+            title={"Day Not Found"}
+            description={`${day} has not been added as one of the free period days add it before creating slot`}
+          />,
+        );
+      }
+      const newSlotDetail = {
+        id: `slot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        start_time: makeTimeField(),
+        end_time: makeTimeField(),
+        course_id: null,
+        hall_id: null,
+        teacher_id: null,
+      };
+
+      if (existingDaySlot) {
+        existingDaySlot.slots.push(newSlotDetail);
+      } else {
+        rASlots.push({
+          day: day,
+          slots: [newSlotDetail],
+        });
+      }
+    },
+    removeRequestedAssignmentSlot(state, action) {
+      const { day, slotId } = action.payload;
+      const rASlots = state.soft_constraints.requested_assignments.slots;
+      const existingDaySlot = rASlots.find((item) => item.day === day);
+
+      if (existingDaySlot) {
+        existingDaySlot.slots = existingDaySlot.slots.filter(
+          (slot) => slot.id !== slotId,
+        );
+
+        if (existingDaySlot.slots.length === 0) {
+          const index = rASlots.indexOf(existingDaySlot);
+          rASlots.splice(index, 1);
+        }
+      }
+    },
+    setRequestedAssignmentSlot(state, action) {
+      const { day, slotId, field, value } = action.payload;
+      const rASlots = state.soft_constraints.requested_assignments.slots;
+      const existingDaySlot = rASlots.find((item) => item.day === day);
+
+      if (existingDaySlot) {
+        const targetSlot = existingDaySlot.slots.find(
+          (slot) => slot.id === slotId,
+        );
+
+        if (targetSlot) {
+          if (field === "start_time") {
+            targetSlot.start_time.value = value;
+          }
+
+          if (field === "end_time") {
+            targetSlot.end_time.value = value;
+          }
+          if (field === "course_id") {
+            targetSlot.course_id = value;
+          }
+          if (field === "hall_id") {
+            targetSlot.hall_id = value;
+          }
+          if (field === "teacher_id") {
+            targetSlot.teacher = value;
+          }
+        }
+      }
+    },
+    setRequestedAssignmentValidation(state, action) {
+      const { day, slotId, field, value } = action.payload;
+      const rASlots = state.soft_constraints.requested_assignments.slots;
+      const existingDaySlot = rASlots.find((item) => item.day === day);
+
+      if (existingDaySlot) {
+        const targetSlot = existingDaySlot.slots.find(
+          (slot) => slot.id === slotId,
+        );
+
+        if (targetSlot) {
+          if (field === "start_time") {
+            targetSlot.start_time.isValid = value;
+          }
+
+          if (field === "end_time") {
+            targetSlot.end_time.isValid = value;
+          }
+        }
+      }
+    },
+    removeAllRequestedAssignmentSlotsByDay(state, action) {
+      const { day } = action.payload;
+      const rASlots = state.soft_constraints.requested_assignments.slots;
+      const existingDaySlot = rASlots.find((item) => item.day === day);
+      existingDaySlot.slots = [];
+    },
   },
 });
 
@@ -542,7 +681,14 @@ export const {
   setDefaultPeriodDuration,
   addCustomPeriodDurationDays,
   removeCustomPeriodDurationDays,
-  setCustomPeriodDuration
+  setCustomPeriodDuration,
+  addRequestedAssignmentDays,
+  removeRequestedAssignmentDays,
+  addRequestedAssigmentSlot,
+  removeRequestedAssignmentSlot,
+  setRequestedAssignmentSlot,
+  setRequestedAssignmentValidation,
+  removeAllRequestedAssignmentSlotsByDay,
 } = semesterTimetableSlice.actions;
 
 export default semesterTimetableSlice.reducer;

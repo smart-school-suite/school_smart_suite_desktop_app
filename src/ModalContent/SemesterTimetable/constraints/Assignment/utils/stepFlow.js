@@ -1,0 +1,9 @@
+import { STEPS } from "./stepConstants";
+
+export const STEP_FLOW = [
+  STEPS.INTRODUCTION,
+  STEPS.ASSIGNMENT_DAYS,
+  STEPS.ASSIGNMENT_LIST,
+  STEPS.ASSIGNMENT_BUILDER,
+  STEPS.REVIEW,
+];

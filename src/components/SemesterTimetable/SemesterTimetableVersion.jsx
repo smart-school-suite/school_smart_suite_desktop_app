@@ -244,6 +244,8 @@ function ConstraintDropdown() {
     isLoading,
     error,
   } = useGetSemesterTimetableConstraints();
+  const schoolSemester = useSelector((state) =>
+      state.semesterTimetable.schoolSemester);
 
   return (
     <>
@@ -265,6 +267,7 @@ function ConstraintDropdown() {
               <button
                 type="button"
                 className="w-100 d-flex flex-row align-items-center justify-content-between border-none transparent-bg"
+                disabled={!schoolSemester}
                 onClick={() =>
                   setOpenId((prev) =>
                     prev === constraintCategory.id
@@ -274,7 +277,7 @@ function ConstraintDropdown() {
                 }
                 aria-expanded={isOpen}
               >
-                <span className="font-size-sm fw-semibold">
+                <span className="font-size-sm fw-medium">
                   {constraintCategory.category}
                 </span>
 

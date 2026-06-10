@@ -1,4 +1,5 @@
 import RequestedAssignment from "../ModalContent/SemesterTimetable/constraints/Assignment/RequestedAssignment";
+import RequestedAssignmentModal from "../ModalContent/SemesterTimetable/constraints/Assignment/RequestedAssignmentModal";
 import CourseDailyFrequency from "../ModalContent/SemesterTimetable/constraints/Course/CourseDailyFrequency";
 import CourseRequestedSlot from "../ModalContent/SemesterTimetable/constraints/Course/CourseRequestedSlot";
 import RequiredJointCourse from "../ModalContent/SemesterTimetable/constraints/Course/RequiredJointCourse";
@@ -85,7 +86,7 @@ const courseConstraintMap = [
 const assignmentConstraintMap = [
     {
         key:"requested_assignments",
-        modal:RequestedAssignment
+        modal:RequestedAssignmentModal
     }
 ]
 

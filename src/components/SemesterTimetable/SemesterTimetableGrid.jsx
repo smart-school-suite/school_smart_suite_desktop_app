@@ -222,7 +222,7 @@ function TimetableGridPlaceholder() {
             Configure Period Duration{" "}
             {
               semesterTimetable.hard_constraints
-                .schedule_period_duration_minutes.duration_minutes.value
+                ?.schedule_period_duration_minutes?.duration_minutes?.value
             }{" "}
             minutes
           </span>
