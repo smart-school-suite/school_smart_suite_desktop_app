@@ -4,6 +4,7 @@ const Courses = React.lazy(() => import("../../pages/Academics/Courses"));
 const Gradesconfiguration = React.lazy(() => import("../../pages/Academics/Gradesconfiguration"));
 const SemesterTimetable = React.lazy(() => import("../../pages/Academics/SemesterTimetable"));
 const Semester = React.lazy(() => import("../../pages/Academics/Semester"));
+const AcademicYear = React.lazy(() => import("../../pages/Academics/AcademicYear"));
 const AcademicRoutes = [
     <Route key="courses" path="/courses" element={
         <Suspense>
@@ -13,6 +14,13 @@ const AcademicRoutes = [
     <Route key={"semesters"} path="/semesters" element={
         <Suspense>
             <Semester />
+        </Suspense>
+    }
+     
+    />,
+    <Route key={"academic-years"} path="/academic-year" element={
+        <Suspense>
+            <AcademicYear />
         </Suspense>
     }
      

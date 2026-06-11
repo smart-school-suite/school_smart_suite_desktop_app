@@ -94,6 +94,15 @@ const MoneyIcon = ({ iconStyle }) => {
   );
 };
 
+const AcademicYearIcon = ({ iconStyle }) => {
+  return (
+    <Icon
+      icon="fluent-mdl2:calendar-year"
+      style={{ ...iconStyle, fontSize: "1rem" }}
+    />
+  );
+};
+
 const ExpensesIcon = ({ iconStyle }) => {
   return (
     <Icon
@@ -241,5 +250,6 @@ export {
   ExamIcon,
   ExamCandidateIcon,
   HallIcon,
-  ActivationCodeIcon
+  ActivationCodeIcon,
+  AcademicYearIcon
 };

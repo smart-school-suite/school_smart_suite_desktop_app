@@ -3557,6 +3557,69 @@ export function teacherActivationCodeStatusTableConfig() {
   return tableConfig;
 }
 
+export function academicYearTableConfig({ DropdownComponent }) {
+  const tableConfig = [
+    {
+      field: "id",
+      hide: true,
+    },
+    {
+      field: "start_date",
+      headerName: "start Date",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: DateComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "end_date",
+      headerName: "End Date",
+      filter: true,
+      floatingFilter: true,
+      cellRenderer: DateComponent,
+      cellStyle: cellStyle,
+    },
+    {
+      field: "school_year",
+      headerName: "School Year",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "specialty_name",
+      headerName: "Specialty",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "level_name",
+      headerName: "Level",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TransactionStatus,
+    },
+    {
+      field: "Action",
+      cellStyle: () => ({ width: "20rem" }),
+      cellRenderer: DropdownComponent,
+    },
+  ];
+  return tableConfig;
+}
+
 export function activationCodeTransactionTableConfig() {
   const tableConfig = [
     {
