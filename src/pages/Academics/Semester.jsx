@@ -7,7 +7,6 @@ import UpdateSemester from "../../ModalContent/Semesters/UpdateSemester";
 import DeleteSemester from "../../ModalContent/Semesters/DeleteSemester";
 import SemeseterDetails from "../../ModalContent/Semesters/SemesterDetails";
 import CreateSemester from "../../ModalContent/Semesters/CreateSemester";
-import { useGetActiveSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
@@ -20,12 +19,13 @@ import BulkDeleteSemester from "../../ModalContent/Semesters/BulkDeleteSemester"
 import BulkUpdateSemester from "../../ModalContent/Semesters/BulkUpdateSemester";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
 function Semester() {
   const {
     data: schoolSemesters,
     isLoading,
     error,
-  } = useGetActiveSchoolSemesters();
+  } = useGetSchoolSemesters();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const tableRef = useRef();
   const [rowCount, setRowCount] = useState(0);

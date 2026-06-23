@@ -64,22 +64,7 @@ function Teachers() {
   return (
     <>
       <main className="main-container gap-2 h-100">
-        <div style={{ height: "5%" }}>
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <span className="fw-semibold">Teachers</span>
-            <ModalButton
-                action={{ modalContent: CreateTeacher }}
-                size={"lg"}
-                classname={
-                  "border-none green-bg font-size-sm rounded-3 px-3 py-2 gap-2 d-flex flex-row align-items-center d-flex text-white"
-                }
-              >
-                <Icon icon="icons8:plus" className="font-size-md" />
-                <span>Create Teacher</span>
-              </ModalButton>
-          </div>
-        </div>
-        <div style={{ height: "95%" }}>
+        <div className="h-100">
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
           ) : error ? (

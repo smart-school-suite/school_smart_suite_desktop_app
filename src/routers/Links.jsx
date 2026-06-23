@@ -17,6 +17,7 @@ import SettingsRoutes from "./Settings/SettingsRoutes";
 import StudentRoutes from "./Student/StudentRoutes";
 import ExamRoutes from "./Exam/ExamRoutes";
 import ResitRoutes from "./Resit/ResitRoutes";
+import CourseRoute from "./Academics/CourseRoutes";
 import ActivationCodeRoutes from "./ActivationCode/ActivationCode";
 import { useSelector } from "react-redux";
 import { AblyProvider, ChannelProvider } from "ably/react";
@@ -72,7 +73,8 @@ function Links() {
                 ...SchoolElectionRoutes,
                 ...ExamRoutes,
                 ...ResitRoutes,
-                ...ActivationCodeRoutes
+                ...ActivationCodeRoutes,
+                ...CourseRoute
               ]}
             </Route>
           </Routes>

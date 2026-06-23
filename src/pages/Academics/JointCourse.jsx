@@ -6,7 +6,7 @@ import CourseDetails from "../../ModalContent/Course/CourseDetails";
 import CreateCourse from "../../ModalContent/Course/CreateCourse";
 import DeactivateCourse from "../../ModalContent/Course/DeactivateCourse";
 import UpdateCourse from "../../ModalContent/Course/UpdateCourse";
-import { CoursesTable } from "../../ComponentConfig/AgGridTableConfig";
+import { jointCoursesTable } from "../../ComponentConfig/AgGridTableConfig";
 import { useGetCourses } from "../../hooks/course/useGetCourses";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import CustomModal from "../../components/Modals/Modal";
@@ -30,44 +30,34 @@ import BulkDeactivateCourse from "../../ModalContent/Course/BulkDeactivateCourse
 import BulkActivateCourse from "../../ModalContent/Course/BulkActivateCourse";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
-function Courses() {
-  const { data: courses, isLoading, error } = useGetCourses();
+import { useGetJointCourses } from "../../hooks/jointCourse/useGetJointCourse";
+import CreateJointCourse from "../../ModalContent/JointCourse/CreateJointCourse";
+function JointCourse() {
+  const { data: jointCourses, isLoading, error } = useGetJointCourses();
   const tableRef = useRef();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);
-  const [selectedCourses, setSelectedCourses] = useState([]);
-  const handleReset = () => {
-    if (tableRef.current) {
-      tableRef.current.deselectAll();
-      setRowCount(0);
-      setSelectedCourses([]);
-    }
-  };
-  const handleRowDataFromChild = useCallback((Data) => {
-    setSelectedCourses(Data);
-  }, []);
-  const handleRowCountFromChild = useCallback((count) => {
-    setRowCount(count);
-  }, []);
   return (
     <>
       <main className="main-container gap-2 h-100">
         <div style={{ height: "10%" }} className="d-flex flex-column gap-3">
           <div className="d-flex flex-row align-items-center w-100">
             <div className="d-block">
-              <p className="font-size-xs my-0">Total Number of Courses</p>
-              <h1 className="fw-bold my-0">{courses?.data?.length || 0}</h1>
+              <p className="font-size-xs my-0">Total Joint Courses</p>
+              <h1 className="fw-bold my-0">
+                {jointCourses?.data?.length || 0}
+              </h1>
             </div>
             <div className="end-block d-flex flex-row ms-auto w-75 justify-content-end gap-3">
               <ModalButton
-                action={{ modalContent: CreateCourse }}
+                action={{ modalContent: CreateJointCourse }}
                 classname={
                   "border-none green-bg font-size-sm rounded-3  gap-2 px-3 py-2 d-flex flex-row align-items-center d-flex text-white"
                 }
                 size={"lg"}
               >
                 <Icon icon="icons8:plus" className="font-size-md" />
-                <span className="font-size-sm">Create Course</span>
+                <span className="font-size-sm">Create Joint Course</span>
               </ModalButton>
             </div>
           </div>
@@ -80,40 +70,13 @@ function Courses() {
               title={error.response.data.errors.title}
               description={error.response.data.errors.description}
             ></NotFoundError>
-          ) : courses?.data?.length > 0 ? (
+          ) : jointCourses?.data?.length > 0 ? (
             <>
               <Table
-                colDefs={CoursesTable({ DropdownComponent })}
-                rowData={courses.data}
+                colDefs={jointCoursesTable({ DropdownComponent })}
+                rowData={jointCourses.data}
                 ref={tableRef}
-                handleRowCountFromChild={handleRowCountFromChild}
-                handleRowDataFromChild={handleRowDataFromChild}
               />
-              {rowCount > 0 && (
-                <BulkActionsToast
-                  rowCount={rowCount}
-                  label={`${
-                    rowCount >= 1
-                      ? "Course Selected"
-                      : rowCount >= 2
-                      ? "Courses Selected"
-                      : null
-                  }`}
-                  resetAll={handleReset}
-                  dropDownItems={
-                    <DropdownItems
-                      selectedCourses={selectedCourses}
-                      resetAll={handleReset}
-                    />
-                  }
-                  actionButton={
-                    <ActionButtons
-                      selectedCourses={selectedCourses}
-                      resetAll={handleReset}
-                    />
-                  }
-                />
-              )}
             </>
           ) : (
             <div className="alert alert-danger">
@@ -126,31 +89,30 @@ function Courses() {
     </>
   );
 }
-export default Courses;
+export default JointCourse;
 
 export function DropdownComponent(props) {
   const rowData = props.data;
 
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
+  const [modalSize, setModalSize] = useState("lg");
 
   const handleCloseModal = () => {
     setShowModal(false);
     setModalContent(null);
   };
 
-  const handleShowModal = (ContentComponent, size = "md") => {
+  const handleShowModal = (ContentComponent, size = "lg") => {
     setModalContent(
       React.createElement(ContentComponent, {
         rowData,
         handleClose: handleCloseModal,
-      })
+      }),
     );
     setModalSize(size);
     setShowModal(true);
   };
-  //update, delete, courseDetails, activate, deactivate
   return (
     <>
       <ActionButtonDropdown
@@ -163,7 +125,7 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateCourse, "lg")}
+        //  onClick={() => handleShowModal(UpdateCourse, "lg")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -176,7 +138,7 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(CourseDetails, "md")}
+         // onClick={() => handleShowModal(CourseDetails, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -189,7 +151,7 @@ export function DropdownComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteCourse, "md")}
+          //onClick={() => handleShowModal(DeleteCourse, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -203,7 +165,7 @@ export function DropdownComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() => handleShowModal(DeactivateCourse, "md")}
+            //onClick={() => handleShowModal(DeactivateCourse, "md")}
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -217,7 +179,7 @@ export function DropdownComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() => handleShowModal(ActivateCourse, "md")}
+            //onClick={() => handleShowModal(ActivateCourse, "md")}
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -233,91 +195,6 @@ export function DropdownComponent(props) {
         handleClose={handleCloseModal}
         size={modalSize}
         centered
-      >
-        {modalContent}
-      </CustomModal>
-    </>
-  );
-}
-
-function ActionButtons({ selectedCourses, resetAll }) {
-  return (
-    <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        //action={{ modalContent: BulkDeleteTeacher }}
-        bulkData={selectedCourses}
-        resetAll={resetAll}
-      >
-        <CustomTooltip tooltipText={"Delete All"}>
-          <span className="pointer-cursor">
-            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
-          </span>
-        </CustomTooltip>
-      </ModalButton>
-    </>
-  );
-}
-function DropdownItems({ selectedCourses, resetAll, onModalStateChange }) {
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
-  const modalRef = useRef(null);
-  useEffect(() => {
-    onModalStateChange(showModal, modalRef);
-  }, [showModal, onModalStateChange]);
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setModalContent(null);
-  };
-
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        handleClose: handleCloseModal,
-        resetAll,
-        bulkData: selectedCourses,
-      })
-    );
-    setModalSize(size);
-    setShowModal(true);
-  };
-  return (
-    <>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteCourse, "md")}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Delete All</span>
-          <DeleteIcon />
-        </div>
-      </DropDownMenuItem>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeactivateCourse, "md")}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Deactivate All</span>
-          <SuspendIcon />
-        </div>
-      </DropDownMenuItem>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkActivateCourse, "md")}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Activate All</span>
-          <ActivateIcon />
-        </div>
-      </DropDownMenuItem>
-      <CustomModal
-        show={showModal}
-        handleClose={handleCloseModal}
-        size={modalSize}
-        centered
-        ref={modalRef}
       >
         {modalContent}
       </CustomModal>

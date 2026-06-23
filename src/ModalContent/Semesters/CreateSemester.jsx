@@ -2,43 +2,31 @@ import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { useCreateSchoolSemester } from "../../hooks/schoolSemester/useCreateSchoolSemester";
-import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
-import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
 import { DateRangeInput } from "../../components/FormComponents/InputComponents";
 import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
-import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useRef } from "react";
 import { allFieldsValid } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import { useGetSchoolAcademicYears } from "../../hooks/academicYear/useGetSchoolAcademicYears";
 function CreateSemester({ handleClose }) {
   const dateRangeRef = useRef();
   const semesterRef = useRef();
-  const specialtyRef = useRef();
-  const studentBatchRef = useRef();
   const schoolYearRef = useRef();
-  const { data: specialties, isLoading: isFetchingSpecialties } =
-    useGetSpecialties();
-  const { data: studentBatches, isLoading: isFetchingStudentBatches } =
-    useGetBatches();
+  const { data: schoolAcademicYears, isLoading: isSchoolAcademicYearLoading} = useGetSchoolAcademicYears();
   const { data: semesters, isLoading: isFetchingSemesters } = useGetSemester();
-  const { mutate: createSchoolSemester, isPending } =
-    useCreateSchoolSemester(handleClose);
+  const { mutate: createSchoolSemester, isPending } = useCreateSchoolSemester(handleClose);
   const [formData, setFormData] = useState({
     start_date: "",
     end_date: "",
-    school_year: "",
-    semester_id: "",
-    specialty_id: "",
-    student_batch_id: "",
+    school_year_id: "",
+    semester_id: ""
   });
   const [errors, setErrors] = useState({
     semester_id: "",
-    specialty_id: "",
-    student_batch_id: "",
-    school_year: "",
+    school_year_id: "",
   });
   const [isValid, setIsValid] = useState({
     start_date: "",
@@ -48,15 +36,11 @@ function CreateSemester({ handleClose }) {
       const startDate = await dateRangeRef.current.preValidateStart();
       const endDate = await dateRangeRef.current.preValidateEnd();
       const semester = await semesterRef.current.triggerValidation();
-      const specialty = await specialtyRef.current.triggerValidation();
-      const studentBatch = await studentBatchRef.current.triggerValidation();
       const schoolYear = await schoolYearRef.current.triggerValidation();
       return {
           startDate,
           endDate,
           semester,
-          studentBatch,
-          specialty,
           schoolYear
       }
   }
@@ -86,8 +70,7 @@ function CreateSemester({ handleClose }) {
      }
     createSchoolSemester({...formData, 
           semester_id:formData.semester_id.id,
-          specialty_id:formData.specialty_id.id,
-          student_batch_id:formData.student_batch_id.id,
+          school_year_id:formData.school_year_id.id
     });
   };
   return (
@@ -123,13 +106,18 @@ function CreateSemester({ handleClose }) {
           <label htmlFor="schoolYear" className="font-size-sm">
             School Year
           </label>
-          <SchoolYearSelector
-            onSelect={(value) => handleStateChange("school_year", value, setFormData)}
-            onError={(msg) => handleStateChange("school_year", msg, setErrors)}
-            error={errors.school_year}
-            placeholder={formData.year}
-            required={true}
+            <CustomDropdown
+            data={schoolAcademicYears?.data || []}
+            displayKey={["specialty_name", "school_year"]}
+            valueKey={["id"]}
+            direction="up"
+            isLoading={isSchoolAcademicYearLoading}
+            onSelect={(value) => handleStateChange("school_year_id", value, setFormData)}
+            error={errors.school_year_id}
+            errorMessage="School Academic Year Required"
+            onError={(msg) => handleStateChange("school_year_id", msg, setErrors)}
             ref={schoolYearRef}
+            value={formData.school_year_id}
           />
         </div>
         <div>
@@ -148,44 +136,6 @@ function CreateSemester({ handleClose }) {
             onError={(msg) => handleStateChange("semester_id", msg, setErrors)}
             ref={semesterRef}
             value={formData.semester_id}
-          />
-        </div>
-        <div>
-          <label htmlFor="specialty" className="font-size-sm">
-            Specialty
-          </label>
-          <CustomDropdown
-            data={specialties?.data || []}
-            displayKey={["specialty_name", "level_name"]}
-            valueKey={["id"]}
-            direction="up"
-            isLoading={isFetchingSpecialties}
-            onSelect={(value) => handleStateChange("specialty_id", value, setFormData)}
-            error={errors.specialty_id}
-            errorMessage="Specialty Required"
-            onError={(msg) => handleStateChange("specialty_id", msg, setErrors)}
-            ref={specialtyRef}
-            value={formData.specialty_id}
-          />
-        </div>
-        <div>
-          <label htmlFor="studentBatch" className="font-size-sm">
-            Student Batch
-          </label>
-          <CustomDropdown
-            data={studentBatches?.data || []}
-            displayKey={["name"]}
-            valueKey={["id"]}
-            direction="up"
-            onSelect={(value) =>
-              handleStateChange("student_batch_id", value, setFormData)
-            }
-            isLoading={isFetchingStudentBatches}
-            error={errors.student_batch_id}
-            errorMessage="Student Batch Required"
-            onError={(msg) => handleStateChange("student_batch_id", msg, setErrors)}
-            ref={studentBatchRef}
-            value={formData.student_batch_id}
           />
         </div>
       </div>

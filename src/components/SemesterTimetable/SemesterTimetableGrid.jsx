@@ -222,7 +222,7 @@ function TimetableGridPlaceholder() {
             Configure Period Duration{" "}
             {
               semesterTimetable.hard_constraints
-                ?.schedule_period_duration_minutes?.duration_minutes?.value
+                ?.schedule_period_duration_minutes?.duration_minutes
             }{" "}
             minutes
           </span>
@@ -242,6 +242,7 @@ function TimetableGridPlaceholder() {
                 semesterTimetable.hard_constraints,
                 generateTimetable,
                 semesterTimetable.schoolSemester,
+                semesterTimetable.timetableVersion
               );
               dispatch(setGenerationStatus(true));
             }}

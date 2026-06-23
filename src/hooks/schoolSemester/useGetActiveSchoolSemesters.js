@@ -4,6 +4,6 @@ import { getActiveSchoolSemester } from "../../services/schoolSemester";
 export const useGetActiveSchoolSemesters = () => {
      return useQuery({
        queryKey: ['activeSchoolSemesters'],
-       queryFn: getActiveSchoolSemester ,
+       queryFn: () => getActiveSchoolSemester(),
      });
 }

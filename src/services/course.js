@@ -5,14 +5,16 @@ export const getActiveCourses = async () => {
   return response.data;
 };
 
-
 export const bulkActivateCourse = async (courseData) => {
   const response = await axiosInstance.post("course/bulk-activate", courseData);
   return response.data;
 };
 
 export const bulkDeactivateCourse = async (courseData) => {
-  const response = await axiosInstance.post("course/bulk-deactivate", courseData);
+  const response = await axiosInstance.post(
+    "course/bulk-deactivate",
+    courseData,
+  );
   return response.data;
 };
 
@@ -26,41 +28,40 @@ export const bulkUpdateCourse = async (updateData) => {
   return response.data;
 };
 
-
 export const createCourse = async (createData) => {
   const response = await axiosInstance.post("course/courses", createData);
   return response.data;
 };
-
 
 export const getCourses = async () => {
   const response = await axiosInstance.get("course/courses");
   return response.data;
 };
 
-export const getCoursesBySpecialtySemester = async (specialtyId, semesterId) => {
-  const response = await axiosInstance.get(`course/specialty/${specialtyId}/semester/${semesterId}`);
+export const getCoursesBySpecialtySemester = async (
+  specialtyId,
+  semesterId,
+) => {
+  const response = await axiosInstance.get(
+    `course/specialty/${specialtyId}/semester/${semesterId}`,
+  );
   return response.data;
 };
-
 
 export const getCourseDetails = async (courseId) => {
   const response = await axiosInstance.get(`course/${courseId}`);
   return response.data;
 };
 
-
 export const updateCourse = async (courseId, updateData) => {
   const response = await axiosInstance.put(`course/${courseId}`, updateData);
   return response.data;
 };
 
-
 export const deleteCourse = async (courseId) => {
   const response = await axiosInstance.delete(`course/${courseId}`);
   return response.data;
 };
-
 
 export const activateCourse = async (courseId) => {
   const response = await axiosInstance.post(`course/${courseId}/activate`);
@@ -73,6 +74,11 @@ export const deactivateCourse = async (courseId) => {
 };
 
 export const getCourseTypes = async () => {
-   const  response = await axiosInstance.get("course-type");
-   return response.data;
-}
+  const response = await axiosInstance.get("course-type");
+  return response.data;
+};
+
+export const getCoursesSpecialtyId = async (specialtyId) => {
+  const response = await axiosInstance.get(`course/specialty/${specialtyId}`);
+  return response.data;
+};

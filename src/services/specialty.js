@@ -1,6 +1,5 @@
 import axiosInstance from "../axios/authAxios";
 
-
 export const createSpecialty = async (data) => {
   const response = await axiosInstance.post("specialty", data);
   return response.data;
@@ -12,17 +11,26 @@ export const getSpecialties = async () => {
 };
 
 export const bulkActivateSpecialty = async (specialtyData) => {
-  const response = await axiosInstance.post("specialty/bulk-activate", specialtyData);
+  const response = await axiosInstance.post(
+    "specialty/bulk-activate",
+    specialtyData,
+  );
   return response.data;
 };
 
 export const bulkDeactivateSpecialty = async (specialtyData) => {
-  const response = await axiosInstance.post("specialty/bulk-deactivate", specialtyData);
+  const response = await axiosInstance.post(
+    "specialty/bulk-deactivate",
+    specialtyData,
+  );
   return response.data;
 };
 
 export const bulkDeleteSpecialty = async (specialtyData) => {
-  const response = await axiosInstance.post("specialty/bulk-delete", specialtyData);
+  const response = await axiosInstance.post(
+    "specialty/bulk-delete",
+    specialtyData,
+  );
   return response.data;
 };
 
@@ -47,11 +55,21 @@ export const deleteSpecialty = async (specialtyId) => {
 };
 
 export const activateSpecialty = async (specialtyId) => {
-  const response = await axiosInstance.post(`specialty/${specialtyId}/activate`);
+  const response = await axiosInstance.post(
+    `specialty/${specialtyId}/activate`,
+  );
   return response.data;
 };
 
-export const deactivateSpecialty = async (specialtyId, data={}) => {
-  const response = await axiosInstance.post(`specialty/${specialtyId}/deactivate`, data);
+export const deactivateSpecialty = async (specialtyId, data = {}) => {
+  const response = await axiosInstance.post(
+    `specialty/${specialtyId}/deactivate`,
+    data,
+  );
+  return response.data;
+};
+
+export const getLevelSpecialties = async () => {
+  const response = await axiosInstance.get("specialty/specialty/level");
   return response.data;
 };

@@ -169,8 +169,8 @@ function AddablePreferences({ teacherId }) {
         </div>
       ) : specialtyError ? (
         <NotFoundError
-          title={specialtyError.response.data.errors.title}
-          description={specialtyError.response.data.errors.description}
+          title={specialtyError?.response?.data?.errors?.title}
+          description={specialtyError?.response?.data?.errors?.description}
         ></NotFoundError>
       ) : (
         <>
@@ -356,8 +356,8 @@ function RemovablePreferences({ teacherId }) {
         </div>
       ) : preferenceError ? (
         <NotFoundError
-          title={preferenceError.response.data.errors.title}
-          description={preferenceError.response.data.errors.description}
+          title={preferenceError?.response?.data?.errors?.title}
+          description={preferenceError?.response?.data?.errors?.description}
         ></NotFoundError>
       ) : (
         <>
@@ -496,8 +496,8 @@ function AddedPreferences({ teacherId }) {
         </div>
       ) : preferenceError ? (
         <NotFoundError
-          title={preferenceError.response.data.errors.title}
-          description={preferenceError.response.data.errors.description}
+          title={preferenceError?.response?.data?.errors?.title}
+          description={preferenceError?.response?.data?.errors?.description}
         ></NotFoundError>
       ) : (
         <>

@@ -23,7 +23,8 @@ import {
   tuitionFeeRoutes,
   teacherRoutes,
   hallRoutes,
-  activationCodeRoutes
+  activationCodeRoutes,
+  courseRoutes
 } from "../../utils/paths";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import Logout from "../../ModalContent/Auth/Logout";
@@ -394,16 +395,18 @@ function SideBarLg() {
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
                         <div className="subbox-nav">
-                          <NavLink
-                            to="/courses"
-                            className={({ isActive }) =>
-                              isActive
-                                ? "text-decoration-none  color-primary"
-                                : "text-decoration-none text-dark "
+                          <div
+                            onClick={() => {
+                              navigate("/courses");
+                            }}
+                            className={
+                              IsPathInRoutes(courseRoutes)
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
                             <p style={{ fontSize:"0.75rem" }}>Courses</p>
-                          </NavLink>
+                          </div>
                         </div>
                       </div>
                       <div

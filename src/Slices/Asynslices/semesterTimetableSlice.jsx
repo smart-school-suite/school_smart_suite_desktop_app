@@ -211,6 +211,7 @@ const semesterTimetableSlice = createSlice({
         bp[field].isValid = value;
       }
     },
+    
     //period duration
     setDefaultPeriodDuration(state, action) {
       const { duration } = action.payload;

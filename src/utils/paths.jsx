@@ -18,6 +18,11 @@ export const teacherRoutes = [
    "/teacher-availability"
 ]
 
+export const courseRoutes = [
+  "/courses",
+  "/joint-course",
+  "/joint-courses-timetable"
+]
 export const hallRoutes = [
    "/hall",
    "/specialty-hall"
@@ -34,11 +39,12 @@ export const adminRoutes = [
 
 export const academicRoutes = [
   "/time-table",
-  "/courses",
   "/semesters",
   "/grades-configuration",
-  "/academic-year"
+  "/academic-year",
+  ...courseRoutes,
 ];
+
 
 export const examRoutes = ["/exam", "/exam-candidate", "/exam-timetable", "/exam-results"];
 

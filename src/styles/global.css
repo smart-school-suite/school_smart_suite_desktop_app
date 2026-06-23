@@ -1345,17 +1345,19 @@ thead {
 }
 
 .schoolexpenses-inactive {
-  height: 5dvh;
+  height: 4dvh;
   padding-inline: 0.5rem;
   text-align: center;
+  font-size: 0.75rem;
 }
 
 .schoolexpenses-active {
   background-color: var(--primary-color-50);
-  height: 5dvh;
+  height: 4dvh;
   padding-inline: 0.5rem;
   text-align: center;
   color: var(--primary-color);
+  font-size: 0.75rem;
 }
 
 .schoolexpenses-active-dark {

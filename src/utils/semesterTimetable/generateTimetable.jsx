@@ -4,6 +4,7 @@ export function handleGenerateTimetable(
   hardConstraints,
   generateTimetable,
   schoolSemester,
+  timetableVersion
 ) {
   const breakPeriod = hardConstraints.break_period;
   const operationalPeriod = hardConstraints.operational_period;
@@ -23,7 +24,7 @@ export function handleGenerateTimetable(
     return;
   }
 
-  if (!periodDuration.duration_minutes.value) {
+  if (!periodDuration.duration_minutes) {
     toast.custom(
       <ToastWarning
         title={"Period Duration Incomplete"}
@@ -45,11 +46,12 @@ export function handleGenerateTimetable(
     );
     return;
   }
-  generateTimetable(buildRequestBody(hardConstraints, schoolSemester));
+  generateTimetable(buildRequestBody(hardConstraints, schoolSemester, timetableVersion));
 }
 
-const buildRequestBody = (hardConstraints, schoolSemester) => ({
+const buildRequestBody = (hardConstraints, schoolSemester, timetableVersion) => ({
   school_semester_id: schoolSemester.id,
+  version_id: timetableVersion?.id || null,
   break_period: {
     start_time: hardConstraints.break_period.start_time.value,
     end_time: hardConstraints.break_period.end_time.value,
@@ -94,7 +96,7 @@ const buildRequestBody = (hardConstraints, schoolSemester) => ({
   },
   schedule_period_duration_minutes: {
     duration_minutes:
-      hardConstraints.schedule_period_duration_minutes.duration_minutes.value,
+      hardConstraints.schedule_period_duration_minutes.duration_minutes,
     ...(hardConstraints.schedule_period_duration_minutes.day_exceptions.filter(
       (exception) => exception.duration_minutes.value,
     ).length > 0 && {
@@ -119,7 +121,7 @@ export function checkConfiguration(hardConstraints) {
   ) {
     return false;
   }
-  if (!periodDuration.duration_minutes.value) {
+  if (!periodDuration.duration_minutes) {
     return false;
   }
   if (!breakPeriod.start_time.value || !breakPeriod.end_time.value) {

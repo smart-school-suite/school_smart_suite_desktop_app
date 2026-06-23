@@ -30,6 +30,70 @@ import TeacherAction from "../components/Badges/ActivationCode/TeacherAction";
 import TransactionStatus from "../components/Badges/ActivationCode/TransactionStatus";
 import SubscriptionStatus from "../components/Badges/ActivationCode/SubscriptionStatus";
 const cellStyle = CoursesCellStyle;
+
+export function jointCoursesTable({ DropdownComponent }){
+     const coursesTableConfig = [
+    {
+      field: "id",
+      cellRenderer: TextComponent,
+      hide: true,
+    },
+    {
+      field: "course_code",
+      headerName: "Code",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "course_title",
+      headerName: "Title",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "course_credit",
+      headerName: "Credit",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "semester_title",
+      headerName: "Semester",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "specialty_count",
+      headerName: "Specialty",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: ActiveInactiveBadge,
+    },
+    {
+      field: "Action",
+      cellRenderer: DropdownComponent,
+      cellStyle: () => ({ width: "20rem" }),
+    },
+  ];
+  return coursesTableConfig;
+}
 export function CoursesTable({ DropdownComponent }) {
   const coursesTableConfig = [
     {
@@ -39,7 +103,7 @@ export function CoursesTable({ DropdownComponent }) {
     },
     {
       field: "course_code",
-      headerName: "Course Code",
+      headerName: "Code",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -47,15 +111,15 @@ export function CoursesTable({ DropdownComponent }) {
     },
     {
       field: "course_title",
-      headerName: "Course Title",
+      headerName: "Title",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
-      field: "credit",
-      headerName: "Course Credit",
+      field: "course_credit",
+      headerName: "Credit",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -71,15 +135,7 @@ export function CoursesTable({ DropdownComponent }) {
     },
     {
       field: "specialty_name",
-      headerName: "Specialty Name",
-      filter: true,
-      floatingFilter: true,
-      cellStyle: cellStyle,
-      cellRenderer: TextComponent,
-    },
-    {
-      field: "level_name",
-      headerName: "Level Name",
+      headerName: "Specialty",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,
@@ -1483,7 +1539,6 @@ export function semesterTableConfig({ ActionButtonGroup }) {
       headerName: "start Date",
       filter: true,
       floatingFilter: true,
-      cellRenderer: DateComponent,
       cellStyle: cellStyle,
     },
     {
@@ -1491,7 +1546,6 @@ export function semesterTableConfig({ ActionButtonGroup }) {
       headerName: "End Date",
       filter: true,
       floatingFilter: true,
-      cellRenderer: DateComponent,
       cellStyle: cellStyle,
     },
     {
@@ -1500,14 +1554,6 @@ export function semesterTableConfig({ ActionButtonGroup }) {
       filter: true,
       floatingFilter: true,
       cellRenderer: SemesterBadge,
-      cellStyle: cellStyle,
-    },
-    {
-      field: "level",
-      headerName: "Level",
-      filter: true,
-      floatingFilter: true,
-      cellRenderer: TextComponent,
       cellStyle: cellStyle,
     },
     {
@@ -3568,7 +3614,6 @@ export function academicYearTableConfig({ DropdownComponent }) {
       headerName: "start Date",
       filter: true,
       floatingFilter: true,
-      cellRenderer: DateComponent,
       cellStyle: cellStyle,
     },
     {
@@ -3576,7 +3621,6 @@ export function academicYearTableConfig({ DropdownComponent }) {
       headerName: "End Date",
       filter: true,
       floatingFilter: true,
-      cellRenderer: DateComponent,
       cellStyle: cellStyle,
     },
     {
