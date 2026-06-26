@@ -93,7 +93,7 @@ function TeacherCourse() {
                 {courses.data.map((semester) => (
                   <Fragment key={semester?.semester_id}>
                     <div className="d-flex flex-column gap-1">
-                      <span className="font-size-sm fw-semibold text-capitalize">
+                      <span className="font-size-md fw-semibold text-capitalize">
                         {semester?.semester_name}
                       </span>
                       <div className="d-flex flex-row align-items-center flex-wrap gap-2">
@@ -269,7 +269,7 @@ function Course({ course, specialtyId }) {
               />
               <div className="d-flex flex-column">
                 <span className="fw-medium">{course?.teachers[0]?.name}</span>
-                <span className="text-muted">@ {course?.teachers[0]?.first_name}</span>
+                <span className="text-muted">@ {course?.teachers[0]?.username}</span>
               </div>
             </div>
           )}

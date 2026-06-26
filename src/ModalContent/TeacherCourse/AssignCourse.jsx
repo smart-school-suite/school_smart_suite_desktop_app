@@ -118,7 +118,8 @@ function AssignCourse({ handleClose, rowData }) {
             <p
               className="text-muted font-size-sm m-0"
               style={{
-                height: "100px",
+                height: "auto",
+                maxHeight: "100px",
                 display: "-webkit-box",
                 WebkitLineClamp: "3",
                 WebkitBoxOrient: "vertical",
@@ -184,8 +185,8 @@ function AssignCourse({ handleClose, rowData }) {
                 {teachers.data.map((teacher) => (
                   <Fragment key={teacher.id}>
                     <div
-                      className="card font-size-sm rounded-4 p-2 d-flex flex-column pointer-cursor"
-                      style={{ width: "32.5%", height: "18dvh" }}
+                      className="card font-size-sm rounded-4 p-2 d-flex flex-column pointer-cursor d-flex flex-column gap-3"
+                      style={{ width: "49%" }}
                       onClick={() => setSelectedTeacher(teacher.id)}
                     >
                       <div className="d-flex flex-row align-items-center justify-content-between">
@@ -217,20 +218,84 @@ function AssignCourse({ handleClose, rowData }) {
                           </span>
                         )}
                       </div>
+                      <div className="d-flex flex-column gap-1">
+                        <span
+                          style={{ fontSize: "0.7rem" }}
+                          className="text-muted"
+                        >
+                          Qualifications
+                        </span>
+                        <div className="flex-row align-items-center flex-wrap gap-2">
+                          {teacher.qualifications.map((quali) => (
+                            <Fragment key={quali.id}>
+                              <div
+                                style={{
+                                  background: "#e0f2fe",
+                                  color: "#38bff8",
+                                  fontSize: "0.7rem",
+                                  width: "max-content",
+                                }}
+                                className="rounded-pill p-1 d-flex flex-row align-items-center gap-1 m-1"
+                              >
+                                <span>{quali?.abbreviation}</span>
+                                <span style={{ lineHeight: 0 }}>
+                                  <Icon icon="icon-park-outline:dot" />
+                                </span>
+                                <span>{quali?.pivot?.field_of_study}</span>
+                              </div>
+                            </Fragment>
+                          ))}
+                        </div>
+                      </div>
                       <div className="mt-auto ps-1">
-                        <div className="d-flex flex-column gap-1">
-                          <span className="font-size-sm">Courses Assigned</span>
-                          <div className="d-flex flex-row align-items-center gap-1">
-                            <span>
-                              <Icon
-                                icon="ion:book-outline"
-                                width={18}
-                                height={18}
-                              />
+                        <hr />
+                        <div className="d-flex flex-row align-items-center justify-content-around">
+                          <div className="d-flex flex-column gap-1 align-center  text-center">
+                            <span
+                              style={{ fontSize: "0.7rem" }}
+                              className="text-muted"
+                            >
+                              Courses Assigned
                             </span>
-                            <span className="fw-bold">
-                              {teacher?.num_assigned_courses}
+                            <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
+                              <span>
+                                <Icon
+                                  icon="ion:book-outline"
+                                  width={18}
+                                  height={18}
+                                />
+                              </span>
+                              <span className="fw-bold font-size-md">
+                                {teacher?.num_assigned_courses}
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              height: "2.5rem",
+                              background: "#ddd",
+                              width: "0.05rem",
+                            }}
+                          ></div>
+                          <div className="d-flex flex-column gap-1">
+                            <span
+                              style={{ fontSize: "0.7rem" }}
+                              className="text-muted"
+                            >
+                              Specailties Assigned
                             </span>
+                            <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
+                              <span>
+                                <Icon
+                                  icon="ion:book-outline"
+                                  width={18}
+                                  height={18}
+                                />
+                              </span>
+                              <span className="fw-bold font-size-md">
+                                {teacher?.num_assigned_specialties}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>

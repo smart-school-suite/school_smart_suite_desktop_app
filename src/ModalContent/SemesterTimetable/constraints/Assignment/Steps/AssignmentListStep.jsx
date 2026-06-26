@@ -149,7 +149,7 @@ function AssignmentListStep({
               <div className="d-flex flex-column gap-4">
                 <div className="d-flex flex-row justify-content-end gap-2">
                   <button
-                    className="d-flex flex-row font-size-sm gap-1 align-items-center border-none px-3 py-2 rounded-pill"
+                    className="d-flex flex-row font-size-sm gap-1 align-items-center border transparent-bg px-3 py-2 rounded-pill"
                     onClick={() => {
                       dispatch(
                         addRequestedAssigmentSlot({
@@ -162,7 +162,7 @@ function AssignmentListStep({
                     <span>Add Requested Assignment</span>
                   </button>
                   <button
-                    className="d-flex flex-row font-size-sm gap-1 align-items-center border-none px-3 py-2 rounded-pill"
+                    className="d-flex flex-row font-size-sm gap-1 align-items-center border transparent-bg px-3 py-2 rounded-pill"
                     onClick={() => {
                       dispatch(
                         removeAllRequestedAssignmentSlotsByDay({
@@ -833,6 +833,7 @@ function ReviewStep({
   day,
   count,
 }) {
+  const dispatch = useDispatch();
   return (
     <>
       <div className="card font-size-sm rounded-4 p-2 d-flex flex-column gap-2 text-capitalize pointer-cursor">
@@ -861,6 +862,7 @@ function ReviewStep({
             </button>
           </div>
         </div>
+        
       </div>
     </>
   );

@@ -1,108 +1,163 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { teacherSpecialtyTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react";
 import { Icon } from "@iconify/react";
-import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import CustomModal from "../../components/Modals/Modal";
-import {
-  DeleteIcon,
-  ChoiceIcon,
-  CreateIcon,
-} from "../../icons/ActionIcons";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import BulkDeleteTeacher from "../../ModalContent/Teacher/BulkDeleteTeacher";
+import { Fragment, useState } from "react";
+import { useGetLevelSpecialties } from "../../hooks/specialty/useGetLevelSpecialties";
+import { AnimatePresence, motion } from "framer-motion";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import BulkAddTeacherSpecialtyPreference from "../../ModalContent/TeacherSpecialty/BulkAddTeacherSpecialtyPreference";
-import BulkRemoveTeacherSpecialtyPreference from "../../ModalContent/TeacherSpecialty/BulkRemoveTeacherSpecialtyPreference";
-import ManageTeacherSpecialtyPreference from "../../ModalContent/TeacherSpecialty/ManageTeacherSpecialtyPreference";
-import DeleteTeacherSpecialtyPreference from "../../ModalContent/TeacherSpecialty/DeleteTeacherSpecialtyPreference";
+import { useGetCourseSpecialtyId } from "../../hooks/course/useGetCourseSpecialtyId";
+import { useNavigate } from "react-router-dom";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpecialty";
+import AssignTeacherSpecialty from "../../ModalContent/TeacherSpecialty/AssignTeacherSpecialty";
 function TeacherSpecialty() {
-  const { data: teachers, isLoading, error } = useGetTeachers();
-  const tableRef = useRef();
-  const [rowCount, setRowCount] = useState(0);
-  const [selectedTeachers, setSelectedTeachers] = useState([]);
-  const handleReset = () => {
-    if (tableRef.current) {
-      tableRef.current.deselectAll();
-      setRowCount(0);
-      setSelectedTeachers([]);
-    }
-  };
-  const handleRowDataFromChild = useCallback((Data) => {
-    setSelectedTeachers(Data);
-  }, []);
-  const handleRowCountFromChild = useCallback((count) => {
-    setRowCount(count);
-  }, []);
-  const memoizedColDefs = useMemo(() => {
-    return teacherSpecialtyTableConfig({
-      DropdownComponent,
-    });
-  }, []);
-
-  const memoizedRowData = useMemo(() => {
-    return teachers?.data ?? [];
-  }, [teachers]);
-
+  const [specialty, setSpecialty] = useState(null);
+  const {
+    data: teachers,
+    isLoading: isTeacherLoading,
+    error: teacherError,
+  } = useGetTeacherBySpecialty(specialty);
   return (
     <>
-      <main className="main-container gap-2 h-100">
-        <div style={{ height: "5%" }}>
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <span className="fw-semibold">Teacher Specialty</span>
+      <main className="d-flex flex-row align-items-start gap-2 h-100 w-100">
+        <div
+          className="card border-none rounded-4 h-100 font-size-sm p-2 d-flex flex-column gap-4"
+          style={{ width: "20%" }}
+        >
+          <div className="d-flex flex-column gap-3">
+            <span className="font-size-sm fw-medium">Specialty</span>
+            <div>
+              <input
+                type="search"
+                className="form-control rounded-3 font-size-sm"
+                placeholder="Search Specialty"
+              />
+            </div>
+          </div>
+          <div className="d-flex flex-column gap-3">
+            <LevelSpecialtyDropdown
+              setSpecialty={setSpecialty}
+              specialty={specialty}
+            />
           </div>
         </div>
-        <div style={{ height: "95%" }}>
-          {isLoading ? (
-            <RectangleSkeleton width="100%" height="100%" />
-          ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
-          ) : (
-            <>
-              <Table
-                colDefs={memoizedColDefs}
-                rowData={memoizedRowData}
-                rowHeight={55}
-                ref={tableRef}
-                handleRowCountFromChild={handleRowCountFromChild}
-                handleRowDataFromChild={handleRowDataFromChild}
+        <div className="d-flex flex-column gap-3" style={{ width: "80%" }}>
+          <div className="d-flex flex-row align-items-end justify-content-between w-100">
+            <input
+              type="search"
+              placeholder="Search for teacher"
+              className="form-control font-size-sm w-50"
+            />
+            {specialty && (
+              <ModalButton
+                action={{ modalContent: AssignTeacherSpecialty }}
+                size={"lg"}
+                rowData={{
+                  specialtyId: specialty,
+                }}
+              >
+                <button
+                  className="border-none border rounded-3 font-size-sm px-2 primary-background text-white text-capitalize"
+                  style={{ padding: "0.38rem" }}
+                >
+                  <span>Assign Teacher</span>
+                </button>
+              </ModalButton>
+            )}
+          </div>
+          {specialty ? (
+            isTeacherLoading ? (
+              <div
+                className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-1"
+                style={{ maxHeight: "75dvh" }}
+              >
+                {[...Array(2)].map((_, index) => (
+                  <Fragment key={index}>
+                    <div className="d-flex flex-column gap-2">
+                      <RectangleSkeleton
+                        width={"15%"}
+                        height={"1rem"}
+                        borderRadius={6}
+                      />
+                      <div className="d-flex flex-row align-items-center flex-wrap gap-2">
+                        {[...Array(6)].map((_, index) => (
+                          <Fragment key={index}>
+                            <RectangleSkeleton
+                              width={"32.8%"}
+                              height={"20dvh"}
+                              borderRadius={6}
+                            />
+                          </Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  </Fragment>
+                ))}
+              </div>
+            ) : teacherError ? (
+              <NotFoundError
+                title={teacherError?.response?.data?.errors?.title || "Error"}
+                description={
+                  teacherError?.response?.data?.errors?.description ||
+                  "Something went wrong"
+                }
               />
-              {rowCount > 0 && (
-                <BulkActionsToast
-                  rowCount={rowCount}
-                  label={`${
-                    rowCount > 1 ? "Teacher Selected" : "Teachers Selected"
-                  }`}
-                  resetAll={handleReset}
-                  dropDownItems={
-                    <DropdownItems
-                      selectedTeachers={selectedTeachers}
-                      resetAll={handleReset}
-                    />
-                  }
-                  actionButton={
-                    <ActionButtons
-                      selectedTeachers={selectedTeachers}
-                      resetAll={handleReset}
-                    />
-                  }
+            ) : teachers?.data?.length > 0 ? (
+              <div
+                className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-1"
+                style={{ maxHeight: "75dvh", paddingBottom: "5rem" }}
+              >
+                <div className="d-flex flex-row align-items-start flex-wrap gap-2">
+                  {teachers?.data?.map((teacher) => (
+                    <Fragment key={teacher?.id}>
+                      <Teacher teacher={teacher} specialtyId={specialty} />
+                    </Fragment>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="d-flex flex-column align-items-center gap-2 text-center">
+                <img
+                  src="./sss-maskot/timetable.png"
+                  alt="sss-timetable-maskot"
+                  style={{
+                    height: "250px",
+                    width: "250px",
+                    objectFit: "contain",
+                  }}
                 />
-              )}
-            </>
+                <span className="fw-semibold font-size-sm">
+                  No Teachers Assigned
+                </span>
+                <p className="text-muted font-size-sm mb-0">
+                  You will have to assign teachers for this specialty before
+                  assigning them click the button below to get started
+                </p>
+                <ModalButton>
+                  <button className="border-none rounded-3 p-2 font-size-sm primary-background text-white">
+                    Manage Courses
+                  </button>
+                </ModalButton>
+              </div>
+            )
+          ) : (
+            <div className="d-flex flex-grow-1 align-items-center justify-content-center">
+              <div className="d-flex flex-column align-items-center gap-2 text-center">
+                <img
+                  src="./sss-maskot/timetable.png"
+                  alt="sss-timetable-maskot"
+                  style={{
+                    height: "250px",
+                    width: "250px",
+                    objectFit: "contain",
+                  }}
+                />
+                <span className="fw-semibold font-size-sm">
+                  Ready To Manage Teacher Specialty Assignment ?
+                </span>
+                <p className="text-muted font-size-sm mb-0">
+                  Select a Specialty To Get Started
+                </p>
+              </div>
+            </div>
           )}
         </div>
       </main>
@@ -111,150 +166,213 @@ function TeacherSpecialty() {
 }
 export default TeacherSpecialty;
 
-export function DropdownComponent(props) {
-  const rowData = props.data;
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
+function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
+  const { data: levelSpecialties, isLoading, error } = useGetLevelSpecialties();
+  const [openLevelId, setOpenLevelId] = useState(null);
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setModalContent(null);
-  };
-
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      })
-    );
-    setModalSize(size);
-    setShowModal(true);
+  const toggleDropdown = (levelId) => {
+    setOpenLevelId(openLevelId === levelId ? null : levelId);
   };
 
   return (
     <>
-      <ActionButtonDropdown
-        buttonContent={"Edit Actions"}
-        style={
-          "tableActionButton primary-background text-white font-size-sm px-2"
-        }
-      >
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+      {isLoading ? (
+        [...Array(6)].map((_, index) => (
+          <RectangleSkeleton
+            key={index}
+            width={"100%"}
+            height={"1.5rem"}
+            borderRadius={6}
+          />
+        ))
+      ) : error ? (
+        <NotFoundError
+          title={error?.response?.data?.errors?.title || "Error"}
+          description={
+            error?.response?.data?.errors?.description || "Something went wrong"
           }
-          onClick={() => handleShowModal(ManageTeacherSpecialtyPreference, "lg")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Specialty Preference</span>
-              <ChoiceIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(DeleteTeacherSpecialtyPreference, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Specialty Preference</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-      </ActionButtonDropdown>
-      <CustomModal
-        show={showModal}
-        handleClose={handleCloseModal}
-        size={modalSize}
-        centered
-      >
-        {modalContent}
-      </CustomModal>
+        />
+      ) : (
+        levelSpecialties?.data?.map((lSpecialty) => {
+          const isOpen = openLevelId === lSpecialty.level_id;
+
+          return (
+            <Fragment key={lSpecialty.level_id}>
+              <div className="d-flex flex-column gap-3 w-100 mb-2">
+                <button
+                  type="button"
+                  onClick={() => toggleDropdown(lSpecialty.level_id)}
+                  className="w-100 d-flex flex-row align-items-center justify-content-between border-none transparent-bg p-0"
+                >
+                  <span className="fw-medium" style={{ fontSize: "0.8rem" }}>
+                    {`${lSpecialty.level_name} (${lSpecialty.specialties.length})`}
+                  </span>
+                  <motion.span
+                    style={{ display: "inline-block" }}
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                  >
+                    <Icon icon="mi:chevron-down" width="16" height="16" />
+                  </motion.span>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      style={{ overflow: "hidden" }}
+                      className="d-flex flex-column gap-3"
+                    >
+                      {lSpecialty.specialties.map((spec) => (
+                        <Fragment key={spec.id}>
+                          <button
+                            className="d-flex flex-row align-items-center justify-content-between border-none transparent-bg p-0 w-100 text-start"
+                            onClick={() => setSpecialty(spec.id)}
+                          >
+                            <span>{spec.specialty_name}</span>
+                            {spec.id === specialty && (
+                              <span>
+                                <Icon
+                                  icon="material-symbols:check-rounded"
+                                  width="16"
+                                  height="16"
+                                />
+                              </span>
+                            )}
+                          </button>
+                        </Fragment>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </Fragment>
+          );
+        })
+      )}
     </>
   );
 }
 
-function ActionButtons({ selectedTeachers, resetAll }) {
+function Teacher({ teacher, specialtyId }) {
   return (
     <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        action={{ modalContent: BulkDeleteTeacher }}
-        bulkData={selectedTeachers}
-        resetAll={resetAll}
+      <div
+        className="card font-size-sm rounded-4 p-2 d-flex flex-column pointer-cursor d-flex flex-column gap-3 border-none shadow-sm"
+        style={{ width: "32%" }}
+        onClick={() => setSelectedTeacher(teacher.id)}
       >
-        <CustomTooltip tooltipText={"Delete All"}>
-          <span className="pointer-cursor">
-            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
-          </span>
-        </CustomTooltip>
-      </ModalButton>
-    </>
-  );
-}
-function DropdownItems({ selectedTeachers, resetAll, onModalStateChange }) {
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
-  const modalRef = useRef(null);
-  useEffect(() => {
-    onModalStateChange(showModal, modalRef);
-  }, [showModal, onModalStateChange]);
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setModalContent(null);
-  };
-
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        handleClose: handleCloseModal,
-        resetAll,
-        bulkData: selectedTeachers,
-      })
-    );
-    setModalSize(size);
-    setShowModal(true);
-  };
-
-  return (
-    <>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkAddTeacherSpecialtyPreference, "md")}
-      >
-        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Add Specialty Preference</span>
-          <CreateIcon />
+        <div className="d-flex flex-row align-items-start justify-content-between">
+          <div className="d-flex flex-row align-items-center gap-1">
+            <img
+              src="./images/user.png"
+              alt=""
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                objectFit: "contain",
+              }}
+            />
+            <div className="d-flex flex-column">
+              <span className="fw-medium">{teacher?.name}</span>
+              <span className="text-muted">@{teacher?.username}</span>
+            </div>
+          </div>
         </div>
-      </DropDownMenuItem>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() =>
-          handleShowModal(BulkRemoveTeacherSpecialtyPreference, "md")
-        }
-      >
-        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Remove Specialty Preference</span>
-          <DeleteIcon />
+        <div className="d-flex flex-column gap-3">
+          <div className="card p-2 rounded-4 d-flex flex-column gap-2 border-none">
+            <div className="d-flex flex-column gap-1">
+              {teacher?.qualifications?.map((quali, index) => {
+                return (
+                  <Fragment key={quali.id}>
+                    <div
+                      style={{ fontSize: "0.7rem" }}
+                      className="d-flex flex-column gap-1"
+                    >
+                      <div className="d-flex flex-row align-items-center gap-1">
+                        <span>
+                          <Icon
+                            icon="streamline-plump:graduation-cap"
+                            width={14}
+                            height={14}
+                          />
+                        </span>
+                        <span className="fw-semibold">{quali?.name}</span>
+                      </div>
+                      <div className="d-flex flex-row align-items-center gap-1 fw-normal">
+                        <span>University of Buea</span>
+                        <span style={{ lineHeight: 0 }}>
+                          <Icon icon="icon-park-outline:dot" />
+                        </span>
+                        <span> 2018</span>
+                      </div>
+                    </div>
+                    {!teacher.qualifications.length == index && <hr />}
+                  </Fragment>
+                );
+              })}
+            </div>
+          </div>
+          <div className="d-flex flex-row flex-wrap gap-2">
+            {teacher?.levels?.map((level) => (
+              <Fragment key={level?.id}>
+                <div
+                  style={{
+                    background: "#e0f2fe",
+                    color: "#38bff8",
+                    fontSize: "0.7rem",
+                    width: "max-content",
+                    padding: "0.1rem",
+                  }}
+                  className="rounded-pill px-2 d-flex flex-row align-items-center gap-1"
+                >
+                  <span>{level?.name}</span>
+                </div>
+              </Fragment>
+            ))}
+          </div>
         </div>
-      </DropDownMenuItem>
-      <CustomModal
-        show={showModal}
-        handleClose={handleCloseModal}
-        size={modalSize}
-        centered
-        ref={modalRef}
-      >
-        {modalContent}
-      </CustomModal>
+        <div>
+          <hr />
+          <div className="d-flex flex-row align-items-center justify-content-around">
+            <div className="d-flex flex-column gap-1 align-center  text-center">
+              <span style={{ fontSize: "0.7rem" }} className="text-muted">
+                Courses Assigned
+              </span>
+              <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
+                <span>
+                  <Icon icon="ion:book-outline" width={18} height={18} />
+                </span>
+                <span className="fw-bold font-size-md">
+                  {teacher?.num_assigned_courses}
+                </span>
+              </div>
+            </div>
+            <div
+              style={{ height: "2.5rem", background: "#ddd", width: "0.05rem" }}
+            ></div>
+            <div className="d-flex flex-column gap-1">
+              <span style={{ fontSize: "0.7rem" }} className="text-muted">
+                Specailties Assigned
+              </span>
+              <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
+                <span>
+                  <Icon icon="ion:book-outline" width={18} height={18} />
+                </span>
+                <span className="fw-bold font-size-md">
+                  {teacher?.num_assigned_specialties}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button className="bg-transparent w-100 rounded-pill p-2 font-size-sm border-none border mt-auto">
+          Manage Assignment
+        </button>
+      </div>
     </>
   );
 }

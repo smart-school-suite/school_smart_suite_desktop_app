@@ -52,7 +52,7 @@ export function SingleSpinner() {
   return (
     <>
       <div className="d-flex flex-row justify-content-center align-items-center">
-        <div className="spinner-border color-primary" role="status">
+        <div className="spinner-border text-white" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
       </div>

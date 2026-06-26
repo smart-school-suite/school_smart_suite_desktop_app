@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 import TeacherSideBar from "../components/SideBars/TeacherSideBar";
 import { TeacherIcon } from "../icons/Icons";
 import { Icon } from "@iconify/react";
-
+import { ModalButton } from "../components/DataTableComponents/ActionComponent";
+import CreateTeacher from "../ModalContent/Teacher/CreateTeacher";
+import AssignTeacherSpecialty from "../ModalContent/TeacherSpecialty/AssignTeacherSpecialty";
 export const sideBarData = [
   { title: "Teacher", path: "/teacher" },
   { title: "Teacher Course", path: "/teacher-course" },
@@ -20,7 +22,7 @@ function TeacherLayout() {
   return (
     <>
       <main className="main-container gap-2">
-        <div className="card border-none rounded-3 p-2 d-flex flex-column gap-3">
+        <div className="card border-none rounded-3 p-2 d-flex flex-column gap-2">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-2">
               <div
@@ -45,31 +47,38 @@ function TeacherLayout() {
               />
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
-              <button className="border-none border rounded-3 font-size-sm px-3 py-1 d-flex flex-row align-items-center gap-2 white-bg">
-                <span>Export</span>
+              <button className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
+                <span style={{ lineHeight: "16px" }}>Export</span>
+                <span>
+                  <Icon icon="tabler:arrow-down" width={14} height={14} />
+                </span>
+              </button>
+              <button className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
+                <span style={{ lineHeight: "16px" }}>Actions</span>
                 <span>
                   <Icon
-                    icon="material-symbols-light:download"
-                    width={18}
-                    height={18}
+                    icon="majesticons:chevron-down"
+                    width={16}
+                    height={16}
                   />
                 </span>
               </button>
-              <button className="border-none border rounded-3 font-size-sm px-3 py-1 d-flex flex-row align-items-center gap-2 white-bg">
-                <span>Import</span>
-                <span>
-                  <Icon
-                    icon="material-symbols-light:upload-rounded"
-                    width={18}
-                    height={18}
-                  />
-                </span>
-              </button>
+              {location.pathname === sideBarData[0].path && (
+                <ModalButton
+                  action={{ modalContent: CreateTeacher }}
+                  size={"lg"}
+                >
+                  <button
+                    className="border-none border rounded-3 font-size-sm px-2 primary-background text-white text-capitalize"
+                    style={{ padding: "0.38rem" }}
+                  >
+                    <span>create teacher</span>
+                  </button>
+                </ModalButton>
+              )}
             </div>
           </div>
           <hr />
-
-          {/* Dynamic Navigation Tabs with Framer Motion Underline */}
           <div className="d-flex flex-row align-items-center gap-4 font-size-sm">
             {sideBarData.map((tab) => {
               const isActive = location.pathname === tab.path;
@@ -88,8 +97,6 @@ function TeacherLayout() {
                       <span>{tab.title}</span>
                     </div>
                   </button>
-
-                  {/* Underline Bar */}
                   <div
                     style={{
                       height: "0.1rem",
