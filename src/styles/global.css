@@ -1,5 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 :root {
   --primary-color: #0ea7e9;
   --primary-color-50: #f0f9ff;
@@ -23,7 +22,7 @@
   --acent-color-eight: transparent;
 
   /* Topography */
-  --primary-font-family: "poppins, sanserif";
+  --primary-font-family: "Montserrat", sans-serif;
   --font-size-base: 1rem;
   /* 16px */
   --scale-ratio: 1.25;
@@ -69,7 +68,20 @@
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
 }
+.ag-paging-panel {
+  font-size: 0.7rem !important;
+}
+.ag-header-cell{
+   background-color: #fff;
+   border: none;
+   outline: none;
+}
 
+.ag-header-cell-label{
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+}
 .school-event-active {
   background-color: #eadcf8;
   height: 5dvh;
@@ -1413,7 +1425,7 @@ hr {
 }
 
 .dropdown-item-table {
-  color: #8a8a8a;
+  color: #222
 }
 
 .remove-button-styles {

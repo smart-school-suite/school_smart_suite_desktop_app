@@ -31,8 +31,8 @@ import TransactionStatus from "../components/Badges/ActivationCode/TransactionSt
 import SubscriptionStatus from "../components/Badges/ActivationCode/SubscriptionStatus";
 const cellStyle = CoursesCellStyle;
 
-export function jointCoursesTable({ DropdownComponent }){
-     const coursesTableConfig = [
+export function jointCoursesTable({ DropdownComponent }) {
+  const coursesTableConfig = [
     {
       field: "id",
       cellRenderer: TextComponent,
@@ -1469,45 +1469,48 @@ export function teacherTableConfig({ DropdownComponent }) {
       headerName: "Avatar",
       cellRenderer: TeacherAvatarComponent,
       cellStyle: cellStyle,
-      filter: true,
-      floatingFilter: true,
+      flex:1,
     },
     {
       field: "name",
       headerName: "Full Names",
-      filter: true,
-      floatingFilter: true,
+      flex:1,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
       headerName: "Email",
       field: "email",
-      filter: true,
-      floatingFilter: true,
+      flex:1,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
       headerName: "Phone",
       field: "phone",
-      filter: true,
-      floatingFilter: true,
+      flex:1,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+     {
+      headerName: "Gender",
+      field: "gender",
+      flex:1,
       cellStyle: cellStyle,
       cellRenderer: TextComponent,
     },
     {
       field: "status",
       headerName: "Status",
-      filter: true,
-      floatingFilter: true,
+      flex:1,
       cellStyle: cellStyle,
       cellRenderer: TeacherTableBadge,
     },
     {
       field: "Action",
+      width: 100,
       cellRenderer: DropdownComponent,
-      cellStyle: () => ({ width: "20rem" }),
+      // cellStyle: () => ({ width: "20rem" }),
     },
   ];
   return tableConfig;

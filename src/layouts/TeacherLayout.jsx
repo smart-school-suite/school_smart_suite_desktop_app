@@ -22,7 +22,7 @@ function TeacherLayout() {
   return (
     <>
       <main className="main-container gap-2">
-        <div className="card border-none rounded-3 p-2 d-flex flex-column gap-2">
+        <div className="card border rounded-4 p-2 d-flex flex-column gap-2">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-2">
               <div
@@ -48,7 +48,7 @@ function TeacherLayout() {
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <button className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
-                <span style={{ lineHeight: "16px" }}>Export</span>
+                <span style={{ lineHeight: "16px" }}>Import</span>
                 <span>
                   <Icon icon="tabler:arrow-down" width={14} height={14} />
                 </span>

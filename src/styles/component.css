@@ -101,13 +101,13 @@
   width: 100%;
   height: 35dvh;
   background-color: var(--acent-color-five);
-  border: 0.4rem;
   transition: all 0.2s;
   padding: 0.2rem;
   display: flex;
   flex-direction: column;
   border: 0.01rem solid #ddd;
   margin-top: 0.4rem;
+  color: #222;
 }
 
 .dropdown-container {

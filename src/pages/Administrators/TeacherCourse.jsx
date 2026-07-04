@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import AssignCourse from "../../ModalContent/TeacherCourse/AssignCourse";
 import ManageCourseAssignment from "../../ModalContent/TeacherCourse/ManageCourseAssignment";
+import { NotFoundError } from "../../components/errors/Error";
 function TeacherCourse() {
   const [specialty, setSpecialty] = useState(null);
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ function TeacherCourse() {
             isSpecialtyCoursesLoading ? (
               <div
                 className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-1"
-                style={{ maxHeight: "75dvh" }}
+                style={{ maxHeight: "80dvh" }}
               >
                 {[...Array(2)].map((_, index) => (
                   <Fragment key={index}>
@@ -108,7 +109,7 @@ function TeacherCourse() {
                 ))}
               </div>
             ) : (
-              <div className="d-flex flex-column align-items-center gap-2 text-center">
+              <div className="d-flex flex-column align-items-center gap-2 text-center flex-grow-1">
                 <img
                   src="./sss-maskot/timetable.png"
                   alt="sss-timetable-maskot"
@@ -335,13 +336,13 @@ function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
 
           return (
             <Fragment key={lSpecialty.level_id}>
-              <div className="d-flex flex-column gap-3 w-100 mb-2">
+              <div className="d-flex flex-column gap-2 w-100 mb-2">
                 <button
                   type="button"
                   onClick={() => toggleDropdown(lSpecialty.level_id)}
                   className="w-100 d-flex flex-row align-items-center justify-content-between border-none transparent-bg p-0"
                 >
-                  <span className="font-size-sm fw-semibold">
+                  <span className="font-size-sm fw-medium">
                     {`${lSpecialty.level_name} (${lSpecialty.specialties.length})`}
                   </span>
                   <motion.span

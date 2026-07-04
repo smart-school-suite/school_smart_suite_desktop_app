@@ -7,13 +7,15 @@ export const useCreateSpecialty = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createSpecialty,
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["specialties"] });
+      queryClient.invalidateQueries({ queryKey: ["level-specialties"] });
+      console.table(response.data);
       toast.custom(
         <ToastSuccess
           title={"Specialty Created"}
           description={"Specialty Created Successfully"}
-        />
+        />,
       );
       if (handleClose) {
         handleClose();
@@ -24,7 +26,7 @@ export const useCreateSpecialty = (handleClose) => {
         <ToastDanger
           title={error.response.data.errors.title}
           description={error.response.data.errors.description}
-        />
+        />,
       );
     },
   });

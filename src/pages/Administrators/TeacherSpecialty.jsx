@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpecialty";
 import AssignTeacherSpecialty from "../../ModalContent/TeacherSpecialty/AssignTeacherSpecialty";
+import { NotFoundError } from "../../components/errors/Error";
 function TeacherSpecialty() {
   const [specialty, setSpecialty] = useState(null);
   const {
@@ -69,28 +70,17 @@ function TeacherSpecialty() {
                 className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-1"
                 style={{ maxHeight: "75dvh" }}
               >
-                {[...Array(2)].map((_, index) => (
-                  <Fragment key={index}>
-                    <div className="d-flex flex-column gap-2">
+                <div className="d-flex flex-row align-items-center flex-wrap gap-2">
+                  {[...Array(8)].map((_, index) => (
+                    <Fragment key={index}>
                       <RectangleSkeleton
-                        width={"15%"}
-                        height={"1rem"}
+                        width={"32.8%"}
+                        height={"40dvh"}
                         borderRadius={6}
                       />
-                      <div className="d-flex flex-row align-items-center flex-wrap gap-2">
-                        {[...Array(6)].map((_, index) => (
-                          <Fragment key={index}>
-                            <RectangleSkeleton
-                              width={"32.8%"}
-                              height={"20dvh"}
-                              borderRadius={6}
-                            />
-                          </Fragment>
-                        ))}
-                      </div>
-                    </div>
-                  </Fragment>
-                ))}
+                    </Fragment>
+                  ))}
+                </div>
               </div>
             ) : teacherError ? (
               <NotFoundError
@@ -131,9 +121,15 @@ function TeacherSpecialty() {
                   You will have to assign teachers for this specialty before
                   assigning them click the button below to get started
                 </p>
-                <ModalButton>
+                <ModalButton
+                  action={{ modalContent: AssignTeacherSpecialty }}
+                  size={"lg"}
+                  rowData={{
+                    specialtyId: specialty,
+                  }}
+                >
                   <button className="border-none rounded-3 p-2 font-size-sm primary-background text-white">
-                    Manage Courses
+                    Assign Teachers
                   </button>
                 </ModalButton>
               </div>

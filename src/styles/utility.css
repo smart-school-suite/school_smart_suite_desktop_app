@@ -23,7 +23,7 @@
   --acent-color-ten: #5cb85c;
 
   /* Topography */
-  --primary-font-family: "Poppins, sans-serif";
+  --primary-font-family: "Montserrat", sans-serif;
   --font-size-base: 1rem; /* 16px */
   --scale-ratio: 1.25;
   --font-size-xs: calc(
@@ -422,7 +422,7 @@
 }
 
 body {
-  font-family: "Poppins", sans-serif;
+  font-family: "JetBrains Mono", monospace;
   background-color: #f9f9f9;
 }
 

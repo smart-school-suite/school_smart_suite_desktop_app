@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { CSSTransition } from "react-transition-group";
 import CustomModal from "../Modals/Modal";
 import React from "react";
+import { Icon } from "@iconify/react";
 import {
   useFloating,
   offset,
@@ -11,11 +12,7 @@ import {
   autoUpdate,
 } from "@floating-ui/react";
 import { useSelector } from "react-redux";
-function ActionButtonDropdown({
-  children,
-  style,
-  buttonContent
-}) {
+function ActionButtonDropdown({ children, style, buttonContent }) {
   const [isToggled, setIsToggeled] = useState(false);
   const darkMode = useSelector((state) => state.theme.darkMode);
   const { refs, floatingStyles } = useFloating({
@@ -59,8 +56,17 @@ function ActionButtonDropdown({
             toggleDropdown();
           }}
           className={style}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color:"#222"
+          }}
         >
-          {buttonContent}
+          <Icon icon="mage:dots" width={24} height={24} style={{color:"#222" }}/>
         </button>
         <CSSTransition
           in={isToggled}
@@ -70,10 +76,10 @@ function ActionButtonDropdown({
         >
           <div
             ref={refs.setFloating}
-            style={floatingStyles}
-            className={`${darkMode ? 'dark-bg dark-mode-border' : 'border'} dropdown-menu show position-absolute shadow-sm p-1 rounded-3 d-flex flex-column gap-1`}
+            style={{...floatingStyles, borderRadius:"0.85rem"}}
+            className={`${darkMode ? "dark-bg dark-mode-border" : "border"} dropdown-menu show position-absolute shadow-sm p-1 d-flex flex-column gap-1`}
           >
-          {children}
+            {children}
           </div>
         </CSSTransition>
       </div>
@@ -90,7 +96,7 @@ export function ModalButton({
   resetAll,
   size,
   bulkData,
-  fullscreen
+  fullscreen,
 }) {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -102,7 +108,7 @@ export function ModalButton({
         rowData={rowData}
         resetAll={resetAll}
         bulkData={bulkData}
-      />
+      />,
     );
     setShowModal(true);
   };
@@ -125,20 +131,21 @@ export function ModalButton({
           {children}
         </div>
       </div>
-      <CustomModal show={showModal} handleClose={handleClose} size={size} fullscreen={fullscreen}>
+      <CustomModal
+        show={showModal}
+        handleClose={handleClose}
+        size={size}
+        fullscreen={fullscreen}
+      >
         {modalContent}
       </CustomModal>
     </>
   );
 }
 
-export function DropDownMenuItem({ children, onClick, className, ...props }){
-   return (
-    <button
-      className={className}
-      onClick={onClick}
-      {...props}
-    >
+export function DropDownMenuItem({ children, onClick, className, ...props }) {
+  return (
+    <button className={className} onClick={onClick} {...props}>
       {children}
     </button>
   );
