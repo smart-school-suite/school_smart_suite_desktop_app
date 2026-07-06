@@ -120,6 +120,26 @@ const Table = forwardRef((props, ref) => {
       refreshCells: (params) => {
         if (gridRef.current) gridRef.current.refreshCells(params);
       },
+      getColumnsState: () => {
+        if (!gridRef.current) return [];
+        const states = gridRef.current.getColumnState();
+        return states.map((state) => {
+          const col = gridRef.current.getColumn(state.colId);
+          const colDef = col ? col.getColDef() : {};
+          return {
+            ...state,
+            headerName: colDef.headerName || state.colId,
+            field: colDef.field,
+            isSystemColumn: !colDef.field || state.colId.startsWith("ag-"),
+          };
+        });
+      },
+
+      setColumnState: (state) => {
+        if (gridRef.current) {
+          gridRef.current.applyColumnState({ state: state, applyOrder: true });
+        }
+      },
     }),
     [],
   );

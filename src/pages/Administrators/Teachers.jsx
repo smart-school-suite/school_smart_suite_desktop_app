@@ -35,6 +35,7 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { NotFoundError } from "../../components/errors/Error";
 import ExportTeacher from "../../ModalContent/Teacher/ExportTeacher";
 import TeacherTableSetting from "../../ModalContent/Teacher/TeacherTableSetting";
+import { teacherColDefs } from "../../utils/table/colDefs/teachers/teacherColDefs";
 function Teachers() {
   const { data: teachers, isLoading, error } = useGetTeachers();
   const tableRef = useRef(null);
@@ -54,8 +55,8 @@ function Teachers() {
     setRowCount(count);
   }, []);
   const memoizedColDefs = useMemo(() => {
-    return teacherTableConfig({
-      DropdownComponent,
+    return teacherColDefs({
+      ActionComponent,
     });
   }, []);
 
@@ -188,7 +189,8 @@ function Teachers() {
                     </ModalButton>
                    <ModalButton 
                      action={{ modalContent: TeacherTableSetting }}
-                     size={"lg"}
+                     size={"xl"}
+                     rowData={{ tableRef }}
                    >
                      <button className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
                       <span>
@@ -243,7 +245,7 @@ function Teachers() {
 }
 export default Teachers;
 
-export function DropdownComponent(props) {
+export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);

@@ -12,6 +12,8 @@ import { CSS } from "@dnd-kit/utilities";
 import PdfGenerator from "../../services/export/generators/pdf";
 import toast from "react-hot-toast";
 import ExportGenerationService from "../../services/export/ExportGenerationService";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import ToastWarning from "../../components/Toast/ToastWarning";
 
 function SortableColumnItem({ column }) {
   const {
@@ -113,9 +115,19 @@ function ExportTeacher({ handleClose, rowData }) {
 
     const result = await ExportGenerationService.generate(payload);
     if (result.success) {
-      toast.success("Export completed.");
+      toast.custom(
+        <ToastSuccess
+          title={"Generation Successfull"}
+          description={"Teacher Generated and stored successfully"}
+        />,
+      );
     } else if (!result.cancelled) {
-      toast.error(result.error);
+      toast.custom(
+        <ToastWarning
+          title={"Generation Failed"}
+          description={"An error occurred while generating the export."}
+        />,
+      );
     }
   };
   return (
@@ -333,28 +345,40 @@ function ExportTeacher({ handleClose, rowData }) {
                   </div>
                   <span className="badge primary-background">PDF</span>
                 </div>
-                <table className="table table-sm table-striped font-size-sm">
-                  <thead className="table-light ">
-                    <tr>
-                      {selectedColumns.map((col) => (
-                        <th key={col.field} className="font-size-sm">
-                          {col.headerName}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {getPreviewRows()
-                      .slice(0, 10)
-                      .map((row, i) => (
-                        <tr key={i}>
-                          {selectedColumns.map((col) => (
-                            <td key={col.field}>{row[col.field] ?? "—"}</td>
-                          ))}
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
+                <div
+                  className="border rounded font-size-sm overflow-auto width-auto"
+                  style={{ width: "99%" }}
+                >
+                  <table
+                    className="table table-sm table-striped font-size-sm"
+                    style={{
+                      fontFamily: "monospace",
+                      width: "100%",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <thead className="table-light" style={{ height:"2rem" }}>
+                      <tr>
+                        {selectedColumns.map((col) => (
+                          <th key={col.field} className="font-size-sm">
+                            {col.headerName}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {getPreviewRows()
+                        .slice(0, 10)
+                        .map((row, i) => (
+                          <tr key={i}>
+                            {selectedColumns.map((col) => (
+                              <td key={col.field}>{row[col.field] ?? "—"}</td>
+                            ))}
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
                 <div className="d-flex justify-content-between mt-2">
                   <small className="text-muted">
                     Confidential — internal use only
@@ -366,7 +390,10 @@ function ExportTeacher({ handleClose, rowData }) {
               </div>
             )}
             {format === "xlsx" && (
-              <div className="border rounded font-size-sm overflow-auto">
+              <div
+                className="border rounded font-size-sm overflow-auto width-auto"
+                style={{ width: "99%" }}
+              >
                 <table
                   className="table table-bordered table-sm mb-0"
                   style={{ fontFamily: "monospace" }}
