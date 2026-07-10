@@ -13,6 +13,7 @@ import React, {
   useCallback,
   useRef,
   useEffect,
+  Fragment,
 } from "react";
 import { Icon } from "@iconify/react";
 import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
@@ -36,12 +37,30 @@ import { NotFoundError } from "../../components/errors/Error";
 import ExportTeacher from "../../ModalContent/Teacher/ExportTeacher";
 import TeacherTableSetting from "../../ModalContent/Teacher/TeacherTableSetting";
 import { teacherColDefs } from "../../utils/table/colDefs/teachers/teacherColDefs";
+import { setTeachers } from "../../Slices/teacher/teacherSlice";
+import {
+  useFloating,
+  offset,
+  flip,
+  shift,
+  autoUpdate,
+} from "@floating-ui/react";
+import { motion, AnimatePresence } from "framer-motion";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import TextFilter from "../../ModalContent/Filter/TextFilterPopOver";
+import TextFilterPopOver from "../../ModalContent/Filter/TextFilterPopOver";
+import filterPopOverMap from "../../utils/maps/FilterMap";
 function Teachers() {
   const { data: teachers, isLoading, error } = useGetTeachers();
   const tableRef = useRef(null);
   const [rowCount, setRowCount] = useState(0);
+  const [columns, setColumns] = useState({
+    selectedColumns: [],
+    availableColumns: [],
+  });
   const [selectedTeachers, setSelectedTeachers] = useState([]);
-  const handleReset = () => {
+  const [searchText, setSearchText] = useState("");
+  const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
@@ -65,11 +84,62 @@ function Teachers() {
   }, [teachers]);
 
   const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
-      tableRef.current.setGridOption("quickFilterText", e.target.value);
+      tableRef.current.setGridOption("quickFilterText", value);
     }
   };
 
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedTeachers([]);
+
+      if (tableRef.current.setGridOption) {
+        tableRef.current.setGridOption("quickFilterText", "");
+      }
+      setSearchText("");
+      const gridApi = tableRef.current.getGridApi
+        ? tableRef.current.getGridApi()
+        : null;
+      if (gridApi) {
+        gridApi.setFilterModel(null);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoading && tableRef.current?.getColumnsState) {
+      const timer = setTimeout(() => {
+        const gridCols = tableRef.current.getColumnsState();
+        if (gridCols && gridCols.length > 0) {
+          const filteredCols = gridCols.filter(
+            (col) =>
+              !col.isSystemColumn &&
+              col.field !== "action" &&
+              col.colId !== "actions" &&
+              col.colId !== "ActionComponent",
+          );
+          setColumns((prevalue) => ({
+            ...prevalue,
+            availableColumns: [...prevalue.availableColumns, ...filteredCols],
+          }));
+          setColumns((prev) => ({
+            ...prev,
+            selectedColumns: prev.availableColumns.slice(0, 4),
+          }));
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, memoizedRowData]);
+
+  const handleAddColumn = (column) => {
+    setColumns((prev) => {});
+  };
   return (
     <>
       <main className="main-container gap-2 h-100">
@@ -86,66 +156,37 @@ function Teachers() {
               <div className="d-flex flex-column gap-2 h-100">
                 <div className="d-flex flex-row align-items-center justify-content-between">
                   <div className="d-flex flex-row align-items-center gap-2">
-                    <button
-                      className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg"
-                      style={{ fontSize: "0.7rem" }}
+                    {columns?.selectedColumns?.map((c, index) => {
+                      const FilterPopOver = filterPopOverMap.find(
+                        (f) => f.cellDataType === c.cellDataType,
+                      ).component;
+                      return (
+                        <Fragment key={index}>
+                          <FilterPopOver column={c} tableRef={tableRef} />
+                        </Fragment>
+                      );
+                    })}
+                    <ModalButton
+                      action={{ modalContent: FilterColumns }}
+                      size={"xl"}
+                      rowData={{ setColumns, columns: columns }}
                     >
-                      <span style={{ lineHeight: "16px" }}>Full Name</span>
-                      <span>
-                        <Icon
-                          icon="majesticons:chevron-down"
-                          width={16}
-                          height={16}
-                        />
-                      </span>
-                    </button>
+                      <button
+                        className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg"
+                        style={{ padding: "0.45rem" }}
+                      >
+                        <span>
+                          <Icon icon="ic:round-plus" width={14} height={14} />
+                        </span>
+                      </button>
+                    </ModalButton>
                     <button
-                      className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg"
-                      style={{ fontSize: "0.7rem" }}
-                    >
-                      <span style={{ lineHeight: "16px" }}>Username</span>
-                      <span>
-                        <Icon
-                          icon="majesticons:chevron-down"
-                          width={16}
-                          height={16}
-                        />
-                      </span>
-                    </button>
-                    <button
-                      className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg"
-                      style={{ fontSize: "0.7rem" }}
-                    >
-                      <span style={{ lineHeight: "16px" }}>Email</span>
-                      <span>
-                        <Icon
-                          icon="majesticons:chevron-down"
-                          width={16}
-                          height={16}
-                        />
-                      </span>
-                    </button>
-                    <button
-                      className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg"
-                      style={{ fontSize: "0.7rem" }}
-                    >
-                      <span style={{ lineHeight: "16px" }}>Specialties</span>
-                      <span>
-                        <Icon
-                          icon="majesticons:chevron-down"
-                          width={16}
-                          height={16}
-                        />
-                      </span>
-                    </button>
-                    <button className="border-none border rounded-3 font-size-sm px-2 py-1  d-flex flex-row align-items-center white-bg">
-                      <span>
-                        <Icon icon="ic:round-plus" width={14} height={14} />
-                      </span>
-                    </button>
-                    <button
-                      className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg"
-                      style={{ fontSize: "0.7rem" }}
+                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                      style={{
+                        fontSize: "0.7rem",
+                        cursor: "pointer",
+                        padding: "0.45rem",
+                      }}
                     >
                       <span>
                         <Icon icon="mynaui:filter" width={16} height={16} />
@@ -154,12 +195,23 @@ function Teachers() {
                     </button>
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
-                    <button className="border-none border rounded-3 font-size-sm p-2  d-flex flex-row align-items-center white-bg">
+                    <button
+                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                      onClick={handleReset}
+                      style={{ padding: "0.45rem" }}
+                    >
                       <span>
-                        <Icon icon="grommet-icons:revert" width={16} height={16} />
+                        <Icon
+                          icon="grommet-icons:revert"
+                          width={16}
+                          height={16}
+                        />
                       </span>
                     </button>
-                    <button className="border-none border rounded-3 font-size-sm p-2  d-flex flex-row align-items-center white-bg">
+                    <button
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
+                      style={{ padding: "0.45rem" }}
+                    >
                       <span>
                         <Icon icon="mage:copy" width={16} height={16} />
                       </span>
@@ -171,37 +223,43 @@ function Teachers() {
                     type="search"
                     placeholder="Search Teacher"
                     onChange={handleSearch}
+                    value={searchText}
                     className="font-size-sm form-control w-25"
                   />
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
-                     action={{ modalContent: ExportTeacher }}
-                     size={"xl"}
-                     rowData={{ teachers, tableRef }}
+                      action={{ modalContent: ExportTeacher }}
+                      size={"xl"}
+                      rowData={{ teachers, tableRef }}
                     >
-                      <button 
-                        className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
+                      <button
+                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
+                        style={{ padding: "0.45rem" }}
+                      >
                         <span style={{ lineHeight: "16px" }}>Export</span>
                         <span>
                           <Icon icon="tabler:arrow-up" width={14} height={14} />
                         </span>
                       </button>
                     </ModalButton>
-                   <ModalButton 
-                     action={{ modalContent: TeacherTableSetting }}
-                     size={"xl"}
-                     rowData={{ tableRef }}
-                   >
-                     <button className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
-                      <span>
-                        <Icon
-                          icon="lsicon:setting-outline"
-                          width={20}
-                          height={20}
-                        />
-                      </span>
-                    </button>
-                   </ModalButton>
+                    <ModalButton
+                      action={{ modalContent: TeacherTableSetting }}
+                      size={"xl"}
+                      rowData={{ tableRef }}
+                    >
+                      <button
+                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
+                        style={{ padding: "0.45rem" }}
+                      >
+                        <span>
+                          <Icon
+                            icon="lsicon:setting-outline"
+                            width={20}
+                            height={20}
+                          />
+                        </span>
+                      </button>
+                    </ModalButton>
                   </div>
                 </div>
                 <div style={{ height: "100%" }}>
@@ -219,17 +277,17 @@ function Teachers() {
                       label={`${
                         rowCount > 1 ? "Teacher Selected" : "Teachers Selected"
                       }`}
-                      resetAll={handleReset}
+                      resetAll={handleResetSelections}
                       dropDownItems={
                         <DropdownItems
                           selectedTeachers={selectedTeachers}
-                          resetAll={handleReset}
+                          resetAll={handleResetSelections}
                         />
                       }
                       actionButton={
                         <ActionButtons
                           selectedTeachers={selectedTeachers}
-                          resetAll={handleReset}
+                          resetAll={handleResetSelections}
                         />
                       }
                     />
@@ -355,7 +413,6 @@ export function ActionComponent(props) {
     </>
   );
 }
-
 function ActionButtons({ selectedTeachers, resetAll }) {
   return (
     <>

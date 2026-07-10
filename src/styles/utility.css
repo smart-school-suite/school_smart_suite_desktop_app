@@ -529,3 +529,11 @@ body {
 .height-auto{
    height: auto;
 }
+
+.z-index-master{
+   z-index: 999;
+}
+
+.border-primary{
+   border: 1px solid var(--primary-color-300) !important;
+}

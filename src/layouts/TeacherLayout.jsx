@@ -7,6 +7,8 @@ import { Icon } from "@iconify/react";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import CreateTeacher from "../ModalContent/Teacher/CreateTeacher";
 import AssignTeacherSpecialty from "../ModalContent/TeacherSpecialty/AssignTeacherSpecialty";
+import ImportTeacher from "../ModalContent/Teacher/ImportTeacher";
+import { useMemo } from "react";
 export const sideBarData = [
   { title: "Teacher", path: "/teacher" },
   { title: "Teacher Course", path: "/teacher-course" },
@@ -14,11 +16,32 @@ export const sideBarData = [
   { title: "Teacher Availability", path: "/teacher-availability" },
 ];
 
+const importMap = {
+  "/teacher": {
+    component: ImportTeacher,
+    size: "lg",
+    title: "Import Teacher",
+  },
+  // "/teacher-course": {
+  //   component: ImportTeacherCourse,
+  //   size: "lg",
+  //   title: "Import Teacher Course",
+  // },
+  // "/teacher-specialty": {
+  //   component: ImportTeacherSpecialty,
+  //   size: "lg",
+  //   title: "Import Teacher Specialty",
+  // }
+};
+
 function TeacherLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const location = useLocation();
   const navigate = useNavigate();
-
+  const currentImportConfig = useMemo(() => {
+    const path = location.pathname;
+    return importMap[path] || importMap["/teacher"];
+  }, [location.pathname]);
   return (
     <>
       <main className="main-container gap-2">
@@ -47,12 +70,17 @@ function TeacherLayout() {
               />
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
-              <button className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
-                <span style={{ lineHeight: "16px" }}>Import</span>
-                <span>
-                  <Icon icon="tabler:arrow-down" width={14} height={14} />
-                </span>
-              </button>
+              <ModalButton
+                action={{ modalContent: currentImportConfig.component }}
+                size={currentImportConfig.size || "lg"}
+              >
+                <button className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
+                  <span style={{ lineHeight: "16px" }}>Import</span>
+                  <span>
+                    <Icon icon="tabler:arrow-down" width={14} height={14} />
+                  </span>
+                </button>
+              </ModalButton>
               <button className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <span>

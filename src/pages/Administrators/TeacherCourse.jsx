@@ -342,7 +342,7 @@ function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
                   onClick={() => toggleDropdown(lSpecialty.level_id)}
                   className="w-100 d-flex flex-row align-items-center justify-content-between border-none transparent-bg p-0"
                 >
-                  <span className="font-size-sm fw-medium">
+                  <span className=" fw-medium" style={{ fontSize:"0.75rem" }}>
                     {`${lSpecialty.level_name} (${lSpecialty.specialties.length})`}
                   </span>
                   <motion.span
@@ -394,3 +394,4 @@ function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
     </>
   );
 }
+

@@ -7,6 +7,6 @@ export const numberColumn = (options = {}) =>
     cellStyle: {
       textAlign: "right",
     },
-
+    cellDataType: "number",
     ...options,
   });

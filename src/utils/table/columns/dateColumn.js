@@ -11,6 +11,7 @@ export const dateColumn = ({
 } = {}) =>
     baseColumn({
         filter: "agDateColumnFilter",
+        cellDataType: 'dateString',
         valueFormatter:
             valueFormatter ||
             ((params) => {

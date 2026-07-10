@@ -10,4 +10,6 @@ export const textColumn = (options = {}) =>
       height: "100%",
       zIndex: "-1",
     },
+    cellDataType: 'text',
+    filter: "agTextColumnFilter",
   });

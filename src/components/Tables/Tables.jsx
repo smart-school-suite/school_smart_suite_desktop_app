@@ -123,13 +123,16 @@ const Table = forwardRef((props, ref) => {
       getColumnsState: () => {
         if (!gridRef.current) return [];
         const states = gridRef.current.getColumnState();
+
         return states.map((state) => {
           const col = gridRef.current.getColumn(state.colId);
           const colDef = col ? col.getColDef() : {};
+
           return {
             ...state,
             headerName: colDef.headerName || state.colId,
             field: colDef.field,
+            cellDataType: colDef.cellDataType,
             isSystemColumn: !colDef.field || state.colId.startsWith("ag-"),
           };
         });

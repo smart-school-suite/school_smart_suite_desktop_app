@@ -3,6 +3,8 @@ import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import useScreenSize from "../hooks/ui/useScreenSize";
+import { getCurrentWindow } from '@tauri-apps/api/window';
+const appWindow = getCurrentWindow();
 function Layout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const { width, is, breakpoint } = useScreenSize();
