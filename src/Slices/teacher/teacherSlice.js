@@ -1,9 +1,9 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
-
+import { v4 as uuidv4 } from "uuid";
 const initialState = {
   teachers: null,
-  isLoading: false,
-  error: null,
+  isGeneralFilterOpen: false,
+  tableRef: null,
   selectedTeachers: [],
   rowCount: 0,
   searchText: "",
@@ -11,20 +11,48 @@ const initialState = {
     selectedColumns: [],
     availableColumns: [],
   },
+  customFilter: [],
 };
 
 const teacherSlice = createSlice({
   name: "teachers",
   initialState,
   reducers: {
-    setTeachers: (state, action) => {
-      state.teachers = action.payload;
+    addCustomFilter: (state, action) => {
+      const myId = uuidv4();
+      state.customFilter.push({
+        id: myId,
+        column: null,
+        match: null,
+        value: null,
+      });
     },
-    setLoading: (state, action) => {
-      state.isLoading = action.payload;
+    resetAllCustomFilters: (state) => {
+       state.customFilter = [];
     },
-    setError: (state, action) => {
-      state.error = action.payload;
+    removeCustomFilter: (state, action) => {
+      const { id } = action.payload;
+      const customFilterIndex = state.customFilter.findIndex(
+        (cf) => cf.id === id,
+      );
+      state.customFilter.splice(customFilterIndex, 1);
+    },
+    setCustomFilter: (state, action) => {
+      const { id, field, value } = action.payload;
+      console.log(action.payload);
+      const customFilter = state.customFilter.find((cf) => cf.id === id);
+      if (!customFilter) return;
+
+      if (field === "column") customFilter.column = value;
+      if (field === "match") customFilter.match = value;
+      if (field === "value") customFilter.value = value;
+    },
+    setTableRef: (state, action) => {
+      const { tableRef } = action.payload;
+      state.tableRef = tableRef;
+    },
+    toggleGeneralFilter: (state) => {
+      state.isGeneralFilterOpen = !state.isGeneralFilterOpen;
     },
     setSelectedTeachers: (state, action) => {
       state.selectedTeachers = action.payload;
@@ -64,9 +92,10 @@ const teacherSlice = createSlice({
 });
 
 export const {
+  addCustomFilter,
+  removeCustomFilter,
+  setCustomFilter,
   setTeachers,
-  setLoading,
-  setError,
   setSelectedTeachers,
   setRowCount,
   setSearchText,
@@ -75,6 +104,9 @@ export const {
   resetAll,
   updateAvailableColumns,
   updateSelectedColumns,
+  setTableRef,
+  toggleGeneralFilter,
+  resetAllCustomFilters
 } = teacherSlice.actions;
 
 export default teacherSlice.reducer;

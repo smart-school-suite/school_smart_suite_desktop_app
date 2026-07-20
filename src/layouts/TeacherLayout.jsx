@@ -45,7 +45,7 @@ function TeacherLayout() {
   return (
     <>
       <main className="main-container gap-2">
-        <div className="card border rounded-4 p-2 d-flex flex-column gap-2">
+        <div className="card border rounded-3 p-2 d-flex flex-column gap-2">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-2">
               <div

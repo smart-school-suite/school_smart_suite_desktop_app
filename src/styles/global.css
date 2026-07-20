@@ -2067,3 +2067,11 @@ textarea::-webkit-scrollbar-thumb:hover {
   font-size: 0.65rem;
   font-weight: 500;
 }
+
+.ag-header-cell-filter-button {
+    display: none !important;
+}
+
+.ag-icon-filter {
+    display: none !important;
+}

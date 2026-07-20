@@ -37,11 +37,16 @@ import BulkActivateSpecialty from "../../ModalContent/Specialty/BulkActivateSpec
 import BulkDeactivateSpecialty from "../../ModalContent/Specialty/BulkDeactivateSpecialty";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import { specialtyColDefs } from "../../utils/table/colDefs/specialty/specialtyColDefs";
 function Specialties() {
   const { data: specialty, isLoading, error } = useGetSpecialties();
   const tableRef = useRef();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);
+  const [columns, setColumns] = useState({
+    selectedColumns: [],
+    availableColumns: [],
+  });
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const handleReset = () => {
     if (tableRef.current) {
@@ -57,7 +62,7 @@ function Specialties() {
     setRowCount(count);
   }, []);
   const memoizedColDefs = useMemo(() => {
-    return SpecialtyTableConfig({
+    return specialtyColDefs({
       DropdownComponent,
     });
   }, []);
@@ -120,27 +125,27 @@ function Specialties() {
                 handleRowCountFromChild={handleRowCountFromChild}
                 handleRowDataFromChild={handleRowDataFromChild}
               />
-              {
-                 rowCount > 0 && <BulkActionsToast
-                rowCount={rowCount}
-                label={`${
-                  rowCount > 0 ? "Specialty Selected" : "Specialties Selected"
-                }`}
-                resetAll={handleReset}
-                dropDownItems={
-                  <DropdownItems
-                    selectedSpecialties={selectedSpecialties}
-                    resetAll={handleReset}
-                  />
-                }
-                actionButton={
-                  <ActionButtons
-                    selectedSpecialties={selectedSpecialties}
-                    resetAll={handleReset}
-                  />
-                }
-              />
-              }
+              {rowCount > 0 && (
+                <BulkActionsToast
+                  rowCount={rowCount}
+                  label={`${
+                    rowCount > 0 ? "Specialty Selected" : "Specialties Selected"
+                  }`}
+                  resetAll={handleReset}
+                  dropDownItems={
+                    <DropdownItems
+                      selectedSpecialties={selectedSpecialties}
+                      resetAll={handleReset}
+                    />
+                  }
+                  actionButton={
+                    <ActionButtons
+                      selectedSpecialties={selectedSpecialties}
+                      resetAll={handleReset}
+                    />
+                  }
+                />
+              )}
             </>
           )}
         </div>
@@ -167,7 +172,7 @@ export function DropdownComponent(props) {
       React.createElement(ContentComponent, {
         rowData,
         handleClose: handleCloseModal,
-      })
+      }),
     );
     setModalSize(size);
     setShowModal(true);
@@ -300,7 +305,7 @@ function DropdownItems({ selectedSpecialties, resetAll, onModalStateChange }) {
         handleClose: handleCloseModal,
         resetAll,
         bulkData: selectedSpecialties,
-      })
+      }),
     );
     setModalSize(size);
     setShowModal(true);

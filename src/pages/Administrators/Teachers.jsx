@@ -37,7 +37,15 @@ import { NotFoundError } from "../../components/errors/Error";
 import ExportTeacher from "../../ModalContent/Teacher/ExportTeacher";
 import TeacherTableSetting from "../../ModalContent/Teacher/TeacherTableSetting";
 import { teacherColDefs } from "../../utils/table/colDefs/teachers/teacherColDefs";
-import { setTeachers } from "../../Slices/teacher/teacherSlice";
+import {
+  setTeachers,
+  setTableRef,
+  toggleGeneralFilter,
+  addCustomFilter,
+  removeCustomFilter,
+  setCustomFilter,
+  resetAllCustomFilters
+} from "../../Slices/teacher/teacherSlice";
 import {
   useFloating,
   offset,
@@ -50,7 +58,11 @@ import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import TextFilter from "../../ModalContent/Filter/TextFilterPopOver";
 import TextFilterPopOver from "../../ModalContent/Filter/TextFilterPopOver";
 import filterPopOverMap from "../../utils/maps/FilterMap";
+import { useDispatch, useSelector } from "react-redux";
+import { GEN_FILTER_FLOW } from "./filterSteps/step";
 function Teachers() {
+  const dispatch = useDispatch();
+  const teacherState = useSelector((state) => state.teachers);
   const { data: teachers, isLoading, error } = useGetTeachers();
   const tableRef = useRef(null);
   const [rowCount, setRowCount] = useState(0);
@@ -137,9 +149,6 @@ function Teachers() {
     }
   }, [isLoading, memoizedRowData]);
 
-  const handleAddColumn = (column) => {
-    setColumns((prev) => {});
-  };
   return (
     <>
       <main className="main-container gap-2 h-100">
@@ -186,6 +195,9 @@ function Teachers() {
                         fontSize: "0.7rem",
                         cursor: "pointer",
                         padding: "0.45rem",
+                      }}
+                      onClick={() => {
+                        dispatch(toggleGeneralFilter());
                       }}
                     >
                       <span>
@@ -262,36 +274,177 @@ function Teachers() {
                     </ModalButton>
                   </div>
                 </div>
-                <div style={{ height: "100%" }}>
-                  <Table
-                    colDefs={memoizedColDefs}
-                    rowData={memoizedRowData}
-                    rowHeight={45}
-                    ref={tableRef}
-                    handleRowCountFromChild={handleRowCountFromChild}
-                    handleRowDataFromChild={handleRowDataFromChild}
-                  />
-                  {rowCount > 0 && (
-                    <BulkActionsToast
-                      rowCount={rowCount}
-                      label={`${
-                        rowCount > 1 ? "Teacher Selected" : "Teachers Selected"
-                      }`}
-                      resetAll={handleResetSelections}
-                      dropDownItems={
-                        <DropdownItems
-                          selectedTeachers={selectedTeachers}
+                <div className="h-100">
+                  <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
+                    <motion.div
+                      className="h-100"
+                      layout
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 30,
+                      }}
+                      style={{
+                        width: teacherState.isGeneralFilterOpen
+                          ? "60%"
+                          : "100%",
+                      }}
+                    >
+                      <Table
+                        colDefs={memoizedColDefs}
+                        rowData={memoizedRowData}
+                        rowHeight={45}
+                        ref={tableRef}
+                        handleRowCountFromChild={handleRowCountFromChild}
+                        handleRowDataFromChild={handleRowDataFromChild}
+                      />
+                      {rowCount > 0 && (
+                        <BulkActionsToast
+                          rowCount={rowCount}
+                          label={`${rowCount > 1 ? "Teacher Selected" : "Teachers Selected"}`}
                           resetAll={handleResetSelections}
+                          dropDownItems={
+                            <DropdownItems
+                              selectedTeachers={selectedTeachers}
+                              resetAll={handleResetSelections}
+                            />
+                          }
+                          actionButton={
+                            <ActionButtons
+                              selectedTeachers={selectedTeachers}
+                              resetAll={handleResetSelections}
+                            />
+                          }
                         />
-                      }
-                      actionButton={
-                        <ActionButtons
-                          selectedTeachers={selectedTeachers}
-                          resetAll={handleResetSelections}
-                        />
-                      }
-                    />
-                  )}
+                      )}
+                    </motion.div>
+                    {teacherState.isGeneralFilterOpen && (
+                      <AnimatePresence mode="popLayout">
+                        {teacherState.isGeneralFilterOpen && (
+                          <motion.div
+                            key="filter-panel"
+                            className="card rounded-3 font-size-sm d-flex flex-column h-100"
+                            initial={{ x: "100%", opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: "100%", opacity: 0 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 350,
+                              damping: 32,
+                            }}
+                            style={{ width: "40%" }}
+                          >
+                            <div
+                              className="p-2 rounded-top-3 d-flex flex-column gap-2 border-bottom"
+                              style={{ background: "#f9f9f9" }}
+                            >
+                              <div className="d-flex flex-row align-items-center justify-content-between">
+                                <span>
+                                  Build a custom view of your teacher data.
+                                </span>
+                                <button
+                                  className="border-none bg-transparent"
+                                  onClick={() =>
+                                    dispatch(toggleGeneralFilter())
+                                  }
+                                >
+                                  <Icon
+                                    icon="iconoir:cancel"
+                                    width={18}
+                                    height={18}
+                                  />
+                                </button>
+                              </div>
+                              <div className="d-flex flex-row align-items-center justify-content-between">
+                                <div className="d-flex flex-row align-items-center gap-2">
+                                  <span>
+                                    <Icon
+                                      icon="mynaui:filter"
+                                      width={18}
+                                      height={18}
+                                    />
+                                  </span>
+                                  <span>Filter Teacher</span>
+                                </div>
+                                <span>{teachers?.data.length} items</span>
+                              </div>
+                            </div>
+                            <div
+                              className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
+                              style={{ maxHeight: "52dvh" }}
+                            >
+                              {teacherState.customFilter.length > 0 ? (
+                                <div>
+                                  {teacherState?.customFilter?.map(
+                                    (cFilters) => (
+                                      <Fragment key={cFilters.id}>
+                                        <CustomFilterStep
+                                          cFilters={cFilters}
+                                          columns={columns}
+                                        />
+                                      </Fragment>
+                                    ),
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1 p-4">
+                                  <div className="text-center d-flex flex-column gap-1 mb-3">
+                                    <span className="fw-semibold">
+                                      Build a custom filter
+                                    </span>
+                                    <span className="text-muted">
+                                      Create one or more conditions to narrow
+                                      down your teacher list.
+                                    </span>
+                                  </div>
+                                  <button
+                                    className="d-flex flex-row align-items-center gap-2 bg-transparent border-none border rounded-3 p-2 font-size-sm"
+                                    onClick={() => {
+                                      dispatch(addCustomFilter());
+                                    }}
+                                  >
+                                    <span>
+                                      <Icon icon="mynaui:plus" />
+                                    </span>
+                                    <span>Add Condition</span>
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                            <div className="mt-auto">
+                              {teacherState.customFilter.length > 0 && (
+                                <div className="d-flex flex-row justify-content-start p-2">
+                                  <button
+                                    className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
+                                    onClick={() => {
+                                      dispatch(addCustomFilter());
+                                    }}
+                                  >
+                                    <span>
+                                      <Icon icon="ic:round-plus" />
+                                    </span>
+                                    <span>Add Condition</span>
+                                  </button>
+                                </div>
+                              )}
+                              <div className="d-flex flex-row border-top justify-content-between p-2">
+                                <button className="border-none border bg-transparent px-3 font-size-sm py-2 rounded-3"
+                                 onClick={() => {
+                                   dispatch(resetAllCustomFilters())
+                                 }}
+                                >
+                                  Reset All
+                                </button>
+                                <button className="border-none border px-3 font-size-sm py-2 primary-background text-white rounded-3">
+                                  Apply
+                                </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    )}
+                  </div>
                 </div>
               </div>
             </>
@@ -495,6 +648,31 @@ function DropdownItems({ selectedTeachers, resetAll, onModalStateChange }) {
       >
         {modalContent}
       </CustomModal>
+    </>
+  );
+}
+function CustomFilterStep({ cFilters, columns }) {
+  const [stepIndex, setStepIndex] = useState(0);
+
+  const currentStep = GEN_FILTER_FLOW[stepIndex];
+
+  const CurrentComponent = currentStep.component;
+  const nextStep = () => {
+    setStepIndex((prev) => prev + 1);
+  };
+
+  const previousStep = () => {
+    setStepIndex((prev) => prev - 1);
+  };
+  return (
+    <>
+      <CurrentComponent
+        cFilters={cFilters}
+        columns={columns}
+        nextStep={nextStep}
+        previousStep={previousStep}
+        currentStep={stepIndex + 1}
+      />
     </>
   );
 }
