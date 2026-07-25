@@ -7,8 +7,8 @@ import { Icon } from "@iconify/react";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import CreateTeacher from "../ModalContent/Teacher/CreateTeacher";
 import AssignTeacherSpecialty from "../ModalContent/TeacherSpecialty/AssignTeacherSpecialty";
-import ImportTeacher from "../ModalContent/Teacher/ImportTeacher";
 import { useMemo } from "react";
+import TeacherImportWizzard from "../ModalContent/Teacher/Import/TeacherImportWizzard";
 export const sideBarData = [
   { title: "Teacher", path: "/teacher" },
   { title: "Teacher Course", path: "/teacher-course" },
@@ -18,7 +18,7 @@ export const sideBarData = [
 
 const importMap = {
   "/teacher": {
-    component: ImportTeacher,
+    component: TeacherImportWizzard,
     size: "lg",
     title: "Import Teacher",
   },

@@ -147,7 +147,7 @@ function SideBarLg() {
                 >
                   <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
                     <span style={{ lineHeight: 0 }}>
-                      <Icon icon="radix-icons:dashboard" width={12} height={12} />
+                      <Icon icon="radix-icons:dashboard" width={16} height={16} />
                     </span>
                     <span style={{ fontSize:"0.75rem" }}>Dashboard</span>
                   </div>
@@ -172,7 +172,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="ri:admin-line" width={12} height={12}/>
+                        <Icon icon="ri:admin-line" width={16} height={16}/>
                       </span>
                       <p style={{ fontSize:"0.75rem" }}>Administrator</p>
                     </div>
@@ -310,7 +310,7 @@ function SideBarLg() {
                       <span style={{ lineHeight: 0 }}>
                         <Icon
                           icon="mdi:book-edit-outline"
-                          width={12} height={12}
+                          width={16} height={16}
                         />
                       </span>
                       <p style={{ fontSize:"0.75rem" }}>Academics</p>
@@ -448,7 +448,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="healthicons:i-exam-multiple-choice-outline" width={12} height={12}/>
+                        <Icon icon="healthicons:i-exam-multiple-choice-outline" width={16} height={16}/>
                       </span>
                       <p style={{ fontSize:"0.75rem" }}>Manage Exams</p>
                     </div>
@@ -564,7 +564,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight:0 }}>
-                        <Icon icon="material-symbols:repeat-rounded" width={12} height={12}/>
+                        <Icon icon="material-symbols:repeat-rounded" width={16} height={16}/>
                       </span>
                       <p style={{ fontSize:"0.75rem" }}>Manage Resit</p>
                     </div>
@@ -680,7 +680,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight:0 }}>
-                        <Icon icon="ph:student" width={12} height={12}/>
+                        <Icon icon="ph:student" width={16} height={16}/>
                       </span>
                       <p style={{ fontSize:"0.75rem" }}>Manage Students</p>
                     </div>
@@ -796,7 +796,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="mynaui:activity-square" width={12} height={12}/>
+                        <Icon icon="mynaui:activity-square" width={16} height={16}/>
                       </span>
                       <p style={{ fontSize:"0.75rem" }}>School Activities</p>
                     </div>
@@ -902,7 +902,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="healthicons:money-bag-outline" width={12} height={12} />
+                        <Icon icon="healthicons:money-bag-outline" width={16} height={16} />
                       </span>
                       <p style={{ fontSize:"0.75rem" }}>Finances</p>
                     </div>
@@ -1039,7 +1039,7 @@ function SideBarLg() {
                 >
                   <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
                     <span style={{ lineHeight:0}}>
-                      <Icon icon="streamline-plump:password-lock" height={12} width={12}/>
+                      <Icon icon="streamline-plump:password-lock" height={16} width={16}/>
                     </span>
                     <span style={{ fontSize:"0.75rem" }}>Account Activation</span>
                   </div>
@@ -1060,7 +1060,7 @@ function SideBarLg() {
             >
               <span style={{ fontSize:"0.75rem" }}>Setting</span>
               <span style={{ lineHeight: 0 }}>
-                <Icon icon="uil:setting" width={12} height={12}/>
+                <Icon icon="uil:setting" width={16} height={16}/>
               </span>
             </div>
             <div className="w-100">
@@ -1070,7 +1070,7 @@ function SideBarLg() {
               >
                 <span style={{ fontSize:"0.75rem" }}>Logout</span>
                 <span style={{ lineHeight: 0 }}>
-                  <Icon icon="mynaui:logout" width={12} height={12}/>
+                  <Icon icon="mynaui:logout" width={16} height={16}/>
                 </span>
               </ModalButton>
             </div>
@@ -1157,9 +1157,9 @@ function SideBarSmTab({ items }) {
               className={`sidebar-sm  menu border p-2 ${
                 darkMode ? "dark-bg" : "bg-white"
               } rounded shadow-lg`}
-              initial={{ opacity: 0, x: 12 }}
+              initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 12 }}
+              exit={{ opacity: 0, x: 16 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
             >
               {items.menuItems.map((item, index) => {

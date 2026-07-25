@@ -41,7 +41,7 @@ const themePersistConfig = {
 const teacherPersistConfig = {
   key: "teachers",
   storage,
-  whitelist: ["selectedTeachers", "rowCount", "searchText", "columns"],
+  whitelist: ["selectedTeachers", "rowCount", "searchText", "columns", "import"],
   blacklist: ["isLoading", "error"],
 };
 

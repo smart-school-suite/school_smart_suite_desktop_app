@@ -12,12 +12,30 @@ const initialState = {
     availableColumns: [],
   },
   customFilter: [],
+  import: {
+    status: "IDLE",
+    selectedFile: null
+  },
 };
 
 const teacherSlice = createSlice({
   name: "teachers",
   initialState,
   reducers: {
+    setImportStatus: (state, action) => {
+      const { status } = action.payload;
+      state.import.status = status;
+    },
+    setImportSelectedFile: (state, action) => {
+      const { selectedFile } = action.payload;
+      state.import.selectedFile = selectedFile;
+    },
+    setImportReset: (state, action) => {
+      state.import = {
+        status: "IDLE",
+        selectedFile: null,
+      };
+    },
     addCustomFilter: (state, action) => {
       const myId = uuidv4();
       state.customFilter.push({
@@ -28,7 +46,7 @@ const teacherSlice = createSlice({
       });
     },
     resetAllCustomFilters: (state) => {
-       state.customFilter = [];
+      state.customFilter = [];
     },
     removeCustomFilter: (state, action) => {
       const { id } = action.payload;
@@ -39,7 +57,6 @@ const teacherSlice = createSlice({
     },
     setCustomFilter: (state, action) => {
       const { id, field, value } = action.payload;
-      console.log(action.payload);
       const customFilter = state.customFilter.find((cf) => cf.id === id);
       if (!customFilter) return;
 
@@ -106,7 +123,10 @@ export const {
   updateSelectedColumns,
   setTableRef,
   toggleGeneralFilter,
-  resetAllCustomFilters
+  resetAllCustomFilters,
+  setImportStatus,
+  setImportSelectedFile,
+  setImportReset
 } = teacherSlice.actions;
 
 export default teacherSlice.reducer;

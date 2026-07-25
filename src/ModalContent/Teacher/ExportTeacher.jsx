@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import ExportGenerationService from "../../services/export/ExportGenerationService";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import {  EXPORT_FORMAT, EXPORT_LABEL } from "@/constants";
 
 function SortableColumnItem({ column }) {
   const {
@@ -62,6 +63,7 @@ function ExportTeacher({ handleClose, rowData }) {
   const selectedRows = rowData.tableRef.current.getSelectedRows();
   const currentPageRows = rowData.tableRef.current.getCurrentPageRows();
   const allTableData = rowData.tableRef.current.getAllTableData();
+  const filteredTableData = rowData.tableRef.current.getAllFilteredData();
   const columns = [
     { headerName: "Full Name", field: "name" },
     { headerName: "Username", field: "username" },
@@ -75,7 +77,7 @@ function ExportTeacher({ handleClose, rowData }) {
 
   const [selectedColumns, setSelectedColumns] = useState(columns);
   const [scope, setScope] = useState("all");
-  const [format, setFormat] = useState("pdf");
+  const [format, setFormat] = useState(EXPORT_FORMAT.PDF);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -92,6 +94,7 @@ function ExportTeacher({ handleClose, rowData }) {
   const getPreviewRows = () => {
     if (scope === "selected") return selectedRows;
     if (scope === "current") return currentPageRows;
+    if(scope === "filtered") return filteredTableData;
     return allTableData;
   };
 
@@ -197,6 +200,20 @@ function ExportTeacher({ handleClose, rowData }) {
                     </p>
                   </div>
                 </div>
+                <div
+                  className={`card p-2 d-flex flex-column gap-4 rounded-4 pointer-cursor ${scope === "filtered" ? "border-primary" : ""}`}
+                  onClick={() => setScope("filtered")}
+                >
+                  <div className="d-flex flex-row align-items-center justify-content-between">
+                    <span className="fw-semibold">Filtered  Rows </span>
+                    <span>{filteredTableData.length} Rows</span>
+                  </div>
+                  <div>
+                    <p className="m-0">
+                      Export only the rows you've filtered in the table.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -204,9 +221,9 @@ function ExportTeacher({ handleClose, rowData }) {
               <span className="fw-bold">Format</span>
               <div className="d-flex flex-row align-items-center flex-wrap gap-2">
                 <div
-                  className={`card p-2 rounded-4 d-flex flex-column gap-2 pointer-cursor ${format === "pdf" ? "border-primary" : ""}`}
+                  className={`card p-2 rounded-4 d-flex flex-column gap-2 pointer-cursor ${format === EXPORT_FORMAT.PDF ? "border-primary" : ""}`}
                   style={{ width: "32%" }}
-                  onClick={() => setFormat("pdf")}
+                  onClick={() => setFormat(EXPORT_FORMAT.PDF)}
                 >
                   <div className="d-flex gap-2 flex-column justify-content-center align-items-center ">
                     <span>
@@ -216,16 +233,16 @@ function ExportTeacher({ handleClose, rowData }) {
                         height={20}
                       />
                     </span>
-                    <span>PDF</span>
+                    <span>{EXPORT_LABEL.PDF}</span>
                   </div>
                   <div>
                     <p className="text-center m-0">Print-ready report (.pdf)</p>
                   </div>
                 </div>
                 <div
-                  className={`card p-2 rounded-4 d-flex flex-column gap-2 pointer-cursor ${format === "xlsx" ? "border-primary" : ""}`}
+                  className={`card p-2 rounded-4 d-flex flex-column gap-2 pointer-cursor ${format === EXPORT_FORMAT.EXCEL ? "border-primary" : ""}`}
                   style={{ width: "32%" }}
-                  onClick={() => setFormat("xlsx")}
+                  onClick={() => setFormat(EXPORT_FORMAT.EXCEL)}
                 >
                   <div className="d-flex gap-2 flex-column justify-content-center align-items-center">
                     <span>
@@ -242,9 +259,9 @@ function ExportTeacher({ handleClose, rowData }) {
                   </div>
                 </div>
                 <div
-                  className={`card p-2 rounded-4 d-flex flex-column gap-2 pointer-cursor ${format === "csv" ? "border-primary" : ""}`}
+                  className={`card p-2 rounded-4 d-flex flex-column gap-2 pointer-cursor ${format === EXPORT_FORMAT.CSV ? "border-primary" : ""}`}
                   style={{ width: "32%" }}
-                  onClick={() => setFormat("csv")}
+                  onClick={() => setFormat(EXPORT_FORMAT.CSV)}
                 >
                   <div className="d-flex gap-2 flex-column justify-content-center align-items-center">
                     <span>
@@ -254,7 +271,7 @@ function ExportTeacher({ handleClose, rowData }) {
                         height={20}
                       />
                     </span>
-                    <span className="fw-bold">CSV</span>
+                    <span className="fw-bold">{EXPORT_LABEL.CSV}</span>
                   </div>
                   <div className="d-flex flex-column align-items-center">
                     <p className="text-center m-0">Raw data file</p>
