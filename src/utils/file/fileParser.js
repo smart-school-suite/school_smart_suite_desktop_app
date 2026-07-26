@@ -1,4 +1,121 @@
 import * as XLSX from "xlsx";
+import Papa from "papaparse";
+
+export const readSpreadsheetData = (file, mapping = {}) => {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      reject(new Error("No file provided"));
+      return;
+    }
+
+    const ext = file.name.split(".").pop().toLowerCase();
+    const reader = new FileReader();
+    const applyMapping = (rows, mapping) => {
+      const entries = Object.entries(mapping || {});
+
+      if (entries.length === 0) return rows;
+
+      return rows.map((row) => {
+        const mapped = {};
+        entries.forEach(([targetField, sourceColumn]) => {
+          if (!sourceColumn) {
+            mapped[targetField] = "";
+            return;
+          }
+          mapped[targetField] =
+            row[sourceColumn] !== undefined && row[sourceColumn] !== null
+              ? row[sourceColumn]
+              : "";
+        });
+        return mapped;
+      });
+    };
+
+    const parseCsvToObjects = (text) => {
+      if (!text || !text.trim()) return [];
+
+      const { data, errors } = Papa.parse(text, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: (header) => header.trim(),
+        transform: (value) => (typeof value === "string" ? value.trim() : value),
+      });
+
+      if (errors.length > 0) {
+        const fatal = errors.filter((e) => e.type !== "FieldMismatch");
+        if (fatal.length > 0) {
+          throw new Error(`Failed to parse CSV file: ${fatal[0].message}`);
+        }
+      }
+
+      return data;
+    };
+
+    const parseExcelToObjects = (data) => {
+      try {
+        const workbook = XLSX.read(data, { type: "array" });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+
+        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        const nonBlankRows = rows.filter((row) =>
+          row.some((cell) => cell !== null && cell !== undefined && cell !== "")
+        );
+
+        if (nonBlankRows.length === 0) return [];
+
+        const headers = nonBlankRows[0].map((h) => String(h).trim());
+        const result = [];
+        for (let i = 1; i < nonBlankRows.length; i++) {
+          const row = nonBlankRows[i];
+          const obj = {};
+          headers.forEach((header, index) => {
+            obj[header] =
+              row[index] !== undefined && row[index] !== null
+                ? String(row[index]).trim()
+                : "";
+          });
+          result.push(obj);
+        }
+
+        return result;
+      } catch (error) {
+        throw new Error(`Failed to parse Excel file: ${error.message}`);
+      }
+    };
+
+    if (ext === "csv") {
+      reader.onload = (e) => {
+        try {
+          const text = e.target.result || "";
+          const rows = parseCsvToObjects(text);
+          resolve(applyMapping(rows, mapping));
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = () => reject(new Error("Failed to read CSV file"));
+      reader.readAsText(file);
+    } else if (ext === "xlsx" || ext === "xls") {
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const rows = parseExcelToObjects(data);
+          resolve(applyMapping(rows, mapping));
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = () => reject(new Error("Failed to read Excel file"));
+      reader.readAsArrayBuffer(file);
+    } else {
+      reject(
+        new Error("Unsupported file format. Please use CSV, XLSX, or XLS files.")
+      );
+    }
+  });
+};
 
 const countCsvRows = (file) => {
   return new Promise((resolve, reject) => {
@@ -148,3 +265,56 @@ export const autoMatchColumns = (fileHeaders = [], targetFields = []) => {
 
   return initialMapping;
 };
+
+export function categorizeImportData(columns, data) {
+  const result = {
+    ready: [],
+    warnings: [],
+    errors: []
+  };
+
+  const requiredFields = columns.filter(col => col.required).map(col => col.program_name);
+  const optionalFields = columns.filter(col => !col.required).map(col => col.program_name);
+
+  const isEmpty = (value) => {
+    return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
+  };
+
+  data.forEach((row, index) => {
+    const rowIssues = {
+      errors: [],
+      warnings: []
+    };
+
+    for (const field of requiredFields) {
+      if (isEmpty(row[field])) {
+        rowIssues.errors.push(`Missing required field: '${field}'`);
+      }
+    }
+
+    for (const field of optionalFields) {
+      if (isEmpty(row[field])) {
+        rowIssues.warnings.push(`Missing optional field: '${field}'`);
+      }
+    }
+
+    const processedRow = {
+      ...row,
+      _meta: {
+        rowIndex: index,
+        errors: rowIssues.errors,
+        warnings: rowIssues.warnings
+      }
+    };
+
+    if (rowIssues.errors.length > 0) {
+      result.errors.push(processedRow);
+    } else if (rowIssues.warnings.length > 0) {
+      result.warnings.push(processedRow);
+    } else {
+      result.ready.push(processedRow);
+    }
+  });
+
+  return result;
+}

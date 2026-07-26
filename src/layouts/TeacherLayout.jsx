@@ -19,7 +19,7 @@ export const sideBarData = [
 const importMap = {
   "/teacher": {
     component: TeacherImportWizzard,
-    size: "lg",
+    size: "xl",
     title: "Import Teacher",
   },
   // "/teacher-course": {
@@ -73,15 +73,20 @@ function TeacherLayout() {
               <ModalButton
                 action={{ modalContent: currentImportConfig.component }}
                 size={currentImportConfig.size || "lg"}
+                classname={
+                  "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
+                }
               >
-                <button className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
-                  <span style={{ lineHeight: "16px" }}>Import</span>
-                  <span>
-                    <Icon icon="tabler:arrow-down" width={14} height={14} />
-                  </span>
-                </button>
+                <span style={{ lineHeight: "16px" }}>Import</span>
+                <span>
+                  <Icon icon="tabler:arrow-down" width={14} height={14} />
+                </span>
               </ModalButton>
-              <button className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg">
+              <ModalButton
+                classname={
+                  "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
+                }
+              >
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <span>
                   <Icon
@@ -90,18 +95,16 @@ function TeacherLayout() {
                     height={16}
                   />
                 </span>
-              </button>
+              </ModalButton>
               {location.pathname === sideBarData[0].path && (
                 <ModalButton
                   action={{ modalContent: CreateTeacher }}
                   size={"lg"}
+                  classname={
+                    "border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
+                  }
                 >
-                  <button
-                    className="border-none border rounded-3 font-size-sm px-2 primary-background text-white text-capitalize"
-                    style={{ padding: "0.38rem" }}
-                  >
-                    <span>create teacher</span>
-                  </button>
+                  <span>create teacher</span>
                 </ModalButton>
               )}
             </div>

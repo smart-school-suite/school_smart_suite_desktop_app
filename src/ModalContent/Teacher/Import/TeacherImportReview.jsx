@@ -1,7 +1,14 @@
 import { Icon } from "@iconify/react";
 import Table from "../../../components/Tables/Tables";
 import { teacherImportColDefs } from "../../../utils/table/colDefs/teachers/teacherImportColdefs";
-import { useRef } from "react";
+import { useRef, useMemo, useEffect, useState, Fragment } from "react";
+import { useSelector } from "react-redux";
+import {
+  readSpreadsheetData,
+  categorizeImportData,
+} from "../../../utils/file/fileParser";
+import { reconstructFileFromRedux } from "../../../utils/file/fileReconstruction";
+import { TEACHER_COLUMNS } from "../../../utils/teacher/teacherColumns";
 function TeacherImportReview({
   handleClose,
   nextStep,
@@ -9,84 +16,70 @@ function TeacherImportReview({
   currentStep,
   fullStep,
 }) {
+  const [fileData, setFileData] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const [searchText, setSearchText] = useState("");
   const tableRef = useRef();
-  const mockData = [
+  const teacherState = useSelector((state) => state.teachers);
+  const mapping = teacherState.import.mapping;
+  const file = useMemo(() => {
+    const serializedFile = teacherState?.import?.selectedFile?.serializedFile;
+    if (!serializedFile) return null;
+    try {
+      return reconstructFileFromRedux(serializedFile);
+    } catch (error) {
+      console.error("Failed to reconstruct file:", error);
+      return null;
+    }
+  }, [teacherState?.import?.selectedFile?.serializedFile]);
+  useEffect(() => {
+    const loadFileData = async () => {
+      if (!file) return;
+
+      try {
+        const data = await readSpreadsheetData(file, mapping);
+        setFileData(data);
+      } catch (error) {
+        console.error("Failed to read file:", error);
+      }
+    };
+
+    loadFileData();
+  }, [file]);
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+    if (tableRef.current && tableRef.current.setGridOption) {
+      tableRef.current.setGridOption("quickFilterText", value);
+    }
+  };
+
+  const categorizeData = categorizeImportData(TEACHER_COLUMNS, fileData);
+
+  const FILTERS = [
     {
-      email: "paul.nguemo@yahoo.fr",
-      first_name: "Paul",
-      last_name: "Nguemo",
-      name: "Paul Nguemo",
-      phone: "+237 699 123 456",
-      gender: "Male",
-      address: "Quartier Mvog-Mbi, Yaoundé, Cameroon",
+      label: "All",
+      key: "all",
     },
     {
-      email: "marie.abena@gmail.com",
-      first_name: "Marie",
-      last_name: "Abena",
-      name: "Marie Abena",
-      phone: "+237 677 987 654",
-      gender: "Female",
-      address: "Rue de la Paix, Douala, Cameroon",
+      label: "Ready",
+      key: "ready",
     },
     {
-      email: "jean.kouadio@yahoo.com",
-      first_name: "Jean",
-      last_name: "Kouadio",
-      name: "Jean Kouadio",
-      phone: "+237 698 345 789",
-      gender: "Male",
-      address: "Bastos, Yaoundé, Cameroon",
+      label: "warnings",
+      key: "warnings",
     },
     {
-      email: "esther.ngono@gmail.com",
-      first_name: "Esther",
-      last_name: "Ngono",
-      name: "Esther Ngono",
-      phone: "+237 655 234 567",
-      gender: "Female",
-      address: "Bonamoussadi, Douala, Cameroon",
-    },
-    {
-      email: "michel.mbarga@outlook.com",
-      first_name: "Michel",
-      last_name: "Mbarga",
-      name: "Michel Mbarga",
-      phone: "+237 678 876 543",
-      gender: "Male",
-      address: "Mendong, Yaoundé, Cameroon",
-    },
-    {
-      email: "francoise.ndongo@yahoo.fr",
-      first_name: "Françoise",
-      last_name: "Ndongo",
-      name: "Françoise Ndongo",
-      phone: "+237 699 456 789",
-      gender: "Female",
-      address: "Bonanjo, Douala, Cameroon",
-    },
-    {
-      email: "joseph.biya@gmail.com",
-      first_name: "Joseph",
-      last_name: "Biya",
-      name: "Joseph Biya",
-      phone: "+237 676 543 210",
-      gender: "Male",
-      address: "Etoa-Meki, Yaoundé, Cameroon",
-    },
-    {
-      email: "catherine.essomba@yahoo.com",
-      first_name: "Catherine",
-      last_name: "Essomba",
-      name: "Catherine Essomba",
-      phone: "+237 697 654 321",
-      gender: "Female",
-      address: "Akwa, Douala, Cameroon",
+      label: "errors",
+      key: "errors",
     },
   ];
+
+  console.log(mapping);
   return (
     <>
-      <div className="d-flex flex-column font-size-sm gap-3">
+      <div className="d-flex flex-column font-size-sm gap-4">
         <div className="d-flex flex-row align-items-center justify-content-between">
           <span className="fw-semibold">Import Teacher</span>
           <span
@@ -112,47 +105,55 @@ function TeacherImportReview({
         <div className="d-flex flex-row justify-content-between">
           <div className="d-flex row align-items-center gap-2 align-items-center text-center">
             <span>rows</span>
-            <span className="fw-bold">126 </span>
+            <span className="fw-bold">{fileData?.length || 0}</span>
           </div>
           <div className="d-flex row align-items-center gap-2 align-items-center text-center">
             <span> Ready</span>
-            <span className="fw-bold">118</span>
+            <span className="fw-bold">
+              {categorizeData?.ready?.length || 0}
+            </span>
           </div>
           <div className="d-flex row align-items-center gap-2 align-items-center text-center">
-            <span>rows</span>
-            <span className="fw-bold">126 </span>
+            <span>errors</span>
+            <span className="fw-bold">
+              {categorizeData?.errors?.length || 0}
+            </span>
           </div>
           <div className="d-flex row align-items-center gap-2 align-items-center text-center">
             <span>Warnings</span>
-            <span className="fw-bold">6 </span>
+            <span className="fw-bold">
+              {categorizeData?.warnings?.length || 0}
+            </span>
           </div>
         </div>
-        <div className="d-flex flex-column gap-2">
+        <div className="d-flex flex-column gap-3">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex flex-row align-items-center gap-2">
-              <button className="font-size-sm border-none border bg-transparent px-2 py-1 rounded-3">
-                All 126
-              </button>
-              <button className="font-size-sm border-none border bg-transparent px-2 py-1 rounded-3">
-                Ready 118
-              </button>
-              <button className="font-size-sm border-none border bg-transparent px-2 py-1 rounded-3">
-                Warnings 6
-              </button>
-              <button className="font-size-sm border-none border bg-transparent px-2 py-1 rounded-3">
-                Errors 2
-              </button>
+              {FILTERS.map((f) => (
+                <Fragment>
+                  <button
+                    className={`font-size-sm border-none border text-capitalize  px-2 py-1 rounded-3 transition-all ${filter === f.key ? "primary-background-200 color-primary" : "bg-transparent"}`}
+                    onClick={() => {
+                      setFilter(f.key);
+                    }}
+                  >
+                    {f.label} 126
+                  </button>
+                </Fragment>
+              ))}
             </div>
             <input
               type="search"
-              className="form-control font-size-sm w-50"
+              className="form-control font-size-sm w-25"
               placeholder="Search......."
+              onChange={handleSearch}
+              value={searchText}
             />
           </div>
-          <div style={{ height: "48dvh" }}>
+          <div style={{ height: "42dvh" }}>
             <Table
               colDefs={teacherImportColDefs()}
-              rowData={mockData}
+              rowData={fileData}
               ref={tableRef}
             />
           </div>

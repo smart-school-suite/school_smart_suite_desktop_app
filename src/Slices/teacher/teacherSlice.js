@@ -14,7 +14,8 @@ const initialState = {
   customFilter: [],
   import: {
     status: "IDLE",
-    selectedFile: null
+    selectedFile: null,
+    mapping: {},
   },
 };
 
@@ -35,6 +36,9 @@ const teacherSlice = createSlice({
         status: "IDLE",
         selectedFile: null,
       };
+    },
+    setColumnMapping: (state, action) => {
+      state.import.mapping = action.payload;
     },
     addCustomFilter: (state, action) => {
       const myId = uuidv4();
@@ -126,7 +130,8 @@ export const {
   resetAllCustomFilters,
   setImportStatus,
   setImportSelectedFile,
-  setImportReset
+  setImportReset,
+  setColumnMapping,
 } = teacherSlice.actions;
 
 export default teacherSlice.reducer;

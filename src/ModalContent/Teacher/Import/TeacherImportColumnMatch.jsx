@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { Icon } from "@iconify/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useFloating,
   useInteractions,
@@ -22,53 +22,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   getSpreadsheetHeaders,
   autoMatchColumns,
+  categorizeImportData
 } from "../../../utils/file/fileParser";
 import { reconstructFileFromRedux } from "../../../utils/file/fileReconstruction";
-
-const TEACHER_COLUMNS = [
-  {
-    program_name: "email",
-    label: "Email",
-    required: true,
-    aliases: ["email_address", "mail", "e-mail"],
-  },
-  {
-    program_name: "full_names",
-    label: "Full Names",
-    required: true,
-    aliases: ["name", "full_name", "teacher_name"],
-  },
-  {
-    program_name: "first_name",
-    label: "First Name",
-    required: true,
-    aliases: ["fname", "given_name", "firstname"],
-  },
-  {
-    program_name: "last_name",
-    label: "Last Name",
-    required: true,
-    aliases: ["lname", "surname", "family_name", "lastname"],
-  },
-  {
-    program_name: "phone",
-    label: "Phone",
-    required: false,
-    aliases: ["phone_number", "telephone", "mobile", "contact"],
-  },
-  {
-    program_name: "address",
-    label: "Address",
-    required: false,
-    aliases: ["residence", "location", "street"],
-  },
-  {
-    program_name: "gender",
-    label: "Gender",
-    required: false,
-    aliases: ["sex"],
-  },
-];
+import { TEACHER_COLUMNS } from "../../../utils/teacher/teacherColumns";
+import { setColumnMapping } from "../../../Slices/teacher/teacherSlice";
 
 function TeacherImportColumnMatch({
   handleClose,
@@ -78,7 +36,7 @@ function TeacherImportColumnMatch({
   fullStep,
 }) {
   const teacherState = useSelector((state) => state.teachers);
-
+  const dispatch = useDispatch();
   const file = useMemo(() => {
     const serializedFile = teacherState?.import?.selectedFile?.serializedFile;
     if (!serializedFile) return null;
@@ -194,7 +152,6 @@ function TeacherImportColumnMatch({
       };
     });
   }, [teacherColumns, mapping, fileHeaders]);
-
   return (
     <div className="d-flex flex-column font-size-sm gap-4">
       <div className="d-flex flex-row align-items-center justify-content-between">
@@ -299,7 +256,10 @@ function TeacherImportColumnMatch({
                 : "bg-secondary opacity-50 cursor-not-allowed"
             }`}
             disabled={!allRequiredMatched || loading}
-            onClick={() => nextStep && nextStep(mapping)}
+            onClick={() => {
+              dispatch(setColumnMapping(mapping))
+               nextStep && nextStep()
+            }}
           >
            Next
           </button>
@@ -368,7 +328,7 @@ function ColumnDropdown({ options = [], selectedValue, onSelect }) {
         {isOpen && (
           <div
             ref={refs.setFloating}
-            style={{ ...floatingStyles, zIndex: 1000, paddingRight: "0.5rem" }}
+            style={{ ...floatingStyles, zIndex: 1000 }}
             {...getFloatingProps()}
           >
             <motion.div
@@ -376,7 +336,7 @@ function ColumnDropdown({ options = [], selectedValue, onSelect }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -4 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
-              className="bg-white border shadow-sm d-flex flex-column gap-1 scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto p-2 "
+              className="bg-white border shadow-sm d-flex flex-column gap-2 scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto p-1"
               style={{
                 width: "20vw",
                 minWidth: "180px",
@@ -387,18 +347,18 @@ function ColumnDropdown({ options = [], selectedValue, onSelect }) {
               {options.map((option, index) => {
                 const isSelected = selectedValue === option;
                 return (
-                  <div
+                  <button
                     key={index}
                     onClick={() => handleSelect(option)}
-                    className="px-3 py-2 cursor-pointer text-dark rounded-2 text-truncate"
+                    className="p-2 cursor-pointer text-dark rounded-2 hover-bg-primary-100 hover-text-primary-400 d-flex flex-row justify-content-start border-none"
                     style={{
                       cursor: "pointer",
-                      backgroundColor: isSelected ? "#f8f9fa" : "transparent",
+                      backgroundColor: isSelected ? "#e0f2fe" : "transparent",
                       fontWeight: isSelected ? "600" : "normal",
                     }}
                   >
                     {option}
-                  </div>
+                  </button>
                 );
               })}
             </motion.div>

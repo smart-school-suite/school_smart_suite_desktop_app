@@ -334,7 +334,7 @@
 
 .transition-all {
   transition-property: all;
-  transition-duration: 0.3s;
+  transition-duration: 0.24s;
   transition-timing-function: ease-in-out;
 }
 
@@ -463,77 +463,181 @@ body {
   width: 3px;
 }
 
-
 /* ─── Letter-spacing utilities using root variables ──────── */
 
-.tracking-tighter  { letter-spacing: var(--tracking-tighter); }
-.tracking-tight    { letter-spacing: var(--tracking-tight); }
-.tracking-normal   { letter-spacing: var(--tracking-normal); }
-.tracking-wide     { letter-spacing: var(--tracking-wide); }
-.tracking-wider    { letter-spacing: var(--tracking-wider); }
-.tracking-widest   { letter-spacing: var(--tracking-widest); }
+.tracking-tighter {
+  letter-spacing: var(--tracking-tighter);
+}
+.tracking-tight {
+  letter-spacing: var(--tracking-tight);
+}
+.tracking-normal {
+  letter-spacing: var(--tracking-normal);
+}
+.tracking-wide {
+  letter-spacing: var(--tracking-wide);
+}
+.tracking-wider {
+  letter-spacing: var(--tracking-wider);
+}
+.tracking-widest {
+  letter-spacing: var(--tracking-widest);
+}
 
-.tracking-0     { letter-spacing: var(--tracking-0); }
-.tracking-025   { letter-spacing: var(--tracking-025); }
-.tracking-050   { letter-spacing: var(--tracking-050); }
-.tracking-075   { letter-spacing: var(--tracking-075); }
-.tracking-100   { letter-spacing: var(--tracking-100); }
-.tracking-150   { letter-spacing: var(--tracking-150); }
-.tracking-200   { letter-spacing: var(--tracking-200); }
-.tracking-300   { letter-spacing: var(--tracking-300); }
+.tracking-0 {
+  letter-spacing: var(--tracking-0);
+}
+.tracking-025 {
+  letter-spacing: var(--tracking-025);
+}
+.tracking-050 {
+  letter-spacing: var(--tracking-050);
+}
+.tracking-075 {
+  letter-spacing: var(--tracking-075);
+}
+.tracking-100 {
+  letter-spacing: var(--tracking-100);
+}
+.tracking-150 {
+  letter-spacing: var(--tracking-150);
+}
+.tracking-200 {
+  letter-spacing: var(--tracking-200);
+}
+.tracking-300 {
+  letter-spacing: var(--tracking-300);
+}
 
 /* negatives */
-.-tracking-025  { letter-spacing: var(--tracking--025); }
-.-tracking-050  { letter-spacing: var(--tracking--050); }
-.-tracking-075  { letter-spacing: var(--tracking--075); }
-.-tracking-100  { letter-spacing: var(--tracking--100); }
-.-tracking-150  { letter-spacing: var(--tracking--150); }
-.-tracking-200  { letter-spacing: var(--tracking--200); }
+.-tracking-025 {
+  letter-spacing: var(--tracking--025);
+}
+.-tracking-050 {
+  letter-spacing: var(--tracking--050);
+}
+.-tracking-075 {
+  letter-spacing: var(--tracking--075);
+}
+.-tracking-100 {
+  letter-spacing: var(--tracking--100);
+}
+.-tracking-150 {
+  letter-spacing: var(--tracking--150);
+}
+.-tracking-200 {
+  letter-spacing: var(--tracking--200);
+}
 
 /* semantic helpers */
-.tracking-caps    { letter-spacing: var(--tracking-caps); }
-.tracking-title   { letter-spacing: var(--tracking-title); }
-.tracking-button  { letter-spacing: var(--tracking-button); }
+.tracking-caps {
+  letter-spacing: var(--tracking-caps);
+}
+.tracking-title {
+  letter-spacing: var(--tracking-title);
+}
+.tracking-button {
+  letter-spacing: var(--tracking-button);
+}
 
 /* reset / force default */
-.tracking-reset   { letter-spacing: normal !important; }
-
-.over-flow-x-scroll{
-   overflow-x: scroll;
+.tracking-reset {
+  letter-spacing: normal !important;
 }
 
-.over-flow-x-auto{
-   overflow-x: auto;
+.over-flow-x-scroll {
+  overflow-x: scroll;
 }
 
-.over-flow-x-hidden{
-   overflow-x: hidden;
+.over-flow-x-auto {
+  overflow-x: auto;
 }
 
-.over-flow-y-scroll{
-   overflow-y: scroll;
+.over-flow-x-hidden {
+  overflow-x: hidden;
 }
 
-.over-flow-y-auto{
-   overflow-y: auto;
+.over-flow-y-scroll {
+  overflow-y: scroll;
 }
 
-.over-flow-y-hidden{
-   overflow-y: hidden;
+.over-flow-y-auto {
+  overflow-y: auto;
 }
 
-.width-auto{
-   width: auto;
+.over-flow-y-hidden {
+  overflow-y: hidden;
 }
 
-.height-auto{
-   height: auto;
+.width-auto {
+  width: auto;
 }
 
-.z-index-master{
-   z-index: 999;
+.height-auto {
+  height: auto;
 }
 
-.border-primary{
-   border: 1px solid var(--primary-color-300) !important;
+.z-index-master {
+  z-index: 999;
+}
+
+.border-primary {
+  border: 1px solid var(--primary-color-300) !important;
+}
+
+/* ──────────────────────────────────────────────
+   Hover Background
+────────────────────────────────────────────── */
+.hover-bg-primary-50:hover {
+  background-color: var(--primary-color-50) !important;
+}
+.hover-bg-primary-100:hover {
+  background-color: var(--primary-color-100) !important;
+}
+.hover-bg-primary-200:hover {
+  background-color: var(--primary-color-200) !important;
+}
+.hover-bg-primary-300:hover {
+  background-color: var(--primary-color-300) !important;
+}
+.hover-bg-primary-400:hover {
+  background-color: var(--primary-color-400) !important;
+}
+
+/* ──────────────────────────────────────────────
+   Hover Text
+────────────────────────────────────────────── */
+.hover-text-primary-50:hover {
+  color: var(--primary-color-50) !important;
+}
+.hover-text-primary-100:hover {
+  color: var(--primary-color-100) !important;
+}
+.hover-text-primary-200:hover {
+  color: var(--primary-color-200) !important;
+}
+.hover-text-primary-300:hover {
+  color: var(--primary-color-300) !important;
+}
+.hover-text-primary-400:hover {
+  color: var(--primary-color-400) !important;
+}
+
+/* ──────────────────────────────────────────────
+   Hover Border
+────────────────────────────────────────────── */
+.hover-border-primary-50:hover {
+  border-color: var(--primary-color-50);
+}
+.hover-border-primary-100:hover {
+  border-color: var(--primary-color-100);
+}
+.hover-border-primary-200:hover {
+  border-color: var(--primary-color-200);
+}
+.hover-border-primary-300:hover {
+  border-color: var(--primary-color-300);
+}
+.hover-border-primary-400:hover {
+  border-color: var(--primary-color-400);
 }

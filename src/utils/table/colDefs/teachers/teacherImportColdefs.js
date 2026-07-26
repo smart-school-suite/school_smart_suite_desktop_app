@@ -13,17 +13,15 @@ export function teacherImportColDefs() {
     textColumn({
       field: "first_name",
       headerName: "First Name",
-      hide: true,
       cellRenderer: TextComponent,
     }),
     textColumn({
       field: "last_name",
       headerName: "Last Name",
-      hide: true,
       cellRenderer: TextComponent,
     }),
     textColumn({
-      field: "name",
+      field: "full_names",
       headerName: "Full Names",
       cellRenderer: TextComponent,
     }),
@@ -40,6 +38,11 @@ export function teacherImportColDefs() {
     textColumn({
       headerName: "Gender",
       field: "gender",
+      cellRenderer: TextComponent,
+    }),
+    textColumn({
+      headerName: "Address",
+      field: "address",
       cellRenderer: TextComponent,
     }),
   ];

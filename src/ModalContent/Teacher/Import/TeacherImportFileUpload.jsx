@@ -52,7 +52,6 @@ function FileUpload({ onFileSelect, fileInfo, onClearFile }) {
           name: file.name,
           size: formattedSize,
           rows: rowCount,
-          rawFile: file,
           serializedFile
         });
       }
