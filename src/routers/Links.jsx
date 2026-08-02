@@ -51,7 +51,9 @@ function Links() {
                     <AblyProvider client={ablyClient}>
                       <ChannelProvider channelName={`private:App.Models.Schooladmin.${adminId}`}>
                         <ChannelProvider channelName={`private:schoolBranch.${schoolBranchId}.schoolAdmin.${adminId}.semesterTimetable`} >
+                          <ChannelProvider channelName={`private:schoolBranch.${schoolBranchId}.schoolAdmin.${adminId}.jobs`} >
                         <Layout />
+                        </ChannelProvider>
                         </ChannelProvider>
                       </ChannelProvider>
                     </AblyProvider>

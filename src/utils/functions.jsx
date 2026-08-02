@@ -746,3 +746,10 @@ export function removeKeyFromObject(obj, keyToRemove) {
   delete newObj[keyToRemove];
   return newObj;
 }
+
+export const isLastElement = (index, arrayOrLength) => {
+  const length = Array.isArray(arrayOrLength) 
+    ? arrayOrLength.length 
+    : arrayOrLength;
+  return index === length - 1;
+};

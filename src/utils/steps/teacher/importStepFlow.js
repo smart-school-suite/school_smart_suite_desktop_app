@@ -18,10 +18,5 @@ export const TEACHER_IMPORT_STEP_FLOW = [
     step: "REVIEW",
     label: "Review",
     component: TeacherImportReview,
-  },
-  {
-    step: "IMPORT",
-    label: "Import",
-    component: TeacherImport,
-  },
+  }
 ];

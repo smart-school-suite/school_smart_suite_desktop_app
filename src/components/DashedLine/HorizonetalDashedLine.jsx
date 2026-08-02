@@ -1,12 +1,16 @@
 import React from 'react';
 
 const HorizontalDashedLine = ({ 
-  color = '#000',   
-  thickness = 2,       
-  dashArray = '10, 5', 
-  rounded = true,      
-  className = ''       
+  color = '#000',           
+  thickness = 2,           
+  dashArray = '10, 5',     
+  rounded = true,          
+  className = '',          
+  dashed = true            // NEW: toggle between dashed and solid
 }) => {
+  // If dashed is false, use an empty dashArray for a solid line
+  const finalDashArray = dashed ? dashArray : 'none';
+  
   return (
     <div className={className} style={{ width: '100%' }}>
       <svg 
@@ -21,7 +25,7 @@ const HorizontalDashedLine = ({
           y2={thickness / 2} 
           stroke={color} 
           strokeWidth={thickness} 
-          strokeDasharray={dashArray} 
+          strokeDasharray={finalDashArray} 
           strokeLinecap={rounded ? 'round' : 'butt'} 
         />
       </svg>

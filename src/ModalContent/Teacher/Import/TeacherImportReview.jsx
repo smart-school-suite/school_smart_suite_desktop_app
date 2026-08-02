@@ -9,6 +9,7 @@ import {
 } from "../../../utils/file/fileParser";
 import { reconstructFileFromRedux } from "../../../utils/file/fileReconstruction";
 import { TEACHER_COLUMNS } from "../../../utils/teacher/teacherColumns";
+import { useImportTeacher } from "../../../hooks/teacher/useImportTeacher";
 function TeacherImportReview({
   handleClose,
   nextStep,
@@ -17,6 +18,12 @@ function TeacherImportReview({
   fullStep,
 }) {
   const [fileData, setFileData] = useState([]);
+  const {
+    mutate: importTeachers,
+    isPending,
+    isError,
+    error,
+  } = useImportTeacher();
   const [filter, setFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const tableRef = useRef();
@@ -76,7 +83,12 @@ function TeacherImportReview({
     },
   ];
 
-  console.log(mapping);
+  const handleTeacherImport = () => {
+    importTeachers({
+      file: file, 
+      map: mapping,
+    });
+  };
   return (
     <>
       <div className="d-flex flex-column font-size-sm gap-4">
@@ -175,7 +187,7 @@ function TeacherImportReview({
             </button>
             <button
               className="border-none border primary-background font-size-sm text-white p-2 rounded-3"
-              onClick={() => nextStep()}
+              onClick={() => handleTeacherImport()}
             >
               Import 118 teachers
             </button>

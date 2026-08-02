@@ -26,13 +26,13 @@ const Table = forwardRef((props, ref) => {
   const lightTheme = themeQuartz.withParams({
     browserColorScheme: "light",
     headerFontSize: "0.75rem",
-    fontFamily: { googleFont: "JetBrains Mono" },
+    fontFamily: { googleFont: "Poppins, sans-serif" },
   });
 
   const darkTheme = themeQuartz.withParams({
     browserColorScheme: "dark",
     headerFontSize: "0.75rem",
-    fontFamily: { googleFont: "JetBrains Mono" },
+    fontFamily: { googleFont: "Poppins, sans-serif" },
     backgroundColor: "#111",
     foregroundColor: "#666",
     headerBackgroundColor: "#111",
@@ -167,6 +167,7 @@ const Table = forwardRef((props, ref) => {
         onSelectionChanged={onSelectionChanged}
         onGridReady={gridReady}
         theme={appliedTheme}
+        loadThemeGoogleFonts={true} 
       />
     </div>
   );

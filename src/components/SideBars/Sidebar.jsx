@@ -24,7 +24,7 @@ import {
   teacherRoutes,
   hallRoutes,
   activationCodeRoutes,
-  courseRoutes
+  courseRoutes,
 } from "../../utils/paths";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import Logout from "../../ModalContent/Auth/Logout";
@@ -40,6 +40,19 @@ import {
   useRole,
   useInteractions,
 } from "@floating-ui/react";
+import {
+  LayoutDashboard,
+  UserRoundCog,
+  BookOpenCheck,
+  FileSpreadsheet,
+  RotateCcw,
+  Users,
+  Activity,
+  Wallet,
+  UserPlus,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
 import useScreenSize from "../../hooks/ui/useScreenSize";
@@ -147,9 +160,9 @@ function SideBarLg() {
                 >
                   <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
                     <span style={{ lineHeight: 0 }}>
-                      <Icon icon="radix-icons:dashboard" width={16} height={16} />
+                      <LayoutDashboard size={16} />
                     </span>
-                    <span style={{ fontSize:"0.75rem" }}>Dashboard</span>
+                    <span style={{ fontSize: "0.75rem" }}>Dashboard</span>
                   </div>
                 </div>
                 {/*Dashoard*/}
@@ -172,9 +185,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="ri:admin-line" width={16} height={16}/>
+                        <UserRoundCog size={16} />
                       </span>
-                      <p style={{ fontSize:"0.75rem" }}>Administrator</p>
+                      <p style={{ fontSize: "0.75rem" }}>Administrator</p>
                     </div>
                     <span>
                       <Icon
@@ -213,7 +226,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>School Admins</p>
+                            <p style={{ fontSize: "0.75rem" }}>School Admins</p>
                           </NavLink>
                         </div>
                       </div>
@@ -229,7 +242,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Departments</p>
+                            <p style={{ fontSize: "0.75rem" }}>Departments</p>
                           </NavLink>
                         </div>
                       </div>
@@ -245,7 +258,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Specialties</p>
+                            <p style={{ fontSize: "0.75rem" }}>Specialties</p>
                           </NavLink>
                         </div>
                       </div>
@@ -263,11 +276,11 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Teacher</p>
+                            <p style={{ fontSize: "0.75rem" }}>Teacher</p>
                           </div>
                         </div>
                       </div>
-                       <div
+                      <div
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
                         <div className="subbox-nav">
@@ -281,7 +294,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Halls</p>
+                            <p style={{ fontSize: "0.75rem" }}>Halls</p>
                           </div>
                         </div>
                       </div>
@@ -308,12 +321,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon
-                          icon="mdi:book-edit-outline"
-                          width={16} height={16}
-                        />
+                        <BookOpenCheck size={16} />
                       </span>
-                      <p style={{ fontSize:"0.75rem" }}>Academics</p>
+                      <p style={{ fontSize: "0.75rem" }}>Academics</p>
                     </div>
                     <span>
                       <Icon
@@ -353,7 +363,7 @@ function SideBarLg() {
                                 ? "text-decoration-none  color-primary pointer-cursor"
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
-                            style={{ fontSize:"0.75rem" }}
+                            style={{ fontSize: "0.75rem" }}
                           >
                             Grades Configuration
                           </p>
@@ -371,11 +381,11 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Semester</p>
+                            <p style={{ fontSize: "0.75rem" }}>Semester</p>
                           </NavLink>
                         </div>
                       </div>
-                       <div
+                      <div
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
                         <div className="subbox-nav">
@@ -387,7 +397,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Academic Year</p>
+                            <p style={{ fontSize: "0.75rem" }}>Academic Year</p>
                           </NavLink>
                         </div>
                       </div>
@@ -405,7 +415,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Courses</p>
+                            <p style={{ fontSize: "0.75rem" }}>Courses</p>
                           </div>
                         </div>
                       </div>
@@ -421,7 +431,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Time-table</p>
+                            <p style={{ fontSize: "0.75rem" }}>Time-table</p>
                           </NavLink>
                         </div>
                       </div>
@@ -448,9 +458,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="healthicons:i-exam-multiple-choice-outline" width={16} height={16}/>
+                        <FileSpreadsheet size={16} />
                       </span>
-                      <p style={{ fontSize:"0.75rem" }}>Manage Exams</p>
+                      <p style={{ fontSize: "0.75rem" }}>Manage Exams</p>
                     </div>
                     <span>
                       <Icon
@@ -489,7 +499,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Exam</p>
+                            <p style={{ fontSize: "0.75rem" }}>Exam</p>
                           </NavLink>
                         </div>
                       </div>
@@ -505,7 +515,9 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Exam Candidate</p>
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Exam Candidate
+                            </p>
                           </NavLink>
                         </div>
                       </div>
@@ -521,7 +533,9 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Exam Timetable</p>
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Exam Timetable
+                            </p>
                           </NavLink>
                         </div>
                       </div>
@@ -537,7 +551,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Exam Results</p>
+                            <p style={{ fontSize: "0.75rem" }}>Exam Results</p>
                           </NavLink>
                         </div>
                       </div>
@@ -563,10 +577,10 @@ function SideBarLg() {
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
-                      <span style={{ lineHeight:0 }}>
-                        <Icon icon="material-symbols:repeat-rounded" width={16} height={16}/>
+                      <span style={{ lineHeight: 0 }}>
+                        <RotateCcw size={16} />
                       </span>
-                      <p style={{ fontSize:"0.75rem" }}>Manage Resit</p>
+                      <p style={{ fontSize: "0.75rem" }}>Manage Resit</p>
                     </div>
                     <span>
                       <Icon
@@ -605,7 +619,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Resit Exam</p>
+                            <p style={{ fontSize: "0.75rem" }}>Resit Exam</p>
                           </NavLink>
                         </div>
                       </div>
@@ -621,7 +635,9 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Resit Candidate</p>
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Resit Candidate
+                            </p>
                           </NavLink>
                         </div>
                       </div>
@@ -637,7 +653,9 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Resit Timetable</p>
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Resit Timetable
+                            </p>
                           </NavLink>
                         </div>
                       </div>
@@ -653,7 +671,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }} >Student Resit</p>
+                            <p style={{ fontSize: "0.75rem" }}>Student Resit</p>
                           </NavLink>
                         </div>
                       </div>
@@ -679,10 +697,10 @@ function SideBarLg() {
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
-                      <span style={{ lineHeight:0 }}>
-                        <Icon icon="ph:student" width={16} height={16}/>
+                      <span style={{ lineHeight: 0 }}>
+                        <Users size={16} />
                       </span>
-                      <p style={{ fontSize:"0.75rem" }}>Manage Students</p>
+                      <p style={{ fontSize: "0.75rem" }}>Manage Students</p>
                     </div>
                     <span>
                       <Icon
@@ -721,7 +739,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Students</p>
+                            <p style={{ fontSize: "0.75rem" }}>Students</p>
                           </NavLink>
                         </div>
                       </div>
@@ -753,7 +771,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Parents</p>
+                            <p style={{ fontSize: "0.75rem" }}>Parents</p>
                           </NavLink>
                         </div>
                       </div>
@@ -769,7 +787,9 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Student Batches</p>
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Student Batches
+                            </p>
                           </NavLink>
                         </div>
                       </div>
@@ -796,9 +816,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="mynaui:activity-square" width={16} height={16}/>
+                        <Activity size={16} />
                       </span>
-                      <p style={{ fontSize:"0.75rem" }}>School Activities</p>
+                      <p style={{ fontSize: "0.75rem" }}>School Activities</p>
                     </div>
                     <span>
                       <Icon
@@ -839,7 +859,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Announcements</p>
+                            <p style={{ fontSize: "0.75rem" }}>Announcements</p>
                           </div>
                         </div>
                       </div>
@@ -857,7 +877,9 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>School Elections</p>
+                            <p style={{ fontSize: "0.75rem" }}>
+                              School Elections
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -875,7 +897,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>School Events</p>
+                            <p style={{ fontSize: "0.75rem" }}>School Events</p>
                           </div>
                         </div>
                       </div>
@@ -902,9 +924,9 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Icon icon="healthicons:money-bag-outline" width={16} height={16} />
+                        <Wallet size={16} />
                       </span>
-                      <p style={{ fontSize:"0.75rem" }}>Finances</p>
+                      <p style={{ fontSize: "0.75rem" }}>Finances</p>
                     </div>
                     <span>
                       <Icon
@@ -945,7 +967,9 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>School Expenses</p>
+                            <p style={{ fontSize: "0.75rem" }}>
+                              School Expenses
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -963,7 +987,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Resit Fees</p>
+                            <p style={{ fontSize: "0.75rem" }}>Resit Fees</p>
                           </div>
                         </div>
                       </div>
@@ -981,7 +1005,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Tuition Fees</p>
+                            <p style={{ fontSize: "0.75rem" }}>Tuition Fees</p>
                           </div>
                         </div>
                       </div>
@@ -999,7 +1023,9 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Registration Fees</p>
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Registration Fees
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1017,7 +1043,9 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark  pointer-cursor"
                             }
                           >
-                            <p style={{ fontSize:"0.75rem" }}>Additional Fees</p>
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Additional Fees
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1038,10 +1066,12 @@ function SideBarLg() {
                   onClick={() => navigate("/activation-code")}
                 >
                   <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
-                    <span style={{ lineHeight:0}}>
-                      <Icon icon="streamline-plump:password-lock" height={16} width={16}/>
+                    <span style={{ lineHeight: 0 }}>
+                      <UserPlus size={16} />
                     </span>
-                    <span style={{ fontSize:"0.75rem" }}>Account Activation</span>
+                    <span style={{ fontSize: "0.75rem" }}>
+                      Account Activation
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1058,9 +1088,9 @@ function SideBarLg() {
                 navigate("/settings/general-settings");
               }}
             >
-              <span style={{ fontSize:"0.75rem" }}>Setting</span>
+              <span style={{ fontSize: "0.75rem" }}>Setting</span>
               <span style={{ lineHeight: 0 }}>
-                <Icon icon="uil:setting" width={16} height={16}/>
+                <Settings size={16} />
               </span>
             </div>
             <div className="w-100">
@@ -1068,9 +1098,9 @@ function SideBarLg() {
                 action={{ modalContent: Logout }}
                 classname="sidebar-item transparent-bg  text-dark"
               >
-                <span style={{ fontSize:"0.75rem" }}>Logout</span>
+                <span style={{ fontSize: "0.75rem" }}>Logout</span>
                 <span style={{ lineHeight: 0 }}>
-                  <Icon icon="mynaui:logout" width={16} height={16}/>
+                  <LogOut size={16} />
                 </span>
               </ModalButton>
             </div>
@@ -1112,7 +1142,7 @@ function SideBarSmTab({ items }) {
         navigate(items.path);
       }
     },
-    [getReferenceProps]
+    [getReferenceProps],
   );
   const routeMap = {
     dashboard: dashboardRoutes,
