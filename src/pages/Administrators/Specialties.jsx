@@ -622,7 +622,6 @@ export function ActionComponent(props) {
     </>
   );
 }
-
 function ActionButtons({ selectedSpecialties, resetAll }) {
   return (
     <>
@@ -707,33 +706,6 @@ function DropdownItems({ selectedSpecialties, resetAll, onModalStateChange }) {
     </>
   );
 }
-
-function CustomFilterStep({ cFilters, columns }) {
-  const [stepIndex, setStepIndex] = useState(0);
-
-  const currentStep = GEN_FILTER_FLOW[stepIndex];
-
-  const CurrentComponent = currentStep.component;
-  const nextStep = () => {
-    setStepIndex((prev) => prev + 1);
-  };
-
-  const previousStep = () => {
-    setStepIndex((prev) => prev - 1);
-  };
-  return (
-    <>
-      <CurrentComponent
-        cFilters={cFilters}
-        columns={columns}
-        nextStep={nextStep}
-        previousStep={previousStep}
-        currentStep={stepIndex + 1}
-      />
-    </>
-  );
-}
-
 function JobPopOver() {
   const [isOpen, setIsOpen] = useState(false);
   const [jobs, setJobs] = useState([]);
@@ -1157,7 +1129,6 @@ function JobPopOver() {
     </>
   );
 }
-
 function StatusTabs({ activeTab, onTabChange, jobs }) {
   const getCounts = useMemo(() => {
     if (!jobs || !Array.isArray(jobs)) {

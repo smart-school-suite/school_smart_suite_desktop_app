@@ -194,8 +194,8 @@ export default function DateFilterPopOver({ column, tableRef }) {
       <button
         ref={refs.setReference}
         {...getReferenceProps()}
-        className="border-none border rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 white-bg"
-        style={{ fontSize: "0.7rem", cursor: "pointer" }}
+        className={`border-none rounded-3 px-2 font-size-sm d-flex flex-row align-items-center gap-1  ${ isFilterActive ? "primary-background-100 color-primary border-primary" : "white-bg border"}`}
+        style={{ fontSize: "0.7rem", cursor: "pointer", padding:"0.45rem" }}
       >
         <span style={{ lineHeight: "16px" }}>{column?.headerName}</span>
         {isFilterActive && (

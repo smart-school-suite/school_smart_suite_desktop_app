@@ -19,6 +19,8 @@ import themeReducer from "../Slices/Asynslices/ThemeSlice";
 import semesterTimetableReducer from "../Slices/Asynslices/semesterTimetableSlice";
 import teacherReducer from "../Slices/teacher/teacherSlice";
 import specialtyReducer  from "../Slices/administrator/specialtySlice";
+import departmentReducer from "../Slices/administrator/departmentSlice";
+import schoolAdminReducer  from "../Slices/administrator/schoolAdminSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -63,6 +65,8 @@ const rootReducer = combineReducers({
   semesterTimetable: semesterTimetableReducer,
   teachers: persistReducer(teacherPersistConfig, teacherReducer),
   specialty: specialtyReducer,
+  department: departmentReducer,
+  schoolAdmin: schoolAdminReducer
 });
 
 export const store = configureStore({
