@@ -1,12 +1,17 @@
 import { Icon } from "@iconify/react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCustomFilter } from "../../../Slices/teacher/teacherSlice";
 import { filterMatchMap } from "../../../utils/maps/fIlterMatchMap";
 import { Fragment } from "react";
-function ColumnFilterMatch({ cFilters, columns, nextStep, previousStep }) {
+function ColumnFilterMatch({
+  cFilters,
+  columns,
+  nextStep,
+  previousStep,
+  setCustomFilter,
+  moduleState,
+}) {
   const dispatch = useDispatch();
-  const teacherState = useSelector((state) => state.teachers);
-  const cf = teacherState.customFilter.find((cf) => cf.id === cFilters.id);
+  const cf = moduleState.customFilter.find((cf) => cf.id === cFilters.id);
   const fms = filterMatchMap.find((fm) => fm.type === cf.column.cellDataType);
   return (
     <>
@@ -50,10 +55,10 @@ function ColumnFilterMatch({ cFilters, columns, nextStep, previousStep }) {
               style={{ width: "2rem", height: "2rem" }}
               className="rounded-circle border-none bg-transparent border d-flex align-items-center justify-content-center"
               onClick={() => {
-                  if(cf.match){
-                      nextStep()
-                  }
-                  return
+                if (cf.match) {
+                  nextStep();
+                }
+                return;
               }}
             >
               <Icon icon="ion:chevron-forward-outline" />

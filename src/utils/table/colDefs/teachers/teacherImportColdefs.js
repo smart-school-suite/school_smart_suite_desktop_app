@@ -45,5 +45,13 @@ export function teacherImportColDefs() {
       field: "address",
       cellRenderer: TextComponent,
     }),
+    textColumn({
+      headerName: "Allowed Levels",
+      field: "allowed_levels",
+    }),
+    textColumn({
+      headerName: "Qualifications",
+      field: "qualifications",
+    })
   ];
 }

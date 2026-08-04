@@ -5,7 +5,11 @@ export const numberColumn = (options = {}) =>
     type: "numericColumn",
     filter: "agNumberColumnFilter",
     cellStyle: {
-      textAlign: "right",
+      display: "flex",
+      justifyContent: "start",
+      alignItems: "center",
+      height: "100%",
+      zIndex: "-1",
     },
     cellDataType: "number",
     ...options,

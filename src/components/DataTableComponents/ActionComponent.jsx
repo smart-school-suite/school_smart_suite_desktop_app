@@ -92,6 +92,7 @@ export function ModalButton({
   action,
   children,
   classname,
+  style,
   rowData,
   resetAll,
   size,
@@ -123,6 +124,7 @@ export function ModalButton({
       <div>
         <div
           className={`${classname} pointer-cursor`}
+          style={style}
           onClick={(e) => {
             e.stopPropagation();
             handleShow(action.modalContent);

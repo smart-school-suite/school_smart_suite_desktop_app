@@ -41,4 +41,50 @@ export const TEACHER_COLUMNS = [
     required: false,
     aliases: ["sex"],
   },
+  {
+    type: "repeatable_group",
+    program_name: "qualifications",
+    label: "Qualifications",
+    occurrences: {
+      min: 1,
+      max: 5,
+    },
+    fields: [
+      {
+        program_name: "qualification",
+        label: "Qualification",
+        required: true,
+      },
+      {
+        program_name: "field_of_study",
+        label: "Field of Study",
+        required: true,
+      },
+      {
+        program_name: "university",
+        label: "university",
+        required: true,
+      },
+      {
+        program_name: "year_obtained",
+        label: "Year Obtained",
+        required: true,
+      },
+    ],
+  },
+  {
+     type:"repeatable_group",
+     program_name:"allowed_levels",
+      occurrences: {
+      min: 1,
+      max: 5,
+    },
+    fields: [
+      {
+        program_name: "allowed_level",
+        label: "Allowed Level",
+        required: true,
+      }
+    ]
+  }
 ];

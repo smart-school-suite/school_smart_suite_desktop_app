@@ -21,7 +21,7 @@ const initialState = {
 };
 
 const specialtySlice = createSlice({
-  name: "specialties",
+  name: "specialty",
   initialState,
   reducers: {
     setImportStatus: (state, action) => {

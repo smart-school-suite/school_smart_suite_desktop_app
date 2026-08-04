@@ -153,7 +153,7 @@ function TeacherImportColumnMatch({
     });
   }, [teacherColumns, mapping, fileHeaders]);
   return (
-    <div className="d-flex flex-column font-size-sm gap-4">
+    <div className="d-flex flex-column font-size-sm gap-3">
       <div className="d-flex flex-row align-items-center justify-content-between">
         <span className="fw-semibold">Import Teacher</span>
         <span
@@ -189,7 +189,7 @@ function TeacherImportColumnMatch({
 
         <div
           className="d-flex flex-column gap-2 scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto px-1"
-          style={{ maxHeight: "35dvh" }}
+          style={{ maxHeight: "40dvh" }}
         >
           {columnMappings.map((col) => (
             <Fragment key={col.program_name}>

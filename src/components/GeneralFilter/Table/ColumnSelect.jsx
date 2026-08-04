@@ -1,18 +1,21 @@
 import { Icon } from "@iconify/react";
 import { Fragment, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCustomFilter } from "../../../Slices/teacher/teacherSlice";
 
-function ColumnSelect({ cFilters, columns, nextStep }) {
+function ColumnSelect({
+  cFilters,
+  columns,
+  nextStep,
+  previousStep,
+  setCustomFilter,
+  moduleState,
+}) {
   const dispatch = useDispatch();
-  const teacherState = useSelector((state) => state.teachers);
 
   const isColumnSelected = useMemo(() => {
-    const cf = teacherState.customFilter?.find(
-      (cf) => cf.id === cFilters.id,
-    );
+    const cf = moduleState.customFilter?.find((cf) => cf.id === cFilters.id);
     return !!cf?.column?.headerName;
-  }, [teacherState.customFilter, cFilters.id]);
+  }, [moduleState?.customFilter, cFilters?.id]);
 
   return (
     <>
@@ -34,7 +37,7 @@ function ColumnSelect({ cFilters, columns, nextStep }) {
             style={{ maxHeight: "32dvh" }}
           >
             {columns?.availableColumns?.map((column, index) => {
-              const cf = teacherState.customFilter?.find(
+              const cf = moduleState.customFilter?.find(
                 (cf) => cf.id === cFilters.id,
               );
               const isSelected = cf?.column?.headerName === column?.headerName;
@@ -79,12 +82,12 @@ function ColumnSelect({ cFilters, columns, nextStep }) {
               onClick={() => nextStep()}
               disabled={!isColumnSelected}
               {...(!isColumnSelected && {
-                style: { 
-                  width: "2rem", 
-                  height: "2rem", 
-                  opacity: 0.5, 
-                  cursor: "not-allowed" 
-                }
+                style: {
+                  width: "2rem",
+                  height: "2rem",
+                  opacity: 0.5,
+                  cursor: "not-allowed",
+                },
               })}
             >
               <Icon icon="ion:chevron-forward-outline" width={16} height={16} />

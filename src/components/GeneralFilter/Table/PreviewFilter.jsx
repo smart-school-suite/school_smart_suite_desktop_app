@@ -1,10 +1,16 @@
 import { useSelector, useDispatch } from "react-redux";
 import { Icon } from "@iconify/react";
-import { removeCustomFilter } from "../../../Slices/teacher/teacherSlice";
-function PreviewFilter({ cFilters, columns, nextStep, previousStep }) {
+function PreviewFilter({
+  cFilters,
+  columns,
+  nextStep,
+  previousStep,
+  setCustomFilter,
+  removeCustomFilter,
+  moduleState,
+}) {
   const dispatch = useDispatch();
-  const teacherState = useSelector((state) => state.teachers);
-  const cf = teacherState.customFilter.find((cf) => cf.id === cFilters.id);
+  const cf = moduleState.customFilter.find((cf) => cf.id === cFilters.id);
   return (
     <>
       <div className="px-2 my-2">

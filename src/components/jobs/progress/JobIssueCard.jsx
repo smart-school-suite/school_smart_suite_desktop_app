@@ -2,10 +2,13 @@ import { Icon } from "@iconify/react";
 import { TriangleAlert, Dot, ArrowRight } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { ModalButton } from "../../DataTableComponents/ActionComponent";
+import JobError from "../../../ModalContent/Job/JobError";
 
 dayjs.extend(relativeTime);
 
 function JobIssueCard({
+  jobId,
   title,
   module,
   type,
@@ -90,18 +93,19 @@ function JobIssueCard({
           </span>
         </div>
 
-        {onViewIssues && (
-          <button
-            type="button"
-            className="border-none bg-transparent p-0 m-0 d-flex flex-row align-items-center gap-2 border-bottom"
-            onClick={handleViewIssuesClick}
-          >
-            <span>View Issues</span>
-            <span style={{ lineHeight: 0 }}>
-              <ArrowRight size={12} />
-            </span>
-          </button>
-        )}
+        <ModalButton
+          action={{ modalContent: JobError }}
+          rowData={{ jobId }}
+          size={"lg"}
+          classname={
+            "border-none bg-transparent p-0 m-0 d-flex flex-row align-items-center gap-2 border-bottom"
+          }
+        >
+          <span>View Issues</span>
+          <span style={{ lineHeight: 0 }}>
+            <ArrowRight size={12} />
+          </span>
+        </ModalButton>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Icon } from "@iconify/react";
 import { Form } from "react-bootstrap";
 import { DndContext, closestCenter } from "@dnd-kit/core";
@@ -51,40 +51,68 @@ function SortableItem({ id, label }) {
   );
 }
 
-function TeacherTableSetting({ handleClose, rowData }) {
-  const { tableRef } = rowData;
+export default function SpecialtyTableColumnSettings({ handleClose, rowData }) {
+  const {
+    tableRef: activeTableRef,
+    title = "Customise Table Columns",
+    subtitle = "Select and reorder columns to display in the table",
+    excludeFields = [
+      "action",
+      "actions",
+      "ActionComponent",
+      "checkbox",
+      "selection",
+    ],
+    onSaveSuccess,
+  } = rowData;
 
   const [columns, setColumns] = useState([]);
   const [leftSearch, setLeftSearch] = useState("");
   const [rightSearch, setRightSearch] = useState("");
 
+  // Extract initial column state from Grid API
   useEffect(() => {
-    if (tableRef?.current?.getColumnsState) {
-      const gridCols = tableRef.current.getColumnsState();
+    if (activeTableRef?.current?.getColumnsState) {
+      const gridCols = activeTableRef.current.getColumnsState();
       const filteredCols = gridCols.filter(
         (col) =>
           !col.isSystemColumn &&
-          col.field !== "action" &&
-          col.colId !== "actions" &&
-          col.colId !== "ActionComponent",
+          !excludeFields.includes(col.field) &&
+          !excludeFields.includes(col.colId),
       );
       setColumns(filteredCols);
     }
-  }, [tableRef]);
+  }, [activeTableRef, excludeFields]);
 
+  // Active (visible) columns subset
   const visibleColumns = useMemo(
     () => columns.filter((c) => !c.hide),
     [columns],
   );
 
-  const filteredLeftColumns = columns.filter((col) =>
-    col.headerName.toLowerCase().includes(leftSearch.toLowerCase()),
+  // Filtered left (All Available) columns search
+  const filteredLeftColumns = useMemo(
+    () =>
+      columns.filter((col) =>
+        (col.headerName || col.colId)
+          .toLowerCase()
+          .includes(leftSearch.toLowerCase()),
+      ),
+    [columns, leftSearch],
   );
 
-  const filteredRightColumns = visibleColumns.filter((col) =>
-    col.headerName.toLowerCase().includes(rightSearch.toLowerCase()),
+  // Filtered right (Selected Visible) columns search
+  const filteredRightColumns = useMemo(
+    () =>
+      visibleColumns.filter((col) =>
+        (col.headerName || col.colId)
+          .toLowerCase()
+          .includes(rightSearch.toLowerCase()),
+      ),
+    [visibleColumns, rightSearch],
   );
 
+  // Toggle Visibility - matches original behavior
   const handleToggleHide = (colId) => {
     setColumns((prev) =>
       prev.map((col) =>
@@ -93,6 +121,7 @@ function TeacherTableSetting({ handleClose, rowData }) {
     );
   };
 
+  // Reorder Handler using Drag & Drop - matches original
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -104,48 +133,55 @@ function TeacherTableSetting({ handleClose, rowData }) {
     });
   };
 
+  // Commit changes back to AG-Grid API
   const handleSaveChanges = () => {
-    if (tableRef?.current?.setColumnState) {
+    if (activeTableRef?.current?.setColumnState) {
       const cleanState = columns.map(({ colId, hide }) => ({ colId, hide }));
-      tableRef.current.setColumnState(cleanState);
+      activeTableRef.current.setColumnState(cleanState);
     }
-    handleClose();
+    if (onSaveSuccess) onSaveSuccess(columns);
+    handleClose?.();
   };
 
+  // Reset columns back to fully visible state
   const handleResetToDefault = () => {
-    if (tableRef?.current?.setColumnState) {
-      const resetState = columns.map((col) => ({
-        colId: col.colId,
-        hide: false,
-      }));
-      tableRef.current.setColumnState(resetState);
-      setColumns(columns.map((col) => ({ ...col, hide: false })));
+    const resetState = columns.map((col) => ({
+      colId: col.colId,
+      hide: false,
+    }));
+
+    if (activeTableRef?.current?.setColumnState) {
+      activeTableRef.current.setColumnState(resetState);
     }
-    handleClose();
+
+    setColumns((prev) => prev.map((col) => ({ ...col, hide: false })));
+    if (onSaveSuccess) onSaveSuccess(resetState);
+    handleClose?.();
   };
 
   return (
     <div className="d-flex flex-column gap-4">
+      {/* Modal Header */}
       <div className="d-flex flex-row align-items-center justify-content-between">
         <div className="d-flex flex-column gap-1">
-          <span className="font-size-md fw-bold">Customise Table Columns</span>
-          <span className="text-muted font-size-sm">
-            Select and reorder columns to display in the table
-          </span>
+          <span className="font-size-md fw-bold">{title}</span>
+          <span className="text-muted font-size-sm">{subtitle}</span>
         </div>
-        <span onClick={handleClose} style={{ cursor: "pointer" }}>
-          <Icon icon="charm:cross" width="22" height="22" />
-        </span>
+        {handleClose && (
+          <span onClick={handleClose} style={{ cursor: "pointer" }}>
+            <Icon icon="charm:cross" width="22" height="22" />
+          </span>
+        )}
       </div>
 
+      {/* Main Dual-Column Panel */}
       <div className="d-flex flex-row align-items-start w-100 gap-4">
+        {/* Left Box: All Options Toggle */}
         <div className="w-50 d-flex flex-column gap-3">
           <div className="d-flex flex-row align-items-center justify-content-between font-size-sm">
             <div className="d-flex flex-column">
               <span className="fw-bold">Column Options</span>
-              <span className="text-muted">
-                Select the columns to see on this table
-              </span>
+              <span className="text-muted">Select columns to display</span>
             </div>
             <div
               style={{
@@ -181,10 +217,10 @@ function TeacherTableSetting({ handleClose, rowData }) {
                     type="checkbox"
                     id={`check-${column.colId}`}
                     checked={!column.hide}
-                    onChange={() => {}}
+                    onChange={() => {}} // Empty handler - matches original behavior
                   />
                   <span className="font-size-sm m-0 fw-medium">
-                    {column.headerName}
+                    {column.headerName || column.colId}
                   </span>
                 </div>
               ))}
@@ -192,17 +228,17 @@ function TeacherTableSetting({ handleClose, rowData }) {
           </div>
         </div>
 
+        {/* Divider */}
         <div
           style={{ width: "0.05rem", height: "55dvh", background: "#dadada" }}
-        ></div>
+        />
 
+        {/* Right Box: Drag to Reorder */}
         <div className="w-50 d-flex flex-column gap-3">
           <div className="d-flex flex-row align-items-center justify-content-between font-size-sm">
             <div className="d-flex flex-column">
               <span className="fw-bold">Selected Columns</span>
-              <span className="text-muted">
-                Drag to reorder columns on this table
-              </span>
+              <span className="text-muted">Drag to reorder columns</span>
             </div>
             <div
               style={{
@@ -239,7 +275,7 @@ function TeacherTableSetting({ handleClose, rowData }) {
                   <SortableItem
                     key={column.colId}
                     id={column.colId}
-                    label={column.headerName}
+                    label={column.headerName || column.colId}
                   />
                 ))}
               </SortableContext>
@@ -248,6 +284,7 @@ function TeacherTableSetting({ handleClose, rowData }) {
         </div>
       </div>
 
+      {/* Modal Actions Footer */}
       <div className="d-flex flex-row align-items-center justify-content-between mt-2">
         <button
           className="border-none bg-transparent font-size-sm color-primary p-0"
@@ -273,5 +310,3 @@ function TeacherTableSetting({ handleClose, rowData }) {
     </div>
   );
 }
-
-export default TeacherTableSetting;

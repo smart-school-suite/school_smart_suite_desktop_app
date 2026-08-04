@@ -35,7 +35,6 @@ import BulkActivateTeacher from "../../ModalContent/Teacher/BulkActivateTeacher"
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import ExportTeacher from "../../ModalContent/Teacher/ExportTeacher";
-import TeacherTableSetting from "../../ModalContent/Teacher/TeacherTableSetting";
 import { teacherColDefs } from "../../utils/table/colDefs/teachers/teacherColDefs";
 import {
   setTeachers,
@@ -59,7 +58,9 @@ import TextFilter from "../../ModalContent/Filter/TextFilterPopOver";
 import TextFilterPopOver from "../../ModalContent/Filter/TextFilterPopOver";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import { useDispatch, useSelector } from "react-redux";
-import { GEN_FILTER_FLOW } from "./filterSteps/step";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 function Teachers() {
   const dispatch = useDispatch();
   const teacherState = useSelector((state) => state.teachers);
@@ -143,7 +144,7 @@ function Teachers() {
             selectedColumns: prev.availableColumns.slice(0, 4),
           }));
         }
-      }, 100);
+      }, 300);
 
       return () => clearTimeout(timer);
     }
@@ -240,9 +241,10 @@ function Teachers() {
                   />
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
-                      action={{ modalContent: ExportTeacher }}
+                      action={{ modalContent: Export }}
                       size={"xl"}
-                      rowData={{ teachers, tableRef }}
+                      rowData={{ tableRef, columns: columns.availableColumns }}
+
                     >
                       <button
                         className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
@@ -255,7 +257,7 @@ function Teachers() {
                       </button>
                     </ModalButton>
                     <ModalButton
-                      action={{ modalContent: TeacherTableSetting }}
+                      action={{ modalContent: TableColumnSetting }}
                       size={"xl"}
                       rowData={{ tableRef }}
                     >
@@ -378,9 +380,12 @@ function Teachers() {
                                   {teacherState?.customFilter?.map(
                                     (cFilters) => (
                                       <Fragment key={cFilters.id}>
-                                        <CustomFilterStep
+                                        <GeneralFilterWizzard
                                           cFilters={cFilters}
                                           columns={columns}
+                                          moduleState={teacherState}
+                                          removeCustomFilter={removeCustomFilter}
+                                          setCustomFilter={setCustomFilter}
                                         />
                                       </Fragment>
                                     ),
@@ -651,28 +656,4 @@ function DropdownItems({ selectedTeachers, resetAll, onModalStateChange }) {
     </>
   );
 }
-function CustomFilterStep({ cFilters, columns }) {
-  const [stepIndex, setStepIndex] = useState(0);
 
-  const currentStep = GEN_FILTER_FLOW[stepIndex];
-
-  const CurrentComponent = currentStep.component;
-  const nextStep = () => {
-    setStepIndex((prev) => prev + 1);
-  };
-
-  const previousStep = () => {
-    setStepIndex((prev) => prev - 1);
-  };
-  return (
-    <>
-      <CurrentComponent
-        cFilters={cFilters}
-        columns={columns}
-        nextStep={nextStep}
-        previousStep={previousStep}
-        currentStep={stepIndex + 1}
-      />
-    </>
-  );
-}

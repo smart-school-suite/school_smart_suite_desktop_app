@@ -37,22 +37,17 @@ function SortableColumnItem({ column }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`card rounded-2 p-2 w-100 ${isDragging ? "border-primary" : ""}`}
+      className={`card rounded-2 p-2 w-100 cursor-grab ${isDragging ? "border-primary" : ""}`}
+      {...attributes}
+      {...listeners}
     >
       <div className="d-flex flex-row align-items-center gap-1">
-        <span
-          {...attributes}
-          {...listeners}
-          style={{ cursor: "grab" }}
-          className="d-flex align-items-center"
-        >
-          <Icon
-            icon="codex:menu"
-            width={20}
-            height={20}
-            className="text-muted"
-          />
-        </span>
+        <Icon
+          icon="codex:menu"
+          width={20}
+          height={20}
+          className="text-muted"
+        />
         <span className="ms-1">{column.headerName}</span>
       </div>
     </div>
@@ -296,23 +291,27 @@ function ExportTeacher({ handleClose, rowData }) {
                     );
                     return (
                       <Fragment key={index}>
-                        <div className="d-flex flex-row align-items-center gap-2">
+                        <div 
+                          className="d-flex flex-row align-items-center gap-2 border rounded-2 p-2 pointer-cursor"
+                          onClick={() =>
+                            setSelectedColumns((prevSelectedColumns) => {
+                              if (isChecked) {
+                                return prevSelectedColumns.filter(
+                                  (selectedColumn) =>
+                                    selectedColumn.field !== column.field,
+                                );
+                              } else {
+                                return [...prevSelectedColumns, column];
+                              }
+                            })
+                          }
+                        >
                           <Form.Check
                             type="checkbox"
                             id={`checkbox-${column.field}`}
                             checked={isChecked}
-                            onChange={() =>
-                              setSelectedColumns((prevSelectedColumns) => {
-                                if (isChecked) {
-                                  return prevSelectedColumns.filter(
-                                    (selectedColumn) =>
-                                      selectedColumn.field !== column.field,
-                                  );
-                                } else {
-                                  return [...prevSelectedColumns, column];
-                                }
-                              })
-                            }
+                            onChange={() => {}} // Empty onChange since click is handled by div
+                            onClick={(e) => e.stopPropagation()} // Prevent double triggering
                           />
                           <span>{column.headerName}</span>
                         </div>
@@ -323,7 +322,6 @@ function ExportTeacher({ handleClose, rowData }) {
               </div>
             </div>
 
-            {/* 3. Reorder Section integrated with DndContext and SortableContext */}
             <div className="d-flex flex-column gap-2">
               <span className="fw-bold">Reorder Columns</span>
               <div className="d-flex flex-column gap-3">

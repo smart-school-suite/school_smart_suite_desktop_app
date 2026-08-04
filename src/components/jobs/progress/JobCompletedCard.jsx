@@ -6,6 +6,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 function JobCompletedCard({
+  jobId,
   title,
   module,
   type,

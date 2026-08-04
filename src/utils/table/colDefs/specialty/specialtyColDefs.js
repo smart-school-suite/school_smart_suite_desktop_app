@@ -6,6 +6,7 @@ import {
 } from "@/utils/table/columns";
 import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
+import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
 
 export function specialtyColDefs({ ActionComponent }) {
   return [
@@ -19,19 +20,19 @@ export function specialtyColDefs({ ActionComponent }) {
       field: "registration_fee",
       headerName: "Registration Fee",
       hide: false,
-      cellRenderer: TextComponent,
+      cellRenderer: CurrencyComponent,
     }),
     numberColumn({
       field: "tuition_fee",
       headerName: "Tuition Fee",
       hide: false,
-      cellRenderer: TextComponent,
+      cellRenderer: CurrencyComponent,
     }),
     numberColumn({
       field: "total",
       headerName: "Total",
       hide: false,
-      cellRenderer: TextComponent,
+      cellRenderer: CurrencyComponent,
     }),
     textColumn({
       field: "level_name",
@@ -40,8 +41,20 @@ export function specialtyColDefs({ ActionComponent }) {
       cellRenderer: TextComponent,
     }),
     textColumn({
-      field: "level",
-      headerName: "Level",
+      field: "level_number",
+      headerName: "Level Number",
+      hide: true,
+      cellRenderer: TextComponent,
+    }),
+    textColumn({
+      field:"description",
+      headerName:"Description",
+      hide: true,
+      cellRenderer: TextComponent,
+    }),
+    textColumn({
+      field:"department",
+      headerName:"Department",
       hide: true,
       cellRenderer: TextComponent,
     }),

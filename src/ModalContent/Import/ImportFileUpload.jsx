@@ -1,20 +1,23 @@
 import React, { useState, useRef } from "react";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { countSpreadsheetRows } from "../../../utils/file/fileParser";
-import {
-  setImportSelectedFile,
+import { countSpreadsheetRows } from "../../utils/file/fileParser";
+import { useDispatch } from "react-redux";
+import { prepareFileForRedux } from "../../utils/file/fileReconstruction";
+import { FILE_ENCODING } from "@/constants";
+import { downloadFile } from "../../utils/file/fileDownload";
+function FileUpload({
+  onFileSelect,
+  fileInfo,
+  onClearFile,
+  moduleState,
   setImportStatus,
   setImportReset,
-} from "../../../Slices/teacher/teacherSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { prepareFileForRedux } from "../../../utils/file/fileReconstruction";
-import { FILE_ENCODING } from "@/constants";
-import { downloadFile } from "../../../utils/file/fileDownload";
-function FileUpload({ onFileSelect, fileInfo, onClearFile }) {
+  setImportSelectedFile,
+}) {
   const dispatch = useDispatch();
   const [dragActive, setDragActive] = useState(false);
-  const status = useSelector((state) => state.teachers.import.status);
+  const status = moduleState.import.status;
   const fileInputRef = useRef(null);
 
   const dashLength = 8;
@@ -297,17 +300,19 @@ function FileUpload({ onFileSelect, fileInfo, onClearFile }) {
   );
 }
 
-function TeacherImportFileUpload({
+function ImportFileUpload({
   handleClose,
   nextStep,
   previousStep,
   currentStep,
   fullStep,
+  moduleState,
+  setImportStatus,
+  setImportReset,
+  setImportSelectedFile,
 }) {
   const dispatch = useDispatch();
-  const selectedFile = useSelector(
-    (state) => state.teachers.import.selectedFile,
-  );
+  const selectedFile = moduleState.import.selectedFile;
 
   return (
     <div className="d-flex flex-column font-size-sm gap-4">
@@ -339,6 +344,10 @@ function TeacherImportFileUpload({
         }
         fileInfo={selectedFile}
         onClearFile={() => dispatch(setImportReset())}
+        moduleState={moduleState}
+        setImportStatus={setImportStatus}
+        setImportReset={setImportReset}
+        setImportSelectedFile={setImportSelectedFile}
       />
 
       <AnimatePresence>
@@ -419,4 +428,4 @@ function TeacherImportFileUpload({
   );
 }
 
-export default TeacherImportFileUpload;
+export default ImportFileUpload;

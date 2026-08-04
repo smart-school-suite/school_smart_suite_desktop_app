@@ -7,6 +7,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 function JobProgressCard({
+  jobId,
   title,
   module,
   type,

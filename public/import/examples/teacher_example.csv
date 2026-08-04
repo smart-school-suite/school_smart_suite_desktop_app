@@ -1,0 +1,103 @@
+phone,email,gender,first_name,last_name,full_names,qualifications,allowed_levels,address
+677123456,jean.mbarga@gmail.com,male,Jean,Mbarga,Jean Mbarga,BSc|MSc,Level One|Level Two,123 Avenue Mermoz, Douala
+699234567,marie.ngono@yahoo.fr,female,Marie,Ngono,Marie Ngono,HND|BSc,Bachelor's Degree Programs|Master's Degree One,456 Rue de la Paix, Yaoundé
+655345678,paul.essomba@hotmail.com,male,Paul,Essomba,Paul Essomba,MSc|PhD,Level Two|Level Three|Master's Degree Two,789 Boulevard de l'Indépendance, Douala
+678456789,claire.ndoumbe@yahoo.com,female,Claire,Ndoumbe,Claire Ndoumbe,HND,Level One|Bachelor's Degree Programs,101 Rue Akwa, Douala
+696567890,david.nguemaleu@outlook.com,male,David,Nguemaleu,David Nguemaleu,BSc|MSc|PhD,Level Three|Master's Degree One|Doctoral (Ph.D.) Programs,202 Avenue Kennedy, Yaoundé
+688678901,sophie.mfoudi@gmail.com,female,Sophie,Mfoudi,Sophie Mfoudi,HND|BSc|MSc,Level One|Level Two|Bachelor's Degree Programs,303 Rue des Palmiers, Douala
+677789012,pierre.biyong@yahoo.fr,male,Pierre,Biyong,Pierre Biyong,BSc,Master's Degree One|Doctoral (Ph.D.) Programs,404 Boulevard de la République, Yaoundé
+699890123,anne.nkeng@icloud.com,female,Anne,Nkeng,Anne Nkeng,MSc|PhD,Level Two|Level Three|Master's Degree Two,505 Rue de l'Hôpital, Douala
+655901234,michel.nguetsop@hotmail.com,male,Michel,Nguetsop,Michel Nguetsop,HND|BSc,Level One|Bachelor's Degree Programs,606 Avenue Charles de Gaulle, Yaoundé
+678012345,carine.atangana@gmail.com,female,Carine,Atangana,Carine Atangana,BSc|MSc,Level Two|Master's Degree One,707 Rue de la Liberté, Douala
+696123456,andre.mbock@outlook.com,male,Andre,Mbock,Andre Mbock,PhD,Level Three|Master's Degree Two|Doctoral (Ph.D.) Programs,808 Boulevard du 20 Mai, Yaoundé
+688234567,aline.mvondo@yahoo.fr,female,Aline,Mvondo,Aline Mvondo,HND|BSc|MSc,Level One|Level Two|Bachelor's Degree Programs,909 Rue de la Gare, Douala
+677345678,charles.ngondi@gmail.com,male,Charles,Ngondi,Charles Ngondi,BSc|MSc,Level Three|Master's Degree One,1010 Avenue Mvog-Mbi, Yaoundé
+699456789,beatrice.babinga@yahoo.com,female,Beatrice,Babinga,Beatrice Babinga,HND|BSc,Level One|Bachelor's Degree Programs,1111 Rue de la Plage, Douala
+655567890,emmanuel.manga@hotmail.com,male,Emmanuel,Manga,Emmanuel Manga,MSc|PhD,Level Two|Master's Degree Two,1212 Boulevard de l'Unité, Yaoundé
+678678901,felicite.ndi@gmail.com,female,Felicite,Ndi,Felicite Ndi,HND,Level One|Level Two|Level Three,1313 Rue du Marché, Douala
+696789012,henri.medjo@outlook.com,male,Henri,Medjo,Henri Medjo,BSc|MSc|PhD,Level Three|Bachelor's Degree Programs|Doctoral (Ph.D.) Programs,1414 Avenue de l'Indépendance, Yaoundé
+688890123,leonnie.mbella@icloud.com,female,Leonnie,Mbella,Leonnie Mbella,HND|BSc,Level One|Level Two,1515 Rue de la Poste, Douala
+677901234,gerard.nguimdo@yahoo.fr,male,Gerard,Nguimdo,Gerard Nguimdo,BSc,Master's Degree One|Master's Degree Two,1616 Boulevard de la Cité Verte, Yaoundé
+699012345,rose.fotso@gmail.com,female,Rose,Fotso,Rose Fotso,MSc|PhD,Level Two|Doctoral (Ph.D.) Programs,1717 Rue de l'Aéroport, Douala
+655123456,francois.ngassam@hotmail.com,male,Francois,Ngassam,Francois Ngassam,HND|BSc|MSc,Level One|Bachelor's Degree Programs|Master's Degree One,1818 Avenue de la Mémoire, Yaoundé
+678234567,isabelle.bebey@yahoo.com,female,Isabelle,Bebey,Isabelle Bebey,BSc,Level Three|Level Two,1919 Rue de l'Université, Douala
+696345678,dominique.ndongo@gmail.com,male,Dominique,Ndongo,Dominique Ndongo,PhD,Master's Degree Two|Doctoral (Ph.D.) Programs,2020 Boulevard de la Loi, Yaoundé
+688456789,brigitte.mbih@outlook.com,female,Brigitte,Mbih,Brigitte Mbih,HND|BSc|MSc,Level One|Level Two|Bachelor's Degree Programs,2121 Rue de l'Administration, Douala
+677567890,celestin.ngagne@icloud.com,male,Celestin,Ngagne,Celestin Ngagne,BSc|MSc,Level Three|Master's Degree One,2222 Avenue de la Paix, Yaoundé
+699678901,christine.tchoumi@yahoo.fr,female,Christine,Tchoumi,Christine Tchoumi,HND|BSc,Level One|Level Two,2323 Rue de la Gare Centrale, Douala
+655789012,patrick.abega@gmail.com,male,Patrick,Abega,Patrick Abega,MSc|PhD,Bachelor's Degree Programs|Master's Degree Two,2424 Boulevard de la Nation, Yaoundé
+678890123,michelle.ntoko@hotmail.com,female,Michelle,Ntoko,Michelle Ntoko,HND|BSc|MSc,Level One|Level Three|Doctoral (Ph.D.) Programs,2525 Rue de l'Église, Douala
+696901234,joseph.minko@outlook.com,male,Joseph,Minko,Joseph Minko,BSc,Level Two|Master's Degree One,2626 Avenue de l'Agriculture, Yaoundé
+,monique.tsalefac@yahoo.fr,female,Monique,Tsalefac,Monique Tsalefac,PhD,Level Three|Master's Degree Two,2727 Rue du Port, Douala
+677123457,augustin.essono@gmail.com,male,Augustin,Essono,Augustin Essono,HND|BSc|MSc,Level One|Bachelor's Degree Programs,2828 Boulevard de l'Océan, Yaoundé
+699234568,laure.metang@icloud.com,female,Laure,Metang,Laure Metang,BSc|MSc,Level Two|Master's Degree One|Doctoral (Ph.D.) Programs,2929 Rue de la Mairie, Douala
+655345679,albert.bekono@yahoo.com,male,Albert,Bekono,Albert Bekono,HND|BSc,Level One|Level Three,3030 Avenue du Golfe, Yaoundé
+,edith.nkodo@outlook.com,female,Edith,Nkodo,Edith Nkodo,MSc|PhD,Bachelor's Degree Programs|Master's Degree Two,3131 Rue de l'Industrie, Douala
+696567891,joel.mbomo@hotmail.com,male,Joel,Mbomo,Joel Mbomo,BSc,Level Two|Level Three,3232 Boulevard de l'École, Yaoundé
+688678902,ghislaine.mbo@gmail.com,female,Ghislaine,Mbo,Ghislaine Mbo,HND|BSc|MSc,Level One|Bachelor's Degree Programs|Master's Degree One,3333 Rue de la Santé, Douala
+677789013,edmond.nguembou@yahoo.fr,male,Edmond,Nguembou,Edmond Nguembou,BSc|MSc,Level Two|Doctoral (Ph.D.) Programs,3434 Avenue de la Recherche, Yaoundé
+699890124,sandrine.tchakoute@icloud.com,female,Sandrine,Tchakoute,Sandrine Tchakoute,PhD,Level Three|Master's Degree Two,3535 Rue du Commerce, Douala
+655901235,roger.belinga@hotmail.com,male,Roger,Belinga,Roger Belinga,HND|BSc,Level One|Level Two|Bachelor's Degree Programs,3636 Boulevard de la Communication, Yaoundé
+678012346,noella.abanda@gmail.com,female,Noella,Abanda,Noella Abanda,BSc|MSc|PhD,Level Three|Master's Degree One|Doctoral (Ph.D.) Programs,3737 Rue de la Justice, Douala
+696123457,bernard.meyo@outlook.com,male,Bernard,Meyo,Bernard Meyo,HND|BSc,Level One|Level Two,3838 Avenue de l'Enseignement, Yaoundé
+688234568,agnes.ngaleu@yahoo.fr,female,Agnes,Ngaleu,Agnes Ngaleu,MSc,Level Three|Bachelor's Degree Programs,3939 Rue de la Culture, Douala
+677345679,gilbert.mvogo@gmail.com,male,Gilbert,Mvogo,Gilbert Mvogo,BSc|PhD,Level Two|Master's Degree Two,4040 Boulevard de la Science, Yaoundé
+,laurette.kouam@yahoo.com,female,Laurette,Kouam,Laurette Kouam,HND|BSc|MSc,Level One|Master's Degree One|Doctoral (Ph.D.) Programs,4141 Rue de la Bonne Nouvelle, Douala
+655567892,philippe.djuissi@hotmail.com,male,Philippe,Djuissi,Philippe Djuissi,BSc|MSc,Level Two|Level Three|Bachelor's Degree Programs,4242 Avenue de la Démocratie, Yaoundé
+678678903,josiane.nzoko@gmail.com,female,Josiane,Nzoko,Josiane Nzoko,HND,Level One|Level Two,4343 Rue de la Solidarité, Douala
+696789013,clement.mbida@outlook.com,male,Clement,Mbida,Clement Mbida,MSc|PhD,Level Three|Master's Degree Two,4444 Boulevard de la Fraternité, Yaoundé
+688890124,chantal.fonkou@icloud.com,female,Chantal,Fonkou,Chantal Fonkou,HND|BSc,Level One|Bachelor's Degree Programs|Master's Degree One,4545 Rue de l'Émergence, Douala
+677901236,jean-claude.ndam@gmail.com,male,Jean-Claude,Ndam,Jean-Claude Ndam,BSc|MSc|PhD,Level Two|Level Three|Doctoral (Ph.D.) Programs,4646 Avenue de la Renaissance, Yaoundé
+699012347,valerie.mbala@yahoo.fr,female,Valerie,Mbala,Valerie Mbala,HND|BSc,Level One|Master's Degree Two,4747 Rue de l'Espoir, Douala
+655123457,didier.kouoh@hotmail.com,male,Didier,Kouoh,Didier Kouoh,BSc,Level Three|Bachelor's Degree Programs,4848 Boulevard de l'Amitié, Yaoundé
+,annick.mebe@gmail.com,female,Annick,Mebe,Annick Mebe,MSc|PhD,Level Two|Master's Degree One,4949 Rue de la Confiance, Douala
+696345679,serge.bassong@outlook.com,male,Serge,Bassong,Serge Bassong,HND|BSc|MSc,Level One|Level Two|Bachelor's Degree Programs,5050 Avenue de la Prospérité, Yaoundé
+688456790,dominique.tsemo@yahoo.fr,female,Dominique,Tsemo,Dominique Tsemo,BSc,Level Three|Master's Degree Two,5151 Rue de la Dignité, Douala
+677567891,alain.ngatchou@yahoo.com,male,Alain,Ngatchou,Alain Ngatchou,PhD,Level One|Doctoral (Ph.D.) Programs,5252 Boulevard de la Nouvelle Espérance, Yaoundé
+699678902,esther.pokam@gmail.com,female,Esther,Pokam,Esther Pokam,HND|BSc|MSc,Level Two|Bachelor's Degree Programs|Master's Degree One,5353 Rue de la Réussite, Douala
+655789013,fidele.nga@icloud.com,male,Fidele,Nga,Fidele Nga,BSc|MSc,Level Three|Level One,5454 Avenue de l'Excellence, Yaoundé
+678890124,madeleine.ngangue@gmail.com,female,Madeleine,Ngangue,Madeleine Ngangue,HND|BSc,Level Two|Master's Degree Two,5555 Rue de la Victoire, Douala
+696901235,armand.essama@hotmail.com,male,Armand,Essama,Armand Essama,MSc|PhD,Level One|Bachelor's Degree Programs|Doctoral (Ph.D.) Programs,5656 Boulevard de la Foi, Yaoundé
+,martine.ndeng@outlook.com,female,Martine,Ndeng,Martine Ndeng,BSc,Level Three|Master's Degree One,5757 Rue de la Charité, Douala
+677123458,cyrille.ndjock@gmail.com,male,Cyrille,Ndjock,Cyrille Ndjock,HND|BSc|MSc,Level Two|Level Three|Bachelor's Degree Programs,5858 Avenue de la Gratitude, Yaoundé
+699234569,elodie.nguemo@yahoo.com,female,Elodie,Nguemo,Elodie Nguemo,BSc|MSc,Level One|Master's Degree Two,5959 Rue de la Bienveillance, Douala
+655345680,thierry.mbogning@yahoo.fr,male,Thierry,Mbogning,Thierry Mbogning,HND,Level Two|Level Three,6060 Boulevard de la Persévérance, Yaoundé
+,sylvie.ngono@outlook.com,female,Sylvie,Ngono,Sylvie Ngono,PhD,Level One|Bachelor's Degree Programs|Doctoral (Ph.D.) Programs,6161 Rue de l'Intégrité, Douala
+696567892,olivier.makon@gmail.com,male,Olivier,Makon,Olivier Makon,HND|BSc|MSc,Level Three|Master's Degree One,6262 Avenue de la Loyauté, Yaoundé
+688678903,veronique.nkili@icloud.com,female,Veronique,Nkili,Veronique Nkili,BSc|MSc,Level Two|Level Three|Bachelor's Degree Programs,6363 Rue de l'Honnêteté, Douala
+677789014,jacques.mimbang@gmail.com,male,Jacques,Mimbang,Jacques Mimbang,HND|BSc,Level One|Master's Degree Two,6464 Boulevard de la Sagesse, Yaoundé
+,leonie.mve@yahoo.fr,female,Leonie,Mve,Leonie Mve,MSc|PhD,Level Two|Doctoral (Ph.D.) Programs,6565 Rue de la Prudence, Douala
+655901236,claude.ndougsa@hotmail.com,male,Claude,Ndougsa,Claude Ndougsa,BSc,Level Three|Bachelor's Degree Programs,6666 Avenue de la Tempérance, Yaoundé
+678012347,celestine.tagne@yahoo.com,female,Celestine,Tagne,Celestine Tagne,HND|BSc|MSc,Level One|Level Two|Master's Degree One,6767 Rue de la Modestie, Douala
+696123458,louis.mbeng@gmail.com,male,Louis,Mbeng,Louis Mbeng,BSc|MSc,Level Three|Master's Degree Two,6868 Boulevard de l'Humilité, Yaoundé
+688234569,odile.ngouana@outlook.com,female,Odile,Ngouana,Odile Ngouana,PhD,Level One|Bachelor's Degree Programs|Doctoral (Ph.D.) Programs,6969 Rue de la Patience, Douala
+677345680,jean-pierre.kouam@gmail.com,male,Jean-Pierre,Kouam,Jean-Pierre Kouam,HND|BSc|MSc,Level Two|Level Three,7070 Avenue de la Tolérance, Yaoundé
+699456790,caroline.noumsi@icloud.com,female,Caroline,Noumsi,Caroline Noumsi,BSc,Level One|Master's Degree One,7171 Rue de la Généralité, Douala
+655567893,guy.menye@hotmail.com,male,Guy,Menye,Guy Menye,MSc|PhD,Level Three|Bachelor's Degree Programs|Master's Degree Two,7272 Boulevard de la Spécialité, Yaoundé
+,flore.nguekam@yahoo.fr,female,Flore,Nguekam,Flore Nguekam,HND|BSc,Level One|Level Two|Doctoral (Ph.D.) Programs,7373 Rue de la Compétence, Douala
+696789014,lucien.bopda@gmail.com,male,Lucien,Bopda,Lucien Bopda,BSc|MSc|PhD,Level Three|Master's Degree One|Master's Degree Two,7474 Avenue de l'Innovation, Yaoundé
+688890125,bernadette.bingono@outlook.com,female,Bernadette,Bingono,Bernadette Bingono,HND|BSc,Level One|Bachelor's Degree Programs,7575 Rue de la Performance, Douala
+677901237,andre.mboudou@yahoo.com,male,Andre,Mboudou,Andre Mboudou,BSc,Level Two|Level Three,7676 Boulevard de l'Efficacité, Yaoundé
+699012348,desiree.tchamba@gmail.com,female,Desiree,Tchamba,Desiree Tchamba,MSc|PhD,Level One|Master's Degree Two|Doctoral (Ph.D.) Programs,7777 Rue de la Qualité, Douala
+655123458,remy.ndjiki@icloud.com,male,Remy,Ndjiki,Remy Ndjiki,HND|BSc|MSc,Level Three|Bachelor's Degree Programs,7878 Avenue de l'Excellence, Yaoundé
+678234569,helene.mbet@gmail.com,female,Helene,Mbet,Helene Mbet,BSc|MSc,Level Two|Master's Degree One,7979 Rue de la Réputation, Douala
+696345680,alexandre.monkam@hotmail.com,male,Alexandre,Monkam,Alexandre Monkam,HND|BSc,Level One|Level Three,8080 Boulevard de la Crédibilité, Yaoundé
+688456791,edith.ntoko@yahoo.fr,female,Edith,Ntoko,Edith Ntoko,PhD,Level Two|Bachelor's Degree Programs|Doctoral (Ph.D.) Programs,8181 Rue de la Confiance, Douala
+677567892,gervais.mbarga@gmail.com,male,Gervais,Mbarga,Gervais Mbarga,HND|BSc|MSc,Level Three|Master's Degree Two,8282 Avenue de la Sérénité, Yaoundé
+699678903,noelie.ndjeng@outlook.com,female,Noelie,Ndjeng,Noelie Ndjeng,BSc|MSc,Level One|Master's Degree One,8383 Rue de la Tranquillité, Douala
+655789014,raymond.tchoffo@yahoo.com,male,Raymond,Tchoffo,Raymond Tchoffo,HND|BSc,Level Two|Bachelor's Degree Programs,8484 Boulevard de la Plénitude, Yaoundé
+678890125,carole.nsangou@gmail.com,female,Carole,Nsangou,Carole Nsangou,MSc|PhD,Level Three|Doctoral (Ph.D.) Programs,8585 Rue de l'Équilibre, Douala
+696901236,philippe.nguimfack@icloud.com,male,Philippe,Nguimfack,Philippe Nguimfack,BSc,Level One|Level Two|Master's Degree Two,8686 Avenue de l'Harmonie, Yaoundé
+,marlene.simo@hotmail.com,female,Marlene,Simo,Marlene Simo,HND|BSc|MSc,Level Three|Bachelor's Degree Programs,8787 Rue de la Joie, Douala
+677123459,jean-baptiste.nguembock@gmail.com,male,Jean-Baptiste,Nguembock,Jean-Baptiste Nguembock,BSc|MSc,Level One|Master's Degree One|Doctoral (Ph.D.) Programs,8888 Boulevard de l'Allégresse, Yaoundé
+699234570,elisabeth.mbock@yahoo.fr,female,Elisabeth,Mbock,Elisabeth Mbock,PhD,Level Two|Level Three,8989 Rue de la Générosité, Douala
+655345681,herve.ndongmo@outlook.com,male,Herve,Ndongmo,Herve Ndongmo,HND|BSc,Level One|Bachelor's Degree Programs|Master's Degree Two,9090 Avenue de la Bienfaisance, Yaoundé
+,alice.ngansop@yahoo.com,female,Alice,Ngansop,Alice Ngansop,BSc|MSc|PhD,Level Three|Master's Degree One|Doctoral (Ph.D.) Programs,9191 Rue de la Magnanimité, Douala
+696567893,marcel.mouelle@gmail.com,male,Marcel,Mouelle,Marcel Mouelle,HND|BSc,Level Two|Level Three,9292 Boulevard de la Clémence, Yaoundé
+688678904,claudine.efoua@icloud.com,female,Claudine,Efoua,Claudine Efoua,MSc,Level One|Bachelor's Degree Programs,9393 Rue de la Douceur, Douala
+677789015,bruno.mvondo@gmail.com,male,Bruno,Mvondo,Bruno Mvondo,BSc|PhD,Level Two|Master's Degree Two|Doctoral (Ph.D.) Programs,9494 Avenue de la Bienveillance, Yaoundé
+699890126,bridgette.ndu@hotmail.com,female,Bridgette,Ndu,Bridgette Ndu,HND|BSc|MSc,Level Three|Master's Degree One,9595 Rue de la Gentillesse, Douala
+655901237,julien.bekale@yahoo.fr,male,Julien,Bekale,Julien Bekale,BSc|MSc,Level One|Level Two|Bachelor's Degree Programs,9696 Boulevard de la Courtoisie, Yaoundé
+678012348,danielle.njine@gmail.com,female,Danielle,Njine,Danielle Njine,HND|BSc,Level Three|Master's Degree Two,9797 Rue de l'Amabilité, Douala
+696123459,eugene.moukam@outlook.com,male,Eugene,Moukam,Eugene Moukam,MSc|PhD,Level One|Doctoral (Ph.D.) Programs,9898 Avenue de la Convivialité, Yaoundé
+,irene.ndjock@yahoo.com,female,Irene,Ndjock,Irene Ndjock,HND|BSc|MSc,Level Two|Bachelor's Degree Programs|Master's Degree One,9999 Rue de la Fraternité, Douala

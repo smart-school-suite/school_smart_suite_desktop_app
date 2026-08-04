@@ -16,21 +16,12 @@ class ExportGenerationService {
    */
   static async generate(payload) {
     try {
-      console.log("Validation Complete");
 
       ValidationService.validate(payload);
 
-      console.log("Factory");
-
       const generator = ExportFactory.get(payload.format);
 
-      console.log("Generator");
-
       const file = await generator.generate(payload);
-
-      console.log(file);
-
-      console.log("Saving");
 
       const result = await FileService.save({
         data: file.data,
@@ -42,13 +33,9 @@ class ExportGenerationService {
         mimeType: MimeTypes[payload.format],
       });
 
-      console.log(result);
 
       return result;
     } catch (error) {
-      console.error("EXPORT ERROR");
-      console.error(error);
-
       return {
         success: false,
 

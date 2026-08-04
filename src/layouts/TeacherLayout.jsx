@@ -39,7 +39,7 @@ import { useChannel } from "ably/react";
 import { useGetJobs } from "../hooks/job/useGetJobs";
 import { jobProgressMap } from "../utils/maps/jobProgressMap";
 import RectangleSkeleton from "../components/SkeletonPageLoader/RectangularSkeleton";
-
+import { JOB_STATUS_LABEL, JOB_STATUS } from "@/constants";
 export const sideBarData = [
   { title: "Teacher", path: "/teacher" },
   { title: "Teacher Course", path: "/teacher-course" },
@@ -203,7 +203,6 @@ export function JobPopOver() {
   const [jobs, setJobs] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
 
-  // Search & Debounce State
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -275,6 +274,7 @@ export function JobPopOver() {
 
     setJobs((prevJobs) => {
       let jobFound = false;
+      let jobCompleted = false;
 
       const updatedJobs = prevJobs.map((group) => {
         const hasJob = group.jobs?.some((j) => j.id === payload.job_id);
@@ -282,17 +282,27 @@ export function JobPopOver() {
           jobFound = true;
           return {
             ...group,
-            jobs: group.jobs.map((j) =>
-              j.id === payload.job_id
-                ? {
-                    ...j,
-                    progress_percentage:
-                      payload.progress ?? j.progress_percentage,
-                    status: payload.status ?? j.status,
-                    stage: payload.stage ?? j.stage,
-                  }
-                : j,
-            ),
+            jobs: group.jobs.map((j) => {
+              if (j.id === payload.job_id) {
+                const updatedJob = {
+                  ...j,
+                  progress_percentage:
+                    payload.progress ?? j.progress_percentage,
+                  status: payload.status ?? j.status,
+                  stage: payload.stage ?? j.stage,
+                };
+
+                if (
+                  payload.progress === 100 ||
+                  payload.status === JOB_STATUS.COMPLETED
+                ) {
+                  jobCompleted = true;
+                }
+
+                return updatedJob;
+              }
+              return j;
+            }),
           };
         }
         return group;
@@ -303,13 +313,19 @@ export function JobPopOver() {
         return prevJobs;
       }
 
+      if (jobCompleted) {
+        setTimeout(() => {
+          fetchJobs();
+        }, 500);
+      }
+
       return updatedJobs;
     });
   });
 
   const activeJobsCount = useMemo(() => {
     if (!jobs || !Array.isArray(jobs)) return 0;
-    const activeStatuses = ["processing", "queued", "pending", "in_progress"];
+    const activeStatuses = [JOB_STATUS.PROCESSING, JOB_STATUS.QUEUED];
 
     return jobs.reduce((total, group) => {
       const activeInGroup = (group.jobs || []).filter((j) =>
@@ -373,10 +389,11 @@ export function JobPopOver() {
                 exit="exit"
                 variants={popoverVariants}
                 transition={{ duration: 0.15, ease: "easeInOut" }}
-                className="card shadow-sm white-bg rounded-4"
+                className="card shadow-sm white-bg"
                 style={{
-                  width: "40vw",
+                  width: "42vw",
                   minWidth: "220px",
+                  borderRadius: "0.7rem",
                 }}
               >
                 <div
@@ -402,6 +419,7 @@ export function JobPopOver() {
                     <StatusTabs
                       activeTab={activeTab}
                       onTabChange={handleTabChange}
+                      jobs={jobs}
                     />
                   </div>
                   <div
@@ -490,8 +508,25 @@ export function JobPopOver() {
                         ))}
                       </>
                     ) : isError ? (
-                      <div className="p-2">
-                        Error occurred while fetching jobs.
+                      <div className="d-flex flex-grow-1 align-items-center justify-content-center">
+                        <div className="d-flex flex-column align-items-center gap-2 text-center">
+                          <img
+                            src="./sss-maskot/error.png"
+                            alt="sss-timetable-maskot"
+                            style={{
+                              height: "250px",
+                              width: "250px",
+                              objectFit: "contain",
+                            }}
+                          />
+                          <span className="fw-semibold font-size-sm">
+                            Timetable Generation Failed
+                          </span>
+                          <p className="text-muted font-size-sm mb-0">
+                            Consider the diagnostic report to identify and
+                            resolve constraint conflicts
+                          </p>
+                        </div>
                       </div>
                     ) : filteredJobs?.length > 0 ? (
                       filteredJobs.map((job, index) => (
@@ -519,6 +554,7 @@ export function JobPopOver() {
                                   <Fragment key={jobItem?.id}>
                                     {Component && (
                                       <Component
+                                        jobId={jobItem.id}
                                         title={jobItem.title}
                                         module={jobItem.module}
                                         type={jobItem.type}
@@ -527,6 +563,8 @@ export function JobPopOver() {
                                         total={jobItem?.total_items}
                                         failedItems={jobItem?.failed_items}
                                         startedAt={jobItem?.started_at}
+                                        queuedAt={jobItem?.started_at}
+                                        timestamp={jobItem?.finished_at}
                                         unit={jobItem?.unit}
                                         processedUnit={jobItem?.processed_unit}
                                         progress={jobItem?.progress_percentage}
@@ -550,7 +588,28 @@ export function JobPopOver() {
                         </Fragment>
                       ))
                     ) : (
-                      <div className="p-2">No jobs found.</div>
+                      <div className="d-flex flex-grow-1 align-items-center justify-content-center">
+                        <div className="d-flex flex-column align-items-center gap-2 text-center">
+                          <img
+                            src="./sss-maskot/404.png"
+                            alt="sss-timetable-maskot"
+                            style={{
+                              height: "250px",
+                              width: "250px",
+                              objectFit: "contain",
+                            }}
+                          />
+                          <span className="fw-semibold font-size-sm">
+                            Jobs Not Found
+                          </span>
+                          <p className="text-muted font-size-sm mb-0">
+                            You will need to create a job to see it here. Jobs
+                            are created when you perform actions like importing
+                            teachers, assigning specialties, or generating
+                            timetables.
+                          </p>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -563,12 +622,59 @@ export function JobPopOver() {
   );
 }
 
-function StatusTabs({ activeTab, onTabChange }) {
+function StatusTabs({ activeTab, onTabChange, jobs }) {
+  const getCounts = useMemo(() => {
+    if (!jobs || !Array.isArray(jobs)) {
+      return {
+        all: 0,
+        [JOB_STATUS.PROCESSING]: 0,
+        [JOB_STATUS.FAILED]: 0,
+        [JOB_STATUS.COMPLETED]: 0,
+        [JOB_STATUS.COMPLETED_WITH_ISSUES]: 0,
+      };
+    }
+
+    const allJobs = jobs.flatMap((group) => group.jobs || []);
+
+    return {
+      all: allJobs.length,
+      [JOB_STATUS.PROCESSING]: allJobs.filter(
+        (j) => j.status?.toLowerCase() === JOB_STATUS.PROCESSING,
+      ).length,
+      [JOB_STATUS.FAILED]: allJobs.filter(
+        (j) => j.status?.toLowerCase() === JOB_STATUS.FAILED,
+      ).length,
+      [JOB_STATUS.COMPLETED]: allJobs.filter(
+        (j) => j.status?.toLowerCase() === JOB_STATUS.COMPLETED,
+      ).length,
+      [JOB_STATUS.COMPLETED_WITH_ISSUES]: allJobs.filter(
+        (j) => j.status?.toLowerCase() === JOB_STATUS.COMPLETED_WITH_ISSUES,
+      ).length,
+    };
+  }, [jobs]);
+
   const tabs = [
-    { id: "all", label: "All", count: 100 },
-    { id: "active", label: "Active", count: 100 },
-    { id: "failed", label: "Failed", count: 100 },
-    { id: "completed", label: "Completed", count: 20 },
+    { id: "all", label: "All", count: getCounts.all },
+    {
+      id: JOB_STATUS.PROCESSING,
+      label: JOB_STATUS_LABEL[JOB_STATUS.PROCESSING],
+      count: getCounts[JOB_STATUS.PROCESSING],
+    },
+    {
+      id: JOB_STATUS.FAILED,
+      label: JOB_STATUS_LABEL[JOB_STATUS.FAILED],
+      count: getCounts[JOB_STATUS.FAILED],
+    },
+    {
+      id: JOB_STATUS.COMPLETED,
+      label: JOB_STATUS_LABEL[JOB_STATUS.COMPLETED],
+      count: getCounts[JOB_STATUS.COMPLETED],
+    },
+    {
+      id: JOB_STATUS.COMPLETED_WITH_ISSUES,
+      label: JOB_STATUS_LABEL[JOB_STATUS.COMPLETED_WITH_ISSUES],
+      count: getCounts[JOB_STATUS.COMPLETED_WITH_ISSUES],
+    },
   ];
 
   return (

@@ -10,6 +10,7 @@ import {
 import { reconstructFileFromRedux } from "../../../utils/file/fileReconstruction";
 import { TEACHER_COLUMNS } from "../../../utils/teacher/teacherColumns";
 import { useImportTeacher } from "../../../hooks/teacher/useImportTeacher";
+import { SingleSpinner } from "../../../components/Spinners/Spinners";
 function TeacherImportReview({
   handleClose,
   nextStep,
@@ -23,7 +24,7 @@ function TeacherImportReview({
     isPending,
     isError,
     error,
-  } = useImportTeacher();
+  } = useImportTeacher(handleClose);
   const [filter, setFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const tableRef = useRef();
@@ -82,8 +83,8 @@ function TeacherImportReview({
       key: "errors",
     },
   ];
-
   const handleTeacherImport = () => {
+    
     importTeachers({
       file: file, 
       map: mapping,
@@ -189,7 +190,9 @@ function TeacherImportReview({
               className="border-none border primary-background font-size-sm text-white p-2 rounded-3"
               onClick={() => handleTeacherImport()}
             >
-              Import 118 teachers
+              {
+                 isPending ? <SingleSpinner /> : `Import ${categorizeData?.ready?.length || 0} teachers`
+              }
             </button>
           </div>
         </div>

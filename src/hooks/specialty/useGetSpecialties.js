@@ -5,5 +5,6 @@ export const useGetSpecialties = () => {
     return useQuery({
         queryKey:["specialties"],
         queryFn:() => getSpecialties(),
+        
     })
 }

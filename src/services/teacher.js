@@ -121,21 +121,16 @@ export const bulkRemoveTeacherSpecialtyPreference = async (data) => {
   );
   return response.data;
 };
-
 export const importTeacher = async (payload) => {
   const formData = new FormData();
-  formData.append("file", payload.file);
+  formData.append("file", payload.file, payload.file.name);
   if (payload.map) {
     Object.entries(payload.map).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(`map[${key}]`, value);
+      if (value !== undefined && value !== null && value !== "") {
+        formData.append(`map[${key}]`, String(value));
       }
     });
   }
-  const response = await axiosInstance.post("teacher/import", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const response = await axiosInstance.post("teacher/import", formData);
   return response.data;
 };

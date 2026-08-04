@@ -1,15 +1,19 @@
 import { Icon } from "@iconify/react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCustomFilter } from "../../../Slices/teacher/teacherSlice";
-import filterInputMap from "../../../utils/maps/filterInputMap";
 
-function ColumnValueInput({ cFilters, columns, nextStep, previousStep }) {
+function ColumnValueInput({
+  cFilters,
+  columns,
+  nextStep,
+  previousStep,
+  setCustomFilter,
+  moduleState,
+}) {
   const dispatch = useDispatch();
-  const teacherState = useSelector((state) => state.teachers);
-  
-  const cf = teacherState.customFilter?.find((cf) => cf.id === cFilters.id);
 
-  if (!cf) return null; 
+  const cf = moduleState.customFilter?.find((cf) => cf.id === cFilters.id);
+
+  if (!cf) return null;
 
   const cellDataType = cf.column?.cellDataType;
   const match = cf.match?.value;
@@ -24,7 +28,9 @@ function ColumnValueInput({ cFilters, columns, nextStep, previousStep }) {
   const FilterComponent = inputConfig?.component;
 
   const handleSingleValueChange = (newValue) => {
-    dispatch(setCustomFilter({ id: cFilters.id, field: "value", value: newValue }));
+    dispatch(
+      setCustomFilter({ id: cFilters.id, field: "value", value: newValue }),
+    );
   };
 
   const handleRangeValueChange = (fieldKey, newValue) => {
@@ -34,12 +40,15 @@ function ColumnValueInput({ cFilters, columns, nextStep, previousStep }) {
         id: cFilters.id,
         field: "value",
         value: { ...currentRangeValue, [fieldKey]: newValue },
-      })
+      }),
     );
   };
 
   return (
-    <div className="d-flex flex-column p-2 font-size-sm" style={{ height: "50dvh" }}>
+    <div
+      className="d-flex flex-column p-2 font-size-sm"
+      style={{ height: "50dvh" }}
+    >
       <div className="d-flex flex-column gap-1 mb-3">
         <span className="fw-semibold">{cf.column?.headerName}</span>
         <span className="text-capitalize text-muted">{match}</span>
@@ -63,7 +72,9 @@ function ColumnValueInput({ cFilters, columns, nextStep, previousStep }) {
             />
           )
         ) : (
-          <div className="text-danger small">No filter input template found for this data type.</div>
+          <div className="text-danger small">
+            No filter input template found for this data type.
+          </div>
         )}
       </div>
 

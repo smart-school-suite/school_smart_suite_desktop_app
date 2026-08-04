@@ -1,8 +1,7 @@
-import ColumnFilterMatch from "./ColumnFilterMatch";
-import ColumnSelect from "./ColumnSelect";
-import ColumnValueInput from "./ColumnValueInput";
-import PreviewFilter from "./PreviewFilter";
-
+import ColumnFilterMatch from "../../../components/GeneralFilter/Table/ColumnFilterMatch"
+import ColumnSelect from "../../../components/GeneralFilter/Table/ColumnSelect"
+import ColumnValueInput from "../../../components/GeneralFilter/Table/ColumnValueInput"
+import PreviewFilter from "../../../components/GeneralFilter/Table/PreviewFilter"
 export const GEN_FILTER_FLOW = [
     {
         program_name:"SELECT_COLUMN",
