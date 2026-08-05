@@ -365,7 +365,7 @@ function SideBarLg() {
                             }
                             style={{ fontSize: "0.75rem" }}
                           >
-                            Grades Configuration
+                            Grades Scale
                           </p>
                         </div>
                       </div>

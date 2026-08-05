@@ -18,9 +18,15 @@ import autoGenTimetableSliceReducer from "../Slices/Asynslices/AutoGenTimetableS
 import themeReducer from "../Slices/Asynslices/ThemeSlice";
 import semesterTimetableReducer from "../Slices/Asynslices/semesterTimetableSlice";
 import teacherReducer from "../Slices/teacher/teacherSlice";
-import specialtyReducer  from "../Slices/administrator/specialtySlice";
+import specialtyReducer from "../Slices/administrator/specialtySlice";
 import departmentReducer from "../Slices/administrator/departmentSlice";
-import schoolAdminReducer  from "../Slices/administrator/schoolAdminSlice";
+import schoolAdminReducer from "../Slices/administrator/schoolAdminSlice";
+import hallReducer from "../Slices/administrator/hallSlice";
+import courseReducer from "../Slices/administrator/courseSlice";
+import semesterReducer from "../Slices/academics/semesterSlice";
+import academicYearReducer from "../Slices/academics/academicYearSlice";
+import gradeScaleReducer from "../Slices/academics/gradeScaleSlice";
+import examReducer from "../Slices/exam/examSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -44,7 +50,13 @@ const themePersistConfig = {
 const teacherPersistConfig = {
   key: "teachers",
   storage,
-  whitelist: ["selectedTeachers", "rowCount", "searchText", "columns", "import"],
+  whitelist: [
+    "selectedTeachers",
+    "rowCount",
+    "searchText",
+    "columns",
+    "import",
+  ],
   blacklist: ["isLoading", "error"],
 };
 
@@ -66,7 +78,13 @@ const rootReducer = combineReducers({
   teachers: persistReducer(teacherPersistConfig, teacherReducer),
   specialty: specialtyReducer,
   department: departmentReducer,
-  schoolAdmin: schoolAdminReducer
+  schoolAdmin: schoolAdminReducer,
+  hall: hallReducer,
+  course: courseReducer,
+  semester: semesterReducer,
+  academicYear: academicYearReducer,
+  gradeScale: gradeScaleReducer,
+  exam: examReducer,
 });
 
 export const store = configureStore({
