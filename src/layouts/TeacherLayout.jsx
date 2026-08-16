@@ -76,7 +76,7 @@ function TeacherLayout() {
   return (
     <>
       <main className="main-container gap-2">
-        <div className="card border rounded-3 p-2 d-flex flex-column gap-2">
+        <div className="card border d-flex flex-column gap-2 p-2" style={{ borderRadius:"0.75rem" }}>
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-2">
               <div

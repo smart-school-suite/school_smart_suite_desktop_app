@@ -77,7 +77,7 @@ const rootReducer = combineReducers({
   semesterTimetable: semesterTimetableReducer,
   teachers: persistReducer(teacherPersistConfig, teacherReducer),
   specialty: specialtyReducer,
-  department: departmentReducer,
+  department: persistReducer({ key: "teachers", storage }, departmentReducer),
   schoolAdmin: schoolAdminReducer,
   hall: hallReducer,
   course: courseReducer,

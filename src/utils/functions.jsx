@@ -753,3 +753,69 @@ export const isLastElement = (index, arrayOrLength) => {
     : arrayOrLength;
   return index === length - 1;
 };
+
+export function analyzeColumns(standardFields, repeatableGroups = {}, columns) {
+  // Track which columns are used and where
+  const usedColumns = new Map();
+  const availableColumns = [];
+  
+  // Convert columns array to a Set for faster lookup
+  const columnsSet = new Set(columns);
+  
+  // Helper function to check if a value exists in columns
+  const isColumnInList = (value) => columnsSet.has(value);
+  
+  // Helper function to add a column usage
+  const addColumnUsage = (columnValue, path) => {
+    if (columnValue && isColumnInList(columnValue)) {
+      if (!usedColumns.has(columnValue)) {
+        usedColumns.set(columnValue, []);
+      }
+      usedColumns.get(columnValue).push(path);
+    }
+  };
+  
+  // Check standardFields
+  for (const [fieldName, fieldData] of Object.entries(standardFields)) {
+    if (fieldData.value) {
+      addColumnUsage(fieldData.value, `standardFields.${fieldName}`);
+    }
+  }
+  
+  // Check repeatableGroups
+  for (const [groupName, groupData] of Object.entries(repeatableGroups)) {
+    if (groupData.instances && Array.isArray(groupData.instances)) {
+      groupData.instances.forEach((instance, instanceIndex) => {
+        if (instance.mapping) {
+          for (const [mappingKey, mappingData] of Object.entries(instance.mapping)) {
+            if (mappingData.value) {
+              addColumnUsage(
+                mappingData.value, 
+                `repeatableGroups.${groupName}.instances[${instanceIndex}].mapping.${mappingKey}`
+              );
+            }
+          }
+        }
+      });
+    }
+  }
+  
+  // Determine available and used columns
+  const alreadyUsedColumns = [];
+  
+  for (const column of columns) {
+    if (usedColumns.has(column)) {
+      alreadyUsedColumns.push({
+        column: column,
+        mapped_to: usedColumns.get(column)
+      });
+    } else {
+      availableColumns.push(column);
+    }
+  }
+  
+  return {
+    available_columns: availableColumns,
+    already_used_columns: alreadyUsedColumns
+  };
+}

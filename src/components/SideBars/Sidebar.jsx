@@ -52,6 +52,7 @@ import {
   UserPlus,
   Settings,
   LogOut,
+  UnfoldHorizontal
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
@@ -129,7 +130,7 @@ function SideBarLg() {
           }`}
         >
           <div className="logo-area mb-3">
-            <div className="d-flex justify-content-start flex-row gap-2 ps-2 align-items-center">
+            <div className="d-flex justify-content-between flex-row gap-2 px-2  align-items-center">
               <div className="app-logo">
                 <img
                   src="./logo/logo-transparent.png"
@@ -137,9 +138,7 @@ function SideBarLg() {
                   className="app-logo"
                 />
               </div>
-              <span className="font-size-sm fw-semibold color-primary">
-                SMART SCHOOL SUITE
-              </span>
+              <UnfoldHorizontal size={16} />
             </div>
           </div>
           <div className="nav-container mt-1">

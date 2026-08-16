@@ -1,6 +1,160 @@
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
 
+export function formatImportMapping(mapping) {
+  const formatted = {
+    standardFields: {},
+    repeatableGroups: {},
+  };
+
+  // Standard fields
+  Object.entries(mapping?.standardFields ?? {}).forEach(
+    ([field, config]) => {
+      if (!config?.value) {
+        return;
+      }
+
+      formatted.standardFields[field] = config.value;
+    }
+  );
+
+  // Repeatable groups
+  Object.entries(mapping?.repeatableGroups ?? {}).forEach(
+    ([groupName, group]) => {
+      formatted.repeatableGroups[groupName] = (
+        group?.instances ?? []
+      )
+        .map((instance) => {
+          const formattedInstance = {};
+
+          Object.entries(instance?.mapping ?? {}).forEach(
+            ([field, config]) => {
+              if (!config?.value) {
+                return;
+              }
+
+              formattedInstance[field] = config.value;
+            }
+          );
+
+          return formattedInstance;
+        })
+        .filter(
+          (instance) => Object.keys(instance).length > 0
+        );
+    }
+  );
+
+  return formatted;
+}
+
+export const transformImportPreviewData = ({
+  spreadsheetData,
+  mapping,
+  schema = {},
+}) => {
+  if (!Array.isArray(spreadsheetData) || spreadsheetData.length === 0) {
+    return [];
+  }
+
+  if (!mapping || typeof mapping !== 'object') {
+    return spreadsheetData;
+  }
+
+  const isAdvancedMapping = mapping.standardFields || mapping.repeatableGroups;
+  
+  if (!isAdvancedMapping) {
+    return spreadsheetData;
+  }
+
+  const { standardFields = {}, repeatableGroups = {} } = mapping;
+
+  const isMeaningfulValue = (value) => {
+    if (value === null || value === undefined) return false;
+    if (typeof value === 'string' && value.trim() === '') return false;
+    return true;
+  };
+
+  const hasMeaningfulValues = (obj) => {
+    if (!obj || typeof obj !== 'object') return false;
+    return Object.values(obj).some(value => isMeaningfulValue(value));
+  };
+
+  const getSpreadsheetValue = (row, columnName) => {
+    if (!columnName || typeof columnName !== 'string') return '';
+    return row[columnName] !== undefined && row[columnName] !== null
+      ? row[columnName]
+      : '';
+  };
+
+  const transformRow = (row) => {
+    const result = {};
+
+    Object.entries(standardFields).forEach(([logicalField, fieldConfig]) => {
+      const columnName = fieldConfig?.value;
+      
+      if (columnName && typeof columnName === 'string' && columnName.trim() !== '') {
+        const value = getSpreadsheetValue(row, columnName);
+        result[logicalField] = value;
+      }
+    });
+
+    Object.entries(repeatableGroups).forEach(([groupName, groupConfig]) => {
+      const instances = groupConfig?.instances;
+      
+      if (!Array.isArray(instances) || instances.length === 0) {
+        return;
+      }
+
+      const groupResults = [];
+
+      instances.forEach((instance) => {
+        const instanceMapping = instance?.mapping || {};
+        const instanceResult = {};
+
+        Object.entries(instanceMapping).forEach(([logicalField, fieldConfig]) => {
+          const columnName = fieldConfig?.value;
+          
+          if (columnName && typeof columnName === 'string' && columnName.trim() !== '') {
+            const value = getSpreadsheetValue(row, columnName);
+            instanceResult[logicalField] = value;
+          }
+        });
+
+        if (hasMeaningfulValues(instanceResult)) {
+          groupResults.push(instanceResult);
+        }
+      });
+
+      if (groupResults.length > 0) {
+        result[groupName] = groupResults;
+      }
+    });
+
+    return result;
+  };
+
+  return spreadsheetData.map(row => transformRow(row));
+};
+
+/**
+ * Enhanced read function that applies advanced mapping
+ */
+export const readAndTransformSpreadsheetData = async (file, mapping = {}) => {
+  try {
+    // First, read the raw spreadsheet data using the existing function
+    const rawData = await readSpreadsheetData(file);
+    
+    // Then apply the advanced transformation
+    return transformImportPreviewData({
+      spreadsheetData: rawData,
+      mapping: mapping,
+    });
+  } catch (error) {
+    throw new Error(`Failed to read and transform spreadsheet: ${error.message}`);
+  }
+};
+
 export const readSpreadsheetData = (file, mapping = {}) => {
   return new Promise((resolve, reject) => {
     if (!file) {

@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { prepareFileForRedux } from "../../../utils/file/fileReconstruction";
 import { FILE_ENCODING } from "@/constants";
 import { downloadFile } from "../../../utils/file/fileDownload";
+import { CircleX, ChevronDown, Plus, Dot, ArrowRight } from "lucide-react";
 function FileUpload({ onFileSelect, fileInfo, onClearFile }) {
   const dispatch = useDispatch();
   const [dragActive, setDragActive] = useState(false);
@@ -311,96 +312,111 @@ function TeacherImportFileUpload({
 
   return (
     <div className="d-flex flex-column font-size-sm gap-4">
-      <div className="d-flex flex-row align-items-center justify-content-between">
-        <span className="fw-semibold">Import Teacher</span>
-        <span
-          style={{ cursor: "pointer" }}
-          onClick={() => handleClose && handleClose()}
-        >
-          <Icon icon="charm:cross" width="22" height="22" />
-        </span>
-      </div>
-      <div className="d-flex flex-row justify-content-end">
-        <span>
-          {currentStep} of {fullStep} completed
-        </span>
-      </div>
-      <div>
-        <span className="fw-medium">Upload teacher data</span>
-        <p className="text-muted m-0">
-          Import teachers from an Excel or CSV file. We'll check your data
-          before anything is added.
-        </p>
-      </div>
-
-      <FileUpload
-        onFileSelect={(fileData) =>
-          dispatch(setImportSelectedFile({ selectedFile: fileData }))
-        }
-        fileInfo={selectedFile}
-        onClearFile={() => dispatch(setImportReset())}
-      />
-
-      <AnimatePresence>
-        {selectedFile && (
-          <motion.div
-            initial={{ opacity: 0, height: 0, y: -8 }}
-            animate={{ opacity: 1, height: "auto", y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-            className="d-flex flex-row align-items-center justify-content-between card p-2 rounded-4"
+      <div
+        className="border-bottom rounded-top-4 p-2 d-flex flex-column justify-content-center"
+        style={{ height: "6dvh", background: "#f9f9f9" }}
+      >
+        <div className="d-flex flex-row align-items-center justify-content-between">
+          <div>
+            <span className="font-size-sm fw-semibold">File Upload</span>
+          </div>
+          <button
+            onClick={() => handleClose()}
+            className="border-none border rounded-circle bg-transparent p-0"
+            style={{
+              width: "2rem",
+              height: "2rem",
+              display: "grid",
+              placeItems: "center",
+              cursor: "pointer",
+            }}
           >
-            <div className="d-flex flex-row align-items-center gap-2">
-              <div>
-                <Icon icon="solar:file-linear" width={20} height={20} />
-              </div>
-              <div className="d-flex flex-column gap-1">
-                <span className="fw-medium">{selectedFile.name}</span>
-                <div className="d-flex flex-row align-items-center gap-2 text-muted small">
-                  <span>{selectedFile.size}</span>
-                  <Icon icon="icon-park-outline:dot" />
-                  <span>{selectedFile.rows} Rows</span>
+            <CircleX size={16} />
+          </button>
+        </div>
+      </div>
+      <div className="px-2 d-flex flex-column gap-4">
+        <div className="d-flex flex-row justify-content-end fw-semibold">
+          <span>
+            {currentStep} of {fullStep} completed
+          </span>
+        </div>
+        <div>
+          <span className="fw-medium">Upload teacher data</span>
+          <p className="text-muted m-0">
+            Import teachers from an Excel or CSV file. We'll check your data
+            before anything is added.
+          </p>
+        </div>
+
+        <FileUpload
+          onFileSelect={(fileData) =>
+            dispatch(setImportSelectedFile({ selectedFile: fileData }))
+          }
+          fileInfo={selectedFile}
+          onClearFile={() => dispatch(setImportReset())}
+        />
+
+        <AnimatePresence>
+          {selectedFile && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, y: -8 }}
+              animate={{ opacity: 1, height: "auto", y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="d-flex flex-row align-items-center justify-content-between card p-2 rounded-4"
+            >
+              <div className="d-flex flex-row align-items-center gap-2">
+                <div>
+                  <Icon icon="solar:file-linear" width={20} height={20} />
+                </div>
+                <div className="d-flex flex-column gap-1">
+                  <span className="fw-medium">{selectedFile.name}</span>
+                  <div className="d-flex flex-row align-items-center gap-2 text-muted small">
+                    <span>{selectedFile.size}</span>
+                    <Icon icon="icon-park-outline:dot" />
+                    <span>{selectedFile.rows} Rows</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button
-              onClick={() => dispatch(setImportReset())}
-              className="border-none border rounded-circle bg-transparent p-0"
-              style={{
-                width: "2rem",
-                height: "2rem",
-                display: "grid",
-                placeItems: "center",
-                cursor: "pointer",
-              }}
-            >
-              <Icon icon="icons8:cancel" width={18} height={18} />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <button
+                onClick={() => dispatch(setImportReset())}
+                className="border-none border rounded-circle bg-transparent p-0"
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  display: "grid",
+                  placeItems: "center",
+                  cursor: "pointer",
+                }}
+              >
+                <Icon icon="icons8:cancel" width={18} height={18} />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <div className="d-flex flex-column gap-2">
-        <span className="fw-medium">New to teacher imports?</span>
-        <button
-          onClick={() =>
-            downloadFile(
-              "import/examples/teacher_example.csv",
-              "teacher_example.csv",
-            )
-          }
-          className="font-size-sm border-none rounded-3 p-2 d-flex flex-row align-items-center gap-2 w-100 justify-content-center bg-light"
-        >
-          <span>Download template</span>
-          <Icon icon="mynaui:download" width={20} height={20} />
-        </button>
-        <span className="font-size-sm text-muted">
-          Use our template to make sure your columns are formatted correctly.
-        </span>
+        <div className="d-flex flex-column gap-2">
+          <span className="fw-medium">New to teacher imports?</span>
+          <button
+            onClick={() =>
+              downloadFile(
+                "import/examples/teacher_example.csv",
+                "teacher_example.csv",
+              )
+            }
+            className="font-size-sm border-none rounded-3 p-2 d-flex flex-row align-items-center gap-2 w-100 justify-content-center bg-light"
+          >
+            <span>Download template</span>
+            <Icon icon="mynaui:download" width={20} height={20} />
+          </button>
+          <span className="font-size-sm text-muted">
+            Use our template to make sure your columns are formatted correctly.
+          </span>
+        </div>
       </div>
-
-      <div className="mt-auto">
+      <div className="mt-auto border-top p-2" style={{ height: "8dvh" }}>
         <div className="d-flex flex-row justify-content-end">
           <button
             disabled={!selectedFile}

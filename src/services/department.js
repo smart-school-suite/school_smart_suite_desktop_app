@@ -1,5 +1,5 @@
 import axiosInstance from "../axios/authAxios";
-
+import axiosUploadInstance from "../axios/axiosUploadInstance";
 
 export const createDepartment = async (data) => {
   const response = await axiosInstance.post("department", data);
@@ -12,18 +12,26 @@ export const getDepartments = async () => {
 };
 
 export const bulkActivateDepartment = async (activateData) => {
-  const response = await axiosInstance.post("department/bulk-activate", activateData);
+  const response = await axiosInstance.post(
+    "department/bulk-activate",
+    activateData,
+  );
   return response.data;
 };
 
 export const bulkDeactivateDepartment = async (activateData) => {
-  const response = await axiosInstance.post("department/bulk-deactivate", activateData);
+  const response = await axiosInstance.post(
+    "department/bulk-deactivate",
+    activateData,
+  );
   return response.data;
 };
 
-
 export const bulkDeleteDepartment = async (deleteData) => {
-  const response = await axiosInstance.post("department/bulk-delete", deleteData);
+  const response = await axiosInstance.post(
+    "department/bulk-delete",
+    deleteData,
+  );
   return response.data;
 };
 
@@ -42,19 +50,75 @@ export const updateDepartment = async (departmentId, data) => {
   return response.data;
 };
 
-
 export const deleteDepartment = async (departmentId) => {
   const response = await axiosInstance.delete(`department/${departmentId}`);
   return response.data;
 };
 
-
-export const activateDepartment = async (departmentId, data={}) => {
-  const response = await axiosInstance.post(`department/${departmentId}/activate`, data);
+export const activateDepartment = async (departmentId, data = {}) => {
+  const response = await axiosInstance.post(
+    `department/${departmentId}/activate`,
+    data,
+  );
   return response.data;
 };
 
-export const deactivateDepartment = async (departmentId, data={}) => {
-  const response = await axiosInstance.post(`department/${departmentId}/deactivate`, data);
+export const deactivateDepartment = async (departmentId, data = {}) => {
+  const response = await axiosInstance.post(
+    `department/${departmentId}/deactivate`,
+    data,
+  );
   return response.data;
+};
+
+export const importDepartment = async (payload) => {
+  const formData = new FormData();
+  formData.append("file", payload.file, payload.file.name);
+  appendFormData(formData, payload.mapping, "mapping");
+  const response = await axiosUploadInstance.post(
+    "department/import",
+    formData,
+  );
+  return response.data;
+};
+
+const appendFormData = (formData, data, parentKey = "") => {
+  if (data === null || data === undefined) {
+    return;
+  }
+
+  if (data instanceof File) {
+    formData.append(parentKey, data);
+    return;
+  }
+
+  if (Array.isArray(data)) {
+    data.forEach((value, index) => {
+      appendFormData(
+        formData,
+        value,
+        `${parentKey}[${index}]`
+      );
+    });
+
+    return;
+  }
+
+  if (typeof data === "object") {
+    Object.entries(data).forEach(([key, value]) => {
+      const fieldKey = parentKey
+        ? `${parentKey}[${key}]`
+        : key;
+
+      appendFormData(
+        formData,
+        value,
+        fieldKey
+      );
+    });
+
+    return;
+  }
+
+  formData.append(parentKey, String(data));
 };

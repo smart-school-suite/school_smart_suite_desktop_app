@@ -7,6 +7,7 @@ import {
   numberColumn,
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
+import RepeatableGroupRenderer from "../../../../components/DataTableComponents/RepeatableGroupRenderer";
 
 export function teacherImportColDefs() {
   return [
@@ -15,43 +16,69 @@ export function teacherImportColDefs() {
       headerName: "First Name",
       cellRenderer: TextComponent,
     }),
+
     textColumn({
       field: "last_name",
       headerName: "Last Name",
       cellRenderer: TextComponent,
     }),
+
     textColumn({
       field: "full_names",
       headerName: "Full Names",
       cellRenderer: TextComponent,
     }),
+
     textColumn({
-      headerName: "Email",
       field: "email",
+      headerName: "Email",
       cellRenderer: TextComponent,
     }),
+
     textColumn({
-      headerName: "Phone",
       field: "phone",
+      headerName: "Phone",
       cellRenderer: TextComponent,
     }),
+
     textColumn({
-      headerName: "Gender",
       field: "gender",
+      headerName: "Gender",
       cellRenderer: TextComponent,
     }),
+
     textColumn({
-      headerName: "Address",
       field: "address",
+      headerName: "Address",
       cellRenderer: TextComponent,
     }),
+
     textColumn({
-      headerName: "Allowed Levels",
       field: "allowed_levels",
+      headerName: "Allowed Levels",
+      cellRenderer: RepeatableGroupRenderer,
+      cellRendererParams: {
+        label: "Allowed Levels",
+        displayFields: ["allowed_level"],
+        maxVisible: 3,
+      },
     }),
+
     textColumn({
-      headerName: "Qualifications",
       field: "qualifications",
-    })
+      headerName: "Qualifications",
+      cellRenderer: RepeatableGroupRenderer,
+      cellRendererParams: {
+        label: "Qualifications",
+        displayFields: ["qualification", "field_of_study"],
+        maxVisible: 2,
+        detailFields: [
+          "qualification",
+          "field_of_study",
+          "institution",
+          "year",
+        ],
+      },
+    }),
   ];
 }

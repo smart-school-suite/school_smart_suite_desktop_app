@@ -27,6 +27,7 @@ const Table = forwardRef((props, ref) => {
     browserColorScheme: "light",
     headerFontSize: "0.75rem",
     fontFamily: { googleFont: "Poppins, sans-serif" },
+     foregroundColor: "#333",
   });
 
   const darkTheme = themeQuartz.withParams({

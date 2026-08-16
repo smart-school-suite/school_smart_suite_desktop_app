@@ -4,13 +4,26 @@ import { teacherImportColDefs } from "../../../utils/table/colDefs/teachers/teac
 import { useRef, useMemo, useEffect, useState, Fragment } from "react";
 import { useSelector } from "react-redux";
 import {
-  readSpreadsheetData,
+  readAndTransformSpreadsheetData, // Import the new function
   categorizeImportData,
+  formatImportMapping,
 } from "../../../utils/file/fileParser";
 import { reconstructFileFromRedux } from "../../../utils/file/fileReconstruction";
 import { TEACHER_COLUMNS } from "../../../utils/teacher/teacherColumns";
 import { useImportTeacher } from "../../../hooks/teacher/useImportTeacher";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
+import {
+  CircleX,
+  ChevronDown,
+  Plus,
+  Dot,
+  ArrowRight,
+  Trash2,
+  TriangleAlert,
+  Info,
+  CircleCheck,
+} from "lucide-react";
+
 function TeacherImportReview({
   handleClose,
   nextStep,
@@ -40,12 +53,13 @@ function TeacherImportReview({
       return null;
     }
   }, [teacherState?.import?.selectedFile?.serializedFile]);
+
   useEffect(() => {
     const loadFileData = async () => {
       if (!file) return;
 
       try {
-        const data = await readSpreadsheetData(file, mapping);
+        const data = await readAndTransformSpreadsheetData(file, mapping);
         setFileData(data);
       } catch (error) {
         console.error("Failed to read file:", error);
@@ -53,7 +67,7 @@ function TeacherImportReview({
     };
 
     loadFileData();
-  }, [file]);
+  }, [file, mapping]);
 
   const handleSearch = (e) => {
     const value = e.target.value;
@@ -69,109 +83,150 @@ function TeacherImportReview({
     {
       label: "All",
       key: "all",
+      count: fileData?.length,
     },
     {
       label: "Ready",
       key: "ready",
+      count: categorizeData?.ready?.length,
     },
     {
-      label: "warnings",
+      label: "Warnings",
       key: "warnings",
+      count: categorizeData?.warnings?.length,
     },
     {
-      label: "errors",
+      label: "Errors",
       key: "errors",
+      count: categorizeData?.errors?.length,
     },
   ];
+
   const handleTeacherImport = () => {
-    
+    const formattedMapping = formatImportMapping(mapping);
     importTeachers({
-      file: file, 
-      map: mapping,
+      file: file,
+      mapping: formattedMapping,
     });
   };
+
   return (
     <>
-      <div className="d-flex flex-column font-size-sm gap-4">
-        <div className="d-flex flex-row align-items-center justify-content-between">
-          <span className="fw-semibold">Import Teacher</span>
-          <span
-            style={{ cursor: "pointer" }}
-            onClick={() => handleClose && handleClose()}
-          >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
-        </div>
-
-        <div className="d-flex flex-row justify-content-end">
-          <span>
-            {currentStep} of {fullStep} completed
-          </span>
-        </div>
-
-        <div>
-          <span className="fw-medium">Review teacher data </span>
-          <p className="text-muted m-0">
-            Check your data and resolve any issues before importing.
-          </p>
-        </div>
-        <div className="d-flex flex-row justify-content-between">
-          <div className="d-flex row align-items-center gap-2 align-items-center text-center">
-            <span>rows</span>
-            <span className="fw-bold">{fileData?.length || 0}</span>
-          </div>
-          <div className="d-flex row align-items-center gap-2 align-items-center text-center">
-            <span> Ready</span>
-            <span className="fw-bold">
-              {categorizeData?.ready?.length || 0}
-            </span>
-          </div>
-          <div className="d-flex row align-items-center gap-2 align-items-center text-center">
-            <span>errors</span>
-            <span className="fw-bold">
-              {categorizeData?.errors?.length || 0}
-            </span>
-          </div>
-          <div className="d-flex row align-items-center gap-2 align-items-center text-center">
-            <span>Warnings</span>
-            <span className="fw-bold">
-              {categorizeData?.warnings?.length || 0}
-            </span>
-          </div>
-        </div>
-        <div className="d-flex flex-column gap-3">
+      <div className="d-flex flex-column font-size-sm gap-2">
+        <div
+          className="border-bottom rounded-top-4 p-2 d-flex flex-column justify-content-center"
+          style={{ height: "6dvh", background: "#f9f9f9" }}
+        >
           <div className="d-flex flex-row align-items-center justify-content-between">
-            <div className="d-flex flex-row align-items-center gap-2">
-              {FILTERS.map((f) => (
-                <Fragment>
-                  <button
-                    className={`font-size-sm border-none border text-capitalize  px-2 py-1 rounded-3 transition-all ${filter === f.key ? "primary-background-200 color-primary" : "bg-transparent"}`}
-                    onClick={() => {
-                      setFilter(f.key);
-                    }}
-                  >
-                    {f.label} 126
-                  </button>
-                </Fragment>
-              ))}
+            <div>
+              <span className="font-size-sm fw-semibold">Import Review</span>
             </div>
-            <input
-              type="search"
-              className="form-control font-size-sm w-25"
-              placeholder="Search......."
-              onChange={handleSearch}
-              value={searchText}
-            />
-          </div>
-          <div style={{ height: "42dvh" }}>
-            <Table
-              colDefs={teacherImportColDefs()}
-              rowData={fileData}
-              ref={tableRef}
-            />
+            <button
+              onClick={() => handleClose()}
+              className="border-none border rounded-circle bg-transparent p-0"
+              style={{
+                width: "2rem",
+                height: "2rem",
+                display: "grid",
+                placeItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <CircleX size={16} />
+            </button>
           </div>
         </div>
-        <div className="mt-auto">
+        <div className="px-2 d-flex flex-column gap-3">
+          <div className="d-flex flex-row justify-content-end fw-semibold">
+            <span>
+              {currentStep} of {fullStep} completed
+            </span>
+          </div>
+
+          <div>
+            <span className="fw-medium">Review teacher data </span>
+            <p className="text-muted m-0">
+              Check your data and resolve any issues before importing.
+            </p>
+          </div>
+          <div className="d-flex flex-row justify-content-between">
+            <div className="d-flex row align-items-center gap-2 align-items-center text-center">
+              <span>rows</span>
+              <span className="fw-bold font-size-sm">
+                {fileData?.length || 0}
+              </span>
+            </div>
+            <div className="d-flex row align-items-center gap-2 align-items-center text-center">
+              <span> Ready</span>
+              <span className="fw-bold font-size-sm">
+                {categorizeData?.ready?.length || 0}
+              </span>
+            </div>
+            <div className="d-flex row align-items-center gap-2 align-items-center text-center">
+              <span>errors</span>
+              <span className="fw-bold font-size-sm">
+                {categorizeData?.errors?.length || 0}
+              </span>
+            </div>
+            <div className="d-flex row align-items-center gap-2 align-items-center text-center">
+              <span>Warnings</span>
+              <span className="fw-bold font-size-sm">
+                {categorizeData?.warnings?.length || 0}
+              </span>
+            </div>
+          </div>
+          <div className="d-flex flex-column gap-3">
+            <div className="d-flex flex-row align-items-center justify-content-between">
+              <div className="d-flex flex-row align-items-center gap-2">
+                {FILTERS.map((f) => (
+                  <Fragment key={f.key}>
+                    <button
+                      className={`font-size-sm border-none border text-capitalize gap-1 z-0 position-relative px-2 rounded-3 transition-all bg-none w-100`}
+                      onClick={() => {
+                        setFilter(f.key);
+                      }}
+                      style={{
+                        paddingTop: "0.45rem",
+                        paddingBottom: "0.45rem",
+                      }}
+                    >
+                      {f.key === filter && (
+                        <span
+                          className="primary-background rounded-circle position-absolute"
+                          style={{
+                            width: "0.6em",
+                            height: "0.6em",
+                            zIndex: 9999,
+                            right: "-2%",
+                            top: "-2%",
+                          }}
+                        ></span>
+                      )}
+                      <div className="d-flex flex-row align-items-center gap-1">
+                        <span>{f.label}</span> <span>{f.count}</span>
+                      </div>
+                    </button>
+                  </Fragment>
+                ))}
+              </div>
+              <input
+                type="search"
+                className="form-control font-size-sm w-25"
+                placeholder="Search......."
+                onChange={handleSearch}
+                value={searchText}
+              />
+            </div>
+            <div style={{ height: "42dvh" }}>
+              <Table
+                colDefs={teacherImportColDefs()}
+                rowData={fileData}
+                ref={tableRef}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="mt-auto border-top p-2" style={{ height: "8dvh" }}>
           <div className="d-flex flex-row align-items-center justify-content-between">
             <button
               className="border-none bg-transparent d-flex flex-row align-items-center gap-2"
@@ -190,9 +245,11 @@ function TeacherImportReview({
               className="border-none border primary-background font-size-sm text-white p-2 rounded-3"
               onClick={() => handleTeacherImport()}
             >
-              {
-                 isPending ? <SingleSpinner /> : `Import ${categorizeData?.ready?.length || 0} teachers`
-              }
+              {isPending ? (
+                <SingleSpinner />
+              ) : (
+                `Import ${categorizeData?.ready?.length || 0} teachers`
+              )}
             </button>
           </div>
         </div>
@@ -200,4 +257,5 @@ function TeacherImportReview({
     </>
   );
 }
+
 export default TeacherImportReview;

@@ -22,6 +22,7 @@
   --acent-color-eight: transparent;
   --acent-color-nine: #bae7fd;
   --acent-color-ten: #5cb85c;
+  --color-danger: #ff0000;
 
   /* Topography */
   --primary-font-family:"Poppins", sans-serif;
@@ -422,6 +423,10 @@
   border: none;
 }
 
+.bg-none{
+   background-color: none;
+   background: none;
+}
 body {
   font-family: "JetBrains Mono", monospace;
   background-color: #f9f9f9;
@@ -641,6 +646,16 @@ body {
 }
 .hover-border-primary-400:hover {
   border-color: var(--primary-color-400);
+}
+
+.hover-neutral:hover {
+   background-color: #f9f9f9 !important;
+   transition: all 0.2s;
+}
+
+.hover-text-danger:hover {
+   color: var(--color-danger) !important;
+   transition: all 0.2s;
 }
 
 .custom-progress-track .progress-bar {

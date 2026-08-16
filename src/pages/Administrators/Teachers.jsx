@@ -37,8 +37,6 @@ import { NotFoundError } from "../../components/errors/Error";
 import ExportTeacher from "../../ModalContent/Teacher/ExportTeacher";
 import { teacherColDefs } from "../../utils/table/colDefs/teachers/teacherColDefs";
 import {
-  setTeachers,
-  setTableRef,
   toggleGeneralFilter,
   addCustomFilter,
   removeCustomFilter,

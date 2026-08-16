@@ -18,6 +18,9 @@ import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 import { JOB_STATUS_LABEL, JOB_STATUS } from "@/constants";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector } from "react-redux";
+import { Icon } from "@iconify/react";
+import { isLastElement } from "../../utils/functions";
+import HorizontalDashedLine from "../DashedLine/HorizonetalDashedLine";
 export default function JobPopOver({ category }) {
   const [isOpen, setIsOpen] = useState(false);
   const [jobs, setJobs] = useState([]);

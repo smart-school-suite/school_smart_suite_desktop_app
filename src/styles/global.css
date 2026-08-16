@@ -71,7 +71,8 @@
 
 body{
    font-family: var(--primary-font-family) !important;
-}
+   color: #333 !important;
+} 
 .ag-paging-panel {
   font-size: 0.7rem !important;
 }
@@ -1087,11 +1088,8 @@ button.disabled {
 }
 
 .custom-modal .modal-content {
-  border-radius: 0.9rem !important;
-  border: none;
-  outline: none;
-  padding-top: 0.2rem;
-  padding-bottom: 1rem;
+  border-radius: 0.75rem !important;
+  padding: 0 !important;
 }
 
 .modal-90w {

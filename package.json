@@ -28,6 +28,7 @@
     "@radix-ui/react-slot": "^1.1.1",
     "@reduxjs/toolkit": "^2.2.8",
     "@shadcn/ui": "^0.0.4",
+    "@tanstack/react-hotkeys": "^0.10.0",
     "@tanstack/react-query": "^5.81.5",
     "@tauri-apps/api": ">=2.0.0",
     "@tauri-apps/plugin-dialog": "^2.7.2",

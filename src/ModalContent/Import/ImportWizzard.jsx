@@ -1,15 +1,24 @@
-import { TEACHER_IMPORT_STEP_FLOW } from "../../utils/steps/teacher/importStepFlow";
 import { useState } from "react";
-function ImportWizzard({
-  moduleState,
-  setImportStatus,
-  setImportReset,
-  setImportSelectedFile,
-  handleClose,
-}) {
+import { IMPORT_STEP_FLOW } from "../../utils/steps/import/importStepFlow";
+import { useSelector } from "react-redux";
+function ImportWizzard({ rowData, handleClose }) {
+  const {
+    moduleState,
+    setImportStatus,
+    setImportReset,
+    setImportSelectedFile,
+    moduleColumns,
+    addRepeatableGroup,
+    setColumnMapping,
+    removeRepeatableGroup,
+    setStandardGroupValue,
+    setRepeatableGroupValue,
+    moduleInstanceMap,
+    module,
+    importModuleColDefs,
+  } = rowData;
   const [stepIndex, setStepIndex] = useState(0);
-
-  const currentStep = TEACHER_IMPORT_STEP_FLOW[stepIndex];
+  const currentStep = IMPORT_STEP_FLOW[stepIndex];
 
   const CurrentComponent = currentStep.component;
   const nextStep = () => {
@@ -26,11 +35,20 @@ function ImportWizzard({
         previousStep={previousStep}
         handleClose={handleClose}
         currentStep={stepIndex + 1}
-        fullStep={TEACHER_IMPORT_STEP_FLOW.length}
+        fullStep={IMPORT_STEP_FLOW.length}
         moduleState={moduleState}
         setImportStatus={setImportStatus}
         setImportReset={setImportReset}
         setImportSelectedFile={setImportSelectedFile}
+        moduleColumns={moduleColumns}
+        addRepeatableGroup={addRepeatableGroup}
+        setColumnMapping={setColumnMapping}
+        removeRepeatableGroup={removeRepeatableGroup}
+        setStandardGroupValue={setStandardGroupValue}
+        setRepeatableGroupValue={setRepeatableGroupValue}
+        module={module}
+        moduleInstanceMap={moduleInstanceMap}
+        importModuleColDefs={importModuleColDefs}
       />
     </>
   );

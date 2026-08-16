@@ -101,12 +101,14 @@ export function examColDefs({ ActionComponent }) {
       headerName: "Created At",
       format: "dd/MM/yyyy",
       hide: true,
+      cellRenderer: TextComponent,
     }),
     dateColumn({
       field: "updated_at",
       headerName: "Updated At",
       format: "dd/MM/yyyy",
       hide: true,
+      cellRenderer: TextComponent,
     }),
     actionsColumn({
       cellRenderer: ActionComponent,
