@@ -1,4 +1,5 @@
 import axiosInstance from "../axios/authAxios";
+import axiosUploadInstance from "../axios/axiosUploadInstance";
 
 export const createSpecialty = async (data) => {
   const response = await axiosInstance.post("specialty", data);
@@ -72,4 +73,56 @@ export const deactivateSpecialty = async (specialtyId, data = {}) => {
 export const getLevelSpecialties = async () => {
   const response = await axiosInstance.get("specialty/specialty/level");
   return response.data;
+};
+
+export const importSpecialty = async (payload) => {
+  const formData = new FormData();
+  formData.append("file", payload.file, payload.file.name);
+  appendFormData(formData, payload.mapping, "mapping");
+  const response = await axiosUploadInstance.post(
+    "specialty/import",
+    formData,
+  );
+  return response.data;
+};
+
+const appendFormData = (formData, data, parentKey = "") => {
+  if (data === null || data === undefined) {
+    return;
+  }
+
+  if (data instanceof File) {
+    formData.append(parentKey, data);
+    return;
+  }
+
+  if (Array.isArray(data)) {
+    data.forEach((value, index) => {
+      appendFormData(
+        formData,
+        value,
+        `${parentKey}[${index}]`
+      );
+    });
+
+    return;
+  }
+
+  if (typeof data === "object") {
+    Object.entries(data).forEach(([key, value]) => {
+      const fieldKey = parentKey
+        ? `${parentKey}[${key}]`
+        : key;
+
+      appendFormData(
+        formData,
+        value,
+        fieldKey
+      );
+    });
+
+    return;
+  }
+
+  formData.append(parentKey, String(data));
 };

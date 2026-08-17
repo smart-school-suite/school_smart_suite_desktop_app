@@ -16,7 +16,40 @@ const initialState = {
   import: {
     status: "IDLE",
     selectedFile: null,
-    mapping: {},
+    mapping: {
+      standardFields: {
+        department_name: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        description: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        level: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        school_fee: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        registration_fee: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        specialty_name: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+      },
+    },
   },
 };
 
@@ -29,14 +62,10 @@ const specialtySlice = createSlice({
       state.import.status = status;
     },
     setImportSelectedFile: (state, action) => {
-      const { selectedFile } = action.payload;
-      state.import.selectedFile = selectedFile;
+      state.import.selectedFile = action.payload.selectedFile;
     },
-    setImportReset: (state, action) => {
-      state.import = {
-        status: "IDLE",
-        selectedFile: null,
-      };
+    setImportReset: (state) => {
+      state.import = initialState.import;
     },
     setColumnMapping: (state, action) => {
       state.import.mapping = action.payload;
@@ -110,6 +139,17 @@ const specialtySlice = createSlice({
     updateSelectedColumns: (state, action) => {
       state.columns.selectedColumns = action.payload;
     },
+    setStandardGroupValue: (state, action) => {
+      const { field, value, automatched = false } = action.payload;
+      const group = state.import.mapping.standardFields;
+
+      if (!group[field]) {
+        group[field] = { value: "", error: null, automatched: false };
+      }
+
+      group[field].value = value;
+      group[field].automatched = automatched;
+    },
   },
 });
 
@@ -133,6 +173,7 @@ export const {
   setImportSelectedFile,
   setImportReset,
   setColumnMapping,
+  setStandardGroupValue
 } = specialtySlice.actions;
 
 export default specialtySlice.reducer;

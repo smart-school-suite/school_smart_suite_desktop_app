@@ -1,4 +1,6 @@
 import axiosInstance from "../axios/authAxios";
+import axiosUploadInstance from "../axios/axiosUploadInstance";
+import { appendFormData } from "../utils/functions";
 
 export const getActiveCourses = async () => {
   const response = await axiosInstance.get("course/active");
@@ -80,5 +82,16 @@ export const getCourseTypes = async () => {
 
 export const getCoursesSpecialtyId = async (specialtyId) => {
   const response = await axiosInstance.get(`course/specialty/${specialtyId}`);
+  return response.data;
+};
+
+export const importCourse = async (payload) => {
+  const formData = new FormData();
+  formData.append("file", payload.file, payload.file.name);
+  appendFormData(formData, payload.mapping, "mapping");
+  const response = await axiosUploadInstance.post(
+    "course/import",
+    formData,
+  );
   return response.data;
 };

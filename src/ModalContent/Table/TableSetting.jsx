@@ -195,9 +195,12 @@ export default function TableColumnSetting(props) {
   return (
     <div className="d-flex flex-column gap-4">
       {/* Modal Header */}
-      <div className="d-flex flex-row align-items-center justify-content-between">
-        <div className="d-flex flex-column gap-1">
-          <span className="font-size-md fw-bold">{title}</span>
+      <div
+        className="d-flex flex-row align-items-center justify-content-between border-bottom rounded-top-4 p-2 "
+        style={{ height: "6.5dvh", background: "#f9f9f9" }}
+      >
+        <div className="d-flex flex-column">
+          <span className="font-size-sm fw-semibold">{title}</span>
           <span className="text-muted font-size-sm">{subtitle}</span>
         </div>
         {handleClose && (
@@ -208,7 +211,7 @@ export default function TableColumnSetting(props) {
       </div>
 
       {/* Main Dual-Column Panel */}
-      <div className="d-flex flex-row align-items-start w-100 gap-4">
+      <div className="d-flex flex-row align-items-start w-100 gap-4 px-2">
         {/* Left Box: All Options Toggle */}
         <div className="w-50 d-flex flex-column gap-3">
           <div className="d-flex flex-row align-items-center justify-content-between font-size-sm">
@@ -269,7 +272,7 @@ export default function TableColumnSetting(props) {
 
         {/* Divider */}
         <div
-          style={{ width: "0.05rem", height: "55dvh", background: "#dadada" }}
+          style={{ width: "0.05rem", height: "64dvh", background: "#dadada" }}
         />
 
         {/* Right Box: Drag to Reorder */}
@@ -330,7 +333,7 @@ export default function TableColumnSetting(props) {
       </div>
 
       {/* Modal Actions Footer */}
-      <div className="d-flex flex-row align-items-center justify-content-between mt-2">
+      <div className="d-flex flex-row align-items-center justify-content-between mt-2 border-top px-2" style={{ height: "8dvh" }}>
         <button
           className="border-none bg-transparent font-size-sm color-primary p-0"
           onClick={handleResetToDefault}

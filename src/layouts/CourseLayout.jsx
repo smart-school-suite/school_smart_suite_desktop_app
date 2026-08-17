@@ -8,9 +8,28 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
 import CreateCourse from "../ModalContent/Course/CreateCourse";
+import {
+  resetAllCustomFilters,
+  addCustomFilter,
+  toggleGeneralFilter,
+  removeCustomFilter,
+  setCustomFilter,
+  setImportStatus,
+  setImportSelectedFile,
+  setImportReset,
+  setColumnMapping,
+  removeRepeatableGroup,
+  addRepeatableGroup,
+  setRepeatableGroupValue,
+  setStandardGroupValue,
+} from "../Slices/administrator/courseSlice";
+import { COURSE_COLUMNS } from "../utils/course/courseColumns";
+import { courseImportColDefs } from "../utils/table/colDefs/course/courseImportColDefs";
+import ImportWizzard from "../ModalContent/Import/ImportWizzard";
+import { courseInstanceMap } from "../utils/maps/course/courseInstanceMap";
 function CourseLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
-   const sideBarData = [
+  const sideBarData = [
     {
       title: "Course",
       path: "/courses",
@@ -57,6 +76,23 @@ function CourseLayout() {
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
+                action={{ modalContent: ImportWizzard }}
+                size={"xl"}
+                rowData={{
+                  moduleState: "course",
+                  setImportStatus: setImportStatus,
+                  setImportReset: setImportReset,
+                  setImportSelectedFile: setImportSelectedFile,
+                  moduleColumns: COURSE_COLUMNS,
+                  setColumnMapping: setColumnMapping,
+                  setStandardGroupValue: setStandardGroupValue,
+                  addRepeatableGroup: addRepeatableGroup,
+                  removeRepeatableGroup: removeRepeatableGroup,
+                  setRepeatableGroupValue: setRepeatableGroupValue,
+                  moduleInstanceMap: courseInstanceMap,
+                  module: { name: "Course" },
+                  importModuleColDefs: courseImportColDefs,
+                }}
               >
                 <span style={{ lineHeight: "16px" }}>Import</span>
                 <span>

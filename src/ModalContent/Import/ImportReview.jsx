@@ -21,7 +21,6 @@ import {
   CircleCheck,
 } from "lucide-react";
 import { useImportModule } from "../../hooks/import/useImportModule";
-import { useImportDepartment } from "../../hooks/department/useImportDepartment";
 function ImportReview({
   moduleState: moduleStateType,
   setImportReset,
@@ -35,19 +34,19 @@ function ImportReview({
   importModuleColDefs,
 }) {
   const [fileData, setFileData] = useState([]);
-  const moduleState = useSelector((state) => state[moduleStateType]);
+  const moduleState = useSelector((state) => state[moduleStateType].import);
   const {
     mutate: importModule,
     isPending,
     isError,
     error,
-  } = useImportDepartment(moduleStateType, handleClose, setImportReset);
+  } = useImportModule(moduleStateType, handleClose, setImportReset);
   const [filter, setFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const tableRef = useRef();
-  const mapping = moduleState.import.mapping;
+  const mapping = moduleState.mapping;
   const file = useMemo(() => {
-    const serializedFile = moduleState?.import?.selectedFile?.serializedFile;
+    const serializedFile = moduleState?.selectedFile?.serializedFile;
     if (!serializedFile) return null;
     try {
       return reconstructFileFromRedux(serializedFile);
@@ -55,7 +54,7 @@ function ImportReview({
       console.error("Failed to reconstruct file:", error);
       return null;
     }
-  }, [moduleState?.import?.selectedFile?.serializedFile]);
+  }, [moduleState?.selectedFile?.serializedFile]);
 
   useEffect(() => {
     const loadFileData = async () => {

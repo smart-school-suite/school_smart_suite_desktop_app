@@ -64,7 +64,7 @@ function ImportColumnMatch({
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state[moduleStateType]);
   const file = useMemo(() => {
-    const serializedFile =  moduleState.import.selectedFile?.serializedFile;
+    const serializedFile = moduleState.import.selectedFile?.serializedFile;
     if (!serializedFile) return null;
     try {
       return reconstructFileFromRedux(serializedFile);
@@ -227,7 +227,7 @@ function ImportColumnMatch({
       </div>
       <div className="d-flex flex-row align-items-start">
         <div
-          className={`d-flex flex-column p-2 gap-3 ${ moduleState?.import?.mapping?.repeatableGroups ? "w-50" : "w-100"}`}
+          className={`d-flex flex-column p-2 gap-3 ${moduleState?.import?.mapping?.repeatableGroups ? "w-50" : "w-100"}`}
         >
           <div className="d-flex flex-column gap-1">
             <span className="fw-semibold">Standard Fields</span>
@@ -304,7 +304,7 @@ function ImportColumnMatch({
             </div>
           </div>
         </div>
-        { moduleState?.import?.mapping?.repeatableGroups && (
+        {moduleState?.import?.mapping?.repeatableGroups && (
           <>
             <VerticalDashedLine
               color={"#ddd"}
@@ -336,6 +336,9 @@ function ImportColumnMatch({
                         moduleState={moduleState}
                         fileHeaders={fileHeaders}
                         moduleInstanceMap={moduleInstanceMap}
+                        addRepeatableGroup={addRepeatableGroup}
+                        removeRepeatableGroup={removeRepeatableGroup}
+                        setRepeatableGroupValue={setRepeatableGroupValue}
                       />
                     </Fragment>
                   ),
@@ -563,7 +566,15 @@ function ColumnDropdown({
   );
 }
 
-function RepeatableGroupAccordion({ rG, moduleState, fileHeaders, moduleInstanceMap }) {
+function RepeatableGroupAccordion({
+  rG,
+  moduleState,
+  fileHeaders,
+  moduleInstanceMap,
+  addRepeatableGroup,
+  removeRepeatableGroup,
+  setRepeatableGroupValue,
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const toggleAccordion = () => {

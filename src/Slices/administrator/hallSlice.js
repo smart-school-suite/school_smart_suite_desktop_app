@@ -1,6 +1,7 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-
+import { hallTypeInstance } from "../../utils/instance/hall/hallInstance";
+import { hallInstanceMap } from "../../utils/maps/hall/hallInstanceMap";
 const initialState = {
   halls: null,
   isGeneralFilterOpen: false,
@@ -16,7 +17,30 @@ const initialState = {
   import: {
     status: "IDLE",
     selectedFile: null,
-    mapping: {},
+    mapping: {
+      standardFields: {
+        name: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        capacity: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        location: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+      },
+      repeatableGroups: {
+        types: {
+          instances: [hallTypeInstance],
+        },
+      },
+    },
   },
 };
 
@@ -29,14 +53,10 @@ const hallSlice = createSlice({
       state.import.status = status;
     },
     setImportSelectedFile: (state, action) => {
-      const { selectedFile } = action.payload;
-      state.import.selectedFile = selectedFile;
+      state.import.selectedFile = action.payload.selectedFile;
     },
-    setImportReset: (state, action) => {
-      state.import = {
-        status: "IDLE",
-        selectedFile: null,
-      };
+    setImportReset: (state) => {
+      state.import = initialState.import;
     },
     setColumnMapping: (state, action) => {
       state.import.mapping = action.payload;
@@ -110,6 +130,54 @@ const hallSlice = createSlice({
     updateSelectedColumns: (state, action) => {
       state.columns.selectedColumns = action.payload;
     },
+    addRepeatableGroup: (state, action) => {
+      const { field } = action.payload;
+      const instanceConfig = hallInstanceMap.find(
+        (inst) => inst.key.toLowerCase() === field.toLowerCase(),
+      );
+
+      if (!instanceConfig) return;
+
+      const group = state.import.mapping.repeatableGroups[field];
+      if (!group || group.instances.length >= 5) return;
+
+      group.instances.push({ ...instanceConfig.instance, id: uuidv4() });
+    },
+    removeRepeatableGroup: (state, action) => {
+      const { id, field } = action.payload;
+      const group = state.import.mapping.repeatableGroups[field];
+
+      if (!group || group.instances.length <= 1) return;
+
+      const index = group.instances.findIndex((i) => i.id === id);
+      if (index !== -1) {
+        group.instances.splice(index, 1);
+      }
+    },
+    setRepeatableGroupValue: (state, action) => {
+      const { field, value, id, group } = action.payload;
+      const groupInstances =
+        state.import.mapping.repeatableGroups[group].instances;
+      const instance = groupInstances.find((gI) => gI.id === id).mapping;
+      if (!instance) {
+        return;
+      }
+      if (!instance[field]) {
+        return;
+      }
+      instance[field].value = value;
+    },
+    setStandardGroupValue: (state, action) => {
+      const { field, value, automatched = false } = action.payload;
+      const group = state.import.mapping.standardFields;
+
+      if (!group[field]) {
+        group[field] = { value: "", error: null, automatched: false };
+      }
+
+      group[field].value = value;
+      group[field].automatched = automatched;
+    },
   },
 });
 
@@ -133,6 +201,10 @@ export const {
   setImportSelectedFile,
   setImportReset,
   setColumnMapping,
+  removeRepeatableGroup,
+  addRepeatableGroup,
+  setRepeatableGroupValue,
+  setStandardGroupValue,
 } = hallSlice.actions;
 
 export default hallSlice.reducer;

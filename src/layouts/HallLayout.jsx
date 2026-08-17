@@ -7,6 +7,24 @@ import CreateHall from "../ModalContent/Hall/CreateHall";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  resetAllCustomFilters,
+  addCustomFilter,
+  toggleGeneralFilter,
+  removeCustomFilter,
+  setCustomFilter,
+  setImportStatus,
+  setImportSelectedFile,
+  setImportReset,
+  setColumnMapping,
+  removeRepeatableGroup,
+  addRepeatableGroup,
+  setRepeatableGroupValue,
+  setStandardGroupValue,
+} from "../Slices/administrator/hallSlice";
+import { HALL_COLUMNS } from "../utils/hall/hallColumns";
+import { hallImportColDefs } from "../utils/table/colDefs/hall/hallImportColDefs";
+import ImportWizzard from "../ModalContent/Import/ImportWizzard";
 function HallLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const sideBarData = [
@@ -46,6 +64,23 @@ function HallLayout() {
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
+                action={{ modalContent: ImportWizzard }}
+                size={"xl"}
+                rowData={{
+                  moduleState: "hall",
+                  setImportStatus: setImportStatus,
+                  setImportReset: setImportReset,
+                  setImportSelectedFile: setImportSelectedFile,
+                  moduleColumns: HALL_COLUMNS,
+                  setColumnMapping: setColumnMapping,
+                  setStandardGroupValue: setStandardGroupValue,
+                  addRepeatableGroup: addRepeatableGroup,
+                  removeRepeatableGroup: removeRepeatableGroup,
+                  setRepeatableGroupValue: setRepeatableGroupValue,
+                  moduleInstanceMap: [],
+                  module: { name: "Hall" },
+                  importModuleColDefs: hallImportColDefs,
+                }}
               >
                 <span style={{ lineHeight: "16px" }}>Import</span>
                 <span>

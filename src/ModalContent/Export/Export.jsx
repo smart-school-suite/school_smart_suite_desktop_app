@@ -130,7 +130,7 @@ function Export({ handleClose, rowData }) {
   return (
     <div className="d-flex flex-column font-size-sm">
       {/* Header */}
-      <div className="d-flex flex-row align-items-center justify-content-between px-1 mb-2">
+      <div className="d-flex flex-row align-items-center justify-content-between mb-2 rounded-top-4 px-2" style={{ height: "6dvh", background: "#f9f9f9" }}>
         <span className="fw-bold">{title}</span>
         <button
           onClick={handleClose}
@@ -141,7 +141,7 @@ function Export({ handleClose, rowData }) {
       </div>
 
       {/* Main Body Grid */}
-      <div className="d-flex flex-row align-items-start w-100 gap-2">
+      <div className="d-flex flex-row align-items-start w-100 gap-2 px-2 ">
         {/* Left Column Controls */}
         <div
           style={{ width: "50%", maxHeight: "70dvh" }}
@@ -461,19 +461,15 @@ function Export({ handleClose, rowData }) {
         </div>
       </div>
 
-      <div className="d-flex flex-row align-items-center gap-2 mt-3">
+      <div className="d-flex flex-row align-items-center justify-content-end gap-2 mt-3 border-top px-2" style={{ height: "8dvh" }}>
+       <div className="d-flex flex-row align-items-end w-50 justify-content-end gap-2">
         <button
-          onClick={handleClose}
-          className="border-none p-2 rounded-pill bg-transparent font-size-sm w-50 border"
-        >
-          Cancel
-        </button>
-        <button
-          className="border-none p-2 rounded-pill primary-background text-white font-size-sm w-50"
+          className="border-none p-2 rounded-3 primary-background text-white font-size-sm"
           onClick={handleGenerate}
         >
           Generate
         </button>
+       </div>
       </div>
     </div>
   );

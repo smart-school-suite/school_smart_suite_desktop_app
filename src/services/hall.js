@@ -1,4 +1,6 @@
 import axiosInstance from "../axios/authAxios";
+import axiosUploadInstance from "../axios/axiosUploadInstance";
+import { appendFormData } from "../utils/functions";
 
 export const getHalls = async () => {
   const response = await axiosInstance.get("hall");
@@ -42,5 +44,16 @@ export const getHallTypes = async () => {
 
 export const getHallDetail = async (hallId) => {
   const response = await axiosInstance.get(`hall/${hallId}`);
+  return response.data;
+};
+
+export const importHall = async (payload) => {
+  const formData = new FormData();
+  formData.append("file", payload.file, payload.file.name);
+  appendFormData(formData, payload.mapping, "mapping");
+  const response = await axiosUploadInstance.post(
+    "hall/import",
+    formData,
+  );
   return response.data;
 };

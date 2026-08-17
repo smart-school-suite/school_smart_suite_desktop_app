@@ -1,5 +1,6 @@
 import axiosInstance from "../axios/authAxios";
 import axiosUploadInstance from "../axios/axiosUploadInstance";
+import { appendFormData } from "../utils/functions";
 
 export const createDepartment = async (data) => {
   const response = await axiosInstance.post("department", data);
@@ -82,43 +83,4 @@ export const importDepartment = async (payload) => {
   return response.data;
 };
 
-const appendFormData = (formData, data, parentKey = "") => {
-  if (data === null || data === undefined) {
-    return;
-  }
 
-  if (data instanceof File) {
-    formData.append(parentKey, data);
-    return;
-  }
-
-  if (Array.isArray(data)) {
-    data.forEach((value, index) => {
-      appendFormData(
-        formData,
-        value,
-        `${parentKey}[${index}]`
-      );
-    });
-
-    return;
-  }
-
-  if (typeof data === "object") {
-    Object.entries(data).forEach(([key, value]) => {
-      const fieldKey = parentKey
-        ? `${parentKey}[${key}]`
-        : key;
-
-      appendFormData(
-        formData,
-        value,
-        fieldKey
-      );
-    });
-
-    return;
-  }
-
-  formData.append(parentKey, String(data));
-};

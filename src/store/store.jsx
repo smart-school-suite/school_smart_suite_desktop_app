@@ -1,7 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { persistStore, persistReducer } from "redux-persist";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authReducer from "../Slices/Asynslices/AuthSlice";
 import pricingReducer from "../Slices/Asynslices/subcriptionPricingSlice";
@@ -27,6 +36,7 @@ import semesterReducer from "../Slices/academics/semesterSlice";
 import academicYearReducer from "../Slices/academics/academicYearSlice";
 import gradeScaleReducer from "../Slices/academics/gradeScaleSlice";
 import examReducer from "../Slices/exam/examSlice";
+
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -41,6 +51,7 @@ const authPersistConfig = {
     "schoolAuthData",
   ],
 };
+
 const themePersistConfig = {
   key: "theme",
   storage,
@@ -76,8 +87,8 @@ const rootReducer = combineReducers({
   autoGenTimetable: autoGenTimetableSliceReducer,
   semesterTimetable: semesterTimetableReducer,
   teachers: persistReducer(teacherPersistConfig, teacherReducer),
-  specialty: specialtyReducer,
-  department: persistReducer({ key: "teachers", storage }, departmentReducer),
+  specialty: persistReducer({ key: "specialties", storage }, specialtyReducer),
+  department: persistReducer({ key: "department", storage }, departmentReducer),
   schoolAdmin: schoolAdminReducer,
   hall: hallReducer,
   course: courseReducer,
@@ -89,6 +100,13 @@ const rootReducer = combineReducers({
 
 export const store = configureStore({
   reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      immutableCheck: { warnAfter: 128 },
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);

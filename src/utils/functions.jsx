@@ -33,6 +33,47 @@ function CleanArrayData(dataArray, keys, filterFn) {
 
 export default CleanArrayData;
 
+export const appendFormData = (formData, data, parentKey = "") => {
+  if (data === null || data === undefined) {
+    return;
+  }
+
+  if (data instanceof File) {
+    formData.append(parentKey, data);
+    return;
+  }
+
+  if (Array.isArray(data)) {
+    data.forEach((value, index) => {
+      appendFormData(
+        formData,
+        value,
+        `${parentKey}[${index}]`
+      );
+    });
+
+    return;
+  }
+
+  if (typeof data === "object") {
+    Object.entries(data).forEach(([key, value]) => {
+      const fieldKey = parentKey
+        ? `${parentKey}[${key}]`
+        : key;
+
+      appendFormData(
+        formData,
+        value,
+        fieldKey
+      );
+    });
+
+    return;
+  }
+
+  formData.append(parentKey, String(data));
+};
+
 export function renameKeys(dataArray, renameMap) {
     return dataArray.map(item => {
         const renamedItem = {};

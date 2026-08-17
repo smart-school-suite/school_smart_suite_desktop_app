@@ -1,12 +1,17 @@
 import { Icon } from "@iconify/react";
 import { useImportDepartment } from "../../hooks/department/useImportDepartment";
 import { useDeleteDepartment } from "../../hooks/department/useDeleteDepartment";
+import { useImportModule } from "../../hooks/import/useImportModule";
 function JobError({ handleClose, rowData }) {
   const { jobId } = rowData;
-  const { mutate: importModule, isPending } = useDeleteDepartment();
+  const { mutate: importModule, isPending } = useImportModule(
+    "specialty",
+    handleClose,
+  );
   const handleImport = async () => {
     importModule({
-      teacher_id: "ASDASKJDASKLJDLKAS",
+      mapping: { email: "email", phone: "phone" },
+      file: { size: 1024 },
     });
   };
   return (
@@ -25,7 +30,7 @@ function JobError({ handleClose, rowData }) {
           className="btn btn-primary font-size-sm"
           onClick={() => handleImport()}
         >
-          {isPending ? "Loading...." : "Import Department"}
+          {isPending ? "Loading...." : "Import Module"}
         </button>
       </div>
     </>
