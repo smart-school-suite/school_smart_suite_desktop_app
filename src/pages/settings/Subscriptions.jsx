@@ -6,7 +6,8 @@ import NumberFlow from "@number-flow/react";
 function Subscriptions() {
   return (
     <>
-      <div className="d-flex flex-column gap-4 setting-container px-2">
+      <div className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-1 gap-2"
+                style={{ maxHeight: "84dvh" }}>
         <div className="d-flex flex-column">
           <span className="fw-semibold">Subscription & Billing</span>
           <span className="font-size-sm">

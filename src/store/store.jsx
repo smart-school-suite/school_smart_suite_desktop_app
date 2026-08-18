@@ -36,6 +36,7 @@ import semesterReducer from "../Slices/academics/semesterSlice";
 import academicYearReducer from "../Slices/academics/academicYearSlice";
 import gradeScaleReducer from "../Slices/academics/gradeScaleSlice";
 import examReducer from "../Slices/exam/examSlice";
+import studentReducer from "../Slices/student/studentSlice";
 
 const authPersistConfig = {
   key: "auth",
@@ -89,6 +90,7 @@ const rootReducer = combineReducers({
   teachers: persistReducer(teacherPersistConfig, teacherReducer),
   specialty: persistReducer({ key: "specialties", storage }, specialtyReducer),
   department: persistReducer({ key: "department", storage }, departmentReducer),
+  student: persistReducer({ key: "student", storage}, studentReducer),
   schoolAdmin: schoolAdminReducer,
   hall: hallReducer,
   course: courseReducer,

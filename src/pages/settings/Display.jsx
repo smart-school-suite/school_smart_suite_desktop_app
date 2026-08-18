@@ -3,75 +3,86 @@ import { useSelector, useDispatch } from "react-redux";
 import { setDarkMode } from "../../Slices/Asynslices/ThemeSlice";
 function Display() {
   const darkMode = useSelector((state) => state.theme.darkMode);
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   return (
     <>
-     <div className="d-flex flex-column gap-2 h-100">
-            <div className="setting-container px-2">
-              <div>
-              <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
-                Theme Selection
-              </span>
-              <div
-                className={`${darkMode ? 'dark-bg gainsboro-color ' : 'white-bg'} card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2`}
-                style={{ fontSize: "0.87rem" }}
-              >
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <div className="d-flex flex-column">
-                    <span className="fw-semibold">Dark Mode</span>
-                    <span className="gainsboro-color fw-light">{darkMode ? 'On' : 'Off'}</span>
-                  </div>
-                  <div>
-                    <div className="form-check form-switch">
-                      <input
-                        class="form-check-input px-3 py-2"
-                        type="checkbox"
-                        role="switch"
-                        id="switchCheckDefault"
-                        checked={darkMode}
-                        onChange={() => {dispatch(setDarkMode())}}
-                      />
-                    </div>
-                  </div>
+      <div
+        className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-1 gap-2"
+        style={{ maxHeight: "84dvh" }}
+      >
+        <div className="setting-container px-2">
+          <div>
+            <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
+              Theme Selection
+            </span>
+            <div
+              className={`${darkMode ? "dark-bg gainsboro-color " : "white-bg"} card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2`}
+              style={{ fontSize: "0.87rem" }}
+            >
+              <div className="d-flex flex-row align-items-center justify-content-between">
+                <div className="d-flex flex-column">
+                  <span className="fw-semibold">Dark Mode</span>
+                  <span className="gainsboro-color fw-light">
+                    {darkMode ? "On" : "Off"}
+                  </span>
                 </div>
-                <hr />
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <div className="d-flex flex-column">
-                    <span className="fw-semibold">Light Mode</span>
-                    <span className="gainsboro-color fw-light">{darkMode ? 'Off' :  'On'}</span>
-                  </div>
-                  <div>
-                    <div className="form-check form-switch">
-                      <input
-                        class="form-check-input px-3 py-2"
-                        type="checkbox"
-                        role="switch"
-                        checked={!darkMode}
-                        id="switchCheckDefault"
-                        onChange={() => {dispatch(setDarkMode())}}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <hr />
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <div className="d-flex flex-column">
-                    <span className="fw-semibold">Custom Themes</span>
-                    <span className="gainsboro-color fw-light">
-                      Select Custom Theme
-                    </span>
-                  </div>
-                  <div>
-                    <Icon
-                      icon="weui:arrow-filled"
-                      className="fs-4 gainsboro-color me-3"
+                <div>
+                  <div className="form-check form-switch">
+                    <input
+                      class="form-check-input px-3 py-2"
+                      type="checkbox"
+                      role="switch"
+                      id="switchCheckDefault"
+                      checked={darkMode}
+                      onChange={() => {
+                        dispatch(setDarkMode());
+                      }}
                     />
                   </div>
                 </div>
               </div>
+              <hr />
+              <div className="d-flex flex-row align-items-center justify-content-between">
+                <div className="d-flex flex-column">
+                  <span className="fw-semibold">Light Mode</span>
+                  <span className="gainsboro-color fw-light">
+                    {darkMode ? "Off" : "On"}
+                  </span>
+                </div>
+                <div>
+                  <div className="form-check form-switch">
+                    <input
+                      class="form-check-input px-3 py-2"
+                      type="checkbox"
+                      role="switch"
+                      checked={!darkMode}
+                      id="switchCheckDefault"
+                      onChange={() => {
+                        dispatch(setDarkMode());
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div className="d-flex flex-row align-items-center justify-content-between">
+                <div className="d-flex flex-column">
+                  <span className="fw-semibold">Custom Themes</span>
+                  <span className="gainsboro-color fw-light">
+                    Select Custom Theme
+                  </span>
+                </div>
+                <div>
+                  <Icon
+                    icon="weui:arrow-filled"
+                    className="fs-4 gainsboro-color me-3"
+                  />
+                </div>
+              </div>
             </div>
-            <div>
-             {/* <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
+          </div>
+          <div>
+            {/* <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
                 Font Settings
               </span>
               <div
@@ -116,9 +127,9 @@ function Display() {
                   </div>
                 </div>
               </div> */}
-            </div>
-            </div>
           </div>
+        </div>
+      </div>
     </>
   );
 }

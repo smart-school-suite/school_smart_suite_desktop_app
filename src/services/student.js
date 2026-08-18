@@ -1,5 +1,6 @@
 import axiosInstance from "../axios/authAxios";
-
+import axiosUploadInstance from "../axios/axiosUploadInstance";
+import { appendFormData } from "../utils/functions";
 export const getAllStudents = async () => {
   const response = await axiosInstance.get("student/students");
   return response.data;
@@ -12,7 +13,7 @@ export const getStudentDetails = async (studentId) => {
 export const updateStudent = async (studentId, updateStudentData) => {
   const response = await axiosInstance.put(
     `student/${studentId}`,
-    updateStudentData
+    updateStudentData,
   );
   return response.data;
 };
@@ -40,7 +41,7 @@ export const markStudentAsDropout = async (studentId) => {
 export const bulkActivateStudent = async (studentData) => {
   const response = await axiosInstance.post(
     "student/bulk-activate",
-    studentData
+    studentData,
   );
   return response.data;
 };
@@ -48,7 +49,7 @@ export const bulkActivateStudent = async (studentData) => {
 export const bulkDeactivateStudent = async (studentData) => {
   const response = await axiosInstance.post(
     "student/bulk-deactivate",
-    studentData
+    studentData,
   );
   return response.data;
 };
@@ -61,7 +62,7 @@ export const bulkDeleteStudent = async (studentData) => {
 export const bulkUpdateStudent = async (studentData) => {
   const response = await axiosInstance.patch(
     "student/bulk-update",
-    studentData
+    studentData,
   );
   return response.data;
 };
@@ -69,7 +70,7 @@ export const bulkUpdateStudent = async (studentData) => {
 export const bulkMarkStudentAsDropout = async (studentData) => {
   const response = await axiosInstance.post(
     "student/bulk-dropout",
-    studentData
+    studentData,
   );
   return response.data;
 };
@@ -81,7 +82,7 @@ export const getDropoutStudents = async () => {
 
 export const reinstateDropOutStudent = async (studentDropoutId) => {
   const response = await axiosInstance.post(
-    `student/dropouts/${studentDropoutId}/reinstate`
+    `student/dropouts/${studentDropoutId}/reinstate`,
   );
   return response.data;
 };
@@ -89,7 +90,7 @@ export const reinstateDropOutStudent = async (studentDropoutId) => {
 export const createStudent = async (studentData) => {
   const response = await axiosInstance.post(
     "auth/student/register",
-    studentData
+    studentData,
   );
   return response.data;
 };
@@ -97,19 +98,27 @@ export const createStudent = async (studentData) => {
 export const bulkReinstateDropoutStudent = async (data) => {
   const response = await axiosInstance.post(
     "student/bulk-reinstate/dropout",
-    data
+    data,
   );
   return response.data;
 };
 
 export const getStudentParentRelationship = async () => {
   const response = await axiosInstance.get(
-    "student-parent-relationship/active"
+    "student-parent-relationship/active",
   );
   return response.data;
 };
 
 export const getStudentSource = async () => {
   const response = await axiosInstance.get("student-source/active");
+  return response.data;
+};
+
+export const importStudent = async () => {
+  const formData = new FormData();
+  formData.append("file", payload.file, payload.file.name);
+  appendFormData(formData, payload.mapping, "mapping");
+  const response = await axiosUploadInstance.post("student/import", formData);
   return response.data;
 };

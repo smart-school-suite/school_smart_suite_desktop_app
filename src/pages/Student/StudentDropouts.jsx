@@ -24,13 +24,57 @@ import {
 } from "../../icons/ActionIcons";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { studentColDefs } from "../../utils/table/colDefs/student/studentColDefs";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import Export from "../../ModalContent/Export/Export";
+import { isLastElement } from "../../utils/functions";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import {
+  useFloating,
+  autoUpdate,
+  offset,
+  flip,
+  shift,
+  useClick,
+  useDismiss,
+  useRole,
+  useInteractions,
+  FloatingPortal,
+} from "@floating-ui/react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  resetAllCustomFilters,
+  addCustomFilter,
+  toggleGeneralFilter,
+  removeCustomFilter,
+  setCustomFilter,
+  setImportStatus,
+  setImportSelectedFile,
+  setImportReset,
+  setColumnMapping,
+  setStandardGroupValue,
+} from "../../Slices/student/studentSlice";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import { useDispatch } from "react-redux";
+import JobPopOver from "../../components/Popover/JobPopover";
+import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 function StudentDropOuts() {
-  const { data: dropoutStudents, isLoading, error } = useGetDropdoutStudents();
-  const darkMode = useSelector((state) => state.theme.darkMode);
+  const { data: students, isLoading, error } = useGetDropdoutStudents();
   const tableRef = useRef();
+  const dispatch = useDispatch();
+  const darkMode = useSelector((state) => state.theme.darkMode);
+  const studentState = useSelector((state) => state.student);
+  const [searchText, setSearchText] = useState("");
   const [rowCount, setRowCount] = useState(0);
+  const [columns, setColumns] = useState({
+    selectedColumns: [],
+    availableColumns: [],
+  });
   const [selectedStudents, setSelectedStudents] = useState([]);
-  const handleReset = () => {
+  const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
@@ -43,6 +87,69 @@ function StudentDropOuts() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
+  const memoizedColDefs = useMemo(() => {
+    return studentColDefs({
+      ActionComponent
+    });
+  }, []);
+
+  const memoizedRowData = useMemo(() => {
+    return students?.data ?? [];
+  }, [students]);
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+    if (tableRef.current && tableRef.current.setGridOption) {
+      tableRef.current.setGridOption("quickFilterText", value);
+    }
+  };
+
+  const handleReset = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedStudents([]);
+
+      if (tableRef.current.setGridOption) {
+        tableRef.current.setGridOption("quickFilterText", "");
+      }
+      setSearchText("");
+      const gridApi = tableRef.current.getGridApi
+        ? tableRef.current.getGridApi()
+        : null;
+      if (gridApi) {
+        gridApi.setFilterModel(null);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoading && tableRef.current?.getColumnsState) {
+      const timer = setTimeout(() => {
+        const gridCols = tableRef.current.getColumnsState();
+        if (gridCols && gridCols.length > 0) {
+          const filteredCols = gridCols.filter(
+            (col) =>
+              !col.isSystemColumn &&
+              col.field !== "action" &&
+              col.colId !== "actions" &&
+              col.colId !== "ActionComponent",
+          );
+          setColumns((prevalue) => ({
+            ...prevalue,
+            availableColumns: [...prevalue.availableColumns, ...filteredCols],
+          }));
+          setColumns((prev) => ({
+            ...prev,
+            selectedColumns: prev.availableColumns.slice(0, 4),
+          }));
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, memoizedRowData]);
   return (
     <>
       <main className="main-container gap-2">
