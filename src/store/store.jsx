@@ -38,7 +38,13 @@ import gradeScaleReducer from "../Slices/academics/gradeScaleSlice";
 import examReducer from "../Slices/exam/examSlice";
 import studentReducer from "../Slices/student/studentSlice";
 import parentReducer from "../Slices/student/parentSlice";
-import studentBatchReducer  from "../Slices/student/studentBatchSlice";
+import studentBatchReducer from "../Slices/student/studentBatchSlice";
+import tuitionFeeReducer from "../Slices/tuitionFee/tuitionFeeSlice";
+import tuitionFeeTransactionReducer from "../Slices/finance/tuitionFeeTransacSlice";
+import schoolExpenseReducer from "../Slices/finance/schoolExpenseSlice";
+import registrationFeeReducer from "../Slices/finance/registrationFeeSlice";
+import additionalFeeReducer from "../Slices/finance/additionalFeeSlice";
+import activationCodeReducer from "../Slices/activationCode/activationCodeSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -91,9 +97,39 @@ const rootReducer = combineReducers({
   teachers: persistReducer(teacherPersistConfig, teacherReducer),
   specialty: persistReducer({ key: "specialties", storage }, specialtyReducer),
   department: persistReducer({ key: "department", storage }, departmentReducer),
-  student: persistReducer({ key: "student", storage}, studentReducer),
-  parent: persistReducer({ key: "parent", storage}, parentReducer),
-  studentBatch: persistReducer({ key: "studentBatch", storage}, studentBatchReducer),
+  student: persistReducer({ key: "student", storage }, studentReducer),
+  parent: persistReducer({ key: "parent", storage }, parentReducer),
+  studentBatch: persistReducer(
+    { key: "studentBatch", storage },
+    studentBatchReducer,
+  ),
+  tuitionFee: persistReducer({ key: "tuitionFee", storage }, tuitionFeeReducer),
+  tuitionFeeTransaction: persistReducer(
+    { key: "tuitionFeeTransaction", storage },
+    tuitionFeeTransactionReducer,
+  ),
+  schoolExpense: persistReducer(
+    { key: "schoolExpense", storage },
+    schoolExpenseReducer,
+  ),
+  registrationFee: persistReducer(
+    {
+      key: "registrationFee",
+      storage,
+    },
+    registrationFeeReducer,
+  ),
+  additionalFee: persistReducer(
+    { key: "additionalFee", storage },
+    additionalFeeReducer,
+  ),
+  activationCode: persistReducer(
+    {
+      key: "activationCode",
+      storage,
+    },
+    activationCodeReducer,
+  ),
   schoolAdmin: schoolAdminReducer,
   hall: hallReducer,
   course: courseReducer,

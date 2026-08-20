@@ -41,25 +41,8 @@ import { NotFoundError } from "../../components/errors/Error";
 import { specialtyColDefs } from "../../utils/table/colDefs/specialty/specialtyColDefs";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
-import { useChannel } from "ably/react";
-import { useGetJobs } from "../../hooks/job/useGetJobs";
-import { JOB_STATUS_LABEL, JOB_STATUS } from "@/constants";
-import { jobProgressMap } from "../../utils/maps/jobProgressMap";
-import ProgressBar from "react-bootstrap/ProgressBar";
 import { isLastElement } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";

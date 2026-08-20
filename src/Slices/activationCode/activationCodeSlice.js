@@ -2,10 +2,10 @@ import { createSlice, createSelector } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-  schoolAdmins: null,
+  activationCodes: null,
   isGeneralFilterOpen: false,
   tableRef: null,
-  selectedschoolAdmins: [],
+  selectedActivationCodes: [],
   rowCount: 0,
   searchText: "",
   columns: {
@@ -16,69 +16,18 @@ const initialState = {
   import: {
     status: "IDLE",
     selectedFile: null,
-    mapping: {
-      standardFields: {
-        email: {
-          value: "",
-          error: null,
-          automatched: false,
-        },
-        full_names: {
-          value: "",
-          error: null,
-          automatched: false,
-        },
-        first_name: {
-          value: "",
-          error: null,
-          automatched: false,
-        },
-        last_name: {
-          value: "",
-          error: null,
-          automatched: false,
-        },
-        phone: {
-          value: "",
-          error: null,
-          automatched: false,
-        },
-        gender: {
-          value: "",
-          error: null,
-          automatched: false,
-        },
-        address: {
-          value: "",
-          error: null,
-          automatched: false,
-        },
-      },
-    },
+    headers: [],
+    preview: [],
   },
 };
 
-const schoolAdminslice = createSlice({
-  name: "schoolAdmin",
+const activationCodeSlice = createSlice({
+  name: "activationCode",
   initialState,
   reducers: {
-    setImportStatus: (state, action) => {
-      const { status } = action.payload;
-      state.import.status = status;
-    },
-    setImportSelectedFile: (state, action) => {
-      state.import.selectedFile = action.payload.selectedFile;
-    },
-    setImportReset: (state) => {
-      state.import = initialState.import;
-    },
-    setColumnMapping: (state, action) => {
-      state.import.mapping = action.payload;
-    },
-    addCustomFilter: (state, action) => {
-      const myId = uuidv4();
+    addCustomFilter: (state) => {
       state.customFilter.push({
-        id: myId,
+        id: uuidv4(),
         column: null,
         match: null,
         value: null,
@@ -89,10 +38,7 @@ const schoolAdminslice = createSlice({
     },
     removeCustomFilter: (state, action) => {
       const { id } = action.payload;
-      const customFilterIndex = state.customFilter.findIndex(
-        (cf) => cf.id === id,
-      );
-      state.customFilter.splice(customFilterIndex, 1);
+      state.customFilter = state.customFilter.filter((cf) => cf.id !== id);
     },
     setCustomFilter: (state, action) => {
       const { id, field, value } = action.payload;
@@ -103,15 +49,11 @@ const schoolAdminslice = createSlice({
       if (field === "match") customFilter.match = value;
       if (field === "value") customFilter.value = value;
     },
-    setTableRef: (state, action) => {
-      const { tableRef } = action.payload;
-      state.tableRef = tableRef;
-    },
     toggleGeneralFilter: (state) => {
       state.isGeneralFilterOpen = !state.isGeneralFilterOpen;
     },
-    setSelectedTeachers: (state, action) => {
-      state.selectedTeachers = action.payload;
+    setSelectedActivationCodes: (state, action) => {
+      state.selectedActivationCodes = action.payload;
     },
     setRowCount: (state, action) => {
       state.rowCount = action.payload;
@@ -126,11 +68,11 @@ const schoolAdminslice = createSlice({
       };
     },
     resetSelections: (state) => {
-      state.selectedTeachers = [];
+      state.selectedActivationCodes = [];
       state.rowCount = 0;
     },
     resetAll: (state) => {
-      state.selectedTeachers = [];
+      state.selectedActivationCodes = [];
       state.rowCount = 0;
       state.searchText = "";
       state.columns = {
@@ -151,23 +93,14 @@ export const {
   addCustomFilter,
   removeCustomFilter,
   setCustomFilter,
-  setTeachers,
-  setSelectedTeachers,
+  setSelectedActivationCodes,
   setRowCount,
   setSearchText,
   setColumns,
   resetSelections,
   resetAll,
-  updateAvailableColumns,
-  updateSelectedColumns,
-  setTableRef,
   toggleGeneralFilter,
   resetAllCustomFilters,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  setStandardGroupValue,
-} = schoolAdminslice.actions;
+} = activationCodeSlice.actions;
 
-export default schoolAdminslice.reducer;
+export default activationCodeSlice.reducer;

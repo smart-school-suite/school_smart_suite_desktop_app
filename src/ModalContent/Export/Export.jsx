@@ -130,7 +130,7 @@ function Export({ handleClose, rowData }) {
   return (
     <div className="d-flex flex-column font-size-sm">
       {/* Header */}
-      <div className="d-flex flex-row align-items-center justify-content-between mb-2 rounded-top-4 px-2" style={{ height: "6dvh", background: "#f9f9f9" }}>
+      <div className="d-flex flex-row align-items-center justify-content-between mb-2 rounded-top-4 px-2 border-bottom" style={{ height: "6dvh", background: "#f9f9f9" }}>
         <span className="fw-bold">{title}</span>
         <button
           onClick={handleClose}

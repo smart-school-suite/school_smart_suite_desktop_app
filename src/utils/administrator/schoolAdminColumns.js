@@ -1,0 +1,51 @@
+export const SCHOOL_ADMIN_COLUMNS = [
+  {
+    program_name: "email",
+    type: "standard_field",
+    label: "Email",
+    required: true,
+    aliases: ["email_address", "mail", "e-mail"],
+  },
+  {
+    program_name: "full_names",
+    type: "standard_field",
+    label: "Full Names",
+    required: true,
+    aliases: ["name", "full_name", "admin_name"],
+  },
+  {
+    program_name: "first_name",
+    type: "standard_field",
+    label: "First Name",
+    required: true,
+    aliases: ["fname", "given_name", "firstname"],
+  },
+  {
+    program_name: "last_name",
+    type: "standard_field",
+    label: "Last Name",
+    required: true,
+    aliases: ["lname", "surname", "family_name", "lastname"],
+  },
+  {
+    program_name: "phone",
+    type: "standard_field",
+    label: "Phone",
+    required: false,
+    aliases: ["phone_number", "telephone", "mobile", "contact"],
+  },
+  {
+    program_name: "address",
+    type: "standard_field",
+    label: "Address",
+    required: false,
+    aliases: ["residence", "location", "street"],
+  },
+  {
+    program_name: "gender",
+    type: "standard_field",
+    label: "Gender",
+    required: false,
+    aliases: ["sex"],
+  },
+]
