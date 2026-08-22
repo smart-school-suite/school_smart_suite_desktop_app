@@ -102,7 +102,9 @@
   --tracking-title: 0.04em; /* slightly more open title case */
   --tracking-button: 0.06em;
 }
-
+.bg-none{
+   background: none;
+}
 .dark-mode-text {
   color: #999;
 }

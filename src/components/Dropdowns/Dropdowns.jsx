@@ -177,6 +177,7 @@ const CustomDropdown = forwardRef(
             onClick={toggleDropdown}
             aria-haspopup="true"
             aria-expanded={isToggled}
+            
           >
             <div
               className={`${
@@ -192,7 +193,7 @@ const CustomDropdown = forwardRef(
                   ? "border-success text-success"
                   : ""
               }`}
-              style={{ padding: "0.35rem" }}
+              style={{ padding: "0.6rem" }}
             >
               <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm text-capitalize">
                 {selectedItem ? selectedItem[displayKey[0]] : placeholder}
@@ -223,6 +224,7 @@ const CustomDropdown = forwardRef(
                 left: x ?? 0,
                 width: dropdownWidth,
                 zIndex: 9999,
+               
               }}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}

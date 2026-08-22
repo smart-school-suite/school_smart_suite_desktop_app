@@ -8,7 +8,6 @@ import ActionButtonDropdown, {
 import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
 import ManagePermission from "../../ModalContent/SchoolAdmin/ManagePermission";
 import ManageRoles from "../../ModalContent/SchoolAdmin/ManageRole";
-import CreateSchoolAdmin from "../../ModalContent/SchoolAdmin/CreateSchoolAdmin";
 import { useMemo, useCallback, useState, useRef, useEffect } from "react";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkActivate";
@@ -75,6 +74,8 @@ import { schoolAdminImportColDefs } from "../../utils/table/colDefs/schoolAdmin/
 import { SCHOOL_ADMIN_COLUMNS } from "../../utils/administrator/schoolAdminColumns";
 import JobPopOver from "../../components/Popover/JobPopover";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import CreateSchoolAdmin from "../../DrawerContent/SchoolAdmin/CreateSchoolAdmin";
 function SchoolAdmins() {
   const tableRef = useRef();
   const dispatch = useDispatch();
@@ -228,16 +229,15 @@ function SchoolAdmins() {
                     <span style={{ lineHeight: "16px" }}>Actions</span>
                     <ChevronDown size={16} />
                   </ModalButton>
-                  <ModalButton
-                    action={{ modalContent: CreateSchoolAdmin }}
-                    size={"lg"}
-                    classname={
-                      "border-none border rounded-3 font-size-sm  primary-background px-2 text-white text-capitalize"
-                    }
-                    style={{ padding: "0.4rem" }}
+                   <DrawerTrigger
+                    title="Create Admin"
+                    placement="right"
+                    drawerChildren={CreateSchoolAdmin}
                   >
-                    <span>Create Admin</span>
-                  </ModalButton>
+                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                      <span>Create Admin</span>
+                    </button>
+                  </DrawerTrigger>
                 </div>
               </div>
               <div className="d-flex flex-column gap-2">

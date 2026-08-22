@@ -16,7 +16,6 @@ import { TeacherIcon } from "../icons/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
-import CreateTeacher from "../ModalContent/Teacher/CreateTeacher";
 import AssignTeacherSpecialty from "../ModalContent/TeacherSpecialty/AssignTeacherSpecialty";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import TeacherImportWizzard from "../ModalContent/Teacher/Import/TeacherImportWizzard";
@@ -40,6 +39,9 @@ import { useGetJobs } from "../hooks/job/useGetJobs";
 import { jobProgressMap } from "../utils/maps/jobProgressMap";
 import RectangleSkeleton from "../components/SkeletonPageLoader/RectangularSkeleton";
 import { JOB_STATUS_LABEL, JOB_STATUS } from "@/constants";
+import CreateTeacher from "../DrawerContent/Teacher/CreateTeacher";
+import { Drawer } from "../components/drawer/Drawer";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
 export const sideBarData = [
   { title: "Teacher", path: "/teacher" },
   { title: "Teacher Course", path: "/teacher-course" },
@@ -67,8 +69,10 @@ const importMap = {
 
 function TeacherLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const handleClose = () => setIsOpen(false);
   const currentImportConfig = useMemo(() => {
     const path = location.pathname;
     return importMap[path] || importMap["/teacher"];
@@ -76,7 +80,10 @@ function TeacherLayout() {
   return (
     <>
       <main className="main-container gap-2">
-        <div className="card border d-flex flex-column gap-2 p-2" style={{ borderRadius:"0.75rem" }}>
+        <div
+          className="card border d-flex flex-column gap-2 p-2"
+          style={{ borderRadius: "0.75rem" }}
+        >
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-2">
               <div
@@ -129,15 +136,15 @@ function TeacherLayout() {
                 </span>
               </ModalButton>
               {location.pathname === sideBarData[0].path && (
-                <ModalButton
-                  action={{ modalContent: CreateTeacher }}
-                  size={"lg"}
-                  classname={
-                    "border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
-                  }
+                <DrawerTrigger
+                  title="Create Teacher"
+                  placement="right"
+                  drawerChildren={CreateTeacher}
                 >
-                  <span>create teacher</span>
-                </ModalButton>
+                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                    <span>create teacher</span>
+                  </button>
+                </DrawerTrigger>
               )}
             </div>
           </div>

@@ -1,7 +1,5 @@
 import Table from "../../components/Tables/Tables";
 import { SpecialtyTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import CreateSpecialty from "../../ModalContent/Specialty/CreateSpecialty";
-import UpdateSpecialty from "../../ModalContent/Specialty/UpdateSpecialty";
 import SpecialtyDetails from "../../ModalContent/Specialty/SpecialtyDetails";
 import DeleteSpecialty from "../../ModalContent/Specialty/DeleteSpecialty";
 import DeactivateSpecialty from "../../ModalContent/Specialty/DeactivateSpecialty";
@@ -64,6 +62,9 @@ import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { specialtyImportColDefs } from "../../utils/table/colDefs/specialty/specialtyImportColDefs";
 import { SPECIALTY_COLUMNS } from "../../utils/specialty/specialtyColumns";
 import JobPopOver from "../../components/Popover/JobPopover";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import CreateSpecialty from "../../DrawerContent/Specialty/CreateSpecialty";
+import UpdateSpecialty from "../../DrawerContent/Specialty/UpdateSpecialty";
 function Specialties() {
   const { data: specialty, isLoading, error } = useGetSpecialties();
   const tableRef = useRef();
@@ -216,16 +217,15 @@ function Specialties() {
                     <span style={{ lineHeight: "16px" }}>Actions</span>
                     <ChevronDown size={16} />
                   </ModalButton>
-                  <ModalButton
-                    action={{ modalContent: CreateSpecialty }}
-                    size={"lg"}
-                    classname={
-                      "border-none border rounded-3 font-size-sm  primary-background px-2 text-white text-capitalize"
-                    }
-                    style={{ padding: "0.4rem" }}
+                  <DrawerTrigger
+                    title="Create Specialty"
+                    placement="right"
+                    drawerChildren={CreateSpecialty}
                   >
-                    <span>Create specialty</span>
-                  </ModalButton>
+                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                      <span>Create Specialty</span>
+                    </button>
+                  </DrawerTrigger>
                 </div>
               </div>
               <div className="d-flex flex-column gap-2">
@@ -562,14 +562,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateSpecialty, "lg")}
         >
-          <div>
+          <DrawerTrigger
+            title="Update Specialty"
+            placement="right"
+            drawerChildren={UpdateSpecialty}
+            drawerData={rowData}
+          >
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update</span>
               <UpdateIcon />
             </div>
-          </div>
+          </DrawerTrigger>
         </DropDownMenuItem>
         <DropDownMenuItem
           className={

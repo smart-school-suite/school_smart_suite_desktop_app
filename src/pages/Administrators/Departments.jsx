@@ -4,7 +4,6 @@ import ActionButtonDropdown, {
 } from "../../components/DataTableComponents/ActionComponent";
 import DeleteDepartment from "../../ModalContent/Department/DeleteDepartment";
 import DepartmentDetails from "../../ModalContent/Department/DepartmentDetails";
-import CreateDepartment from "../../ModalContent/Department/CreateDepartment";
 import UpdateDepartment from "../../ModalContent/Department/UpdateDepartment";
 import DeactivateDepartment from "../../ModalContent/Department/DeactivateDepartment";
 import { DepartmentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
@@ -77,6 +76,8 @@ import JobPopOver from "../../components/Popover/JobPopover";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { DEPARTMENT_COLUMNS } from "../../utils/department/departmentColumns";
 import { departmentImportColDefs } from "../../utils/table/colDefs/department/departmentImportColDefs";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import CreateDepartment from "../../DrawerContent/Department/CreateDepartment";
 function Departments() {
   const tableRef = useRef();
   const dispatch = useDispatch();
@@ -229,16 +230,15 @@ function Departments() {
                     <span style={{ lineHeight: "16px" }}>Actions</span>
                     <ChevronDown size={16} />
                   </ModalButton>
-                  <ModalButton
-                    action={{ modalContent: CreateDepartment }}
-                    size={"lg"}
-                    classname={
-                      "border-none border rounded-3 font-size-sm  primary-background px-2 text-white text-capitalize"
-                    }
-                    style={{ padding: "0.4rem" }}
+                   <DrawerTrigger
+                    title="Create Department"
+                    placement="right"
+                    drawerChildren={CreateDepartment}
                   >
-                    <span>Create Department</span>
-                  </ModalButton>
+                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                      <span>Create Department</span>
+                    </button>
+                  </DrawerTrigger>
                 </div>
               </div>
               <div className="d-flex flex-column gap-2">
