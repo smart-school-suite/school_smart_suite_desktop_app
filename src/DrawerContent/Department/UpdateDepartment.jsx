@@ -19,10 +19,11 @@ import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-function UpdateDepartment({ handleClose, rowData }) {
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+function UpdateDepartment({ handleClose, drawerData }) {
   const { mutate: updateDepartment, isPending } =
     useUpdateDepartment(handleClose);
-  const { id: departmentId, department_name, description } = rowData;
+  const { id: departmentId, department_name, description } = drawerData;
   const {
     data: departmentDetails,
     isLoading,
@@ -48,7 +49,6 @@ function UpdateDepartment({ handleClose, rowData }) {
     department_name: "",
     description: "",
   });
-
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
@@ -58,7 +58,7 @@ function UpdateDepartment({ handleClose, rowData }) {
         <ToastWarning
           title={"Invalid Fields"}
           description={"Please ensure all fields are valid before updating."}
-        />
+        />,
       );
       return;
     }
@@ -68,7 +68,7 @@ function UpdateDepartment({ handleClose, rowData }) {
         <ToastWarning
           title={"Nothing to Update"}
           description={"Please ensure all fields are filled before updating."}
-        />
+        />,
       );
       return;
     }
@@ -76,18 +76,10 @@ function UpdateDepartment({ handleClose, rowData }) {
   };
   return (
     <>
-      <div>
-        <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-          <span className="m-0">Update Department</span>
-          <span
-            className="m-0"
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
-        </div>
+      <div
+        className="font-size-sm d-flex flex-column gap-4 pt-2"
+        style={{ flex: 1, minHeight: 0 }}
+      >
         {isLoading ? (
           <div className="d-flex flex-column gap-3 w-100">
             <div className="d-flex flex-column gap-2 w-100">
@@ -108,7 +100,7 @@ function UpdateDepartment({ handleClose, rowData }) {
           ></NotFoundError>
         ) : (
           <>
-            <div>
+            <div className="drawer-content px-2">
               <div>
                 <label htmlFor="departmentName" className="font-size-sm">
                   Department Name
@@ -156,13 +148,29 @@ function UpdateDepartment({ handleClose, rowData }) {
                 />
               </div>
             </div>
-            <div className="w-100 mt-2 py-2">
-              <button
-                  className="border-none rounded-3 p-2 w-100 primary-background text-white font-size-sm"
-                  onClick={handleDepartmentUpdate}
-                >
-                  {isPending ? <SingleSpinner /> : <> Update Department</>}
-                </button>
+            <div className="drawer-footer font-size-sm">
+              <div className="d-flex flex-column w-100">
+                <HorizontalDashedLine
+                  dashed={false}
+                  color="#ccc"
+                  thickness={0.5}
+                />
+                <div className="d-flex flex-row align-items-center justify-content-between p-2">
+                  <button
+                    className="border-none bg-none"
+                    onClick={() => handleClose()}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+                    onClick={() => handleDepartmentUpdate()}
+                    disabled={isPending}
+                  >
+                    {isPending ? <SingleSpinner /> : "Update Department"}
+                  </button>
+                </div>
+              </div>
             </div>
           </>
         )}

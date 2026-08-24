@@ -6,6 +6,7 @@ import {
   emailValidationSchema,
   nameSchema,
   phoneValidationSchema,
+  addressSchema
 } from "../../ComponentConfig/YupValidationSchema";
 import {
   PhoneNumberInput,
@@ -24,7 +25,17 @@ import { useGetQualifications } from "../../hooks/qualification/useGetQualificat
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { motion, AnimatePresence } from "framer-motion";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-
+import {
+  createDynamicRefCallback,
+  removeDynamicRefs,
+  updateDynamicFieldValidation,
+  removeDynamicFieldValidation,
+  validateDynamicSection,
+  validateCustomRules,
+  validateRefs,
+  isValidationSuccessful,
+  updateFormField
+} from "@/utils/form";
 const qInstance = {
   qualification_id: "",
   field_of_study: "",
@@ -86,6 +97,7 @@ function CreateTeacher({ handleClose }) {
   const genderRef = useRef();
   const phoneNumberRef = useRef();
   const addressRef = useRef();
+  const formRefs = useRef({});
 
   const [formData, setFormData] = useState({
     email: "",
@@ -109,8 +121,13 @@ function CreateTeacher({ handleClose }) {
     allowed_levels: "",
   });
 
+  const [dynamicFieldValid, setDynamicFieldValid] = useState({});
+
   const [errors, setErrors] = useState({
     gender: "",
+    qualification: {
+
+    }
   });
 
   const { mutate: createTeacherMutation, isPending } =
@@ -130,6 +147,9 @@ function CreateTeacher({ handleClose }) {
   };
 
   const removeQualification = (id) => {
+    removeDynamicRefs(formRefs, "qualifications", id);
+
+    removeDynamicFieldValidation(setDynamicFieldValid, "qualifications", id);
     setFormData((prev) => ({
       ...prev,
       qualifications: prev.qualifications.filter((q) => q.id !== id),
@@ -158,40 +178,35 @@ function CreateTeacher({ handleClose }) {
   };
 
   const handlePrevalidation = async () => {
-    if (formData.allowed_levels.length == 0) {
-      setFieldValid((prev) => {
-        const clone = { ...prev };
-        clone.allowed_levels = false;
-        return clone;
-      });
-    } else {
-      setFieldValid((prev) => {
-        const clone = { ...prev };
-        clone.allowed_levels = true;
-        return clone;
-      });
-    }
-    const firstName = await firstNameRef.current?.triggerValidation?.();
-    const lastName = await lastNameRef.current?.triggerValidation?.();
-    const fullName = await fullNameRef.current?.triggerValidation?.();
-    const email = await emailRef.current?.triggerValidation?.();
-    const gender = await genderRef.current?.triggerValidation?.();
-    const phoneNumber = await phoneNumberRef.current?.triggerValidation?.();
-    const address = await addressRef?.current?.triggerValidation();
+    const staticValidation = await validateRefs({
+      firstName: firstNameRef.current,
+      lastName: lastNameRef.current,
+      fullName: fullNameRef.current,
+      email: emailRef.current,
+      gender: genderRef.current,
+      phoneNumber: phoneNumberRef.current,
+      address: addressRef.current,
+    });
+
+    const qualificationValidation = await validateDynamicSection(
+      formRefs.current.qualifications || {},
+    );
+
+    const customValidation = await validateCustomRules({
+      allowed_levels: () => formData.allowed_levels.length > 0,
+    });
+
     return {
-      firstName,
-      lastName,
-      fullName,
-      email,
-      gender,
-      phoneNumber,
-      address,
+      static: staticValidation,
+      qualifications: qualificationValidation,
+      custom: customValidation,
     };
   };
 
   const handleCreateTeacher = async () => {
-    const prevalidation = await handlePrevalidation();
-    if (!allFieldsValid(prevalidation) || !allFieldsValid(isFieldValid)) {
+    const validation = await handlePrevalidation();
+    const isValid = isValidationSuccessful(validation);
+    if (!isValid) {
       toast.custom(
         <ToastWarning
           title={"Invalid Fields"}
@@ -344,9 +359,9 @@ function CreateTeacher({ handleClose }) {
                   handleStateChange("address", value, setFieldValid)
                 }
                 placeholder={"e.g Yaounde Avenue Charles De Gaull"}
-                validationSchema={nameSchema({
-                  min: 3,
-                  max: 50,
+                validationSchema={addressSchema({
+                  min: 5,
+                  max: 100,
                   required: true,
                   message: {
                     min: "Address Must Be Atleast 3 Characters Long",
@@ -422,19 +437,19 @@ function CreateTeacher({ handleClose }) {
                           : "Selected Levels Will Appear here"}
                       </span>
                     </div>
-                    {
-                       isFieldValid.allowed_levels === false && (
-                          <div className="mt-auto">
-                             <span className="font-size-sm text-danger">Alteast One Level Is Required</span>
-                          </div>
-                       )
-                    }
+                    {isFieldValid.allowed_levels === false && (
+                      <div className="mt-auto">
+                        <span className="font-size-sm text-danger">
+                          Alteast One Level Is Required
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 {isLevelLoading ? (
                   <div className="d-flex flex-row flex-wrap gap-2">
                     {[...Array(5)].map((_, index) => (
-                      <Fragment>
+                      <Fragment key={index}>
                         <RectangleSkeleton width="10rem" height="5dvh" />
                       </Fragment>
                     ))}
@@ -569,6 +584,21 @@ function CreateTeacher({ handleClose }) {
                                   required: "Field of Study Required",
                                 },
                               })}
+                              ref={createDynamicRefCallback(
+                                formRefs,
+                                "qualifications",
+                                qualification.id,
+                                "field_of_study",
+                              )}
+                              onValidationChange={(value) =>
+                                updateDynamicFieldValidation(
+                                  setDynamicFieldValid,
+                                  "qualifications",
+                                  qualification.id,
+                                  "field_of_study",
+                                  value,
+                                )
+                              }
                               value={qualification.field_of_study}
                             />
                           </div>
@@ -593,6 +623,21 @@ function CreateTeacher({ handleClose }) {
                                   required: "Institution Required",
                                 },
                               })}
+                              ref={createDynamicRefCallback(
+                                formRefs,
+                                "qualifications",
+                                qualification.id,
+                                "institution",
+                              )}
+                              onValidationChange={(value) =>
+                                updateDynamicFieldValidation(
+                                  setDynamicFieldValid,
+                                  "qualifications",
+                                  qualification.id,
+                                  "institution",
+                                  value,
+                                )
+                              }
                               value={qualification.institution}
                             />
                           </div>
@@ -617,6 +662,21 @@ function CreateTeacher({ handleClose }) {
                                   required: "Year Required",
                                 },
                               })}
+                              ref={createDynamicRefCallback(
+                                formRefs,
+                                "qualifications",
+                                qualification.id,
+                                "year",
+                              )}
+                              onValidationChange={(value) =>
+                                updateDynamicFieldValidation(
+                                  setDynamicFieldValid,
+                                  "qualifications",
+                                  qualification.id,
+                                  "year",
+                                  value,
+                                )
+                              }
                               value={qualification.year}
                             />
                           </div>
@@ -640,6 +700,12 @@ function CreateTeacher({ handleClose }) {
                                 qualification.qualification_id?.id ||
                                 qualification.qualification_id
                               }
+                              ref={createDynamicRefCallback(
+                                formRefs,
+                                "qualifications",
+                                qualification.id,
+                                "qualification_id",
+                              )}
                             />
                           </div>
                         </div>

@@ -45,6 +45,9 @@ import schoolExpenseReducer from "../Slices/finance/schoolExpenseSlice";
 import registrationFeeReducer from "../Slices/finance/registrationFeeSlice";
 import additionalFeeReducer from "../Slices/finance/additionalFeeSlice";
 import activationCodeReducer from "../Slices/activationCode/activationCodeSlice";
+import teacherSpecialtyReducer from "../Slices/teacher/teacherSpecialtySlice";
+import teacherCourseReducer from "../Slices/teacher/teacherCourseSlice";
+import teacherTimePrefReducer from "../Slices/teacher/teacherTimePrefSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -129,6 +132,27 @@ const rootReducer = combineReducers({
       storage,
     },
     activationCodeReducer,
+  ),
+  teacherSpecialty: persistReducer(
+    {
+      key: "teacherSpecialty",
+      storage,
+    },
+    teacherSpecialtyReducer,
+  ),
+  teacherCourse: persistReducer(
+    {
+      key: "teacherCourse",
+      storage,
+    },
+    teacherCourseReducer,
+  ),
+  teacherTimePref: persistReducer(
+    {
+      key: "teacherTimePref",
+      storage,
+    },
+    teacherTimePrefReducer,
   ),
   schoolAdmin: schoolAdminReducer,
   hall: hallReducer,

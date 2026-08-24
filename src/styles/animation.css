@@ -25,3 +25,55 @@
 .shiny-text.disabled {
   animation: none;
 }
+
+
+.specialty-level-toggle {
+  cursor: pointer;
+}
+
+/* small dot next to a level name that contains the current selection */
+.specialty-level-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--bs-primary, #0d6efd);
+  display: inline-block;
+}
+
+/* scrollable list per level so long lists don't blow up the card */
+.specialty-scroll-list {
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.specialty-scroll-list::-webkit-scrollbar {
+  width: 6px;
+}
+.specialty-scroll-list::-webkit-scrollbar-thumb {
+  background-color: #d0d5dd;
+  border-radius: 10px;
+}
+.specialty-scroll-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.specialty-option {
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.specialty-option:hover {
+  background-color: #f5f6fa;
+}
+.specialty-option-selected {
+  background-color: rgba(13, 110, 253, 0.1);
+  color: var(--bs-primary, #0d6efd);
+  font-weight: 500;
+}
+
+.specialty-option-text {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-height: 1.3;
+}

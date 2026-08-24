@@ -1,6 +1,5 @@
 import Table from "../../components/Tables/Tables";
 import { SpecialtyTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import SpecialtyDetails from "../../ModalContent/Specialty/SpecialtyDetails";
 import DeleteSpecialty from "../../ModalContent/Specialty/DeleteSpecialty";
 import DeactivateSpecialty from "../../ModalContent/Specialty/DeactivateSpecialty";
 import ActionButtonDropdown, {
@@ -65,6 +64,8 @@ import JobPopOver from "../../components/Popover/JobPopover";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import CreateSpecialty from "../../DrawerContent/Specialty/CreateSpecialty";
 import UpdateSpecialty from "../../DrawerContent/Specialty/UpdateSpecialty";
+import SpecialtyDetails from "../../DrawerContent/Specialty/SpecialtyDetails";
+import { Drawer } from "../../components/drawer/Drawer";
 function Specialties() {
   const { data: specialty, isLoading, error } = useGetSpecialties();
   const tableRef = useRef();
@@ -410,7 +411,7 @@ function Specialties() {
                           >
                             <div className="d-flex flex-row align-items-center justify-content-between">
                               <span>
-                                Build a custom view of your teacher data.
+                                Build a custom view of your specialty data.
                               </span>
                               <button
                                 className="border-none bg-transparent"
@@ -432,7 +433,7 @@ function Specialties() {
                                     height={18}
                                   />
                                 </span>
-                                <span>Filter Teacher</span>
+                                <span>Filter Specialty</span>
                               </div>
                               <span>{specialty?.data.length} items</span>
                             </div>
@@ -465,7 +466,7 @@ function Specialties() {
                                   </span>
                                   <span className="text-muted">
                                     Create one or more conditions to narrow down
-                                    your teacher list.
+                                    your specialty list.
                                   </span>
                                 </div>
                                 <button
@@ -529,25 +530,32 @@ export default Specialties;
 
 export function ActionComponent(props) {
   const rowData = props.data;
-
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
-
+  const [ModalComponent, setModalComponent] = useState(null);
+  const [modalSize, setModalSize] = useState("md");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [DrawerComponent, setDrawerComponent] = useState(null);
+  const [drawerDetail, setDrawerDetail] = useState({
+    placement: "right",
+    title: "",
+  });
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalComponent(null);
   };
-
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
+  const handleShowModal = (Component, size = "md") => {
+    setModalComponent(() => Component);
     setModalSize(size);
     setShowModal(true);
+  };
+  const handleShowDrawer = (Component, title = "") => {
+    setDrawerDetail((prev) => ({ ...prev, title }));
+    setDrawerComponent(() => Component);
+    setShowDrawer(true);
+  };
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerComponent(null);
   };
 
   return (
@@ -562,18 +570,14 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
+          onClick={() => handleShowDrawer(UpdateSpecialty, "Update Department")}
         >
-          <DrawerTrigger
-            title="Update Specialty"
-            placement="right"
-            drawerChildren={UpdateSpecialty}
-            drawerData={rowData}
-          >
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Update</span>
               <UpdateIcon />
             </div>
-          </DrawerTrigger>
+          </div>
         </DropDownMenuItem>
         <DropDownMenuItem
           className={
@@ -592,7 +596,9 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(SpecialtyDetails, "md")}
+          onClick={() =>
+            handleShowDrawer(SpecialtyDetails, "Specialty Details")
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -631,13 +637,29 @@ export function ActionComponent(props) {
           </DropDownMenuItem>
         )}
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerDetail?.placement}
+        title={drawerDetail?.title}
+      >
+        {DrawerComponent && (
+          <DrawerComponent
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}
         centered
       >
-        {modalContent}
+        {ModalComponent && (
+          <ModalComponent rowData={rowData} handleClose={handleCloseModal} />
+        )}
       </CustomModal>
     </>
   );

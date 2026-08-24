@@ -1,0 +1,57 @@
+export const TEACHER_PREF_TIME_SLOT_COLUMNS = [
+  {
+    program_name: "teacher",
+    type: "standard_field",
+    label: "Teacher Name",
+    required: true,
+    aliases: ["name", "full_name", "teacher_name"],
+  },
+  {
+    program_name: "specialty",
+    type: "standard_field",
+    label: "Specialty",
+    required: false,
+    aliases: [
+      "specialty",
+      "spec",
+      "teacher_specialty",
+      "spec_stud",
+      "spec_teacher",
+    ],
+  },
+  {
+    program_name: "level",
+    type: "standard_field",
+    label: "Level",
+    required: false,
+    aliases: ["level", "teacher_level", "stud_level"],
+  },
+  {
+    program_name: "semester",
+    type: "standard_field",
+    label: "Semester",
+    required: false,
+    aliases: [ "school_semester", "semester"],
+  },
+  {
+    program_name: "day",
+    type: "standard_field",
+    label: "Day",
+    required: false,
+    aliases: [ "day", "week_day"],
+  },
+   {
+    program_name: "end_time",
+    type: "standard_field",
+    label: "End Time",
+    required: false,
+    aliases: [ "end_time", "day_end_time"],
+  },
+   {
+    program_name: "day",
+    type: "standard_field",
+    label: "Start Time",
+    required: false,
+    aliases: [ "start_time", "day_start"],
+  },
+];

@@ -3,8 +3,8 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import DeleteDepartment from "../../ModalContent/Department/DeleteDepartment";
-import DepartmentDetails from "../../ModalContent/Department/DepartmentDetails";
-import UpdateDepartment from "../../ModalContent/Department/UpdateDepartment";
+import DepartmentDetails from "../../DrawerContent/Department/DepartmentDetails";
+import UpdateDepartment from "../../DrawerContent/Department/UpdateDepartment";
 import DeactivateDepartment from "../../ModalContent/Department/DeactivateDepartment";
 import { DepartmentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
@@ -78,6 +78,7 @@ import { DEPARTMENT_COLUMNS } from "../../utils/department/departmentColumns";
 import { departmentImportColDefs } from "../../utils/table/colDefs/department/departmentImportColDefs";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import CreateDepartment from "../../DrawerContent/Department/CreateDepartment";
+import { Drawer } from "../../components/drawer/Drawer";
 function Departments() {
   const tableRef = useRef();
   const dispatch = useDispatch();
@@ -230,7 +231,7 @@ function Departments() {
                     <span style={{ lineHeight: "16px" }}>Actions</span>
                     <ChevronDown size={16} />
                   </ModalButton>
-                   <DrawerTrigger
+                  <DrawerTrigger
                     title="Create Department"
                     placement="right"
                     drawerChildren={CreateDepartment}
@@ -312,7 +313,7 @@ function Departments() {
                 <div className="d-flex flex-row justify-content-between align-items-center">
                   <input
                     type="search"
-                    placeholder="Search Specialty"
+                    placeholder="Search Department"
                     onChange={handleSearch}
                     value={searchText}
                     className="font-size-sm form-control w-25"
@@ -445,7 +446,7 @@ function Departments() {
                                     height={18}
                                   />
                                 </span>
-                                <span>Filter Teacher</span>
+                                <span>Filter Department</span>
                               </div>
                               <span>{departments?.data.length} items</span>
                             </div>
@@ -478,7 +479,7 @@ function Departments() {
                                   </span>
                                   <span className="text-muted">
                                     Create one or more conditions to narrow down
-                                    your teacher list.
+                                    your Department list.
                                   </span>
                                 </div>
                                 <button
@@ -540,29 +541,39 @@ function Departments() {
 }
 export default Departments;
 
+
 export function ActionComponent(props) {
   const rowData = props.data;
-
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
+  const [ModalComponent, setModalComponent] = useState(null);
   const [modalSize, setModalSize] = useState("md");
-
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [DrawerComponent, setDrawerComponent] = useState(null);
+  const [drawerDetail, setDrawerDetail] = useState({
+    placement: "right",
+    title: "",
+  });
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalComponent(null);
   };
-
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
+  const handleShowModal = (Component, size = "md") => {
+    setModalComponent(() => Component);
     setModalSize(size);
     setShowModal(true);
   };
-  //update, details, delete, deactivate, activate
+  const handleShowDrawer = (Component, title = "") => {
+    setDrawerDetail((prev) => ({ ...prev, title }));
+    setDrawerComponent(() => Component);
+    setShowDrawer(true);
+  };
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerComponent(null);
+  };
+  const menuItemClassName =
+    "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor";
+
   return (
     <>
       <ActionButtonDropdown
@@ -572,53 +583,50 @@ export function ActionComponent(props) {
         }
       >
         <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          className={menuItemClassName}
+          onClick={() =>
+            handleShowDrawer(UpdateDepartment, "Update Department")
           }
-          onClick={() => handleShowModal(UpdateDepartment, "md")}
         >
           <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Update</span>
               <UpdateIcon />
             </div>
           </div>
         </DropDownMenuItem>
+
         <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
+          className={menuItemClassName}
           onClick={() => handleShowModal(DeleteDepartment, "md")}
         >
           <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Delete</span>
               <DeleteIcon />
             </div>
           </div>
         </DropDownMenuItem>
+
         <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(DepartmentDetails, "md")}
+          className={menuItemClassName}
+          onClick={() => handleShowDrawer(DepartmentDetails, "Department Details")}
         >
           <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Details</span>
               <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
-        {rowData.status == "active" ? (
+
+        {rowData?.status === "active" ? (
           <DropDownMenuItem
-            className={
-              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-            }
+            className={menuItemClassName}
             onClick={() => handleShowModal(DeactivateDepartment, "md")}
           >
             <div>
-              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
                 <span>Deactivate</span>
                 <SuspendIcon />
               </div>
@@ -626,13 +634,11 @@ export function ActionComponent(props) {
           </DropDownMenuItem>
         ) : (
           <DropDownMenuItem
-            className={
-              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-            }
+            className={menuItemClassName}
             onClick={() => handleShowModal(ActivateDepartment, "md")}
           >
             <div>
-              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
                 <span>Activate</span>
                 <ActivateIcon />
               </div>
@@ -640,13 +646,30 @@ export function ActionComponent(props) {
           </DropDownMenuItem>
         )}
       </ActionButtonDropdown>
+
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerDetail?.placement}
+        title={drawerDetail?.title}
+      >
+        {DrawerComponent && (
+          <DrawerComponent
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}
         centered
       >
-        {modalContent}
+        {ModalComponent && (
+          <ModalComponent rowData={rowData} handleClose={handleCloseModal} />
+        )}
       </CustomModal>
     </>
   );

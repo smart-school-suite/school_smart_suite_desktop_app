@@ -9,6 +9,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { CircleX } from "lucide-react";
 
 function SortableItem({ id, item }) {
   const {
@@ -44,9 +45,7 @@ function SortableItem({ id, item }) {
             className="text-muted"
           />
         </span>
-        <span className="ms-1 font-size-sm fw-medium">
-          {item.headerName}
-        </span>
+        <span className="ms-1 font-size-sm fw-medium">{item.headerName}</span>
       </div>
     </div>
   );
@@ -55,17 +54,25 @@ function SortableItem({ id, item }) {
 function FilterColumns({ rowData, handleClose }) {
   const { setColumns, columns } = rowData;
 
-  const [localAvailable, setLocalAvailable] = useState(columns.availableColumns || []);
-  const [localSelected, setLocalSelected] = useState(columns.selectedColumns || []);
+  const [localAvailable, setLocalAvailable] = useState(
+    columns.availableColumns || [],
+  );
+  const [localSelected, setLocalSelected] = useState(
+    columns.selectedColumns || [],
+  );
 
   const [searchAvailable, setSearchAvailable] = useState("");
   const [searchSelected, setSearchSelected] = useState("");
 
   const handleCheckboxToggle = (columnItem) => {
-    const isCurrentlySelected = localSelected.some((col) => col.field === columnItem.field);
-    
+    const isCurrentlySelected = localSelected.some(
+      (col) => col.field === columnItem.field,
+    );
+
     if (isCurrentlySelected) {
-      setLocalSelected(localSelected.filter((col) => col.field !== columnItem.field));
+      setLocalSelected(
+        localSelected.filter((col) => col.field !== columnItem.field),
+      );
     } else {
       setLocalSelected([...localSelected, columnItem]);
     }
@@ -83,11 +90,11 @@ function FilterColumns({ rowData, handleClose }) {
   };
 
   const filteredAvailable = localAvailable.filter((c) =>
-    c?.headerName?.toLowerCase().includes(searchAvailable.toLowerCase())
+    c?.headerName?.toLowerCase().includes(searchAvailable.toLowerCase()),
   );
 
   const filteredSelected = localSelected.filter((c) =>
-    c?.headerName?.toLowerCase().includes(searchSelected.toLowerCase())
+    c?.headerName?.toLowerCase().includes(searchSelected.toLowerCase()),
   );
 
   const handleSave = () => {
@@ -101,20 +108,35 @@ function FilterColumns({ rowData, handleClose }) {
   return (
     <>
       <div className="d-flex flex-column gap-4">
-        <div className="d-flex flex-row align-items-center justify-content-between">
-          <div className="d-flex flex-column gap-1">
-            <span className="font-size-md fw-bold">
-              Customize Filter Columns
-            </span>
-            <span className="text-muted font-size-sm">
-              Select and reorder columns to display in the filter list
-            </span>
+        <div
+          className="border-bottom rounded-top-4 p-2 d-flex flex-column justify-content-center"
+          style={{ height: "6dvh", background: "#f9f9f9" }}
+        >
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <div className="d-flex flex-column">
+              <span className="font-size-sm fw-semibold">
+                Customize Filter Columns
+              </span>
+              <span className="text-muted font-size-sm">
+                Select and reorder columns to display in the filter list
+              </span>
+            </div>
+            <button
+              onClick={() => handleClose()}
+              className="border-none border rounded-circle bg-transparent p-0"
+              style={{
+                width: "2rem",
+                height: "2rem",
+                display: "grid",
+                placeItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <CircleX size={16} />
+            </button>
           </div>
-          <span onClick={handleClose} style={{ cursor: "pointer" }}>
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
         </div>
-        <div className="d-flex flex-row align-items-start  gap-4">
+        <div className="d-flex flex-row align-items-start  gap-4 px-2">
           <div className="w-50 d-flex flex-column gap-3">
             <div className="d-flex flex-row align-items-center justify-content-between font-size-sm">
               <div className="d-flex flex-column">
@@ -148,12 +170,14 @@ function FilterColumns({ rowData, handleClose }) {
             >
               <div className="d-flex flex-column gap-2 pe-1">
                 {filteredAvailable.map((c, index) => {
-                  const isChecked = localSelected.some((col) => col.field === c.field);
+                  const isChecked = localSelected.some(
+                    (col) => col.field === c.field,
+                  );
                   return (
                     <Fragment key={c.field || index}>
                       <div className="d-flex flex-row align-items-center gap-2 card rounded-3 p-2">
-                        <Form.Check 
-                          type="checkbox" 
+                        <Form.Check
+                          type="checkbox"
                           checked={isChecked}
                           onChange={() => handleCheckboxToggle(c)}
                         />
@@ -166,7 +190,7 @@ function FilterColumns({ rowData, handleClose }) {
             </div>
           </div>
           <div
-            style={{ width: "0.05rem", height: "55dvh", background: "#dadada" }}
+            style={{ width: "0.05rem", height: "64dvh", background: "#dadada" }}
           ></div>
           <div className="w-50 d-flex flex-column gap-3">
             <div className="d-flex flex-row align-items-center justify-content-between font-size-sm">
@@ -218,20 +242,22 @@ function FilterColumns({ rowData, handleClose }) {
             </div>
           </div>
         </div>
-        <div className="d-flex flex-row align-items-center justify-content-end mt-2">
-          <div className="d-flex flex-row align-items-center gap-2">
-            <button 
-              onClick={handleClose} 
-              className="border-none border bg-transparent px-3 py-2 font-size-sm rounded-3"
-            >
-              Cancel
-            </button>
-            <button 
-              onClick={handleSave} 
-              className="border-none primary-background text-white font-size-sm rounded-3 px-3 py-2"
-            >
-              Save Changes
-            </button>
+        <div className="mt-auto border-top p-2" style={{ height: "8dvh" }}>
+          <div className="d-flex flex-row align-items-center justify-content-end mt-2">
+            <div className="d-flex flex-row align-items-center gap-2">
+              <button
+                onClick={handleClose}
+                className="border-none border bg-transparent px-3 py-2 font-size-sm rounded-3"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="border-none primary-background text-white font-size-sm rounded-3 px-3 py-2"
+              >
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
       </div>

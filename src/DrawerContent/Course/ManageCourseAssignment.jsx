@@ -8,204 +8,198 @@ import ToastWarning from "../../components/Toast/ToastWarning";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useRemoveAssignedTeacherCourse } from "../../hooks/teacherCourse/useRemoveTeacherAssignedCourse";
 import { useChangeTeacherCourse } from "../../hooks/teacherCourse/useChangeTeacherCourse";
-function ManageCourseAssignment({ handleClose, rowData }) {
+function ManageCourseAssignment({ handleClose, drawerData }) {
   const [selectedAction, setSelectedAction] = useState(null);
   return (
     <>
-      <div className="d-flex flex-column gap-3">
-        <div className="d-flex flex-row align-items-center justify-content-between w-100">
-          <span className="m-0">Manage Assignment</span>
-          <span
-            className="m-0"
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
-        </div>
-        <div
-          className="scroll-bar-sm px-1 height-auto overflow-x-hidden overflow-y-scroll overflow-y-auto d-flex flex-column gap-4"
-          style={{ maxHeight: "65dvh" }}
-        >
-          <div className="card p-2 rounded-4  shadow-sm d-flex flex-column gap-3 font-size-sm">
-            <div className="d-flex flex-column gap-1">
-              <div className="d-flex flex-row align-items-center justify-content-between">
-                <span style={{ width: "65%" }} className="fw-semibold">
-                  {rowData?.course_title}
-                </span>
-                {rowData.assignment_status === "unassigned" ? (
-                  <div
-                    style={{
-                      background: "#fbedd9",
-                      color: "#e9994e",
-                      fontSize: "0.7rem",
-                      padding: "0.2rem",
-                    }}
-                    className="rounded-pill px-1 d-flex flex-row align-items-center gap-1"
-                  >
-                    <span>
-                      <Icon
-                        icon="fluent:warning-16-regular"
-                        width={16}
-                        height={16}
-                      />
+      <div
+        className="font-size-sm d-flex flex-column gap-4 pt-2"
+        style={{ flex: 1, minHeight: 0 }}
+      >
+        <div className="drawer-content px-2">
+          <div className="d-flex flex-column gap-3">
+            <div className="card p-2 rounded-4  shadow-sm d-flex flex-column gap-3 font-size-sm">
+              <div className="d-flex flex-column gap-1">
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <span style={{ width: "65%" }} className="fw-semibold">
+                    {drawerData?.course_title}
+                  </span>
+                  {drawerData.assignment_status === "unassigned" ? (
+                    <div
+                      style={{
+                        background: "#fbedd9",
+                        color: "#e9994e",
+                        fontSize: "0.7rem",
+                        padding: "0.2rem",
+                      }}
+                      className="rounded-pill px-1 d-flex flex-row align-items-center gap-1"
+                    >
+                      <span>
+                        <Icon
+                          icon="fluent:warning-16-regular"
+                          width={16}
+                          height={16}
+                        />
+                      </span>
+                      <span>unassigned</span>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        background: "#e3f5e3",
+                        color: "#5cb85c",
+                        fontSize: "0.7rem",
+                      }}
+                      className="rounded-pill px-1 d-flex flex-row align-items-center gap-1"
+                    >
+                      <span>
+                        <Icon
+                          icon="lets-icons:check-fill"
+                          width={18}
+                          height={18}
+                        />
+                      </span>
+                      <span>assigned</span>
+                    </div>
+                  )}
+                </div>
+                <div className="d-flex flex-row align-items-center gap-2 fw-medium">
+                  <div className="d-flex flex-row align-items-center gap-1">
+                    <span style={{ lineHeight: 0 }}>
+                      <Icon icon="iconoir:medal" width={18} height={18} />
                     </span>
-                    <span>unassigned</span>
+                    <span>{drawerData.course_credit} Credit</span>
                   </div>
-                ) : (
-                  <div
-                    style={{
-                      background: "#e3f5e3",
-                      color: "#5cb85c",
-                      fontSize: "0.7rem",
-                    }}
-                    className="rounded-pill px-1 d-flex flex-row align-items-center gap-1"
-                  >
-                    <span>
-                      <Icon
-                        icon="lets-icons:check-fill"
-                        width={18}
-                        height={18}
-                      />
+                  <span>
+                    <Icon icon="icon-park-outline:dot" />
+                  </span>
+                  <div className="d-flex flex-row align-items-center gap-1">
+                    <span style={{ lineHeight: 0 }}>
+                      <Icon icon="mynaui:hash-waves" width={18} height={18} />
                     </span>
-                    <span>assigned</span>
+                    <span>{drawerData.course_code}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="d-flex flex-column gap-2">
+                <p
+                  className="text-muted font-size-sm m-0"
+                  style={{
+                    height: "auto",
+                    maxHeight: "80px",
+                    display: "-webkit-box",
+                    WebkitLineClamp: "3",
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {drawerData?.description}
+                </p>
+                <div className="d-flex flex-row gap-2">
+                  {drawerData.types.map((type) => (
+                    <Fragment key={type.id}>
+                      <div
+                        style={{
+                          background: type?.background_color,
+                          color: type?.text_color,
+                          fontSize: "0.75rem",
+                        }}
+                        className="rounded-pill px-2"
+                      >
+                        {type?.name}
+                      </div>
+                    </Fragment>
+                  ))}
+                </div>
+                {drawerData?.assignment_status === "assigned" && (
+                  <div className="d-flex flex-row align-items-center gap-1">
+                    <img
+                      src="./images/user.png"
+                      alt=""
+                      style={{
+                        width: "2rem",
+                        height: "2rem",
+                        objectFit: "contain",
+                      }}
+                    />
+                    <div className="d-flex flex-column">
+                      <span className="fw-medium">
+                        {drawerData?.teachers[0]?.name}
+                      </span>
+                      <span className="text-muted">
+                        @ {drawerData?.teachers[0]?.username}
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
-              <div className="d-flex flex-row align-items-center gap-2 fw-medium">
-                <div className="d-flex flex-row align-items-center gap-1">
-                  <span style={{ lineHeight: 0 }}>
-                    <Icon icon="iconoir:medal" width={18} height={18} />
-                  </span>
-                  <span>{rowData.course_credit} Credit</span>
-                </div>
-                <span>
-                  <Icon icon="icon-park-outline:dot" />
-                </span>
-                <div className="d-flex flex-row align-items-center gap-1">
-                  <span style={{ lineHeight: 0 }}>
-                    <Icon icon="mynaui:hash-waves" width={18} height={18} />
-                  </span>
-                  <span>{rowData.course_code}</span>
-                </div>
-              </div>
             </div>
-            <div className="d-flex flex-column gap-2">
-              <p
-                className="text-muted font-size-sm m-0"
-                style={{
-                  height: "auto",
-                  maxHeight: "80px",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "3",
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                  wordBreak: "break-word",
-                }}
-              >
-                {rowData?.description}
-              </p>
-              <div className="d-flex flex-row gap-2">
-                {rowData.types.map((type) => (
-                  <Fragment key={type.id}>
-                    <div
-                      style={{
-                        background: type?.background_color,
-                        color: type?.text_color,
-                        fontSize: "0.75rem",
-                      }}
-                      className="rounded-pill px-2"
-                    >
-                      {type?.name}
-                    </div>
-                  </Fragment>
-                ))}
-              </div>
-              {rowData?.assignment_status === "assigned" && (
-                <div className="d-flex flex-row align-items-center gap-1">
-                  <img
-                    src="./images/user.png"
-                    alt=""
-                    style={{
-                      width: "2rem",
-                      height: "2rem",
-                      objectFit: "contain",
-                    }}
-                  />
-                  <div className="d-flex flex-column">
-                    <span className="fw-medium">
-                      {rowData?.teachers[0]?.name}
-                    </span>
-                    <span className="text-muted">
-                      @ {rowData?.teachers[0]?.username}
-                    </span>
+            <div className="d-flex flex-column gap-1">
+              <span className="font-size-sm">Choose Action</span>
+              <div className="d-flex flex-row align-items-center gap-2">
+                <div
+                  className="card w-50 p-2 rounded-4 font-size-sm d-flex flex-column pointer-cursor"
+                  style={{ height: "16dvh" }}
+                  onClick={() => setSelectedAction("update")}
+                >
+                  <div className="d-flex flex-row align-items-center justify-content-between">
+                    <span className="fw-semibold">Change Teacher</span>
+                    {selectedAction === "update" && (
+                      <span>
+                        <Icon
+                          icon="material-symbols:check-circle-rounded"
+                          width={18}
+                          height={18}
+                          className="green-color"
+                        />
+                      </span>
+                    )}
                   </div>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="d-flex flex-column gap-1">
-            <span className="font-size-sm">Choose Action</span>
-            <div className="d-flex flex-row align-items-center gap-2">
-              <div
-                className="card w-50 p-2 rounded-4 font-size-sm d-flex flex-column pointer-cursor"
-                style={{ height: "16dvh" }}
-                onClick={() => setSelectedAction("update")}
-              >
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <span className="fw-semibold">Change Teacher</span>
-                  {selectedAction === "update" && (
-                    <span>
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        width={18}
-                        height={18}
-                        className="green-color"
-                      />
-                    </span>
-                  )}
-                </div>
 
-                <p className="mt-auto m-0">
-                  Assign this course to a different teacher while replacing the
-                  current assignment.
-                </p>
-              </div>
-              <div
-                className="card w-50 p-2 rounded-4 font-size-sm d-flex flex-column pointer-cursor"
-                style={{ height: "16dvh" }}
-                onClick={() => setSelectedAction("remove")}
-              >
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <span className="fw-semibold">Remove Assignment</span>
-                  {selectedAction === "remove" && (
-                    <span>
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        width={18}
-                        height={18}
-                        className="green-color"
-                      />
-                    </span>
-                  )}
+                  <p className="mt-auto m-0">
+                    Assign this course to a different teacher while replacing
+                    the current assignment.
+                  </p>
                 </div>
-                <p className="mt-auto m-0">
-                  Remove the current teacher and leave this course without an
-                  assigned teacher.
-                </p>
+                <div
+                  className="card w-50 p-2 rounded-4 font-size-sm d-flex flex-column pointer-cursor"
+                  style={{ height: "16dvh" }}
+                  onClick={() => setSelectedAction("remove")}
+                >
+                  <div className="d-flex flex-row align-items-center justify-content-between">
+                    <span className="fw-semibold">Remove Assignment</span>
+                    {selectedAction === "remove" && (
+                      <span>
+                        <Icon
+                          icon="material-symbols:check-circle-rounded"
+                          width={18}
+                          height={18}
+                          className="green-color"
+                        />
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-auto m-0">
+                    Remove the current teacher and leave this course without an
+                    assigned teacher.
+                  </p>
+                </div>
               </div>
             </div>
+            {selectedAction === "update" ? (
+              <ChangeTeacher
+                drawerData={drawerData}
+                handleClose={handleClose}
+              />
+            ) : selectedAction === "remove" ? (
+              <RemoveAssignment
+                drawerData={drawerData}
+                setSelectedAction={setSelectedAction}
+                handleClose={handleClose}
+              />
+            ) : null}
           </div>
-          {selectedAction === "update" ? (
-            <ChangeTeacher rowData={rowData} handleClose={handleClose} />
-          ) : selectedAction === "remove" ? (
-            <RemoveAssignment
-              rowData={rowData}
-              setSelectedAction={setSelectedAction}
-              handleClose={handleClose}
-            />
-          ) : null}
         </div>
       </div>
     </>
@@ -213,19 +207,19 @@ function ManageCourseAssignment({ handleClose, rowData }) {
 }
 export default ManageCourseAssignment;
 
-function ChangeTeacher({ rowData, handleClose }) {
-  const teacherId = rowData?.teachers[0]?.id;
+function ChangeTeacher({ drawerData, handleClose }) {
+  const teacherId = drawerData?.teachers[0]?.id;
   const [selectedTeacher, setSelectedTeacher] = useState(teacherId);
   const {
     data: teachers,
     isLoading: isTeacherLoading,
     error: teacherError,
-  } = useGetTeacherBySpecialty(rowData.specialtyId);
+  } = useGetTeacherBySpecialty(drawerData.specialtyId);
   const { mutate: changeTeacher, isPending: isChanging } =
-    useChangeTeacherCourse(rowData.specialtyId, handleClose);
+    useChangeTeacherCourse(drawerData.specialtyId, handleClose);
   const handleChangeTeacher = () => {
     changeTeacher({
-      course_id: rowData?.course_id,
+      course_id: drawerData?.course_id,
       new_teacher_id: selectedTeacher,
       old_teacher_id: teacherId,
     });
@@ -269,7 +263,7 @@ function ChangeTeacher({ rowData, handleClose }) {
                   <Fragment key={teacher.id}>
                     <div
                       className="card font-size-sm rounded-4 p-2 d-flex flex-column pointer-cursor d-flex flex-column gap-3"
-                      style={{ width: "49%",  }}
+                      style={{ width: "49%" }}
                       onClick={() => setSelectedTeacher(teacher.id)}
                     >
                       <div className="d-flex flex-row align-items-start justify-content-between">
@@ -330,12 +324,12 @@ function ChangeTeacher({ rowData, handleClose }) {
                                   background: "#e0f2fe",
                                   color: "#38bff8",
                                   fontSize: "0.7rem",
-                                  width: "max-content"
+                                  width: "max-content",
                                 }}
                                 className="rounded-pill p-1 d-flex flex-row align-items-center gap-1 m-1"
                               >
                                 <span>{quali?.abbreviation}</span>
-                                <span style={{ lineHeight:0 }}>
+                                <span style={{ lineHeight: 0 }}>
                                   <Icon icon="icon-park-outline:dot" />
                                 </span>
                                 <span>{quali?.pivot?.field_of_study}</span>
@@ -367,7 +361,13 @@ function ChangeTeacher({ rowData, handleClose }) {
                               </span>
                             </div>
                           </div>
-                          <div style={{ height:"2.5rem", background:"#ddd", width:"0.05rem" }}></div>
+                          <div
+                            style={{
+                              height: "2.5rem",
+                              background: "#ddd",
+                              width: "0.05rem",
+                            }}
+                          ></div>
                           <div className="d-flex flex-column gap-1">
                             <span
                               style={{ fontSize: "0.7rem" }}
@@ -411,15 +411,15 @@ function ChangeTeacher({ rowData, handleClose }) {
   );
 }
 
-function RemoveAssignment({ rowData, setSelectedAction, handleClose }) {
+function RemoveAssignment({ drawerData, setSelectedAction, handleClose }) {
   const { mutate: removeAssigedCourse, isPending: isRemoving } =
-    useRemoveAssignedTeacherCourse(rowData.specialtyId);
+    useRemoveAssignedTeacherCourse(drawerData.specialtyId);
   const handleRemove = () => {
     removeAssigedCourse({
-      teacher_id: rowData?.teachers[0]?.id,
+      teacher_id: drawerData?.teachers[0]?.id,
       courseIds: [
         {
-          course_id: rowData?.course_id,
+          course_id: drawerData?.course_id,
         },
       ],
     });
@@ -434,9 +434,9 @@ function RemoveAssignment({ rowData, setSelectedAction, handleClose }) {
           <div className="d-flex flex-column gap-1">
             <div className="d-flex flex-row align-items-center justify-content-between">
               <span style={{ width: "65%" }} className="fw-semibold">
-                {rowData?.course_title}
+                {drawerData?.course_title}
               </span>
-              {rowData.assignment_status === "unassigned" ? (
+              {drawerData.assignment_status === "unassigned" ? (
                 <div
                   style={{
                     background: "#fbedd9",
@@ -476,7 +476,7 @@ function RemoveAssignment({ rowData, setSelectedAction, handleClose }) {
                 <span style={{ lineHeight: 0 }}>
                   <Icon icon="iconoir:medal" width={18} height={18} />
                 </span>
-                <span>{rowData.course_credit} Credit</span>
+                <span>{drawerData.course_credit} Credit</span>
               </div>
               <span>
                 <Icon icon="icon-park-outline:dot" />
@@ -485,7 +485,7 @@ function RemoveAssignment({ rowData, setSelectedAction, handleClose }) {
                 <span style={{ lineHeight: 0 }}>
                   <Icon icon="mynaui:hash-waves" width={18} height={18} />
                 </span>
-                <span>{rowData.course_code}</span>
+                <span>{drawerData.course_code}</span>
               </div>
             </div>
           </div>
@@ -502,10 +502,10 @@ function RemoveAssignment({ rowData, setSelectedAction, handleClose }) {
                 wordBreak: "break-word",
               }}
             >
-              {rowData?.description}
+              {drawerData?.description}
             </p>
             <div className="d-flex flex-row gap-2">
-              {rowData.types.map((type) => (
+              {drawerData.types.map((type) => (
                 <Fragment key={type.id}>
                   <div
                     style={{
@@ -535,9 +535,9 @@ function RemoveAssignment({ rowData, setSelectedAction, handleClose }) {
               }}
             />
             <div className="d-flex flex-column">
-              <span className="fw-medium">{rowData?.teachers[0]?.name}</span>
+              <span className="fw-medium">{drawerData?.teachers[0]?.name}</span>
               <span className="text-muted">
-                @ {rowData?.teachers[0]?.first_name}
+                @ {drawerData?.teachers[0]?.first_name}
               </span>
             </div>
           </div>

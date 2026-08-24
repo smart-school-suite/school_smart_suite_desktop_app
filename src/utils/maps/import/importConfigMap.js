@@ -4,6 +4,7 @@ import { importSpecialty } from "../../../services/specialty";
 import { importHall } from "../../../services/hall";
 import { importCourse } from "../../../services/course";
 import { importStudent } from "../../../services/student";
+import { importTeacherSpecialty } from "../../../services/teacherSpecialty";
 const IMPORT_CONFIG_MAP = {
   department: {
     mutationFn: importDepartment,
@@ -40,6 +41,12 @@ const IMPORT_CONFIG_MAP = {
     queryKey: ["students"],
     successTitle: "Import Initiated",
     successDescription: "Student Importation Initiated Successfully",
+  },
+  teacherSpecialty: {
+    mutationFn: importTeacherSpecialty,
+    queryKey: ["students"],
+    successTitle: "Import Initiated",
+    successDescription: "Teacher Specialty Importation Initiated Successfully",
   },
 };
 

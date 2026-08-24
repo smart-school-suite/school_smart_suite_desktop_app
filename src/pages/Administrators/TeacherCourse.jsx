@@ -6,9 +6,10 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { useGetCourseSpecialtyId } from "../../hooks/course/useGetCourseSpecialtyId";
 import { useNavigate } from "react-router-dom";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import AssignCourse from "../../ModalContent/TeacherCourse/AssignCourse";
-import ManageCourseAssignment from "../../ModalContent/TeacherCourse/ManageCourseAssignment";
+import AssignCourse from "../../DrawerContent/Course/AssignCourse";
 import { NotFoundError } from "../../components/errors/Error";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import ManageCourseAssignment from "../../DrawerContent/Course/ManageCourseAssignment";
 function TeacherCourse() {
   const [specialty, setSpecialty] = useState(null);
   const navigate = useNavigate();
@@ -21,8 +22,8 @@ function TeacherCourse() {
     <>
       <main className="d-flex flex-row align-items-start gap-2 h-100 w-100">
         <div
-          className="card border-none rounded-4 h-100 font-size-sm p-2 d-flex flex-column gap-4"
-          style={{ width: "20%" }}
+          className="card border rounded-3 h-100 font-size-sm p-2 d-flex flex-column gap-4"
+          style={{ width: "25%" }}
         >
           <div className="d-flex flex-column gap-3">
             <span className="font-size-sm fw-medium">Specialty</span>
@@ -34,12 +35,14 @@ function TeacherCourse() {
               />
             </div>
           </div>
-          <LevelSpecialtyDropdown
-            setSpecialty={setSpecialty}
-            specialty={specialty}
-          />
+          <div className="d-flex flex-column gap-3">
+            <LevelSpecialtyDropdown
+              setSpecialty={setSpecialty}
+              specialty={specialty}
+            />
+          </div>
         </div>
-        <div className="d-flex flex-column gap-2" style={{ width: "80%" }}>
+        <div className="d-flex flex-column gap-2" style={{ width: "75%" }}>
           <div className="d-flex flex-row align-items-end justify-content-end">
             <input
               type="search"
@@ -65,7 +68,7 @@ function TeacherCourse() {
                         {[...Array(6)].map((_, index) => (
                           <Fragment key={index}>
                             <RectangleSkeleton
-                              width={"32.8%"}
+                              width={"32%"}
                               height={"20dvh"}
                               borderRadius={6}
                             />
@@ -167,7 +170,7 @@ function Course({ course, specialtyId }) {
     <>
       <div
         className="card p-2 rounded-4 border-none shadow-sm d-flex flex-column gap-3 font-size-sm"
-        style={{ width: "32.8%" }}
+        style={{ width: "32%" }}
       >
         <div className="d-flex flex-column gap-1">
           <div className="d-flex flex-row align-items-center justify-content-between">
@@ -270,33 +273,41 @@ function Course({ course, specialtyId }) {
               />
               <div className="d-flex flex-column">
                 <span className="fw-medium">{course?.teachers[0]?.name}</span>
-                <span className="text-muted">@ {course?.teachers[0]?.username}</span>
+                <span className="text-muted">
+                  @ {course?.teachers[0]?.username}
+                </span>
               </div>
             </div>
           )}
         </div>
         {course?.assignment_status === "unassigned" ? (
-          <ModalButton
-            action={{ modalContent: AssignCourse }}
-            rowData={{ ...course, specialtyId }}
-            classname={
-              "p-2 font-size-sm rounded-pill border-none primary-background text-white text-center"
-            }
-            size={"lg"}
-          >
-            <span>Assign Teacher</span>
-          </ModalButton>
-        ) : (
-          <ModalButton
-            action={{ modalContent: ManageCourseAssignment }}
-            rowData={{ ...course, specialtyId }}
+          <DrawerTrigger
+            title="Assign Teacher To Course"
+            placement="right"
+            drawerChildren={AssignCourse}
+            drawerData={{ ...course, specialtyId }}
             classname={
               "p-2 font-size-sm rounded-pill border-none  text-center border"
             }
-            size={"lg"}
           >
-            <span>Manage Assignment</span>
-          </ModalButton>
+            <button className="rounded-pill p-2 font-size-sm bg-none border w-100">
+              <span>Assign Teacher</span>
+            </button>
+          </DrawerTrigger>
+        ) : (
+          <DrawerTrigger
+            title="Manage Assignment"
+            placement="right"
+            drawerChildren={ManageCourseAssignment}
+            drawerData={{ ...course, specialtyId }}
+            classname={
+              "p-2 font-size-sm rounded-pill border-none  text-center border"
+            }
+          >
+            <button className="rounded-pill p-2 font-size-sm bg-none border w-100">
+              <span>Manage Assignment</span>
+            </button>
+          </DrawerTrigger>
         )}
       </div>
     </>
@@ -305,13 +316,10 @@ function Course({ course, specialtyId }) {
 
 function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
   const { data: levelSpecialties, isLoading, error } = useGetLevelSpecialties();
-  // Store the active level ID instead of a boolean to manage menus individually
   const [openLevelId, setOpenLevelId] = useState(null);
-
   const toggleDropdown = (levelId) => {
     setOpenLevelId(openLevelId === levelId ? null : levelId);
   };
-
   return (
     <>
       {isLoading ? (
@@ -340,9 +348,9 @@ function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
                 <button
                   type="button"
                   onClick={() => toggleDropdown(lSpecialty.level_id)}
-                  className="w-100 d-flex flex-row align-items-center justify-content-between border-none transparent-bg p-0"
+                  className="w-100 d-flex flex-row hover-text-primary-400 align-items-center justify-content-between border-none transparent-bg pe-2"
                 >
-                  <span className=" fw-medium" style={{ fontSize:"0.75rem" }}>
+                  <span className=" fw-medium">
                     {`${lSpecialty.level_name} (${lSpecialty.specialties.length})`}
                   </span>
                   <motion.span
@@ -362,27 +370,41 @@ function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25, ease: "easeInOut" }}
                       style={{ overflow: "hidden" }}
-                      className="d-flex flex-column gap-3"
+                      className="d-flex flex-column gap-3 pe-3"
                     >
-                      {lSpecialty.specialties.map((spec) => (
-                        <Fragment key={spec.id}>
-                          <button
-                            className="d-flex flex-row align-items-center justify-content-between border-none transparent-bg p-0 w-100 text-start"
-                            onClick={() => setSpecialty(spec.id)}
-                          >
-                            <span>{spec.specialty_name}</span>
-                            {spec.id === specialty && (
-                              <span>
-                                <Icon
-                                  icon="material-symbols:check-rounded"
-                                  width="16"
-                                  height="16"
-                                />
-                              </span>
-                            )}
-                          </button>
-                        </Fragment>
-                      ))}
+                      <div
+                        className="scroll-bar-sm over-flow-x-hidden d-flex flex-column gap-2 over-flow-y-auto pe-1"
+                        style={{
+                          height: "34dvh",
+                          overflowY: "auto",
+                          minHeight: "auto",
+                        }}
+                      >
+                        {lSpecialty.specialties.map((spec) => (
+                          <Fragment key={spec.id}>
+                            <button
+                              className={`d-flex flex-row align-items-center justify-content-between border-none rounded-3 
+                              p-2 w-100 text-start transition-all  ${
+                                spec.id == specialty
+                                  ? "primary-background-100 color-primary"
+                                  : "bg-transparent hover-bg-primary-50 hover-text-primary-400"
+                              }`}
+                              onClick={() => setSpecialty(spec.id)}
+                            >
+                              <span>{spec.specialty_name}</span>
+                              {spec.id === specialty && (
+                                <span>
+                                  <Icon
+                                    icon="material-symbols:check-rounded"
+                                    width="16"
+                                    height="16"
+                                  />
+                                </span>
+                              )}
+                            </button>
+                          </Fragment>
+                        ))}
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -394,4 +416,3 @@ function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
     </>
   );
 }
-

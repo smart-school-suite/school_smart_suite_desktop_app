@@ -8,6 +8,17 @@ import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { NotFoundError } from "../../components/errors/Error";
+import {
+  CircleX,
+  ChevronDown,
+  Plus,
+  Dot,
+  ArrowRight,
+  Trash2,
+  TriangleAlert,
+  Info,
+  CircleCheck,
+} from "lucide-react";
 function AssignTeacherSpecialty({ handleClose, rowData }) {
   const {
     data: specialty,
@@ -20,7 +31,7 @@ function AssignTeacherSpecialty({ handleClose, rowData }) {
     error: teachersError,
   } = useGetAssignableTeachers(rowData?.specialtyId);
   const { mutate: assignTeacher, isPending: isAssigning } = useAssignTeachers(
-    rowData?.specialtyId
+    rowData?.specialtyId,
   );
   const [selectedTeachers, setSelectedTeachers] = useState([]);
   const handleAssignTeachers = () => {
@@ -43,185 +54,245 @@ function AssignTeacherSpecialty({ handleClose, rowData }) {
   return (
     <>
       <div className="d-flex flex-column gap-2 ">
-        <div className="d-flex flex-column">
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <span className="fw-medium font-size-md">Assign Teachers</span>
-            <span onClick={handleClose} style={{ cursor: "pointer" }}>
-              <Icon icon="proicons:cancel" width={18} height={18} />
-            </span>
-          </div>
-          <p className="font-size-sm">
-            Select one or more teachers to join this specialty.
-          </p>
-        </div>
         <div
-          className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-1"
-          style={{ maxHeight: "65dvh" }}
+          className="border-bottom rounded-top-4 p-2 d-flex flex-column justify-content-center"
+          style={{ height: "6dvh", background: "#f9f9f9" }}
         >
-          {isSpecialtyLoading ? (
-            <RectangleSkeleton />
-          ) : specialtyError ? (
-            <div className="card rounded-3 p-2"></div>
-          ) : (
-            <div className="card rounded-4 p-2 font-size-sm d-flex flex-column gap-2">
-              <div className="d-flex flex-column gap-1">
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <span className="fw-semibold">
-                    {specialty?.data?.specialty_name}
-                  </span>
-                  <div
-                    style={{
-                      background: "#e3f5e3",
-                      color: "#5cb85c",
-                      fontSize: "0.7rem",
-                      width: "max-content",
-                      padding: "0.1rem",
-                    }}
-                    className="rounded-pill px-2 d-flex flex-row align-items-center gap-1"
-                  >
-                    <span>{specialty?.data?.status}</span>
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <div className="d-flex flex-column">
+              <span className="font-size-sm fw-semibold">
+                Match your columns
+              </span>
+              <small style={{ fontSize:"0.7rem"}}>Select one or more teachers to join this specialty.</small>
+            </div>
+            <button
+              onClick={() => handleClose()}
+              className="border-none border rounded-circle bg-transparent p-0"
+              style={{
+                width: "2rem",
+                height: "2rem",
+                display: "grid",
+                placeItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <CircleX size={16} />
+            </button>
+          </div>
+        </div>
+        <div className="px-2">
+          <div
+            className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-2"
+            style={{ maxHeight: "72dvh" }}
+          >
+            {isSpecialtyLoading ? (
+              <RectangleSkeleton />
+            ) : specialtyError ? (
+              <div className="card rounded-3 p-2"></div>
+            ) : (
+              <div className="card rounded-4 p-2 font-size-sm d-flex flex-column gap-2">
+                <div className="d-flex flex-column gap-1">
+                  <div className="d-flex flex-row align-items-center justify-content-between">
+                    <span className="fw-semibold">
+                      {specialty?.data?.specialty_name}
+                    </span>
+                    <div
+                      style={{
+                        background: "#e3f5e3",
+                        color: "#5cb85c",
+                        fontSize: "0.7rem",
+                        width: "max-content",
+                        padding: "0.1rem",
+                      }}
+                      className="rounded-pill px-2 d-flex flex-row align-items-center gap-1"
+                    >
+                      <span>{specialty?.data?.status}</span>
+                    </div>
+                  </div>
+                  <div className="d-flex flex-row align-items-center gap-1 fw-medium">
+                    <div className="d-flex flex-row align-items-center gap-2">
+                      <Icon
+                        icon="mynaui:graduation-cap"
+                        width={16}
+                        height={16}
+                      />
+                      <span>{specialty?.data?.level?.name}</span>
+                    </div>
+                    <span>
+                      <Icon
+                        icon="icon-park-outline:dot"
+                        width={14}
+                        height={14}
+                      />
+                    </span>
+                    <div className="d-flex flex-row align-items-center gap-1">
+                      <Icon
+                        icon="material-symbols:grid-on-outline"
+                        width={16}
+                        height={16}
+                      />
+                      <span>
+                        {specialty?.data?.department?.department_name}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div className="d-flex flex-row align-items-center gap-1 fw-medium">
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <Icon icon="mynaui:graduation-cap" width={16} height={16} />
-                    <span>{specialty?.data?.level?.name}</span>
-                  </div>
-                  <span>
-                    <Icon icon="icon-park-outline:dot" width={14} height={14} />
-                  </span>
-                  <div className="d-flex flex-row align-items-center gap-1">
-                    <Icon
-                      icon="material-symbols:grid-on-outline"
-                      width={16}
-                      height={16}
-                    />
-                    <span>{specialty?.data?.department?.department_name}</span>
+                <p className="text-muted">{specialty?.data?.description}</p>
+                <div>
+                  <hr />
+                  <div className="d-flex flex-row align-items-center justify-content-around">
+                    <div className="d-flex flex-column gap-1 align-center  text-center">
+                      <span
+                        style={{ fontSize: "0.7rem" }}
+                        className="text-muted"
+                      >
+                        Courses Assigned
+                      </span>
+                      <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
+                        <span>
+                          <Icon
+                            icon="ion:book-outline"
+                            width={18}
+                            height={18}
+                          />
+                        </span>
+                        <span className="fw-bold font-size-md">
+                          {specialty?.data?.total_courses}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="d-flex flex-column gap-1">
+                      <span
+                        style={{ fontSize: "0.7rem" }}
+                        className="text-muted"
+                      >
+                        Halls Assigned
+                      </span>
+                      <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
+                        <span>
+                          <Icon
+                            icon="streamline-flex:city-hall"
+                            width={18}
+                            height={18}
+                          />
+                        </span>
+                        <span className="fw-bold font-size-md">
+                          {specialty?.data?.total_halls}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="d-flex flex-column gap-1">
+                      <span
+                        style={{ fontSize: "0.7rem" }}
+                        className="text-muted"
+                      >
+                        Teachers Assigned
+                      </span>
+                      <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
+                        <span>
+                          <Icon
+                            icon="solar:user-linear"
+                            width={18}
+                            height={18}
+                          />
+                        </span>
+                        <span className="fw-bold font-size-md">
+                          {specialty?.data?.total_teachers}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="d-flex flex-column gap-1">
+                      <span
+                        style={{ fontSize: "0.7rem" }}
+                        className="text-muted"
+                      >
+                        Student
+                      </span>
+                      <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
+                        <span>
+                          <Icon
+                            icon="ph:student-light"
+                            width={18}
+                            height={18}
+                          />
+                        </span>
+                        <span className="fw-bold font-size-md">
+                          {specialty?.data?.total_students}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <p className="text-muted">{specialty?.data?.description}</p>
-              <div>
-                <hr />
-                <div className="d-flex flex-row align-items-center justify-content-around">
-                  <div className="d-flex flex-column gap-1 align-center  text-center">
-                    <span style={{ fontSize: "0.7rem" }} className="text-muted">
-                      Courses Assigned
-                    </span>
-                    <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                      <span>
-                        <Icon icon="ion:book-outline" width={18} height={18} />
-                      </span>
-                      <span className="fw-bold font-size-md">
-                        {specialty?.data?.total_courses}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="d-flex flex-column gap-1">
-                    <span style={{ fontSize: "0.7rem" }} className="text-muted">
-                      Halls Assigned
-                    </span>
-                    <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                      <span>
-                        <Icon
-                          icon="streamline-flex:city-hall"
-                          width={18}
-                          height={18}
-                        />
-                      </span>
-                      <span className="fw-bold font-size-md">
-                        {specialty?.data?.total_halls}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="d-flex flex-column gap-1">
-                    <span style={{ fontSize: "0.7rem" }} className="text-muted">
-                      Teachers Assigned
-                    </span>
-                    <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                      <span>
-                        <Icon icon="solar:user-linear" width={18} height={18} />
-                      </span>
-                      <span className="fw-bold font-size-md">
-                        {specialty?.data?.total_teachers}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="d-flex flex-column gap-1">
-                    <span style={{ fontSize: "0.7rem" }} className="text-muted">
-                      Student
-                    </span>
-                    <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                      <span>
-                        <Icon icon="ph:student-light" width={18} height={18} />
-                      </span>
-                      <span className="fw-bold font-size-md">
-                        {specialty?.data?.total_students}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+            )}
+            <div className="d-flex flex-column gap-3">
+              <div className="d-flex flex-row align-items-center justify-content-end">
+                <input
+                  type="search"
+                  className="form-control font-size-sm w-50"
+                  placeholder="Search Teacher"
+                />
               </div>
-            </div>
-          )}
-          <div className="d-flex flex-column gap-2">
-            <div className="d-flex flex-row align-items-center justify-content-end">
-              <input
-                type="search"
-                className="form-control font-size-sm w-50"
-                placeholder="Search Teacher"
-              />
-            </div>
-            {isTeachersLoading ? (
-              <div className="d-flex flex-row flex-wrap gap-2">
-                {
-                   [...Array(6)].map((_, index) => (
+              {isTeachersLoading ? (
+                <div className="d-flex flex-row flex-wrap gap-2">
+                  {[...Array(6)].map((_, index) => (
                     <Fragment key={index}>
-                       <RectangleSkeleton
+                      <RectangleSkeleton
                         width={"49%"}
                         height={"1rem"}
                         borderRadius={6}
                       />
                     </Fragment>
-                   ))
-                }
-              </div>
-            ) : teachersError ? (
-              <NotFoundError
-                title={
-                  teachersError?.response?.data?.errors?.title || "Error"
-                }
-                description={
-                  teachersError?.response?.data?.errors?.description ||
-                  "Something went wrong"
-                }
-              />
-            ) : (
-              <div>
-                <div className="d-flex flex-row align-items-start flex-wrap gap-2">
-                  {teachers?.data?.map((teacher) => (
-                    <Fragment key={teacher.id}>
-                      <Teacher
-                        teacher={teacher}
-                        selectedTeachers={selectedTeachers}
-                        setSelectedTeachers={setSelectedTeachers}
-                      />
-                    </Fragment>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : teachersError ? (
+                <NotFoundError
+                  title={
+                    teachersError?.response?.data?.errors?.title || "Error"
+                  }
+                  description={
+                    teachersError?.response?.data?.errors?.description ||
+                    "Something went wrong"
+                  }
+                />
+              ) : (
+                <div>
+                  <div className="d-flex flex-row align-items-start flex-wrap gap-2">
+                    {teachers?.data?.map((teacher) => (
+                      <Fragment key={teacher.id}>
+                        <Teacher
+                          teacher={teacher}
+                          selectedTeachers={selectedTeachers}
+                          setSelectedTeachers={setSelectedTeachers}
+                        />
+                      </Fragment>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        {selectedTeachers.length > 0 && (
-          <button className="primary-background text-white w-100 rounded-pill p-2 font-size-sm border-none border mt-auto"
-           onClick={() => handleAssignTeachers()}
-          >
-            {
-               isAssigning ? <SingleSpinner /> : `Assign Teacher ${selectedTeachers.length}`
-            }
-          </button>
-        )}
+        <div className="mt-auto border-top p-2" style={{ height: "8dvh" }}>
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <button
+              className="border-none bg-transparent d-flex flex-row align-items-center font-size-sm gap-2"
+              onClick={() => handleClose()}
+            >
+              <span>Cancel</span>
+            </button>
+            <button
+              className="primary-background text-white rounded-3 p-2 font-size-sm border-none border mt-auto"
+              onClick={() => handleAssignTeachers()}
+            >
+              {isAssigning ? (
+                <SingleSpinner />
+              ) : (
+                `Assign Teacher ${selectedTeachers.length}`
+              )}
+            </button>
+          </div>
+        </div>
       </div>
     </>
   );

@@ -5,114 +5,209 @@ import { Icon } from "@iconify/react";
 import { days } from "../../constants/day";
 import { Fragment, useState } from "react";
 import { parse, format } from "date-fns";
-function TeacherAvailabilitySlot({ rowData, handleClose }) {
-  const [selectedDay, setSelectedDay] = useState("mon");
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import {
+  CircleX,
+  ChevronDown,
+  Plus,
+  Dot,
+  ArrowRight,
+  Trash2,
+  TriangleAlert,
+  Info,
+  CircleCheck,
+  Minus,
+} from "lucide-react";
+import { isLastElement } from "../../utils/functions";
+import { groupAndFormatSlots } from "../../utils/time/time";
+import InstructorAvailabilitySchedule from "../../components/Schedule/InstructorAvailabilitySchedule";
+function TeacherAvailabilitySlot({ drawerData, handleClose }) {
   const {
     data: slots,
     isLoading,
     error,
-  } = useGetTeacherAvailabilitySlots(rowData.id);
+  } = useGetTeacherAvailabilitySlots(drawerData.id);
 
   return (
     <>
-      <div className="d-flex flex-column gap-3">
-        <div className="d-flex flex-row align-items-center justify-content-between">
-          <span>Teacher Availability Slots</span>
-          <span onClick={handleClose} style={{ cursor: "pointer" }}>
-            <Icon icon="proicons:cancel" />
-          </span>
-        </div>
-        <div className="d-flex flex-column gap-2">
-          <div className="day-calendar-container">
-            {days?.map((day, index) => (
-              <Fragment key={index}>
-                <button
-                  className={`${
-                    selectedDay == day?.short?.toLowerCase()
-                      ? "day-selected"
-                      : null
-                  } font-size-sm`}
-                  style={{ height: "3rem" }}
-                  onClick={() => setSelectedDay(day?.short?.toLowerCase())}
-                >
-                  {day?.short}
-                </button>
-              </Fragment>
-            ))}
-          </div>
-          <div className="modal-content-child pe-2">
-            {isLoading ? (
-              <div>
-                <RectangleSkeleton width="20%" height="1dvh" />
-                <div className="avaibility-slot-grid">
-                  {[...Array(10)].map((_, index) => (
-                    <Fragment key={index}>
-                      <RectangleSkeleton width="100%" height="100%" />
-                    </Fragment>
-                  ))}
+      <div
+        className="pt-2 font-size-sm d-flex flex-column"
+        style={{ flex: 1, minHeight: 0 }}
+      >
+        {isLoading ? (
+          <RectangleSkeleton />
+        ) : error ? (
+          <NotFoundError
+            title={error?.response?.data?.errors?.title}
+            description={error?.response?.data?.errors?.description}
+          ></NotFoundError>
+        ) : (
+          <>
+            <div className="drawer-content pb-4">
+              <div className="d-flex flex-column gap-3">
+                <div className="d-flex flex-row align-items-center gap-2 px-2">
+                  <div
+                    style={{ width: "2.8rem", height: "2.8rem" }}
+                    className="rounded-circle"
+                  >
+                    <img
+                      src="./images/user.png"
+                      alt=""
+                      className="object-fit-cover w-100 h-100"
+                      style={{
+                        borderRadius: "2.8rem",
+                      }}
+                    />
+                  </div>
+                  <div className="d-flex flex-column">
+                    <span className="fw-medium">
+                      {slots?.data?.teacher?.name}
+                    </span>
+                    <small>@{slots?.data?.teacher?.username}</small>
+                  </div>
+                </div>
+                <HorizontalDashedLine
+                  dashed={false}
+                  thickness={0.5}
+                  color="#ddd"
+                />
+                <div className="d-flex flex-column gap-3 px-2">
+                  <span className="text-muted">Context</span>
+                  <div className="d-flex flex-column gap-2">
+                    <div className="d-flex flex-column fw-medium">
+                      <span>School year</span>
+                      <span>
+                        {
+                          slots?.data?.school_semester?.school_year
+                            ?.system_academic_year?.name
+                        }
+                      </span>
+                    </div>
+                    <HorizontalDashedLine
+                      dashed={false}
+                      thickness={0.5}
+                      color="#ddd"
+                    />
+                    <div className="d-flex flex-column fw-medium">
+                      <span>Semester </span>
+                      <span>
+                        {slots?.data?.school_semester?.semester?.name}
+                      </span>
+                    </div>
+                    <HorizontalDashedLine
+                      dashed={false}
+                      thickness={0.5}
+                      color="#ddd"
+                    />
+                    <div className="d-flex flex-column fw-medium">
+                      <span>Specialty </span>
+                      <div className="d-flex flex-row align-items-center">
+                        <span>
+                          {
+                            slots?.data?.school_semester?.school_year?.specialty
+                              ?.specialty_name
+                          }
+                        </span>
+                        <Dot size={12} />
+                        <span>
+                          {
+                            slots?.data?.school_semester?.school_year?.specialty
+                              ?.level.name
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <HorizontalDashedLine
+                  dashed={false}
+                  thickness={0.5}
+                  color="#ddd"
+                />
+                <div className="d-flex flex-column gap-3 px-2">
+                  <span className="text-muted">Weekly Availability</span>
+                  <div className="d-flex flex-column fw-medium">
+                    <span>{slots?.data?.summary?.total_weekly_hours} Hours</span>
+                    <span>Available each week</span>
+                  </div>
+                  <InstructorAvailabilitySchedule />
+                </div>
+                <HorizontalDashedLine
+                  dashed={false}
+                  thickness={0.5}
+                  color="#ddd"
+                />
+                <div className="d-flex flex-column gap-3 px-2">
+                  <span className="text-muted">Availability Windows</span>
+                  {slots?.data?.pref_times?.map((ptimes, index) => {
+                    const slots = groupAndFormatSlots(ptimes.slots);
+                    return (
+                      <>
+                        <Fragment key={index}>
+                          <div className="d-flex flex-column gap-2 fw-semibold">
+                            <span className="text-capitalize">
+                              {ptimes.day}
+                            </span>
+                            {Object.keys(slots).map((obj, objIndex) => {
+                              return (
+                                <div
+                                  className="d-flex flex-column gap-2"
+                                  key={objIndex}
+                                >
+                                  <small className="text-muted fw-normal text-capitalize">
+                                    {obj}
+                                  </small>
+                                  <div className="d-flex flex-row flex-wrap gap-2">
+                                    {slots[obj].map((slot) => (
+                                      <Fragment key={slot.id}>
+                                        <button className="border-none rounded-pill d-flex flex-row gap-1 align-items-center px-2"
+                                         style={{ padding:"0.2rem" }}
+                                        >
+                                          <span>{slot.formatted_start}</span>
+                                          <Minus size={8} />
+                                          <span>{slot.formatted_end}</span>
+                                        </button>
+                                      </Fragment>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </Fragment>
+                        {!isLastElement(index, slots?.data?.pref_times) && (
+                          <HorizontalDashedLine
+                            dashed={false}
+                            color="#ccc"
+                            thickness={0.5}
+                          />
+                        )}
+                      </>
+                    );
+                  })}
                 </div>
               </div>
-            ) : error ? (
-              <NotFoundError
-                title={error?.response?.data?.errors?.title}
-                description={error?.response?.data?.errors?.description}
-              ></NotFoundError>
-            ) : (
-              slots?.data
-                ?.filter((items) => items.short == selectedDay)
-                .map((items, index) => (
-                  <Fragment key={index}>
-                    <span className="font-size-sm fw-medium text-capitalize">
-                      {items?.day}
-                    </span>
-                    <div className="avaibility-slot-grid">
-                      {items.slots.map((slot) => (
-                        <div
-                          className="card border p-2 d-flex flex-column gap-2"
-                          style={{ height: "100%" }}
-                        >
-                          <div className="d-flex flex-column">
-                            <span className="font-size-sm fw-semibold text-capitalize">
-                              {slot.day_of_week}
-                            </span>
-                            <span className="font-size-sm">Teacher Name</span>
-                          </div>
-                          <div className="d-flex flex-row align-items-center font-size-sm gap-1 fw-medium mt-auto">
-                            <span style={{ lineHeight: 0 }}>
-                              <Icon
-                                icon="weui:time-outlined"
-                                width="16"
-                                height="16"
-                              />
-                            </span>
-                            <span>
-                              {format(
-                                parse(slot.start_time, "HH:mm:ss", new Date()),
-                                "hh:mm a"
-                              )}
-                            </span>
-                            <span style={{ lineHeight: 0 }}>
-                              <Icon
-                                icon="octicon:dash-16"
-                                width="10"
-                                height="10"
-                              />
-                            </span>
-                            <span>
-                              {format(
-                                parse(slot.end_time, "HH:mm:ss", new Date()),
-                                "hh:mm a"
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </Fragment>
-                ))
-            )}
-          </div>
-        </div>
+            </div>
+            <div className="drawer-footer font-size-sm">
+              <div className="d-flex flex-column w-100">
+                <HorizontalDashedLine
+                  dashed={false}
+                  color="#ccc"
+                  thickness={0.5}
+                />
+                <div className="d-flex flex-row align-items-center justify-content-between p-2">
+                  <span> Last updated {slots?.data?.summary?.last_updated_human}</span>
+                  <button
+                    className="border-none bg-none border p-2 rounded-3"
+                    onClick={() => handleClose()}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
