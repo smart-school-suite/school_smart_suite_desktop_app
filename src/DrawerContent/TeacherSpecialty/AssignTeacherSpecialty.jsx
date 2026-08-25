@@ -171,12 +171,16 @@ export default function AssignTeacherSpecialty({ handleClose, drawerData }) {
               />
             </div>
             {isTeachersLoading ? (
-              <div className="d-flex flex-row flex-wrap gap-2">
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, 1fr)",
+                }}
+                className="gap-2"
+              >
                 {[...Array(6)].map((_, index) => (
                   <Fragment key={index}>
                     <RectangleSkeleton
-                      width={"49%"}
-                      height={"1rem"}
                       borderRadius={6}
                     />
                   </Fragment>
@@ -191,8 +195,15 @@ export default function AssignTeacherSpecialty({ handleClose, drawerData }) {
                 }
               />
             ) : (
-              <div>
-                <div className="d-flex flex-row align-items-start flex-wrap gap-2">
+              <div className="d-flex flex-column gap-2">
+                <span className="font-size-sm fw-semibold">Teachers</span>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(2, 1fr)",
+                  }}
+                  className="gap-2"
+                >
                   {teachers?.data?.map((teacher) => (
                     <Fragment key={teacher.id}>
                       <Teacher
@@ -237,7 +248,6 @@ function Teacher({ teacher, selectedTeachers, setSelectedTeachers }) {
     <>
       <div
         className="card font-size-sm rounded-4 p-2 d-flex flex-column pointer-cursor d-flex flex-column gap-3 shadow-sm"
-        style={{ width: "49%" }}
         onClick={() =>
           setSelectedTeachers((value) => {
             const newValue = [...value];

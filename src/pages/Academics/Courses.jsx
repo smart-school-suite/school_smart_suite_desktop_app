@@ -14,7 +14,7 @@ import React, {
   useRef,
   useEffect,
   useMemo,
-  Fragment
+  Fragment,
 } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
@@ -67,6 +67,7 @@ import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFi
 import { courseColDefs } from "../../utils/table/colDefs/course/courseColDefs";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
+import SearchInput from "../../components/input/search";
 function Courses() {
   const dispatch = useDispatch();
   const courseState = useSelector((state) => state.course);
@@ -101,8 +102,7 @@ function Courses() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
@@ -234,13 +234,14 @@ function Courses() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Teacher"
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Course......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}
@@ -288,9 +289,7 @@ function Courses() {
                         damping: 30,
                       }}
                       style={{
-                        width: courseState.isGeneralFilterOpen
-                          ? "60%"
-                          : "100%",
+                        width: courseState.isGeneralFilterOpen ? "60%" : "100%",
                       }}
                     >
                       <Table

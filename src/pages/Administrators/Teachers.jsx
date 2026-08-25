@@ -43,13 +43,6 @@ import {
   setCustomFilter,
   resetAllCustomFilters
 } from "../../Slices/teacher/teacherSlice";
-import {
-  useFloating,
-  offset,
-  flip,
-  shift,
-  autoUpdate,
-} from "@floating-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import TextFilter from "../../ModalContent/Filter/TextFilterPopOver";
@@ -59,6 +52,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 function Teachers() {
   const dispatch = useDispatch();
   const teacherState = useSelector((state) => state.teachers);
@@ -94,13 +88,12 @@ function Teachers() {
     return teachers?.data ?? [];
   }, [teachers]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearchText(value);
-    if (tableRef.current && tableRef.current.setGridOption) {
-      tableRef.current.setGridOption("quickFilterText", value);
-    }
-  };
+const handleSearch = (value) => {
+  setSearchText(value);
+  if (tableRef.current && tableRef.current.setGridOption) {
+    tableRef.current.setGridOption("quickFilterText", value);
+  }
+};
 
   const handleReset = () => {
     if (tableRef.current) {
@@ -230,13 +223,14 @@ function Teachers() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Teacher"
-                    onChange={handleSearch}
+                  <div className="w-50">
+                    <SearchInput 
+                    placeholder={"Search Teacher......"}
                     value={searchText}
-                    className="font-size-sm form-control w-25"
+                    onChange={(val) => handleSearch(val)}
+                    hotkey="Ctrl+K" 
                   />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}

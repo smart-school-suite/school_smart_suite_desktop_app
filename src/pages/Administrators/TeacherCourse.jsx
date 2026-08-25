@@ -10,6 +10,8 @@ import AssignCourse from "../../DrawerContent/Course/AssignCourse";
 import { NotFoundError } from "../../components/errors/Error";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import ManageCourseAssignment from "../../DrawerContent/Course/ManageCourseAssignment";
+import { ArrowDown } from "lucide-react";
+import SearchInput from "../../components/input/search";
 function TeacherCourse() {
   const [specialty, setSpecialty] = useState(null);
   const navigate = useNavigate();
@@ -22,16 +24,16 @@ function TeacherCourse() {
     <>
       <main className="d-flex flex-row align-items-start gap-2 h-100 w-100">
         <div
-          className="card border rounded-3 h-100 font-size-sm p-2 d-flex flex-column gap-4"
+          className="card border rounded-4 h-100 font-size-sm p-2 d-flex flex-column gap-3"
           style={{ width: "25%" }}
         >
-          <div className="d-flex flex-column gap-3">
+          <div className="d-flex flex-column gap-2">
             <span className="font-size-sm fw-medium">Specialty</span>
             <div>
-              <input
-                type="search"
-                className="form-control rounded-3 font-size-sm"
-                placeholder="Search Specialty"
+              <SearchInput
+                placeholder="Search for Specialty"
+                shortcut={"Ctrl+S"}
+                size="sm"
               />
             </div>
           </div>
@@ -43,18 +45,26 @@ function TeacherCourse() {
           </div>
         </div>
         <div className="d-flex flex-column gap-2" style={{ width: "75%" }}>
-          <div className="d-flex flex-row align-items-end justify-content-end">
-            <input
-              type="search"
-              placeholder="Search for course"
-              className="form-control font-size-sm"
-            />
+          <div className="d-flex flex-row align-items-end justify-content-between">
+            <div className="w-50">
+              <SearchInput placeholder="Search for course" />
+            </div>
+            <div className="d-flex flex-row align-items-center gap-2">
+              <button className="font-size-sm bg-white border-none border rounded-3 p-2 d-flex flex-row align-items-center gap-2">
+                <span>Export</span>
+                <ArrowDown size={16} />
+              </button>
+              <button className="font-size-sm bg-white border-none border rounded-3 p-2 d-flex flex-row align-items-center gap-2">
+                <span>Filter</span>
+                <Icon icon="basil:filter-outline" width={16} height={16} />
+              </button>
+            </div>
           </div>
           {specialty ? (
             isSpecialtyCoursesLoading ? (
               <div
                 className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-1"
-                style={{ maxHeight: "80dvh" }}
+                style={{ maxHeight: "75dvh" }}
               >
                 {[...Array(2)].map((_, index) => (
                   <Fragment key={index}>
@@ -64,14 +74,16 @@ function TeacherCourse() {
                         height={"1rem"}
                         borderRadius={6}
                       />
-                      <div className="d-flex flex-row align-items-center flex-wrap gap-2">
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(3, 1fr)",
+                        }}
+                        className="gap-2"
+                      >
                         {[...Array(6)].map((_, index) => (
                           <Fragment key={index}>
-                            <RectangleSkeleton
-                              width={"32%"}
-                              height={"20dvh"}
-                              borderRadius={6}
-                            />
+                            <RectangleSkeleton borderRadius={6} />
                           </Fragment>
                         ))}
                       </div>
@@ -91,16 +103,22 @@ function TeacherCourse() {
               />
             ) : courses?.data?.length > 0 ? (
               <div
-                className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-1"
+                className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-2 pe-1"
                 style={{ maxHeight: "75dvh", paddingBottom: "5rem" }}
               >
                 {courses.data.map((semester) => (
                   <Fragment key={semester?.semester_id}>
                     <div className="d-flex flex-column gap-1">
-                      <span className="font-size-md fw-semibold text-capitalize">
+                      <span className="font-size-sm fw-semibold text-capitalize">
                         {semester?.semester_name}
                       </span>
-                      <div className="d-flex flex-row align-items-center flex-wrap gap-2">
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(3, 1fr)",
+                        }}
+                        className="gap-2"
+                      >
                         {semester?.courses?.map((course) => (
                           <Fragment key={course.course_id}>
                             <Course course={course} specialtyId={specialty} />
@@ -114,7 +132,7 @@ function TeacherCourse() {
             ) : (
               <div className="d-flex flex-column align-items-center gap-2 text-center flex-grow-1">
                 <img
-                  src="./sss-maskot/timetable.png"
+                  src="./sss-maskot/404.png"
                   alt="sss-timetable-maskot"
                   style={{
                     height: "250px",
@@ -141,7 +159,7 @@ function TeacherCourse() {
             <div className="d-flex flex-grow-1 align-items-center justify-content-center">
               <div className="d-flex flex-column align-items-center gap-2 text-center">
                 <img
-                  src="./sss-maskot/timetable.png"
+                  src="./sss-maskot/happy.png"
                   alt="sss-timetable-maskot"
                   style={{
                     height: "250px",
@@ -168,10 +186,7 @@ export default TeacherCourse;
 function Course({ course, specialtyId }) {
   return (
     <>
-      <div
-        className="card p-2 rounded-4 border-none shadow-sm d-flex flex-column gap-3 font-size-sm"
-        style={{ width: "32%" }}
-      >
+      <div className="card p-2 rounded-4 border shadow-sm d-flex flex-column gap-3 font-size-sm">
         <div className="d-flex flex-column gap-1">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <span style={{ width: "65%" }} className="fw-semibold">
@@ -375,9 +390,9 @@ function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
                       <div
                         className="scroll-bar-sm over-flow-x-hidden d-flex flex-column gap-2 over-flow-y-auto pe-1"
                         style={{
-                          height: "34dvh",
                           overflowY: "auto",
-                          minHeight: "auto",
+                          maxHeight: "34dvh",
+                          height: "auto",
                         }}
                       >
                         {lSpecialty.specialties.map((spec) => (

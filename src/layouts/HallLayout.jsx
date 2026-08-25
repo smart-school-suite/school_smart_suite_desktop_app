@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import HallSideBar from "../components/SideBars/HallSideBar";
 import { HallIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
@@ -28,6 +28,7 @@ import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import CreateHall from "../DrawerContent/Hall/CreateHall";
 function HallLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const navigate = useNavigate();
   const sideBarData = [
     { title: "Hall", path: "/hall" },
     { title: "Hall Specialty", path: "/specialty-hall" },

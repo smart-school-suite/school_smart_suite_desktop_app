@@ -11,6 +11,8 @@ import AssignTeacherSpecialty from "../../DrawerContent/TeacherSpecialty/AssignT
 import { NotFoundError } from "../../components/errors/Error";
 import { isLastElement } from "../../utils/functions";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { ArrowDown } from "lucide-react";
+import SearchInput from "../../components/input/search";
 function TeacherSpecialty() {
   const [specialty, setSpecialty] = useState(null);
   const {
@@ -22,17 +24,19 @@ function TeacherSpecialty() {
     <>
       <main className="d-flex flex-row align-items-start gap-2 h-100 w-100">
         <div
-          className="card border rounded-3 h-100 font-size-sm p-2 d-flex flex-column gap-4"
+          className="card border rounded-4 h-100 font-size-sm p-2 d-flex flex-column gap-3"
           style={{ width: "25%" }}
         >
-          <div className="d-flex flex-column gap-3">
-            <span className="font-size-sm fw-medium">Specialties</span>
-            <div>
-              <input
-                type="search"
-                className="form-control rounded-3 font-size-sm"
-                placeholder="Search Specialty"
-              />
+          <div className="d-flex flex-column gap-2">
+            <div className="d-flex flex-column gap-2">
+              <span className="font-size-sm fw-medium">Specialty</span>
+              <div>
+                <SearchInput
+                  placeholder="Search for Specialty"
+                  hotkey="Ctrl+U"
+                  size="sm"
+                />
+              </div>
             </div>
           </div>
           <div className="d-flex flex-column gap-3">
@@ -42,33 +46,41 @@ function TeacherSpecialty() {
             />
           </div>
         </div>
-        <div className="d-flex flex-column gap-3" style={{ width: "80%" }}>
+        <div className="d-flex flex-column gap-3" style={{ width: "75%" }}>
           <div className="d-flex flex-row align-items-end justify-content-between w-100">
-            <input
-              type="search"
-              placeholder="Search for teacher"
-              className="form-control font-size-sm w-50"
-            />
-            {specialty && (
-              <DrawerTrigger
-                title="Manage Assignment"
-                placement="right"
-                drawerChildren={AssignTeacherSpecialty}
-                drawerData={{
-                  specialtyId: specialty,
-                }}
-                classname={
-                  "p-2 font-size-sm rounded-pill border-none  text-center border"
-                }
-              >
-                <button
-                  className="border-none border rounded-3 font-size-sm px-2 primary-background text-white text-capitalize"
-                  style={{ padding: "0.38rem" }}
+            <div className="w-50">
+              <SearchInput placeholder="Search for Teacher" hotkey="Ctrl+K" />
+            </div>
+            <div className="d-flex flex-row align-items-center gap-2">
+              <button className="font-size-sm bg-white border-none border rounded-3 p-2 d-flex flex-row align-items-center gap-2">
+                <span>Export</span>
+                <ArrowDown size={16} />
+              </button>
+              <button className="font-size-sm bg-white border-none border rounded-3 p-2 d-flex flex-row align-items-center gap-2">
+                <span>Filter</span>
+                <Icon icon="basil:filter-outline" width={16} height={16} />
+              </button>
+              {specialty && (
+                <DrawerTrigger
+                  title="Manage Assignment"
+                  placement="right"
+                  drawerChildren={AssignTeacherSpecialty}
+                  drawerData={{
+                    specialtyId: specialty,
+                  }}
+                  classname={
+                    "p-2 font-size-sm rounded-pill border-none  text-center border"
+                  }
                 >
-                  <span>Assign Teacher</span>
-                </button>
-              </DrawerTrigger>
-            )}
+                  <button
+                    className="border-none border rounded-3 font-size-sm px-2 primary-background text-white text-capitalize"
+                    style={{ padding: "0.38rem" }}
+                  >
+                    <span>Assign Teacher</span>
+                  </button>
+                </DrawerTrigger>
+              )}
+            </div>
           </div>
           {specialty ? (
             isTeacherLoading ? (
@@ -76,14 +88,16 @@ function TeacherSpecialty() {
                 className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-1"
                 style={{ maxHeight: "75dvh" }}
               >
-                <div className="d-flex flex-row align-items-center flex-wrap gap-2">
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                  }}
+                  className="gap-2"
+                >
                   {[...Array(8)].map((_, index) => (
                     <Fragment key={index}>
-                      <RectangleSkeleton
-                        width={"32%"}
-                        height={"40dvh"}
-                        borderRadius={6}
-                      />
+                      <RectangleSkeleton borderRadius={6} />
                     </Fragment>
                   ))}
                 </div>
@@ -98,10 +112,16 @@ function TeacherSpecialty() {
               />
             ) : teachers?.data?.length > 0 ? (
               <div
-                className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-2"
+                className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-1"
                 style={{ maxHeight: "75dvh", paddingBottom: "5rem" }}
               >
-                <div className="d-flex flex-row align-items-start flex-wrap gap-2">
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                  }}
+                  className="gap-2"
+                >
                   {teachers?.data?.map((teacher) => (
                     <Fragment key={teacher?.id}>
                       <Teacher teacher={teacher} specialtyId={specialty} />
@@ -112,7 +132,7 @@ function TeacherSpecialty() {
             ) : (
               <div className="d-flex flex-column align-items-center gap-2 text-center">
                 <img
-                  src="./sss-maskot/timetable.png"
+                  src="./sss-maskot/404.png"
                   alt="sss-timetable-maskot"
                   style={{
                     height: "250px",
@@ -127,24 +147,31 @@ function TeacherSpecialty() {
                   You will have to assign teachers for this specialty before
                   assigning them click the button below to get started
                 </p>
-                <ModalButton
-                  action={{ modalContent: AssignTeacherSpecialty }}
-                  size={"xl"}
-                  rowData={{
+                <DrawerTrigger
+                  title="Manage Assignment"
+                  placement="right"
+                  drawerChildren={AssignTeacherSpecialty}
+                  drawerData={{
                     specialtyId: specialty,
                   }}
+                  classname={
+                    "p-2 font-size-sm rounded-pill border-none  text-center border"
+                  }
                 >
-                  <button className="border-none rounded-3 p-2 font-size-sm primary-background text-white">
-                    Assign Teachers
+                  <button
+                    className="border-none border rounded-3 font-size-sm px-2 primary-background text-white text-capitalize"
+                    style={{ padding: "0.38rem" }}
+                  >
+                    <span>Assign Teacher</span>
                   </button>
-                </ModalButton>
+                </DrawerTrigger>
               </div>
             )
           ) : (
             <div className="d-flex flex-grow-1 align-items-center justify-content-center">
               <div className="d-flex flex-column align-items-center gap-2 text-center">
                 <img
-                  src="./sss-maskot/timetable.png"
+                  src="./sss-maskot/happy.png"
                   alt="sss-timetable-maskot"
                   style={{
                     height: "250px",
@@ -231,9 +258,9 @@ function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
                       <div
                         className="scroll-bar-sm over-flow-x-hidden d-flex flex-column gap-2 over-flow-y-auto pe-1"
                         style={{
-                          height: "34dvh",
                           overflowY: "auto",
-                          minHeight: "auto",
+                          maxHeight: "34dvh",
+                          height: "auto",
                         }}
                       >
                         {lSpecialty.specialties.map((spec) => (
@@ -272,8 +299,7 @@ function Teacher({ teacher, specialtyId }) {
   return (
     <>
       <div
-        className="card font-size-sm rounded-4 p-2 d-flex flex-column pointer-cursor d-flex flex-column gap-3 border-none shadow-sm"
-        style={{ width: "32%" }}
+        className="card font-size-sm rounded-4 p-2 d-flex flex-column pointer-cursor d-flex flex-column gap-3 border shadow-sm"
         onClick={() => setSelectedTeacher(teacher.id)}
       >
         <div className="d-flex flex-row align-items-start justify-content-between">
@@ -348,7 +374,7 @@ function Teacher({ teacher, specialtyId }) {
             ))}
           </div>
         </div>
-        <div>
+        <div className="mt-auto">
           <hr />
           <div className="d-flex flex-row align-items-center justify-content-around">
             <div className="d-flex flex-column gap-1 align-center  text-center">

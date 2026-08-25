@@ -1,5 +1,5 @@
 import ResitFeeSideBar from "../components/SideBars/ResitFeeSideBar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { CourseIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
 import CourseSideBar from "../components/SideBars/CourseSideBar";
@@ -29,6 +29,7 @@ import ImportWizzard from "../ModalContent/Import/ImportWizzard";
 import { courseInstanceMap } from "../utils/maps/course/courseInstanceMap";
 function CourseLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const navigate = useNavigate();
   const sideBarData = [
     {
       title: "Course",
