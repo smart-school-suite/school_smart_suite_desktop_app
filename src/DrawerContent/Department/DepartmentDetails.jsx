@@ -16,7 +16,7 @@ function DepartmentDetails({ handleClose, drawerData }) {
         style={{ flex: 1, minHeight: 0 }}
       >
         {isLoading ? (
-          <div className="d-flex flex-column gap-2 modal-content-container">
+          <div className="d-flex flex-column gap-2">
             <div className="d-flex flex-column gap-4">
               {[...Array(4)].map((_, index) => (
                 <div className="d-flex gap-1 flex-column" key={index}>

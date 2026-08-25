@@ -10,6 +10,7 @@ import {
 import { allFieldsValid, objectHasEmpty } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 function CreateSchoolAdmin({ handleClose }) {
   const { mutate: createAdmin, isPending } = useCreateSchoolAdmin(handleClose);
   const emailRef = useRef();
@@ -71,7 +72,7 @@ function CreateSchoolAdmin({ handleClose }) {
   };
   return (
     <>
-      <div className="w-100">
+      <div className="drawer-content px-2 pt-2">
         <div>
           <label htmlFor="firstName" className="font-size-sm">
             First Name
@@ -166,14 +167,25 @@ function CreateSchoolAdmin({ handleClose }) {
             ref={emailRef}
           />
         </div>
-        <div className="mt-2">
-          <button
-            className="rounded-3 p-2 text-white border-none primary-background font-size-sm w-100"
-            onClick={handleCreateSchoolAdmin}
-            disabled={isPending}
-          >
-            {isPending ? <SingleSpinner /> : "Create School Admin"}
-          </button>
+      </div>
+      <div className="drawer-footer font-size-sm">
+        <div className="d-flex flex-column w-100">
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+          <div className="d-flex flex-row align-items-center justify-content-between p-2">
+            <button
+              className="border-none bg-none"
+              onClick={() => handleClose()}
+            >
+              Cancel
+            </button>
+            <button
+              className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+              onClick={() => handleCreateSchoolAdmin()}
+              disabled={isPending}
+            >
+              {isPending ? <SingleSpinner /> : "Create School Admin"}
+            </button>
+          </div>
         </div>
       </div>
     </>

@@ -21,8 +21,9 @@ import { useGetHallDetail } from "../../hooks/hall/useGetHallDetail";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import { useUpdateHall } from "../../hooks/hall/useUpdateHall";
-function UpdateHall({ handleClose, rowData }) {
-   const { id:hallId } = rowData;
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+function UpdateHall({ handleClose, drawerData }) {
+  const { id: hallId } = drawerData;
   const {
     data: hallDetails,
     isLoading: isHallDetailLoading,
@@ -57,13 +58,13 @@ function UpdateHall({ handleClose, rowData }) {
         })),
       }));
     }
-  }, [setFormData, isHallDetailLoading, rowData]);
+  }, [setFormData, isHallDetailLoading, drawerData]);
 
   const handleStateChange = useCallback((field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  const { mutate:updateHall, isPending }  = useUpdateHall(handleClose, hallId);
+  const { mutate: updateHall, isPending } = useUpdateHall(handleClose, hallId);
 
   const handleUpdateHall = async () => {
     if (optionalValidateObject(isFieldValid) == false) {
@@ -71,7 +72,7 @@ function UpdateHall({ handleClose, rowData }) {
         <ToastWarning
           title={"Invalid Fields"}
           description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
+        />,
       );
       return;
     }
@@ -82,7 +83,7 @@ function UpdateHall({ handleClose, rowData }) {
           description={
             "Please Ensure Atleast One Field Is Updated Before Submitting"
           }
-        />
+        />,
       );
       return;
     }
@@ -94,22 +95,14 @@ function UpdateHall({ handleClose, rowData }) {
         type_id: items.id,
       })),
     };
-    updateHall({ hallId , updateData: payload });
+    updateHall({ hallId, updateData: payload });
   };
   return (
     <>
-      <div className="d-flex flex-column gap-3">
-        <div className="d-flex flex-row align-items-center justify-content-between w-100">
-          <span className="m-0">Update Hall</span>
-          <span
-            className="m-0"
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
-        </div>
+      <div
+        className="font-size-sm d-flex flex-column gap-4 pt-2"
+        style={{ flex: 1, minHeight: 0 }}
+      >
         {isHallDetailLoading ? (
           <div className="d-flex flex-column gap-2">
             {[...Array(4)].map((_, index) => (
@@ -126,7 +119,7 @@ function UpdateHall({ handleClose, rowData }) {
           ></NotFoundError>
         ) : (
           <>
-            <div>
+            <div className="drawer-content px-2">
               <div>
                 <label htmlFor="courseTitle" className="font-size-sm">
                   Hall Name
@@ -223,16 +216,28 @@ function UpdateHall({ handleClose, rowData }) {
                 />
               </div>
             </div>
-            <div>
-              <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
-                <button
-                  className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
-                  onClick={() => {
-                    handleUpdateHall();
-                  }}
-                >
-                  {isPending ? <SingleSpinner /> : "Update Hall"}
-                </button>
+            <div className="drawer-footer font-size-sm">
+              <div className="d-flex flex-column w-100">
+                <HorizontalDashedLine
+                  dashed={false}
+                  color="#ccc"
+                  thickness={0.5}
+                />
+                <div className="d-flex flex-row align-items-center justify-content-between p-2">
+                  <button
+                    className="border-none bg-none"
+                    onClick={() => handleClose()}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+                    onClick={() => handleUpdateHall()}
+                    disabled={isPending}
+                  >
+                    {isPending ? <SingleSpinner /> : "Update Hall"}
+                  </button>
+                </div>
               </div>
             </div>
           </>

@@ -3,7 +3,6 @@ import HallSideBar from "../components/SideBars/HallSideBar";
 import { HallIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
 import JobPopOver from "../components/Popover/JobPopover";
-import CreateHall from "../ModalContent/Hall/CreateHall";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,6 +24,8 @@ import {
 import { HALL_COLUMNS } from "../utils/hall/hallColumns";
 import { hallImportColDefs } from "../utils/table/colDefs/hall/hallImportColDefs";
 import ImportWizzard from "../ModalContent/Import/ImportWizzard";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import CreateHall from "../DrawerContent/Hall/CreateHall";
 function HallLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const sideBarData = [
@@ -102,15 +103,15 @@ function HallLayout() {
                 </span>
               </ModalButton>
               {location.pathname === sideBarData[0].path && (
-                <ModalButton
-                  action={{ modalContent: CreateHall }}
-                  size={"lg"}
-                  classname={
-                    "border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
-                  }
+                <DrawerTrigger
+                  title="Create Hall"
+                  placement="right"
+                  drawerChildren={CreateHall}
                 >
-                  <span>Create Hall</span>
-                </ModalButton>
+                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                    <span>Create Hall</span>
+                  </button>
+                </DrawerTrigger>
               )}
             </div>
           </div>

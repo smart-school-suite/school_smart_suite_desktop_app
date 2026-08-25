@@ -16,10 +16,7 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { NotFoundError } from "../../components/errors/Error";
 import { hallTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import { useGetHalls } from "../../hooks/hall/useGetHalls";
-import CreateHall from "../../ModalContent/Hall/CreateHall";
 import { Icon } from "@iconify/react";
-import UpdateHall from "../../ModalContent/Hall/UpdateHall";
-import HallDetails from "../../ModalContent/Hall/HallDetails";
 import DeactivateHall from "../../ModalContent/Hall/DeactivateHall";
 import ActivateHall from "../../ModalContent/Hall/ActivateHall";
 import DeleteHall from "../../ModalContent/Hall/DeleteHall";
@@ -50,11 +47,14 @@ import {
   addCustomFilter,
   toggleGeneralFilter,
   removeCustomFilter,
-  setCustomFilter
+  setCustomFilter,
 } from "../../Slices/administrator/hallSlice";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import { useSelector, useDispatch } from "react-redux";
 import { hallColDefs } from "../../utils/table/colDefs/hall/hallColDefs";
+import { Drawer } from "../../components/drawer/Drawer";
+import UpdateHall from "../../DrawerContent/Hall/UpdateHall";
+import HallDetails from "../../DrawerContent/Hall/HallDetail";
 function Hall() {
   const { data: halls, isLoading, error } = useGetHalls();
   const tableRef = useRef();
@@ -418,23 +418,31 @@ export default Hall;
 export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
-
+  const [ModalComponent, setModalComponent] = useState(null);
+  const [modalSize, setModalSize] = useState("md");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [DrawerComponent, setDrawerComponent] = useState(null);
+  const [drawerDetail, setDrawerDetail] = useState({
+    placement: "right",
+    title: "",
+  });
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalComponent(null);
   };
-
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
+  const handleShowModal = (Component, size = "md") => {
+    setModalComponent(() => Component);
     setModalSize(size);
     setShowModal(true);
+  };
+  const handleShowDrawer = (Component, title = "") => {
+    setDrawerDetail((prev) => ({ ...prev, title }));
+    setDrawerComponent(() => Component);
+    setShowDrawer(true);
+  };
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerComponent(null);
   };
 
   return (
@@ -449,7 +457,7 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateHall, "md")}
+          onClick={() => handleShowDrawer(UpdateHall, "Update Hall")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -462,7 +470,7 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(HallDetails, "md")}
+          onClick={() => handleShowDrawer(HallDetails, "Hall Details")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -512,13 +520,29 @@ export function ActionComponent(props) {
           </div>
         </DropDownMenuItem>
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerDetail?.placement}
+        title={drawerDetail?.title}
+      >
+        {DrawerComponent && (
+          <DrawerComponent
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}
         centered
       >
-        {modalContent}
+        {ModalComponent && (
+          <ModalComponent rowData={rowData} handleClose={handleCloseModal} />
+        )}
       </CustomModal>
     </>
   );
