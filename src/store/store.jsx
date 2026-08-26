@@ -48,6 +48,8 @@ import activationCodeReducer from "../Slices/activationCode/activationCodeSlice"
 import teacherSpecialtyReducer from "../Slices/teacher/teacherSpecialtySlice";
 import teacherCourseReducer from "../Slices/teacher/teacherCourseSlice";
 import teacherTimePrefReducer from "../Slices/teacher/teacherTimePrefSlice";
+import jointCourseReducer from "../Slices/academics/jointCourseSlice";
+
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -153,6 +155,13 @@ const rootReducer = combineReducers({
       storage,
     },
     teacherTimePrefReducer,
+  ),
+  jointCourse: persistReducer(
+    {
+      key: "jointCourse",
+      storage,
+    },
+    jointCourseReducer,
   ),
   schoolAdmin: schoolAdminReducer,
   hall: hallReducer,

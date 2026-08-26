@@ -5,6 +5,7 @@ import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useCreateCourse } from "../../hooks/course/useCreateCourse";
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
+import { useCreateJointCourse } from "../../hooks/jointCourse/useCreateJointCourse";
 import {
   NumberInput,
   TextAreaInput,
@@ -21,7 +22,8 @@ import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
 import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
-function CreateCourse({ handleClose }) {
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+function CreateJointCourse({ handleClose }) {
   const courseCodeRef = useRef();
   const courseTitleRef = useRef();
   const courseCreditRef = useRef();
@@ -35,7 +37,7 @@ function CreateCourse({ handleClose }) {
     course_code: "",
     course_title: "",
     credit: "",
-    specialty_id: "",
+    specialties: [],
     semester_id: "",
     description: "",
     type: [],
@@ -47,15 +49,12 @@ function CreateCourse({ handleClose }) {
     description: null,
   });
   const [errors, setErrors] = useState({
-    specialty_id: "",
+    specialties: null,
     semester_id: "",
     type: null,
   });
-  const { mutate: createCourseMutation, isPending } = useCreateCourse(
-    handleClose,
-    formData.specialty_Id,
-    formData.semester_Id
-  );
+  const { mutate: createCourseMutation, isPending } =
+    useCreateJointCourse(handleClose);
   const { data: specialty, isFetching: isSpecailtyLoading } =
     useGetSpecialties();
   const { data: semesters, isLoading: isSemesterLoading } = useGetSemester();
@@ -91,7 +90,7 @@ function CreateCourse({ handleClose }) {
           description={
             "Some Fields Seem To Be Invalid Please Go Through the form and try again"
           }
-        />
+        />,
       );
       return;
     }
@@ -102,34 +101,22 @@ function CreateCourse({ handleClose }) {
           description={
             "Some Fields Seem To Be Invalid Please Go Through the form and try again"
           }
-        />
+        />,
       );
       return;
     }
     createCourseMutation({
       ...formData,
-      specialty_id: formData.specialty_id.id,
       semester_id: formData.semester_id.id,
       typeIds: formData.type.map((items) => ({
         type_id: items.id,
       })),
+      specialtyIds: formData.specialties.map((specialty) => specialty.id),
     });
   };
-
   return (
-    <div className="w-100">
-      <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
-        <span className="m-0">Create Course</span>
-        <span
-          className="m-0"
-          onClick={() => {
-            handleClose();
-          }}
-        >
-          <Icon icon="charm:cross" width="22" height="22" />
-        </span>
-      </div>
-      <div>
+    <>
+      <div className="drawer-content px-2">
         <div>
           <label htmlFor="courseTitle" className="font-size-sm">
             Course Title
@@ -257,21 +244,24 @@ function CreateCourse({ handleClose }) {
           <label htmlFor="specialty" className="font-size-sm">
             Specialty
           </label>
-          <CustomDropdown
+          <MultiSelectDropdown
             data={specialty?.data || []}
+            value={formData.specialties}
             displayKey={["specialty_name", "level_name"]}
             valueKey={["id"]}
             direction="up"
-            onSelect={(value) =>
-              handleStateChange("specialty_id", value, setFormData)
-            }
             isLoading={isSpecailtyLoading}
-            error={errors.specialty_id}
-            errorMessage="Specialty Required"
-            onError={(msg) => handleStateChange("specialty_id", msg, setErrors)}
-            placeholder="Select Specialty"
+            placeholder={"Select Specialties"}
+            errorMessage={"Specialty Required"}
+            onSelect={(value) =>
+              handleStateChange("specialties", value, setFormData)
+            }
+            onError={(error) =>
+              handleStateChange("specialties", error, setErrors)
+            }
+            error={errors.specialties}
+            optional={false}
             ref={specialtyRef}
-            value={formData.specialty_id}
           />
         </div>
         <div>
@@ -304,19 +294,27 @@ function CreateCourse({ handleClose }) {
           />
         </div>
       </div>
-      <div className="mt-4">
-        <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
-          <button
-            className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
-            onClick={() => {
-              handleSubmit();
-            }}
-          >
-            {isPending ? <SingleSpinner /> : "Create Course"}
-          </button>
+      <div className="drawer-footer font-size-sm">
+        <div className="d-flex flex-column w-100">
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+          <div className="d-flex flex-row align-items-center justify-content-between p-2">
+            <button
+              className="border-none bg-none"
+              onClick={() => handleClose()}
+            >
+              Cancel
+            </button>
+            <button
+              className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+              onClick={() => handleSubmit()}
+              disabled={isPending}
+            >
+              {isPending ? <SingleSpinner /> : "Create Joint Course"}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
-export default CreateCourse;
+export default CreateJointCourse;

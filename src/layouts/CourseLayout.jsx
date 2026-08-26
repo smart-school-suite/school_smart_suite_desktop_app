@@ -7,7 +7,6 @@ import JobPopOver from "../components/Popover/JobPopover";
 import { motion, AnimatePresence } from "framer-motion";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
-import CreateCourse from "../ModalContent/Course/CreateCourse";
 import {
   resetAllCustomFilters,
   addCustomFilter,
@@ -27,6 +26,11 @@ import { COURSE_COLUMNS } from "../utils/course/courseColumns";
 import { courseImportColDefs } from "../utils/table/colDefs/course/courseImportColDefs";
 import ImportWizzard from "../ModalContent/Import/ImportWizzard";
 import { courseInstanceMap } from "../utils/maps/course/courseInstanceMap";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import CreateCourse from "../DrawerContent/Course/CreateCourse";
+import { COURSE_IMPORT_TRIGGER_MAP } from "../utils/maps/course/courseImportTriggerMap";
+import { useMemo } from "react";
+import CreateJointCourse from "../DrawerContent/JointCourse/CreateJointCourse";
 function CourseLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
@@ -44,6 +48,10 @@ function CourseLayout() {
       path: "/joint-course-timetable",
     },
   ];
+  const ImportTrigger = useMemo(() => {
+    const path = location.pathname;
+    return COURSE_IMPORT_TRIGGER_MAP[path]?.component || null;
+  }, [location.pathname]);
   return (
     <>
       <main className="main-container gap-2">
@@ -73,33 +81,7 @@ function CourseLayout() {
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Course"} />
-              <ModalButton
-                classname={
-                  "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
-                }
-                action={{ modalContent: ImportWizzard }}
-                size={"xl"}
-                rowData={{
-                  moduleState: "course",
-                  setImportStatus: setImportStatus,
-                  setImportReset: setImportReset,
-                  setImportSelectedFile: setImportSelectedFile,
-                  moduleColumns: COURSE_COLUMNS,
-                  setColumnMapping: setColumnMapping,
-                  setStandardGroupValue: setStandardGroupValue,
-                  addRepeatableGroup: addRepeatableGroup,
-                  removeRepeatableGroup: removeRepeatableGroup,
-                  setRepeatableGroupValue: setRepeatableGroupValue,
-                  moduleInstanceMap: courseInstanceMap,
-                  module: { name: "Course" },
-                  importModuleColDefs: courseImportColDefs,
-                }}
-              >
-                <span style={{ lineHeight: "16px" }}>Import</span>
-                <span>
-                  <Icon icon="tabler:arrow-down" width={14} height={14} />
-                </span>
-              </ModalButton>
+              {ImportTrigger && <ImportTrigger />}
               <ModalButton
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
@@ -114,17 +96,27 @@ function CourseLayout() {
                   />
                 </span>
               </ModalButton>
-              {location.pathname === sideBarData[0].path && (
-                <ModalButton
-                  action={{ modalContent: CreateCourse }}
-                  size={"lg"}
-                  classname={
-                    "border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
-                  }
+              {location.pathname === sideBarData[0].path ? (
+                <DrawerTrigger
+                  title="Create Course"
+                  placement="right"
+                  drawerChildren={CreateCourse}
                 >
-                  <span>Create Course</span>
-                </ModalButton>
-              )}
+                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                    <span>create course</span>
+                  </button>
+                </DrawerTrigger>
+              ) : location.pathname === sideBarData[1].path ? (
+                <DrawerTrigger
+                  title="Create Joint Course"
+                  placement="right"
+                  drawerChildren={CreateJointCourse}
+                >
+                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                    <span>Create Joint Course</span>
+                  </button>
+                </DrawerTrigger>
+              ) : null}
             </div>
           </div>
           <hr />

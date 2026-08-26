@@ -1,6 +1,10 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-import { courseTypeInstance } from "../../utils/instance/course/courseInstance";
+import {
+  courseTypeInstance,
+  specialtyInstance,
+} from "../../utils/instance/course/jointCourseInstance";
+import { jointCourseInstanceMap } from "../../utils/maps/course/jointCourseInstanceMap";
 const initialState = {
   jointCourses: null,
   isGeneralFilterOpen: false,
@@ -42,20 +46,13 @@ const initialState = {
           error: null,
           automatched: false,
         },
-        specialty: {
-          value: "",
-          error: null,
-          automatched: false,
-        },
-        level: {
-          value: "",
-          error: null,
-          automatched: false,
-        },
       },
       repeatableGroups: {
         course_types: {
           instances: [courseTypeInstance],
+        },
+        specialties: {
+          instances: [specialtyInstance],
         },
       },
     },
@@ -63,7 +60,7 @@ const initialState = {
 };
 
 const jointCourseSlice = createSlice({
-  name: "semester",
+  name: "jointCourse",
   initialState,
   reducers: {
     setImportStatus: (state, action) => {
@@ -150,7 +147,7 @@ const jointCourseSlice = createSlice({
     },
     addRepeatableGroup: (state, action) => {
       const { field } = action.payload;
-      const instanceConfig = teacherInstanceMap.find(
+      const instanceConfig = jointCourseInstanceMap.find(
         (inst) => inst.key.toLowerCase() === field.toLowerCase(),
       );
 

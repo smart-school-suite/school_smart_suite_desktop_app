@@ -1,9 +1,12 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useActivateCourse } from "../../hooks/course/useActivateCourse";
 import { CircleX } from "lucide-react";
-function ActivateCourse({ handleClose, rowData }) {
+import { useActivateJointCourse } from "../../hooks/jointCourse/useActivateJointCourse";
+function ActivateJointCourse({ handleClose, rowData }) {
   const courseId = rowData.id;
-  const { mutate: activateCourse, isPending } = useActivateCourse(handleClose, courseId);
+  const { mutate: activateCourse, isPending } = useActivateJointCourse(
+    handleClose,
+    courseId,
+  );
   const handleActivateCourse = () => {
     activateCourse(courseId);
   };
@@ -16,9 +19,7 @@ function ActivateCourse({ handleClose, rowData }) {
         >
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
-              <span className="font-size-sm fw-semibold">
-                Activate Course
-              </span>
+              <span className="font-size-sm fw-semibold">Activate Course</span>
             </div>
             <button
               onClick={() => handleClose()}
@@ -64,4 +65,4 @@ function ActivateCourse({ handleClose, rowData }) {
     </>
   );
 }
-export default ActivateCourse;
+export default ActivateJointCourse;

@@ -1,32 +1,34 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateJointCourse } from "../../services/jointCourse";
+import { activateCourse } from "../../services/course";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
-
-export const useUpdateJointCourse = (handleClose, jointCourseId) => {
+export const useActivateJointCourse = (handleClose, courseId) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ courseId, updateData }) =>
-      updateJointCourse(courseId, updateData),
+    mutationFn: (courseId) => activateCourse(courseId),
     onSuccess: () => {
-      toast.custom(
-        <ToastSuccess
-          title={"Update Successfull"}
-          description={"Joint Course Updated Successfully"}
-        />,
-      );
+      queryClient.invalidateQueries({ queryKey: ["joint-courses"] });
+      queryClient.removeQueries({ queryKey: ["course", courseId] });
+      queryClient.invalidateQueries({ queryKey: ["activeCourses"] });
+
       if (handleClose) {
         handleClose();
       }
-      queryClient.invalidateQueries({ queryKey: ["joint-courses"] });
+
+      toast.custom(
+        <ToastSuccess
+          title={"Activated!!"}
+          description={"Course Activated Successfully"}
+        />
+      );
     },
     onError: (error) => {
       toast.custom(
         <ToastDanger
           title={error.response.data.errors.title}
           description={error.response.data.errors.description}
-        />,
+        />
       );
     },
   });

@@ -5,8 +5,8 @@ export const createJointCourse = async (payload) => {
   return response.data;
 };
 
-export const updateJointCourse = async (payload, jointCourseId) => {
-  const response = await axiosInstance.post(
+export const updateJointCourse = async (jointCourseId, payload) => {
+  const response = await axiosInstance.put(
     `joint-course/update/${jointCourseId}`,
     payload,
   );

@@ -5,6 +5,6 @@ export const useGetJointCourseDetails = (jointCourseId) => {
   return useQuery({
     queryKey: ["joint-course", jointCourseId],
     queryFn: () => getJointCourseDetails(jointCourseId),
-    enabled: !jointCourseId,
+    enabled: !!jointCourseId,
   });
 };

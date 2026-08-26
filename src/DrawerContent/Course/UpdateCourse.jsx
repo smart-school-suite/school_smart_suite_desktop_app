@@ -27,8 +27,9 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
 import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
-function UpdateCourse({ handleClose, rowData }) {
-  const { id: courseId } = rowData;
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+function UpdateCourse({ handleClose, drawerData }) {
+  const { id: courseId } = drawerData;
   const {
     data: courseDetails,
     isLoading: isCourseDetailsLoading,
@@ -68,7 +69,7 @@ function UpdateCourse({ handleClose, rowData }) {
   });
   const { mutate: updateCourse, isPending } = useUpdateCourse(
     handleClose,
-    courseId
+    courseId,
   );
 
   useEffect(() => {
@@ -97,7 +98,7 @@ function UpdateCourse({ handleClose, rowData }) {
         <ToastWarning
           title={"Invalid Fields"}
           description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
+        />,
       );
       return;
     }
@@ -108,7 +109,7 @@ function UpdateCourse({ handleClose, rowData }) {
           description={
             "Please Ensure Atleast One Field Is Updated Before Submitting"
           }
-        />
+        />,
       );
       return;
     }
@@ -124,18 +125,10 @@ function UpdateCourse({ handleClose, rowData }) {
   };
   return (
     <>
-      <div className="w-100">
-        <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
-          <span className="m-0">Update Course</span>
-          <span
-            className="m-0"
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
-        </div>
+      <div
+        className="font-size-sm d-flex flex-column gap-4 pt-2"
+        style={{ flex: 1, minHeight: 0 }}
+      >
         {isCourseDetailsLoading || isSpecailtyLoading || isSemesterLoading ? (
           <div className="d-flex flex-column w-100 gap-3">
             {[...Array(6)].map((_, index) => (
@@ -159,8 +152,8 @@ function UpdateCourse({ handleClose, rowData }) {
             }
           ></NotFoundError>
         ) : (
-          <div>
-            <div>
+          <>
+            <div className="drawer-content px-2">
               <div>
                 <label htmlFor="courseTitle" className="font-size-sm">
                   Course Title
@@ -324,20 +317,31 @@ function UpdateCourse({ handleClose, rowData }) {
                 />
               </div>
             </div>
-            <div className="mt-4">
-              <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
-                <button
-                  className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
-                  disabled={isPending}
-                  onClick={() => {
-                    handleSubmit();
-                  }}
-                >
-                  {isPending ? <SingleSpinner /> : "Update Course"}
-                </button>
+            <div className="drawer-footer font-size-sm">
+              <div className="d-flex flex-column w-100">
+                <HorizontalDashedLine
+                  dashed={false}
+                  color="#ccc"
+                  thickness={0.5}
+                />
+                <div className="d-flex flex-row align-items-center justify-content-between p-2">
+                  <button
+                    className="border-none bg-none"
+                    onClick={() => handleClose()}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+                    onClick={() => handleSubmit()}
+                    disabled={isPending}
+                  >
+                    {isPending ? <SingleSpinner /> : "Update Course"}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </>

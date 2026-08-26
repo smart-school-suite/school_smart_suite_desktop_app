@@ -1,6 +1,5 @@
 import * as Yup from "yup";
 
-
 export const isValidMySQLDate = (value) => {
   if (!value) return false;
 
@@ -25,7 +24,7 @@ const sanitizeInput = (value, removeEmojis = true) => {
   if (removeEmojis) {
     cleaned = cleaned.replace(
       /([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD83C-\uDBFF\uDC00-\uDFFF]|[\uFE0F])/g,
-      ""
+      "",
     );
   }
 
@@ -34,20 +33,21 @@ const sanitizeInput = (value, removeEmojis = true) => {
 export const phoneValidationSchema = (options) => {
   const {
     optional = false,
-    prefixes = ['6'],
+    prefixes = ["6"],
     length = 9,
-    errorMessage, 
+    errorMessage,
   } = options || {};
 
-  const prefixPattern = prefixes.map(p => `(?:${p})`).join('|'); 
-  const finalRegex = new RegExp(`^(${prefixPattern})\\d{${length - prefixes[0].length}}$`);
+  const prefixPattern = prefixes.map((p) => `(?:${p})`).join("|");
+  const finalRegex = new RegExp(
+    `^(${prefixPattern})\\d{${length - prefixes[0].length}}$`,
+  );
 
-  const defaultErrorMessage =
-    `Phone number must start with one of ${prefixes.map(p => `'${p}'`).join(', ')} and be ${length} digits long.`;
+  const defaultErrorMessage = `Phone number must start with one of ${prefixes.map((p) => `'${p}'`).join(", ")} and be ${length} digits long.`;
 
   let schema = Yup.string().matches(
     finalRegex,
-    errorMessage || defaultErrorMessage 
+    errorMessage || defaultErrorMessage,
   );
 
   if (!optional) {
@@ -63,39 +63,63 @@ export const emailValidationSchema = ({
   required = true,
   disposableDomains = ["mailinator.com", "tempmail.com", "guerrillamail.com"],
   blacklistedDomains = ["example.com", "test.com"],
-  messages = {}
+  messages = {},
 } = {}) => {
   let schema = Yup.string()
     .transform((val) => (val ? val.trim().toLowerCase() : val)) // sanitize
-    .email(messages.email || "Please enter a valid email address (e.g., user@domain.com).")
+    .email(
+      messages.email ||
+        "Please enter a valid email address (e.g., user@domain.com).",
+    )
     .max(254, messages.max || "Email address must be less than 255 characters.")
     .matches(
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      messages.format || "The email address format is invalid."
+      messages.format || "The email address format is invalid.",
     )
-    .test("no-ip-address-domain", messages.ip || "Email domain cannot be an IP address.", (value) => {
-      if (!value) return true;
-      const domain = value.split("@")[1];
-      return !/^\[?\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\]?$/.test(domain);
-    })
-    .test("no-temp-domains", messages.temp || "Disposable email addresses are not allowed.", (value) => {
-      if (!value) return true;
-      const domain = value.split("@")[1];
-      return !disposableDomains.includes(domain);
-    })
-    .test("no-blacklist", messages.blacklist || "This email domain is restricted. Please use another email.", (value) => {
-      if (!value) return true;
-      const domain = value.split("@")[1];
-      return !blacklistedDomains.includes(domain);
-    })
-    .test("no-leading-trailing-dot", messages.dot || "Email cannot start or end with a dot.", (value) => {
-      if (!value) return true;
-      return !value.startsWith(".") && !value.endsWith(".");
-    })
-    .test("no-consecutive-dots", messages.dots || "Email cannot contain consecutive dots.", (value) => {
-      if (!value) return true;
-      return !/\.\./.test(value);
-    })
+    .test(
+      "no-ip-address-domain",
+      messages.ip || "Email domain cannot be an IP address.",
+      (value) => {
+        if (!value) return true;
+        const domain = value.split("@")[1];
+        return !/^\[?\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\]?$/.test(domain);
+      },
+    )
+    .test(
+      "no-temp-domains",
+      messages.temp || "Disposable email addresses are not allowed.",
+      (value) => {
+        if (!value) return true;
+        const domain = value.split("@")[1];
+        return !disposableDomains.includes(domain);
+      },
+    )
+    .test(
+      "no-blacklist",
+      messages.blacklist ||
+        "This email domain is restricted. Please use another email.",
+      (value) => {
+        if (!value) return true;
+        const domain = value.split("@")[1];
+        return !blacklistedDomains.includes(domain);
+      },
+    )
+    .test(
+      "no-leading-trailing-dot",
+      messages.dot || "Email cannot start or end with a dot.",
+      (value) => {
+        if (!value) return true;
+        return !value.startsWith(".") && !value.endsWith(".");
+      },
+    )
+    .test(
+      "no-consecutive-dots",
+      messages.dots || "Email cannot contain consecutive dots.",
+      (value) => {
+        if (!value) return true;
+        return !/\.\./.test(value);
+      },
+    )
     .transform((val) => (val === "" ? null : val));
 
   if (required) {
@@ -107,28 +131,34 @@ export const emailValidationSchema = ({
   return schema;
 };
 
-export const passwordSchema = ({
-  min = 8,
-  messages = {}
-} = {}) => {
+export const passwordSchema = ({ min = 8, messages = {} } = {}) => {
   return Yup.string()
     .required(messages.required || "Password is required.")
-    .min(min, messages.min || `Password must be at least ${min} characters long.`);
+    .min(
+      min,
+      messages.min || `Password must be at least ${min} characters long.`,
+    );
 };
 
 export const courseCodeSchema = ({
   min = 4,
   max = 10,
   required = true,
-  messages = {}
+  messages = {},
 } = {}) => {
   let schema = Yup.string()
     .trim()
-    .min(min, messages.min || `Course code must be at least ${min} characters long.`)
-    .max(max, messages.max || `Course code cannot be more than ${max} characters.`)
+    .min(
+      min,
+      messages.min || `Course code must be at least ${min} characters long.`,
+    )
+    .max(
+      max,
+      messages.max || `Course code cannot be more than ${max} characters.`,
+    )
     .matches(
       /^[A-Za-z0-9]+$/, // letters & numbers only, any order
-      messages.invalid || "Course code can only contain letters and numbers."
+      messages.invalid || "Course code can only contain letters and numbers.",
     )
     .transform((val) => (val === "" ? null : val));
 
@@ -151,21 +181,16 @@ export const addressSchema = ({
     .trim()
     .min(
       min,
-      messages.min || `Address must be at least ${min} characters long.`
+      messages.min || `Address must be at least ${min} characters long.`,
     )
-    .max(
-      max,
-      messages.max || `Address cannot be more than ${max} characters.`
-    )
+    .max(max, messages.max || `Address cannot be more than ${max} characters.`)
     .test(
       "valid-address",
-      messages.invalid || "Address can only contain letters, numbers, and common punctuation like commas, periods, and hyphens.",
+      messages.invalid ||
+        "Address can only contain letters, numbers, and common punctuation like commas, periods, and hyphens.",
       (value) => {
-        return (
-          value === null ||
-          /^[A-Za-z0-9\s.,\-\/]*$/.test(value)
-        );
-      }
+        return value === null || /^[A-Za-z0-9\s.,\-\/]*$/.test(value);
+      },
     )
     .transform((val) => (val === "" ? null : val));
 
@@ -187,17 +212,11 @@ export const promoCodeSchema = ({
   let schema = Yup.string()
     .trim()
     .uppercase()
-    .min(
-      min,
-      messages.min || `Promo code must be at least ${min} characters.`
-    )
-    .max(
-      max,
-      messages.max || `Promo code cannot exceed ${max} characters.`
-    )
+    .min(min, messages.min || `Promo code must be at least ${min} characters.`)
+    .max(max, messages.max || `Promo code cannot exceed ${max} characters.`)
     .matches(
       /^[A-Z0-9]*$/,
-      messages.invalid || "Promo code can only contain letters and numbers."
+      messages.invalid || "Promo code can only contain letters and numbers.",
     )
     .transform((val) => (val === "" ? null : val));
 
@@ -213,18 +232,18 @@ export const promoCodeSchema = ({
 export const dateValidationSchema = ({
   required = true,
   futureOrToday = false,
-  messages = {}
+  messages = {},
 } = {}) => {
   let schema = Yup.string()
     .trim()
     .matches(
       /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
-      messages.format || "Invalid date format (YYYY-MM-DD)"
+      messages.format || "Invalid date format (YYYY-MM-DD)",
     )
     .test(
       "is-valid-date",
       messages.invalid || "Invalid date",
-      (val) => !val || isValidMySQLDate(val)
+      (val) => !val || isValidMySQLDate(val),
     )
     .transform((val) => (val === "" ? null : val));
 
@@ -241,7 +260,7 @@ export const dateValidationSchema = ({
 
         const inputDate = new Date(val);
         return inputDate >= today;
-      }
+      },
     );
   }
 
@@ -256,7 +275,7 @@ export const dateValidationSchema = ({
 
 export const activationCodeSchema = ({
   required = true,
-  messages = {}
+  messages = {},
 } = {}) => {
   let schema = Yup.string()
     .trim()
@@ -264,12 +283,14 @@ export const activationCodeSchema = ({
     // Matches 3 letters, a hyphen, then 8 alphanumeric chars
     .matches(
       /^[A-Z]{3}-[A-Z0-9]{8}$/,
-      messages.format || "Invalid format. Expected: XXX-XXXXXXXX"
+      messages.format || "Invalid format. Expected: XXX-XXXXXXXX",
     )
     .transform((val) => (val === "" ? null : val));
 
   if (required) {
-    schema = schema.required(messages.required || "Activation code is required");
+    schema = schema.required(
+      messages.required || "Activation code is required",
+    );
   } else {
     schema = schema.nullable();
   }
@@ -280,32 +301,28 @@ export const activationCodeSchema = ({
 export const timeValidationSchema = ({
   required = true,
   futureOrNow = false,
-  messages = {}
+  messages = {},
 } = {}) => {
   let schema = Yup.string()
     .trim()
     .matches(
       /^([01]\d|2[0-3]):([0-5]\d)$/,
-      messages.format || "Invalid time format (HH:MM)"
+      messages.format || "Invalid time format (HH:MM)",
     )
-    .test(
-      "is-valid-time",
-      messages.invalid || "Invalid time",
-      (val) => {
-        if (!val) return true;
-        const parts = val.split(":");
-        if (parts.length !== 2) return false;
-        const [h, m] = parts.map(Number);
-        return (
-          Number.isInteger(h) &&
-          Number.isInteger(m) &&
-          h >= 0 &&
-          h <= 23 &&
-          m >= 0 &&
-          m <= 59
-        );
-      }
-    )
+    .test("is-valid-time", messages.invalid || "Invalid time", (val) => {
+      if (!val) return true;
+      const parts = val.split(":");
+      if (parts.length !== 2) return false;
+      const [h, m] = parts.map(Number);
+      return (
+        Number.isInteger(h) &&
+        Number.isInteger(m) &&
+        h >= 0 &&
+        h <= 23 &&
+        m >= 0 &&
+        m <= 59
+      );
+    })
     .transform((val) => (val === "" ? null : val));
 
   if (futureOrNow) {
@@ -319,7 +336,7 @@ export const timeValidationSchema = ({
         const inputDate = new Date();
         inputDate.setHours(h, m, 0, 0);
         return inputDate >= now;
-      }
+      },
     );
   }
 
@@ -332,7 +349,6 @@ export const timeValidationSchema = ({
   return schema;
 };
 
-
 export const dateRangeValidationSchema = ({
   optional = false,
   futureOnly = false,
@@ -341,10 +357,10 @@ export const dateRangeValidationSchema = ({
     let schema = Yup.string()
       .matches(
         /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
-        "Invalid date format (YYYY-MM-DD)"
+        "Invalid date format (YYYY-MM-DD)",
       )
       .test("is-valid-date", "Invalid date", (value) =>
-        value ? isValidMySQLDate(value) : true
+        value ? isValidMySQLDate(value) : true,
       );
 
     if (!optional) {
@@ -361,7 +377,7 @@ export const dateRangeValidationSchema = ({
           today.setHours(0, 0, 0, 0);
           const inputDate = new Date(value);
           return inputDate >= today;
-        }
+        },
       );
     }
 
@@ -376,11 +392,16 @@ export const dateRangeValidationSchema = ({
       function (value) {
         const { start_date } = this.parent;
         // Only validate if both fields are filled and valid
-        if (!value || !start_date || !isValidMySQLDate(value) || !isValidMySQLDate(start_date)) {
+        if (
+          !value ||
+          !start_date ||
+          !isValidMySQLDate(value) ||
+          !isValidMySQLDate(start_date)
+        ) {
           return true;
         }
         return new Date(value) >= new Date(start_date);
-      }
+      },
     ),
   });
 };
@@ -389,21 +410,22 @@ export const textareaSchema = ({
   min = 20,
   max = 500,
   required = true,
-  allowEmojis = false,
-  messages = {}
+  allowEmojis = true, // Default to true
+  messages = {},
 } = {}) => {
   let schema = Yup.string()
     .transform((value) => sanitizeInput(value?.trim() || "", !allowEmojis))
     .min(min, messages.min || `Text must be at least ${min} characters long.`)
     .max(max, messages.max || `Text must not exceed ${max} characters.`)
+    // More permissive - allow most Unicode characters
     .matches(
-      /^[\w\s.,!?'"()\-:;#&@/]*$/u,
-      messages.invalid || "Text contains invalid or unsafe characters."
+      /^[\p{L}\p{N}\p{P}\p{Z}\p{S}]*$/u,
+      messages.invalid || "Text contains invalid characters.",
     )
     .test(
       "no-scripts",
       messages.scripts || "Text cannot contain scripts or HTML tags.",
-      (val) => !/<script|<\/script|<[^>]+>/i.test(val || "")
+      (val) => !/<script|<\/script|<[^>]+>/i.test(val || ""),
     )
     .transform((value) => (value === "" ? null : value));
 
@@ -416,30 +438,30 @@ export const textareaSchema = ({
   return schema;
 };
 
-
 export const nameSchema = ({
   min = 2,
   max = 50,
   required = true,
-  messages = {}
+  messages = {},
 } = {}) => {
   let schema = Yup.string()
-    .transform((value) => sanitizeInput(value?.trim() || "", true)) 
+    .transform((value) => sanitizeInput(value?.trim() || "", true))
     .min(min, messages.min || `Name must be at least ${min} characters long.`)
     .max(max, messages.max || `Name must not exceed ${max} characters.`)
     .matches(
       /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/u,
-      messages.invalid || "Name can only contain letters, spaces, apostrophes, and hyphens."
+      messages.invalid ||
+        "Name can only contain letters, spaces, apostrophes, and hyphens.",
     )
     .test(
       "no-numbers",
       messages.noNumbers || "Name cannot contain numbers.",
-      (val) => !/[0-9]/.test(val || "")
+      (val) => !/[0-9]/.test(val || ""),
     )
     .test(
       "no-html",
       messages.html || "Name cannot contain HTML tags.",
-      (val) => !/<[^>]*>/g.test(val || "")
+      (val) => !/<[^>]*>/g.test(val || ""),
     )
     .transform((value) => (value === "" ? null : value));
 
@@ -457,7 +479,7 @@ export const numberSchema = ({
   max = 1000,
   required = true,
   integerOnly = false,
-  messages = {}
+  messages = {},
 } = {}) => {
   let schema = Yup.number()
     .transform((value, originalValue) => {
@@ -465,7 +487,7 @@ export const numberSchema = ({
         const trimmed = originalValue.trim();
 
         if (trimmed === "") return undefined;
-        if (!/^-?\d+(\.\d+)?$/.test(trimmed)) return NaN; 
+        if (!/^-?\d+(\.\d+)?$/.test(trimmed)) return NaN;
 
         const num = Number(trimmed);
         if (!isFinite(num)) return NaN;
@@ -482,7 +504,7 @@ export const numberSchema = ({
     schema = schema.test(
       "is-integer",
       messages.integer || "Value must be an integer",
-      (val) => val == null || Number.isInteger(val)
+      (val) => val == null || Number.isInteger(val),
     );
   }
 
@@ -501,26 +523,29 @@ export const urlSchema = (optional = false) => {
   if (optional) {
     schema = schema.nullable().notRequired();
   } else {
-    schema = schema.required('URL is required.');
+    schema = schema.required("URL is required.");
   }
 
   schema = schema
-    .url('Must be a valid URL.')
-    .test('is-secure-protocol', 'URL must use http:// or https://', (value) => {
+    .url("Must be a valid URL.")
+    .test("is-secure-protocol", "URL must use http:// or https://", (value) => {
       if (!value) return true;
-      return value.startsWith('http://') || value.startsWith('https://');
+      return value.startsWith("http://") || value.startsWith("https://");
     })
-    .max(2048, 'URL is too long. Maximum length is 2048 characters.');
+    .max(2048, "URL is too long. Maximum length is 2048 characters.");
 
   return schema;
 };
 
-
 const parseTime = (time) => {
-  if (!time || typeof time !== 'string' || !/^([01]\d|2[0-3]):?([0-5]\d)$/.test(time)) {
+  if (
+    !time ||
+    typeof time !== "string" ||
+    !/^([01]\d|2[0-3]):?([0-5]\d)$/.test(time)
+  ) {
     return null;
   }
-  const [hours, minutes] = time.split(':').map(Number);
+  const [hours, minutes] = time.split(":").map(Number);
   return hours * 60 + minutes;
 };
 
@@ -529,43 +554,46 @@ export const timeRangeSchema = ({ optional = false, messages = {} } = {}) => {
     .trim()
     .matches(
       /^([01]\d|2[0-3]):?([0-5]\d)$/,
-      messages.invalid || "Time must be in HH:mm format (e.g., 08:30)."
+      messages.invalid || "Time must be in HH:mm format (e.g., 08:30).",
     );
 
   let schema = Yup.object({
     start_time: timeValidation,
-    end_time: timeValidation
-      .test(
-        'is-after-start',
-        messages.afterStart || "End time must be after the start time.",
-        function (value) {
-          const { start_time } = this.parent;
-          
-          // If optional, and both fields are empty, validation passes
-          if (optional && (!start_time && !value)) {
-            return true;
-          }
+    end_time: timeValidation.test(
+      "is-after-start",
+      messages.afterStart || "End time must be after the start time.",
+      function (value) {
+        const { start_time } = this.parent;
 
-          // If one field is present, both must be valid for comparison
-          if (start_time && !value) {
-            return this.createError({ message: messages.requiredEnd || "End time is required." });
-          }
-          if (!start_time && value) {
-            return this.createError({ message: messages.requiredStart || "Start time is required." });
-          }
-
-          // Normal comparison
-          const startTimeInMinutes = parseTime(start_time);
-          const endTimeInMinutes = parseTime(value);
-
-          if (startTimeInMinutes === null || endTimeInMinutes === null) {
-            // This case should be caught by the .matches() test
-            return true; 
-          }
-          
-          return endTimeInMinutes > startTimeInMinutes;
+        // If optional, and both fields are empty, validation passes
+        if (optional && !start_time && !value) {
+          return true;
         }
-      )
+
+        // If one field is present, both must be valid for comparison
+        if (start_time && !value) {
+          return this.createError({
+            message: messages.requiredEnd || "End time is required.",
+          });
+        }
+        if (!start_time && value) {
+          return this.createError({
+            message: messages.requiredStart || "Start time is required.",
+          });
+        }
+
+        // Normal comparison
+        const startTimeInMinutes = parseTime(start_time);
+        const endTimeInMinutes = parseTime(value);
+
+        if (startTimeInMinutes === null || endTimeInMinutes === null) {
+          // This case should be caught by the .matches() test
+          return true;
+        }
+
+        return endTimeInMinutes > startTimeInMinutes;
+      },
+    ),
   });
 
   if (optional) {
@@ -573,10 +601,14 @@ export const timeRangeSchema = ({ optional = false, messages = {} } = {}) => {
     schema.fields.start_time = schema.fields.start_time.nullable();
     schema.fields.end_time = schema.fields.end_time.nullable();
   } else {
-    schema.fields.start_time = schema.fields.start_time.required(messages.requiredStart || "Start time is required.");
-    schema.fields.end_time = schema.fields.end_time.required(messages.requiredEnd || "End time is required.");
+    schema.fields.start_time = schema.fields.start_time.required(
+      messages.requiredStart || "Start time is required.",
+    );
+    schema.fields.end_time = schema.fields.end_time.required(
+      messages.requiredEnd || "End time is required.",
+    );
   }
-  
+
   return schema;
 };
 
@@ -609,27 +641,26 @@ export const dateTimeValidationSchema = ({
     .trim()
     .matches(
       /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]) ([01]\d|2[0-3]):([0-5]\d)$/,
-      messages.format || "Invalid format (YYYY-MM-DD HH:MM)"
+      messages.format || "Invalid format (YYYY-MM-DD HH:MM)",
     )
     .test(
       "is-valid-datetime",
       messages.invalid || "Invalid date/time",
-      (val) => !val || isValidMySQLDateTime(val)
+      (val) => !val || isValidMySQLDateTime(val),
     )
     .transform((val) => (val === "" ? null : val));
 
   if (futureOrToday) {
     schema = schema.test(
       "is-future-or-today",
-      messages.futureOrToday ||
-        "Date and time must be in the future or today",
+      messages.futureOrToday || "Date and time must be in the future or today",
       (val) => {
         if (!val) return true;
         if (!isValidMySQLDateTime(val)) return false;
         const now = new Date();
         const input = new Date(val.replace(" ", "T"));
         return input >= now;
-      }
+      },
     );
   }
 
@@ -641,7 +672,6 @@ export const dateTimeValidationSchema = ({
 
   return schema;
 };
-
 
 export const dateTimeRangeValidationSchema = ({
   required = true,
@@ -660,13 +690,9 @@ export const dateTimeRangeValidationSchema = ({
 
   const formatRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
 
-  let start_date = Yup.string()
-    .trim()
-    .matches(formatRegex, invalidFormat);
+  let start_date = Yup.string().trim().matches(formatRegex, invalidFormat);
 
-  let end_date = Yup.string()
-    .trim()
-    .matches(formatRegex, invalidFormat);
+  let end_date = Yup.string().trim().matches(formatRegex, invalidFormat);
 
   if (required) {
     start_date = start_date.required(startRequired);
@@ -681,12 +707,12 @@ export const dateTimeRangeValidationSchema = ({
     start_date = start_date.test(
       "future-or-now-start",
       startInFuture,
-      (value) => !value || new Date(value) >= now
+      (value) => !value || new Date(value) >= now,
     );
     end_date = end_date.test(
       "future-or-now-end",
       endInFuture,
-      (value) => !value || new Date(value) >= now
+      (value) => !value || new Date(value) >= now,
     );
   }
 
@@ -695,26 +721,20 @@ export const dateTimeRangeValidationSchema = ({
     start_date = start_date.test(
       "no-past-start",
       "Start date cannot be in the past",
-      (value) => !value || new Date(value) >= now
+      (value) => !value || new Date(value) >= now,
     );
     end_date = end_date.test(
       "no-past-end",
       "End date cannot be in the past",
-      (value) => !value || new Date(value) >= now
+      (value) => !value || new Date(value) >= now,
     );
   }
 
-  end_date = end_date.test(
-    "is-after-start",
-    endAfterStart,
-    function (value) {
-      const { start_date } = this.parent;
-      if (!start_date || !value) return true;
-      return new Date(value) > new Date(start_date);
-    }
-  );
+  end_date = end_date.test("is-after-start", endAfterStart, function (value) {
+    const { start_date } = this.parent;
+    if (!start_date || !value) return true;
+    return new Date(value) > new Date(start_date);
+  });
 
   return Yup.object().shape({ start_date, end_date });
 };
-
-

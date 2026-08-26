@@ -1,11 +1,14 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useActivateCourse } from "../../hooks/course/useActivateCourse";
 import { CircleX } from "lucide-react";
-function ActivateCourse({ handleClose, rowData }) {
+import { useDeactivateJointCourse } from "../../hooks/jointCourse/useDeactivateJointCourse";
+function DeactivateJointCourse({ handleClose, rowData }) {
   const courseId = rowData.id;
-  const { mutate: activateCourse, isPending } = useActivateCourse(handleClose, courseId);
-  const handleActivateCourse = () => {
-    activateCourse(courseId);
+  const { mutate: deactivateCourse, isPending } = useDeactivateJointCourse(
+    handleClose,
+    courseId,
+  );
+  const handleDeactivateCourse = () => {
+    deactivateCourse(courseId);
   };
   return (
     <>
@@ -17,7 +20,7 @@ function ActivateCourse({ handleClose, rowData }) {
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
               <span className="font-size-sm fw-semibold">
-                Activate Course
+                Deactivate Joint Course
               </span>
             </div>
             <button
@@ -53,10 +56,10 @@ function ActivateCourse({ handleClose, rowData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleActivateCourse();
+                handleDeactivateCourse();
               }}
             >
-              {isPending ? <SingleSpinner /> : <>Yes, Activate</>}
+              {isPending ? <SingleSpinner /> : <>Yes, Deactivate</>}
             </button>
           </div>
         </div>
@@ -64,4 +67,4 @@ function ActivateCourse({ handleClose, rowData }) {
     </>
   );
 }
-export default ActivateCourse;
+export default DeactivateJointCourse

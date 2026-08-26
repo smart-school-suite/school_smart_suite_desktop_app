@@ -2,10 +2,10 @@ import Table from "../../components/Tables/Tables";
 import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import CourseDetails from "../../ModalContent/Course/CourseDetails";
-import CreateCourse from "../../ModalContent/Course/CreateCourse";
+import CourseDetails from "../../DrawerContent/Course/CourseDetails";
+import CreateCourse from "../../DrawerContent/Course/CreateCourse";
 import DeactivateCourse from "../../ModalContent/Course/DeactivateCourse";
-import UpdateCourse from "../../ModalContent/Course/UpdateCourse";
+import UpdateCourse from "../../DrawerContent/Course/UpdateCourse";
 import { CoursesTable } from "../../ComponentConfig/AgGridTableConfig";
 import { useGetCourses } from "../../hooks/course/useGetCourses";
 import React, {
@@ -37,21 +37,8 @@ import BulkDeactivateCourse from "../../ModalContent/Course/BulkDeactivateCourse
 import BulkActivateCourse from "../../ModalContent/Course/BulkActivateCourse";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
-import JobPopOver from "../../components/Popover/JobPopover";
 import { isLastElement } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
@@ -68,6 +55,7 @@ import { courseColDefs } from "../../utils/table/colDefs/course/courseColDefs";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
 import SearchInput from "../../components/input/search";
+import { Drawer } from "../../components/drawer/Drawer";
 function Courses() {
   const dispatch = useDispatch();
   const courseState = useSelector((state) => state.course);
@@ -471,27 +459,33 @@ export default Courses;
 
 export function ActionComponent(props) {
   const rowData = props.data;
-
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
+  const [ModalComponent, setModalComponent] = useState(null);
   const [modalSize, setModalSize] = useState("md");
-
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [DrawerComponent, setDrawerComponent] = useState(null);
+  const [drawerDetail, setDrawerDetail] = useState({
+    placement: "right",
+    title: "",
+  });
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalComponent(null);
   };
-
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
+  const handleShowModal = (Component, size = "md") => {
+    setModalComponent(() => Component);
     setModalSize(size);
     setShowModal(true);
   };
-  //update, delete, courseDetails, activate, deactivate
+  const handleShowDrawer = (Component, title = "") => {
+    setDrawerDetail((prev) => ({ ...prev, title }));
+    setDrawerComponent(() => Component);
+    setShowDrawer(true);
+  };
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerComponent(null);
+  };
   return (
     <>
       <ActionButtonDropdown
@@ -504,7 +498,7 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateCourse, "lg")}
+          onClick={() => handleShowDrawer(UpdateCourse, "Update Course")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -517,7 +511,7 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(CourseDetails, "md")}
+          onClick={() => handleShowDrawer(CourseDetails, "Course Details")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -569,13 +563,29 @@ export function ActionComponent(props) {
           </DropDownMenuItem>
         )}
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerDetail?.placement}
+        title={drawerDetail?.title}
+      >
+        {DrawerComponent && (
+          <DrawerComponent
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}
         centered
       >
-        {modalContent}
+        {ModalComponent && (
+          <ModalComponent rowData={rowData} handleClose={handleCloseModal} />
+        )}
       </CustomModal>
     </>
   );
