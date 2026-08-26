@@ -21,7 +21,7 @@ export const teacherRoutes = [
 export const courseRoutes = [
   "/courses",
   "/joint-course",
-  "/joint-courses-timetable"
+  "/joint-course-timetable"
 ]
 export const hallRoutes = [
    "/hall",

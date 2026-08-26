@@ -166,7 +166,7 @@ function Semester() {
                     <SemesterIcon />
                   </div>
                   <span className="fw-semibold font-size-sm">
-                    Manage Specialties
+                    Manage Semester
                   </span>
                 </div>
                 <div className="d-flex flex-row align-item-center gap-2">

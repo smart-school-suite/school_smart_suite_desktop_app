@@ -124,7 +124,7 @@ export function ModalButton({
       <div>
         <div
           className={`${classname} pointer-cursor`}
-          style={style}
+          style={{...style}}
           onClick={(e) => {
             e.stopPropagation();
             handleShow(action.modalContent);
