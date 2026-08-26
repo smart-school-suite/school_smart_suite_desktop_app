@@ -3,11 +3,18 @@ import Table from "../../components/Tables/Tables";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { semesterTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import UpdateSemester from "../../ModalContent/Semesters/UpdateSemester";
 import DeleteSemester from "../../ModalContent/Semesters/DeleteSemester";
-import SemeseterDetails from "../../ModalContent/Semesters/SemesterDetails";
-import CreateSemester from "../../ModalContent/Semesters/CreateSemester";
-import React, { useState, useCallback, useRef, useEffect, Fragment, useMemo } from "react";
+import UpdateSemester from "../../DrawerContent/Semester/UpdateSemester";
+import SemesterDetails from "../../DrawerContent/Semester/SemesterDetails";
+import CreateSemester from "../../DrawerContent/Semester/CreateSemester";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  Fragment,
+  useMemo,
+} from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DetailsIcon, UpdateIcon, DeleteIcon } from "../../icons/ActionIcons";
@@ -50,6 +57,10 @@ import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFi
 import { semesterColDefs } from "../../utils/table/colDefs/semester/semesterColDefs";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import CreateAcademicYear from "../../DrawerContent/AcademicYear/CreateAcademicYear";
+import SearchInput from "../../components/input/search";
 function Semester() {
   const { data: schoolSemesters, isLoading, error } = useGetSchoolSemesters();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -85,8 +96,7 @@ function Semester() {
     return schoolSemesters?.data ?? [];
   }, [schoolSemesters]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
@@ -173,30 +183,31 @@ function Semester() {
                   <JobPopOver />
                   <ModalButton
                     classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+                      "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                     }
+                    style={{ padding: "0.6rem" }}
                   >
                     <span style={{ lineHeight: "16px" }}>Import</span>
                     <ArrowDown size={16} />
                   </ModalButton>
                   <ModalButton
                     classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+                      "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                     }
+                    style={{ padding: "0.6rem" }}
                   >
                     <span style={{ lineHeight: "16px" }}>Actions</span>
                     <ChevronDown size={16} />
                   </ModalButton>
-                  <ModalButton
-                    action={{ modalContent: CreateSemester }}
-                    size={"lg"}
-                    classname={
-                      "border-none border rounded-3 font-size-sm  primary-background px-2 text-white text-capitalize"
-                    }
-                    style={{ padding: "0.4rem" }}
+                  <DrawerTrigger
+                    title="Create Semester"
+                    placement="right"
+                    drawerChildren={CreateSemester}
                   >
-                    <span>Create Semester</span>
-                  </ModalButton>
+                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                      <span>Create Semester</span>
+                    </button>
+                  </DrawerTrigger>
                 </div>
               </div>
               <div className="d-flex flex-column gap-2">
@@ -268,13 +279,14 @@ function Semester() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Specialty"
-                    onChange={handleSearch}
+                  <div className="w-50">
+                    <SearchInput
+                    placeholder={"Search Semester......"}
                     value={searchText}
-                    className="font-size-sm form-control w-25"
+                    onChange={(val) => handleSearch(val)}
+                    hotkey="Ctrl+K"
                   />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}
@@ -323,9 +335,7 @@ function Semester() {
                       damping: 30,
                     }}
                     style={{
-                      width: semesterState.isGeneralFilterOpen
-                        ? "60%"
-                        : "100%",
+                      width: semesterState.isGeneralFilterOpen ? "60%" : "100%",
                     }}
                   >
                     <Table
@@ -500,27 +510,33 @@ export default Semester;
 
 function ActionComponent(props) {
   const rowData = props.data;
-
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
+  const [ModalComponent, setModalComponent] = useState(null);
   const [modalSize, setModalSize] = useState("md");
-
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [DrawerComponent, setDrawerComponent] = useState(null);
+  const [drawerDetail, setDrawerDetail] = useState({
+    placement: "right",
+    title: "",
+  });
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalComponent(null);
   };
-
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
+  const handleShowModal = (Component, size = "md") => {
+    setModalComponent(() => Component);
     setModalSize(size);
     setShowModal(true);
   };
-  //delete. update. details
+  const handleShowDrawer = (Component, title = "") => {
+    setDrawerDetail((prev) => ({ ...prev, title }));
+    setDrawerComponent(() => Component);
+    setShowDrawer(true);
+  };
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerComponent(null);
+  };
   return (
     <>
       <ActionButtonDropdown
@@ -533,7 +549,7 @@ function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateSemester, "lg")}
+          onClick={() => handleShowDrawer(UpdateSemester, "Update Semester")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -559,7 +575,7 @@ function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(SemeseterDetails, "md")}
+          onClick={() => handleShowDrawer(SemesterDetails, "Semester Details")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -569,13 +585,29 @@ function ActionComponent(props) {
           </div>
         </DropDownMenuItem>
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerDetail?.placement}
+        title={drawerDetail?.title}
+      >
+        {DrawerComponent && (
+          <DrawerComponent
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
         size={modalSize}
         centered
       >
-        {modalContent}
+        {ModalComponent && (
+          <ModalComponent rowData={rowData} handleClose={handleCloseModal} />
+        )}
       </CustomModal>
     </>
   );
