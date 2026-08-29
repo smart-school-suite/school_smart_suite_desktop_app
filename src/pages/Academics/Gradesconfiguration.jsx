@@ -68,6 +68,7 @@ import Export from "../../ModalContent/Export/Export";
 import SearchInput from "../../components/input/search";
 import { Drawer } from "../../components/drawer/Drawer";
 import ScaleWizzard from "../../DrawerContent/GradeScale/ScaleWizzard";
+import GradeScale from "../../DrawerContent/GradeScale/GradeScale";
 function Gradesconfiguration() {
   const { data: gradeScales, isLoading, error } = useGetSchoolGradeCategories();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -527,8 +528,8 @@ function ActionComponent(props) {
     setModalSize(size);
     setShowModal(true);
   };
-  const handleShowDrawer = (Component, title = "") => {
-    setDrawerDetail((prev) => ({ ...prev, title }));
+  const handleShowDrawer = (Component, title = "", closeOnOutsideClick = true) => {
+    setDrawerDetail((prev) => ({ ...prev, title, closeOnOutsideClick }));
     setDrawerComponent(() => Component);
     setShowDrawer(true);
   };
@@ -561,7 +562,7 @@ function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowDrawer(ScaleWizzard, "Grade Scale Configuration")}
+          onClick={() => handleShowDrawer(ScaleWizzard, "Grade Scale Configuration", false)}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -578,7 +579,7 @@ function ActionComponent(props) {
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update Grades Config</span>
+              <span>Update Grades Scale</span>
               <UpdateIcon />
             </div>
           </div>
@@ -587,7 +588,7 @@ function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ViewGradesConfig, "md")}
+          onClick={() => handleShowDrawer(GradeScale, "Grade Scale")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -617,7 +618,7 @@ function ActionComponent(props) {
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Grades Config</span>
+              <span>Delete Grade Scale</span>
               <DeleteIcon />
             </div>
           </div>
@@ -628,6 +629,7 @@ function ActionComponent(props) {
         onClose={handleCloseDrawer}
         placement={drawerDetail?.placement}
         title={drawerDetail?.title}
+        closeOnOutsideClick={drawerDetail?.closeOnOutsideClick}
       >
         {DrawerComponent && (
           <DrawerComponent

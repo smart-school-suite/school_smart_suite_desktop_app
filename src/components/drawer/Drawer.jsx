@@ -80,14 +80,18 @@ export const Drawer = ({
   title,
   children,
   placement = "right",
-  className = ""
+  className = "",
+  closeOnOutsideClick = true,
 }) => {
   const { refs, context } = useFloating({
     open: isOpen,
     onOpenChange: (open) => !open && onClose(),
   });
 
-  const dismiss = useDismiss(context, { outsidePress: true, escapeKey: true });
+  const dismiss = useDismiss(context, {
+    outsidePress: closeOnOutsideClick,
+    escapeKey: true,
+  });
   const role = useRole(context, { role: "dialog" });
   const { getFloatingProps } = useInteractions([dismiss, role]);
   useScrollLock(isOpen);
@@ -104,7 +108,7 @@ export const Drawer = ({
               transition={backdropTransition}
               className="drawer-backdrop"
               style={{}}
-              onClick={onClose}
+              onClick={closeOnOutsideClick ? onClose : undefined}
             />
 
             <FloatingFocusManager context={context}>
