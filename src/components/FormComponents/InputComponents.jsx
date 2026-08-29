@@ -1,11 +1,18 @@
-import React, { useState, useEffect, useCallback, useImperativeHandle, forwardRef, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useImperativeHandle,
+  forwardRef,
+  useRef,
+} from "react";
 import { Icon } from "@iconify/react";
 import InputMask from "react-input-mask";
 import { useSelector } from "react-redux";
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "framer-motion";
 function PhoneNumberInputComponent(
   { onChange, value, onValidationChange, validationSchema, optional = false },
-  ref
+  ref,
 ) {
   const [phoneNumber, setPhoneNumber] = useState(value || "");
   const [error, setError] = useState("");
@@ -43,8 +50,8 @@ function PhoneNumberInputComponent(
     triggerValidation: async () => {
       const rawValue = phoneNumber.replace(/\D/g, "");
       if (!rawValue) {
-         setIsTouched(true);
-         return validatePhoneNumber(rawValue);
+        setIsTouched(true);
+        return validatePhoneNumber(rawValue);
       }
       return await validatePhoneNumber(rawValue);
     },
@@ -91,8 +98,8 @@ function PhoneNumberInputComponent(
     isTouched && error
       ? "invalid-feedback transition-all"
       : isTouched && !error && phoneNumber
-      ? "valid-feedback transition-all"
-      : null,
+        ? "valid-feedback transition-all"
+        : null,
     isTouched && (error || (!error && phoneNumber))
       ? "opacity-100 transition-all"
       : "opacity-0 transition-all",
@@ -103,12 +110,15 @@ function PhoneNumberInputComponent(
   return (
     <div className="input-container">
       <div className="input-group position-relative z-0 has-validation">
-        <span className={`${darkMode ? 'input-group-text-dark' : null} input-group-text font-size-sm  fw-semibold `}  id="basic-addon1">
+        <span
+          className={`${darkMode ? "input-group-text-dark" : null} input-group-text font-size-sm  fw-semibold `}
+          id="basic-addon1"
+        >
           <Icon icon="twemoji:flag-cameroon" width="24" height="24" />
         </span>
         <input
           type="tel"
-          className={`form-control font-size-sm p-2 ${darkMode ? 'dark-mode-input' : null}   ${
+          className={`form-control font-size-sm p-2 ${darkMode ? "dark-mode-input" : null}   ${
             isTouched && error ? "is-invalid" : ""
           } ${isTouched && !error && phoneNumber ? "is-valid" : ""}`}
           placeholder="6XX-XXX-XXX"
@@ -128,7 +138,18 @@ function PhoneNumberInputComponent(
 export const PhoneNumberInput = forwardRef(PhoneNumberInputComponent);
 
 export const TextInput = forwardRef(
-  ({ onChange, onValidationChange, value, placeholder, validationSchema, className, type = "text" }, ref) => {
+  (
+    {
+      onChange,
+      onValidationChange,
+      value,
+      placeholder,
+      validationSchema,
+      className,
+      type = "text",
+    },
+    ref,
+  ) => {
     const darkMode = useSelector((state) => state.theme.darkMode);
     const [inputValue, setInputValue] = useState(value || "");
     const [inputError, setInputError] = useState("");
@@ -190,16 +211,16 @@ export const TextInput = forwardRef(
       isInputTouched && inputError
         ? inputError
         : isInputTouched && !inputError && inputValue
-        ? "Looks Good!"
-        : "";
+          ? "Looks Good!"
+          : "";
 
     const feedbackClasses = [
       "transition-all font-size-sm",
       isInputTouched && inputError
         ? "invalid-feedback transition-all"
         : isInputTouched && !inputError && inputValue
-        ? "valid-feedback transition-all"
-        : null,
+          ? "valid-feedback transition-all"
+          : null,
       isInputTouched && (inputError || (!inputError && inputValue))
         ? "opacity-100 transition-all"
         : "opacity-0 transition-all",
@@ -216,14 +237,14 @@ export const TextInput = forwardRef(
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           placeholder={placeholder}
-          className={`${className} form-control font-size-sm p-2 ${darkMode ? 'dark-mode-input' : ''} ${
+          className={`${className} form-control font-size-sm p-2 ${darkMode ? "dark-mode-input" : ""} ${
             isInputTouched && inputError ? "is-invalid" : ""
           } ${isInputTouched && !inputError && inputValue ? "is-valid" : ""}`}
         />
         <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
       </div>
     );
-  }
+  },
 );
 
 export const TextAreaInput = forwardRef(
@@ -237,10 +258,10 @@ export const TextAreaInput = forwardRef(
       optional = false,
       rows = 5,
     },
-    ref
+    ref,
   ) => {
-    const [inputValue, setInputValue] = useState(value || '');
-    const [inputError, setInputError] = useState('');
+    const [inputValue, setInputValue] = useState(value || "");
+    const [inputError, setInputError] = useState("");
     const [isInputTouched, setIsInputTouched] = useState(false);
     const darkMode = useSelector((state) => state.theme.darkMode);
 
@@ -249,57 +270,63 @@ export const TextAreaInput = forwardRef(
       async (currentValue) => {
         if (
           optional &&
-          (currentValue === '' || currentValue === null || currentValue === undefined)
+          (currentValue === "" ||
+            currentValue === null ||
+            currentValue === undefined)
         ) {
-          setInputError('');
+          setInputError("");
           onValidationChange?.(true);
           return true;
         }
 
         if (!validationSchema) {
-          setInputError('');
+          setInputError("");
           onValidationChange?.(true);
           return true;
         }
 
         try {
           await validationSchema.validate(currentValue);
-          setInputError('');
+          setInputError("");
           onValidationChange?.(true);
           return true;
         } catch (err) {
-          setInputError(err.message || 'Invalid input');
+          setInputError(err.message || "Invalid input");
           onValidationChange?.(false);
           return false;
         }
       },
-      [validationSchema, onValidationChange, optional]
+      [validationSchema, onValidationChange, optional],
     );
 
     // 🔹 Sync inputValue with value prop and validate when prop changes
     useEffect(() => {
       if (value !== inputValue) {
-        setInputValue(value || '');
+        setInputValue(value || "");
         if (value && !isInputTouched) {
           setIsInputTouched(true);
           validateInput(value);
         } else if (!value && optional) {
           setIsInputTouched(false);
-          setInputError('');
+          setInputError("");
           onValidationChange?.(true);
         }
       }
     }, [value, optional, validateInput]); // Removed inputValue and isInputTouched from dependencies
 
     // 🔹 Expose imperative validation trigger
-    useImperativeHandle(ref, () => ({
-      triggerValidation: async () => {
-        if (!inputValue && !optional) {
-          setIsInputTouched(true);
-        }
-        return validateInput(inputValue);
-      },
-    }), [inputValue, optional, validateInput]);
+    useImperativeHandle(
+      ref,
+      () => ({
+        triggerValidation: async () => {
+          if (!inputValue && !optional) {
+            setIsInputTouched(true);
+          }
+          return validateInput(inputValue);
+        },
+      }),
+      [inputValue, optional, validateInput],
+    );
 
     // 🔹 Handle input change
     const handleInputChange = (e) => {
@@ -329,22 +356,22 @@ export const TextAreaInput = forwardRef(
       isInputTouched && inputError
         ? inputError
         : isInputTouched && !inputError && inputValue
-        ? 'Looks Good!'
-        : '';
+          ? "Looks Good!"
+          : "";
 
     const feedbackClasses = [
-      'transition-all font-size-sm',
+      "transition-all font-size-sm",
       isInputTouched && inputError
-        ? 'invalid-feedback'
+        ? "invalid-feedback"
         : isInputTouched && !inputError && inputValue
-        ? 'valid-feedback'
-        : '',
+          ? "valid-feedback"
+          : "",
       isInputTouched && (inputError || (!inputError && inputValue))
-        ? 'opacity-100'
-        : 'opacity-0',
+        ? "opacity-100"
+        : "opacity-0",
     ]
       .filter(Boolean)
-      .join(' ');
+      .join(" ");
 
     return (
       <div className="text-input-container">
@@ -356,15 +383,15 @@ export const TextAreaInput = forwardRef(
           placeholder={placeholder}
           rows={rows}
           className={`form-control font-size-sm p-2 ${
-            darkMode ? 'dark-mode-input' : ''
-          } ${isInputTouched && inputError ? 'is-invalid' : ''} ${
-            isInputTouched && !inputError && inputValue ? 'is-valid' : ''
+            darkMode ? "dark-mode-input" : ""
+          } ${isInputTouched && inputError ? "is-invalid" : ""} ${
+            isInputTouched && !inputError && inputValue ? "is-valid" : ""
           }`}
         />
         <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
       </div>
     );
-  }
+  },
 );
 
 export const NumberInput = forwardRef(function NumberInput(
@@ -374,82 +401,48 @@ export const NumberInput = forwardRef(function NumberInput(
     value,
     placeholder,
     validationSchema,
+    className = "",
     step = "1",
     type = "number",
     optional = false,
   },
-  ref
+  ref,
 ) {
-  const [inputValue, setInputValue] = useState(value || '');
-  const [inputError, setInputError] = useState('');
-  const [isInputTouched, setIsInputTouched] = useState(false);
   const darkMode = useSelector((state) => state.theme.darkMode);
-
-  const validateInput = useCallback(
-    async (currentValue) => {
-      if (optional && (currentValue === '' || currentValue == null)) {
-        setInputError('');
-        onValidationChange?.(true);
-        return true;
-      }
-
-      if (!validationSchema) {
-        setInputError('');
-        onValidationChange?.(true);
-        return true;
-      }
-
-      try {
-        await validationSchema.validate(currentValue);
-        setInputError('');
-        onValidationChange?.(true);
-        return true;
-      } catch (err) {
-        setInputError(err.message || 'Invalid input');
-        onValidationChange?.(false);
-        return false;
-      }
-    },
-    [validationSchema, onValidationChange, optional]
-  );
+  const [inputValue, setInputValue] = useState(value ?? "");
+  const [inputError, setInputError] = useState("");
+  const [isInputTouched, setIsInputTouched] = useState(false);
 
   useEffect(() => {
-    if (value !== inputValue) {
-      setInputValue(value || '');
-      if (value && !isInputTouched) {
-        setIsInputTouched(true);
-        validateInput(value);
-      } else if (!value && optional) {
-        setIsInputTouched(false);
-        setInputError('');
-        onValidationChange?.(true);
-      }
+    const stringValue = value ?? "";
+    setInputValue(stringValue);
+    if (stringValue !== "") {
+      setIsInputTouched(true);
+      validateInput(stringValue);
     }
-  }, [value, optional, validateInput]);
+  }, [value]);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      triggerValidation: async () => {
-        if (!inputValue && !optional) {
-          setIsInputTouched(true);
-        }
-        return validateInput(inputValue);
-      },
-      resetField: () => {
-        setInputValue('');
-        setInputError('');
-        setIsInputTouched(false);
-        onValidationChange?.(optional ? true : false);
-      },
-    }),
-    [inputValue, optional, validateInput]
-  );
+  const validateInput = async (currentValue) => {
+    if (!validationSchema) {
+      if (onValidationChange) onValidationChange(true);
+      return true;
+    }
+    try {
+      await validationSchema.validate(currentValue);
+      setInputError("");
+      if (onValidationChange) onValidationChange(true);
+      return true;
+    } catch (err) {
+      setInputError(err.message);
+      if (onValidationChange) onValidationChange(false);
+      return false;
+    }
+  };
 
   const handleInputChange = (e) => {
-    const newValue = e.target.value;
+    const { value: newValue } = e.target;
     setInputValue(newValue);
-    onChange?.(newValue);
+    if (onChange) onChange(newValue);
     if (isInputTouched) {
       validateInput(newValue);
     }
@@ -457,35 +450,41 @@ export const NumberInput = forwardRef(function NumberInput(
 
   const handleInputFocus = () => {
     setIsInputTouched(true);
-    if (inputValue) {
-      validateInput(inputValue);
-    }
+    validateInput(inputValue);
   };
 
   const handleInputBlur = () => {
     validateInput(inputValue);
   };
 
+  useImperativeHandle(ref, () => ({
+    triggerValidation: () => {
+      setIsInputTouched(true);
+      return validateInput(inputValue);
+    },
+    getValue: () => inputValue,
+  }));
+
   const feedbackContent =
     isInputTouched && inputError
       ? inputError
-      : isInputTouched && !inputError && inputValue !== ''
-      ? 'Looks Good!'
-      : '';
+      : isInputTouched && !inputError && inputValue !== ""
+        ? "Looks Good!"
+        : "";
 
   const feedbackClasses = [
-    'transition-all font-size-sm',
+    "transition-all font-size-sm",
     isInputTouched && inputError
-      ? 'invalid-feedback'
-      : isInputTouched && !inputError && inputValue !== ''
-      ? 'valid-feedback'
-      : '',
-    isInputTouched && (inputError || (!inputError && inputValue !== ''))
-      ? 'opacity-100'
-      : 'opacity-0',
+      ? "invalid-feedback transition-all"
+      : isInputTouched && !inputError && inputValue !== ""
+        ? "valid-feedback transition-all"
+        : null,
+    isInputTouched && (inputError || (!inputError && inputValue !== ""))
+      ? "opacity-100 transition-all"
+      : "opacity-0 transition-all",
   ]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   return (
     <div className="input-container">
@@ -497,10 +496,10 @@ export const NumberInput = forwardRef(function NumberInput(
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         placeholder={placeholder}
-        className={`form-control font-size-sm p-2 ${
-          darkMode ? 'dark-mode-input' : ''
-        } ${isInputTouched && inputError ? 'is-invalid' : ''} ${
-          isInputTouched && !inputError && inputValue !== '' ? 'is-valid' : ''
+        className={`${className} form-control font-size-sm p-2 ${
+          darkMode ? "dark-mode-input" : ""
+        } ${isInputTouched && inputError ? "is-invalid" : ""} ${
+          isInputTouched && !inputError && inputValue !== "" ? "is-valid" : ""
         }`}
       />
       <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
@@ -518,10 +517,10 @@ function DateInputComponent(
     id,
     name,
   },
-  ref
+  ref,
 ) {
-  const [displayValue, setDisplayValue] = useState(value || '');
-  const [inputError, setInputError] = useState('');
+  const [displayValue, setDisplayValue] = useState(value || "");
+  const [inputError, setInputError] = useState("");
   const [isInputTouched, setIsInputTouched] = useState(false);
   const darkMode = useSelector((state) => state.theme.darkMode);
 
@@ -529,33 +528,33 @@ function DateInputComponent(
   const validateInput = useCallback(
     async (currentValue) => {
       if (!currentValue) {
-        setInputError('');
+        setInputError("");
         onValidationChange?.(true);
         return true;
       }
       if (!validationSchema) {
-        setInputError('');
+        setInputError("");
         onValidationChange?.(true);
         return true;
       }
       try {
         await validationSchema.validate(currentValue);
-        setInputError('');
+        setInputError("");
         onValidationChange?.(true);
         return true;
       } catch (err) {
-        setInputError(err.message || 'Invalid date');
+        setInputError(err.message || "Invalid date");
         onValidationChange?.(false);
         return false;
       }
     },
-    [validationSchema, onValidationChange]
+    [validationSchema, onValidationChange],
   );
 
   // 🔹 Sync displayValue with value prop
   useEffect(() => {
     if (value !== displayValue) {
-      setDisplayValue(value || '');
+      setDisplayValue(value || "");
       if (value && !isInputTouched) {
         setIsInputTouched(true);
         validateInput(value);
@@ -574,7 +573,7 @@ function DateInputComponent(
         validateInput(rawValue);
       }
     },
-    [onChange, isInputTouched, validateInput]
+    [onChange, isInputTouched, validateInput],
   );
 
   // 🔹 Handle focus
@@ -597,14 +596,14 @@ function DateInputComponent(
       triggerValidation: async () => {
         if (!displayValue) {
           setIsInputTouched(true);
-          setInputError('Date is required');
+          setInputError("Date is required");
           onValidationChange?.(false);
           return false;
         }
         return validateInput(displayValue);
       },
     }),
-    [displayValue, validateInput, onValidationChange]
+    [displayValue, validateInput, onValidationChange],
   );
 
   // 🔹 Feedback helpers
@@ -612,20 +611,22 @@ function DateInputComponent(
     isInputTouched && inputError
       ? inputError
       : isInputTouched && !inputError && displayValue
-      ? 'Looks Good!'
-      : '';
+        ? "Looks Good!"
+        : "";
 
   const feedbackClasses = [
-    'transition-all font-size-sm',
+    "transition-all font-size-sm",
     isInputTouched && inputError
-      ? 'invalid-feedback'
+      ? "invalid-feedback"
       : isInputTouched && !inputError && displayValue
-      ? 'valid-feedback'
-      : '',
+        ? "valid-feedback"
+        : "",
     isInputTouched && (inputError || (!inputError && displayValue))
-      ? 'opacity-100'
-      : 'opacity-0',
-  ].filter(Boolean).join(' ');
+      ? "opacity-100"
+      : "opacity-0",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className="input-container">
@@ -641,9 +642,9 @@ function DateInputComponent(
         placeholder={placeholder}
         aria-describedby={`${id}-hint`}
         className={`form-control date-input-field p-2 font-size-sm ${
-          darkMode ? 'dark-mode-input' : ''
-        } ${isInputTouched && inputError ? 'is-invalid' : ''} ${
-          isInputTouched && !inputError && displayValue ? 'is-valid' : ''
+          darkMode ? "dark-mode-input" : ""
+        } ${isInputTouched && inputError ? "is-invalid" : ""} ${
+          isInputTouched && !inputError && displayValue ? "is-valid" : ""
         }`}
       />
       <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
@@ -664,7 +665,7 @@ export const TimeInput = forwardRef(function TimeInput(
     optional = false,
     onValidationChange, // ✅ added
   },
-  ref
+  ref,
 ) {
   const [displayValue, setDisplayValue] = useState(value || "");
   const [inputError, setInputError] = useState("");
@@ -684,12 +685,12 @@ export const TimeInput = forwardRef(function TimeInput(
   const validateInput = async (currentValue) => {
     if (optional && (currentValue === "" || currentValue == null)) {
       setInputError("");
-      onValidationChange?.(true); 
+      onValidationChange?.(true);
       return true;
     }
     if (!validationSchema) {
       setInputError("");
-      onValidationChange?.(true); 
+      onValidationChange?.(true);
       return true;
     }
     try {
@@ -728,7 +729,7 @@ export const TimeInput = forwardRef(function TimeInput(
       }
     } else {
       onChange("");
-      onValidationChange?.(false); 
+      onValidationChange?.(false);
     }
   };
 
@@ -745,16 +746,16 @@ export const TimeInput = forwardRef(function TimeInput(
     isInputTouched && inputError
       ? inputError
       : isInputTouched && !inputError && displayValue !== ""
-      ? "Looks Good!"
-      : null;
+        ? "Looks Good!"
+        : null;
 
   const feedbackClasses = [
     "transition-all font-size-sm",
     isInputTouched && inputError
       ? "invalid-feedback"
       : isInputTouched && !inputError && displayValue !== ""
-      ? "valid-feedback"
-      : null,
+        ? "valid-feedback"
+        : null,
     isInputTouched && (inputError || (!inputError && displayValue !== ""))
       ? "opacity-100"
       : "opacity-0",
@@ -798,7 +799,7 @@ export const InputGroup = forwardRef(
       InputGroupText,
       optional = false,
     },
-    ref
+    ref,
   ) => {
     const [inputValue, setInputValue] = useState(value || "");
     const [inputError, setInputError] = useState("");
@@ -816,7 +817,9 @@ export const InputGroup = forwardRef(
     const validateInput = async (currentValue) => {
       if (
         optional &&
-        (currentValue === "" || currentValue === null || currentValue === undefined)
+        (currentValue === "" ||
+          currentValue === null ||
+          currentValue === undefined)
       ) {
         setInputError("");
         onValidationChange(true);
@@ -858,11 +861,11 @@ export const InputGroup = forwardRef(
     const handleInputBlur = () => {
       validateInput(inputValue);
     };
-  
+
     useImperativeHandle(ref, () => ({
       triggerValidation: () => {
         if (!inputValue && !optional) {
-          setIsInputTouched(true)
+          setIsInputTouched(true);
           return validateInput(inputValue);
         }
         return true;
@@ -879,8 +882,8 @@ export const InputGroup = forwardRef(
       isInputTouched && inputError
         ? "invalid-feedback transition-all"
         : isInputTouched && !inputError && inputValue
-        ? "valid-feedback transition-all"
-        : null,
+          ? "valid-feedback transition-all"
+          : null,
       isInputTouched && (inputError || (!inputError && inputValue))
         ? "opacity-100 transition-all"
         : "opacity-0 transition-all",
@@ -899,20 +902,25 @@ export const InputGroup = forwardRef(
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             placeholder={placeholder}
-            className={`form-control font-size-sm p-2  ${darkMode ? 'dark-mode-input' : null} ${
+            className={`form-control font-size-sm p-2  ${darkMode ? "dark-mode-input" : null} ${
               isInputTouched && inputError ? "is-invalid" : ""
             } ${
-              isInputTouched && !inputError && inputValue !== "" ? "is-valid" : ""
+              isInputTouched && !inputError && inputValue !== ""
+                ? "is-valid"
+                : ""
             }`}
           />
-          <span className={`${darkMode ? 'input-group-text-dark' : null} input-group-text font-size-sm  fw-semibold `} id="basic-addon1">
+          <span
+            className={`${darkMode ? "input-group-text-dark" : null} input-group-text font-size-sm  fw-semibold `}
+            id="basic-addon1"
+          >
             {InputGroupText}
           </span>
           <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
         </div>
       </div>
     );
-  }
+  },
 );
 
 export const DateRangeInput = forwardRef(
@@ -929,16 +937,16 @@ export const DateRangeInput = forwardRef(
       placeholderStart = "YYYY-MM-DD",
       placeholderEnd = "YYYY-MM-DD",
     },
-    ref
+    ref,
   ) => {
     const darkMode = useSelector((state) => state.theme.darkMode);
     const [dates, setDates] = useState({
-      start_date: startValue || '',
-      end_date: endValue || '',
+      start_date: startValue || "",
+      end_date: endValue || "",
     });
     const [errors, setErrors] = useState({
-      start_date: '',
-      end_date: '',
+      start_date: "",
+      end_date: "",
     });
     const [touched, setTouched] = useState({
       start_date: false,
@@ -955,19 +963,19 @@ export const DateRangeInput = forwardRef(
 
         try {
           await validationSchema.fields.start_date.validate(value);
-          setErrors((prev) => ({ ...prev, start_date: '' }));
+          setErrors((prev) => ({ ...prev, start_date: "" }));
           onStartDateValidationChange?.(true);
           return true;
         } catch (err) {
           setErrors((prev) => ({
             ...prev,
-            start_date: err.message || 'Invalid start date',
+            start_date: err.message || "Invalid start date",
           }));
           onStartDateValidationChange?.(false);
           return false;
         }
       },
-      [validationSchema, onStartDateValidationChange]
+      [validationSchema, onStartDateValidationChange],
     );
 
     // 🔹 Validate end date
@@ -981,30 +989,30 @@ export const DateRangeInput = forwardRef(
         try {
           await validationSchema.validate(
             { start_date: startDate, end_date: value },
-            { abortEarly: false }
+            { abortEarly: false },
           );
-          setErrors((prev) => ({ ...prev, end_date: '' }));
+          setErrors((prev) => ({ ...prev, end_date: "" }));
           onEndDateValidationChange?.(true);
           return true;
         } catch (err) {
-          const fieldError = err.inner?.find((e) => e.path === 'end_date');
+          const fieldError = err.inner?.find((e) => e.path === "end_date");
           setErrors((prev) => ({
             ...prev,
-            end_date: fieldError ? fieldError.message : 'Invalid end date',
+            end_date: fieldError ? fieldError.message : "Invalid end date",
           }));
           onEndDateValidationChange?.(false);
           return false;
         }
       },
-      [validationSchema, onEndDateValidationChange, dates.start_date]
+      [validationSchema, onEndDateValidationChange, dates.start_date],
     );
 
     // 🔹 Sync dates with props and validate when props change
     useEffect(() => {
       if (startValue !== dates.start_date || endValue !== dates.end_date) {
         setDates({
-          start_date: startValue || '',
-          end_date: endValue || '',
+          start_date: startValue || "",
+          end_date: endValue || "",
         });
 
         if (startValue && !touched.start_date) {
@@ -1013,7 +1021,7 @@ export const DateRangeInput = forwardRef(
         }
         if (endValue && !touched.end_date) {
           setTouched((prev) => ({ ...prev, end_date: true }));
-          validateEndDate(endValue, startValue || '');
+          validateEndDate(endValue, startValue || "");
         }
       }
     }, [startValue, endValue, validateStartDate, validateEndDate]);
@@ -1025,13 +1033,14 @@ export const DateRangeInput = forwardRef(
         setDates((prev) => ({ ...prev, [field]: rawValue }));
         onChange?.({ ...dates, [field]: rawValue });
 
-        if (field === 'start_date') {
+        if (field === "start_date") {
           onStartDateChange?.(rawValue);
           if (touched.start_date) validateStartDate(rawValue);
           // Re-validate end_date if start_date changes
-          if (touched.end_date && dates.end_date) validateEndDate(dates.end_date, rawValue);
+          if (touched.end_date && dates.end_date)
+            validateEndDate(dates.end_date, rawValue);
         }
-        if (field === 'end_date') {
+        if (field === "end_date") {
           onEndDateChange?.(rawValue);
           if (touched.end_date) validateEndDate(rawValue);
         }
@@ -1045,26 +1054,26 @@ export const DateRangeInput = forwardRef(
         touched.end_date,
         validateStartDate,
         validateEndDate,
-      ]
+      ],
     );
 
     // 🔹 Handle focus
     const handleFocus = useCallback(
       (field) => () => {
         setTouched((prev) => ({ ...prev, [field]: true }));
-        if (field === 'start_date') validateStartDate(dates.start_date);
-        if (field === 'end_date') validateEndDate(dates.end_date);
+        if (field === "start_date") validateStartDate(dates.start_date);
+        if (field === "end_date") validateEndDate(dates.end_date);
       },
-      [dates.start_date, dates.end_date, validateStartDate, validateEndDate]
+      [dates.start_date, dates.end_date, validateStartDate, validateEndDate],
     );
 
     // 🔹 Handle blur
     const handleBlur = useCallback(
       (field) => () => {
-        if (field === 'start_date') validateStartDate(dates.start_date);
-        if (field === 'end_date') validateEndDate(dates.end_date);
+        if (field === "start_date") validateStartDate(dates.start_date);
+        if (field === "end_date") validateEndDate(dates.end_date);
       },
-      [dates.start_date, dates.end_date, validateStartDate, validateEndDate]
+      [dates.start_date, dates.end_date, validateStartDate, validateEndDate],
     );
 
     // 🔹 Expose imperative validation methods
@@ -1084,36 +1093,36 @@ export const DateRangeInput = forwardRef(
           return await validateEndDate(dates.end_date);
         },
       }),
-      [dates.start_date, dates.end_date, validateStartDate, validateEndDate]
+      [dates.start_date, dates.end_date, validateStartDate, validateEndDate],
     );
 
     // 🔹 Feedback helpers
     const feedbackClasses = (field) =>
       [
-        'transition-all font-size-sm',
+        "transition-all font-size-sm",
         touched[field] && errors[field]
-          ? 'invalid-feedback'
+          ? "invalid-feedback"
           : touched[field] && !errors[field] && dates[field]
-          ? 'valid-feedback'
-          : '',
+            ? "valid-feedback"
+            : "",
         touched[field] && (errors[field] || (!errors[field] && dates[field]))
-          ? 'opacity-100'
-          : 'opacity-0',
+          ? "opacity-100"
+          : "opacity-0",
       ]
         .filter(Boolean)
-        .join(' ');
+        .join(" ");
 
     const feedbackMessage = (field) =>
       touched[field] && errors[field]
         ? errors[field]
         : touched[field] && !errors[field] && dates[field]
-        ? 'Looks Good!'
-        : '';
+          ? "Looks Good!"
+          : "";
 
     return (
       <div
         className="d-flex flex-row align-items-center gap-2 w-100"
-        style={{ height: '11dvh' }}
+        style={{ height: "11dvh" }}
       >
         {/* Start Date */}
         <div className="input-container w-50">
@@ -1124,18 +1133,22 @@ export const DateRangeInput = forwardRef(
             mask="9999-99-99"
             maskChar="_"
             value={dates.start_date}
-            onChange={handleChange('start_date')}
-            onFocus={handleFocus('start_date')}
-            onBlur={handleBlur('start_date')}
+            onChange={handleChange("start_date")}
+            onFocus={handleFocus("start_date")}
+            onBlur={handleBlur("start_date")}
             placeholder={placeholderStart}
             className={`form-control w-100 font-size-sm p-2 ${
-              darkMode ? 'dark-mode-input' : ''
-            } ${touched.start_date && errors.start_date ? 'is-invalid' : ''} ${
-              touched.start_date && !errors.start_date && dates.start_date ? 'is-valid' : ''
+              darkMode ? "dark-mode-input" : ""
+            } ${touched.start_date && errors.start_date ? "is-invalid" : ""} ${
+              touched.start_date && !errors.start_date && dates.start_date
+                ? "is-valid"
+                : ""
             }`}
           />
-          <div className={`${feedbackClasses('start_date')} font-size-sm mt-auto`}>
-            {feedbackMessage('start_date')}
+          <div
+            className={`${feedbackClasses("start_date")} font-size-sm mt-auto`}
+          >
+            {feedbackMessage("start_date")}
           </div>
         </div>
 
@@ -1148,23 +1161,27 @@ export const DateRangeInput = forwardRef(
             mask="9999-99-99"
             maskChar="_"
             value={dates.end_date}
-            onChange={handleChange('end_date')}
-            onFocus={handleFocus('end_date')}
-            onBlur={handleBlur('end_date')}
+            onChange={handleChange("end_date")}
+            onFocus={handleFocus("end_date")}
+            onBlur={handleBlur("end_date")}
             placeholder={placeholderEnd}
             className={`form-control w-100 p-2 font-size-sm ${
-              darkMode ? 'dark-mode-input' : ''
-            } ${touched.end_date && errors.end_date ? 'is-invalid' : ''} ${
-              touched.end_date && !errors.end_date && dates.end_date ? 'is-valid' : ''
+              darkMode ? "dark-mode-input" : ""
+            } ${touched.end_date && errors.end_date ? "is-invalid" : ""} ${
+              touched.end_date && !errors.end_date && dates.end_date
+                ? "is-valid"
+                : ""
             }`}
           />
-          <div className={`${feedbackClasses('end_date')} font-size-sm mt-auto`}>
-            {feedbackMessage('end_date')}
+          <div
+            className={`${feedbackClasses("end_date")} font-size-sm mt-auto`}
+          >
+            {feedbackMessage("end_date")}
           </div>
         </div>
       </div>
     );
-  }
+  },
 );
 
 export const TimeRangeInput = forwardRef(
@@ -1181,7 +1198,7 @@ export const TimeRangeInput = forwardRef(
       placeholderStart = "HH:MM",
       placeholderEnd = "HH:MM",
     },
-    ref
+    ref,
   ) => {
     const darkMode = useSelector((state) => state.theme.darkMode);
     const [times, setTimes] = useState({
@@ -1230,7 +1247,7 @@ export const TimeRangeInput = forwardRef(
       try {
         await validationSchema.validate(
           { start_time: times.start_time, end_time: value },
-          { abortEarly: false }
+          { abortEarly: false },
         );
         setErrors((prev) => ({ ...prev, end_time: "" }));
         onEndTimeValidationChange?.(true);
@@ -1290,8 +1307,8 @@ export const TimeRangeInput = forwardRef(
         touched[field] && errors[field]
           ? "invalid-feedback"
           : touched[field] && !errors[field] && times[field]
-          ? "valid-feedback"
-          : null,
+            ? "valid-feedback"
+            : null,
         touched[field] && (errors[field] || (!errors[field] && times[field]))
           ? "opacity-100"
           : "opacity-0",
@@ -1303,14 +1320,12 @@ export const TimeRangeInput = forwardRef(
       touched[field] && errors[field]
         ? errors[field]
         : touched[field] && !errors[field] && times[field]
-        ? "Looks Good!"
-        : "";
+          ? "Looks Good!"
+          : "";
 
     return (
-      <div
-        className="d-flex flex-row align-items-center gap-2 w-100"
-      >
-        <div className="w-50 d-flex flex-column" style={{ height:"9dvh" }}>
+      <div className="d-flex flex-row align-items-center gap-2 w-100">
+        <div className="w-50 d-flex flex-column" style={{ height: "9dvh" }}>
           <label htmlFor="startTime" className="font-size-sm">
             Start Time
           </label>
@@ -1322,7 +1337,7 @@ export const TimeRangeInput = forwardRef(
             onFocus={handleFocus("start_time")}
             onBlur={handleFocus("start_time")}
             placeholder={placeholderStart}
-            className={`form-control w-100 font-size-sm ${darkMode ? 'dark-mode-input' : null} p-2 ${
+            className={`form-control w-100 font-size-sm ${darkMode ? "dark-mode-input" : null} p-2 ${
               touched.start_time && errors.start_time ? "is-invalid" : ""
             } ${
               touched.start_time && !errors.start_time && times.start_time
@@ -1337,7 +1352,10 @@ export const TimeRangeInput = forwardRef(
           </div>
         </div>
 
-        <div className="w-50 d-flex flex-column w-50" style={{ height:"9dvh" }}>
+        <div
+          className="w-50 d-flex flex-column w-50"
+          style={{ height: "9dvh" }}
+        >
           <label htmlFor="endTime" className="font-size-sm">
             End Time
           </label>
@@ -1349,7 +1367,7 @@ export const TimeRangeInput = forwardRef(
             onFocus={handleFocus("end_time")}
             onBlur={handleFocus("end_time")}
             placeholder={placeholderEnd}
-            className={`form-control w-100 p-2 font-size-sm ${darkMode ? 'dark-mode-input' : null} ${
+            className={`form-control w-100 p-2 font-size-sm ${darkMode ? "dark-mode-input" : null} ${
               touched.end_time && errors.end_time ? "is-invalid" : ""
             } ${
               touched.end_time && !errors.end_time && times.end_time
@@ -1360,12 +1378,12 @@ export const TimeRangeInput = forwardRef(
           <div
             className={`${feedbackClasses("end_time")} font-size-sm mt-auto`}
           >
-            {feedbackMessage("end_time")} 
+            {feedbackMessage("end_time")}
           </div>
         </div>
       </div>
     );
-  }
+  },
 );
 
 export const DateTimeInput = forwardRef(function DateTimeInput(
@@ -1379,14 +1397,14 @@ export const DateTimeInput = forwardRef(function DateTimeInput(
     optional = false,
     onValidationChange,
   },
-  ref
+  ref,
 ) {
   const [displayValue, setDisplayValue] = useState(value || "");
   const [inputError, setInputError] = useState("");
   const [isInputTouched, setIsInputTouched] = useState(false);
   const darkMode = useSelector((state) => state.theme.darkMode);
 
-   const validateInput = useCallback(
+  const validateInput = useCallback(
     async (currentValue) => {
       if (optional && (currentValue === "" || currentValue == null)) {
         setInputError("");
@@ -1409,9 +1427,9 @@ export const DateTimeInput = forwardRef(function DateTimeInput(
         return false;
       }
     },
-    [optional, validationSchema, onValidationChange]
+    [optional, validationSchema, onValidationChange],
   );
-  
+
   useEffect(() => {
     if (displayValue !== (value || "")) {
       setDisplayValue(value || "");
@@ -1425,8 +1443,6 @@ export const DateTimeInput = forwardRef(function DateTimeInput(
       onValidationChange(true);
     }
   }, [value, optional, validateInput, displayValue, isInputTouched]);
-
- 
 
   useImperativeHandle(ref, () => ({
     triggerValidation: async () => {
@@ -1473,16 +1489,16 @@ export const DateTimeInput = forwardRef(function DateTimeInput(
     isInputTouched && inputError
       ? inputError
       : isInputTouched && !inputError && displayValue !== ""
-      ? "Looks Good!"
-      : null;
+        ? "Looks Good!"
+        : null;
 
   const feedbackClasses = [
     "transition-all font-size-sm",
     isInputTouched && inputError
       ? "invalid-feedback"
       : isInputTouched && !inputError && displayValue !== ""
-      ? "valid-feedback"
-      : null,
+        ? "valid-feedback"
+        : null,
     isInputTouched && (inputError || (!inputError && displayValue !== ""))
       ? "opacity-100"
       : "opacity-0",
@@ -1527,9 +1543,9 @@ export const DateTimeRangeInput = forwardRef(
       placeholderStart = "YYYY-MM-DD HH:MM",
       placeholderEnd = "YYYY-MM-DD HH:MM",
       startDateLabel,
-      endDateLabel
+      endDateLabel,
     },
-    ref
+    ref,
   ) => {
     const darkMode = useSelector((state) => state.theme.darkMode);
     const [values, setValues] = useState({
@@ -1566,7 +1582,7 @@ export const DateTimeRangeInput = forwardRef(
           return false;
         }
       },
-      [validationSchema, onStartDateTimeValidationChange]
+      [validationSchema, onStartDateTimeValidationChange],
     );
 
     // 🔹 Validate end datetime
@@ -1579,7 +1595,7 @@ export const DateTimeRangeInput = forwardRef(
         try {
           await validationSchema.validate(
             { start_date: startDate, end_date: value },
-            { abortEarly: false }
+            { abortEarly: false },
           );
           setErrors((prev) => ({ ...prev, end_date: "" }));
           onEndDateTimeValidationChange?.(true);
@@ -1594,7 +1610,7 @@ export const DateTimeRangeInput = forwardRef(
           return false;
         }
       },
-      [validationSchema, onEndDateTimeValidationChange]
+      [validationSchema, onEndDateTimeValidationChange],
     );
 
     // Sync values with props and apply validation when props change
@@ -1627,7 +1643,8 @@ export const DateTimeRangeInput = forwardRef(
       if (field === "start_date") {
         onStartDateTimeChange?.(rawValue);
         if (touched.start_date) validateStart(rawValue);
-        if (touched.end_date && values.end_date) validateEnd(values.end_date, rawValue);
+        if (touched.end_date && values.end_date)
+          validateEnd(values.end_date, rawValue);
       }
       if (field === "end_date") {
         onEndDateTimeChange?.(rawValue);
@@ -1670,8 +1687,8 @@ export const DateTimeRangeInput = forwardRef(
         touched[field] && errors[field]
           ? "invalid-feedback"
           : touched[field] && !errors[field] && values[field]
-          ? "valid-feedback"
-          : null,
+            ? "valid-feedback"
+            : null,
         touched[field] && (errors[field] || (!errors[field] && values[field]))
           ? "opacity-100"
           : "opacity-0",
@@ -1683,8 +1700,8 @@ export const DateTimeRangeInput = forwardRef(
       touched[field] && errors[field]
         ? errors[field]
         : touched[field] && !errors[field] && values[field]
-        ? "Looks Good!"
-        : "";
+          ? "Looks Good!"
+          : "";
 
     return (
       <div
@@ -1706,9 +1723,7 @@ export const DateTimeRangeInput = forwardRef(
             placeholder={placeholderStart}
             className={`form-control w-100 font-size-sm p-2 ${
               darkMode ? "dark-mode-input" : ""
-            } ${
-              touched.start_date && errors.start_date ? "is-invalid" : ""
-            } ${
+            } ${touched.start_date && errors.start_date ? "is-invalid" : ""} ${
               touched.start_date && !errors.start_date && values.start_date
                 ? "is-valid"
                 : ""
@@ -1736,9 +1751,7 @@ export const DateTimeRangeInput = forwardRef(
             placeholder={placeholderEnd}
             className={`form-control w-100 font-size-sm p-2 ${
               darkMode ? "dark-mode-input" : ""
-            } ${
-              touched.end_date && errors.end_date ? "is-invalid" : ""
-            } ${
+            } ${touched.end_date && errors.end_date ? "is-invalid" : ""} ${
               touched.end_date && !errors.end_date && values.end_date
                 ? "is-valid"
                 : ""
@@ -1752,21 +1765,21 @@ export const DateTimeRangeInput = forwardRef(
         </div>
       </div>
     );
-  }
+  },
 );
 
 export const ImageUploadComponent = ({
   onImageUpload,
   onImagePreview,
   maxFileSize = 5 * 1024 * 1024,
-  accept = 'image/*',
-  uploadText = 'Click Here To Upload Event Image',
-  progressBarColor = 'green-bg',
+  accept = "image/*",
+  uploadText = "Click Here To Upload Event Image",
+  progressBarColor = "green-bg",
 }) => {
-  const [fileName, setFileName] = useState('');
+  const [fileName, setFileName] = useState("");
   const [progress, setProgress] = useState(0);
   const [fileSize, setFileSize] = useState(0);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const fileInputRef = useRef(null);
 
   const handleFileChange = (event) => {
@@ -1779,7 +1792,7 @@ export const ImageUploadComponent = ({
       return;
     }
 
-    setError('');
+    setError("");
     setFileName(file.name);
     setFileSize(file.size);
 
@@ -1808,18 +1821,18 @@ export const ImageUploadComponent = ({
   };
 
   const handleCancel = () => {
-    setFileName('');
+    setFileName("");
     setProgress(0);
     setFileSize(0);
-    setError('');
-    fileInputRef.current.value = '';
+    setError("");
+    fileInputRef.current.value = "";
     onImagePreview?.(null); // Clear preview
   };
 
   const formatFileSize = (bytes) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / 1048576).toFixed(1) + ' MB';
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / 1048576).toFixed(1) + " MB";
   };
 
   return (
@@ -1827,12 +1840,9 @@ export const ImageUploadComponent = ({
       <label htmlFor="eventImage" className="font-size-sm">
         Event Image (optional)
       </label>
-      <div 
-        className="custom-image-input-container"
-        onClick={handleClick}
-      >
+      <div className="custom-image-input-container" onClick={handleClick}>
         <div className="d-flex flex-column justify-content-center align-items-center gap-2 w-100  rounded">
-          <Icon icon="mage:image-plus" style={{ fontSize: '2rem' }} />
+          <Icon icon="mage:image-plus" style={{ fontSize: "2rem" }} />
           <span className="font-size-sm">{uploadText}</span>
           <input
             type="file"
@@ -1864,40 +1874,39 @@ export const ImageUploadComponent = ({
             transition={{ duration: 0.3 }}
           >
             <div className="d-flex flex-column w-100">
-              <span className="font-size-sm fw-medium text-capitalize">{fileName}</span>
+              <span className="font-size-sm fw-medium text-capitalize">
+                {fileName}
+              </span>
               <div className="progress">
                 <motion.div
                   className={`progress-bar ${progressBarColor}`}
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
                 ></motion.div>
               </div>
               <div className="d-flex flex-row align-items-center justify-content-between">
                 <span className="font-size-sm text-success">Looks Good</span>
                 <motion.div
-                className="d-flex flex-row align-items-center gap-1 font-size-sm"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.1, duration: 0.3 }}
-              >
-                <span>{formatFileSize(fileSize)}</span>
-                <Icon icon="ph:line-vertical" />
-                <span>{progress}%</span>
-              </motion.div>
+                  className="d-flex flex-row align-items-center gap-1 font-size-sm"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.1, duration: 0.3 }}
+                >
+                  <span>{formatFileSize(fileSize)}</span>
+                  <Icon icon="ph:line-vertical" />
+                  <span>{progress}%</span>
+                </motion.div>
               </div>
             </div>
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <button
                 style={{
-                  border: 'none',
-                  background: 'transparent',
-                  fontSize: '0.8rem',
-                  textAlign: 'center',
-                  outline: 'none',
+                  border: "none",
+                  background: "transparent",
+                  fontSize: "0.8rem",
+                  textAlign: "center",
+                  outline: "none",
                 }}
                 onClick={handleCancel}
               >

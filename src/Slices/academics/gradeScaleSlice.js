@@ -18,6 +18,20 @@ const initialState = {
     selectedFile: null,
     mapping: {},
   },
+  gradeScale: {
+    configContext: {
+      category: {},
+      scale: {},
+    },
+    initialconfig: {
+      maximumScore: "",
+      grades: {},
+    },
+    draft: {
+      maximumScore: "",
+      grades: {},
+    },
+  },
 };
 
 const gradeScaleSlice = createSlice({
@@ -110,6 +124,34 @@ const gradeScaleSlice = createSlice({
     updateSelectedColumns: (state, action) => {
       state.columns.selectedColumns = action.payload;
     },
+    updatedGradeContext: (state, action) => {
+      const { data, maxScore, field } = action.payload;
+      state.gradeScale.configContext[field] = { ...data };
+      if (field == "category") {
+        state.gradeScale.draft.maximumScore = maxScore;
+        state.gradeScale.initialconfig.maximumScore = data?.max_score || "";
+      }
+    },
+    setGradeScaleLoadData: (state, action) => {
+      const { value } = action.payload;
+      state.gradeScale.initialconfig.grades = value;
+      state.gradeScale.draft.grades = value;
+    },
+    setDraftFieldValue: (state, action) => {
+      const { field, value, grade_id } = action.payload;
+      if (state.gradeScale?.draft?.grades?.[grade_id]?.[field]) {
+        state.gradeScale.draft.grades[grade_id][field].value = value;
+      }
+      if(state.gradeScale.draft.grades[grade_id].is_configured == false){
+         state.gradeScale.draft.grades[grade_id].is_configured = true;
+      }
+    },
+    setDraftFieldValidation: (state, action) => {
+      const { field, value, grade_id } = action.payload;
+      if (state.gradeScale?.draft?.grades?.[grade_id]?.[field]) {
+        state.gradeScale.draft.grades[grade_id][field].isValid = value;
+      }
+    },
   },
 });
 
@@ -133,6 +175,10 @@ export const {
   setImportSelectedFile,
   setImportReset,
   setColumnMapping,
+  updatedGradeContext,
+  setGradeScaleLoadData,
+  setDraftFieldValue,
+  setDraftFieldValidation,
 } = gradeScaleSlice.actions;
 
 export default gradeScaleSlice.reducer;

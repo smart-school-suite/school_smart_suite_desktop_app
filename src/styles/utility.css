@@ -236,6 +236,9 @@
 .green-color {
   color: var(--acent-color-ten);
 }
+.red-color{
+   color: var(--color-danger);
+}
 
 .font-size-xs {
   font-size: var(--font-size-xs);
@@ -666,4 +669,8 @@ body {
 
 .cursor-grab{
    cursor: grab;
+}
+
+.border{
+   border: 1px solid rgba(0, 0, 0, 0.06) !important;
 }
