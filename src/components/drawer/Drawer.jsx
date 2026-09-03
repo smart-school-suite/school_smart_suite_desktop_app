@@ -82,6 +82,7 @@ export const Drawer = ({
   placement = "right",
   className = "",
   closeOnOutsideClick = true,
+  showHeader = true,
 }) => {
   const { refs, context } = useFloating({
     open: isOpen,
@@ -121,23 +122,25 @@ export const Drawer = ({
                 exit="exit"
                 className={`drawer-panel drawer-panel--${placement} ${className} bg-white`}
               >
-                <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
-                  <span className="fw-medium">{title}</span>
-                  <button
-                    onClick={onClose}
-                    className="bg-none border-none border rounded-circle"
-                    aria-label="Close drawer"
-                    style={{
-                      width: "2rem",
-                      height: "2rem",
-                      display: "grid",
-                      placeItems: "center",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
+                {showHeader && (
+                  <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
+                    <span className="fw-medium">{title}</span>
+                    <button
+                      onClick={onClose}
+                      className="bg-none border-none border rounded-circle"
+                      aria-label="Close drawer"
+                      style={{
+                        width: "2rem",
+                        height: "2rem",
+                        display: "grid",
+                        placeItems: "center",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                )}
 
                 {children}
               </motion.div>

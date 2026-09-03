@@ -1,12 +1,11 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
-import { useDeleteGradeScale } from "../../hooks/gradeScale/useDeleteGradeScale";
-function DeleteGradesConfig({ handleClose, rowData }) {
-  const { id: categoryId } = rowData;
-  const { mutate: deleteGradeScale, isPending } =
-    useDeleteGradeScale(handleClose);
-  const handleDeleteExamGrades = async () => {
-    deleteGradeScale(categoryId);
+import { useDeactivateGradeScaleCategory } from "../../hooks/gradeScale/useDeactivateGradeScaleCategory";
+function DeactivateGradeScaleCategory({ handleClose, rowData }) {
+  const { mutate: deactivateCategory, isPending } =
+    useDeactivateGradeScaleCategory(handleClose, rowData.id);
+  const handleDeactivate = () => {
+    deactivateCategory(rowData.id);
   };
   return (
     <>
@@ -17,7 +16,7 @@ function DeleteGradesConfig({ handleClose, rowData }) {
         >
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
-              <span className="font-size-sm fw-semibold">Delete Grade Scale</span>
+              <span className="font-size-sm fw-semibold">Deactivate Grade Scale Category</span>
             </div>
             <button
               onClick={() => handleClose()}
@@ -52,10 +51,10 @@ function DeleteGradesConfig({ handleClose, rowData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeleteExamGrades();
+                handleDeactivate();
               }}
             >
-              {isPending ? <SingleSpinner /> : <>Yes, Delete</>}
+              {isPending ? <SingleSpinner /> : <>Yes, Deactivate</>}
             </button>
           </div>
         </div>
@@ -63,4 +62,4 @@ function DeleteGradesConfig({ handleClose, rowData }) {
     </>
   );
 }
-export default DeleteGradesConfig;
+export default DeactivateGradeScaleCategory;

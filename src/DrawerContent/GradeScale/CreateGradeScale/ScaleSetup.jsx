@@ -1,15 +1,18 @@
-import { NumberInput } from "../../components/FormComponents/InputComponents";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import { NumberInput } from "../../../components/FormComponents/InputComponents";
+import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { useRef, useState } from "react";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastWarning from "../../components/Toast/ToastWarning";
+import ToastDanger from "../../../components/Toast/ToastDanger";
+import ToastSuccess from "../../../components/Toast/ToastSuccess";
+import ToastWarning from "../../../components/Toast/ToastWarning";
 import toast from "react-hot-toast";
-import { allFieldsValid } from "../../utils/functions";
-import { numberSchema } from "../../ComponentConfig/YupValidationSchema";
-import { max, min } from "lodash";
+import { allFieldsValid } from "../../../utils/functions";
+import { numberSchema } from "../../../ComponentConfig/YupValidationSchema";
 import { useSelector, useDispatch } from "react-redux";
-import { updatedGradeContext } from "../../Slices/academics/gradeScaleSlice";
+import {
+  updatedGradeContext,
+  resetScaleState,
+} from "../../../Slices/academics/gradeScaleSlice";
+import {  X } from "lucide-react";
 function ScaleSetup({
   handleClose,
   nextStep,
@@ -20,7 +23,7 @@ function ScaleSetup({
 }) {
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.gradeScale.gradeScale);
-  
+
   const scoreRef = useRef();
   const [formData, setFormData] = useState({
     score: drawerData?.max_score ?? "",
@@ -61,15 +64,37 @@ function ScaleSetup({
       );
       return;
     }
-    dispatch(updatedGradeContext({
-         field: "category",
-         data: { drawerData },
-         maxScore: formData.score
-    }))
+    dispatch(
+      updatedGradeContext({
+        field: "category",
+        data: { drawerData },
+        maxScore: formData.score,
+      }),
+    );
     nextStep();
   };
   return (
     <>
+      <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
+        <span className="fw-medium">Grade Scale Configuration</span>
+        <button
+          className="bg-none border-none border rounded-circle"
+          aria-label="Close drawer"
+          onClick={() => {
+            handleClose();
+            dispatch(resetScaleState());
+          }}
+          style={{
+            width: "2rem",
+            height: "2rem",
+            display: "grid",
+            placeItems: "center",
+            cursor: "pointer",
+          }}
+        >
+          <X size={16} />
+        </button>
+      </div>
       <div className="drawer-content px-2 font-size-sm pt-2">
         <div className="d-flex flex-column gap-3">
           <div className="d-flex flex-row justify-content-end">
@@ -83,7 +108,10 @@ function ScaleSetup({
           <div className="d-flex flex-column gap-2">
             <div className="d-flex flex-row align-items-center gap-1">
               <span className="fw-semibold">Maximum score</span> (
-              <small className="muted fw-normal">Lowest possible score is zero</small>)
+              <small className="muted fw-normal">
+                Lowest possible score is zero
+              </small>
+              )
             </div>
             <NumberInput
               ref={scoreRef}

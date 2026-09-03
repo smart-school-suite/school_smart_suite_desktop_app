@@ -1,7 +1,7 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
 import { useDeleteGradeScale } from "../../hooks/gradeScale/useDeleteGradeScale";
-function DeleteGradesConfig({ handleClose, rowData }) {
+function DeleteGradeScale({ handleClose, rowData }) {
   const { id: categoryId } = rowData;
   const { mutate: deleteGradeScale, isPending } =
     useDeleteGradeScale(handleClose);
@@ -17,7 +17,9 @@ function DeleteGradesConfig({ handleClose, rowData }) {
         >
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
-              <span className="font-size-sm fw-semibold">Delete Grade Scale</span>
+              <span className="font-size-sm fw-semibold">
+                Delete Grade Scale
+              </span>
             </div>
             <button
               onClick={() => handleClose()}
@@ -63,4 +65,4 @@ function DeleteGradesConfig({ handleClose, rowData }) {
     </>
   );
 }
-export default DeleteGradesConfig;
+export default DeleteGradeScale;

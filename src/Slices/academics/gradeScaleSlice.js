@@ -1,6 +1,9 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-
+import {
+  hasGradeScaleChanges,
+  validateGradeRanges,
+} from "../../utils/gradeScale/gradeScaleHelpers";
 const initialState = {
   gradeScales: null,
   isGeneralFilterOpen: false,
@@ -16,9 +19,58 @@ const initialState = {
   import: {
     status: "IDLE",
     selectedFile: null,
-    mapping: {},
+    mapping: {
+      standardFields: {
+        grade_title: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        exam_type: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        grade_max_score: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        max_score: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        min_score: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        grade: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        result: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        resit_result: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+        performance: {
+          value: "",
+          error: null,
+          automatched: false,
+        },
+      },
+    },
   },
   gradeScale: {
+    isDirty: false,
     configContext: {
       category: {},
       scale: {},
@@ -30,6 +82,11 @@ const initialState = {
     draft: {
       maximumScore: "",
       grades: {},
+    },
+    diagnostics: {
+      isValid: null,
+      conflicts: [],
+      warnings: [],
     },
   },
 };
@@ -56,9 +113,9 @@ const gradeScaleSlice = createSlice({
       state.import.mapping = action.payload;
     },
     addCustomFilter: (state, action) => {
-      const myId = uuidv4();
+      const id = uuidv4();
       state.customFilter.push({
-        id: myId,
+        id: id,
         column: null,
         match: null,
         value: null,
@@ -139,11 +196,23 @@ const gradeScaleSlice = createSlice({
     },
     setDraftFieldValue: (state, action) => {
       const { field, value, grade_id } = action.payload;
-      if (state.gradeScale?.draft?.grades?.[grade_id]?.[field]) {
-        state.gradeScale.draft.grades[grade_id][field].value = value;
+      const grade = state.gradeScale?.draft?.grades?.[grade_id];
+      if (!grade || !grade[field]) {
+        return;
       }
-      if(state.gradeScale.draft.grades[grade_id].is_configured == false){
-         state.gradeScale.draft.grades[grade_id].is_configured = true;
+      grade[field].value = value;
+      if (grade.is_configured === false) {
+        grade.is_configured = true;
+      }
+      state.gradeScale.isDirty = hasGradeScaleChanges(
+        state.gradeScale.initialconfig,
+        state.gradeScale.draft,
+      );
+      if (field === "min_score" || field === "max_score") {
+        state.gradeScale.diagnostics = validateGradeRanges(
+          state.gradeScale.draft.grades,
+          state.gradeScale.draft.maximumScore,
+        );
       }
     },
     setDraftFieldValidation: (state, action) => {
@@ -151,6 +220,20 @@ const gradeScaleSlice = createSlice({
       if (state.gradeScale?.draft?.grades?.[grade_id]?.[field]) {
         state.gradeScale.draft.grades[grade_id][field].isValid = value;
       }
+    },
+    setStandardGroupValue: (state, action) => {
+      const { field, value, automatched = false } = action.payload;
+      const group = state.import.mapping.standardFields;
+
+      if (!group[field]) {
+        group[field] = { value: "", error: null, automatched: false };
+      }
+
+      group[field].value = value;
+      group[field].automatched = automatched;
+    },
+    resetScaleState: (state, action) => {
+      state.gradeScale = initialState.gradeScale;
     },
   },
 });
@@ -179,6 +262,8 @@ export const {
   setGradeScaleLoadData,
   setDraftFieldValue,
   setDraftFieldValidation,
+  setStandardGroupValue,
+  resetScaleState,
 } = gradeScaleSlice.actions;
 
 export default gradeScaleSlice.reducer;

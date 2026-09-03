@@ -1,14 +1,14 @@
 import { Fragment, useEffect } from "react";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { PenLine, Plus } from "lucide-react";
-import { useGetGradeConfigDetails } from "../../hooks/schoolGradeCategory/useGetGradeConfigDetails";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
+import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
+import { Dot, PenLine, Plus, X } from "lucide-react";
+import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../../components/errors/Error";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updatedGradeContext,
   setGradeScaleLoadData,
-} from "../../Slices/academics/gradeScaleSlice";
+  resetScaleState,
+} from "../../../Slices/academics/gradeScaleSlice";
 import {
   RESIT,
   RESIT_META,
@@ -18,6 +18,12 @@ import {
   RESULT_META,
   EXAM_TYPE,
 } from "@/constants";
+import { isConflicting } from "../../../utils/gradeScale/gradeScaleHelpers";
+import { useGetGradeScaleCategoryId } from "../../../hooks/gradeScale/useGetGradeScaleCategoryId";
+import { useCreateGradeScale } from "../../../hooks/gradeScale/useCreateGradeScale";
+import { SingleSpinner } from "../../../components/Spinners/Spinners";
+import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
+import DiscardWarning from "../../../ModalContent/GradesConfig/DiscardWarning";
 function GradeList({
   handleClose,
   nextStep,
@@ -31,25 +37,31 @@ function GradeList({
     data: gradeScales,
     isLoading,
     error,
-  } = useGetGradeConfigDetails(drawerData.id);
+  } = useGetGradeScaleCategoryId(drawerData.id);
+  const { mutate: createGradeScale, isPending } =
+    useCreateGradeScale(handleClose);
   const moduleState = useSelector((state) => state.gradeScale.gradeScale);
   const gradeScaleList = moduleState?.draft?.grades;
   useEffect(() => {
     const hasExistingDraftData =
       gradeScaleList && Object.keys(gradeScaleList).length > 0;
-    if (!isLoading && gradeScales?.data?.grades && !hasExistingDraftData) {
-      const data = gradeScales?.data?.grades.reduce((acc, item) => {
+    if (
+      !isLoading &&
+      gradeScales?.data?.grade_scales &&
+      !hasExistingDraftData
+    ) {
+      const data = gradeScales?.data?.grade_scales.reduce((acc, item) => {
         acc[item.letter_grade_id] = {
           min_score: {
-            value: item.configuration.min_score,
+            value: item.configuration.minimum_score,
             isValid: null,
           },
           max_score: {
-            value: item.configuration.max_score,
+            value: item.configuration.maximum_score,
             isValid: null,
           },
           grade_point: {
-            value: item.configuration.grade_point,
+            value: item.configuration.grade_points,
             isValid: null,
           },
           performance: {
@@ -64,7 +76,7 @@ function GradeList({
           letter_grade: item.letter_grade ?? null,
           letter_grade_id: item.letter_grade_id ?? null,
           resit_result: {
-            value: item?.resit_result?.toLowerCase() ?? null,
+            value: item?.configuration?.resit_result?.toLowerCase() ?? null,
             isValid: null,
           },
         };
@@ -73,14 +85,92 @@ function GradeList({
 
       dispatch(setGradeScaleLoadData({ value: data }));
     }
-  }, [
-    isLoading,
-    gradeScales,
-    gradeScaleList,
-    drawerData.id
-  ]);
+  }, [isLoading, gradeScales, gradeScaleList, drawerData.id]);
+
+  const handleCreateGrades = async () => {
+    const grades = moduleState.draft.grades;
+    const formattedPayload = Object.keys(grades)
+      .map((objKey) => ({
+        letter_grade_id: grades[objKey].letter_grade_id,
+        result: grades[objKey].result.value,
+        resit_result: grades[objKey].resit_result.value,
+        performance: grades[objKey].performance.value,
+        maximum_score: grades[objKey].max_score.value,
+        minimum_score: grades[objKey].min_score.value,
+        grade_points: grades[objKey].grade_point.value,
+      }))
+      .filter(
+        (grade) =>
+          grade.performance !== null &&
+          grade.performance !== undefined &&
+          grade.performance !== "" &&
+          grade.maximum_score !== null &&
+          grade.maximum_score !== undefined &&
+          grade.maximum_score !== "" &&
+          grade.minimum_score !== null &&
+          grade.minimum_score !== undefined &&
+          grade.minimum_score !== "" &&
+          grade.grade_points !== null &&
+          grade.grade_points !== undefined &&
+          grade.grade_points !== "",
+      );
+
+    createGradeScale({
+      grade_scales: formattedPayload,
+      grade_max_score: moduleState.draft.maximumScore,
+      grades_category_id: moduleState.configContext.category.drawerData.id,
+    });
+  };
   return (
     <>
+      <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
+        <span className="fw-medium">Grade Scale Configuration</span>
+        {moduleState.isDirty ? (
+          <ModalButton
+            action={{ modalContent: DiscardWarning }}
+            size={"md"}
+            rowData={{ handleCloseDrawer: handleClose }}
+            closeOnOutsideClick={false}
+            closeOnEscape={false}
+          >
+            <button
+              className="bg-none border-none border rounded-circle"
+              aria-label="Close drawer"
+              onClick={() => {
+                handleClose();
+                dispatch(resetScaleState());
+              }}
+              style={{
+                width: "2rem",
+                height: "2rem",
+                display: "grid",
+                placeItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <X size={16} />
+            </button>
+          </ModalButton>
+        ) : (
+          <button
+            className="bg-none border-none border rounded-circle"
+            aria-label="Close drawer"
+            onClick={() => {
+              handleClose();
+              dispatch(resetScaleState());
+            }}
+            style={{
+              width: "2rem",
+              height: "2rem",
+              display: "grid",
+              placeItems: "center",
+              cursor: "pointer",
+            }}
+          >
+            <X size={16} />
+          </button>
+        )}
+      </div>
       <div className="drawer-content px-2 font-size-sm pt-2">
         <div className="d-flex flex-column gap-3">
           <div className="d-flex flex-column gap-2">
@@ -90,12 +180,15 @@ function GradeList({
             </div>
             <div className="d-flex flex-column">
               <span>Configure the score range and meaning of each grade.</span>
-              <span className="font-size-md">
-                {isLoading ? 0 : gradeScales?.data?.grades?.length} grades ·{" "}
-                {moduleState?.draft?.maximumScore} Max Score
-              </span>
+              <div className="d-flex flex-row align-items-center gap-2">
+                <span>
+                  {isLoading ? 0 : gradeScales?.data?.grade_scales?.length}{" "}
+                  grades
+                </span>
+                <Dot />
+                <span>{moduleState?.draft?.maximumScore} Max Score</span>
+              </div>
             </div>
-            {console.log(gradeScaleList)}
           </div>
           <div
             className="d-flex flex-column gap-2"
@@ -122,9 +215,17 @@ function GradeList({
                 return (
                   <Fragment key={objKey}>
                     {grade?.is_configured ? (
-                      <GradeListCard grade={grade} nextStep={nextStep} />
+                      <GradeListCard
+                        grade={grade}
+                        nextStep={nextStep}
+                        moduleState={moduleState}
+                      />
                     ) : (
-                      <NotConfiguredCard grade={grade} nextStep={nextStep} />
+                      <NotConfiguredCard
+                        grade={grade}
+                        nextStep={nextStep}
+                        moduleState={moduleState}
+                      />
                     )}
                   </Fragment>
                 );
@@ -143,6 +244,39 @@ function GradeList({
             >
               Back
             </button>
+            <div className="d-flex flex-row align-items-center gap-2">
+              {moduleState.isDirty ? (
+                <ModalButton
+                  action={{ modalContent: DiscardWarning }}
+                  size={"md"}
+                  rowData={{ handleCloseDrawer: handleClose }}
+                  closeOnOutsideClick={false}
+                  closeOnEscape={false}
+                >
+                  <button className="border rounded-3 bg-none px-3 py-2">
+                    Cancel
+                  </button>
+                </ModalButton>
+              ) : (
+                <button
+                  className="border rounded-3 bg-none px-3 py-2"
+                  onClick={() => {
+                    handleClose();
+                    dispatch(resetScaleState());
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
+              {moduleState.isDirty && (
+                <button
+                  className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
+                  onClick={() => handleCreateGrades()}
+                >
+                  {isPending ? <SingleSpinner /> : "Create Grade Scale"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -151,11 +285,14 @@ function GradeList({
 }
 export default GradeList;
 
-function GradeListCard({ grade, nextStep }) {
+function GradeListCard({ grade, nextStep, moduleState }) {
   const dispatch = useDispatch();
+  const conflicts = moduleState.diagnostics.conflicts;
   return (
     <>
-      <div className="card p-3 rounded-4 d-flex flex-column gap-3 border shadow-sm">
+      <div
+        className={`card p-3 rounded-4 d-flex flex-column gap-3 ${isConflicting(grade?.letter_grade_id, conflicts) ? "border-danger" : "border"} shadow-sm`}
+      >
         <div className="d-flex flex-row justify-content-between">
           <div className="d-flex flex-row align-items-center gap-2">
             <div
@@ -171,17 +308,31 @@ function GradeListCard({ grade, nextStep }) {
               </span>
             </div>
           </div>
-          <span
-            className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2"
-            style={{
-              backgroundColor: "#e3f5e3",
-              color: "#5cb85c",
-              fontSize: "0.75rem",
-              height: "1.5rem",
-            }}
-          >
-            Configured
-          </span>
+          {isConflicting(grade?.letter_grade_id, conflicts) ? (
+            <span
+              className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2"
+              style={{
+                backgroundColor: "#ffdddd",
+                color: "#ff5757",
+                fontSize: "0.75rem",
+                height: "1.5rem",
+              }}
+            >
+              Needs Review
+            </span>
+          ) : (
+            <span
+              className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2"
+              style={{
+                backgroundColor: "#e3f5e3",
+                color: "#5cb85c",
+                fontSize: "0.75rem",
+                height: "1.5rem",
+              }}
+            >
+              Configured
+            </span>
+          )}
         </div>
         <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
         <div className="d-flex flex-row font-size-sm  gap-4">
@@ -221,9 +372,9 @@ function GradeListCard({ grade, nextStep }) {
           <div className="d-flex flex-row align-items-center gap-2">
             <span>Count As</span>
             {grade?.result?.value == "failed" ? (
-              <span className=" red-color fw-semibold">Failing</span>
+              <span className="text-danger fw-medium">Failing</span>
             ) : (
-              <span className="green-color fw-semibold">Passing</span>
+              <span className="text-success fw-medium">Passing</span>
             )}
           </div>
           <button
@@ -247,7 +398,7 @@ function GradeListCard({ grade, nextStep }) {
   );
 }
 
-function NotConfiguredCard({ grade, nextStep }) {
+function NotConfiguredCard({ grade, nextStep, moduleState }) {
   const dispatch = useDispatch();
   return (
     <>

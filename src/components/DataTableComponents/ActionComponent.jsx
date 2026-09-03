@@ -98,6 +98,8 @@ export function ModalButton({
   size,
   bulkData,
   fullscreen,
+  closeOnOutsideClick = true,
+  closeOnEscape = true,
 }) {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -138,6 +140,8 @@ export function ModalButton({
         handleClose={handleClose}
         size={size}
         fullscreen={fullscreen}
+        closeOnOutsideClick={closeOnOutsideClick}
+        closeOnEscape={closeOnEscape}
       >
         {modalContent}
       </CustomModal>

@@ -37,7 +37,7 @@ export function gradeScaleColDefs({ ActionComponent }) {
       cellRenderer: ActiveInactiveBadge,
     }),
     textColumn({
-      field: "isgrades_configured",
+      field: "is_configured",
       headerName: "Config Status",
       hide: false,
       cellRenderer: GradesConfigTableBadge,

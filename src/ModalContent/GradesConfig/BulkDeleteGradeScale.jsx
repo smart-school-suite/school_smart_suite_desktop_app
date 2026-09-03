@@ -1,12 +1,16 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useBulkDeleteGradeScale } from "../../hooks/gradeScale/useBulkDeleteGradeScale";
 import { CircleX } from "lucide-react";
-import { useDeleteGradeScale } from "../../hooks/gradeScale/useDeleteGradeScale";
-function DeleteGradesConfig({ handleClose, rowData }) {
-  const { id: categoryId } = rowData;
-  const { mutate: deleteGradeScale, isPending } =
-    useDeleteGradeScale(handleClose);
-  const handleDeleteExamGrades = async () => {
-    deleteGradeScale(categoryId);
+function BulkDeleteGradeScale({ handleClose, bulkData }) {
+  const { mutate: bulkDelete, isPending } =
+    useBulkDeleteGradeScale(handleClose);
+  const handleBulkDelete = () => {
+    const payload = {
+      grade_scale_category_ids: bulkData.map((cat) => ({
+        category_id: cat.id,
+      })),
+    };
+    bulkDelete(payload);
   };
   return (
     <>
@@ -17,7 +21,9 @@ function DeleteGradesConfig({ handleClose, rowData }) {
         >
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
-              <span className="font-size-sm fw-semibold">Delete Grade Scale</span>
+              <span className="font-size-sm fw-semibold">
+                Delete Grade Scale
+              </span>
             </div>
             <button
               onClick={() => handleClose()}
@@ -52,7 +58,7 @@ function DeleteGradesConfig({ handleClose, rowData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeleteExamGrades();
+                handleBulkDelete();
               }}
             >
               {isPending ? <SingleSpinner /> : <>Yes, Delete</>}
@@ -63,4 +69,5 @@ function DeleteGradesConfig({ handleClose, rowData }) {
     </>
   );
 }
-export default DeleteGradesConfig;
+
+export default BulkDeleteGradeScale;

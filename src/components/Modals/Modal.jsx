@@ -1,6 +1,7 @@
 import { Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Icon } from "@iconify/react"
+
 function CustomModal({
   show,
   handleClose,
@@ -11,9 +12,12 @@ function CustomModal({
   fullscreen = false,
   dialogClassName,
   contentClassName,
+  closeOnOutsideClick = true, 
+  closeOnEscape = true,
   ...props
 }) {
   const darkMode = useSelector((state) => state.theme.darkMode);
+  
   return (
     <Modal
       show={show}
@@ -22,6 +26,8 @@ function CustomModal({
       centered={centered}
       scrollable={scrollable}
       fullscreen={fullscreen}
+      backdrop={closeOnOutsideClick ? true : "static"} 
+      keyboard={closeOnEscape}
       className="custom-modal border p-0"
       dialogClassName={`${dialogClassName || ""} custom-modal-dialog`}
       contentClassName={`${contentClassName || ""} ${darkMode ? "dark-bg dark-mode-text" : "white-bg"} custom-modal-content`}

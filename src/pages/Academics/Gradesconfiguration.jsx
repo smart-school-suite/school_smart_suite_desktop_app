@@ -2,11 +2,12 @@ import Table from "../../components/Tables/Tables";
 import { Icon } from "@iconify/react";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import UpdateGradeConfig from "../../ModalContent/GradesConfig/UpdateGrades";
-import DeleteGradesConfig from "../../ModalContent/GradesConfig/DeleteGrades";
-import ViewGradesConfig from "../../ModalContent/GradesConfig/ViewConfigurations";
-import ConfigureGrades from "../../ModalContent/GradesConfig/ConfigureGrades";
-import { ExamGradingCongfig } from "../../ComponentConfig/AgGridTableConfig";
+import DeleteGradeScale from "../../ModalContent/GradesConfig/DeleteGradeScale";
+import DeactivateGradeScaleCategory from "../../ModalContent/GradesConfig/DeactivateGradeScaleCategory";
+import ActivateGradeScaleCategory from "../../ModalContent/GradesConfig/ActivateGradeScaleCategory";
 import ConfigureByOtherGrades from "../../ModalContent/GradesConfig/ConfigureByOtherGrades";
+import CopyExistingGradeScale from "../../DrawerContent/GradeScale/CopyExistingGradeScale";
+import GradeScaleCategoryDetail from "../../DrawerContent/GradeScale/GradeScaleCategoryDetail";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import React, {
@@ -23,8 +24,10 @@ import {
   GenerateIcon,
   ReuseIcon,
   UpdateIcon,
+  SuspendIcon,
+  ActivateIcon,
+  DetailsIcon,
 } from "../../icons/ActionIcons";
-import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
 import { GradeIcon } from "../../icons/Icons";
 import AutoConfigureGrades from "../../ModalContent/GradesConfig/AutoConfigGrades";
 import { useSelector } from "react-redux";
@@ -61,16 +64,26 @@ import {
   toggleGeneralFilter,
   removeCustomFilter,
   setCustomFilter,
+  setImportStatus,
+  setImportSelectedFile,
+  setImportReset,
+  setColumnMapping,
+  setStandardGroupValue,
 } from "../../Slices/academics/gradeScaleSlice";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
 import SearchInput from "../../components/input/search";
 import { Drawer } from "../../components/drawer/Drawer";
-import ScaleWizzard from "../../DrawerContent/GradeScale/ScaleWizzard";
+import ScaleWizzard from "../../DrawerContent/GradeScale/CreateGradeScale/ScaleWizzard";
 import GradeScale from "../../DrawerContent/GradeScale/GradeScale";
+import { GRADE_SCALE_COLUMNS } from "../../utils/gradeScale/gradeScaleColumns";
+import { gradeScaleImportColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleImportColDefs";
+import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
+import { useGetGradeScaleCategories } from "../../hooks/gradeScale/useGetGradeScaleCategories";
+import BulkDeleteGradeScale from "../../ModalContent/GradesConfig/BulkDeleteGradeScale";
 function Gradesconfiguration() {
-  const { data: gradeScales, isLoading, error } = useGetSchoolGradeCategories();
+  const { data: gradeScales, isLoading, error } = useGetGradeScaleCategories();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const gradeScaleState = useSelector((state) => state.gradeScale);
   const tableRef = useRef();
@@ -85,7 +98,7 @@ function Gradesconfiguration() {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedSemesters([]);
+      setSelectedGradeScales([]);
     }
   };
   const handleRowDataFromChild = useCallback((Data) => {
@@ -191,6 +204,20 @@ function Gradesconfiguration() {
                 <div className="d-flex flex-row align-item-center gap-2">
                   <JobPopOver />
                   <ModalButton
+                    action={{ modalContent: ImportWizzard }}
+                    size={"xl"}
+                    rowData={{
+                      moduleState: "gradeScale",
+                      setImportStatus: setImportStatus,
+                      setImportReset: setImportReset,
+                      setImportSelectedFile: setImportSelectedFile,
+                      moduleColumns: GRADE_SCALE_COLUMNS,
+                      setColumnMapping: setColumnMapping,
+                      setStandardGroupValue: setStandardGroupValue,
+                      moduleInstanceMap: [],
+                      module: { name: "Grade Scale" },
+                      importModuleColDefs: gradeScaleImportColDefs,
+                    }}
                     classname={
                       "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
                     }
@@ -345,29 +372,29 @@ function Gradesconfiguration() {
                       handleRowCountFromChild={handleRowCountFromChild}
                       handleRowDataFromChild={handleRowDataFromChild}
                     />
-                    {/* {rowCount > 0 && (
+                    {rowCount > 0 && (
                       <BulkActionsToast
                         rowCount={rowCount}
                         label={`${
                           rowCount > 0
-                            ? "Semester Selected"
-                            : "Semesters Selected"
+                            ? "Grade Scale Category Selected"
+                            : "Grade Scale Categories Selected"
                         }`}
                         resetAll={handleResetSelections}
                         dropDownItems={
                           <DropdownItems
-                            selectedSpecialties={selectedSemesters}
+                            selectedGradeScales={selectedGradeScales}
                             resetAll={handleResetSelections}
                           />
                         }
                         actionButton={
                           <ActionButtons
-                            selectedSpecialties={selectedSemesters}
+                            selectedGradeScales={selectedGradeScales}
                             resetAll={handleResetSelections}
                           />
                         }
                       />
-                    )} */}
+                    )}
                   </motion.div>
                   {gradeScaleState.isGeneralFilterOpen && (
                     <AnimatePresence mode="popLayout">
@@ -511,32 +538,66 @@ export default Gradesconfiguration;
 function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
-  const [ModalComponent, setModalComponent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [DrawerComponent, setDrawerComponent] = useState(null);
-  const [drawerDetail, setDrawerDetail] = useState({
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
     placement: "right",
     title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
   });
+
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalComponent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
-  const handleShowModal = (Component, size = "md") => {
-    setModalComponent(() => Component);
-    setModalSize(size);
+
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
   };
-  const handleShowDrawer = (Component, title = "", closeOnOutsideClick = true) => {
-    setDrawerDetail((prev) => ({ ...prev, title, closeOnOutsideClick }));
-    setDrawerComponent(() => Component);
-    setShowDrawer(true);
-  };
+
   const handleCloseDrawer = () => {
     setShowDrawer(false);
-    setDrawerComponent(null);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
   };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
+  };
+
   return (
     <>
       <ActionButtonDropdown
@@ -545,7 +606,7 @@ function ActionComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        <DropDownMenuItem
+        {/* <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -557,17 +618,64 @@ function ActionComponent(props) {
               <GenerateIcon />
             </div>
           </div>
-        </DropDownMenuItem>
+        </DropDownMenuItem> */}
+        {rowData.is_configured ? (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowDrawer(ScaleWizzard, {
+                title: "Update Grade Scale",
+                closeOnOutsideClick: false,
+                showHeader: false,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Update Grades Scale</span>
+                <UpdateIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        ) : (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowDrawer(ScaleWizzard, {
+                title: "Grade Scale Configuration",
+                closeOnOutsideClick: false,
+                showHeader: false,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Configure Grade</span>
+                <CreateIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        )}
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowDrawer(ScaleWizzard, "Grade Scale Configuration", false)}
+          onClick={() =>
+            handleShowDrawer(GradeScaleCategoryDetail, {
+              title: "Grade Scale Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Configure Grade</span>
-              <CreateIcon />
+              <span>Details</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -575,20 +683,13 @@ function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateGradeConfig, "xl")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update Grades Scale</span>
-              <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          onClick={() =>
+            handleShowDrawer(GradeScale, {
+              title: "Grade Scale",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
           }
-          onClick={() => handleShowDrawer(GradeScale, "Grade Scale")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -601,20 +702,73 @@ function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ConfigureByOtherGrades, "md")}
+          onClick={() =>
+            handleShowModal(CopyExistingGradeScale, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Configure By Other Grades</span>
+              <span>Copy Grade</span>
               <ReuseIcon />
             </div>
           </div>
         </DropDownMenuItem>
+        {rowData.status == "active" ? (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowModal(DeactivateGradeScaleCategory, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Deactivate</span>
+                <SuspendIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        ) : (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowModal(ActivateGradeScaleCategory, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Activate</span>
+                <ActivateIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        )}
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteGradesConfig, "md")}
+          onClick={() =>
+            handleShowModal(DeleteGradeScale, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -627,12 +781,13 @@ function ActionComponent(props) {
       <Drawer
         isOpen={showDrawer}
         onClose={handleCloseDrawer}
-        placement={drawerDetail?.placement}
-        title={drawerDetail?.title}
-        closeOnOutsideClick={drawerDetail?.closeOnOutsideClick}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
       >
-        {DrawerComponent && (
-          <DrawerComponent
+        {drawerConfig.component && (
+          <drawerConfig.component
             handleClose={handleCloseDrawer}
             drawerData={rowData}
           />
@@ -642,11 +797,16 @@ function ActionComponent(props) {
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {ModalComponent && (
-          <ModalComponent rowData={rowData} handleClose={handleCloseModal} />
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
         )}
       </CustomModal>
     </>
@@ -662,7 +822,7 @@ function ActionButtons({ selectedGradeScales, resetAll }) {
         bulkData={selectedGradeScales}
         resetAll={resetAll}
       >
-        <CustomTooltip tooltipText={"Delete All"}>
+        <CustomTooltip tooltipText={"Delete All Grade Scales"}>
           <span className="pointer-cursor">
             <Icon icon="iconamoon:trash-thin" width="24" height="24" />
           </span>
@@ -701,10 +861,10 @@ function DropdownItems({ selectedGradeScales, resetAll, onModalStateChange }) {
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteGradesByCategory, "md")}
+        onClick={() => handleShowModal(BulkDeleteGradeScale, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Delete All Grades</span>
+          <span className="font-size-sm">Delete All Grade Scales</span>
           <DeleteIcon />
         </div>
       </DropDownMenuItem>

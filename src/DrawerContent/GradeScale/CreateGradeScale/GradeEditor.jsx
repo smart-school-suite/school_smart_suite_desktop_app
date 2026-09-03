@@ -1,19 +1,19 @@
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { ArrowLeft, Minus, CircleCheck } from "lucide-react";
 import {
   NumberInput,
   TextInput,
-} from "../../components/FormComponents/InputComponents";
+} from "../../../components/FormComponents/InputComponents";
 import {
   numberSchema,
   nameSchema,
-} from "../../ComponentConfig/YupValidationSchema";
+} from "../../../ComponentConfig/YupValidationSchema";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 import {
   setDraftFieldValue,
   setDraftFieldValidation,
-} from "../../Slices/academics/gradeScaleSlice";
+} from "../../../Slices/academics/gradeScaleSlice";
 import {
   RESIT,
   RESIT_META,
@@ -36,7 +36,7 @@ function GradeEditor({
   const config = moduleState?.configContext?.scale;
   const draftState = moduleState?.draft?.grades[config.letter_grade_id];
   const gsCategory = moduleState.configContext.category.drawerData;
-  
+
   return (
     <>
       <div className="drawer-content px-2 font-size-sm pt-2">
@@ -207,15 +207,32 @@ function GradeEditor({
               <button
                 className="border-none p-2 rounded-3 w-50 bg-none border d-flex flex-row 
                align-items-center justify-content-between text-start hover-border-primary-50 hover-text-primary-400"
-                onClick={() =>
+                onClick={() => {
                   dispatch(
                     setDraftFieldValue({
                       field: "result",
                       value: RESULT.PASSED,
                       grade_id: config.letter_grade_id,
                     }),
-                  )
-                }
+                  );
+                  if (gsCategory.exam_type == EXAM_TYPE.CA) {
+                    dispatch(
+                      setDraftFieldValue({
+                        field: "resit_result",
+                        value: RESIT.LOW_RESIT_POTENTIAL,
+                        grade_id: config.letter_grade_id,
+                      }),
+                    );
+                  } else {
+                    dispatch(
+                      setDraftFieldValue({
+                        field: "resit_result",
+                        value: RESIT.NO_RESIT,
+                        grade_id: config.letter_grade_id,
+                      }),
+                    );
+                  }
+                }}
               >
                 <span>{RESULT_LABEL[RESULT.PASSED]}</span>
                 {draftState?.result?.value == RESULT.PASSED && (
@@ -225,15 +242,32 @@ function GradeEditor({
               <button
                 className="border-none p-2 rounded-3 w-50 bg-none border d-flex flex-row 
                align-items-center justify-content-between text-start hover-border-primary-50 hover-text-primary-400"
-                onClick={() =>
+                onClick={() => {
                   dispatch(
                     setDraftFieldValue({
                       field: "result",
                       value: RESULT.FAILED,
                       grade_id: config.letter_grade_id,
                     }),
-                  )
-                }
+                  );
+                  if (gsCategory.exam_type == EXAM_TYPE.CA) {
+                    dispatch(
+                      setDraftFieldValue({
+                        field: "resit_result",
+                        value: RESIT.HIGH_RESIT_POTENTIAL,
+                        grade_id: config.letter_grade_id,
+                      }),
+                    );
+                  } else {
+                    dispatch(
+                      setDraftFieldValue({
+                        field: "resit_result",
+                        value: RESIT.RESIT,
+                        grade_id: config.letter_grade_id,
+                      }),
+                    );
+                  }
+                }}
               >
                 <span>{RESULT_LABEL[RESULT.FAILED]}</span>
                 {draftState?.result?.value == RESULT.FAILED && (
@@ -259,7 +293,8 @@ function GradeEditor({
                   }}
                 >
                   <span>{RESIT_LABEL[RESIT.LOW_RESIT_POTENTIAL]}</span>
-                  {draftState?.resit_result.value == RESIT.LOW_RESIT_POTENTIAL && (
+                  {draftState?.resit_result.value ==
+                    RESIT.LOW_RESIT_POTENTIAL && (
                     <CircleCheck size={16} className="green-color" />
                   )}
                 </button>
@@ -276,7 +311,8 @@ function GradeEditor({
                   }}
                 >
                   <span>{RESIT_LABEL[RESIT.HIGH_RESIT_POTENTIAL]}</span>
-                  {draftState?.resit_result.value == RESIT.HIGH_RESIT_POTENTIAL && (
+                  {draftState?.resit_result.value ==
+                    RESIT.HIGH_RESIT_POTENTIAL && (
                     <CircleCheck size={16} className="green-color" />
                   )}
                 </button>

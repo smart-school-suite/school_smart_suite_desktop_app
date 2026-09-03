@@ -1,7 +1,6 @@
 import { Fragment, useEffect } from "react";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { PenLine, Plus } from "lucide-react";
-import { useGetGradeConfigDetails } from "../../hooks/schoolGradeCategory/useGetGradeConfigDetails";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,13 +17,14 @@ import {
   RESULT_META,
   EXAM_TYPE,
 } from "@/constants";
+import { useGetGradeScaleCategoryId } from "../../hooks/gradeScale/useGetGradeScaleCategoryId";
 
 function GradeScale({ drawerData, handleClose }) {
   const {
     data: gradeScales,
     isLoading,
     error,
-  } = useGetGradeConfigDetails(drawerData.id);
+  } = useGetGradeScaleCategoryId(drawerData.id);
   return (
     <>
       <div className="drawer-content px-2 font-size-sm pt-2">
@@ -49,7 +49,7 @@ function GradeScale({ drawerData, handleClose }) {
                 ></NotFoundError>
               </>
             ) : (
-              gradeScales?.data?.grades?.map((grade, index) => {
+              gradeScales?.data?.grade_scales?.map((grade, index) => {
                 return (
                   <Fragment key={grade.letter_grade_id}>
                     {grade?.configuration?.is_configured ? (
@@ -70,9 +70,9 @@ function GradeScale({ drawerData, handleClose }) {
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
             <button
               className="border-none bg-none p-2"
-              onClick={() => previousStep()}
+              onClick={() => handleClose()}
             >
-              Back
+             cancel
             </button>
           </div>
         </div>
@@ -121,8 +121,8 @@ function GradeListCard({ grade }) {
               Score Range
             </span>
             <span className="fw-semibold">
-              {grade?.configuration?.min_score} -{" "}
-              {grade?.configuration?.max_score}
+              {grade?.configuration?.minimum_score} -{" "}
+              {grade?.configuration?.maximum_score}
             </span>
           </div>
           <div className="d-flex flex-column gap-2 align-items-center">
@@ -130,7 +130,7 @@ function GradeListCard({ grade }) {
               Grade Points
             </span>
             <span className="fw-semibold">
-              {grade?.configuration?.grade_point}
+              {grade?.configuration?.grade_points}
             </span>
           </div>
           <div className="d-flex flex-column gap-2 align-items-center">

@@ -1,4 +1,4 @@
-import { GRADE_SCALE_STEP_FLOW } from "../../utils/steps/gradeScale/gradeScaleStepFlow";
+import { GRADE_SCALE_STEP_FLOW } from "../../../utils/steps/gradeScale/gradeScaleStepFlow";
 import { useState } from "react";
 function ScaleWizzard({ handleClose, drawerData }) {
   const [stepIndex, setStepIndex] = useState(0);
