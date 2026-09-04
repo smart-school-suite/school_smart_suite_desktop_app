@@ -1,6 +1,14 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { Dot, PenLine, Plus, X } from "lucide-react";
+import {
+  Dot,
+  PenLine,
+  Plus,
+  X,
+  TriangleAlert,
+  Check,
+  OctagonAlert,
+} from "lucide-react";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../../components/errors/Error";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,12 +26,18 @@ import {
   RESULT_META,
   EXAM_TYPE,
 } from "@/constants";
-import { isConflicting } from "../../../utils/gradeScale/gradeScaleHelpers";
+import {
+  isConflicting,
+  isError,
+  isWarning,
+  groupGradeScaleErrors,
+} from "../../../utils/gradeScale/gradeScaleHelpers";
 import { useGetGradeScaleCategoryId } from "../../../hooks/gradeScale/useGetGradeScaleCategoryId";
 import { useCreateGradeScale } from "../../../hooks/gradeScale/useCreateGradeScale";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
 import DiscardWarning from "../../../ModalContent/GradesConfig/DiscardWarning";
+import { GRADE_SCALE_ERROR_MAP } from "../../../utils/maps/gradeScale/gradeScaleErrorMap";
 function GradeList({
   handleClose,
   nextStep,
@@ -210,26 +224,31 @@ function GradeList({
                 ></NotFoundError>
               </>
             ) : (
-              Object.keys(gradeScaleList).map((objKey, index) => {
-                const grade = gradeScaleList[objKey];
-                return (
-                  <Fragment key={objKey}>
-                    {grade?.is_configured ? (
-                      <GradeListCard
-                        grade={grade}
-                        nextStep={nextStep}
-                        moduleState={moduleState}
-                      />
-                    ) : (
-                      <NotConfiguredCard
-                        grade={grade}
-                        nextStep={nextStep}
-                        moduleState={moduleState}
-                      />
-                    )}
-                  </Fragment>
-                );
-              })
+              <div className="d-flex flex-column gap-1">
+                <span className="fw-medium">Scales</span>
+                <div className="d-flex flex-column gap-2">
+                  {Object.keys(gradeScaleList).map((objKey, index) => {
+                    const grade = gradeScaleList[objKey];
+                    return (
+                      <Fragment key={objKey}>
+                        {grade?.is_configured ? (
+                          <GradeListCard
+                            grade={grade}
+                            nextStep={nextStep}
+                            moduleState={moduleState}
+                          />
+                        ) : (
+                          <NotConfiguredCard
+                            grade={grade}
+                            nextStep={nextStep}
+                            moduleState={moduleState}
+                          />
+                        )}
+                      </Fragment>
+                    );
+                  })}
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -286,12 +305,26 @@ function GradeList({
 export default GradeList;
 
 function GradeListCard({ grade, nextStep, moduleState }) {
+  const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const conflicts = moduleState.diagnostics.conflicts;
+  const warnings = moduleState.diagnostics.warnings;
+  const groupErrors = groupGradeScaleErrors(
+    grade?.letter_grade_id,
+    conflicts,
+    warnings,
+  );
   return (
     <>
       <div
-        className={`card p-3 rounded-4 d-flex flex-column gap-3 ${isConflicting(grade?.letter_grade_id, conflicts) ? "border-danger" : "border"} shadow-sm`}
+        className={`card p-3 rounded-4 d-flex flex-column gap-3 transition-all
+           ${
+             isError(grade?.letter_grade_id, conflicts)
+               ? "border-1 border-red-200 shadow-red-50"
+               : isWarning(grade?.letter_grade_id, warnings)
+                 ? "border-1 border-old-lace-200 shadow-old-lace-50"
+                 : "border shadow-sm"
+           } `}
       >
         <div className="d-flex flex-row justify-content-between">
           <div className="d-flex flex-row align-items-center gap-2">
@@ -310,29 +343,43 @@ function GradeListCard({ grade, nextStep, moduleState }) {
           </div>
           {isConflicting(grade?.letter_grade_id, conflicts) ? (
             <span
-              className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2"
+              className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2 pointer-cursor"
               style={{
                 backgroundColor: "#ffdddd",
                 color: "#ff5757",
                 fontSize: "0.75rem",
                 height: "1.5rem",
               }}
+              onClick={() => setIsOpen(true)}
             >
-              Needs Review
+              <TriangleAlert size={14} />
+              <span>Action required</span>
             </span>
-          ) : (
+          ) : isWarning(grade?.letter_grade_id, warnings) ? (
             <span
-              className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2"
+              className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2 pointer-cursor bg-old-lace-100 text-old-lace-400"
               style={{
-                backgroundColor: "#e3f5e3",
-                color: "#5cb85c",
+                fontSize: "0.75rem",
+                height: "1.5rem",
+              }}
+              onClick={() => setIsOpen(true)}
+            >
+              <OctagonAlert size={12} />
+              <span>Review recommended</span>
+            </span>
+          ) : !isConflicting(grade?.letter_grade_id, conflicts) &&
+            !isWarning(grade?.letter_grade_id, warnings) ? (
+            <span
+              className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2 pointer-cursor bg-fern-100 text-fern-400"
+              style={{
                 fontSize: "0.75rem",
                 height: "1.5rem",
               }}
             >
-              Configured
+              <Check size={12} />
+              <span>Configured</span>
             </span>
-          )}
+          ) : null}
         </div>
         <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
         <div className="d-flex flex-row font-size-sm  gap-4">
@@ -366,6 +413,14 @@ function GradeListCard({ grade, nextStep, moduleState }) {
               {RESIT_LABEL[grade?.resit_result?.value]}
             </span>
           </div>
+          <div className="d-flex flex-column gap-2 align-items-center">
+            <span className="fw-normal gainsboro-color text-uppercase">
+              Performance
+            </span>
+            <span className="fw-semibold text-capitalize">
+              {grade?.performance?.value}
+            </span>
+          </div>
         </div>
         <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
         <div className="d-flex flex-row justify-content-between">
@@ -393,6 +448,50 @@ function GradeListCard({ grade, nextStep, moduleState }) {
             <PenLine size={16} />
           </button>
         </div>
+        <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+        {isOpen && (
+          <div className="d-flex flex-column gap-2">
+            {groupErrors?.conflicts?.length > 0 && (
+              <>
+                <div className="d-flex flex-column gap-1">
+                  <span className="fw-medium">Errors</span>
+                  {groupErrors?.conflicts?.map((conflict) => {
+                    const Component =
+                      GRADE_SCALE_ERROR_MAP[conflict.type]?.component;
+                    return (
+                      <Component
+                        error={conflict}
+                        updatedGradeContext={updatedGradeContext}
+                        nextStep={nextStep}
+                        grade={grade}
+                        gradeScale={moduleState?.draft}
+                      />
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+            {groupErrors?.warnings?.length > 0 && (
+              <div className="d-flex flex-column gap-1">
+                <span className="fw-medium">Warnings</span>
+                {groupErrors?.warnings?.map((warning) => {
+                  const Component =
+                    GRADE_SCALE_ERROR_MAP[warning.type]?.component;
+                  return (
+                    <Component
+                      error={warning}
+                      updatedGradeContext={updatedGradeContext}
+                      nextStep={nextStep}
+                      grade={grade}
+                      gradeScale={moduleState?.draft}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </>
   );

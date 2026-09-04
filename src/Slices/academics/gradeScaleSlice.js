@@ -2,7 +2,7 @@ import { createSlice, createSelector } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import {
   hasGradeScaleChanges,
-  validateGradeRanges,
+  validateGradeScale,
 } from "../../utils/gradeScale/gradeScaleHelpers";
 const initialState = {
   gradeScales: null,
@@ -87,6 +87,10 @@ const initialState = {
       isValid: null,
       conflicts: [],
       warnings: [],
+    },
+    copyGrade: {
+      sourceScale: null,
+      targetScales: [],
     },
   },
 };
@@ -208,8 +212,8 @@ const gradeScaleSlice = createSlice({
         state.gradeScale.initialconfig,
         state.gradeScale.draft,
       );
-      if (field === "min_score" || field === "max_score") {
-        state.gradeScale.diagnostics = validateGradeRanges(
+      if (field === "min_score" || field === "max_score" || field === "performance") {
+        state.gradeScale.diagnostics = validateGradeScale(
           state.gradeScale.draft.grades,
           state.gradeScale.draft.maximumScore,
         );

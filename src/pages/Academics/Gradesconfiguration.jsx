@@ -1,13 +1,12 @@
 import Table from "../../components/Tables/Tables";
 import { Icon } from "@iconify/react";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import UpdateGradeConfig from "../../ModalContent/GradesConfig/UpdateGrades";
 import DeleteGradeScale from "../../ModalContent/GradesConfig/DeleteGradeScale";
 import DeactivateGradeScaleCategory from "../../ModalContent/GradesConfig/DeactivateGradeScaleCategory";
 import ActivateGradeScaleCategory from "../../ModalContent/GradesConfig/ActivateGradeScaleCategory";
-import ConfigureByOtherGrades from "../../ModalContent/GradesConfig/ConfigureByOtherGrades";
-import CopyExistingGradeScale from "../../DrawerContent/GradeScale/CopyExistingGradeScale";
 import GradeScaleCategoryDetail from "../../DrawerContent/GradeScale/GradeScaleCategoryDetail";
+import BulkDeleteGradeScale from "../../ModalContent/GradesConfig/BulkDeleteGradeScale";
+import CopyScaleWizzard from "../../DrawerContent/GradeScale/CopyScale/CopyScaleWizzard";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import React, {
@@ -29,13 +28,10 @@ import {
   DetailsIcon,
 } from "../../icons/ActionIcons";
 import { GradeIcon } from "../../icons/Icons";
-import AutoConfigureGrades from "../../ModalContent/GradesConfig/AutoConfigGrades";
 import { useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import BulkDeleteGradesByCategory from "../../ModalContent/GradesConfig/BulkDeleteGradesByCategory";
-import BulkCreateGradesByTargetCategory from "../../ModalContent/GradesConfig/BulkCreateGradesByTargetCategory";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { gradeScaleColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleColDefs";
@@ -81,7 +77,8 @@ import { GRADE_SCALE_COLUMNS } from "../../utils/gradeScale/gradeScaleColumns";
 import { gradeScaleImportColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleImportColDefs";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { useGetGradeScaleCategories } from "../../hooks/gradeScale/useGetGradeScaleCategories";
-import BulkDeleteGradeScale from "../../ModalContent/GradesConfig/BulkDeleteGradeScale";
+import { GRADE_SCALE_ERROR_MAP } from "../../utils/maps/gradeScale/gradeScaleErrorMap";
+
 function Gradesconfiguration() {
   const { data: gradeScales, isLoading, error } = useGetGradeScaleCategories();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -703,16 +700,16 @@ function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowModal(CopyExistingGradeScale, {
-              size: "md",
+            handleShowDrawer(CopyScaleWizzard, {
+              title: "Copy Grade Scale",
               closeOnOutsideClick: true,
-              closeOnEscape: true,
+              showHeader: true,
             })
           }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Copy Grade</span>
+              <span>Copy Grade Scale</span>
               <ReuseIcon />
             </div>
           </div>
@@ -870,7 +867,6 @@ function DropdownItems({ selectedGradeScales, resetAll, onModalStateChange }) {
       </DropDownMenuItem>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkCreateGradesByTargetCategory, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Configure All By Target Category</span>

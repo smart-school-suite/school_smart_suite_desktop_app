@@ -47,7 +47,7 @@ const hasGradeScaleChanges = (initialConfig, draft) => {
 
   return false;
 };
-const validateGradeRanges = (grades, maximumScore) => {
+const validateGradeScale = (grades, maximumScore) => {
   const conflicts = [];
   const warnings = [];
 
@@ -56,69 +56,100 @@ const validateGradeRanges = (grades, maximumScore) => {
   for (let i = 0; i < gradeEntries.length; i++) {
     const grade = gradeEntries[i];
 
-    const min = Number(grade.min_score?.value);
-    const max = Number(grade.max_score?.value);
+    const gradeId = grade.letter_grade_id;
 
-    if (
-      grade.min_score?.value === "" ||
-      grade.max_score?.value === "" ||
-      grade.min_score?.value === null ||
-      grade.max_score?.value === null
-    ) {
-      continue;
-    }
+    const minValue = grade.min_score?.value;
+    const maxValue = grade.max_score?.value;
 
-    if (min > max) {
-      conflicts.push({
-        id: uuidv4(),
-        type: "invalid_grade_range",
-        grade_ids: [grade.letter_grade_id]
-      });
-    }
+    const hasMin = minValue !== "" && minValue !== null;
+    const hasMax = maxValue !== "" && maxValue !== null;
 
-    if (min < 0 || max < 0) {
-      conflicts.push({
-        id: uuidv4(),
-        type: "negative_score",
-        grade_ids: [grade.letter_grade_id]
-      });
-    }
+    const min = parseFloat(minValue);
+    const max = parseFloat(maxValue);
 
-    if (
-      maximumScore !== "" &&
-      maximumScore !== null &&
-      (min > Number(maximumScore) || max > Number(maximumScore))
-    ) {
-      conflicts.push({
-        id: uuidv4(),
-        type: "score_exceeds_maximum",
-        grade_ids: [grade.letter_grade_id]
-      });
-    }
-
-    for (let j = i + 1; j < gradeEntries.length; j++) {
-      const otherGrade = gradeEntries[j];
-
-      const otherMin = Number(otherGrade.min_score?.value);
-      const otherMax = Number(otherGrade.max_score?.value);
-
-      if (
-        otherGrade.min_score?.value === "" ||
-        otherGrade.max_score?.value === "" ||
-        otherGrade.min_score?.value === null ||
-        otherGrade.max_score?.value === null
-      ) {
-        continue;
+    if (hasMin && hasMax) {
+      if (min > max) {
+        conflicts.push({
+          id: uuidv4(),
+          type: "invalid_grade_range",
+          grade_ids: [gradeId],
+        });
       }
 
-      const overlaps = min <= otherMax && max >= otherMin;
-
-      if (overlaps) {
+      if (min < 0 || max < 0) {
         conflicts.push({
-          id:  uuidv4(),
-          type: "grade_range_overlap",
-          grade_ids: [grade.letter_grade_id, otherGrade.letter_grade_id],
+          id: uuidv4(),
+          type: "negative_score",
+          grade_ids: [gradeId],
         });
+      }
+
+      if (
+        maximumScore !== "" &&
+        maximumScore !== null &&
+        (min > parseFloat(maximumScore) || max > parseFloat(maximumScore))
+      ) {
+        conflicts.push({
+          id: uuidv4(),
+          type: "score_exceeds_maximum",
+          grade_ids: [gradeId],
+        });
+      }
+    }
+
+    if (hasMin && hasMax) {
+      for (let j = i + 1; j < gradeEntries.length; j++) {
+        const otherGrade = gradeEntries[j];
+
+        const otherMinValue = otherGrade.min_score?.value;
+        const otherMaxValue = otherGrade.max_score?.value;
+
+        const hasOtherMin = otherMinValue !== "" && otherMinValue !== null;
+
+        const hasOtherMax = otherMaxValue !== "" && otherMaxValue !== null;
+
+        if (!hasOtherMin || !hasOtherMax) {
+          continue;
+        }
+
+        const otherMin = parseFloat(otherMinValue);
+        const otherMax = parseFloat(otherMaxValue);
+
+        const overlaps = min <= otherMax && max >= otherMin;
+
+        if (overlaps) {
+          conflicts.push({
+            id: uuidv4(),
+            type: "grade_range_overlap",
+            grade_ids: [gradeId, otherGrade.letter_grade_id],
+          });
+        }
+      }
+    }
+
+    const performance = grade.performance?.value;
+
+    if (performance !== null && performance !== "") {
+      for (let j = i + 1; j < gradeEntries.length; j++) {
+        const otherGrade = gradeEntries[j];
+
+        const otherPerformance = otherGrade.performance?.value;
+
+        if (otherPerformance === null || otherPerformance === "") {
+          continue;
+        }
+
+        const samePerformance =
+          performance.trim().toLowerCase() ==
+          otherPerformance.trim().toLowerCase();
+
+        if (samePerformance) {
+          warnings.push({
+            id: uuidv4(),
+            type: "duplicate_performance",
+            grade_ids: [gradeId, otherGrade.letter_grade_id],
+          });
+        }
       }
     }
   }
@@ -126,14 +157,32 @@ const validateGradeRanges = (grades, maximumScore) => {
   return {
     isValid: conflicts.length === 0,
     conflicts,
-    warnings
+    warnings,
   };
 };
+
+function isError(id, conflictsArray) {
+  for (const conflict of conflictsArray) {
+    if (conflict.grade_ids && conflict.grade_ids.includes(id)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isWarning(id, conflictsArray) {
+  for (const conflict of conflictsArray) {
+    if (conflict.grade_ids && conflict.grade_ids.includes(id)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 function isConflicting(id, conflictsArray) {
   // Filter for grade_range_overlap type conflicts
   const gradeRangeOverlaps = conflictsArray.filter(
-    item => item.type === "grade_range_overlap"
+    (item) => item.type === "grade_range_overlap",
   );
 
   // Check if any conflict's grade_ids array includes the given id
@@ -146,4 +195,29 @@ function isConflicting(id, conflictsArray) {
   return false;
 }
 
-export { hasGradeScaleChanges, validateGradeRanges, isConflicting };
+function groupGradeScaleErrors(id, conflictsArray, warningsArray) {
+  const conflicts = [];
+  const warnings = [];
+
+  for (const conflict of conflictsArray) {
+    if (conflict.grade_ids && conflict.grade_ids.includes(id)) {
+      conflicts.push(conflict);
+    }
+  }
+
+  for (const warning of warningsArray) {
+    if (warning.grade_ids && warning.grade_ids.includes(id)) {
+      warnings.push(warning);
+    }
+  }
+
+  return { conflicts, warnings };
+}
+export {
+  hasGradeScaleChanges,
+  validateGradeScale,
+  isConflicting,
+  isError,
+  isWarning,
+  groupGradeScaleErrors,
+};
