@@ -44,8 +44,10 @@ export const getGradeScaleCategoryDetails = async (categoryId) => {
 };
 
 export const copyGradeScale = async (sourceCategoryId, targetCategoryId) => {
+  console.log(sourceCategoryId, targetCategoryId);
   const response = await axiosInstance.post(
     `grade-scale/copy/source-category/${sourceCategoryId}/target-category/${targetCategoryId}`,
+    {},
   );
   return response.data;
 };
@@ -76,7 +78,13 @@ export const importGradeScale = async (payload) => {
   return response.data;
 };
 
-export const getGradeScaleCategoryId = async (categoryId) => {
-  const response = await axiosInstance.get(`grade-scale/category/${categoryId}`);
+export const getGradeScaleCategoryId = async (
+  categoryId,
+  configType = null,
+  maxScore = null,
+) => {
+  const response = await axiosInstance.get(
+    `grade-scale/category/${categoryId}/configType/${configType}/maxScore/${maxScore}`,
+  );
   return response.data;
 };

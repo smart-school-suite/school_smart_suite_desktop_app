@@ -1,9 +1,11 @@
 import { CircleX } from "lucide-react";
 import { resetScaleState } from "../../Slices/academics/gradeScaleSlice";
 import { useDispatch } from "react-redux";
+import { useQueryClient } from "@tanstack/react-query";
 function DiscardWarning({ handleClose, rowData }) {
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const { handleCloseDrawer } = rowData;
+  const { handleCloseDrawer, drawerData } = rowData;
   return (
     <>
       <div className="w-100">
@@ -50,6 +52,12 @@ function DiscardWarning({ handleClose, rowData }) {
               onClick={() => {
                 dispatch(resetScaleState());
                 handleCloseDrawer();
+                queryClient.invalidateQueries({
+                  queryKey: [
+                    "grade-scale-category",
+                    drawerData.id,
+                  ],
+                });
               }}
             >
               Yes, Discard

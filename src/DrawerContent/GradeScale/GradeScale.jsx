@@ -1,6 +1,6 @@
 import { Fragment, useEffect } from "react";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { PenLine, Plus } from "lucide-react";
+import { PenLine, Plus, Dot, Scale } from "lucide-react";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,39 +28,70 @@ function GradeScale({ drawerData, handleClose }) {
   return (
     <>
       <div className="drawer-content px-2 font-size-sm pt-2">
-        <div className="d-flex flex-column gap-3">
-          <div
-            className="d-flex flex-column gap-2"
-            style={{ paddingBottom: "10rem" }}
-          >
-            {isLoading ? (
-              <div className="d-flex flex-column gap-2 px-2">
-                {[...Array(8)].map((_, index) => (
-                  <Fragment key={index}>
-                    <RectangleSkeleton height="20dvh" width="100%" />
-                  </Fragment>
-                ))}
+        <div className="d-flex flex-column gap-4">
+          <div className="d-flex flex-row align-items-center gap-2">
+            <div
+              className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
+              style={{ height: "2.5rem", width: "2.5rem" }}
+            >
+              <Scale size={16} />
+            </div>
+            <div className="d-flex flex-column">
+              <small className="text-muted">Category</small>
+              <div className="d-flex flex-row align-items-center gap-1">
+                <span className="fw-semibold font-size-md">
+                  {drawerData.grade_title}
+                </span>
+                <Dot size={16} />
+                <span className="fw-semibold font-size-md text-capitalize">
+                  {drawerData.exam_type}
+                </span>
+                {drawerData?.max_score && (
+                  <>
+                    <Dot size={16} />
+                    <span className="fw-semibold font-size-md text-capitalize">
+                      {drawerData?.max_score ?? 0}
+                    </span>
+                  </>
+                )}
               </div>
-            ) : error ? (
-              <>
-                <NotFoundError
-                  title={error?.response?.data?.errors?.title}
-                  description={error?.response?.data?.errors?.description}
-                ></NotFoundError>
-              </>
-            ) : (
-              gradeScales?.data?.grade_scales?.map((grade, index) => {
-                return (
-                  <Fragment key={grade.letter_grade_id}>
-                    {grade?.configuration?.is_configured ? (
-                      <GradeListCard grade={grade} />
-                    ) : (
-                      <NotConfiguredCard grade={grade} />
-                    )}
-                  </Fragment>
-                );
-              })
-            )}
+            </div>
+          </div>
+          <div className="d-flex flex-column gap-1">
+            <span className="fw-medium">Scales</span>
+            <div
+              className="d-flex flex-column gap-2"
+              style={{ paddingBottom: "10rem" }}
+            >
+              {isLoading ? (
+                <div className="d-flex flex-column gap-2 px-2">
+                  {[...Array(8)].map((_, index) => (
+                    <Fragment key={index}>
+                      <RectangleSkeleton height="20dvh" width="100%" />
+                    </Fragment>
+                  ))}
+                </div>
+              ) : error ? (
+                <>
+                  <NotFoundError
+                    title={error?.response?.data?.errors?.title}
+                    description={error?.response?.data?.errors?.description}
+                  ></NotFoundError>
+                </>
+              ) : (
+                gradeScales?.data?.grade_scales?.map((grade, index) => {
+                  return (
+                    <Fragment key={grade.letter_grade_id}>
+                      {grade?.configuration?.is_configured ? (
+                        <GradeListCard grade={grade} />
+                      ) : (
+                        <NotConfiguredCard grade={grade} />
+                      )}
+                    </Fragment>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -72,7 +103,7 @@ function GradeScale({ drawerData, handleClose }) {
               className="border-none bg-none p-2"
               onClick={() => handleClose()}
             >
-             cancel
+              cancel
             </button>
           </div>
         </div>
@@ -170,7 +201,7 @@ function GradeListCard({ grade }) {
   );
 }
 
-function NotConfiguredCard({ grade  }) {
+function NotConfiguredCard({ grade }) {
   const dispatch = useDispatch();
   return (
     <>

@@ -10,7 +10,7 @@ import {
 import { useDispatch } from "react-redux";
 function MaxScoreExceeded({
   error,
-  updateGradeContext,
+  updatedGradeContext,
   nextStep,
   grade,
   gradeScale,

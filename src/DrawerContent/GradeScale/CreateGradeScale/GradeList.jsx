@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import {
   Dot,
@@ -8,6 +9,8 @@ import {
   TriangleAlert,
   Check,
   OctagonAlert,
+  Info,
+  Scale,
 } from "lucide-react";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../../components/errors/Error";
@@ -46,16 +49,23 @@ function GradeList({
   currentStep,
   drawerData,
 }) {
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
+  const moduleState = useSelector((state) => state.gradeScale.gradeScale);
+ 
+  const gradeScaleList = moduleState?.draft?.grades;
+  const [isValid, setIsValid] = useState(true);
   const {
     data: gradeScales,
     isLoading,
     error,
-  } = useGetGradeScaleCategoryId(drawerData.id);
+  } = useGetGradeScaleCategoryId(
+    drawerData.id,
+    moduleState?.configType,
+    moduleState?.draft?.maximumScore,
+  );
   const { mutate: createGradeScale, isPending } =
     useCreateGradeScale(handleClose);
-  const moduleState = useSelector((state) => state.gradeScale.gradeScale);
-  const gradeScaleList = moduleState?.draft?.grades;
   useEffect(() => {
     const hasExistingDraftData =
       gradeScaleList && Object.keys(gradeScaleList).length > 0;
@@ -67,15 +77,15 @@ function GradeList({
       const data = gradeScales?.data?.grade_scales.reduce((acc, item) => {
         acc[item.letter_grade_id] = {
           min_score: {
-            value: item.configuration.minimum_score,
+            value: parseFloat(item.configuration.minimum_score).toFixed(2),
             isValid: null,
           },
           max_score: {
-            value: item.configuration.maximum_score,
+            value: parseFloat(item.configuration.maximum_score).toFixed(2),
             isValid: null,
           },
           grade_point: {
-            value: item.configuration.grade_points,
+            value: parseFloat(item.configuration.grade_points).toFixed(2),
             isValid: null,
           },
           performance: {
@@ -103,6 +113,10 @@ function GradeList({
 
   const handleCreateGrades = async () => {
     const grades = moduleState.draft.grades;
+    if (moduleState.diagnostics.conflicts.length > 0) {
+      setIsValid(false);
+      return;
+    }
     const formattedPayload = Object.keys(grades)
       .map((objKey) => ({
         letter_grade_id: grades[objKey].letter_grade_id,
@@ -134,14 +148,19 @@ function GradeList({
       grade_max_score: moduleState.draft.maximumScore,
       grades_category_id: moduleState.configContext.category.drawerData.id,
     });
+    dispatch(resetScaleState());
   };
+ 
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
         <span className="fw-medium">Grade Scale Configuration</span>
         {moduleState.isDirty ? (
           <ModalButton
-            action={{ modalContent: DiscardWarning }}
+            action={{
+              modalContent: DiscardWarning,
+              drawerData: { ...moduleState.configContext.category.drawerData },
+            }}
             size={"md"}
             rowData={{ handleCloseDrawer: handleClose }}
             closeOnOutsideClick={false}
@@ -149,11 +168,6 @@ function GradeList({
           >
             <button
               className="bg-none border-none border rounded-circle"
-              aria-label="Close drawer"
-              onClick={() => {
-                handleClose();
-                dispatch(resetScaleState());
-              }}
               style={{
                 width: "2rem",
                 height: "2rem",
@@ -172,6 +186,12 @@ function GradeList({
             onClick={() => {
               handleClose();
               dispatch(resetScaleState());
+              queryClient.invalidateQueries({
+                queryKey: [
+                  "grade-scale-category",
+                  moduleState.configContext.category.drawerData.id,
+                ],
+              });
             }}
             style={{
               width: "2rem",
@@ -187,23 +207,72 @@ function GradeList({
       </div>
       <div className="drawer-content px-2 font-size-sm pt-2">
         <div className="d-flex flex-column gap-3">
-          <div className="d-flex flex-column gap-2">
+          <div className="d-flex flex-column gap-4">
             <div className="d-flex flex-row justify-content-between">
-              <span className="fw-semibold">Configure Grade Scale</span>
-              <span className="text-end muted text-capitalize">{`step ${currentStep} of ${fullStep} completed`}</span>
-            </div>
-            <div className="d-flex flex-column">
-              <span>Configure the score range and meaning of each grade.</span>
               <div className="d-flex flex-row align-items-center gap-2">
+                <div
+                  className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
+                  style={{ height: "2.5rem", width: "2.5rem" }}
+                >
+                  <Scale size={16} />
+                </div>
+                <div className="d-flex flex-column">
+                  <small className="text-muted">Category</small>
+                  <div className="d-flex flex-row align-items-center gap-1">
+                    <span className="fw-semibold font-size-md">
+                      {
+                        moduleState?.configContext?.category?.drawerData
+                          ?.grade_title
+                      }
+                    </span>
+                    <Dot size={16} />
+                    <span className="fw-semibold font-size-md text-capitalize">
+                      {
+                        moduleState?.configContext?.category?.drawerData
+                          ?.exam_type
+                      }
+                    </span>
+                    <Dot size={16} />
+                    <span className="fw-semibold font-size-md text-capitalize">
+                      {moduleState?.draft?.maximumScore}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <span className="text-end text-capitalize">{`step ${currentStep} of ${fullStep} completed`}</span>
+            </div>
+            <div className="d-flex flex-row justify-content-between">
+              <div className="d-flex flex-row align-items-center gap-2">
+                <Info size={16} />
+                <small className="text-muted">
+                  Only configured grades will be included when you save this
+                  scale.
+                </small>
+              </div>
+              <div className="d-flex flex-row gap-1 fw-semibold">
                 <span>
-                  {isLoading ? 0 : gradeScales?.data?.grade_scales?.length}{" "}
-                  grades
+                  {isLoading
+                    ? 0
+                    : Object.values(gradeScaleList).filter(
+                        (item) => item.is_configured === true,
+                      ).length}
+                </span>{" "}
+                <span>/</span>{" "}
+                <span>
+                  {isLoading ? 0 : gradeScales?.data?.grade_scales?.length}
                 </span>
-                <Dot />
-                <span>{moduleState?.draft?.maximumScore} Max Score</span>
+                <span>Grades Configured</span>
               </div>
             </div>
           </div>
+          {!isValid && (
+            <div className="alert alert-danger rounded-4">
+              <p>
+                Opps Looks Like you have errors please fix them before
+                submitting again
+              </p>
+            </div>
+          )}
           <div
             className="d-flex flex-column gap-2"
             style={{ paddingBottom: "10rem" }}
@@ -260,6 +329,7 @@ function GradeList({
             <button
               className="border-none bg-none p-2"
               onClick={() => previousStep()}
+              disabled={isLoading}
             >
               Back
             </button>
@@ -268,7 +338,12 @@ function GradeList({
                 <ModalButton
                   action={{ modalContent: DiscardWarning }}
                   size={"md"}
-                  rowData={{ handleCloseDrawer: handleClose }}
+                  rowData={{
+                    handleCloseDrawer: handleClose,
+                    drawerData: {
+                      ...moduleState.configContext.category.drawerData,
+                    },
+                  }}
                   closeOnOutsideClick={false}
                   closeOnEscape={false}
                 >
@@ -279,9 +354,16 @@ function GradeList({
               ) : (
                 <button
                   className="border rounded-3 bg-none px-3 py-2"
+                  disabled={isLoading}
                   onClick={() => {
                     handleClose();
                     dispatch(resetScaleState());
+                    queryClient.invalidateQueries({
+                      queryKey: [
+                        "grade-scale-category",
+                        moduleState.configContext.category.drawerData.id,
+                      ],
+                    });
                   }}
                 >
                   Cancel
@@ -291,6 +373,7 @@ function GradeList({
                 <button
                   className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
                   onClick={() => handleCreateGrades()}
+                  disabled={isLoading}
                 >
                   {isPending ? <SingleSpinner /> : "Create Grade Scale"}
                 </button>
@@ -448,7 +531,9 @@ function GradeListCard({ grade, nextStep, moduleState }) {
             <PenLine size={16} />
           </button>
         </div>
-        <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+        {isOpen && (
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+        )}
         {isOpen && (
           <div className="d-flex flex-column gap-2">
             {groupErrors?.conflicts?.length > 0 && (

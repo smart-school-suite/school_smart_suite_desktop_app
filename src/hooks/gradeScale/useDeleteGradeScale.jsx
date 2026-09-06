@@ -8,7 +8,8 @@ export const useDeleteGradeScale = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteGradeScale,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const categoryId = data?.data?.id ?? data?.id;
       toast.custom(
         <ToastSuccess
           title={"Delete Successfull"}
@@ -19,6 +20,11 @@ export const useDeleteGradeScale = (handleClose) => {
         handleClose();
       }
       queryClient.invalidateQueries({ queryKey: ["grade-scale-categories"] });
+      if (categoryId) {
+        queryClient.invalidateQueries({
+          queryKey: ["grade-scale-category", categoryId],
+        });
+      }
     },
     onError: (error) => {
       toast.custom(

@@ -7,8 +7,10 @@ import { copyGradeScale } from "../../services/gradeScale";
 export const useCopyGradeScale = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: copyGradeScale,
-    onSuccess: () => {
+    mutationFn: ({ sourceCategoryId, targetCategoryId }) =>
+      copyGradeScale(sourceCategoryId, targetCategoryId),
+    onSuccess: (data) => {
+      const categoryId = data?.data?.id ?? data?.id;
       toast.custom(
         <ToastSuccess
           title={"Copy Successfull"}
@@ -19,6 +21,11 @@ export const useCopyGradeScale = (handleClose) => {
         handleClose();
       }
       queryClient.invalidateQueries({ queryKey: ["grade-scale-categories"] });
+      if (categoryId) {
+        queryClient.invalidateQueries({
+          queryKey: ["grade-scale-category", categoryId],
+        });
+      }
     },
     onError: (error) => {
       toast.custom(

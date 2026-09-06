@@ -28,7 +28,7 @@ import {
   DetailsIcon,
 } from "../../icons/ActionIcons";
 import { GradeIcon } from "../../icons/Icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
@@ -65,6 +65,7 @@ import {
   setImportReset,
   setColumnMapping,
   setStandardGroupValue,
+  resetScaleState,
 } from "../../Slices/academics/gradeScaleSlice";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
@@ -81,6 +82,7 @@ import { GRADE_SCALE_ERROR_MAP } from "../../utils/maps/gradeScale/gradeScaleErr
 
 function Gradesconfiguration() {
   const { data: gradeScales, isLoading, error } = useGetGradeScaleCategories();
+  const dipatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const gradeScaleState = useSelector((state) => state.gradeScale);
   const tableRef = useRef();
@@ -533,6 +535,7 @@ function Gradesconfiguration() {
 export default Gradesconfiguration;
 
 function ActionComponent(props) {
+  const dispatch = useDispatch();
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
@@ -621,13 +624,14 @@ function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() =>
+            onClick={() => {
+              dispatch(resetScaleState());
               handleShowDrawer(ScaleWizzard, {
                 title: "Update Grade Scale",
                 closeOnOutsideClick: false,
                 showHeader: false,
-              })
-            }
+              });
+            }}
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -641,13 +645,14 @@ function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() =>
+            onClick={() => {
+              dispatch(resetScaleState());
               handleShowDrawer(ScaleWizzard, {
                 title: "Grade Scale Configuration",
                 closeOnOutsideClick: false,
                 showHeader: false,
-              })
-            }
+              });
+            }}
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -865,9 +870,7 @@ function DropdownItems({ selectedGradeScales, resetAll, onModalStateChange }) {
           <DeleteIcon />
         </div>
       </DropDownMenuItem>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-      >
+      <DropDownMenuItem className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor">
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Configure All By Target Category</span>
           <ReuseIcon />

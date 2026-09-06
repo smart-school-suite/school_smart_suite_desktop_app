@@ -19,7 +19,9 @@ export const useActivateGradeScaleCategory = (handleClose, categoryId) => {
         handleClose();
       }
       queryClient.invalidateQueries({ queryKey: ["grade-scale-categories"] });
-      queryClient.invalidateQueries({ queryKey: ["grade-scale-category-details", hallId] });
+      queryClient.invalidateQueries({
+        queryKey: ["grade-scale-categories-active"],
+      });
     },
     onError: (error) => {
       toast.custom(

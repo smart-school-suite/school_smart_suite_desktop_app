@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 function DuplicatePerformance({
   error,
-  updateGradeContext,
+  updatedGradeContext,
   nextStep,
   grade,
   gradeScale,

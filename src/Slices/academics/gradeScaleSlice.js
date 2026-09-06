@@ -71,6 +71,7 @@ const initialState = {
   },
   gradeScale: {
     isDirty: false,
+    configType: null,
     configContext: {
       category: {},
       scale: {},
@@ -186,11 +187,15 @@ const gradeScaleSlice = createSlice({
       state.columns.selectedColumns = action.payload;
     },
     updatedGradeContext: (state, action) => {
-      const { data, maxScore, field } = action.payload;
+      const { data, maxScore, field, configType } = action.payload;
       state.gradeScale.configContext[field] = { ...data };
       if (field == "category") {
         state.gradeScale.draft.maximumScore = maxScore;
         state.gradeScale.initialconfig.maximumScore = data?.max_score || "";
+        state.gradeScale.configType = configType;
+        if (configType === "automatic") {
+          state.gradeScale.isDirty = true;
+        }
       }
     },
     setGradeScaleLoadData: (state, action) => {
@@ -212,7 +217,11 @@ const gradeScaleSlice = createSlice({
         state.gradeScale.initialconfig,
         state.gradeScale.draft,
       );
-      if (field === "min_score" || field === "max_score" || field === "performance") {
+      if (
+        field === "min_score" ||
+        field === "max_score" ||
+        field === "performance"
+      ) {
         state.gradeScale.diagnostics = validateGradeScale(
           state.gradeScale.draft.grades,
           state.gradeScale.draft.maximumScore,
@@ -239,6 +248,18 @@ const gradeScaleSlice = createSlice({
     resetScaleState: (state, action) => {
       state.gradeScale = initialState.gradeScale;
     },
+    setCopyScaleValue: (state, action) => {
+       const { field, value } = action.payload;
+       if(field === "source"){
+          state.gradeScale.copyGrade.sourceScale = value;
+       }
+       if(field === "target"){
+          state.gradeScale.copyGrade.targetScales.push(value)
+       }
+    },
+    resetCopyScaleState: (state, action)  => {
+       state.gradeScale.copyGrade = initialState.gradeScale.copyGrade;
+    }
   },
 });
 
@@ -268,6 +289,8 @@ export const {
   setDraftFieldValidation,
   setStandardGroupValue,
   resetScaleState,
+  resetCopyScaleState,
+  setCopyScaleValue
 } = gradeScaleSlice.actions;
 
 export default gradeScaleSlice.reducer;

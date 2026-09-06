@@ -10,7 +10,7 @@ import {
 import { useDispatch } from "react-redux";
 function InvalidGradeRange({
   error,
-  updateGradeContext,
+  updatedGradeContext,
   nextStep,
   grade,
   gradeScale,
