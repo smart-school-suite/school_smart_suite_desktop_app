@@ -79,6 +79,7 @@ import { gradeScaleImportColDefs } from "../../utils/table/colDefs/gradeScale/gr
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { useGetGradeScaleCategories } from "../../hooks/gradeScale/useGetGradeScaleCategories";
 import { GRADE_SCALE_ERROR_MAP } from "../../utils/maps/gradeScale/gradeScaleErrorMap";
+import UpdateGradeScaleWizzard from "../../DrawerContent/GradeScale/UpdateGradeScale/UpdateGradeScaleWizzard";
 
 function Gradesconfiguration() {
   const { data: gradeScales, isLoading, error } = useGetGradeScaleCategories();
@@ -606,19 +607,6 @@ function ActionComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        {/* <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(AutoConfigureGrades, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Auto Generate Grades</span>
-              <GenerateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem> */}
         {rowData.is_configured ? (
           <DropDownMenuItem
             className={
@@ -626,7 +614,7 @@ function ActionComponent(props) {
             }
             onClick={() => {
               dispatch(resetScaleState());
-              handleShowDrawer(ScaleWizzard, {
+              handleShowDrawer(UpdateGradeScaleWizzard, {
                 title: "Update Grade Scale",
                 closeOnOutsideClick: false,
                 showHeader: false,

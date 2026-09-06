@@ -8,7 +8,8 @@ export const useUpdateGradeScale = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateGradeScale,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const categoryId = data?.data?.id ?? data?.id;
       toast.custom(
         <ToastSuccess
           title={"Updated Succesfull"}
@@ -19,6 +20,11 @@ export const useUpdateGradeScale = (handleClose) => {
         handleClose();
       }
       queryClient.invalidateQueries({ queryKey: ["grade-scale-categories"] });
+      if (categoryId) {
+        queryClient.invalidateQueries({
+          queryKey: ["grade-scale-category", categoryId],
+        });
+      }
     },
     onError: (error) => {
       toast.custom(

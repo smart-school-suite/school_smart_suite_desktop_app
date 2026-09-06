@@ -1,11 +1,8 @@
 import { NumberInput } from "../../../components/FormComponents/InputComponents";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { useRef, useState } from "react";
-import ToastDanger from "../../../components/Toast/ToastDanger";
-import ToastSuccess from "../../../components/Toast/ToastSuccess";
 import ToastWarning from "../../../components/Toast/ToastWarning";
 import toast from "react-hot-toast";
-import { motion, AnimatePresence } from "framer-motion";
 import { allFieldsValid } from "../../../utils/functions";
 import { numberSchema } from "../../../ComponentConfig/YupValidationSchema";
 import { useSelector, useDispatch } from "react-redux";
@@ -14,11 +11,10 @@ import {
   updatedGradeContext,
   resetScaleState,
 } from "../../../Slices/academics/gradeScaleSlice";
-import { X, Scale, Dot, Sparkles, Cog, CircleCheck, Check } from "lucide-react";
+import { X, Scale, Dot } from "lucide-react";
 function ScaleSetup({
   handleClose,
   nextStep,
-  previousStep,
   fullStep,
   currentStep,
   drawerData,
@@ -29,7 +25,6 @@ function ScaleSetup({
   const scoreRef = useRef();
   const [formData, setFormData] = useState({
     score: drawerData?.max_score ?? "",
-    gen_type: moduleState?.configType ?? "automatic",
   });
   const [isValid, setIsValid] = useState({
     score: "",
@@ -71,8 +66,7 @@ function ScaleSetup({
       updatedGradeContext({
         field: "category",
         data: { drawerData },
-        maxScore: formData.score,
-        configType: formData.gen_type,
+        maxScore: formData.score
       }),
     );
     nextStep();
@@ -80,7 +74,7 @@ function ScaleSetup({
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
-        <span className="fw-medium">Grade Scale Configuration</span>
+        <span className="fw-medium">Update Grade Scale</span>
         <button
           className="bg-none border-none border rounded-circle"
           aria-label="Close drawer"
@@ -88,10 +82,7 @@ function ScaleSetup({
             handleClose();
             dispatch(resetScaleState());
             queryClient.invalidateQueries({
-              queryKey: [
-                "grade-scale-category",
-                moduleState.drawerData.id,
-              ],
+              queryKey: ["grade-scale-category", moduleState.drawerData.id],
             });
           }}
           style={{
@@ -117,18 +108,16 @@ function ScaleSetup({
               </div>
               <div className="d-flex flex-column">
                 <small className="text-muted">Category</small>
-                <div className="d-flex flex-row align-items-center gap-1">
-                  <span className="fw-semibold font-size-md">
-                    {drawerData.grade_title}
-                  </span>
+                <div className="d-flex flex-row align-items-center gap-1 font-size-sm">
+                  <span className="fw-semibold">{drawerData.grade_title}</span>
                   <Dot size={16} />
-                  <span className="fw-semibold font-size-md text-capitalize">
+                  <span className="fw-semibold  text-capitalize">
                     {drawerData.exam_type}
                   </span>
                   {formData.score && (
                     <>
                       <Dot size={16} />
-                      <span className="fw-semibold font-size-md text-capitalize">
+                      <span className="fw-semibold  text-capitalize">
                         {formData.score}
                       </span>
                     </>
@@ -137,97 +126,6 @@ function ScaleSetup({
               </div>
             </div>
             <span className="text-end fw-medium text-capitalize">{`step ${currentStep} of ${fullStep} completed`}</span>
-          </div>
-          <div className="d-flex flex-column gap-2">
-            <span className="fw-medium">
-              How would you like to configure this scale?
-            </span>
-            <div className="d-flex flex-row align-items-center gap-2">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`card p-2 rounded-4 transition-all
-                   d-flex flex-column gap-3 pointer-cursor w-50
-                  ${
-                    formData.gen_type === "automatic"
-                      ? "shadow-fern-100-lg border-fern-300"
-                      : "border-none border shadow-sm"
-                  } `}
-                onClick={() => {
-                  handleStateChange("gen_type", "automatic", setFormData);
-                }}
-              >
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <div className="d-flex flex-row align-items-center gap-1">
-                    <Sparkles size={16} />
-                    <span className="fw-semibold">Generate automatically</span>
-                  </div>
-                  <AnimatePresence>
-                    {formData.gen_type === "automatic" && (
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 500,
-                          damping: 30,
-                        }}
-                      >
-                        <CircleCheck size={16} className="green-color" />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-                <p className="text-muted">
-                  Create a grade scale based on your maximum score. You can
-                  review and customize it before saving.
-                </p>
-                <small className="text-muted">Recommended</small>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`card p-2 rounded-4 transition-all w-50
-                   d-flex flex-column gap-3 pointer-cursor 
-                  ${
-                    formData.gen_type === "manual"
-                      ? "shadow-fern-100-lg border-fern-300"
-                      : "border-none border shadow-sm"
-                  } `}
-                onClick={() => {
-                  handleStateChange("gen_type", "manual", setFormData);
-                }}
-              >
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <div className="d-flex flex-row align-items-center gap-1">
-                    <Cog size={16} />
-                    <span className="fw-semibold">Configure manually</span>
-                  </div>
-                  <AnimatePresence>
-                    {formData.gen_type === "manual" && (
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 500,
-                          damping: 30,
-                        }}
-                      >
-                        <CircleCheck size={16} className="green-color" />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-                <p className="text-muted">
-                  Set the score ranges, grade points, and other values yourself.
-                </p>
-                <small className="text-muted">Custom build</small>
-              </motion.div>
-            </div>
           </div>
           <div className="d-flex flex-column gap-2">
             <div className="d-flex flex-row align-items-center gap-1">
