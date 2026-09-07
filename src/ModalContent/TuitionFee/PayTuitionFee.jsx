@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { usePayTuitionFee } from "../../hooks/feePayment/usePayTuitionFee";
+import { usePayTuitionFee } from "../../hooks/FeePayment/usePayTuitionFee";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";

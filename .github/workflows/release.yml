@@ -1,0 +1,116 @@
+# Tag → build Tauri installers → GitHub Release
+#
+# Trigger: push a version tag, e.g.
+#   git tag v1.4.0 && git push origin v1.4.0
+#
+# Extension points (add later without redesigning the pipeline):
+# - Code signing: set platform signing secrets and enable signing env vars below
+# - Tauri updater: enable updater in tauri.conf + uncomment updaterJson / signing key env
+# - Draft releases: set releaseDraft: true until signing is ready
+#
+# Stable "latest" download URLs (after a successful release):
+#   https://github.com/<owner>/<repo>/releases/latest/download/<artifact-filename>
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish-tauri:
+    name: Build (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Default: Apple Silicon (macos-latest). Add an Intel row later if needed:
+          # - platform: macos-13
+          #   args: --target x86_64-apple-darwin
+          - platform: macos-latest
+            args: ""
+          - platform: ubuntu-22.04
+            # deb + AppImage (skip rpm unless packaging deps are added later)
+            args: "--bundles deb,appimage"
+          - platform: windows-latest
+            # NSIS only: MSI rejects non-numeric prerelease tags like v1.4.0-rc.1
+            # Add msi later for stable numeric versions (e.g. v1.4.0 or v1.4.0-1)
+            args: "--bundles nsis"
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Install Linux dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            xdg-utils
+
+      - name: Sync version from Git tag
+        run: node scripts/sync-version-from-tag.mjs "${{ github.ref_name }}"
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      # --- Future: code signing / updater keys (do not redesign pipeline) ---
+      # env:
+      #   TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+      #   TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+      #   APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+      #   APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      #   APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+      #   APPLE_ID: ${{ secrets.APPLE_ID }}
+      #   APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+      #   APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      #   WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+      #   WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+
+      - name: Build and upload to GitHub Release
+        uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: SSS ${{ github.ref_name }}
+          releaseBody: |
+            Desktop release **${{ github.ref_name }}**.
+
+            Download the installer for your platform from the assets below.
+
+            Latest (stable) asset URLs use:
+            `.../releases/latest/download/<artifact-name>`
+          releaseDraft: false
+          prerelease: false
+          # When enabling auto-updates later:
+          # includeUpdaterJson: true
+          args: ${{ matrix.args }}

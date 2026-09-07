@@ -1,6 +1,6 @@
 import { useGetMonthlySchoolExpense } from "../../hooks/financialAnalytics/useGetMonthlySchoolExpense";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
-import BarChart from "../ChartComponents/BarChart";
+import BarChart from "../chartcomponents/barChart";
 import { useSelector } from "react-redux";
 function MonthlyExpense() {
   const {

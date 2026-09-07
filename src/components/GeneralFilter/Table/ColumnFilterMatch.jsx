@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useDispatch, useSelector } from "react-redux";
-import { filterMatchMap } from "../../../utils/maps/fIlterMatchMap";
+import { filterMatchMap } from "../../../utils/maps/filterMatchMap";
 import { Fragment } from "react";
 function ColumnFilterMatch({
   cFilters,

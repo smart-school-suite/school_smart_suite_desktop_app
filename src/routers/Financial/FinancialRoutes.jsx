@@ -11,7 +11,7 @@ const ResitFeeTransactions = React.lazy(() =>
   import("../../pages/Finances/Transactions/ResitFeeTransactions")
 );
 const SchoolExpenses = React.lazy(() =>
-  import("../../pages/Finances/Schoolexpenses")
+  import("../../pages/Finances/SchoolExpenses")
 );
 const TuitionFees = React.lazy(() => import("../../pages/Finances/TuitionFee"));
 const TuitionFeeTransactions = React.lazy(() =>

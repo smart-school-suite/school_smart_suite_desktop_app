@@ -3,7 +3,7 @@ import Layout from "../layouts/layout";
 import {
   ProtectedRoute,
   ProtectedLoginRoute,
-} from "../components/RouteComponentHelpers/protectedRoutes";
+} from "../components/RouteComponentHelpers/ProtectedRoutes";
 import AuthLayout from "../layouts/AuthLayout";
 import AuthRoutes from "./Auth/AuthRoutes";
 import AcademicRoutes from "./Academics/AcademicRoutes";

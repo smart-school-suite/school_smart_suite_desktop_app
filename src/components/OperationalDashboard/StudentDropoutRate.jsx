@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import GuageChart from "../ChartComponents/GuageChart";
+import GuageChart from "../chartcomponents/GuageChart";
 import { useGetStudentDropoutRate } from "../../hooks/operationalAnalytics/useGetStudentDropoutRate";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 import { formatNumber } from "../../utils/functions";
