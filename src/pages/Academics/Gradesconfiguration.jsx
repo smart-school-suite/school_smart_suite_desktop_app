@@ -943,7 +943,7 @@ function DropdownItems({ selectedGradeScales, resetAll, onModalStateChange }) {
           handleShowDrawer(CopyScaleWizzard, {
             title: "Copy Grade Scale",
             closeOnOutsideClick: true,
-            showHeader: true,
+            showHeader: false,
             drawerData: { action: "bulkCopy" }
           })
         }

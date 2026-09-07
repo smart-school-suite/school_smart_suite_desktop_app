@@ -249,17 +249,20 @@ const gradeScaleSlice = createSlice({
       state.gradeScale = initialState.gradeScale;
     },
     setCopyScaleValue: (state, action) => {
-       const { field, value } = action.payload;
-       if(field === "source"){
-          state.gradeScale.copyGrade.sourceScale = value;
-       }
-       if(field === "target"){
-          state.gradeScale.copyGrade.targetScales.push(value)
-       }
+      const { field, value, actionType } = action.payload;
+      if (field === "source") {
+        state.gradeScale.copyGrade.sourceScale = value;
+      }
+      if (field === "target") {
+        if (actionType === "bulkCopy") {
+          state.gradeScale.copyGrade.targetScales = value;
+        }
+        state.gradeScale.copyGrade.targetScales.push(value);
+      }
     },
-    resetCopyScaleState: (state, action)  => {
-       state.gradeScale.copyGrade = initialState.gradeScale.copyGrade;
-    }
+    resetCopyScaleState: (state, action) => {
+      state.gradeScale.copyGrade = initialState.gradeScale.copyGrade;
+    },
   },
 });
 
@@ -290,7 +293,7 @@ export const {
   setStandardGroupValue,
   resetScaleState,
   resetCopyScaleState,
-  setCopyScaleValue
+  setCopyScaleValue,
 } = gradeScaleSlice.actions;
 
 export default gradeScaleSlice.reducer;

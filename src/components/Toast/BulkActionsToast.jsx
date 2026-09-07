@@ -45,28 +45,6 @@ function BulkActionsToast({
     setModalRef(modalElementRef);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isModalOpen) {
-        return;
-      }
-
-      if (modalRef?.current?.contains(event.target)) {
-        return;
-      }
-
-      if (!event.target.closest(".bulk-actions-toast")) {
-        setIsToggeled(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isModalOpen, modalRef]);
-
   const toggleDropdown = () => {
     setIsToggeled((prev) => !prev);
   };
@@ -121,23 +99,21 @@ function BulkActionsToast({
               >
                 <div className="me-2">
                   <div
-                  className="w-100 d-flex flex-column rounded-3 white-bg border p-2 shadow-sm overflow-x-hidden overflow-y-auto scroll-bar-sm"
-                  style={{
-                    maxHeight: "24dvh"
-                  }}
-                >
-                  {React.cloneElement(dropDownItems, {
-                    onModalStateChange: handleModalStateChange,
-                  })}
-                </div>
+                    className="w-100 d-flex flex-column rounded-3 white-bg border p-2 shadow-sm overflow-x-hidden overflow-y-auto scroll-bar-sm"
+                    style={{
+                      maxHeight: "24dvh",
+                    }}
+                  >
+                    {React.cloneElement(dropDownItems, {
+                      onModalStateChange: handleModalStateChange,
+                    })}
+                  </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <div
-            className="w-100 p-2 rounded-3 d-flex flex-row justify-content-between align-items-center shadow-sm bg-white border"
-          >
+          <div className="w-100 p-2 rounded-3 d-flex flex-row justify-content-between align-items-center shadow-sm bg-white border">
             <div className="d-flex flex-row align-items-center gap-3">
               <SquareMousePointer size={16} />
               <span className="font-size-sm">
