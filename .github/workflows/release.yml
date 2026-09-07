@@ -41,7 +41,9 @@ jobs:
             # deb + AppImage (skip rpm unless packaging deps are added later)
             args: "--bundles deb,appimage"
           - platform: windows-latest
-            args: ""
+            # NSIS only: MSI rejects non-numeric prerelease tags like v1.4.0-rc.1
+            # Add msi later for stable numeric versions (e.g. v1.4.0 or v1.4.0-1)
+            args: "--bundles nsis"
 
     runs-on: ${{ matrix.platform }}
 

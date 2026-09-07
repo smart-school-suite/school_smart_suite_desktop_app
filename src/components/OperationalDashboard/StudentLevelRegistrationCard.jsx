@@ -1,5 +1,5 @@
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
-import BarChart from "../ChartComponents/BarChart";
+import BarChart from "../chartcomponents/barChart";
 import { useGetStudentLevelRegistration } from "../../hooks/operationalAnalytics/useGetStudentLevelRegistration";
 import { useSelector } from "react-redux";
 function StudentRegistrationLevelCard() {

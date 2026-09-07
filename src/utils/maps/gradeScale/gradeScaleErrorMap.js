@@ -1,6 +1,6 @@
 import InvalidGradeRange from "../../../error/gradeList/InvalidGradeRange";
 import DuplicatePerformance from "../../../error/gradeList/DuplicatePerformance";
-import GradeRangeOverlap from "../../../error/gradeList/GradeRangeOverLap";
+import GradeRangeOverlap from "../../../error/gradeList/GradeRangeOverlap";
 import NegativeScore from "../../../error/gradeList/NegativeScore";
 import MaxScoreExceeded from "../../../error/gradeList/MaxScoreExceeded";
 

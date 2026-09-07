@@ -2,7 +2,7 @@ import ResetPassword from "../../pages/signup/ResetPassword";
 import ValidatePasswordResetOtp from "../../pages/signup/ValidatePasswordResetOtp";
 import ChangePassword from "../../pages/signup/ChangePassword";
 import RegisterSchool from "../../pages/signup/registerSchool";
-import RegisterSchoolAdmin from "../../pages/signup/RegisterSchoolAdmin";
+import RegisterSchoolAdmin from "../../pages/signup/registerSchoolAdmin";
 import RegisterSchoolBranch from "../../pages/signup/registerSchoolBranch";
 import Hero from "../../pages/signup/Hero";
 import SubcriptionPlan from "../../pages/signup/subcriptionPlans";

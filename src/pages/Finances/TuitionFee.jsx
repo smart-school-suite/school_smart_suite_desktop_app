@@ -1,5 +1,5 @@
 import Table from "../../components/Tables/Tables";
-import { useGetTuitionFees } from "../../hooks/feePayment/useGetTuitionFees";
+import { useGetTuitionFees } from "../../hooks/FeePayment/useGetTuitionFees";
 import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import PayStudentTuitionFee from "../../ModalContent/TuitionFee/PayTuitionFee";
 import TuitionFeeDetails from "../../ModalContent/TuitionFee/TuitionFeeDetails";

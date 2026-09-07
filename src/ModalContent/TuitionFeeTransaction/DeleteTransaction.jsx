@@ -1,4 +1,4 @@
-import { useDeleteTuitionFeeTransaction } from "../../hooks/feePayment/useDeleteTuitionFeeTransaction";
+import { useDeleteTuitionFeeTransaction } from "../../hooks/FeePayment/useDeleteTuitionFeeTransaction";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 function DeleteTransaction({ handleClose, rowData }) {
   const { id: transactionId } = rowData;
