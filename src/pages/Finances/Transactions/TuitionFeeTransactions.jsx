@@ -4,7 +4,7 @@ import Table from "../../../components/Tables/Tables";
 import TransactionDetails from "../../../ModalContent/TuitionFeeTransaction/TransactionDetails";
 import ReverseTransaction from "../../../ModalContent/TuitionFeeTransaction/ReverseTransaction";
 import DeleteTransaction from "../../../ModalContent/TuitionFeeTransaction/DeleteTransaction";
-import { useGetTuitionFeeTransactions } from "../../../hooks/feePayment/useGetTuitionFeeTransactions";
+import { useGetTuitionFeeTransactions } from "../../../hooks/FeePayment/useGetTuitionFeeTransactions";
 import DataTableNavLoader from "../../../components/PageLoaders/DataTableNavLoader";
 import React, {
   useState,

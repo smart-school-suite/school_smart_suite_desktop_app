@@ -1,4 +1,4 @@
-import { useBulkReverseTuitionFeeTransactions } from "../../hooks/feePayment/useBulkReverseTuitionFeeTransactions";
+import { useBulkReverseTuitionFeeTransactions } from "../../hooks/FeePayment/useBulkReverseTuitionFeeTransactions";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 function BulkReverseTuitionFeeTransaction({ bulkData, handleClose, resetAll }) {
   const formattedData = bulkData.map((items) => ({ transaction_id: items.id }));
