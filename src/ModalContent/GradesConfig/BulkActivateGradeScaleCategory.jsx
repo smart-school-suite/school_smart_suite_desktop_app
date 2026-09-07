@@ -1,25 +1,17 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useBulkDeleteGradeScale } from "../../hooks/gradeScale/useBulkDeleteGradeScale";
+import { useBulkActivateGradeScaleCategory } from "../../hooks/gradeScale/useBulkActivateGradeScaleCategory";
 import { CircleX } from "lucide-react";
-function BulkDeleteGradeScale({ handleClose, bulkData, rowData }) {
-  const { mutate: bulkDelete, isPending } =
-    useBulkDeleteGradeScale(handleClose);
-  const handleBulkDelete = () => {
-    if (bulkData) {
-      const payload = {
-        grade_scale_category_ids: bulkData.map((cat) => ({
-          category_id: cat.id,
-        })),
-      };
-      bulkDelete(payload);
-    } else {
-      const payload = {
-        grade_scale_category_ids: rowData.map((cat) => ({
-          category_id: cat.id,
-        })),
-      };
-      bulkDelete(payload);
-    }
+function BulkActivateGradeScaleCategory({ rowData, handleClose }) {
+  const { selectedGradeScales } = rowData;
+  const { mutate: bulkActivate, isPending } =
+    useBulkActivateGradeScaleCategory(handleClose);
+  const handleBulkActivate = () => {
+    const payload = {
+      grade_scale_category_ids: selectedGradeScales.map((cat) => ({
+        category_id: cat.id,
+      })),
+    };
+    bulkActivate(payload);
   };
   return (
     <>
@@ -31,7 +23,7 @@ function BulkDeleteGradeScale({ handleClose, bulkData, rowData }) {
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
               <span className="font-size-sm fw-semibold">
-                Delete Grade Scale
+                Activate Grade Scale
               </span>
             </div>
             <button
@@ -67,10 +59,10 @@ function BulkDeleteGradeScale({ handleClose, bulkData, rowData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleBulkDelete();
+                handleBulkActivate();
               }}
             >
-              {isPending ? <SingleSpinner /> : <>Yes, Delete</>}
+              {isPending ? <SingleSpinner /> : <>Yes, Activate All</>}
             </button>
           </div>
         </div>
@@ -78,5 +70,4 @@ function BulkDeleteGradeScale({ handleClose, bulkData, rowData }) {
     </>
   );
 }
-
-export default BulkDeleteGradeScale;
+export default BulkActivateGradeScaleCategory;

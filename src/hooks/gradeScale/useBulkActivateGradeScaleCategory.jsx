@@ -2,27 +2,23 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
-import { deactivateGradeScaleCategory } from "../../services/gradeScale";
+import { bulkActivateGradeScale } from "../../services/gradeScale";
 
-export const useDeactivateGradeScaleCategory = (handleClose, categoryId) => {
+export const useBulkActivateGradeScaleCategory = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (categoryId) => deactivateGradeScaleCategory(categoryId),
-    onSuccess: (data) => {
-      const categoryId = data?.data?.id ?? data?.id;
+    mutationFn: bulkActivateGradeScale,
+    onSuccess: () => {
       toast.custom(
         <ToastSuccess
-          title={"Deactivation Succesfull"}
-          description={"Grade Scale Category Deactivated Successfully"}
+          title={"Activation Succesfull"}
+          description={"Grade Scale Category Activated Successfully"}
         />,
       );
       if (handleClose) {
         handleClose();
       }
       queryClient.invalidateQueries({ queryKey: ["grade-scale-categories"] });
-      queryClient.invalidateQueries({
-        queryKey: ["grade-scale-category-details", categoryId],
-      });
     },
     onError: (error) => {
       toast.custom(

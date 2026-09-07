@@ -88,3 +88,13 @@ export const getGradeScaleCategoryId = async (
   );
   return response.data;
 };
+
+export const bulkActivateGradeScale = async (payload) => {
+  const response = await axiosInstance.post("grade-scale/category/bulk-activate", payload);
+  return response.data;
+};
+
+export const bulkDeactivateGradeScale = async (payload) => {
+  const response = await axiosInstance.post("grade-scale/category/bulk-deactivate", payload);
+  return response.data;
+};

@@ -20,7 +20,6 @@ import React, {
 import {
   CreateIcon,
   DeleteIcon,
-  GenerateIcon,
   ReuseIcon,
   UpdateIcon,
   SuspendIcon,
@@ -36,20 +35,6 @@ import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { gradeScaleColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleColDefs";
 import JobPopOver from "../../components/Popover/JobPopover";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
@@ -78,12 +63,12 @@ import { GRADE_SCALE_COLUMNS } from "../../utils/gradeScale/gradeScaleColumns";
 import { gradeScaleImportColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleImportColDefs";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { useGetGradeScaleCategories } from "../../hooks/gradeScale/useGetGradeScaleCategories";
-import { GRADE_SCALE_ERROR_MAP } from "../../utils/maps/gradeScale/gradeScaleErrorMap";
 import UpdateGradeScaleWizzard from "../../DrawerContent/GradeScale/UpdateGradeScale/UpdateGradeScaleWizzard";
-
+import BulkActivateGradeScaleCategory from "../../ModalContent/GradesConfig/BulkActivateGradeScaleCategory";
+import BulkDeactivateGradeScaleCategory from "../../ModalContent/GradesConfig/BulkDeactivateGradeScaleCategory";
 function Gradesconfiguration() {
   const { data: gradeScales, isLoading, error } = useGetGradeScaleCategories();
-  const dipatch = useDispatch();
+  const tableWrapperRef = useRef(null);
   const darkMode = useSelector((state) => state.theme.darkMode);
   const gradeScaleState = useSelector((state) => state.gradeScale);
   const tableRef = useRef();
@@ -353,6 +338,7 @@ function Gradesconfiguration() {
                 <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
                   <motion.div
                     className="h-100"
+                    ref={tableWrapperRef}
                     layout
                     transition={{
                       type: "spring",
@@ -372,29 +358,33 @@ function Gradesconfiguration() {
                       handleRowCountFromChild={handleRowCountFromChild}
                       handleRowDataFromChild={handleRowDataFromChild}
                     />
-                    {rowCount > 0 && (
-                      <BulkActionsToast
-                        rowCount={rowCount}
-                        label={`${
-                          rowCount > 0
-                            ? "Grade Scale Category Selected"
-                            : "Grade Scale Categories Selected"
-                        }`}
-                        resetAll={handleResetSelections}
-                        dropDownItems={
-                          <DropdownItems
-                            selectedGradeScales={selectedGradeScales}
-                            resetAll={handleResetSelections}
-                          />
-                        }
-                        actionButton={
-                          <ActionButtons
-                            selectedGradeScales={selectedGradeScales}
-                            resetAll={handleResetSelections}
-                          />
-                        }
-                      />
-                    )}
+                    <AnimatePresence>
+                      {rowCount > 0 && (
+                        <BulkActionsToast
+                          key="bulk-actions-toast"
+                          anchorRef={tableWrapperRef}
+                          rowCount={rowCount}
+                          label={
+                            rowCount > 0
+                              ? "Category Selected"
+                              : "Categories Selected"
+                          }
+                          resetAll={handleResetSelections}
+                          dropDownItems={
+                            <DropdownItems
+                              selectedGradeScales={selectedGradeScales}
+                              resetAll={handleResetSelections}
+                            />
+                          }
+                          actionButton={
+                            <ActionButtons
+                              selectedGradeScales={selectedGradeScales}
+                              resetAll={handleResetSelections}
+                            />
+                          }
+                        />
+                      )}
+                    </AnimatePresence>
                   </motion.div>
                   {gradeScaleState.isGeneralFilterOpen && (
                     <AnimatePresence mode="popLayout">
@@ -755,8 +745,8 @@ function ActionComponent(props) {
           onClick={() =>
             handleShowModal(DeleteGradeScale, {
               size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
+              closeOnOutsideClick: false,
+              closeOnEscape: false,
             })
           }
         >
@@ -807,8 +797,7 @@ function ActionButtons({ selectedGradeScales, resetAll }) {
   return (
     <>
       <ModalButton
-        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        action={{ modalContent: BulkDeleteGradesByCategory }}
+        classname={"border-none transparent-bg w-100 p-0 text-color"}
         bulkData={selectedGradeScales}
         resetAll={resetAll}
       >
@@ -824,54 +813,184 @@ function ActionButtons({ selectedGradeScales, resetAll }) {
 
 function DropdownItems({ selectedGradeScales, resetAll, onModalStateChange }) {
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
+  const [showDrawer, setShowDrawer] = useState(false);
   const modalRef = useRef(null);
+
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+    modalData: {}
+  });
+
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+    drawerData: {}
+  });
+
   useEffect(() => {
-    onModalStateChange(showModal, modalRef);
+    if (typeof onModalStateChange === "function") {
+      onModalStateChange(showModal, modalRef);
+    }
   }, [showModal, onModalStateChange]);
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        handleClose: handleCloseModal,
-        resetAll,
-        bulkData: selectedGradeScales,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+      modalData = {}
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+      modalData
+    });
     setShowModal(true);
   };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+      drawerData = {},
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+      drawerData
+    });
+    setShowDrawer(true);
+  };
+
   return (
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteGradeScale, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeleteGradeScale, {
+            size: "md",
+            closeOnOutsideClick: false,
+            closeOnEscape: false,
+          })
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
           <span className="font-size-sm">Delete All Grade Scales</span>
           <DeleteIcon />
         </div>
       </DropDownMenuItem>
-      <DropDownMenuItem className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor">
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Configure All By Target Category</span>
+      <hr />
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() =>
+          handleShowModal(BulkActivateGradeScaleCategory, {
+            size: "md",
+            closeOnOutsideClick: false,
+            closeOnEscape: false,
+          })
+        }
+      >
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
+          <span className="font-size-sm">Activate All Grade Scales</span>
+          <ActivateIcon />
+        </div>
+      </DropDownMenuItem>
+      <hr />
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() => {
+          handleShowModal(BulkDeactivateGradeScaleCategory, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          });
+        }}
+      >
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
+          <span className="font-size-sm">Deactivate Grade Scale</span>
+          <SuspendIcon />
+        </div>
+      </DropDownMenuItem>
+      <hr />
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() =>
+          handleShowDrawer(CopyScaleWizzard, {
+            title: "Copy Grade Scale",
+            closeOnOutsideClick: true,
+            showHeader: true,
+            drawerData: { action: "bulkCopy" }
+          })
+        }
+      >
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
+          <span className="font-size-sm">Copy Grade Scale</span>
           <ReuseIcon />
         </div>
       </DropDownMenuItem>
+
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={{
+              selectedGradeScales: selectedGradeScales,
+              ...drawerConfig.drawerData,
+            }}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
+        ref={modalRef} 
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
-        ref={modalRef}
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={{
+              selectedGradeScales: selectedGradeScales,
+              ...modalConfig.modalData, 
+            }}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );

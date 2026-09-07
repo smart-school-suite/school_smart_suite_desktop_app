@@ -73,6 +73,10 @@ body {
   font-family: var(--primary-font-family) !important;
   color: #333 !important;
 }
+
+.text-color{
+color: #333
+}
 .ag-paging-panel {
   font-size: 0.7rem !important;
 }
@@ -1235,17 +1239,6 @@ thead {
   overflow-y: auto;
 }
 
-.table-toast-container.active {
-  top: -18dvh;
-  position: relative;
-  transition: top 0.3s ease;
-}
-
-.table-toast-container.inactive {
-  top: 0;
-  transition: top 0.3s ease;
-  opacity: 0;
-}
 
 .dropdown-content-sm {
   height: auto;
