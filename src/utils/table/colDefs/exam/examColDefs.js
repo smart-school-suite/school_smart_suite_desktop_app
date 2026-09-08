@@ -4,11 +4,7 @@ import {
   dateColumn,
   numberColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
-import ActiveInactiveBadge from "../../../../components/Badges/ActiveInactive";
 import GradesConfigTableBadge from "../../../../components/Badges/GradesConfigTableBadge";
 
 export function examColDefs({ ActionComponent }) {
@@ -44,7 +40,7 @@ export function examColDefs({ ActionComponent }) {
       cellRenderer: TextComponent,
     }),
     numberColumn({
-      field: "weighted_mark",
+      field: "max_score",
       headerName: "Score",
       hide: false,
     }),
@@ -52,12 +48,6 @@ export function examColDefs({ ActionComponent }) {
       field: "semester_name",
       headerName: "Semester",
       hide: false,
-      cellRenderer: TextComponent,
-    }),
-    textColumn({
-      field: "batch_title",
-      headerName: "Batch",
-      hide: true,
       cellRenderer: TextComponent,
     }),
     textColumn({
@@ -91,8 +81,8 @@ export function examColDefs({ ActionComponent }) {
       cellRenderer: TextComponent,
     }),
     textColumn({
-      field: "isgrades_configured",
-      headerName: "Config Status",
+      field: "is_grade_scale_configured",
+      headerName: "Grade Scale Status",
       hide: true,
       cellRenderer: GradesConfigTableBadge,
     }),

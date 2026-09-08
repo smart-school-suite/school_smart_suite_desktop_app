@@ -18,6 +18,10 @@ const initialState = {
     selectedFile: null,
     mapping: {},
   },
+  createExam: {
+      examType: {},
+      academicYear: null,
+  }
 };
 
 const examSlice = createSlice({
@@ -110,6 +114,10 @@ const examSlice = createSlice({
     updateSelectedColumns: (state, action) => {
       state.columns.selectedColumns = action.payload;
     },
+    setCreateExamValue:(state, action) => {
+       const { value, field } = action.payload;
+       state.createExam[field] = value;
+    }
   },
 });
 
@@ -133,6 +141,7 @@ export const {
   setImportSelectedFile,
   setImportReset,
   setColumnMapping,
+  setCreateExamValue
 } = examSlice.actions;
 
 export default examSlice.reducer;

@@ -3,10 +3,8 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import CourseDetails from "../../DrawerContent/Course/CourseDetails";
-import CreateCourse from "../../DrawerContent/Course/CreateCourse";
 import DeactivateCourse from "../../ModalContent/Course/DeactivateCourse";
 import UpdateCourse from "../../DrawerContent/Course/UpdateCourse";
-import { CoursesTable } from "../../ComponentConfig/AgGridTableConfig";
 import { useGetCourses } from "../../hooks/course/useGetCourses";
 import React, {
   useState,
@@ -27,7 +25,6 @@ import {
 } from "../../icons/ActionIcons";
 import ActivateCourse from "../../ModalContent/Course/ActivateCourse";
 import DeleteCourse from "../../ModalContent/Course/DeleteCourse";
-import { CourseIcon } from "../../icons/Icons";
 import { useSelector, useDispatch } from "react-redux";
 import { Icon } from "@iconify/react";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
@@ -37,10 +34,6 @@ import BulkDeactivateCourse from "../../ModalContent/Course/BulkDeactivateCourse
 import BulkActivateCourse from "../../ModalContent/Course/BulkActivateCourse";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
