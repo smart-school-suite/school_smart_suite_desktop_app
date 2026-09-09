@@ -1,4 +1,3 @@
-import { useGetExamTypes } from "../../../ModalContent/ExamType/useGetExamType";
 import { useDispatch, useSelector } from "react-redux";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import {
@@ -9,13 +8,12 @@ import {
   FileText,
   ArrowRight,
   Target,
-  Info,
   Calculator,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { NotFoundError } from "../../../components/errors/Error";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { Fragment, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useCreateExam } from "../../../hooks/exam/useCreateExam";
 import {
@@ -30,7 +28,9 @@ import { allFieldsValid } from "../../../utils/functions";
 import ToastWarning from "../../../components/Toast/ToastWarning";
 import { useGetRelatedCaExam } from "../../../hooks/exam/useGetRelatedCaExam";
 import { format, parseISO } from "date-fns";
-import { getDayWindow, getTimeRemaining } from "../../../utils/time/date";
+import { getDayWindow } from "../../../utils/time/date";
+import { resetCreateExamState } from "../../../Slices/exam/examSlice";
+import { SingleSpinner } from "../../../components/Spinners/Spinners";
 function CreateExam({
   handleClose,
   nextStep,
@@ -38,6 +38,7 @@ function CreateExam({
   fullStep,
   currentStep,
 }) {
+  const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.exam.createExam);
   const dateRangeRef = useRef();
   const maxScoreRef = useRef();
@@ -104,6 +105,7 @@ function CreateExam({
           aria-label="Close drawer"
           onClick={() => {
             handleClose();
+            dispatch(resetCreateExamState());
           }}
           style={{
             width: "2rem",
@@ -183,7 +185,7 @@ function CreateExam({
               className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
               onClick={() => handleSubmit()}
             >
-              Create Exam
+              {isPending ? <SingleSpinner /> : "Create Exam"}
             </button>
           </div>
         </div>
@@ -478,14 +480,15 @@ function CreateSemesterExam({
                   <li>
                     When results are entered, the CA and exam scores will be
                     combined to produce a final exam score out of{" "}
-                   {parseFloat(
+                    {parseFloat(
                       parseFloat(formData?.max_score) +
                         parseFloat(relatedCa?.data?.max_score),
                     ).toFixed(2)}
                     .
                   </li>
                   <li>
-                    The exam’s {parseFloat(formData?.max_score)} points will be combined with the selected CA’s
+                    The exam’s {parseFloat(formData?.max_score)} points will be
+                    combined with the selected CA’s
                     {relatedCa?.data?.max_score} points when the exam is
                     created, for a total of{" "}
                     {parseFloat(

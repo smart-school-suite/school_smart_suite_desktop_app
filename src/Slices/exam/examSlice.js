@@ -19,9 +19,12 @@ const initialState = {
     mapping: {},
   },
   createExam: {
-      examType: {},
-      academicYear: null,
-  }
+    examType: {},
+    academicYear: {},
+  },
+  gradeScale: {
+    selectedGradeScale: {},
+  },
 };
 
 const examSlice = createSlice({
@@ -114,10 +117,20 @@ const examSlice = createSlice({
     updateSelectedColumns: (state, action) => {
       state.columns.selectedColumns = action.payload;
     },
-    setCreateExamValue:(state, action) => {
-       const { value, field } = action.payload;
-       state.createExam[field] = value;
-    }
+    setCreateExamValue: (state, action) => {
+      const { value, field } = action.payload;
+      state.createExam[field] = value;
+    },
+    resetCreateExamState: (state, action) => {
+      state.createExam = initialState.createExam;
+    },
+    setSelectedGradeScale: (state, action) => {
+      const { gradeScale } = action.payload;
+      state.gradeScale.selectedGradeScale = gradeScale;
+    },
+    resetGradeScaleState: (state, action) => {
+      state.gradeScale.selectedGradeScale = initialState.gradeScale;
+    },
   },
 });
 
@@ -141,7 +154,10 @@ export const {
   setImportSelectedFile,
   setImportReset,
   setColumnMapping,
-  setCreateExamValue
+  setCreateExamValue,
+  resetCreateExamState,
+  setSelectedGradeScale,
+  resetGradeScaleState
 } = examSlice.actions;
 
 export default examSlice.reducer;

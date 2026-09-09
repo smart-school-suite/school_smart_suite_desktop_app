@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addExamGrading } from "../../services/exam";
+import { addExamGradeScale } from "../../services/exam";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 
-export const useAddExamGrading = (handleClose) => {
+export const useAddExamGradeScale = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ examId, gradesConfig }) =>
-      addExamGrading(examId, gradesConfig),
+    mutationFn: ({ examId, gradeScaleCategoryId }) =>
+      addExamGradeScale(examId, gradeScaleCategoryId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exams"] });
 

@@ -8,8 +8,11 @@ import {
   ArrowRight,
 } from "lucide-react";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { Fragment} from "react";
-import { setCreateExamValue, resetCreateExamState } from "../../../Slices/exam/examSlice";
+import { Fragment } from "react";
+import {
+  setCreateExamValue,
+  resetCreateExamState,
+} from "../../../Slices/exam/examSlice";
 import { useGetSchoolAcademicYears } from "../../../hooks/academicYear/useGetSchoolAcademicYears";
 import SearchInput from "../../../components/input/search";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +26,7 @@ function SelectSchoolYear({
   previousStep,
   fullStep,
   currentStep,
+  drawerData,
 }) {
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.exam.createExam);
@@ -60,16 +64,15 @@ function SelectSchoolYear({
                 <BookOpenCheck size={16} />
               </div>
               <div className="d-flex flex-column">
-                <small className="text-muted">Selected Exam Type</small>
-
+                <span className="fw-semibold">{drawerData?.exam_name}</span>
                 <div className="d-flex flex-row align-items-center gap-1 text-capitalize">
-                  <span className="fw-semibold">
-                    {moduleState.examType.exam_name}
-                  </span>
+                  <span>{drawerData?.specialty_name}</span>
                   <Dot size={16} />
-                  <span className="fw-semibold">
-                    {moduleState.examType.type}
-                  </span>
+                  <span>{drawerData?.level_name}</span>
+                  <Dot size={16} />
+                  <span>{drawerData?.max_score}</span>
+                  <Dot size={16} />
+                  <span>{drawerData?.school_year}</span>
                 </div>
               </div>
             </div>
@@ -237,7 +240,7 @@ function SelectSchoolYear({
                         </div>
                         {academicYear.status == "upcoming" ? (
                           <span className="color-primary text-capitalize fw-medium">
-                            starts in {" "}
+                            starts in{" "}
                             {getTimeRemaining(academicYear?.start_date)}
                           </span>
                         ) : academicYear.status == "active" ? (

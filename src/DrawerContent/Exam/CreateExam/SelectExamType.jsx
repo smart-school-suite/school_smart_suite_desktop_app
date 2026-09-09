@@ -1,18 +1,16 @@
 import { useGetExamTypes } from "../../../ModalContent/ExamType/useGetExamType";
 import { useDispatch, useSelector } from "react-redux";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
-import { Dot,  CircleCheck, X, BookOpenCheck } from "lucide-react";
+import { Dot, CircleCheck, X, BookOpenCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NotFoundError } from "../../../components/errors/Error";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { Fragment } from "react";
-import { setCreateExamValue } from "../../../Slices/exam/examSlice";
-function SelectExamType({
-  handleClose,
-  nextStep,
-  fullStep,
-  currentStep
-}) {
+import {
+  setCreateExamValue,
+  resetCreateExamState,
+} from "../../../Slices/exam/examSlice";
+function SelectExamType({ handleClose, nextStep, fullStep, currentStep }) {
   const dispatch = useDispatch();
   const { data: examTypes, isLoading, error } = useGetExamTypes();
   const moduleState = useSelector((state) => state.exam.createExam);
@@ -24,6 +22,7 @@ function SelectExamType({
           className="bg-none border-none border rounded-circle"
           aria-label="Close drawer"
           onClick={() => {
+            dispatch(resetCreateExamState());
             handleClose();
           }}
           style={{
@@ -62,7 +61,7 @@ function SelectExamType({
             </div>
             <span className="fw-medium">Select Exam Type</span>
             <div className="d-flex flex-column gap-3">
-              {examTypes?.data?.map((examType) => (
+              {examTypes?.data?.filter((t) => t.type !== "resit").map((examType) => (
                 <Fragment key={examType.id}>
                   <motion.div
                     whileHover={{ scale: 1.01 }}
@@ -79,7 +78,7 @@ function SelectExamType({
                       dispatch(
                         setCreateExamValue({
                           value: examType,
-                          field: "examType"
+                          field: "examType",
                         }),
                       );
                     }}
@@ -140,7 +139,10 @@ function SelectExamType({
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
             <button
               className="border-none bg-none p-2"
-              onClick={() => handleClose()}
+              onClick={() => {
+                handleClose();
+                dispatch(resetCreateExamState());
+              }}
             >
               cancel
             </button>

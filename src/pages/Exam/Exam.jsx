@@ -638,8 +638,8 @@ export function ActionComponent(props) {
           onClick={() =>
             handleShowDrawer(ConfigureGradeScaleWizzard, {
               title: "Configure Grade Scale",
-              closeOnOutsideClick: true,
-              showHeader: true,
+              closeOnOutsideClick: false,
+              showHeader: false,
             })
           }
         >
