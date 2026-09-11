@@ -75,7 +75,7 @@ function UpdateExam({
       school_year_id: moduleState.academicYear.id,
       exam_type_id: moduleState.examType.id,
     };
-    update({
+    updateExam({
       examId: drawerData?.id,
       updateData: payload,
     });
@@ -83,7 +83,7 @@ function UpdateExam({
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
-        <span className="fw-medium">Create Exam</span>
+        <span className="fw-medium">Update Exam</span>
         <button
           className="bg-none border-none border rounded-circle"
           aria-label="Close drawer"
@@ -129,7 +129,7 @@ function UpdateExam({
               {`step ${currentStep} of ${fullStep} completed`}
             </span>
           </div>
-          {moduleState.examType.type == "ca" ? (
+          {moduleState?.examType?.type == "ca" ? (
             <CreateCAExam
               handleStateChange={handleStateChange}
               formData={formData}
@@ -138,7 +138,7 @@ function UpdateExam({
               setIsInvalid={setIsInvalid}
               moduleState={moduleState}
             />
-          ) : (
+          ) : moduleState?.examType?.type == "exam" ? (
             <CreateSemesterExam
               handleStateChange={handleStateChange}
               formData={formData}
@@ -147,7 +147,7 @@ function UpdateExam({
               setIsInvalid={setIsInvalid}
               moduleState={moduleState}
             />
-          )}
+          ) : null}
         </div>
       </div>
       <div className="drawer-footer font-size-sm">

@@ -74,8 +74,8 @@ body {
   color: #333 !important;
 }
 
-.text-color{
-color: #333
+.text-color {
+  color: #333;
 }
 .ag-paging-panel {
   font-size: 0.7rem !important;
@@ -1239,7 +1239,6 @@ thead {
   overflow-y: auto;
 }
 
-
 .dropdown-content-sm {
   height: auto;
   max-height: 18dvh;
@@ -2072,7 +2071,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1030; 
+  z-index: 1030;
   display: flex;
   align-items: center;
   justify-content: center;

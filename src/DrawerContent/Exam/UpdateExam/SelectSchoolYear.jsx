@@ -34,7 +34,7 @@ function SelectSchoolYear({
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
-        <span className="fw-medium">Create Exam</span>
+        <span className="fw-medium">Update Exam</span>
         <button
           className="bg-none border-none border rounded-circle"
           aria-label="Close drawer"

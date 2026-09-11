@@ -2,10 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-  exams: null,
+  examInvigilators: null,
   isGeneralFilterOpen: false,
   tableRef: null,
-  selectedExams: [],
+  selectedInvigilators: [],
   rowCount: 0,
   searchText: "",
   columns: {
@@ -18,17 +18,15 @@ const initialState = {
     selectedFile: null,
     mapping: {},
   },
-  createExam: {
-    examType: {},
-    academicYear: {},
-  },
-  gradeScale: {
-    selectedGradeScale: {},
+  selectedExam: null,
+  selectedAcademicYear: null,
+  assignInvigilator: {
+    selectedInvigilator: [],
   },
 };
 
-const examSlice = createSlice({
-  name: "exam",
+const examInvigilatorSlice = createSlice({
+  name: "examInvigilator",
   initialState,
   reducers: {
     setImportStatus: (state, action) => {
@@ -84,7 +82,7 @@ const examSlice = createSlice({
       state.isGeneralFilterOpen = !state.isGeneralFilterOpen;
     },
     setSelectedExams: (state, action) => {
-      state.selectedExams = action.payload;
+      state.selectedInvigilators = action.payload;
     },
     setRowCount: (state, action) => {
       state.rowCount = action.payload;
@@ -99,11 +97,11 @@ const examSlice = createSlice({
       };
     },
     resetSelections: (state) => {
-      state.selectedExams = [];
+      state.selectedInvigilators = [];
       state.rowCount = 0;
     },
     resetAll: (state) => {
-      state.selectedExams = [];
+      state.selectedInvigilators = [];
       state.rowCount = 0;
       state.searchText = "";
       state.columns = {
@@ -117,19 +115,30 @@ const examSlice = createSlice({
     updateSelectedColumns: (state, action) => {
       state.columns.selectedColumns = action.payload;
     },
-    setCreateExamValue: (state, action) => {
-      const { value, field } = action.payload;
-      state.createExam[field] = value;
+    setSelectedExam: (state, action) => {
+      const { exam } = action.payload;
+      state.selectedExam = exam;
     },
-    resetCreateExamState: (state, action) => {
-      state.createExam = initialState.createExam;
+    setSelectedAcademicYear: (state, action) => {
+      const { academicYear } = action.payload;
+      state.selectedAcademicYear = academicYear;
     },
-    setSelectedGradeScale: (state, action) => {
-      const { gradeScale } = action.payload;
-      state.gradeScale.selectedGradeScale = gradeScale;
+    toggleInvigilator: (state, action) => {
+      const { invigilator } = action.payload;
+      const index = state.assignInvigilator.selectedInvigilator.findIndex(
+        (item) =>
+          item.actorable_id === invigilator.actorable_id &&
+          item.actorable_type === invigilator.actorable_type,
+      );
+
+      if (index !== -1) {
+        state.assignInvigilator.selectedInvigilator.splice(index, 1);
+      } else {
+        state.assignInvigilator.selectedInvigilator.push(invigilator);
+      }
     },
-    resetGradeScaleState: (state, action) => {
-      state.gradeScale.selectedGradeScale = initialState.gradeScale;
+    resetAssignInvigilatorState: (state, action) => {
+      state.assignInvigilator = initialState.assignInvigilator;
     },
   },
 });
@@ -154,10 +163,10 @@ export const {
   setImportSelectedFile,
   setImportReset,
   setColumnMapping,
-  setCreateExamValue,
-  resetCreateExamState,
-  setSelectedGradeScale,
-  resetGradeScaleState
-} = examSlice.actions;
+  setSelectedExam,
+  setSelectedAcademicYear,
+  toggleInvigilator,
+  resetAssignInvigilatorState
+} = examInvigilatorSlice.actions;
 
-export default examSlice.reducer;
+export default examInvigilatorSlice.reducer;

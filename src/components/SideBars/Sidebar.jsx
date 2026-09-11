@@ -525,6 +525,24 @@ function SideBarLg() {
                       >
                         <div className="subbox-nav">
                           <NavLink
+                            to="/exam-invigilator"
+                            className={({ isActive }) =>
+                              isActive
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
+                            }
+                          >
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Exam Invigilator
+                            </p>
+                          </NavLink>
+                        </div>
+                      </div>
+                      <div
+                        className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
+                      >
+                        <div className="subbox-nav">
+                          <NavLink
                             to="/exam-timetable"
                             className={({ isActive }) =>
                               isActive

@@ -36,6 +36,7 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { NotFoundError } from "../../components/errors/Error";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   resetAllCustomFilters,
   addCustomFilter,

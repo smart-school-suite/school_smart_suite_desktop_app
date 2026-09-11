@@ -1,21 +1,33 @@
 import React, { Suspense } from "react";
 import { Route } from "react-router-dom";
 const Exam = React.lazy(() => import("../../pages/Exam/Exam"));
-const ExamCandidates = React.lazy(() =>
-  import("../../pages/Exam/ExamCandidate")
+const ExamCandidates = React.lazy(
+  () => import("../../pages/Exam/ExamCandidate"),
 );
-const ExamTimetable = React.lazy(() =>
-  import("../../pages/Exam/ExamTimetable")
+const ExamTimetable = React.lazy(
+  () => import("../../pages/Exam/ExamTimetable"),
 );
 const ExamResults = React.lazy(() => import("../../pages/Exam/ExamResults"));
+const ExamInvigilator = React.lazy(
+  () => import("../../pages/Exam/ExamInvigilator"),
+);
 const ExamRoutes = [
-  <Route 
+  <Route
     key="examResults"
     path="/exam-results"
     element={
-       <Suspense>
+      <Suspense>
         <ExamResults />
-       </Suspense>
+      </Suspense>
+    }
+  />,
+  <Route
+    key={"examInvigilator"}
+    path="/exam-invigilator"
+    element={
+      <Suspense>
+        <ExamInvigilator />
+      </Suspense>
     }
   />,
   <Route

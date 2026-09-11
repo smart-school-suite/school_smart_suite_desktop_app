@@ -8,34 +8,30 @@ export const settingRoutes = [
   "/settings/app-settings",
   "/settings/subscription",
   "/settings/school-branch",
-  "/settings/school"
+  "/settings/school",
 ];
 
 export const teacherRoutes = [
-   "/teacher",
-   "/teacher-course",
-   "/teacher-specialty",
-   "/teacher-availability"
-]
+  "/teacher",
+  "/teacher-course",
+  "/teacher-specialty",
+  "/teacher-availability",
+];
 
 export const courseRoutes = [
   "/courses",
   "/joint-course",
-  "/joint-course-timetable"
-]
-export const hallRoutes = [
-   "/hall",
-   "/specialty-hall"
-]
+  "/joint-course-timetable",
+];
+export const hallRoutes = ["/hall", "/specialty-hall"];
 
 export const adminRoutes = [
   "/school-admins",
   "/departments",
   "/specialties",
   ...teacherRoutes,
-  ...hallRoutes
+  ...hallRoutes,
 ];
-
 
 export const academicRoutes = [
   "/time-table",
@@ -45,8 +41,13 @@ export const academicRoutes = [
   ...courseRoutes,
 ];
 
-
-export const examRoutes = ["/exam", "/exam-candidate", "/exam-timetable", "/exam-results"];
+export const examRoutes = [
+  "/exam",
+  "/exam-candidate",
+  "/exam-timetable",
+  "/exam-results",
+  "/exam-invigilator",
+];
 
 export const resitRoutes = [
   "/resit-candidate",
@@ -69,7 +70,7 @@ export const electionRoutes = [
   "/election-application",
   "/election-candidates",
   "/election-roles",
-  "/election-type"
+  "/election-type",
 ];
 
 export const eventRoutes = [
@@ -90,7 +91,6 @@ export const announcementRoutes = [
   "/announcement",
 ];
 
-
 export const dashboardRoutes = [
   "/",
   "/academic-analysis",
@@ -98,12 +98,12 @@ export const dashboardRoutes = [
 ];
 
 export const activationCodeRoutes = [
-   "/activation-code",
-   "/activation-code/student",
-   "/activation-code/teacher",
-   "/activation-code/usage",
-   "/activation-code/transactions"
-]
+  "/activation-code",
+  "/activation-code/student",
+  "/activation-code/teacher",
+  "/activation-code/usage",
+  "/activation-code/transactions",
+];
 
 export const additionalFeeRoutes = [
   "/additional-fees",
@@ -128,10 +128,7 @@ export const tuitionFeeRoutes = [
   "/fee-payment-schedule",
 ];
 
-export const resitFeeRoutes = [
-    "/resit-payments",
-    "/resitfee-transaction"
-];
+export const resitFeeRoutes = ["/resit-payments", "/resitfee-transaction"];
 
 export const financialRoutes = [
   ...resitFeeRoutes,

@@ -49,7 +49,8 @@ import teacherSpecialtyReducer from "../Slices/teacher/teacherSpecialtySlice";
 import teacherCourseReducer from "../Slices/teacher/teacherCourseSlice";
 import teacherTimePrefReducer from "../Slices/teacher/teacherTimePrefSlice";
 import jointCourseReducer from "../Slices/academics/jointCourseSlice";
-
+import examCandidateReducer from "../Slices/exam/examCandidateSlice";
+import examInvigilatorReducer from "../Slices/exam/examInvigilatorSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -162,6 +163,20 @@ const rootReducer = combineReducers({
       storage,
     },
     jointCourseReducer,
+  ),
+  examCandidate: persistReducer(
+    {
+      key: "examCandidate",
+      storage,
+    },
+    examCandidateReducer,
+  ),
+  examInvigilator: persistReducer(
+    {
+      key: "examInvigilator",
+      storage,
+    },
+    examInvigilatorReducer,
   ),
   schoolAdmin: schoolAdminReducer,
   hall: hallReducer,

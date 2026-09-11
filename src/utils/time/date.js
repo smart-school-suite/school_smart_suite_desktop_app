@@ -1,31 +1,57 @@
-import { format, parseISO, intervalToDuration, isBefore, differenceInDays } from 'date-fns';
+import { format, parseISO, intervalToDuration, isBefore, differenceInDays, isValid } from 'date-fns';
 
-export function getTimeRemaining(targetDateString) {
-  const targetDate = parseISO(targetDateString);
-  const now = new Date();
-
-  if (isBefore(targetDate, now)) {
-    return '0 days 0 hours';
+function safelyParseDate(dateInput) {
+  if (!dateInput) return null;
+  
+  if (dateInput instanceof Date) {
+    return isValid(dateInput) ? dateInput : null;
   }
-
-  const { days = 0, hours = 0 } = intervalToDuration({ start: now, end: targetDate });
-
-  const dayText = `${days} ${days === 1 ? 'day' : 'days'}`;
-  const hourText = `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
-
-  return `${dayText} ${hourText}`;
+  
+  if (typeof dateInput === 'string') {
+    const parsed = parseISO(dateInput);
+    return isValid(parsed) ? parsed : null;
+  }
+  
+  return null;
 }
 
-export function getDayWindow(startDateString, endDateString) {
-  const start = parseISO(startDateString);
-  const end = parseISO(endDateString);
+export function getTimeRemaining(targetDateInput) {
+  try {
+    const targetDate = safelyParseDate(targetDateInput);
+    const now = new Date();
 
-  if (isBefore(end, start)) {
+    if (!targetDate || isBefore(targetDate, now)) {
+      return '0 days 0 hours';
+    }
+
+    const { days = 0, hours = 0 } = intervalToDuration({ start: now, end: targetDate }) || {};
+
+    const safeDays = Math.max(0, days);
+    const safeHours = Math.max(0, hours);
+
+    const dayText = `${safeDays} ${safeDays === 1 ? 'day' : 'days'}`;
+    const hourText = `${safeHours} ${safeHours === 1 ? 'hour' : 'hours'}`;
+
+    return `${dayText} ${hourText}`;
+  } catch (error) {
+    return '0 days 0 hours';
+  }
+}
+
+export function getDayWindow(startDateInput, endDateInput) {
+  try {
+    const start = safelyParseDate(startDateInput);
+    const end = safelyParseDate(endDateInput);
+
+    if (!start || !end || isBefore(end, start)) {
+      return '0 days';
+    }
+
+    const days = differenceInDays(end, start);
+    const safeDays = Math.max(0, isNaN(days) ? 0 : days);
+    
+    return `${safeDays} ${safeDays === 1 ? 'day' : 'days'}`;
+  } catch (error) {
     return '0 days';
   }
-
-  const days = differenceInDays(end, start);
-  const dayText = `${days} ${days === 1 ? 'day' : 'days'}`;
-
-  return dayText;
 }
