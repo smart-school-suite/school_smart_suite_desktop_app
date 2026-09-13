@@ -138,6 +138,15 @@
   --tracking-title: 0.04em; /* slightly more open title case */
   --tracking-button: 0.06em;
 }
+
+.tabular-numbers {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum"; 
+}
+
+.text-muted{
+   color: rgba(5, 38, 58, 0.45)!important;
+}
 .bg-none {
   background: none;
 }

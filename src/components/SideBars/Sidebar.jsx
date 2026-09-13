@@ -556,22 +556,6 @@ function SideBarLg() {
                           </NavLink>
                         </div>
                       </div>
-                      <div
-                        className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
-                      >
-                        <div className="subbox-nav">
-                          <NavLink
-                            to="/exam-results"
-                            className={({ isActive }) =>
-                              isActive
-                                ? "text-decoration-none  color-primary"
-                                : "text-decoration-none text-dark "
-                            }
-                          >
-                            <p style={{ fontSize: "0.75rem" }}>Exam Results</p>
-                          </NavLink>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>

@@ -2199,3 +2199,6 @@ textarea::-webkit-scrollbar-thumb:hover {
 .drawer-content::-webkit-scrollbar-thumb:hover {
   background-color: #475569;
 }
+.ev-custom-progress .progress-bar {
+  background-color: var(--primary-color-400) !important; /* Custom purple filler */
+}

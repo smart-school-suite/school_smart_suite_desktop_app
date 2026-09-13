@@ -13,7 +13,6 @@ import { DropDownMenuItem } from "../../components/DataTableComponents/ActionCom
 import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import DeleteExamCandidate from "../../ModalContent/ExamCandidate/DeleteCandidate";
-import AddCaScores from "../../ModalContent/ExamCandidate/AddCaScores";
 import AddExamScores from "../../ModalContent/ExamCandidate/AddExamScores";
 import { ExamCandidateIcon } from "../../icons/Icons";
 import { useSelector, useDispatch } from "react-redux";
@@ -30,7 +29,7 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { examCandidateColDefs } from "../../utils/table/colDefs/exam/examCandidateColDefs";
 import JobPopOver from "../../components/Popover/JobPopover";
 import { motion, AnimatePresence } from "framer-motion";
-import {  ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
@@ -38,12 +37,14 @@ import {
   addCustomFilter,
   toggleGeneralFilter,
   removeCustomFilter,
-  setCustomFilter
+  setCustomFilter,
 } from "../../Slices/exam/examCandidateSlice";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
 import SearchInput from "../../components/input/search";
+import { Drawer } from "../../components/drawer/Drawer";
+import CreateCaScore from "../../ModalContent/ExamCandidate/CreateCaScore";
 function ExamCandidates() {
   const { data: examCandidates, isLoading, error } = useGetExamCandidates();
   const dispatch = useDispatch();
@@ -365,7 +366,8 @@ function ExamCandidates() {
                           >
                             <div className="d-flex flex-row align-items-center justify-content-between">
                               <span>
-                                Build a custom view of your Exam Candidates data.
+                                Build a custom view of your Exam Candidates
+                                data.
                               </span>
                               <button
                                 className="border-none bg-transparent"
@@ -483,26 +485,67 @@ function ExamCandidates() {
 export default ExamCandidates;
 
 export function ActionComponent(props) {
+  const dispatch = useDispatch();
   const rowData = props.data;
-
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
 
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
@@ -519,7 +562,7 @@ export function ActionComponent(props) {
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
               onClick={() => {
-                if (rowData.student_accessed == "accessed") {
+                if (rowData.is_student_evaluated) {
                   toast.custom(
                     <ToastWarning
                       title={"Opps Something Not Right"}
@@ -530,7 +573,11 @@ export function ActionComponent(props) {
                   );
                   return;
                 }
-                handleShowModal(AddCaScores, "xl");
+                handleShowModal(CreateCaScore, {
+                  size: "xl",
+                  closeOnOutsideClick: false,
+                  closeOnEscape: false,
+                });
               }}
             >
               <div>
@@ -545,7 +592,7 @@ export function ActionComponent(props) {
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
               onClick={() => {
-                if (rowData.student_accessed !== "accessed") {
+                if (rowData.is_student_evaluated) {
                   toast.custom(
                     <ToastWarning
                       title={"Opps Something Not Right"}
@@ -556,7 +603,11 @@ export function ActionComponent(props) {
                   );
                   return;
                 }
-                handleShowModal(UpdateCaScores, "xl");
+                handleShowDrawer(UpdateCaScores, {
+                  title: "Update Ca Exam Candidate Results",
+                  closeOnOutsideClick: false,
+                  showHeader: false,
+                });
               }}
             >
               <div>
@@ -574,7 +625,7 @@ export function ActionComponent(props) {
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
               onClick={() => {
-                if (rowData.student_accessed == "accessed") {
+                if (rowData.is_student_evaluated) {
                   toast.custom(
                     <ToastWarning
                       title={"Opps Something Not Right"}
@@ -585,7 +636,11 @@ export function ActionComponent(props) {
                   );
                   return;
                 }
-                handleShowModal(AddExamScores, "xl");
+                handleShowDrawer(AddExamScores, {
+                  title: "Evaluate  Exam Candidate",
+                  closeOnOutsideClick: false,
+                  showHeader: false,
+                });
               }}
             >
               <div>
@@ -600,7 +655,7 @@ export function ActionComponent(props) {
                 "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
               }
               onClick={() => {
-                if (rowData.student_accessed !== "accessed") {
+                if (rowData.is_student_evaluated) {
                   toast.custom(
                     <ToastWarning
                       title={"Opps Something Not Right"}
@@ -611,7 +666,11 @@ export function ActionComponent(props) {
                   );
                   return;
                 }
-                handleShowModal(UpdateExamScores, "xl");
+                handleShowDrawer(UpdateExamScores, {
+                  title: "Update Candidate Exam Results",
+                  closeOnOutsideClick: false,
+                  showHeader: false,
+                });
               }}
             >
               <div>
@@ -637,13 +696,36 @@ export function ActionComponent(props) {
           </div>
         </DropDownMenuItem>
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );

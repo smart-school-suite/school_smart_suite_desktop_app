@@ -2,22 +2,22 @@ import axiosInstance from "../axios/authAxios";
 
 
 export const createCaMark = async (data) => {
-  const response = await axiosInstance.post("mark/ca-scores", data);
+  const response = await axiosInstance.post("evaluation/ca-scores/create", data);
   return response.data;
 };
 
 export const updateCaMark = async (data) => {
-  const response = await axiosInstance.put("mark/ca-scores", data);
+  const response = await axiosInstance.put("evaluation/ca-scores/update", data);
   return response.data;
 };
 
 export const createExamMark = async (data) => {
-  const response = await axiosInstance.post("mark/exam-scores", data);
+  const response = await axiosInstance.post("evaluation/exam-scores/create", data);
   return response.data;
 };
 
 export const updateExamMark = async (data) => {
-  const response = await axiosInstance.put("mark/exam-scores", data);
+  const response = await axiosInstance.put("evaluation/exam-scores/update", data);
   return response.data;
 };
 

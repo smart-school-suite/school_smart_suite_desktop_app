@@ -51,6 +51,7 @@ import teacherTimePrefReducer from "../Slices/teacher/teacherTimePrefSlice";
 import jointCourseReducer from "../Slices/academics/jointCourseSlice";
 import examCandidateReducer from "../Slices/exam/examCandidateSlice";
 import examInvigilatorReducer from "../Slices/exam/examInvigilatorSlice";
+import caEvaluationReducer from "../Slices/examEvaluation/caEvaluationSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -149,6 +150,13 @@ const rootReducer = combineReducers({
       storage,
     },
     teacherCourseReducer,
+  ),
+  caEvaluation: persistReducer(
+    {
+      key: "caEvalutation",
+      storage,
+    },
+    caEvaluationReducer,
   ),
   teacherTimePref: persistReducer(
     {
