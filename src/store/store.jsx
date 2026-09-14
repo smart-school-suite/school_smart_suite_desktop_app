@@ -52,6 +52,7 @@ import jointCourseReducer from "../Slices/academics/jointCourseSlice";
 import examCandidateReducer from "../Slices/exam/examCandidateSlice";
 import examInvigilatorReducer from "../Slices/exam/examInvigilatorSlice";
 import caEvaluationReducer from "../Slices/examEvaluation/caEvaluationSlice";
+import examEvaluationReducer from "../Slices/examEvaluation/examEvaluationSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -178,6 +179,13 @@ const rootReducer = combineReducers({
       storage,
     },
     examCandidateReducer,
+  ),
+  examEvaluation: persistReducer(
+    {
+      key: "examEvaluation",
+      storage,
+    },
+    examEvaluationReducer,
   ),
   examInvigilator: persistReducer(
     {

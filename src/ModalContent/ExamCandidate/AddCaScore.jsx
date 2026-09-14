@@ -17,7 +17,7 @@ import {
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useCreateCaMark } from "../../hooks/evaluateStudent/useCreateCaMarks";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-function CreateCaScore({ handleClose, rowData }) {
+function AddCaScore({ handleClose, rowData }) {
   const moduleState = useSelector((state) => state.caEvaluation);
   const { id: candidateId } = rowData;
   const dispatch = useDispatch();
@@ -52,7 +52,7 @@ function CreateCaScore({ handleClose, rowData }) {
 
     return isValidScore ? count + 1 : count;
   }, 0);
-  const handleCreateCaScore = () => {
+  const handleAddCaScore = () => {
      const payload = {
          candidate_id: candidateId,
          scores: moduleState?.scores?.map((score) => ({
@@ -420,7 +420,7 @@ function CreateCaScore({ handleClose, rowData }) {
             <button
               className="border-0 px-3 py-2 border rounded-3 font-size-sm primary-background text-white"
               disabled={isPending}
-              onClick={() => handleCreateCaScore()}
+              onClick={() => handleAddCaScore()}
             >
               {
                  isPending ? <SingleSpinner /> : "Save Scores"
@@ -433,4 +433,4 @@ function CreateCaScore({ handleClose, rowData }) {
     </>
   );
 }
-export default CreateCaScore;
+export default AddCaScore;

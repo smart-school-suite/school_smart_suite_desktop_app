@@ -10,18 +10,19 @@ import React, {
 } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
+import {
+  CreateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import DeleteExamCandidate from "../../ModalContent/ExamCandidate/DeleteCandidate";
-import AddExamScores from "../../ModalContent/ExamCandidate/AddExamScores";
 import { ExamCandidateIcon } from "../../icons/Icons";
 import { useSelector, useDispatch } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
-import UpdateCaScores from "../../ModalContent/ExamCandidate/UpdateCaScores";
-import UpdateExamScores from "../../ModalContent/ExamCandidate/UpdateExamScores";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { NotFoundError } from "../../components/errors/Error";
@@ -44,7 +45,15 @@ import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
 import SearchInput from "../../components/input/search";
 import { Drawer } from "../../components/drawer/Drawer";
-import CreateCaScore from "../../ModalContent/ExamCandidate/CreateCaScore";
+import DeleteExamCandidate from "../../ModalContent/ExamCandidate/DeleteCandidate";
+import UpdateExamScores from "../../ModalContent/ExamCandidate/UpdateExamScores";
+import UpdateCaScores from "../../ModalContent/ExamCandidate/UpdateCaScores";
+import AddExamScores from "../../ModalContent/ExamCandidate/AddExamScores";
+import AddCaScore from "../../ModalContent/ExamCandidate/AddCaScore";
+import DeleteCaScores from "../../ModalContent/ExamCandidate/DeleteCaScores";
+import DeleteExamScores from "../../ModalContent/ExamCandidate/DeleteExamScores";
+import ExamScoreDetails from "../../DrawerContent/Evaluation/ExamScoreDetails";
+import CaScoreDetails from "../../DrawerContent/Evaluation/CaScoreDetails";
 function ExamCandidates() {
   const { data: examCandidates, isLoading, error } = useGetExamCandidates();
   const dispatch = useDispatch();
@@ -557,66 +566,69 @@ export function ActionComponent(props) {
       >
         {rowData.exam_type === "ca" ? (
           <>
-            <DropDownMenuItem
-              className={
-                "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-              }
-              onClick={() => {
-                if (rowData.is_student_evaluated) {
-                  toast.custom(
-                    <ToastWarning
-                      title={"Opps Something Not Right"}
-                      description={
-                        "Looks like this student has been accessed for further changes you can update the student scores"
-                      }
-                    />,
-                  );
-                  return;
+            {rowData.is_student_evaluated ? (
+              <DropDownMenuItem
+                className={
+                  "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
                 }
-                handleShowModal(CreateCaScore, {
-                  size: "xl",
-                  closeOnOutsideClick: false,
-                  closeOnEscape: false,
-                });
-              }}
-            >
-              <div>
-                <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-                  <span>Add CA Scores</span>
-                  <CreateIcon />
+                onClick={() => {
+                  if (rowData.is_student_evaluated) {
+                    toast.custom(
+                      <ToastWarning
+                        title={"Opps Something Not Right"}
+                        description={
+                          "Looks like this student has not been accessed you will need to create student scores before updating"
+                        }
+                      />,
+                    );
+                    return;
+                  }
+                  handleShowDrawer(UpdateCaScores, {
+                    title: "Update Ca Exam Candidate Results",
+                    closeOnOutsideClick: false,
+                    showHeader: false,
+                  });
+                }}
+              >
+                <div>
+                  <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                    <span>Update CA Scores</span>
+                    <UpdateIcon />
+                  </div>
                 </div>
-              </div>
-            </DropDownMenuItem>
-            <DropDownMenuItem
-              className={
-                "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-              }
-              onClick={() => {
-                if (rowData.is_student_evaluated) {
-                  toast.custom(
-                    <ToastWarning
-                      title={"Opps Something Not Right"}
-                      description={
-                        "Looks like this student has not been accessed you will need to create student scores before updating"
-                      }
-                    />,
-                  );
-                  return;
+              </DropDownMenuItem>
+            ) : (
+              <DropDownMenuItem
+                className={
+                  "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
                 }
-                handleShowDrawer(UpdateCaScores, {
-                  title: "Update Ca Exam Candidate Results",
-                  closeOnOutsideClick: false,
-                  showHeader: false,
-                });
-              }}
-            >
-              <div>
-                <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-                  <span>Update CA Scores</span>
-                  <UpdateIcon />
+                onClick={() => {
+                  if (rowData.is_student_evaluated) {
+                    toast.custom(
+                      <ToastWarning
+                        title={"Opps Something Not Right"}
+                        description={
+                          "Looks like this student has been accessed for further changes you can update the student scores"
+                        }
+                      />,
+                    );
+                    return;
+                  }
+                  handleShowModal(AddCaScore, {
+                    size: "xl",
+                    closeOnOutsideClick: false,
+                    closeOnEscape: false,
+                  });
+                }}
+              >
+                <div>
+                  <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                    <span>Add CA Scores</span>
+                    <CreateIcon />
+                  </div>
                 </div>
-              </div>
-            </DropDownMenuItem>
+              </DropDownMenuItem>
+            )}
           </>
         ) : (
           <>
@@ -636,10 +648,10 @@ export function ActionComponent(props) {
                   );
                   return;
                 }
-                handleShowDrawer(AddExamScores, {
-                  title: "Evaluate  Exam Candidate",
+                handleShowModal(AddExamScores, {
+                  size: "xl",
                   closeOnOutsideClick: false,
-                  showHeader: false,
+                  closeOnEscape: false,
                 });
               }}
             >
@@ -695,6 +707,88 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
+        {rowData.exam_type === "ca" ? (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowModal(DeleteCaScores, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Delete Ca Scores</span>
+                <DeleteIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        ) : (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowModal(DeleteExamScores, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Delete Exam Score</span>
+                <DeleteIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        )}
+        {rowData.exam_type === "ca" ? (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowDrawer(CaScoreDetails, {
+                title: "Ca Exam Candidate Result",
+                closeOnOutsideClick: true,
+                showHeader: true,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Ca Result</span>
+                <DetailsIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        ) : (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowDrawer(ExamScoreDetails, {
+                title: "Exam Candidate Result",
+                closeOnOutsideClick: true,
+                showHeader: true,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Exam Result</span>
+                <DetailsIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        )}
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}

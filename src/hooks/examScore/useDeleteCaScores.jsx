@@ -1,36 +1,32 @@
-import { createExamMark } from "../../services/evaluateStudent";
+import { deleteCaExamScores } from "../../services/examScore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
+import ToastDanger from "../../components/Toast/ToastDanger";
 import toast from "react-hot-toast";
-import { resetExamScoreState } from "../../Slices/examEvaluation/examEvaluationSlice";
-import { useDispatch } from "react-redux";
-export const useCreateExamMarks = (handleClose) => {
+export const useDeleteCaExamScores = (handleClose, candidateId) => {
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
   return useMutation({
-    mutationFn: createExamMark,
+    mutationFn: deleteCaExamScores,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["examCandidates"] });
-
+       queryClient.invalidateQueries({ queryKey: ["candidate-scores", candidateId]})   
       if (handleClose) {
         handleClose();
       }
 
       toast.custom(
         <ToastSuccess
-          title={"Marks Submitted"}
-          description={"Marks Submitted Successfully"}
-        />
+          title={"Deleted Successful"}
+          description={"Ca Exam Deleted Successfully"}
+        />,
       );
-      dispatch(resetExamScoreState());
     },
     onError: (error) => {
       toast.custom(
         <ToastDanger
           title={error.response.data.errors.title}
           description={error.response.data.errors.description}
-        />
+        />,
       );
     },
   });
