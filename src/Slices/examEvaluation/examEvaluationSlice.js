@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { RESIT_LABEL, RESULT, RESULT_LABEL } from "@/constants";
+import { RESULT } from "@/constants";
 
 const initialState = {
   scores: [],
@@ -16,12 +16,92 @@ const initialState = {
   maxGpa: 0.0,
   maxScore: 0,
   caMaxScore: 0,
+  update: {
+    maxGpa: 0.0,
+    maxScore: 0,
+    caMaxScore: 0,
+    isDirty: false,
+    gradeScale: [],
+    initial: {
+      scores: [],
+      resultSummary: {
+        coursesPassed: 0,
+        coursesFailed: 0,
+        examStatus: "NA",
+        totalScore: 0,
+        totalCredit: 0,
+        totalGradePoints: 0,
+        gpa: 0,
+      },
+    },
+    draft: {
+      scores: [],
+      resultSummary: {
+        coursesPassed: 0,
+        coursesFailed: 0,
+        examStatus: "NA",
+        totalScore: 0,
+        totalCredit: 0,
+        totalGradePoints: 0,
+        gpa: 0,
+      },
+    },
+  },
 };
 
 const examEvaluationSlice = createSlice({
   name: "examEvaluation",
   initialState: initialState,
   reducers: {
+    setUpdateInitialData: (state, action) => {
+      const {
+        courses = [],
+        gradeScale = [],
+        maxGpa = 0.0,
+        maxScore = 70,
+        caMaxScore = 30,
+      } = action.payload;
+
+      const mappedScale = gradeScale.map((gs) => ({
+        scale_id: gs.id,
+        gradePoints: gs.grade_points,
+        result: gs.result,
+        maximumScore: gs.maximum_score,
+        minimumScore: gs.minimum_score,
+        performance: gs.performance,
+        resitResult: gs.resit_result,
+        grade: gs.grade?.letter_grade || gs.grade,
+      }));
+
+      const mappedCourses = courses.map((course) => ({
+        id: course?.id,
+        course_id: course?.course_id,
+        course_title: course?.course_title,
+        course_code: course?.course_code,
+        course_credit: course?.credit,
+        caScore: parseFloat(course?.ca_score) || 0,
+        score: isNaN(course?.score) ? "" : parseFloat(course?.score),
+        gradePoints: parseFloat(course?.grade_points) || 0,
+        result: course?.result || "N/A",
+        resitResult: course?.resit_result || "N/A",
+        performance: course?.performance || "N/A",
+        grade: course?.grade || "N/A",
+      }));
+
+      state.update.gradeScale = mappedScale;
+      state.update.maxGpa = maxGpa;
+      state.update.maxScore = maxScore;
+      state.update.caMaxScore = caMaxScore;
+
+      state.update.initial.scores = mappedCourses;
+      state.update.initial.resultSummary = calculateResultSummary(mappedCourses);
+
+      state.update.draft.scores = mappedCourses.map((c) => ({ ...c }));
+      state.update.draft.resultSummary = calculateResultSummary(mappedCourses);
+
+      state.update.isDirty = false;
+    },
+
     setInitialData: (state, action) => {
       const {
         caScores = [],
@@ -37,7 +117,7 @@ const examEvaluationSlice = createSlice({
         course_code: item.course.course_code,
         course_credit: item.course.credit,
         caScore: parseFloat(item.score) || 0,
-        score: "", // Exam score provided by user
+        score: "",
         gradePoints: 0,
         result: "N/A",
         resitResult: "N/A",
@@ -75,14 +155,12 @@ const examEvaluationSlice = createSlice({
             ? courseToUpdate.caScore
             : parseFloat(courseToUpdate.caScore) || 0;
 
-        // Total score = CA + Exam (score)
         const totalScore = caScore + parsedExamScore;
 
         const grade = state.gradeScale.find(
           (g) => totalScore >= g.minimumScore && totalScore <= g.maximumScore
         );
 
-        // Directly store user input in 'score'
         courseToUpdate.score = score;
 
         if (grade) {
@@ -101,6 +179,55 @@ const examEvaluationSlice = createSlice({
       }
 
       state.resultSummary = calculateResultSummary(state.scores);
+    },
+
+    updateDraftScore: (state, action) => {
+      const { scoreId, score } = action.payload;
+      const parsedExamScore = score === "" || isNaN(score) ? 0 : parseFloat(score);
+
+      const courseToUpdate = state.update.draft.scores.find(
+        (course) => course.id === scoreId
+      );
+
+      if (courseToUpdate) {
+        const caScore =
+          typeof courseToUpdate.caScore === "number"
+            ? courseToUpdate.caScore
+            : parseFloat(courseToUpdate.caScore) || 0;
+
+        const totalScore = caScore + parsedExamScore;
+
+        const grade = state.update.gradeScale.find(
+          (g) => totalScore >= g.minimumScore && totalScore <= g.maximumScore
+        );
+
+        courseToUpdate.score = score;
+
+        if (grade) {
+          courseToUpdate.gradePoints = grade.gradePoints;
+          courseToUpdate.result = grade.result;
+          courseToUpdate.resitResult = grade.resitResult;
+          courseToUpdate.performance = grade.performance;
+          courseToUpdate.grade = grade.grade;
+        } else {
+          courseToUpdate.gradePoints = 0;
+          courseToUpdate.result = "NA";
+          courseToUpdate.resitResult = "NA";
+          courseToUpdate.performance = "NA";
+          courseToUpdate.grade = "NA";
+        }
+      }
+
+      state.update.draft.resultSummary = calculateResultSummary(state.update.draft.scores);
+
+      state.update.isDirty = checkIsDirty(
+        state.update.draft.scores,
+        state.update.initial.scores
+      );
+    },
+
+    resetUpdateState: (state) => {
+      state.update = initialState.update;
     },
 
     resetExamScoreState: () => initialState,
@@ -127,13 +254,32 @@ const calculateResultSummary = (scores) => {
   });
 
   const gpa = totalCourses > 0 ? totalGradePoints / totalCourses : 0;
-  const examStatus =
-    coursesFailed > 0 ? RESULT.FAILED : RESULT.PASSED;
+  const examStatus = coursesFailed > 0 ? RESULT.FAILED : RESULT.PASSED;
 
   return { coursesPassed, coursesFailed, totalGradePoints, gpa, examStatus };
 };
 
-export const { setInitialData, updateScore, resetExamScoreState } =
-  examEvaluationSlice.actions;
+const checkIsDirty = (draftScores, initialScores) => {
+  if (draftScores.length !== initialScores.length) return true;
+
+  return draftScores.some((draftCourse) => {
+    const initialCourse = initialScores.find(
+      (init) => init.id === draftCourse.id || init.course_id === draftCourse.course_id
+    );
+
+    if (!initialCourse) return true;
+
+    return String(draftCourse.score) !== String(initialCourse.score);
+  });
+};
+
+export const {
+  setUpdateInitialData,
+  setInitialData,
+  updateScore,
+  updateDraftScore,
+  resetUpdateState,
+  resetExamScoreState,
+} = examEvaluationSlice.actions;
 
 export default examEvaluationSlice.reducer;

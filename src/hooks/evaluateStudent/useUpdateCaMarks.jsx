@@ -3,12 +3,18 @@ import { updateCaMark } from "../../services/evaluateStudent";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
-export const useUpdateCaMarks = (handleClose) => {
+import { resetUpdateState } from "../../Slices/examEvaluation/caEvaluationSlice";
+import { useDispatch } from "react-redux";
+export const useUpdateCaMarks = (handleClose, candidateId) => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   return useMutation({
     mutationFn: updateCaMark,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["examCandidates"] });
+      queryClient.invalidateQueries({
+        queryKey: ["candidate-scores", candidateId],
+      });
       if (handleClose) {
         handleClose();
       }
@@ -17,15 +23,19 @@ export const useUpdateCaMarks = (handleClose) => {
         <ToastSuccess
           title={"Update Successfull"}
           description={"CA Scores Updated Successfully"}
-        />
+        />,
       );
+
+      if (resetUpdateState) {
+        dispatch(resetUpdateState());
+      }
     },
     onError: (error) => {
       toast.custom(
         <ToastDanger
           title={error.response.data.errors.title}
           description={error.response.data.errors.description}
-        />
+        />,
       );
     },
   });

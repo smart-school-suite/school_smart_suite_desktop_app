@@ -572,7 +572,7 @@ export function ActionComponent(props) {
                   "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
                 }
                 onClick={() => {
-                  if (rowData.is_student_evaluated) {
+                  if (!rowData.is_student_evaluated) {
                     toast.custom(
                       <ToastWarning
                         title={"Opps Something Not Right"}
@@ -583,10 +583,10 @@ export function ActionComponent(props) {
                     );
                     return;
                   }
-                  handleShowDrawer(UpdateCaScores, {
-                    title: "Update Ca Exam Candidate Results",
+                  handleShowModal(UpdateCaScores, {
+                    size: "xl",
                     closeOnOutsideClick: false,
-                    showHeader: false,
+                    closeOnEscape: false,
                   });
                 }}
               >
@@ -632,66 +632,69 @@ export function ActionComponent(props) {
           </>
         ) : (
           <>
-            <DropDownMenuItem
-              className={
-                "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-              }
-              onClick={() => {
-                if (rowData.is_student_evaluated) {
-                  toast.custom(
-                    <ToastWarning
-                      title={"Opps Something Not Right"}
-                      description={
-                        "Looks like this student has been accessed for further changes you can update the student scores"
-                      }
-                    />,
-                  );
-                  return;
+            {rowData?.is_student_evaluated ? (
+              <DropDownMenuItem
+                className={
+                  "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
                 }
-                handleShowModal(AddExamScores, {
-                  size: "xl",
-                  closeOnOutsideClick: false,
-                  closeOnEscape: false,
-                });
-              }}
-            >
-              <div>
-                <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-                  <span>Add Exam Scores</span>
-                  <CreateIcon />
+                onClick={() => {
+                  if (!rowData.is_student_evaluated) {
+                    toast.custom(
+                      <ToastWarning
+                        title={"Opps Something Not Right"}
+                        description={
+                          "Looks like this student has not been accessed add student exam marks before updating"
+                        }
+                      />,
+                    );
+                    return;
+                  }
+                  handleShowModal(UpdateExamScores, {
+                    size: "xl",
+                    closeOnOutsideClick: false,
+                    closeOnEscape: false,
+                  });
+                }}
+              >
+                <div>
+                  <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                    <span>Update Exam Scores</span>
+                    <UpdateIcon />
+                  </div>
                 </div>
-              </div>
-            </DropDownMenuItem>
-            <DropDownMenuItem
-              className={
-                "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-              }
-              onClick={() => {
-                if (rowData.is_student_evaluated) {
-                  toast.custom(
-                    <ToastWarning
-                      title={"Opps Something Not Right"}
-                      description={
-                        "Looks like this student has not been accessed add student exam marks before updating"
-                      }
-                    />,
-                  );
-                  return;
+              </DropDownMenuItem>
+            ) : (
+              <DropDownMenuItem
+                className={
+                  "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
                 }
-                handleShowDrawer(UpdateExamScores, {
-                  title: "Update Candidate Exam Results",
-                  closeOnOutsideClick: false,
-                  showHeader: false,
-                });
-              }}
-            >
-              <div>
-                <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-                  <span>Update Exam Scores</span>
-                  <UpdateIcon />
+                onClick={() => {
+                  if (rowData.is_student_evaluated) {
+                    toast.custom(
+                      <ToastWarning
+                        title={"Opps Something Not Right"}
+                        description={
+                          "Looks like this student has been accessed for further changes you can update the student scores"
+                        }
+                      />,
+                    );
+                    return;
+                  }
+                  handleShowModal(AddExamScores, {
+                    size: "xl",
+                    closeOnOutsideClick: false,
+                    closeOnEscape: false,
+                  });
+                }}
+              >
+                <div>
+                  <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                    <span>Add Exam Scores</span>
+                    <CreateIcon />
+                  </div>
                 </div>
-              </div>
-            </DropDownMenuItem>
+              </DropDownMenuItem>
+            )}
           </>
         )}
         <DropDownMenuItem

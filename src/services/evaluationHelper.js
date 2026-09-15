@@ -13,3 +13,17 @@ export const getExamEvaluationHelperData = async (candidateId) => {
   );
   return response.data;
 };
+
+export const getCaUpdateHelperData = async (candidateId) => {
+  const response = await axiosInstance.get(
+    `evaluation-helper/candidate/${candidateId}/ca-update/helper`,
+  );
+  return response.data;
+};
+
+export const getExamUpdateHelperData = async (candidateId) => {
+  const response = await axiosInstance.get(
+    `evaluation-helper/candidate/${candidateId}/exam-update/helper`,
+  );
+  return response.data;
+};

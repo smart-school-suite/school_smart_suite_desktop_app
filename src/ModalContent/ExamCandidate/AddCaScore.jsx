@@ -236,12 +236,12 @@ function AddCaScore({ handleClose, rowData }) {
                 <span className="text-muted font-size-sm">Result</span>
                 <span
                   className={`fw-semibold font-size-sm ${
-                    moduleState?.resultSummary?.examStatus === RESULT.PASSED
-                      ? "text-fern-700"
-                      : "text-red-700"
+                    moduleState?.resultSummary?.examStatus.toLowerCase()  == RESULT?.PASSED
+                      ? "text-fern-500" : moduleState?.resultSummary?.examStatus.toLowerCase() == RESULT.FAILED ?
+                       "text-red-500" : "text-muted" 
                   }`}
                 >
-                  {moduleState?.resultSummary?.examStatus}
+                  { RESULT_LABEL[moduleState?.resultSummary?.examStatus.toLowerCase()] ?? "N/A"}
                 </span>
               </div>
             </div>

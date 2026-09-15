@@ -1,233 +1,448 @@
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useGetCaExamScoresByCandidate } from "../../hooks/evaluateStudent/useGetCaExamScoresByCandidate";
-import { useEffect } from "react";
+import { Dot, CircleX } from "lucide-react";
+import ProgressBar from "react-bootstrap/ProgressBar";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import VerticalDashedLine from "../../components/DashedLine/VerticalDashedLine";
+import { Fragment, useEffect } from "react";
+import SearchInput from "../../components/input/search";
+import { RESIT_LABEL, RESULT, RESULT_LABEL } from "@/constants";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setExamScores,
-  setExamGrading,
-  setMaxGpa,
-  updateScore,
-  resetCaScoreState,
-} from "../../Slices/Asynslices/CaScoreSlice";
-import { Icon } from "@iconify/react";
 import NumberFlow from "@number-flow/react";
-import { useUpdateCaMarks } from "../../hooks/evaluateStudent/useUpdateCaMarks";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import {
+  updateDraftScore,
+  resetUpdateState,
+  setUpdateInitialData,
+} from "../../Slices/examEvaluation/caEvaluationSlice";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useUpdateCaMarks } from "../../hooks/evaluateStudent/useUpdateCaMarks";
+import { useGetCaUpdateHelperData } from "../../hooks/evaluationHelper/useGetCaUpdateHelperData";
 function UpdateCaScores({ handleClose, rowData }) {
-  const { student_id: studentId, id: candidateId } = rowData;
-  const {
-    data: updateData,
-    isLoading: isUpdateDataLoading,
-    error: updateDataError,
-  } = useGetCaExamScoresByCandidate(candidateId);
-  const { mutate: updateCaMarks, isPending } = useUpdateCaMarks(handleClose);
-  const formData = useSelector((state) => state.createCaScore.examScores);
-  const maxGpa = useSelector((state) => state.createCaScore.maxGpa);
-  const resultSummary = useSelector(
-    (state) => state.createCaScore.resultSummary
-  );
-  const darkMode = useSelector((state) => state.theme.darkMode);
+  const moduleState = useSelector((state) => state.caEvaluation.update);
+  const { id: candidateId } = rowData;
   const dispatch = useDispatch();
 
+  const {
+    data: helperData,
+    isLoading,
+    error,
+  } = useGetCaUpdateHelperData(candidateId);
+
+  const { mutate: updateCaScores, isPending } = useUpdateCaMarks(handleClose);
   useEffect(() => {
-    if (updateData?.data) {
-      const examGrading = updateData?.data?.exam_grades?.map((items) => ({
-        gradePoints: parseFloat(items.grade_points),
-        gradeStatus: items.grade_status,
-        resitStatus: items.resit_status,
-        minimumScore: parseFloat(items.minimum_score),
-        maximumScore: parseFloat(items.maximum_score),
-        determinant: items.determinant,
-        letterGrade: items.lettergrade.letter_grade,
-      }));
-      const examScores = updateData?.data?.ca_marks?.map((items) => ({
-        mark_id: items.id,
-        studentId: studentId,
-        candidateId: candidateId,
-        courseId: items.courses_id,
-        courseName: items.course.course_title,
-        gradePoints: parseFloat(items.grade_points),
-        gradeStatus: items.grade_status,
-        resitStatus: items.resit_status,
-        determinant: items.gratification,
-        letterGrade: items.grade,
-        score: parseFloat(items.score),
-      }));
-      dispatch(setExamGrading(examGrading));
-      dispatch(setMaxGpa(updateData.data.max_gpa));
-      dispatch(setExamScores({ examScores, recalculate: true }));
+    const data = helperData?.data;
+
+    if (data && !isLoading) {
+      dispatch(
+        setUpdateInitialData({
+          courses: data?.courses,
+          gradeScale: data?.grade_scale,
+          maxGpa: data?.max_gpa,
+          maxScore: data?.exam?.max_score,
+        }),
+      );
     }
-  }, [updateData?.data, studentId, candidateId, dispatch]);
+  }, [helperData, isLoading, dispatch]);
+  const coursesEvaluated = moduleState?.draft?.scores.reduce(
+    (count, course) => {
+      const isValidScore =
+        course.score !== "" &&
+        course.score !== null &&
+        course.score !== undefined &&
+        !isNaN(course.score);
 
-  const handleScoreChange = (e, index) => {
-    const newScore = parseFloat(e.target.value);
-    dispatch(updateScore({ index, score: newScore }));
-  };
-  const handleUpdateCaScores = () => {
-    const formattedData = formData.map((items) => ({
-      mark_id: items.mark_id,
-      course_id: items.courseId,
-      score: items.score,
-    }));
-
-    updateCaMarks({ scores_entries: formattedData });
+      return isValidScore ? count + 1 : count;
+    },
+    0,
+  );
+  const handleUpdateCaScore = () => {
+    const payload = {
+      scores: moduleState?.draft?.scores.map((score) => ({
+        score_id: score.id,
+        score: score.score,
+      })),
+    };
+    updateCaScores(payload);
   };
   return (
     <>
-      <div className="d-flex flex-row align-items-center justify-content-between mb-4 ">
-        <span>Update CA Scores</span>
-        <span
-          onClick={() => {
-            handleClose();
-          }}
+      <div style={{ height: "84dvh" }} className="d-flex flex-column">
+        <div
+          className="border-bottom rounded-top-4 p-2 d-flex flex-column justify-content-center"
+          style={{ height: "6dvh", background: "#f9f9f9" }}
         >
-          <Icon icon="charm:cross" width="22" height="22" />
-        </span>
-      </div>
-      {isUpdateDataLoading ? (
-        <RectangleSkeleton height="70dvh" width="100%" />
-      ) : updateDataError ? (
-        <NotFoundError
-          title={updateDataError?.response?.data?.errors?.title}
-          description={updateDataError?.response?.data?.errors?.description}
-        ></NotFoundError>
-      ) : (
-        <div>
-          <div className="d-flex flex-row align-items-center justify-content-end gap-2 mb-2">
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <div>
+              <span className="font-size-sm fw-semibold">
+                Update Ca Exam Scores
+              </span>
+            </div>
             <button
-              className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"
               onClick={() => {
-                handleUpdateCaScores();
-                dispatch(resetCaScoreState());
+                dispatch(resetUpdateState());
+                handleClose();
+              }}
+              disabled={isPending}
+              className="border-0 bg-transparent p-0"
+              style={{
+                width: "2rem",
+                height: "2rem",
+                display: "grid",
+                placeItems: "center",
+                cursor: "pointer",
               }}
             >
-              {isPending ? <SingleSpinner /> : "Submit Score"}
+              <CircleX size={16} />
             </button>
           </div>
+        </div>
+
+        <div
+          className="d-flex flex-row align-items-stretch w-100 overflow-hidden"
+          style={{ flex: 1 }}
+        >
           <div
-            className={`card grades-box rounded-3 ${
-              darkMode ? "dark-bg gainsboro-color" : "bg-white  border"
-            }`}
+            className="d-flex flex-column gap-4 p-2 h-100 overflow-y-auto"
+            style={{ width: "30%", flexShrink: 0 }}
           >
-            <table
-              className={`${
-                darkMode ? "table-dark" : null
-              } table-responsive table`}
-            >
-              <thead className="grades-thead">
-                <tr>
-                  <th className="text-start">Course</th>
-                  <th className="text-center">Score</th>
-                  <th className="text-center">Grade Points</th>
-                  <th className="text-center">Score Status</th>
-                  <th className="text-center">Grade</th>
-                </tr>
-              </thead>
-              <tbody>
-                {formData.map((items, index) => (
-                  <tr className="grades-tr" key={index}>
-                    <td style={{ width: "20%" }}>
-                      <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center font-size-sm">
-                        <div className="d-flex flex-column w-100 font-size">
-                          <span className="text-capitalize">
-                            {items?.courseName || "N/A"}
-                          </span>
-                          <span style={{ fontSize: "0.65rem", opacity: 0 }}>
-                            Error
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ width: "20%" }}>
-                      <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center font-size-sm">
-                        <div className="d-flex flex-column">
-                          <input
-                            type="number"
-                            step="0.01"
-                            className={`form-control w-100 font-size-sm p-2 ${
-                              darkMode ? "dark-mode-input" : null
-                            }`}
-                            value={items.score}
-                            onChange={(e) => handleScoreChange(e, index)}
-                            placeholder={items.score || 0}
-                          />
-                          <span style={{ fontSize: "0.65rem", opacity: 0 }}>
-                            Error
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ width: "20%" }}>
-                      <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center font-size-sm">
-                        <div className="d-flex flex-column">
-                          <span>
-                            {
-                              <NumberFlow
-                                value={items.gradePoints.toFixed(2)}
-                              />
-                            }
-                          </span>
-                          <span style={{ fontSize: "0.65rem", opacity: 0 }}>
-                            Error
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ width: "20%" }}>
-                      <div className="h-100 d-flex flex-row align-items-center justify-content-center font-size-sm">
-                        <div className="d-flex flex-column">
-                          <span className="text-capitalize">
-                            {items.gradeStatus || "N/A"}
-                          </span>
-                          <span style={{ fontSize: "0.65rem", opacity: 0 }}>
-                            Error
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ width: "20%" }}>
-                      <div className="w-100 h-100 d-flex flex-row align-items-center justify-content-center font-size-sm">
-                        <div className="d-flex flex-column">
-                          <span>{items.letterGrade || "N/A"}</span>
-                          <span style={{ fontSize: "0.65rem", opacity: 0 }}>
-                            Error
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+            <div className="d-flex flex-column gap-2 w-100">
+              <div className="d-flex flex-row align-items-center gap-2">
+                <div
+                  style={{
+                    width: "2.5rem",
+                    height: "2.5rem",
+                    flexShrink: 0,
+                  }}
+                  className="rounded-circle overflow-hidden"
+                >
+                  <img
+                    src="./images/user.png"
+                    alt="User"
+                    className="object-fit-cover w-100 h-100"
+                  />
+                </div>
+                <div className="d-flex flex-column overflow-hidden">
+                  <span className="fw-semibold font-size-sm text-truncate">
+                    {rowData?.student_name}
+                  </span>
+                  <div
+                    className="d-flex flex-row align-items-center gap-1 text-muted text-capitalize text-truncate"
+                    style={{ fontSize: "0.85rem" }}
+                  >
+                    <small>{rowData?.level_name}</small>
+                    <Dot />
+                    <small>{rowData?.specialty_name}</small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
+                <small
+                  style={{
+                    minHeight: "1.2rem",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "0.65rem",
+                    whiteSpace: "nowrap",
+                  }}
+                  className="rounded-pill px-2 primary-background-100 color-primary text-capitalize"
+                >
+                  {rowData?.exam_name}
+                </small>
+                <small
+                  style={{
+                    minHeight: "1.2rem",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "0.65rem",
+                    whiteSpace: "nowrap",
+                  }}
+                  className="rounded-pill px-2 primary-background-100 color-primary text-capitalize"
+                >
+                  {rowData?.academic_year}
+                </small>
+              </div>
+            </div>
+
+            <div className="d-flex flex-column gap-1">
+              <div className="d-flex flex-row justify-content-between align-items-center">
+                {isLoading ? (
+                  <small
+                    style={{ fontSize: "0.7rem" }}
+                    className="text-muted d-flex flex-row align-items-center"
+                  >
+                    <small>0</small>
+                    <small>/</small>
+                    <small>0</small>
+                    <small>Courses Evaluated</small>
+                  </small>
+                ) : (
+                  <small
+                    style={{ fontSize: "0.7rem" }}
+                    className="text-muted d-flex flex-row align-items-center gap-1"
+                  >
+                    <small>{coursesEvaluated}</small>
+                    <small>/</small>
+                    <small>{moduleState?.draft?.scores?.length}</small>
+                    <small>Courses Evaluated</small>
+                  </small>
+                )}
+                <small style={{ fontSize: "0.7rem" }} className="fw-semibold">
+                  {(coursesEvaluated / moduleState?.draft?.scores?.length) *
+                    100}{" "}
+                  % complete
+                </small>
+              </div>
+              <ProgressBar
+                now={
+                  (coursesEvaluated / moduleState?.draft?.scores?.length) * 100
+                }
+                style={{
+                  height: "0.2rem",
+                  backgroundColor: "#e9ecef",
+                  borderRadius: "10px",
+                }}
+                className="ev-custom-progress"
+              />
+            </div>
+
+            <div className="mt-auto w-100 pt-2 border-top d-flex flex-column gap-2">
+              <div className="d-flex flex-row justify-content-between align-items-center w-100">
+                <span className="text-muted font-size-sm">GPA</span>
+                <div className="d-flex flex-row align-items-baseline">
+                  <span className="fw-bold font-size-md tabular-numbers">
+                    <NumberFlow
+                      value={moduleState?.draft?.resultSummary?.gpa}
+                    />
+                  </span>
+                  <span>/</span>
+                  <span className="text-muted font-size-sm">
+                    {parseFloat(moduleState?.maxGpa).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+              <div className="d-flex flex-row justify-content-between align-items-center w-100">
+                <span className="text-muted font-size-sm">Courses Passed</span>
+                <span className="fw-bold font-size-sm">
+                  <NumberFlow
+                    value={moduleState?.draft?.resultSummary?.coursesPassed}
+                  />
+                </span>
+              </div>
+              <div className="d-flex flex-row justify-content-between align-items-center w-100">
+                <span className="text-muted font-size-sm">Courses Failed</span>
+                <span className="fw-bold font-size-sm">
+                  <NumberFlow
+                    value={moduleState?.draft?.resultSummary?.coursesFailed}
+                  />
+                </span>
+              </div>
+              <div className="d-flex flex-row justify-content-between align-items-center w-100">
+                <span className="text-muted font-size-sm">Result</span>
+                <span
+                  className={`fw-semibold font-size-sm ${
+                    moduleState?.draft?.resultSummary?.examStatus.toLowerCase() ==
+                    RESULT?.PASSED
+                      ? "text-fern-500"
+                      : moduleState?.draft?.resultSummary?.examStatus.toLowerCase() ==
+                          RESULT.FAILED
+                        ? "text-red-500"
+                        : "text-muted"
+                  }`}
+                >
+                  {RESULT_LABEL[
+                    moduleState?.draft?.resultSummary?.examStatus.toLowerCase()
+                  ] ?? "N/A"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <VerticalDashedLine
+            dashed={false}
+            color="#ccc"
+            thickness={0.4}
+            height="100%"
+          />
+
+          <div
+            className="d-flex flex-column gap-2 h-100 p-2 overflow-hidden"
+            style={{ width: "70%" }}
+          >
+            {isLoading ? (
+              <div className="d-flex flex-column gap-2 flex-grow-1 overflow-y-auto pe-1 scroll-bar-sm">
+                {[...Array(4)].map((_, index) => (
+                  <Fragment key={index}>
+                    <RectangleSkeleton height="20dvh" width="100%" />
+                  </Fragment>
                 ))}
-              </tbody>
-            </table>
-            <div className="d-flex flex-row align-items-center justify-content-end gap-3 py-2 font-size-sm pe-2">
-              <span>
-                Exam-Status:{" "}
-                <span className="fw-semibold">{resultSummary.examStatus} </span>
-              </span>
-              <span>
-                Courses Passed:{" "}
-                <span className="fw-semibold">
-                  {resultSummary.coursesPassed}
-                </span>
-              </span>
-              <span>
-                Courses Failed:{" "}
-                <span className="fw-semibold">
-                  {resultSummary.coursesFailed}
-                </span>
-              </span>
-              <span>
-                GPA:{" "}
-                <span className="fw-semibold">
-                  {<NumberFlow value={resultSummary.gpa.toFixed(2)} />}/
-                  {parseFloat(maxGpa).toFixed(2)}
-                </span>
-              </span>
+              </div>
+            ) : error ? (
+              <NotFoundError
+                title={error?.response?.data?.errors?.title}
+                description={error?.response?.data?.errors?.description}
+              />
+            ) : (
+              <>
+                <div style={{ height: "40px", flexShrink: 0 }} className="pe-2">
+                  <SearchInput
+                    placeholder={"Search Course......"}
+                    hotkey="Ctrl+U"
+                  />
+                </div>
+                <div
+                  className="d-flex flex-column gap-2 flex-grow-1 overflow-y-auto pe-1 scroll-bar-sm"
+                  style={{ minHeight: 0, paddingBottom: "10rem" }}
+                >
+                  {moduleState?.draft?.scores?.map((course, index) => (
+                    <Fragment key={course.id || index}>
+                      <div className="card border rounded-4 px-3 py-3 font-size-sm d-flex flex-column gap-3 shadow-sm">
+                        <div className="d-flex flex-row justify-content-between">
+                          <div className="d-flex flex-column">
+                            <span className="fw-semibold">
+                              {course.course_title}
+                            </span>
+                            <span className="text-muted">
+                              {course.course_code}
+                            </span>
+                          </div>
+                          <span className="text-muted">
+                            {course.course_credit} credit
+                          </span>
+                        </div>
+                        <div className="d-flex flex-column">
+                          <small className="text-muted fw-medium">SCORE</small>
+                          <div className="d-flex flex-row align-items-center gap-2">
+                            <input
+                              type="number"
+                              step={"0.01"}
+                              min={0}
+                              max={moduleState.maxScore}
+                              placeholder="—"
+                              value={course.score}
+                              onChange={(e) =>
+                                dispatch(
+                                  updateDraftScore({
+                                    scoreId: course.id,
+                                    score: e.target.value,
+                                  }),
+                                )
+                              }
+                              className="form-control"
+                              style={{
+                                width: 120,
+                                fontFamily: "inherit",
+                                fontSize: 18,
+                                fontWeight: 600,
+                                fontVariantNumeric: "tabular-nums",
+                                padding: "7px 9px",
+                                borderRadius: 8,
+                                border: `1.5px solid rgba(8,48,73,0.16)`,
+                                outline: "none",
+                                textAlign: "center",
+                              }}
+                            />
+                            <span className="text-muted font-size-md">
+                              / {moduleState.maxScore}
+                            </span>
+                          </div>
+                        </div>
+                        <HorizontalDashedLine
+                          dashed={false}
+                          color="#ccc"
+                          thickness={0.2}
+                        />
+                        {course.score ? (
+                          <div className="d-flex flex-row align-items-center justify-content-between">
+                            <div className="d-flex flex-column gap-2 align-items-center">
+                              <small className="text-uppercase text-muted">
+                                Performance
+                              </small>
+                              <span>{course.performance}</span>
+                            </div>
+                            <div className="d-flex flex-column gap-2 align-items-center">
+                              <small className="text-uppercase text-muted">
+                                Grade
+                              </small>
+                              <span
+                                className={
+                                  course.result === RESULT.PASSED
+                                    ? "text-fern-500"
+                                    : "text-red-500"
+                                }
+                              >
+                                {course.grade}
+                              </span>
+                            </div>
+                            <div className="d-flex flex-column gap-2 align-items-center">
+                              <small className="text-uppercase text-muted">
+                                Grade Point
+                              </small>
+                              <span className="fw-semibold tabular-numbers">
+                                <NumberFlow value={course.gradePoints} />
+                              </span>
+                            </div>
+                            <div className="d-flex flex-column gap-2 align-items-center">
+                              <small className="text-uppercase text-muted">
+                                Result
+                              </small>
+                              <span
+                                className={
+                                  course.result === RESULT.PASSED
+                                    ? "text-fern-500"
+                                    : "text-red-500"
+                                }
+                              >
+                                {RESULT_LABEL[course.result]}
+                              </span>
+                            </div>
+                            <div className="d-flex flex-column gap-2 align-items-center">
+                              <small className="text-uppercase text-muted">
+                                Resit Result
+                              </small>
+                              <span>{RESIT_LABEL[course.resitResult]}</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-muted">Not yet evaluated</span>
+                        )}
+                      </div>
+                    </Fragment>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-auto border-top p-2" style={{ height: "6dvh" }}>
+          <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100 h-100">
+            <div className="d-flex flex-row align-items-center gap-2">
+              <button
+                className="border-0 px-3 py-2 border rounded-3 font-size-sm bg-none"
+                disabled={isPending}
+                onClick={() => {
+                  dispatch(resetUpdateState());
+                  handleClose();
+                }}
+              >
+                Cancel
+              </button>
+              {moduleState.isDirty && (
+                <button
+                  className="border-0 px-3 py-2 border rounded-3 font-size-sm primary-background text-white"
+                  disabled={isPending}
+                  onClick={() => handleUpdateCaScore()}
+                >
+                  {isPending ? <SingleSpinner /> : "Update Scores"}
+                </button>
+              )}
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }

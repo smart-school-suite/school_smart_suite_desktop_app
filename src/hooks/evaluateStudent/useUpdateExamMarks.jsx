@@ -3,8 +3,11 @@ import { updateExamMark } from "../../services/evaluateStudent";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
+import { resetUpdateState } from "../../Slices/examEvaluation/examEvaluationSlice";
+import { useDispatch } from "react-redux";
 export const useUpdateExamMarks = (handleClose) => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   return useMutation({
     mutationFn: updateExamMark,
     onSuccess: () => {
@@ -20,6 +23,10 @@ export const useUpdateExamMarks = (handleClose) => {
           description={"Exam Scores Updated Successfully"}
         />
       );
+
+      if(resetUpdateState){
+         dispatch(resetUpdateState())
+      }
     },
     onError: (error) => {
       toast.custom(
