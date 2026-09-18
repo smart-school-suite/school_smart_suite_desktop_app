@@ -5,7 +5,7 @@ import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
 import { resetUpdateState } from "../../Slices/examEvaluation/examEvaluationSlice";
 import { useDispatch } from "react-redux";
-export const useUpdateExamMarks = (handleClose) => {
+export const useUpdateExamMarks = (handleClose, candidateId) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   return useMutation({
@@ -13,6 +13,9 @@ export const useUpdateExamMarks = (handleClose) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["examCandidates"] });
       queryClient.invalidateQueries({ queryKey: ["examResults"] });
+      queryClient.invalidateQueries({
+        queryKey: ["exam-update-helper", candidateId],
+      });
       if (handleClose) {
         handleClose();
       }
@@ -21,11 +24,11 @@ export const useUpdateExamMarks = (handleClose) => {
         <ToastSuccess
           title={"Update Successfull"}
           description={"Exam Scores Updated Successfully"}
-        />
+        />,
       );
 
-      if(resetUpdateState){
-         dispatch(resetUpdateState())
+      if (resetUpdateState) {
+        dispatch(resetUpdateState());
       }
     },
     onError: (error) => {
@@ -33,7 +36,7 @@ export const useUpdateExamMarks = (handleClose) => {
         <ToastDanger
           title={error.response.data.errors.title}
           description={error.response.data.errors.description}
-        />
+        />,
       );
     },
   });

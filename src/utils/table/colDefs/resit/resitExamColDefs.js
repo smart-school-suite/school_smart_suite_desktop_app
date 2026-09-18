@@ -8,7 +8,8 @@ import TextComponent from "../../../../components/DataTableComponents/TextCompon
 import GradesConfigTableBadge from "../../../../components/Badges/GradesConfigTableBadge";
 import ExamStatusRenderer from "../../../../components/Badges/ExamStatusRenderer";
 
-export function examColDefs({ ActionComponent }) {
+
+export function resitExamColDefs({ ActionComponent }) {
   return [
     textColumn({
       field: "exam_name",
@@ -86,6 +87,11 @@ export function examColDefs({ ActionComponent }) {
       headerName: "Grade Scale Status",
       hide: true,
       cellRenderer: GradesConfigTableBadge,
+    }),
+    numberColumn({
+       field:"candidates",
+       headerName:"Candidates",
+       hide: true, 
     }),
     dateColumn({
       field: "created_at",

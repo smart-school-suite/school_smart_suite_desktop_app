@@ -494,7 +494,6 @@ function ExamCandidates() {
 export default ExamCandidates;
 
 export function ActionComponent(props) {
-  const dispatch = useDispatch();
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);

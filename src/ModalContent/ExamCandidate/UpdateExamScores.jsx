@@ -29,7 +29,7 @@ function UpdateExamScores({ handleClose, rowData }) {
   const moduleState = useSelector((state) => state?.examEvaluation?.update);
   const darkMode = useSelector((state) => state?.theme?.darkMode);
   const { mutate: updateExamScores, isPending } =
-    useUpdateExamMarks(handleClose);
+    useUpdateExamMarks(handleClose, candidateId);
 
   useEffect(() => {
     const data = helperData?.data;
@@ -67,6 +67,7 @@ function UpdateExamScores({ handleClose, rowData }) {
 
   const handleUpdateScores = () => {
     const payload = {
+      candidate_id: candidateId,
       scores: scoresList.map((score) => ({
         score_id: score.id,
         score: score.score,
@@ -95,7 +96,7 @@ function UpdateExamScores({ handleClose, rowData }) {
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
               <span className="font-size-sm fw-semibold">
-                Evaluate Exam Candidate
+               Update Exam Candidate Scores
               </span>
             </div>
             <button
@@ -532,7 +533,7 @@ function UpdateExamScores({ handleClose, rowData }) {
                   disabled={isPending}
                   onClick={() => handleUpdateScores()}
                 >
-                  {isPending ? <SingleSpinner /> : "Update Ca Scores"}
+                  {isPending ? <SingleSpinner /> : "Update Exam Scores"}
                 </button>
               )}
             </div>

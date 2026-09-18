@@ -53,6 +53,9 @@ import examCandidateReducer from "../Slices/exam/examCandidateSlice";
 import examInvigilatorReducer from "../Slices/exam/examInvigilatorSlice";
 import caEvaluationReducer from "../Slices/examEvaluation/caEvaluationSlice";
 import examEvaluationReducer from "../Slices/examEvaluation/examEvaluationSlice";
+import resitReducer from "../Slices/resit/resitSlice";
+import resitExamReducer from "../Slices/resit/resitExamSlice";
+import resitCandidateReducer from "../Slices/resit/resitCandidateSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -107,10 +110,19 @@ const rootReducer = combineReducers({
   department: persistReducer({ key: "department", storage }, departmentReducer),
   student: persistReducer({ key: "student", storage }, studentReducer),
   parent: persistReducer({ key: "parent", storage }, parentReducer),
+  resitExam: persistReducer({ key: "resitExam", storage }, resitExamReducer),
   studentBatch: persistReducer(
     { key: "studentBatch", storage },
     studentBatchReducer,
   ),
+  resitCandidate: persistReducer(
+    {
+      key: "resitCandidate",
+      storage,
+    },
+    resitCandidateReducer,
+  ),
+  resit: persistReducer({ key: "resit", storage }, resitReducer),
   tuitionFee: persistReducer({ key: "tuitionFee", storage }, tuitionFeeReducer),
   tuitionFeeTransaction: persistReducer(
     { key: "tuitionFeeTransaction", storage },

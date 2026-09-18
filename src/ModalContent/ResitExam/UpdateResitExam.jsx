@@ -64,7 +64,7 @@ function UpdateResitExam({ handleClose, rowData }) {
     <>
       <div className="d-flex flex-row align-items-center">
         <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
-          <span className="m-0">Update Exam</span>
+          <span className="m-0">Update Resit Exam</span>
           <span
             className="m-0"
             onClick={() => {

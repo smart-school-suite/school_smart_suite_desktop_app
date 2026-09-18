@@ -12,7 +12,7 @@ export const useCreateExamMarks = (handleClose) => {
     mutationFn: createExamMark,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["examCandidates"] });
-
+      queryClient.invalidateQueries({ queryKey: ["studentResits"]});
       if (handleClose) {
         handleClose();
       }

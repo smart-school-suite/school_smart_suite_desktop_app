@@ -15,6 +15,9 @@ export const useUpdateCaMarks = (handleClose, candidateId) => {
       queryClient.invalidateQueries({
         queryKey: ["candidate-scores", candidateId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["ca-update-helper", candidateId],
+      });
       if (handleClose) {
         handleClose();
       }

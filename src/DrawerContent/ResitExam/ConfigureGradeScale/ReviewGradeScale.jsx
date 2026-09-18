@@ -1,0 +1,279 @@
+import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
+import { useSelector, useDispatch } from "react-redux";
+import { useGetGradeScaleCategoryId } from "../../../hooks/gradeScale/useGetGradeScaleCategoryId";
+import { RESIT_LABEL, RESULT, RESULT_LABEL } from "@/constants";
+import { Dot, Scale, X } from "lucide-react";
+import { Fragment } from "react";
+import { NotFoundError } from "../../../components/errors/Error";
+import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
+import { SingleSpinner } from "../../../components/Spinners/Spinners";
+import { resetGradeScaleState } from "../../../Slices/exam/examSlice";
+import { useAddResitExamGradeScale } from "../../../hooks/resitExam/useAddResitExamGradeScale";
+function ReviewGradeScale({
+  handleClose,
+  previousStep,
+  fullStep,
+  currentStep,
+  drawerData,
+}) {
+  const dispatch = useDispatch();
+  const moduleState = useSelector((state) => state.resitExam.gradeScale);
+  const { mutate: addGradeScale, isPending } =
+    useAddResitExamGradeScale(handleClose);
+  const {
+    data: gradeScales,
+    isLoading,
+    error,
+  } = useGetGradeScaleCategoryId(moduleState?.selectedGradeScale?.id);
+  const handleConfigureScale = () => {
+    addGradeScale({
+      resitExamId: drawerData.id,
+      gradeScaleCategoryId: moduleState?.selectedGradeScale?.id,
+    });
+  };
+  return (
+    <>
+      <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
+        <span className="fw-medium">Configure Resit Exam Grade Scale</span>
+        <button
+          className="bg-none border-none border rounded-circle"
+          aria-label="Close drawer"
+          onClick={() => {
+            dispatch(resetGradeScaleState());
+            handleClose();
+          }}
+          style={{
+            width: "2rem",
+            height: "2rem",
+            display: "grid",
+            placeItems: "center",
+            cursor: "pointer",
+          }}
+        >
+          <X size={16} />
+        </button>
+      </div>
+      <div className="drawer-content px-2 font-size-sm pt-2">
+        <div className="d-flex flex-column gap-4">
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <div className="d-flex flex-row align-items-center gap-2">
+              <div
+                className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
+                style={{ height: "2.5rem", width: "2.5rem" }}
+              >
+                <Scale size={16} />
+              </div>
+              <div className="d-flex flex-column">
+                <small className="text-muted">Exam</small>
+                <div className="d-flex flex-row align-items-center gap-1 font-size-sm text-capitalize fw-semibold">
+                  <span>{drawerData?.exam_name}</span>
+                  {drawerData?.exam_type && <Dot size={16} />}
+                  <span>{drawerData?.exam_type}</span>
+                  <Dot size={16} />
+                  <span>{drawerData?.max_score}</span>
+                </div>
+              </div>
+            </div>
+
+            <span className="text-end fw-medium text-capitalize">
+              {`step ${currentStep} of ${fullStep} completed`}
+            </span>
+          </div>
+
+          <div className="d-flex flex-column gap-1">
+            <span className="fw-medium">Scales</span>
+            <div
+              className="d-flex flex-column gap-2"
+              style={{ paddingBottom: "10rem" }}
+            >
+              {isLoading ? (
+                <div className="d-flex flex-column gap-2 px-2">
+                  {[...Array(8)].map((_, index) => (
+                    <Fragment key={index}>
+                      <RectangleSkeleton height="20dvh" width="100%" />
+                    </Fragment>
+                  ))}
+                </div>
+              ) : error ? (
+                <>
+                  <NotFoundError
+                    title={error?.response?.data?.errors?.title}
+                    description={error?.response?.data?.errors?.description}
+                  ></NotFoundError>
+                </>
+              ) : (
+                gradeScales?.data?.grade_scales?.map((grade, index) => {
+                  return (
+                    <Fragment key={grade.letter_grade_id}>
+                      {grade?.configuration?.is_configured ? (
+                        <GradeListCard grade={grade} />
+                      ) : (
+                        <NotConfiguredCard grade={grade} />
+                      )}
+                    </Fragment>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="drawer-footer font-size-sm">
+        <div className="d-flex flex-column w-100">
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+          <div className="d-flex flex-row align-items-center justify-content-between p-2">
+            <button
+              disabled={isPending}
+              className="border-none bg-none p-2"
+              onClick={() => previousStep()}
+            >
+              Back to selections
+            </button>
+            <button
+              disabled={isPending}
+              className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
+              onClick={() => handleConfigureScale()}
+            >
+              {isPending ? <SingleSpinner /> : "Add Grade Scale"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+export default ReviewGradeScale;
+
+function GradeListCard({ grade }) {
+  return (
+    <>
+      <div className="card p-3 rounded-4 d-flex flex-column gap-3 border shadow-sm">
+        <div className="d-flex flex-row justify-content-between">
+          <div className="d-flex flex-row align-items-center gap-2">
+            <div
+              className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
+              style={{ height: "2.5rem", width: "2.5rem" }}
+            >
+              {grade?.letter_grade}
+            </div>
+            <div className="d-flex flex-column">
+              <small className="text-muted">Grade Tier</small>
+              <span className="fw-semibold font-size-md">
+                Grade {grade?.letter_grade}
+              </span>
+            </div>
+          </div>
+          <span
+            className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2"
+            style={{
+              backgroundColor: "#e3f5e3",
+              color: "#5cb85c",
+              fontSize: "0.75rem",
+              height: "1.5rem",
+            }}
+          >
+            Configured
+          </span>
+        </div>
+        <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+        <div className="d-flex flex-row font-size-sm  gap-4">
+          <div className="d-flex flex-column gap-2 align-items-center">
+            <span className="fw-normal gainsboro-color text-uppercase">
+              Score Range
+            </span>
+            <span className="fw-semibold">
+              {grade?.configuration?.minimum_score} -{" "}
+              {grade?.configuration?.maximum_score}
+            </span>
+          </div>
+          <div className="d-flex flex-column gap-2 align-items-center">
+            <span className="fw-normal gainsboro-color text-uppercase">
+              Grade Points
+            </span>
+            <span className="fw-semibold">
+              {grade?.configuration?.grade_points}
+            </span>
+          </div>
+          <div className="d-flex flex-column gap-2 align-items-center">
+            <span className="fw-normal gainsboro-color text-uppercase">
+              Result
+            </span>
+            <span className="fw-semibold text-capitalize">
+              {grade?.configuration?.result}
+            </span>
+          </div>
+          <div className="d-flex flex-column gap-2 align-items-center">
+            <span className="fw-normal gainsboro-color text-uppercase">
+              Resit Result
+            </span>
+            <span className="fw-semibold text-capitalize">
+              {RESIT_LABEL[grade?.configuration?.resit_result]}
+            </span>
+          </div>
+        </div>
+        <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+        <div className="d-flex flex-row justify-content-between">
+          <div className="d-flex flex-row align-items-center gap-2">
+            <span>Count As</span>
+            {grade?.configuration?.result == RESULT.FAILED ? (
+              <span className=" red-color fw-semibold">
+                {RESULT_LABEL[RESULT.FAILED]}
+              </span>
+            ) : (
+              <span className="green-color fw-semibold">
+                {RESULT_LABEL[RESULT.PASSED]}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function NotConfiguredCard({ grade }) {
+  return (
+    <>
+      <div className="card p-3 rounded-4 d-flex flex-column gap-3 border shadow-sm">
+        <div className="d-flex flex-row justify-content-between">
+          <div className="d-flex flex-row align-items-center gap-2">
+            <div
+              className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3"
+              style={{
+                height: "2.5rem",
+                width: "2.5rem",
+                border: "1px dashed #cccccc",
+                background: "#f5f5f5",
+                color: "#727272",
+              }}
+            >
+              {grade?.letter_grade}
+            </div>
+            <div className="d-flex flex-column">
+              <small className="text-muted">Grade Tier</small>
+              <span className="fw-semibold font-size-md">
+                Grade {grade?.letter_grade}
+              </span>
+            </div>
+          </div>
+          <span
+            className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2"
+            style={{
+              backgroundColor: "#f5f5f5",
+              color: "#727272",
+              fontSize: "0.75rem",
+              height: "1.5rem",
+            }}
+          >
+            Not Setup
+          </span>
+        </div>
+        <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+        <p className="w-50 text-muted">
+          Set a score range and grade points so that students in this tier are
+          grades correctly
+        </p>
+      </div>
+    </>
+  );
+}

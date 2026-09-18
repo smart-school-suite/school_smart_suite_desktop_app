@@ -28,7 +28,7 @@ function UpdateCaScores({ handleClose, rowData }) {
     error,
   } = useGetCaUpdateHelperData(candidateId);
 
-  const { mutate: updateCaScores, isPending } = useUpdateCaMarks(handleClose);
+  const { mutate: updateCaScores, isPending } = useUpdateCaMarks(handleClose, candidateId);
   useEffect(() => {
     const data = helperData?.data;
 
@@ -61,6 +61,7 @@ function UpdateCaScores({ handleClose, rowData }) {
         score_id: score.id,
         score: score.score,
       })),
+      candidate_id: candidateId
     };
     updateCaScores(payload);
   };

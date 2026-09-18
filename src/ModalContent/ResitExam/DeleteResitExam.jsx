@@ -1,11 +1,11 @@
-import { useDeleteStudentResit } from "../../hooks/studentResit/useDeleteResit";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useDeleteResitExam } from "../../hooks/resitExam/useDeleteResitExam";
 import { CircleX } from "lucide-react";
-function DeleteStudentResit({ handleClose, rowData }) {
-  const { id: resitId } = rowData;
-  const { mutate: deleteStudentResit, isPending } = useDeleteStudentResit();
-  const handleDelete = () => {
-    deleteStudentResit(resitId);
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+function DeleteResitExam({ handleClose, rowData }) {
+  const examId = rowData.id;
+  const { mutate: deleteExam, isPending } = useDeleteResitExam();
+  const handleDeleteExam = async () => {
+    deleteExam(examId);
   };
   return (
     <>
@@ -16,7 +16,7 @@ function DeleteStudentResit({ handleClose, rowData }) {
         >
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
-              <span className="font-size-sm fw-semibold">Delete Resit</span>
+              <span className="font-size-sm fw-semibold">Delete Exam</span>
             </div>
             <button
               onClick={() => handleClose()}
@@ -51,7 +51,7 @@ function DeleteStudentResit({ handleClose, rowData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDelete();
+                handleDeleteExam();
               }}
             >
               {isPending ? <SingleSpinner /> : <>Yes, Delete</>}
@@ -62,4 +62,4 @@ function DeleteStudentResit({ handleClose, rowData }) {
     </>
   );
 }
-export default DeleteStudentResit;
+export default DeleteResitExam;
