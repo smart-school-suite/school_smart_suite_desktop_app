@@ -3,7 +3,7 @@ import { getResitCandidates } from "../../services/resitCandidate";
 
 export const useGetResitCandidates = () => {
      return useQuery({
-         queryKey:["resitCandidates"],
+         queryKey:["resit-candidates"],
          queryFn: () => getResitCandidates()
      })
 }

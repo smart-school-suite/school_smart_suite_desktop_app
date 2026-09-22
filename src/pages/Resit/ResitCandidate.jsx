@@ -1,5 +1,8 @@
 import { useGetResitCandidates } from "../../hooks/resitCandidate/useGetResitCandidates";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import React, {
   useState,
   useCallback,
@@ -10,8 +13,12 @@ import React, {
 } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import Table from "../../components/Tables/Tables";
-import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
-import SummitScores from "../../ModalContent/ResitCandidate/SubmitScores";
+import {
+  CreateIcon,
+  DeleteIcon,
+  UpdateIcon,
+  DetailsIcon,
+} from "../../icons/ActionIcons";
 import { ExamCandidateIcon } from "../../icons/Icons";
 import { useSelector, useDispatch } from "react-redux";
 import UpdateResitScore from "../../ModalContent/ResitCandidate/UpdateResitScores";
@@ -39,6 +46,9 @@ import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
 import SearchInput from "../../components/input/search";
 import { Drawer } from "../../components/drawer/Drawer";
+import AddResitScores from "../../ModalContent/ResitCandidate/AddResitScores";
+import DeleteResitScores from "../../ModalContent/ResitCandidate/DeleteResitScores";
+import ResitExamScoreDetails from "../../DrawerContent/ResitEvaluation/ResitExamScoreDetails";
 function ResitCandidates() {
   const { data: resitCandidates, isLoading, error } = useGetResitCandidates();
   const dispatch = useDispatch();
@@ -69,7 +79,7 @@ function ResitCandidates() {
 
   const memoizedColDefs = useMemo(() => {
     return resitCandidateColDefs({
-      ActionComponent
+      ActionComponent,
     });
   }, []);
 
@@ -553,18 +563,11 @@ function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() => {
-            if (rowData.student_accessed == "accessed") {
-              toast.custom(
-                <ToastWarning
-                  title={"Candidate Already Accessed"}
-                  description={
-                    "Candidate has already been accessed. Please update the resit scores instead."
-                  }
-                />,
-              );
-              return;
-            }
-            handleShowModal(SummitScores, "xl");
+            handleShowModal(AddResitScores, {
+              size: "xl",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            });
           }}
         >
           <div>
@@ -579,18 +582,11 @@ function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() => {
-            if (rowData.student_accessed !== "accessed") {
-              toast.custom(
-                <ToastWarning
-                  title={"Candidate Not Accessed"}
-                  description={
-                    "Candidate has not been accessed. Please add scores first and try again."
-                  }
-                />,
-              );
-              return;
-            }
-            handleShowModal(UpdateResitScore, "xl");
+            handleShowModal(UpdateResitScore, {
+              size: "xl",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            });
           }}
         >
           <div>
@@ -610,6 +606,44 @@ function ActionComponent(props) {
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Delete Candidate</span>
               <DeleteIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeleteResitScores, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Resit Scores</span>
+              <DeleteIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowDrawer(ResitExamScoreDetails, {
+              title: "Resit Exam Candidate Scores",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Resit Exam Result</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>

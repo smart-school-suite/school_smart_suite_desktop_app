@@ -56,6 +56,7 @@ import examEvaluationReducer from "../Slices/examEvaluation/examEvaluationSlice"
 import resitReducer from "../Slices/resit/resitSlice";
 import resitExamReducer from "../Slices/resit/resitExamSlice";
 import resitCandidateReducer from "../Slices/resit/resitCandidateSlice";
+import resitEvaluationReducer from "../Slices/resit/resitEvaluationSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -170,6 +171,13 @@ const rootReducer = combineReducers({
       storage,
     },
     caEvaluationReducer,
+  ),
+  resitEvaluation: persistReducer(
+    {
+      key: "resitEvaluation",
+      storage,
+    },
+    resitEvaluationReducer,
   ),
   teacherTimePref: persistReducer(
     {

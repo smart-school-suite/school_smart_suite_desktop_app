@@ -1,35 +1,34 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { submitResitScores } from "../../services/resitEvaluation";
-import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
-import { useDispatch } from "react-redux";
-import { resetResitScoreState } from "../../Slices/resit/resitEvaluationSlice";
-export const useCreateResitScore = (handleClose) => {
+import toast from "react-hot-toast";
+import { deleteResitExamScores } from "../../services/resitScore";
+export const useDeleteResitScores = (handleClose, candidateId) => {
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
   return useMutation({
-    mutationFn: submitResitScores,
+    mutationFn: deleteResitExamScores,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["resitCandidates"] });
+      queryClient.invalidateQueries({
+        queryKey: ["resit-scores", candidateId],
+      });
       if (handleClose) {
         handleClose();
       }
 
       toast.custom(
         <ToastSuccess
-          title={"Scores Submitted"}
-          description={"Resit Scores Submited Successfully"}
-        />
+          title={"Delete Successful"}
+          description={"Resit Exam Scores Deleted Successfully"}
+        />,
       );
-      dispatch(resetResitScoreState());
     },
     onError: (error) => {
       toast.custom(
         <ToastDanger
           title={error.response.data.errors.title}
           description={error.response.data.errors.description}
-        />
+        />,
       );
     },
   });
