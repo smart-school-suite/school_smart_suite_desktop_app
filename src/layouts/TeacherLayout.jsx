@@ -1,49 +1,13 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import {
-  CloudUpload,
-  ListEnd,
-  Clock3,
-  UserRoundX,
-  Clock,
-  CopyCheck,
-  TriangleAlert,
-  Dot,
-  ArrowRight,
-} from "lucide-react";
 import { useSelector } from "react-redux";
-import TeacherSideBar from "../components/SideBars/TeacherSideBar";
 import { TeacherIcon } from "../icons/Icons";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
-import AssignTeacherSpecialty from "../ModalContent/TeacherSpecialty/AssignTeacherSpecialty";
-import React, { Fragment, useEffect, useMemo, useState } from "react";
-import TeacherImportWizzard from "../ModalContent/Teacher/Import/TeacherImportWizzard";
-import HorizontalDashedLine from "../components/DashedLine/HorizonetalDashedLine";
-import RectangleSkeleton from "../components/SkeletonPageLoader/RectangularSkeleton";
+import { useMemo, useState } from "react";
 import CreateTeacher from "../DrawerContent/Teacher/CreateTeacher";
-import { Drawer } from "../components/drawer/Drawer";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
-import { TEACHER_COLUMNS } from "../utils/teacher/teacherColumns";
 import JobPopOver from "../components/Popover/JobPopover";
-import { teacherImportColDefs } from "../utils/table/colDefs/teachers/teacherImportColdefs";
-import ImportWizzard from "../ModalContent/Import/ImportWizzard";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  removeRepeatableGroup,
-  addRepeatableGroup,
-  setRepeatableGroupValue,
-  setStandardGroupValue,
-} from "../Slices/teacher/teacherSlice";
-import { teacherInstanceMap } from "../utils/maps/teacher/teacherInstanceMap";
 import { TEACHER_IMPORT_TRIGGER_MAP } from "../utils/maps/teacher/teacherImportMap";
 export const sideBarData = [
   { title: "Teacher", path: "/teacher" },
@@ -60,7 +24,10 @@ function TeacherLayout() {
   const handleClose = () => setIsOpen(false);
   const ImportTrigger = useMemo(() => {
     const path = location.pathname;
-    return TEACHER_IMPORT_TRIGGER_MAP[path].component || TEACHER_IMPORT_TRIGGER_MAP["/teacher"].component;
+    return (
+      TEACHER_IMPORT_TRIGGER_MAP[path].component ||
+      TEACHER_IMPORT_TRIGGER_MAP["/teacher"].component
+    );
   }, [location.pathname]);
   return (
     <>

@@ -8,7 +8,11 @@ export const useDeleteResitScores = (handleClose, candidateId) => {
   return useMutation({
     mutationFn: deleteResitExamScores,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resitCandidates"] });
+      queryClient.invalidateQueries({ queryKey: ["resit-candidates"] });
+      queryClient.invalidateQueries({ queryKey: ["student-resits"] });
+      queryClient.invalidateQueries({
+        queryKey: ["resit-evaluation-helper", candidateId],
+      });
       queryClient.invalidateQueries({
         queryKey: ["resit-scores", candidateId],
       });

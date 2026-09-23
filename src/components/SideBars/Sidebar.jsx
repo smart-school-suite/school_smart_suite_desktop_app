@@ -676,6 +676,22 @@ function SideBarLg() {
                           </NavLink>
                         </div>
                       </div>
+                          <div
+                        className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
+                      >
+                        <div className="subbox-nav">
+                          <NavLink
+                            to="/resit-invigilator"
+                            className={({ isActive }) =>
+                              isActive
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
+                            }
+                          >
+                            <p style={{ fontSize: "0.75rem" }}>Resit Invigilator</p>
+                          </NavLink>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -772,7 +788,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize: "0.75rem" }}>Parents</p>
+                            <p style={{ fontSize: "0.75rem" }}>Guardian</p>
                           </NavLink>
                         </div>
                       </div>

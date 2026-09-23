@@ -1,14 +1,11 @@
-import { useBulkDeleteStudent } from "../../hooks/student/useBulkDeleteStudent";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
-function BulkDeleteStudent({ handleClose, resetAll, bulkData }) {
-  const formattedData = bulkData.map((items) => ({ student_id: items.id }));
-  const { mutate: bulkDeleteStudent, isPending } = useBulkDeleteStudent(
-    handleClose,
-    resetAll,
-  );
-  const handleBulkDeleteStudent = () => {
-    bulkDeleteStudent({ studentIds: formattedData });
+import { useDeleteParent } from "../../hooks/parent/useDeleteParent";
+function DeleteGuardian({ handleClose, rowData }) {
+  const parentId = rowData.id;
+  const { mutate: deleteParent, isPending } = useDeleteParent(handleClose);
+  const handleDelete = async () => {
+    deleteParent(parentId);
   };
   return (
     <>
@@ -19,7 +16,7 @@ function BulkDeleteStudent({ handleClose, resetAll, bulkData }) {
         >
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
-              <span className="font-size-sm fw-semibold">Delete Student</span>
+              <span className="font-size-sm fw-semibold">Delete Guardian</span>
             </div>
             <button
               onClick={() => handleClose()}
@@ -54,7 +51,7 @@ function BulkDeleteStudent({ handleClose, resetAll, bulkData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleBulkDeleteStudent();
+                handleDelete();
               }}
             >
               {isPending ? <SingleSpinner /> : <>Yes, Delete</>}
@@ -65,4 +62,4 @@ function BulkDeleteStudent({ handleClose, resetAll, bulkData }) {
     </>
   );
 }
-export default BulkDeleteStudent;
+export default DeleteGuardian;

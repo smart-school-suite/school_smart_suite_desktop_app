@@ -4,13 +4,10 @@ import ActionButtonDropdown, {
 } from "../../components/DataTableComponents/ActionComponent";
 import DeactivateStudent from "../../ModalContent/Student/DeactivateStudent";
 import DeleteStudent from "../../ModalContent/Student/DeleteStudent";
-import StudentDetails from "../../ModalContent/Student/StudentDetails";
-import UpdateStudent from "../../ModalContent/Student/UpdateStudent";
-import CreateStudent from "../../ModalContent/Student/CreateStudent";
+import StudentDetails from "../../DrawerContent/Student/StudentDetails";
 import MarkAsDropout from "../../ModalContent/Student/MarkAsDropout";
 import { useGetStudents } from "../../hooks/student/useGetStudent";
 import Table from "../../components/Tables/Tables";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import React, {
   useState,
   useCallback,
@@ -42,20 +39,6 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { studentColDefs } from "../../utils/table/colDefs/student/studentColDefs";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
@@ -77,8 +60,14 @@ import { useDispatch } from "react-redux";
 import JobPopOver from "../../components/Popover/JobPopover";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { STUDENT_COLUMNS } from "../../utils/student/studentColumns";
+import SearchInput from "../../components/input/search";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import CreateStudent from "../../DrawerContent/Student/CreateStudent";
+import UpdateStudent from "../../DrawerContent/Student/UpdateStudent";
+import { Drawer } from "../../components/drawer/Drawer";
 function Students() {
   const { data: students, isLoading, error } = useGetStudents();
+  const tableWrapperRef = useRef(null);
   const tableRef = useRef();
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -113,8 +102,7 @@ function Students() {
     return students?.data ?? [];
   }, [students]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
@@ -215,30 +203,31 @@ function Students() {
                       importModuleColDefs: studentColDefs,
                     }}
                     classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+                      "border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
                     }
+                    style={{ padding: "0.6rem" }}
                   >
                     <span style={{ lineHeight: "16px" }}>Import</span>
                     <ArrowDown size={16} />
                   </ModalButton>
                   <ModalButton
                     classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+                      "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                     }
+                    style={{ padding: "0.6rem" }}
                   >
                     <span style={{ lineHeight: "16px" }}>Actions</span>
                     <ChevronDown size={16} />
                   </ModalButton>
-                  <ModalButton
-                    action={{ modalContent: CreateStudent }}
-                    size={"lg"}
-                    classname={
-                      "border-none border rounded-3 font-size-sm  primary-background px-2 text-white text-capitalize"
-                    }
-                    style={{ padding: "0.4rem" }}
+                  <DrawerTrigger
+                    title="Create Student"
+                    placement="right"
+                    drawerChildren={CreateStudent}
                   >
-                    <span>Create Student</span>
-                  </ModalButton>
+                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                      <span>create Student</span>
+                    </button>
+                  </DrawerTrigger>
                 </div>
               </div>
               <div className="d-flex flex-column gap-2">
@@ -310,13 +299,14 @@ function Students() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Student......................."
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Student......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}
@@ -367,6 +357,7 @@ function Students() {
                     style={{
                       width: studentState.isGeneralFilterOpen ? "60%" : "100%",
                     }}
+                    ref={tableWrapperRef}
                   >
                     <Table
                       colDefs={memoizedColDefs}
@@ -377,6 +368,8 @@ function Students() {
                     />
                     {rowCount > 0 && (
                       <BulkActionsToast
+                        key="bulk-actions-toast"
+                        anchorRef={tableWrapperRef}
                         rowCount={rowCount}
                         label={`${
                           rowCount > 0
@@ -538,25 +531,65 @@ export default Students;
 export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
 
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
   };
 
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
+  };
   return (
     <>
       <ActionButtonDropdown
@@ -569,7 +602,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateStudent, "lg")}
+          onClick={() =>
+            handleShowDrawer(UpdateStudent, {
+              title: "Update Student",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -582,7 +621,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteStudent)}
+          onClick={() =>
+            handleShowModal(DeleteStudent, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -595,7 +640,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(StudentDetails)}
+          onClick={() =>
+            handleShowDrawer(StudentDetails, {
+              title: "Student Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -608,11 +659,17 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(MarkAsDropout)}
+          onClick={() =>
+            handleShowModal(MarkAsDropout, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Mark Student As Drop-out</span>
+              <span>Mark As Drop-out</span>
               <UpdateIcon />
             </div>
           </div>
@@ -622,7 +679,13 @@ export function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() => handleShowModal(DeactivateStudent, "md")}
+            onClick={() =>
+              handleShowModal(DeactivateStudent, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -636,7 +699,13 @@ export function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() => handleShowModal(ActivateStudent, "md")}
+            onClick={() =>
+              handleShowModal(ActivateStudent, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -647,13 +716,36 @@ export function ActionComponent(props) {
           </DropDownMenuItem>
         )}
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );

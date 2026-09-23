@@ -60,17 +60,17 @@
   --fern-900: #224523;
   --fern-950: #0e250f;
 
-  --color-iron-50: #fafafa;
-  --color-iron-100: #f5f5f5;
-  --color-iron-200: #e6e6e6;
-  --color-iron-300: #cccccc;
-  --color-iron-400: #a3a3a3;
-  --color-iron-500: #727272;
-  --color-iron-600: #535353;
-  --color-iron-700: #404040;
-  --color-iron-800: #272727;
-  --color-iron-900: #1a1a1a;
-  --color-iron-950: #0b0b0b;
+  --iron-50: #fafafa;
+  --iron-100: #f5f5f5;
+  --iron-200: #e6e6e6;
+  --iron-300: #cccccc;
+  --iron-400: #a3a3a3;
+  --iron-500: #727272;
+  --iron-600: #535353;
+  --iron-700: #404040;
+  --iron-800: #272727;
+  --iron-900: #1a1a1a;
+  --iron-950: #0b0b0b;
 
   /* Topography */
   --primary-font-family: "Poppins", sans-serif;

@@ -9,11 +9,10 @@ import {
 import {
   nameSchema,
   addressSchema,
-  phoneValidationSchema,
-  emailValidationSchema,
+  phoneValidationSchema
 } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import { contactMethod, guardianTypes, languages } from "../../data/data";
+import { contactMethod, languages } from "../../data/data";
 import {
   hasNonEmptyValue,
   optionalValidateObject,
@@ -23,8 +22,9 @@ import ToastWarning from "../../components/Toast/ToastWarning";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useGetParentDetails } from "../../hooks/parent/useGetParentDetails";
-function UpdateParent({ handleClose, rowData }) {
-  const { id: parentId } = rowData;
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+function UpdateGuardian({ handleClose, drawerData }) {
+  const { id: parentId } = drawerData;
   const {
     data: parentDetails,
     isLoading: isParentDetailsLoading,
@@ -71,7 +71,7 @@ function UpdateParent({ handleClose, rowData }) {
         <ToastWarning
           title={"Invalid Fields"}
           description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
+        />,
       );
       return;
     }
@@ -82,7 +82,7 @@ function UpdateParent({ handleClose, rowData }) {
           description={
             "Please Ensure Atleast One Field Is Updated Before Submitting"
           }
-        />
+        />,
       );
       return;
     }
@@ -97,18 +97,7 @@ function UpdateParent({ handleClose, rowData }) {
   };
   return (
     <>
-      <div>
-        <div className="d-flex flex-row align-items-center justify-content-between w-100 mb-3">
-          <span className="m-0">Update Guardian</span>
-          <span
-            className="m-0"
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
-        </div>
+      <div className="drawer-content px-2 pt-4">
         {isParentDetailsLoading ? (
           <div className="d-flex flex-column w-100 gap-3">
             {[...Array(6)].map((_, index) => (
@@ -126,7 +115,7 @@ function UpdateParent({ handleClose, rowData }) {
             }
           ></NotFoundError>
         ) : (
-          <div>
+          <div className="d-flex flex-column gap-4">
             <div>
               <TextInput
                 type="name"
@@ -199,7 +188,7 @@ function UpdateParent({ handleClose, rowData }) {
                   handleStateChange(
                     "preferred_contact_method",
                     value,
-                    setFormData
+                    setFormData,
                   )
                 }
                 placeholder="Select Preferred Contact Method"
@@ -224,19 +213,30 @@ function UpdateParent({ handleClose, rowData }) {
                 value={formData.preferred_language}
               />
             </div>
-            <div className="mt-3">
-              <button
-                className="border-none rounded-3 primary-background w-100 text-white font-size-sm px-3 py-2"
-                onClick={handleUpdateParent}
-                disabled={isPending}
-              >
-                {isPending ? <SingleSpinner /> : "Update Guardian"}
-              </button>
-            </div>
           </div>
         )}
+      </div>
+      <div className="drawer-footer font-size-sm">
+        <div className="d-flex flex-column w-100">
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+          <div className="d-flex flex-row align-items-center justify-content-between p-2">
+            <button
+              className="border-none bg-none"
+              onClick={() => handleClose()}
+            >
+              Cancel
+            </button>
+            <button
+              className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+              onClick={() => handleSubmit()}
+              disabled={isPending}
+            >
+              {isPending ? <SingleSpinner /> : "Create Guardian"}
+            </button>
+          </div>
+        </div>
       </div>
     </>
   );
 }
-export default UpdateParent;
+export default UpdateGuardian;

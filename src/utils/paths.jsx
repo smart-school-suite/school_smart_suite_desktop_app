@@ -54,6 +54,7 @@ export const resitRoutes = [
   "/resit-exams",
   "/resit-timetable",
   "/student-resit",
+  "/resit-invigilator"
 ];
 
 export const StudentRoutes = [
