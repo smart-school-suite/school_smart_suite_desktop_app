@@ -1,43 +1,37 @@
-import { Outlet } from "react-router-dom";
-import AnnoucementSideBar from "../components/SideBars/AnnoucementSideBar";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import CreateAnnouncement from "../ModalContent/Announcement/CreateAnnouncement";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
-import { AnnouncementIcon } from "../icons/ActionIcons";
 import { useSelector } from "react-redux";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Megaphone } from "lucide-react";
 import JobPopOver from "../components/Popover/JobPopover";
 function AnnouncementLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const navigate = useNavigate();
   const sideBarData = [
     {
-      title: "Overview",
-      icon: "mage:dashboard-4-fill",
-      path: "/announcement-overview",
-    },
-    {
-      title: "Active Announcement",
+      title: "All",
       icon: "f7:speaker-2-fill",
-      path: "/announcement",
+      path: "/all-announcement",
     },
     {
-      title: "Schedule Annoucements",
+      title: "Scheduled",
       icon: "material-symbols:schedule-send-rounded",
-      path: "/scheduled-annoucement",
+      path: "/scheduled-announcement",
     },
     {
-      title: "Draft Announcements",
+      title: "Active",
       icon: "ion:archive",
-      path: "/draft-annoucement",
+      path: "/active-announcement",
     },
     {
-      title: "Expired Annoucements",
+      title: "Draft",
       icon: "pajamas:expire",
-      path: "/expired-annoucement",
+      path: "/draft-announcement",
     },
     {
-      title: "Announcement Category",
+      title: "Category",
       icon: "stash:engagement",
       path: "/announcement-category",
     },
@@ -64,13 +58,6 @@ function AnnouncementLayout() {
               <span className="font-size-sm fw-semibold">
                 Manage Announcements
               </span>
-            </div>
-            <div className="w-50">
-              <input
-                type="search"
-                className="form-control font-size-sm w-100"
-                placeholder="Search For Anything"
-              />
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Hall"} />

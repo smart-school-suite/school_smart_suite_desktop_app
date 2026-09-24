@@ -4,11 +4,10 @@ import {
   dateColumn,
   numberColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
 import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
-
+import TuitionFeePaymentStatusRenderer from "../../../../components/Badges/TuitionFeePaymentStatusRenderer";
 export function tuitionFeeColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -34,23 +33,29 @@ export function tuitionFeeColDefs({ ActionComponent }) {
       hide: true,
       cellRenderer: TextComponent,
     }),
-     textColumn({
+    textColumn({
       field: "specialty_name",
       headerName: "Specialty",
       hide: false,
       cellRenderer: TextComponent,
     }),
-     textColumn({
+    textColumn({
       field: "department",
       headerName: "Department",
       hide: false,
       cellRenderer: TextComponent,
     }),
-     textColumn({
+    textColumn({
       field: "level_name",
       headerName: "Level Name",
       hide: false,
       cellRenderer: TextComponent,
+    }),
+    textColumn({
+      field: "status",
+      headerName: "Status",
+      hide: false,
+      cellRenderer: TuitionFeePaymentStatusRenderer,
     }),
     textColumn({
       field: "level_number",
@@ -71,7 +76,7 @@ export function tuitionFeeColDefs({ ActionComponent }) {
       cellRenderer: CurrencyComponent,
     }),
     numberColumn({
-      field: "tution_fee_total",
+      field: "tuition_fee_total",
       headerName: "Total",
       hide: false,
       cellRenderer: CurrencyComponent,

@@ -1,26 +1,26 @@
-import Table from "../../../components/Tables/Tables";
-import { registrationFeeTransactionTableConfig } from "../../../ComponentConfig/AgGridTableConfig";
-import ActionButtonDropdown from "../../../components/DataTableComponents/ActionComponent";
-import { useGetRegistrationFeeTransations } from "../../../hooks/registrationFee/useGetRegistrationFeeTransations";
-import ReverseTransaction from "../../../ModalContent/RegistrationFees/ReverseTransaction";
+import Table from "../../components/Tables/Tables";
+import { registrationFeeTransactionTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import { useGetRegistrationFeeTransations } from "../../hooks/registrationFee/useGetRegistrationFeeTransations";
+import ReverseTransaction from "../../ModalContent/RegistrationFees/ReverseTransaction";
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import CustomModal from "../../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../../components/DataTableComponents/ActionComponent";
-import DeleteTransaction from "../../../ModalContent/RegistrationFees/DeleteTransaction";
-import TransactionDetails from "../../../ModalContent/RegistrationFees/TransactionDetails";
-import BulkActionsToast from "../../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../../components/Tooltips/Tooltip";
+import CustomModal from "../../components/Modals/Modal";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import DeleteTransaction from "../../ModalContent/RegistrationFees/DeleteTransaction";
+import TransactionDetails from "../../ModalContent/RegistrationFees/TransactionDetails";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
-import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
-import BulkDeleteRegistrationFeeTransaction from "../../../ModalContent/RegistrationFees/BulkDeleteRegistrationFeeTransaction";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import BulkDeleteRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFeeTransaction";
 import {
   DeleteIcon,
   DetailsIcon,
   ReverseIcon,
-} from "../../../icons/ActionIcons";
-import BulkReverseRegistrationFeeTransaction from "../../../ModalContent/RegistrationFees/BulkReverseRegistrationFeeTransaction";
-import { NotFoundError } from "../../../components/errors/Error";
-import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
+} from "../../icons/ActionIcons";
+import BulkReverseRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkReverseRegistrationFeeTransaction";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 function RegistrationFeeTransactions() {
   const {
     data: transactions,

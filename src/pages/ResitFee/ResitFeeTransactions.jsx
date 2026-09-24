@@ -1,100 +1,95 @@
+import { useGetResitTransactions } from "../../hooks/studentResit/useGetResitTransactions";
 import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import { SchoolExpensesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import CreateExpense from "../../ModalContent/SchoolExpenses/CreateExpense";
-import DeleteExpense from "../../ModalContent/SchoolExpenses/DeleteExpense";
-import ExpenseDetails from "../../ModalContent/SchoolExpenses/ExpenseDetails";
-import UpdateExpense from "../../ModalContent/SchoolExpenses/UpdateExpense";
-import { useGetExpenses } from "../../hooks/schoolExpenses/useGetSchoolExpenses";
-import React, { useState, useCallback, useRef, useEffect, useMemo, Fragment } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+  Fragment,
+} from "react";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { DeleteIcon, DetailsIcon, ReverseIcon } from "../../icons/ActionIcons";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
-import BulkDeleteAdditionalFee from "../../ModalContent/AdditionalFees/BulkDeleteAdditionalFee";
-import BulkDeleteExpense from "../../ModalContent/SchoolExpenses/BulkDeleteExpense";
-import BulkUpdateExpense from "../../ModalContent/SchoolExpenses/BulkUpdateExpense";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ReverseResitFeeTransaction from "../../ModalContent/ResitFee/ReverseResitFeeTransaction";
+import DeleteResitFeeTransaction from "../../ModalContent/ResitFee/DeleteResitFeeTransaction";
+import ResitFeeTransactionDetails from "../../ModalContent/ResitFee/ResitFeeTransactionDetails";
+import { bulkDeleteStudentResitTransactions } from "../../services/studentResit";
+import BulkReverseResitFeeTransaction from "../../ModalContent/ResitFee/BulkReverseResitFeeTransaction";
+import BulkDeleteResitFeeTransaction from "../../ModalContent/ResitFee/BulkDeleteResitFeeTransaction";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { schoolExpenseColDefs } from "../../utils/table/colDefs/finance/schoolExpenseColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
+import { resitFeeTransactionColDefs } from "../../utils/table/colDefs/resitFee/resitFeeTransactionColDefs";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   resetAllCustomFilters,
   addCustomFilter,
   toggleGeneralFilter,
   removeCustomFilter,
   setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  setStandardGroupValue,
-} from "../../Slices/finance/schoolExpenseSlice";
+} from "../../Slices/resitFee/resitFeeTransactionSlice";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
-import { SCHOOL_EXPENSE_COLUMNS } from "../../utils/finance/schoolExpenseColumn";
-import JobPopOver from "../../components/Popover/JobPopover";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import Export from "../../ModalContent/Export/Export";
+import SearchInput from "../../components/input/search";
+import { Drawer } from "../../components/drawer/Drawer";
 import { useSelector, useDispatch } from "react-redux";
-function SchoolExpenses() {
-  const { data: schoolExpenses, isLoading, error } = useGetExpenses();
-  const tableRef = useRef();
+function ResitFeeTransactions() {
   const dispatch = useDispatch();
-  const darkMode = useSelector((state) => state.theme.darkMode);
-  const schoolExpenseState = useSelector((state) => state.schoolExpense);
-  const [searchText, setSearchText] = useState("");
+  const tableRef = useRef(null);
+  const tableWrapperRef = useRef(null);
+  const moduleState = useSelector((state) => state.resitFeeTransaction);
+  const { data: transactions, isLoading, error } = useGetResitTransactions();
   const [rowCount, setRowCount] = useState(0);
   const [columns, setColumns] = useState({
     selectedColumns: [],
     availableColumns: [],
   });
-  const [selectedExpenses, setSelectedExpenses] = useState([]);
+  const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const [searchText, setSearchText] = useState("");
+
   const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedExpenses([]);
+      setSelectedTransactions([]);
     }
   };
-  const handleRowDataFromChild = useCallback((Data) => {
-    setSelectedExpenses(Data);
+  const memoizedColDefs = useMemo(() => {
+    return resitFeeTransactionColDefs({
+      ActionComponent,
+    });
   }, []);
+  const memoizedRowData = useMemo(() => {
+    return transactions?.data ?? [];
+  }, [transactions]);
+
+  const handleRowDataFromChild = useCallback((Data) => {
+    setSelectedTransactions(Data);
+  }, []);
+
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  const memoizedColDefs = useMemo(() => {
-    return schoolExpenseColDefs({
-      ActionComponent
-    });
-  }, []);
 
-  const memoizedRowData = useMemo(() => {
-    return schoolExpenses?.data ?? [];
-  }, [schoolExpenses]);
-
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
     }
   };
-
   const handleReset = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedExpenses([]);
+      setSelectedTransactions([]);
 
       if (tableRef.current.setGridOption) {
         tableRef.current.setGridOption("quickFilterText", "");
@@ -108,7 +103,6 @@ function SchoolExpenses() {
       }
     }
   };
-
   useEffect(() => {
     if (!isLoading && tableRef.current?.getColumnsState) {
       const timer = setTimeout(() => {
@@ -130,7 +124,7 @@ function SchoolExpenses() {
             selectedColumns: prev.availableColumns.slice(0, 4),
           }));
         }
-      }, 100);
+      }, 300);
 
       return () => clearTimeout(timer);
     }
@@ -217,13 +211,14 @@ function SchoolExpenses() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search School Expense.................."
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Transaction......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}
@@ -231,8 +226,8 @@ function SchoolExpenses() {
                       rowData={{ tableRef, columns: columns.availableColumns }}
                     >
                       <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
+                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-2 white-bg"
+                        style={{ padding: "0.58rem" }}
                       >
                         <span style={{ lineHeight: "16px" }}>Export</span>
                         <span>
@@ -246,8 +241,8 @@ function SchoolExpenses() {
                       rowData={{ tableRef }}
                     >
                       <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
+                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-2 white-bg"
+                        style={{ padding: "0.58rem" }}
                       >
                         <span>
                           <Icon
@@ -271,10 +266,9 @@ function SchoolExpenses() {
                         damping: 30,
                       }}
                       style={{
-                        width: schoolExpenseState.isGeneralFilterOpen
-                          ? "60%"
-                          : "100%",
+                        width: moduleState.isGeneralFilterOpen ? "60%" : "100%",
                       }}
+                      ref={tableWrapperRef}
                     >
                       <Table
                         colDefs={memoizedColDefs}
@@ -285,33 +279,35 @@ function SchoolExpenses() {
                       />
                       {rowCount > 0 && (
                         <BulkActionsToast
+                          key="bulk-actions-toast"
+                          anchorRef={tableWrapperRef}
                           rowCount={rowCount}
                           label={`${
                             rowCount >= 1
-                              ? "School Expense Selected"
+                              ? "Transaction Selected"
                               : rowCount >= 2
-                                ? "School Expenses Selected"
+                                ? "Transactions Selected"
                                 : null
                           }`}
-                          resetAll={handleReset}
+                          resetAll={handleResetSelections}
                           dropDownItems={
                             <DropdownItems
-                              selectedExpenses={selectedExpenses}
-                              resetAll={handleReset}
+                              selectedTransactions={selectedTransactions}
+                              resetAll={handleResetSelections}
                             />
                           }
                           actionButton={
                             <ActionButtons
-                              selectedExpenses={selectedExpenses}
-                              resetAll={handleReset}
+                              selectedTransactions={selectedTransactions}
+                              resetAll={handleResetSelections}
                             />
                           }
                         />
                       )}
                     </motion.div>
-                    {schoolExpenseState.isGeneralFilterOpen && (
+                    {moduleState.isGeneralFilterOpen && (
                       <AnimatePresence mode="popLayout">
-                        {schoolExpenseState.isGeneralFilterOpen && (
+                        {moduleState.isGeneralFilterOpen && (
                           <motion.div
                             key="filter-panel"
                             className="card rounded-3 font-size-sm d-flex flex-column h-100"
@@ -331,7 +327,8 @@ function SchoolExpenses() {
                             >
                               <div className="d-flex flex-row align-items-center justify-content-between">
                                 <span>
-                                  Build a custom view of your School Expenses data.
+                                  Build a custom view of your Resit Transactions
+                                  data.
                                 </span>
                                 <button
                                   className="border-none bg-transparent"
@@ -355,7 +352,7 @@ function SchoolExpenses() {
                                       height={18}
                                     />
                                   </span>
-                                  <span>Filter School Expenses</span>
+                                  <span>Filter Resit Transactions</span>
                                 </div>
                                 <span>{memoizedRowData?.length} items</span>
                               </div>
@@ -364,15 +361,15 @@ function SchoolExpenses() {
                               className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
                               style={{ maxHeight: "52dvh" }}
                             >
-                              {schoolExpenseState.customFilter.length > 0 ? (
+                              {moduleState.customFilter.length > 0 ? (
                                 <div>
-                                  {schoolExpenseState?.customFilter?.map(
+                                  {moduleState?.customFilter?.map(
                                     (cFilters) => (
                                       <Fragment key={cFilters.id}>
                                         <GeneralFilterWizzard
                                           cFilters={cFilters}
                                           columns={columns}
-                                          moduleState={schoolExpenseState}
+                                          moduleState={moduleState}
                                           removeCustomFilter={
                                             removeCustomFilter
                                           }
@@ -390,7 +387,7 @@ function SchoolExpenses() {
                                     </span>
                                     <span className="text-muted">
                                       Create one or more conditions to narrow
-                                      down your expenses list.
+                                      down your Resit Transaction list.
                                     </span>
                                   </div>
                                   <button
@@ -408,7 +405,7 @@ function SchoolExpenses() {
                               )}
                             </div>
                             <div className="mt-auto">
-                              {schoolExpenseState.customFilter.length > 0 && (
+                              {moduleState.customFilter.length > 0 && (
                                 <div className="d-flex flex-row justify-content-start p-2">
                                   <button
                                     className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
@@ -451,29 +448,68 @@ function SchoolExpenses() {
     </>
   );
 }
-export default SchoolExpenses;
+export default ResitFeeTransactions;
 
 export function ActionComponent(props) {
   const rowData = props.data;
-
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
@@ -487,12 +523,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateExpense, "md")}
+          onClick={() =>
+            handleShowModal(ReverseResitFeeTransaction, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update Expense</span>
-              <UpdateIcon />
+              <span>Reverse Transaction</span>
+              <ReverseIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -500,11 +542,17 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteExpense, "md")}
+          onClick={() =>
+            handleShowModal(DeleteResitFeeTransaction, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Expense</span>
+              <span>Delete</span>
               <DeleteIcon />
             </div>
           </div>
@@ -513,38 +561,64 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ExpenseDetails, "md")}
+          onClick={() => handleShowModal(ResitFeeTransactionDetails, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Expense Details</span>
+              <span>Transaction Details</span>
               <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );
 }
-function ActionButtons({ selectedExpenses, resetAll }) {
+
+function ActionButtons({ selectedTransactions, resetAll }) {
   return (
     <>
       <ModalButton
-        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        action={{ modalContent: BulkDeleteExpense }}
-        bulkData={selectedExpenses}
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkDeleteResitFeeTransaction }}
+        bulkData={{
+          selectedTransactions,
+          resetAll,
+        }}
         resetAll={resetAll}
       >
         <CustomTooltip tooltipText={"Delete All"}>
-          <span className="pointer-cursor">
+          <span className="pointer-cursor hover-text-red-400">
             <Icon icon="iconamoon:trash-thin" width="24" height="24" />
           </span>
         </CustomTooltip>
@@ -552,59 +626,155 @@ function ActionButtons({ selectedExpenses, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedExpenses, resetAll, onModalStateChange }) {
+function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
+  const [showDrawer, setShowDrawer] = useState(false);
   const modalRef = useRef(null);
+
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "lg",
+    data: null,
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    data: null,
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
+
   useEffect(() => {
-    onModalStateChange(showModal, modalRef);
-  }, [showModal, onModalStateChange]);
+    if (onModalStateChange) {
+      onModalStateChange(showModal || showDrawer, modalRef);
+    }
+  }, [showModal, showDrawer, onModalStateChange]);
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null, data: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        handleClose: handleCloseModal,
-        resetAll,
-        bulkData: selectedExpenses,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const configOptions =
+      typeof options === "string" ? { size: options } : options;
+    const {
+      size = "lg",
+      data = null,
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = configOptions;
+
+    setModalConfig({
+      component: Component,
+      size,
+      data,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null, data: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      data = null,
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      data,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkUpdateExpense, "md")}
+        onClick={() =>
+          handleShowModal(BulkReverseResitFeeTransaction, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Update All</span>
-          <UpdateIcon />
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
+          <span className="font-size-sm">Reverse All</span>
+          <ReverseIcon />
         </div>
       </DropDownMenuItem>
+      <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteAdditionalFee, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeleteResitFeeTransaction, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-red-400 text-color">
           <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
       </DropDownMenuItem>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            resetAll={resetAll}
+            drawerData={
+              drawerConfig.data || {
+                selectedTransactions: selectedTransactions,
+                resetAll,
+              }
+            }
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
         ref={modalRef}
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            handleClose={handleCloseModal}
+            resetAll={resetAll}
+            modalData={modalConfig.data || selectedTransactions}
+            bulkData={{  selectedTransactions, resetAll }}
+          />
+        )}
       </CustomModal>
     </>
   );

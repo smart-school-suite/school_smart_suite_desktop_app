@@ -3,7 +3,6 @@ import { MoneyIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
-import ImportWizzard from "../ModalContent/Import/ImportWizzard";
 import JobPopOver from "../components/Popover/JobPopover";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { useNavigate } from "react-router-dom";
@@ -41,13 +40,6 @@ function RegistrationFeeLayout() {
               <span className="font-size-sm fw-semibold">
                 Manage Registration Fee
               </span>
-            </div>
-            <div className="w-50">
-              <input
-                type="search"
-                className="form-control font-size-sm w-100"
-                placeholder="Search For Anything"
-              />
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Registration Fee"} />

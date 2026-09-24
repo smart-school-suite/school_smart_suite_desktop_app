@@ -4,10 +4,8 @@ import {
   dateColumn,
   numberColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
 export function tuitionFeeTransacColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -29,6 +27,12 @@ export function tuitionFeeTransacColDefs({ ActionComponent }) {
       cellRenderer: TextComponent,
     }),
     textColumn({
+      field: "department_name",
+      headerName: "Department",
+      hide: false,
+      cellRenderer: TextComponent,
+    }),
+    textColumn({
       field: "level_name",
       headerName: "Level Name",
       hide: false,
@@ -46,7 +50,7 @@ export function tuitionFeeTransacColDefs({ ActionComponent }) {
       hide: false,
       cellRenderer: CurrencyComponent,
     }),
-     textColumn({
+    textColumn({
       field: "payment_method",
       headerName: "Payment Method",
       hide: false,

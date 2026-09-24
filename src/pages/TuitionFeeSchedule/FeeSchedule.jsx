@@ -1,112 +1,96 @@
-import ActionButtonDropdown from "../../../components/DataTableComponents/ActionComponent";
-import { tuitionFeesTransactionTableConfig } from "../../../ComponentConfig/AgGridTableConfig";
-import Table from "../../../components/Tables/Tables";
-import TransactionDetails from "../../../ModalContent/TuitionFeeTransaction/TransactionDetails";
-import ReverseTransaction from "../../../ModalContent/TuitionFeeTransaction/ReverseTransaction";
-import DeleteTransaction from "../../../ModalContent/TuitionFeeTransaction/DeleteTransaction";
-import { useGetTuitionFeeTransactions } from "../../../hooks/FeePayment/useGetTuitionFeeTransactions";
-import DataTableNavLoader from "../../../components/PageLoaders/DataTableNavLoader";
+import Table from "../../components/Tables/Tables";
+import { useGetFeeSchedule } from "../../hooks/feeSchedule/useGetFeeSchedule";
 import React, {
   useState,
-  useMemo,
   useCallback,
   useRef,
   useEffect,
+  useMemo,
   Fragment,
 } from "react";
-import CustomModal from "../../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../../components/DataTableComponents/ActionComponent";
+import CustomModal from "../../components/Modals/Modal";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Icon } from "@iconify/react";
+import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import DeleteFeeScheduleSlot from "../../ModalContent/FeeSchedule/DeleteFeeSchedule";
+import UpdateFeeScheduleSlot from "../../ModalContent/FeeSchedule/UpdateFeeSchedule";
+import AutoGenerateFeeSchedule from "../../ModalContent/FeeSchedule/AutoGenerateFeeSchedule";
+import FeeScheduleSlots from "../../ModalContent/FeeSchedule/FeeScheduleSlots";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import {
+  CreateIcon,
   DeleteIcon,
   DetailsIcon,
-  ReverseIcon,
-} from "../../../icons/ActionIcons";
-import BulkActionsToast from "../../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
-import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
-import BulkDeleteTuitionFeeTransaction from "../../../ModalContent/TuitionFeeTransaction/BulkDeleteTuitionFeeTransaction";
-import BulkReverseTuitionFeeTransaction from "../../../ModalContent/TuitionFeeTransaction/BulkReverseTuitionFeeTransaction";
-import { NotFoundError } from "../../../components/errors/Error";
-import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
-import { tuitionFeeTransacColDefs } from "../../../utils/table/colDefs/finance/tuitionFeeTransacColDefs";
-import TableColumnSetting from "../../../ModalContent/Table/TableSetting";
-import Export from "../../../ModalContent/Export/Export";
-import { isLastElement } from "../../../utils/functions";
-import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../../utils/maps/FilterMap";
-import FilterColumns from "../../../ModalContent/Teacher/FilterColumns";
-import GeneralFilterWizzard from "../../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import ImportWizzard from "../../../ModalContent/Import/ImportWizzard";
-import JobPopOver from "../../../components/Popover/JobPopover";
-import { tuitionFeeColDefs } from "../../../utils/table/colDefs/tuitionfee/tuitionFeeColDefs";
-import { MoneyIcon } from "../../../icons/Icons";
+  GenerateIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
+import { tuitionFeeScheduleColDefs } from "../../utils/table/colDefs/tuitionfee/tuitionFeeScheduleColDefs";
+import { NotFoundError } from "../../components/errors/Error";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import Export from "../../ModalContent/Export/Export";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
   resetAllCustomFilters,
   addCustomFilter,
   toggleGeneralFilter,
   removeCustomFilter,
   setCustomFilter,
-} from "../../../Slices/finance/tuitionFeeTransacSlice";
+} from "../../Slices/tuitionFee/tuitionFeeScheduleSlice";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import { useSelector, useDispatch } from "react-redux";
-function TuitionFeeTransactions() {
-  const {
-    data: transactions,
-    isLoading,
-    error,
-  } = useGetTuitionFeeTransactions();
+import SearchInput from "../../components/input/search";
+import { motion, AnimatePresence } from "framer-motion";
+import { Drawer } from "../../components/drawer/Drawer";
+function FeeSchedule() {
+  const { data: feeSchedule, isLoading, error } = useGetFeeSchedule();
   const tableRef = useRef();
+  const tableWrapperRef = useRef(null);
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const tuitionFeeTransacState = useSelector(
-    (state) => state.tuitionFeeTransaction,
-  );
-  console.log(tuitionFeeTransacState);
+  const moduleState = useSelector((state) => state.tuitionFeeSchedule);
   const [searchText, setSearchText] = useState("");
   const [rowCount, setRowCount] = useState(0);
   const [columns, setColumns] = useState({
     selectedColumns: [],
     availableColumns: [],
   });
-  const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const [selectedSchedules, setSelectedSchedules] = useState([]);
   const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedTransactions([]);
+      setSelectedSchedules([]);
     }
   };
   const handleRowDataFromChild = useCallback((Data) => {
-    setSelectedTransactions(Data);
+    setSelectedSchedules(Data);
   }, []);
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
   const memoizedColDefs = useMemo(() => {
-    return tuitionFeeTransacColDefs({
+    return tuitionFeeScheduleColDefs({
       ActionComponent,
     });
   }, []);
 
   const memoizedRowData = useMemo(() => {
-    return transactions?.data ?? [];
-  }, [transactions]);
+    return feeSchedule?.data ?? [];
+  }, [feeSchedule]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
     }
   };
-
   const handleReset = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedTransactions([]);
+      setSelectedSchedules([]);
 
       if (tableRef.current.setGridOption) {
         tableRef.current.setGridOption("quickFilterText", "");
@@ -229,13 +213,14 @@ function TuitionFeeTransactions() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Tuition fee Transactions.................."
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Schedule......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}
@@ -283,10 +268,9 @@ function TuitionFeeTransactions() {
                         damping: 30,
                       }}
                       style={{
-                        width: tuitionFeeTransacState.isGeneralFilterOpen
-                          ? "60%"
-                          : "100%",
+                        width: moduleState.isGeneralFilterOpen ? "60%" : "100%",
                       }}
+                      ref={tableWrapperRef}
                     >
                       <Table
                         colDefs={memoizedColDefs}
@@ -297,33 +281,35 @@ function TuitionFeeTransactions() {
                       />
                       {rowCount > 0 && (
                         <BulkActionsToast
+                          key="bulk-actions-toast"
+                          anchorRef={tableWrapperRef}
                           rowCount={rowCount}
                           label={`${
                             rowCount >= 1
-                              ? "Transaction Selected"
+                              ? "Schedule Selected"
                               : rowCount >= 2
-                                ? "Transactions Selected"
+                                ? "Schedules Selected"
                                 : null
                           }`}
-                          resetAll={handleReset}
+                          resetAll={handleResetSelections}
                           dropDownItems={
                             <DropdownItems
-                              selectedTransactions={selectedTransactions}
-                              resetAll={handleReset}
+                              selectedSchedules={selectedSchedules}
+                              resetAll={handleResetSelections}
                             />
                           }
                           actionButton={
                             <ActionButtons
-                              selectedTransactions={selectedTransactions}
-                              resetAll={handleReset}
+                              selectedSchedules={selectedSchedules}
+                              resetAll={handleResetSelections}
                             />
                           }
                         />
                       )}
                     </motion.div>
-                    {tuitionFeeTransacState.isGeneralFilterOpen && (
+                    {moduleState.isGeneralFilterOpen && (
                       <AnimatePresence mode="popLayout">
-                        {tuitionFeeTransacState.isGeneralFilterOpen && (
+                        {moduleState.isGeneralFilterOpen && (
                           <motion.div
                             key="filter-panel"
                             className="card rounded-3 font-size-sm d-flex flex-column h-100"
@@ -343,7 +329,7 @@ function TuitionFeeTransactions() {
                             >
                               <div className="d-flex flex-row align-items-center justify-content-between">
                                 <span>
-                                  Build a custom view of your Tuition fee Transaction data.
+                                  Build a custom view of your Fee Schedule data.
                                 </span>
                                 <button
                                   className="border-none bg-transparent"
@@ -367,7 +353,7 @@ function TuitionFeeTransactions() {
                                       height={18}
                                     />
                                   </span>
-                                  <span>Filter Tuition Fee Transactions</span>
+                                  <span>Filter Fee Schedules</span>
                                 </div>
                                 <span>{memoizedRowData?.length} items</span>
                               </div>
@@ -376,15 +362,15 @@ function TuitionFeeTransactions() {
                               className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
                               style={{ maxHeight: "52dvh" }}
                             >
-                              {tuitionFeeTransacState.customFilter.length > 0 ? (
+                              {moduleState.customFilter.length > 0 ? (
                                 <div>
-                                  {tuitionFeeTransacState?.customFilter?.map(
+                                  {moduleState?.customFilter?.map(
                                     (cFilters) => (
                                       <Fragment key={cFilters.id}>
                                         <GeneralFilterWizzard
                                           cFilters={cFilters}
                                           columns={columns}
-                                          moduleState={tuitionFeeTransacState}
+                                          moduleState={moduleState}
                                           removeCustomFilter={
                                             removeCustomFilter
                                           }
@@ -402,7 +388,7 @@ function TuitionFeeTransactions() {
                                     </span>
                                     <span className="text-muted">
                                       Create one or more conditions to narrow
-                                      down your transactions list.
+                                      down your Fee Schedule List.
                                     </span>
                                   </div>
                                   <button
@@ -420,7 +406,7 @@ function TuitionFeeTransactions() {
                               )}
                             </div>
                             <div className="mt-auto">
-                              {tuitionFeeTransacState.customFilter.length > 0 && (
+                              {moduleState.customFilter.length > 0 && (
                                 <div className="d-flex flex-row justify-content-start p-2">
                                   <button
                                     className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
@@ -463,29 +449,69 @@ function TuitionFeeTransactions() {
     </>
   );
 }
-export default TuitionFeeTransactions;
+export default FeeSchedule;
 
 export function ActionComponent(props) {
   const rowData = props.data;
-
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
 
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
@@ -499,12 +525,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ReverseTransaction, "md")}
+          onClick={() =>
+            handleShowDrawer(AutoGenerateFeeSchedule, {
+              title: "Create Fee Schedule",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Reverse Transaction</span>
-              <ReverseIcon />
+              <span>Auto Generate Schedule</span>
+              <GenerateIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -512,111 +544,59 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteTransaction, "md")}
+          onClick={() => handleShowModal(FeeScheduleSlots, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Transaction</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(TransactionDetails, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Transaction Details</span>
+              <span>View Schedule</span>
               <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteFeeScheduleSlot, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Schedule</span>
+              <DeleteIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {modalContent}
-      </CustomModal>
-    </>
-  );
-}
-function ActionButtons({ selectedTransactions, resetAll }) {
-  return (
-    <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        action={{ modalContent: BulkDeleteTuitionFeeTransaction }}
-        bulkData={selectedTransactions}
-        resetAll={resetAll}
-      >
-        <CustomTooltip tooltipText={"Delete All"}>
-          <span className="pointer-cursor">
-            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
-          </span>
-        </CustomTooltip>
-      </ModalButton>
-    </>
-  );
-}
-function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
-  const modalRef = useRef(null);
-  useEffect(() => {
-    onModalStateChange(showModal, modalRef);
-  }, [showModal, onModalStateChange]);
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setModalContent(null);
-  };
-
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        handleClose: handleCloseModal,
-        resetAll,
-        bulkData: selectedTransactions,
-      }),
-    );
-    setModalSize(size);
-    setShowModal(true);
-  };
-  return (
-    <>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkReverseTuitionFeeTransaction, "md")}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Reverse All</span>
-          <ReverseIcon />
-        </div>
-      </DropDownMenuItem>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteTuitionFeeTransaction, "md")}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Delete All</span>
-          <DeleteIcon />
-        </div>
-      </DropDownMenuItem>
-      <CustomModal
-        show={showModal}
-        handleClose={handleCloseModal}
-        size={modalSize}
-        centered
-        ref={modalRef}
-      >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );

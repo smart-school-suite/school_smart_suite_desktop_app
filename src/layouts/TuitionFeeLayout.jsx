@@ -45,13 +45,6 @@ function TuitionFeeLayout() {
               </div>
               <span className="font-size-sm fw-semibold">Manage Tuition Fee</span>
             </div>
-            <div className="w-50">
-              <input
-                type="search"
-                className="form-control font-size-sm w-100"
-                placeholder="Search For Anything"
-              />
-            </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Tuition Fee"} />
               <ModalButton

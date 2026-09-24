@@ -828,7 +828,7 @@ function SideBarLg() {
                         : "nav-item-box-inactive"
                     }
                     onClick={() => {
-                      navigate("/announcement-overview");
+                      navigate("/all-announcement");
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
@@ -868,7 +868,7 @@ function SideBarLg() {
                         <div className="subbox-nav">
                           <div
                             onClick={() => {
-                              navigate("/announcement-overview");
+                              navigate("/all-announcement");
                             }}
                             className={
                               IsPathInRoutes(announcementRoutes)

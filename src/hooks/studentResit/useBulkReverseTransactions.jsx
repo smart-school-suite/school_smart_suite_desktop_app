@@ -8,7 +8,7 @@ export const useBulkReverserResitTransactions = (handleClose, resetAll) => {
   return useMutation({
     mutationFn: bulkReverseTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resitTransactions"] });
+     queryClient.invalidateQueries({ queryKey: ["resit-transactions"] });
 
       if (handleClose) {
         handleClose();

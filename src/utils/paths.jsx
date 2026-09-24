@@ -84,12 +84,11 @@ export const eventRoutes = [
 ];
 
 export const announcementRoutes = [
-  "/announcement-overview",
-  "/draft-annoucement",
+  "/all-announcement",
+  "/draft-announcement",
   "/announcement-category",
-  "/expired-annoucement",
-  "/scheduled-annoucement",
-  "/announcement",
+  "/active-announcement",
+  "/scheduled-announcement",
 ];
 
 export const dashboardRoutes = [

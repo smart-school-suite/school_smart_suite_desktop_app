@@ -57,6 +57,11 @@ import resitReducer from "../Slices/resit/resitSlice";
 import resitExamReducer from "../Slices/resit/resitExamSlice";
 import resitCandidateReducer from "../Slices/resit/resitCandidateSlice";
 import resitEvaluationReducer from "../Slices/resit/resitEvaluationSlice";
+import announcementCatReducer from "../Slices/announcement/announcementCatSlice";
+import expenseCategoryReducer from "../Slices/schoolExpense/expenseCategorySlice";
+import resitFeeReducer from "../Slices/resitFee/resitFeeSlice";
+import resitFeeTransactionReducer from "../Slices/resitFee/resitFeeTransactionSlice";
+import tuitionFeeScheduleReducer from "../Slices/tuitionFee/tuitionFeeScheduleSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -213,6 +218,41 @@ const rootReducer = combineReducers({
       storage,
     },
     examInvigilatorReducer,
+  ),
+  announcementCategory: persistReducer(
+    {
+      key: "announcementCategory",
+      storage,
+    },
+    announcementCatReducer,
+  ),
+  expenseCategory: persistReducer(
+    {
+      key: "expenseCategory",
+      storage,
+    },
+    expenseCategoryReducer,
+  ),
+  resitFee: persistReducer(
+    {
+      key: "resitFee",
+      storage,
+    },
+    resitFeeReducer,
+  ),
+  resitFeeTransaction: persistReducer(
+    {
+      key: "resitFeeTransaction",
+      storage,
+    },
+    resitFeeTransactionReducer,
+  ),
+  tuitionFeeSchedule: persistReducer(
+    {
+      key: "tuitionFeeSchedule",
+      storage,
+    },
+    tuitionFeeReducer,
   ),
   schoolAdmin: schoolAdminReducer,
   hall: hallReducer,

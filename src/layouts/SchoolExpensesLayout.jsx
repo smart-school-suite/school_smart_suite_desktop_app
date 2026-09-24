@@ -1,22 +1,22 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import SchoolExpensesSideBar from "../components/SideBars/SchoolExpensesSideBar";
 import { MoneyIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
-import { motion, AnimatePresence } from "framer-motion";
-import { Megaphone } from "lucide-react";
+import { motion } from "framer-motion";
 import JobPopOver from "../components/Popover/JobPopover";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import CreateSchoolExpense from "../DrawerContent/SchoolExpenses/CreateSchoolExpense";
 function SchoolExpensesLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const sideBarData = [
     {
-      title: "School Expenses",
+      title: "Expenses",
       icon: "mage:dashboard-4-fill",
       path: "/school-expenses",
     },
     {
-      title: "School Expenses Category",
+      title: "Expenses Category",
       icon: "f7:speaker-2-fill",
       path: "/school-expense-category",
     },
@@ -41,14 +41,9 @@ function SchoolExpensesLayout() {
               >
                 <MoneyIcon size={16} />
               </div>
-              <span className="font-size-sm fw-semibold">Manage School Expense</span>
-            </div>
-            <div className="w-50">
-              <input
-                type="search"
-                className="form-control font-size-sm w-100"
-                placeholder="Search For Anything"
-              />
+              <span className="font-size-sm fw-semibold">
+                Manage School Expense
+              </span>
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Hall"} />
@@ -76,14 +71,15 @@ function SchoolExpensesLayout() {
                   />
                 </span>
               </ModalButton>
-              <ModalButton
-                size={"lg"}
-                classname={
-                  "border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
-                }
+              <DrawerTrigger
+                title="Create School Expense"
+                placement="right"
+                drawerChildren={CreateSchoolExpense}
               >
-                <span>Create Expense</span>
-              </ModalButton>
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Create Expense</span>
+                </button>
+              </DrawerTrigger>
             </div>
           </div>
           <hr />
