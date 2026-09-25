@@ -3460,8 +3460,16 @@ export function activationCodeUsageTableConfig() {
       cellRenderer: UsageStatus,
     },
     {
-      headerName: "User Name",
-      field: "user_name",
+      headerName: "Account Name",
+      field: "account_name",
+      filter: true,
+      floatingFilter: true,
+      cellStyle: cellStyle,
+      cellRenderer: TextComponent,
+    },
+    {
+      headerName: "Username",
+      field: "username",
       filter: true,
       floatingFilter: true,
       cellStyle: cellStyle,

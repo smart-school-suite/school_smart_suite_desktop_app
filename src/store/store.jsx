@@ -65,6 +65,10 @@ import tuitionFeeScheduleReducer from "../Slices/tuitionFee/tuitionFeeScheduleSl
 import registrationFeeTransactionReducer from "../Slices/registrationFee/registrationFeeTransacSlice";
 import additionalFeeBillingReducer from "../Slices/additionalFee/additionalFeeBillingSlice";
 import additionalFeeCategoryReducer from "../Slices/additionalFee/additionalFeeCategorySlice";
+import studentActivationCodeReducer from "../Slices/activationCode/studentActivationCodeSlice";
+import teacherActivationCodeReducer from "../Slices/activationCode/teacherActivationCodeSlice";
+import activationCodeUsageReducer from "../Slices/activationCode/activationCodeUsageSlice";
+import activationCodeTransactionReducer from "../Slices/activationCode/activationCodeTransactionSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -120,6 +124,34 @@ const rootReducer = combineReducers({
   student: persistReducer({ key: "student", storage }, studentReducer),
   parent: persistReducer({ key: "parent", storage }, parentReducer),
   resitExam: persistReducer({ key: "resitExam", storage }, resitExamReducer),
+  activationCodeTransaction: persistReducer(
+    {
+      key: "activationCodeTransaction",
+      storage,
+    },
+    activationCodeTransactionReducer,
+  ),
+  activationCodeUsage: persistReducer(
+    {
+      key: "activationCodeUsage",
+      storage,
+    },
+    activationCodeUsageReducer,
+  ),
+  teacherActivationCode: persistReducer(
+    {
+      key: "teacherActivationCode",
+      storage,
+    },
+    teacherActivationCodeReducer,
+  ),
+  studentActivationCode: persistReducer(
+    {
+      key: "studentActivationCode",
+      storage,
+    },
+    studentActivationCodeReducer,
+  ),
   additionalFeeCategory: persistReducer(
     {
       key: "additionalFeeCategory",

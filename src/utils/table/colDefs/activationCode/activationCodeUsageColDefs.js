@@ -1,7 +1,8 @@
-import { textColumn, actionsColumn, dateColumn } from "@/utils/table/columns";
+import { textColumn, dateColumn } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import ActionComponent from "../../../../components/Badges/ActivationCode/ActionComponent";
-export function activationCodeColDefs() {
+import UsageStatus from "../../../../components/Badges/ActivationCode/UsageStatus";
+
+export function activationCodeUsageColDefs() {
   return [
     textColumn({
       field: "code",
@@ -10,33 +11,28 @@ export function activationCodeColDefs() {
       cellRenderer: TextComponent,
     }),
     textColumn({
-      field: "code_type",
-      headerName: "Code Type",
+      field: "account_type",
+      headerName: "Account Type",
       hide: false,
       cellRenderer: TextComponent,
     }),
     textColumn({
-      field: "code_type",
-      headerName: "Code Type",
-      hide: false,
-      cellRenderer: TextComponent,
-    }),
-    textColumn({
-      field: "used",
-      headerName: "Used Status",
-      hide: false,
-    }),
-    textColumn({
-      headerName: "Status",
       field: "status",
+      headerName: "Status",
+      hide: false,
+      cellRenderer: UsageStatus,
+    }),
+    textColumn({
+      field: "account_name",
+      headerName: "Account Name",
       hide: false,
       cellRenderer: TextComponent,
     }),
-    dateColumn({
-      field: "expires_at",
-      headerName: "Expire Date",
-      format: "dd/MM/yyyy",
+    textColumn({
+      field: "user_name",
+      headerName: "Username",
       hide: false,
+      cellRenderer: TextComponent,
     }),
     dateColumn({
       field: "created_at",
@@ -49,9 +45,6 @@ export function activationCodeColDefs() {
       headerName: "Updated At",
       format: "dd/MM/yyyy",
       hide: false,
-    }),
-    actionsColumn({
-      cellRenderer: ActionComponent,
     }),
   ];
 }

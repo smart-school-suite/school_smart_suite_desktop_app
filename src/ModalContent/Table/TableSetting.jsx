@@ -9,6 +9,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { CircleX } from "lucide-react";
 
 const DEFAULT_EXCLUDED_FIELDS = [
   "action",
@@ -204,9 +205,19 @@ export default function TableColumnSetting(props) {
           <span className="text-muted font-size-sm">{subtitle}</span>
         </div>
         {handleClose && (
-          <span onClick={handleClose} style={{ cursor: "pointer" }}>
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
+          <button
+            onClick={handleClose}
+            className="border-none border rounded-circle bg-transparent p-0"
+            style={{
+              width: "2rem",
+              height: "2rem",
+              display: "grid",
+              placeItems: "center",
+              cursor: "pointer",
+            }}
+          >
+            <CircleX size={16} />
+          </button>
         )}
       </div>
 
@@ -333,7 +344,10 @@ export default function TableColumnSetting(props) {
       </div>
 
       {/* Modal Actions Footer */}
-      <div className="d-flex flex-row align-items-center justify-content-between mt-2 border-top px-2" style={{ height: "8dvh" }}>
+      <div
+        className="d-flex flex-row align-items-center justify-content-between mt-2 border-top px-2"
+        style={{ height: "8dvh" }}
+      >
         <button
           className="border-none bg-transparent font-size-sm color-primary p-0"
           onClick={handleResetToDefault}

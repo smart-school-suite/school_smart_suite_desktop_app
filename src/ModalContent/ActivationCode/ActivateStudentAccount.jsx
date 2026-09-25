@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { activationCodeSchema } from "../../ComponentConfig/YupValidationSchema";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { CircleX } from "lucide-react";
 function ActivateStudentAccount({ rowData, handleClose }) {
   const codeRef = useRef();
   const { mutate: activateAccount, isPending } =
@@ -38,7 +39,7 @@ function ActivateStudentAccount({ rowData, handleClose }) {
           description={
             "Your Code Seems to be Invalid, please check and try again"
           }
-        />
+        />,
       );
       return;
     }
@@ -50,7 +51,7 @@ function ActivateStudentAccount({ rowData, handleClose }) {
           description={
             "Your Code Seems to be Invalid, please check and try again"
           }
-        />
+        />,
       );
       return;
     }
@@ -58,20 +59,34 @@ function ActivateStudentAccount({ rowData, handleClose }) {
   };
   return (
     <>
-      <div className="d-flex flex-row align-items-center justify-content-between">
-        <span className="m-0">Activate Student Account</span>
-        <span
-          className="m-0"
-          onClick={() => {
-            handleClose();
-          }}
-        >
-          <Icon icon="charm:cross" width="22" height="22" />
-        </span>
+      <div
+        className="border-bottom rounded-top-4 p-2 d-flex flex-column justify-content-center"
+        style={{ height: "6dvh", background: "#f9f9f9" }}
+      >
+        <div className="d-flex flex-row align-items-center justify-content-between">
+          <div>
+            <span className="font-size-sm fw-semibold">
+              Activate Student Account
+            </span>
+          </div>
+          <button
+            onClick={() => handleClose()}
+            className="border-none border rounded-circle bg-transparent p-0"
+            style={{
+              width: "2rem",
+              height: "2rem",
+              display: "grid",
+              placeItems: "center",
+              cursor: "pointer",
+            }}
+          >
+            <CircleX size={16} />
+          </button>
+        </div>
       </div>
-      <div className="d-flex flex-column gap-2">
+      <div className="d-flex flex-column gap-2 px-2 pt-4">
         <div>
-          <span className="font-size-sm">Activation Code</span>
+          <span className="font-size-sm fw-medium">Activation Code</span>
           <TextInput
             placeholder={"XXX-XXXXXXXX"}
             onChange={(value) =>
@@ -87,7 +102,8 @@ function ActivateStudentAccount({ rowData, handleClose }) {
             value={formData.activation_code}
           />
         </div>
-        <div>
+      </div>
+        <div className="mt-4 border-top p-2">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"
@@ -99,7 +115,6 @@ function ActivateStudentAccount({ rowData, handleClose }) {
             </button>
           </div>
         </div>
-      </div>
     </>
   );
 }

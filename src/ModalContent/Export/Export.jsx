@@ -15,6 +15,7 @@ import ExportGenerationService from "../../services/export/ExportGenerationServi
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { EXPORT_FORMAT, EXPORT_LABEL } from "@/constants";
+import { CircleX } from "lucide-react";
 
 function SortableColumnItem({ column }) {
   const {
@@ -130,13 +131,23 @@ function Export({ handleClose, rowData }) {
   return (
     <div className="d-flex flex-column font-size-sm">
       {/* Header */}
-      <div className="d-flex flex-row align-items-center justify-content-between mb-2 rounded-top-4 px-2 border-bottom" style={{ height: "6dvh", background: "#f9f9f9" }}>
+      <div
+        className="d-flex flex-row align-items-center justify-content-between mb-2 rounded-top-4 px-2 border-bottom"
+        style={{ height: "6dvh", background: "#f9f9f9" }}
+      >
         <span className="fw-bold">{title}</span>
         <button
           onClick={handleClose}
-          className="border-none bg-transparent cursor-pointer"
+          className="border-none border rounded-circle bg-transparent p-0"
+          style={{
+            width: "2rem",
+            height: "2rem",
+            display: "grid",
+            placeItems: "center",
+            cursor: "pointer",
+          }}
         >
-          <Icon icon="charm:cross" width="22" height="22" />
+          <CircleX size={16} />
         </button>
       </div>
 
@@ -461,15 +472,18 @@ function Export({ handleClose, rowData }) {
         </div>
       </div>
 
-      <div className="d-flex flex-row align-items-center justify-content-end gap-2 mt-3 border-top px-2" style={{ height: "8dvh" }}>
-       <div className="d-flex flex-row align-items-end w-50 justify-content-end gap-2">
-        <button
-          className="border-none p-2 rounded-3 primary-background text-white font-size-sm"
-          onClick={handleGenerate}
-        >
-          Generate
-        </button>
-       </div>
+      <div
+        className="d-flex flex-row align-items-center justify-content-end gap-2 mt-3 border-top px-2"
+        style={{ height: "8dvh" }}
+      >
+        <div className="d-flex flex-row align-items-end w-50 justify-content-end gap-2">
+          <button
+            className="border-none p-2 rounded-3 primary-background text-white font-size-sm"
+            onClick={handleGenerate}
+          >
+            Generate
+          </button>
+        </div>
       </div>
     </div>
   );
