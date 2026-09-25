@@ -1,35 +1,37 @@
-import { useRef, useState } from "react";
-import { usePayRegistrationFee } from "../../hooks/registrationFee/usePayRegistrationFee";
+import { useState, useRef } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { Icon } from "@iconify/react";
+import { usePayAdditionalFee } from "../../hooks/additionalFee/usePayAdditionalFee";
 import { InputGroup } from "../../components/FormComponents/InputComponents";
-import { useSelector } from "react-redux";
 import { numberSchema } from "../../ComponentConfig/YupValidationSchema";
+import { useSelector } from "react-redux";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { paymentMethods } from "../../data/data";
 import { allFieldsValid } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
-function PayRegistrationFees({ handleClose, rowData }) {
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+function PayAdditionalFee({ handleClose, drawerData }) {
   const amountRef = useRef();
   const methodRef = useRef();
-  const { id: registrationFeeId, amount } = rowData;
+  const { id: additionalFeeId, amount } = drawerData;
   const currencyState = useSelector((state) => state.auth.user);
   const userCurrencySymbol =
     currencyState?.schoolDetails?.school?.country?.currency || "";
   const [formData, setFormData] = useState({
     amount: "",
     payment_method: "",
-    registration_fee_id: registrationFeeId,
+    fee_id: additionalFeeId,
   });
   const [errors, setErrors] = useState({
     payment_method: "",
   });
-  const [isValid, setValid] = useState({
+  const [isValid, setIsValid] = useState({
     amount: "",
   });
-  const { mutate: handlePayment, isPending } =
-    usePayRegistrationFee(handleClose);
+  const { mutate: payAdditionalFee, isPending } = usePayAdditionalFee(
+    handleClose,
+    additionalFeeId,
+  );
   const handlePrevalidation = async () => {
     const amount = await amountRef.current.triggerValidation();
     const paymentMethod = await methodRef.current.triggerValidation();
@@ -48,7 +50,7 @@ function PayRegistrationFees({ handleClose, rowData }) {
         <ToastWarning
           title={"Invalid Fields"}
           description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
+        />,
       );
       return;
     }
@@ -57,37 +59,31 @@ function PayRegistrationFees({ handleClose, rowData }) {
         <ToastWarning
           title={"Invalid Fields"}
           description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
+        />,
       );
       return;
     }
-    handlePayment({...formData, payment_method:formData.payment_method.value});
+    payAdditionalFee({
+      ...formData,
+      payment_method: formData.payment_method.value,
+    });
   };
   return (
     <>
-      <span>
-        <div>
-          <div className="block">
-            <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-              <span className="m-0">Make Registration Fee Payment</span>
-              <span
-                className="m-0"
-                onClick={() => {
-                  handleClose();
-                }}
-              >
-                <Icon icon="charm:cross" width="22" height="22" />
-              </span>
-            </div>
-          </div>
+      <div className="drawer-content px-2 pt-3">
+        <div className="d-flex flex-column gap-3">
           <div>
             <label htmlFor="amount" className="font-size-sm">
               Amount
             </label>
             <InputGroup
-              onChange={(value) => handleStateChange("amount", value, setFormData)}
-              InputGroupText={userCurrencySymbol}
-              onValidationChange={(value) => handleStateChange("amount", value, setValid)}
+              onChange={(value) =>
+                handleStateChange("amount", value, setFormData)
+              }
+              onValidationChange={(value) =>
+                handleStateChange("amount", value, setIsValid)
+              }
+              value={formData.amount}
               validationSchema={numberSchema({
                 min: amount,
                 max: amount,
@@ -100,6 +96,7 @@ function PayRegistrationFees({ handleClose, rowData }) {
                 },
               })}
               placeholder={"Enter Amount Paid"}
+              InputGroupText={userCurrencySymbol}
               ref={amountRef}
             />
           </div>
@@ -112,7 +109,9 @@ function PayRegistrationFees({ handleClose, rowData }) {
               valueKey={["value"]}
               displayKey={["label"]}
               direction="down"
-              onError={(value) => handleStateChange("payment_method", value, setErrors)}
+              onError={(value) =>
+                handleStateChange("payment_method", value, setErrors)
+              }
               onSelect={(value) =>
                 handleStateChange("payment_method", value, setFormData)
               }
@@ -123,19 +122,29 @@ function PayRegistrationFees({ handleClose, rowData }) {
               value={formData.payment_method}
             />
           </div>
-          <div className="mt-3 d-flex gap-2">
+        </div>
+      </div>
+      <div className="drawer-footer font-size-sm">
+        <div className="d-flex flex-column w-100">
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+          <div className="d-flex flex-row align-items-center justify-content-between p-2">
             <button
-              className="border-none px-3 py-2 rounded-3 font-size-sm w-50 primary-background text-white w-100"
-              onClick={() => {
-                handleSubmit();
-              }}
+              className="border-none bg-none"
+              onClick={() => handleClose()}
             >
-              {isPending ? <SingleSpinner /> : "Make Payment"}
+              Cancel
+            </button>
+            <button
+              className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+              onClick={() => handleSubmit()}
+              disabled={isPending}
+            >
+              {isPending ? <SingleSpinner /> : "Pay Additional Fee"}
             </button>
           </div>
         </div>
-      </span>
+      </div>
     </>
   );
 }
-export default PayRegistrationFees;
+export default PayAdditionalFee;

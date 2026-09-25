@@ -70,10 +70,15 @@ function PayRegistrationFees({ handleClose, drawerData }) {
     <>
       <div className="drawer-content px-2 pt-3">
         <div className="d-flex flex-column gap-3">
-          <div>
-            <label htmlFor="amount" className="font-size-sm">
-              Amount
-            </label>
+          <div className="d-flex flex-column gap-1">
+            <div className="d-flex flex-row align-items-center gap-3">
+              <label htmlFor="amount" className="font-size-sm">
+                Amount
+              </label>
+              <label htmlFor="amount" className="font-size-sm text-iron-400">
+                Registration Fee: {`${amount} ${userCurrencySymbol}`}
+              </label>
+            </div>
             <InputGroup
               onChange={(value) =>
                 handleStateChange("amount", value, setFormData)
@@ -97,7 +102,7 @@ function PayRegistrationFees({ handleClose, drawerData }) {
               ref={amountRef}
             />
           </div>
-          <div>
+          <div className="d-flex flex-column gap-1">
             <label htmlFor="paymentMethod" className="font-size-sm">
               Payment Method
             </label>

@@ -1,94 +1,89 @@
 import Table from "../../components/Tables/Tables";
-import { additionalFeesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import DeleteAdditionalFees from "../../ModalContent/AdditionalFees/DeleteAdditionalFees";
-import PayAdditionalFees from "../../ModalContent/AdditionalFees/PayAdditionalFees";
-import UpdateAdditionalFees from "../../ModalContent/AdditionalFees/UpdateAdditionalFees";
-import AdditionalFeeDetail from "../../ModalContent/AdditionalFees/AdditionalFeesDetails";
-import { useGetAdditionalFees } from "../../hooks/additionalFee/useGetAdditionalFees";
-import React, { useState, useCallback, useRef, useEffect, useMemo, Fragment } from "react";
+import ReverseTransaction from "../../ModalContent/AdditionalFeesTransactions/ReverseTransaction";
+import DeleteTransaction from "../../ModalContent/AdditionalFeesTransactions/DeleteTransaction";
+import TransactionDetails from "../../ModalContent/AdditionalFeesTransactions/TransactionDetails";
+import { useGetAdditionalFeeTransactions } from "../../hooks/additionalFee/useGetAdditionalFeeTransactions";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+  Fragment,
+} from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import {
-  CreateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
+import { DeleteIcon, DetailsIcon, ReverseIcon } from "../../icons/ActionIcons";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
-import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import BulkPayAdditionalFee from "../../ModalContent/AdditionalFees/BulkPayAdditionalFee";
-import BulkDeleteAdditionalFee from "../../ModalContent/AdditionalFees/BulkDeleteAdditionalFee";
-import BulkUpdateAdditionalFee from "../../ModalContent/AdditionalFees/BulkUpdateAdditionalFee";
+import BulkDeleteAdditionalFeeTransaction from "../../ModalContent/AdditionalFees/BulkDeleteAdditionalFeeTransaction";
+import BulkReverseAdditionalFeeTransaction from "../../ModalContent/AdditionalFees/BulkReverseAdditionalFeeTransaction";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { additionalFeeColDefs } from "../../utils/table/colDefs/finance/additionalFeeColDefs";
+import { additionalFeeTransactionColDefs } from "../../utils/table/colDefs/additionalFee/additionalFeeTransacColDefs";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import {
   resetAllCustomFilters,
   addCustomFilter,
   toggleGeneralFilter,
   removeCustomFilter,
   setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  setStandardGroupValue,
-} from "../../Slices/finance/additionalFeeSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
-import { ADDITIONAL_FEE_COLUMN } from "../../utils/finance/additionalFeeColumn";
-import JobPopOver from "../../components/Popover/JobPopover";
+} from "../../Slices/registrationFee/registrationFeeTransacSlice";
 import { useSelector, useDispatch } from "react-redux";
-function AdditionalFees() {
-  const { data: additionalFee, isLoading, error } = useGetAdditionalFees();
-  const tableRef = useRef();
+import SearchInput from "../../components/input/search";
+import { Drawer } from "../../components/drawer/Drawer";
+function AdditionalFeeTransactions() {
+  const {
+    data: transactions,
+    isLoading,
+    error,
+  } = useGetAdditionalFeeTransactions();
+  const tableRef = useRef(null);
+  const tableWrapperRef = useRef(null);
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const additionalFeeState = useSelector((state) => state.additionalFee);
+  const tuitionFeeTransacState = useSelector(
+    (state) => state.registrationFeeTransaction,
+  );
   const [searchText, setSearchText] = useState("");
   const [rowCount, setRowCount] = useState(0);
   const [columns, setColumns] = useState({
     selectedColumns: [],
     availableColumns: [],
   });
-  const [selectedAdditionalFees, setSelectedAdditionalFee] = useState([]);
+  const [selectedTransactions, setSelectedTransactions] = useState([]);
   const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedAdditionalFee([]);
+      setSelectedTransactions([]);
     }
   };
   const handleRowDataFromChild = useCallback((Data) => {
-    setSelectedAdditionalFee(Data);
+    setSelectedTransactions(Data);
   }, []);
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
   const memoizedColDefs = useMemo(() => {
-    return additionalFeeColDefs({
-      ActionComponent
+    return additionalFeeTransactionColDefs({
+      ActionComponent,
     });
   }, []);
 
   const memoizedRowData = useMemo(() => {
-    return additionalFee?.data ?? [];
-  }, [additionalFee]);
+    return transactions?.data ?? [];
+  }, [transactions]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
@@ -99,7 +94,7 @@ function AdditionalFees() {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedAdditionalFee([]);
+      setSelectedTransactions([]);
 
       if (tableRef.current.setGridOption) {
         tableRef.current.setGridOption("quickFilterText", "");
@@ -140,7 +135,6 @@ function AdditionalFees() {
       return () => clearTimeout(timer);
     }
   }, [isLoading, memoizedRowData]);
-
   return (
     <>
       <main className="main-container gap-2 h-100">
@@ -223,13 +217,14 @@ function AdditionalFees() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Additional Fees.................."
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Additional Fee Transaction......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}
@@ -277,10 +272,11 @@ function AdditionalFees() {
                         damping: 30,
                       }}
                       style={{
-                        width: additionalFeeState.isGeneralFilterOpen
+                        width: tuitionFeeTransacState.isGeneralFilterOpen
                           ? "60%"
                           : "100%",
                       }}
+                      ref={tableWrapperRef}
                     >
                       <Table
                         colDefs={memoizedColDefs}
@@ -291,37 +287,35 @@ function AdditionalFees() {
                       />
                       {rowCount > 0 && (
                         <BulkActionsToast
+                          key="bulk-actions-toast"
+                          anchorRef={tableWrapperRef}
                           rowCount={rowCount}
                           label={`${
                             rowCount >= 1
-                              ? "Additional Fee Selected"
+                              ? "Transaction Selected"
                               : rowCount >= 2
-                                ? "Additional Fees Selected"
+                                ? "Transactions Selected"
                                 : null
                           }`}
-                          resetAll={handleReset}
+                          resetAll={handleResetSelections}
                           dropDownItems={
                             <DropdownItems
-                              selectedAdditionalFees={
-                                selectedAdditionalFees
-                              }
-                              resetAll={handleReset}
+                              selectedTransactions={selectedTransactions}
+                              resetAll={handleResetSelections}
                             />
                           }
                           actionButton={
                             <ActionButtons
-                              selectedAdditionalFees={
-                                selectedAdditionalFees
-                              }
-                              resetAll={handleReset}
+                              selectedTransactions={selectedTransactions}
+                              resetAll={handleResetSelections}
                             />
                           }
                         />
                       )}
                     </motion.div>
-                    {additionalFeeState.isGeneralFilterOpen && (
+                    {tuitionFeeTransacState.isGeneralFilterOpen && (
                       <AnimatePresence mode="popLayout">
-                        {additionalFeeState.isGeneralFilterOpen && (
+                        {tuitionFeeTransacState.isGeneralFilterOpen && (
                           <motion.div
                             key="filter-panel"
                             className="card rounded-3 font-size-sm d-flex flex-column h-100"
@@ -342,7 +336,7 @@ function AdditionalFees() {
                               <div className="d-flex flex-row align-items-center justify-content-between">
                                 <span>
                                   Build a custom view of your Additional Fee
-                                  data.
+                                  Transaction data.
                                 </span>
                                 <button
                                   className="border-none bg-transparent"
@@ -366,7 +360,9 @@ function AdditionalFees() {
                                       height={18}
                                     />
                                   </span>
-                                  <span>Filter Additional Fee</span>
+                                  <span>
+                                    Filter Additional Fee Transactions
+                                  </span>
                                 </div>
                                 <span>{memoizedRowData?.length} items</span>
                               </div>
@@ -375,15 +371,16 @@ function AdditionalFees() {
                               className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
                               style={{ maxHeight: "52dvh" }}
                             >
-                              {additionalFeeState.customFilter.length > 0 ? (
+                              {tuitionFeeTransacState.customFilter.length >
+                              0 ? (
                                 <div>
-                                  {additionalFeeState?.customFilter?.map(
+                                  {tuitionFeeTransacState?.customFilter?.map(
                                     (cFilters) => (
                                       <Fragment key={cFilters.id}>
                                         <GeneralFilterWizzard
                                           cFilters={cFilters}
                                           columns={columns}
-                                          moduleState={additionalFeeState}
+                                          moduleState={tuitionFeeTransacState}
                                           removeCustomFilter={
                                             removeCustomFilter
                                           }
@@ -401,7 +398,7 @@ function AdditionalFees() {
                                     </span>
                                     <span className="text-muted">
                                       Create one or more conditions to narrow
-                                      down your Additional Fee list.
+                                      down your additional Fee transaction list.
                                     </span>
                                   </div>
                                   <button
@@ -419,7 +416,8 @@ function AdditionalFees() {
                               )}
                             </div>
                             <div className="mt-auto">
-                              {additionalFeeState.customFilter.length > 0 && (
+                              {tuitionFeeTransacState.customFilter.length >
+                                0 && (
                                 <div className="d-flex flex-row justify-content-start p-2">
                                   <button
                                     className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
@@ -462,29 +460,69 @@ function AdditionalFees() {
     </>
   );
 }
-export default AdditionalFees;
+export default AdditionalFeeTransactions;
 
-function ActionComponent(props) {
+export function ActionComponent(props) {
   const rowData = props.data;
-
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
 
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
@@ -498,12 +536,12 @@ function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(PayAdditionalFees, "md")}
+          onClick={() => handleShowModal(ReverseTransaction, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Pay Fee</span>
-              <CreateIcon />
+              <span>Reverse Transaction</span>
+              <ReverseIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -511,64 +549,74 @@ function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(AdditionalFeeDetail, "md")}
+          onClick={() => handleShowModal(DeleteTransaction, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Fee Details</span>
-              <DetailsIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(UpdateAdditionalFees, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update Fee</span>
-              <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(DeleteAdditionalFees, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Fee</span>
+              <span>Delete</span>
               <DeleteIcon />
             </div>
           </div>
         </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(TransactionDetails, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Transaction Details</span>
+              <DetailsIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );
 }
-function ActionButtons({ selectedAdditionalFee, resetAll }) {
+
+function ActionButtons({ selectedTransactions, resetAll }) {
   return (
     <>
       <ModalButton
-        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        action={{ modalContent: BulkPayAdditionalFee }}
-        bulkData={selectedAdditionalFee}
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkDeleteAdditionalFeeTransaction }}
+        bulkData={selectedTransactions}
         resetAll={resetAll}
       >
         <CustomTooltip tooltipText={"Delete All"}>
-          <span className="pointer-cursor">
+          <span className="pointer-cursor hover-text-red-400">
             <Icon icon="iconamoon:trash-thin" width="24" height="24" />
           </span>
         </CustomTooltip>
@@ -576,72 +624,147 @@ function ActionButtons({ selectedAdditionalFee, resetAll }) {
     </>
   );
 }
-function DropdownItems({
-  selectedAdditionalFee,
-  resetAll,
-  onModalStateChange,
-}) {
+function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
+  const [showDrawer, setShowDrawer] = useState(false);
   const modalRef = useRef(null);
+
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "lg",
+    data: null,
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    data: null,
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
+
   useEffect(() => {
-    onModalStateChange(showModal, modalRef);
-  }, [showModal, onModalStateChange]);
+    if (onModalStateChange) {
+      onModalStateChange(showModal || showDrawer, modalRef);
+    }
+  }, [showModal, showDrawer, onModalStateChange]);
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null, data: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        handleClose: handleCloseModal,
-        resetAll,
-        bulkData: selectedAdditionalFee,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const configOptions =
+      typeof options === "string" ? { size: options } : options;
+    const {
+      size = "lg",
+      data = null,
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = configOptions;
+
+    setModalConfig({
+      component: Component,
+      size,
+      data,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null, data: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      data = null,
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      data,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkPayAdditionalFee, "md")}
+        onClick={() =>
+          handleShowModal(BulkReverseAdditionalFeeTransaction, "md")
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Pay All</span>
-          <CreateIcon />
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
+          <span className="font-size-sm">Reverse All</span>
+          <ReverseIcon />
         </div>
       </DropDownMenuItem>
+      <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkUpdateAdditionalFee, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeleteAdditionalFeeTransaction, "md")
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Update All</span>
-          <UpdateIcon />
-        </div>
-      </DropDownMenuItem>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteAdditionalFee, "md")}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-red-400 text-color">
           <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
       </DropDownMenuItem>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            resetAll={resetAll}
+            drawerData={
+              drawerConfig.data || {
+                selectedTransactions,
+                resetAll,
+              }
+            }
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
         ref={modalRef}
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            handleClose={handleCloseModal}
+            resetAll={resetAll}
+            modalData={modalConfig.data || selectedTransactions}
+            bulkData={{ selectedTransactions, resetAll }}
+          />
+        )}
       </CustomModal>
     </>
   );

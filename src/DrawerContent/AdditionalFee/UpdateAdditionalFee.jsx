@@ -1,4 +1,4 @@
-import { useBulkUpdateAdditionalFees } from "../../hooks/additionalFee/useBulkUpdateStudentAdditionalFee";
+import { useUpdateAdditionalFee } from "../../hooks/additionalFee/useUpdateAdditionalFee";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
@@ -19,7 +19,7 @@ import {
 } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
-function BulkUpdateAdditionalFee({ handleClose, resetAll, bulkData }) {
+function UpdateAdditionalFee({ handleClose, drawerData }) {
   const currencyState = useSelector((state) => state.auth.user);
   const currency =
     currencyState?.schoolDetails?.school?.country?.currency || "";
@@ -36,8 +36,11 @@ function BulkUpdateAdditionalFee({ handleClose, resetAll, bulkData }) {
     additionalfee_category_id: "",
   });
   const { data: category, isFetching } = useGetAdditionalFeeCategory();
-  const { mutate: updateAdditionalFee, isPending } =
-    useBulkUpdateAdditionalFees(handleClose, resetAll);
+  const { id: additionalFeeId, amount, reason } = rowData;
+  const { mutate: updateAdditionalFee, isPending } = useUpdateAdditionalFee(
+    handleClose,
+    additionalFeeId,
+  );
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
@@ -47,7 +50,7 @@ function BulkUpdateAdditionalFee({ handleClose, resetAll, bulkData }) {
         <ToastWarning
           title={"Invalid Fields"}
           description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
+        />,
       );
       return;
     }
@@ -58,41 +61,22 @@ function BulkUpdateAdditionalFee({ handleClose, resetAll, bulkData }) {
           description={
             "Please Ensure Atleast One Field Is Updated Before Submitting"
           }
-        />
+        />,
       );
       return;
     }
-    const formattedData = bulkData.map((items) => ({
-      fee_id: items.id,
-      amount: formData.amount,
-      reason: formData.reason,
-      additionalfee_category_id: formData.additionalfee_category_id,
-    }));
-    updateAdditionalFee({ additional_fee: formattedData });
+    updateAdditionalFee({ additionalFeeId, updateData: formData });
   };
   return (
     <>
-      <div className="w-100 border-none">
-        <div className="block">
-          <div className="d-flex flex-row align-items-center justify-content-between mb-3 w-100">
-            <span className="m-0">Update Additional Fee</span>
-            <span
-              className="m-0"
-              onClick={() => {
-                handleClose();
-              }}
-            >
-              <Icon icon="charm:cross" width="22" height="22" />
-            </span>
-          </div>
-        </div>
-        <div>
+      <div className="drawer-content px-2 pt-3">
+        <div className="d-flex flex-column gap-2">
           <div>
             <label htmlFor="amount" className="font-size-sm">
               Amount
             </label>
             <InputGroup
-              placeholder="Enter Amount"
+              placeholder={amount}
               validationSchema={numberSchema({
                 min: 1,
                 max: 1000000,
@@ -117,22 +101,18 @@ function BulkUpdateAdditionalFee({ handleClose, resetAll, bulkData }) {
               Additional Fee Category
             </label>
             <CustomDropdown
-              data={category?.data ? category?.data : []}
+              data={category.data}
               displayKey={["title"]}
               valueKey={["id"]}
               isLoading={isFetching}
               direction="up"
               onSelect={(value) =>
-                handleStateChange(
-                  "additionalfee_category_id",
-                  value,
-                  setFormData
-                )
+                handleStateChange("additionalfee_category_id", value)
               }
               errorMessage="Category Required"
               error={errors.additionalfee_category_id}
               onError={(value) =>
-                handleFieldError("additionalfee_category_id", value, setErrors)
+                handleFieldError("additionalfee_category_id", value)
               }
               optional={true}
               placeholder="Select Additional Fee Category"
@@ -155,23 +135,32 @@ function BulkUpdateAdditionalFee({ handleClose, resetAll, bulkData }) {
                 },
               })}
               value={formData.reason}
-              placeholder={"Enter Reason For the bill"}
+              placeholder={reason ? reason : "Enter Reason For the bill"}
             />
           </div>
         </div>
-        <div className="w-100 mt-2">
-          <button
-            className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"
-            onClick={() => {
-              handleUpdate();
-            }}
-            disabled={isPending}
-          >
-            {isPending ? <SingleSpinner /> : "Update Additional Fee"}
-          </button>
+      </div>
+      <div className="drawer-footer font-size-sm">
+        <div className="d-flex flex-column w-100">
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+          <div className="d-flex flex-row align-items-center justify-content-between p-2">
+            <button
+              className="border-none bg-none"
+              onClick={() => handleClose()}
+            >
+              Cancel
+            </button>
+            <button
+              className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+              onClick={() => handleUpdate()}
+              disabled={isPending}
+            >
+              {isPending ? <SingleSpinner /> : "Update Additional Fee"}
+            </button>
+          </div>
         </div>
       </div>
     </>
   );
 }
-export default BulkUpdateAdditionalFee;
+export default UpdateAdditionalFee;

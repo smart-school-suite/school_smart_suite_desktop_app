@@ -1,100 +1,91 @@
+import { useGetAdditionalFeeCategory } from "../../hooks/additionalFee/useGetAdditionalFeeCategories";
 import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { useGetRegistrationFeeTransations } from "../../hooks/registrationFee/useGetRegistrationFeeTransations";
-import ReverseTransaction from "../../ModalContent/RegistrationFees/ReverseTransaction";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import DeleteCategory from "../../ModalContent/AdditionalFees/DeleteCategory";
 import React, {
   useState,
-  useMemo,
   useCallback,
   useRef,
   useEffect,
+  useMemo,
   Fragment,
 } from "react";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import DeleteTransaction from "../../ModalContent/RegistrationFees/DeleteTransaction";
-import TransactionDetails from "../../ModalContent/RegistrationFees/TransactionDetails";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+} from "../../components/DataTableComponents/ActionComponent";
+import { Icon } from "@iconify/react";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import BulkDeleteRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFeeTransaction";
-import { DeleteIcon, DetailsIcon, ReverseIcon } from "../../icons/ActionIcons";
-import BulkReverseRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkReverseRegistrationFeeTransaction";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { registrationFeeTransactionColDefs } from "../../utils/table/colDefs/registrationFee/registrationFeeTransactionColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
+import { additionalFeeCategoryColDefs } from "../../utils/table/colDefs/additionalFee/additionalFeeCategoryColDefs";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   resetAllCustomFilters,
   addCustomFilter,
   toggleGeneralFilter,
   removeCustomFilter,
   setCustomFilter,
-} from "../../Slices/registrationFee/registrationFeeTransacSlice";
-import { useSelector, useDispatch } from "react-redux";
+} from "../../Slices/additionalFee/additionalFeeCategorySlice";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import Export from "../../ModalContent/Export/Export";
 import SearchInput from "../../components/input/search";
 import { Drawer } from "../../components/drawer/Drawer";
-function RegistrationFeeTransactions() {
-  const {
-    data: transactions,
-    isLoading,
-    error,
-  } = useGetRegistrationFeeTransations();
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { Plus } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import UpdateAdditionalFeeCategory from "../../DrawerContent/AdditionalFeeCategory/UpdateAdditionalFeeCategory";
+import CreateAdditionalFeeCategory from "../../DrawerContent/AdditionalFeeCategory/CreateAdditionalFeeCategory";
+function AdditionalFeeCategory() {
+  const { data: categories, isLoading, error } = useGetAdditionalFeeCategory();
+  const dispatch = useDispatch();
   const tableRef = useRef(null);
   const tableWrapperRef = useRef(null);
-  const dispatch = useDispatch();
-  const darkMode = useSelector((state) => state.theme.darkMode);
-  const tuitionFeeTransacState = useSelector(
-    (state) => state.registrationFeeTransaction,
-  );
-  const [searchText, setSearchText] = useState("");
+  const moduleState = useSelector((state) => state.additionalFeeCategory);
   const [rowCount, setRowCount] = useState(0);
   const [columns, setColumns] = useState({
     selectedColumns: [],
     availableColumns: [],
   });
-  const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const [selectedCategories, setSelectedCategory] = useState([]);
+  const [searchText, setSearchText] = useState("");
+
   const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedTransactions([]);
+      setSelectedCategory([]);
     }
   };
+  const memoizedColDefs = useMemo(() => {
+    return additionalFeeCategoryColDefs({
+      ActionComponent,
+    });
+  }, []);
+  const memoizedRowData = useMemo(() => {
+    return categories?.data ?? [];
+  }, [categories]);
   const handleRowDataFromChild = useCallback((Data) => {
-    setSelectedTransactions(Data);
+    setSelectedCategory(Data);
   }, []);
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  const memoizedColDefs = useMemo(() => {
-    return registrationFeeTransactionColDefs({
-      ActionComponent,
-    });
-  }, []);
-
-  const memoizedRowData = useMemo(() => {
-    return transactions?.data ?? [];
-  }, [transactions]);
-
   const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
     }
   };
-
   const handleReset = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedTransactions([]);
+      setSelectedCategory([]);
 
       if (tableRef.current.setGridOption) {
         tableRef.current.setGridOption("quickFilterText", "");
@@ -108,7 +99,6 @@ function RegistrationFeeTransactions() {
       }
     }
   };
-
   useEffect(() => {
     if (!isLoading && tableRef.current?.getColumnsState) {
       const timer = setTimeout(() => {
@@ -130,7 +120,7 @@ function RegistrationFeeTransactions() {
             selectedColumns: prev.availableColumns.slice(0, 4),
           }));
         }
-      }, 100);
+      }, 300);
 
       return () => clearTimeout(timer);
     }
@@ -219,21 +209,38 @@ function RegistrationFeeTransactions() {
                 <div className="d-flex flex-row justify-content-between align-items-center">
                   <div className="w-50">
                     <SearchInput
-                      placeholder={"Search Registration Fee Transaction......"}
+                      placeholder={"Search Category......"}
                       value={searchText}
                       onChange={(val) => handleSearch(val)}
                       hotkey="Ctrl+K"
                     />
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
+                    <DrawerTrigger
+                      title="Create Additional Fee Category"
+                      placement="right"
+                      drawerChildren={CreateAdditionalFeeCategory}
+                      showHeader={true}
+                      closeOnOutsideClick={true}
+                    >
+                      <button
+                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-2 white-bg"
+                        style={{ padding: "0.64rem" }}
+                      >
+                        <span style={{ lineHeight: "16px" }}>
+                          Create Category
+                        </span>
+                        <Plus size={14} />
+                      </button>
+                    </DrawerTrigger>
                     <ModalButton
                       action={{ modalContent: Export }}
                       size={"xl"}
                       rowData={{ tableRef, columns: columns.availableColumns }}
                     >
                       <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
+                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-2 white-bg"
+                        style={{ padding: "0.58rem" }}
                       >
                         <span style={{ lineHeight: "16px" }}>Export</span>
                         <span>
@@ -247,8 +254,8 @@ function RegistrationFeeTransactions() {
                       rowData={{ tableRef }}
                     >
                       <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
+                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-2 white-bg"
+                        style={{ padding: "0.58rem" }}
                       >
                         <span>
                           <Icon
@@ -272,9 +279,7 @@ function RegistrationFeeTransactions() {
                         damping: 30,
                       }}
                       style={{
-                        width: tuitionFeeTransacState.isGeneralFilterOpen
-                          ? "60%"
-                          : "100%",
+                        width: moduleState.isGeneralFilterOpen ? "60%" : "100%",
                       }}
                       ref={tableWrapperRef}
                     >
@@ -292,30 +297,30 @@ function RegistrationFeeTransactions() {
                           rowCount={rowCount}
                           label={`${
                             rowCount >= 1
-                              ? "Transaction Selected"
+                              ? "Category Selected"
                               : rowCount >= 2
-                                ? "Transactions Selected"
+                                ? "Categories Selected"
                                 : null
                           }`}
                           resetAll={handleResetSelections}
                           dropDownItems={
                             <DropdownItems
-                              selectedTransactions={selectedTransactions}
+                              selectedCategories={selectedCategories}
                               resetAll={handleResetSelections}
                             />
                           }
                           actionButton={
                             <ActionButtons
-                              selectedTransactions={selectedTransactions}
+                              selectedCategories={selectedCategories}
                               resetAll={handleResetSelections}
                             />
                           }
                         />
                       )}
                     </motion.div>
-                    {tuitionFeeTransacState.isGeneralFilterOpen && (
+                    {moduleState.isGeneralFilterOpen && (
                       <AnimatePresence mode="popLayout">
-                        {tuitionFeeTransacState.isGeneralFilterOpen && (
+                        {moduleState.isGeneralFilterOpen && (
                           <motion.div
                             key="filter-panel"
                             className="card rounded-3 font-size-sm d-flex flex-column h-100"
@@ -335,8 +340,8 @@ function RegistrationFeeTransactions() {
                             >
                               <div className="d-flex flex-row align-items-center justify-content-between">
                                 <span>
-                                  Build a custom view of your Registration Fee
-                                  Transaction data.
+                                  Build a custom view of your Additional Fee
+                                  Category data.
                                 </span>
                                 <button
                                   className="border-none bg-transparent"
@@ -360,9 +365,7 @@ function RegistrationFeeTransactions() {
                                       height={18}
                                     />
                                   </span>
-                                  <span>
-                                    Filter Registration Fee Transactions
-                                  </span>
+                                  <span>Filter Category</span>
                                 </div>
                                 <span>{memoizedRowData?.length} items</span>
                               </div>
@@ -371,16 +374,15 @@ function RegistrationFeeTransactions() {
                               className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
                               style={{ maxHeight: "52dvh" }}
                             >
-                              {tuitionFeeTransacState.customFilter.length >
-                              0 ? (
+                              {moduleState.customFilter.length > 0 ? (
                                 <div>
-                                  {tuitionFeeTransacState?.customFilter?.map(
+                                  {moduleState?.customFilter?.map(
                                     (cFilters) => (
                                       <Fragment key={cFilters.id}>
                                         <GeneralFilterWizzard
                                           cFilters={cFilters}
                                           columns={columns}
-                                          moduleState={tuitionFeeTransacState}
+                                          moduleState={moduleState}
                                           removeCustomFilter={
                                             removeCustomFilter
                                           }
@@ -398,8 +400,7 @@ function RegistrationFeeTransactions() {
                                     </span>
                                     <span className="text-muted">
                                       Create one or more conditions to narrow
-                                      down your registration fee transaction
-                                      list.
+                                      down your Category list.
                                     </span>
                                   </div>
                                   <button
@@ -417,8 +418,7 @@ function RegistrationFeeTransactions() {
                               )}
                             </div>
                             <div className="mt-auto">
-                              {tuitionFeeTransacState.customFilter.length >
-                                0 && (
+                              {moduleState.customFilter.length > 0 && (
                                 <div className="d-flex flex-row justify-content-start p-2">
                                   <button
                                     className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
@@ -461,7 +461,7 @@ function RegistrationFeeTransactions() {
     </>
   );
 }
-export default RegistrationFeeTransactions;
+export default AdditionalFeeCategory;
 
 export function ActionComponent(props) {
   const rowData = props.data;
@@ -538,17 +538,16 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowModal(ReverseTransaction, {
-              size: "md",
+            handleShowDrawer(UpdateAdditionalFeeCategory, {
+              title: "Update Additional Fee Category",
               closeOnOutsideClick: true,
-              closeOnEscape: true,
+              showHeader: true,
             })
           }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Reverse Transaction</span>
-              <ReverseIcon />
+              <span>Update Category</span>
             </div>
           </div>
         </DropDownMenuItem>
@@ -557,7 +556,7 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowModal(DeleteTransaction, {
+            handleShowModal(DeleteCategory, {
               size: "md",
               closeOnOutsideClick: true,
               closeOnEscape: true,
@@ -566,21 +565,7 @@ export function ActionComponent(props) {
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Transaction</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(TransactionDetails, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span> Transaction Details</span>
-              <DetailsIcon />
+              <span>Delete Category</span>
             </div>
           </div>
         </DropDownMenuItem>
@@ -619,17 +604,17 @@ export function ActionComponent(props) {
   );
 }
 
-function ActionButtons({ selectedTransactions, resetAll }) {
+function ActionButtons({ selectedCategories, resetAll }) {
   return (
     <>
       <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeleteRegistrationFeeTransaction }}
-        bulkData={selectedTransactions}
+        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        //action={{ modalContent: BulkDeleteTeacher }}
+        bulkData={selectedCategories}
         resetAll={resetAll}
       >
         <CustomTooltip tooltipText={"Delete All"}>
-          <span className="pointer-cursor hover-text-red-400">
+          <span className="pointer-cursor">
             <Icon icon="iconamoon:trash-thin" width="24" height="24" />
           </span>
         </CustomTooltip>
@@ -637,156 +622,42 @@ function ActionButtons({ selectedTransactions, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
-  const [showModal, setShowModal] = useState(false);
-  const [showDrawer, setShowDrawer] = useState(false);
-  const modalRef = useRef(null);
-
-  const [modalConfig, setModalConfig] = useState({
-    component: null,
-    size: "lg",
-    data: null,
-    closeOnOutsideClick: true,
-    closeOnEscape: true,
-  });
-
-  const [drawerConfig, setDrawerConfig] = useState({
-    component: null,
-    placement: "right",
-    title: "",
-    data: null,
-    closeOnOutsideClick: true,
-    showHeader: true,
-  });
-
-  useEffect(() => {
-    if (onModalStateChange) {
-      onModalStateChange(showModal || showDrawer, modalRef);
-    }
-  }, [showModal, showDrawer, onModalStateChange]);
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setModalConfig((prev) => ({ ...prev, component: null, data: null }));
-  };
-
-  const handleShowModal = (Component, options = {}) => {
-    const configOptions =
-      typeof options === "string" ? { size: options } : options;
-    const {
-      size = "lg",
-      data = null,
-      closeOnOutsideClick = true,
-      closeOnEscape = true,
-    } = configOptions;
-
-    setModalConfig({
-      component: Component,
-      size,
-      data,
-      closeOnOutsideClick,
-      closeOnEscape,
-    });
-    setShowModal(true);
-  };
-
-  const handleCloseDrawer = () => {
-    setShowDrawer(false);
-    setDrawerConfig((prev) => ({ ...prev, component: null, data: null }));
-  };
-
-  const handleShowDrawer = (Component, options = {}) => {
-    const {
-      title = "",
-      placement = "right",
-      data = null,
-      closeOnOutsideClick = true,
-      showHeader = true,
-    } = options;
-
-    setDrawerConfig({
-      component: Component,
-      title,
-      placement,
-      data,
-      closeOnOutsideClick,
-      showHeader,
-    });
-    setShowDrawer(true);
-  };
+function DropdownItems({ selectedCategories, resetAll }) {
   return (
     <>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() =>
-          handleShowModal(BulkReverseRegistrationFeeTransaction, {
-            size: "md",
-            closeOnOutsideClick: true,
-            closeOnEscape: true,
-          })
-        }
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent: BulkDeleteCourse }}
+        bulkData={selectedCategories}
+        resetAll={resetAll}
       >
-        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
-          <span className="font-size-sm">Reverse All</span>
-          <ReverseIcon />
-        </div>
-      </DropDownMenuItem>
-      <hr />
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() =>
-          handleShowModal(BulkDeleteRegistrationFeeTransaction, {
-            size: "md",
-            closeOnOutsideClick: true,
-            closeOnEscape: true,
-          })
-        }
-      >
-        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-red-400 text-color">
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
           <DeleteIcon />
         </div>
-      </DropDownMenuItem>
-      <Drawer
-        isOpen={showDrawer}
-        onClose={handleCloseDrawer}
-        placement={drawerConfig.placement}
-        title={drawerConfig.title}
-        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
-        showHeader={drawerConfig.showHeader}
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        //action={{ modalContent:BulkDeactivateCourse }}
+        bulkData={selectedCategories}
+        resetAll={resetAll}
       >
-        {drawerConfig.component && (
-          <drawerConfig.component
-            handleClose={handleCloseDrawer}
-            resetAll={resetAll}
-            drawerData={
-              drawerConfig.data || {
-                selectedTransactions,
-                resetAll,
-              }
-            }
-          />
-        )}
-      </Drawer>
-
-      <CustomModal
-        show={showModal}
-        handleClose={handleCloseModal}
-        size={modalConfig.size}
-        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
-        closeOnEscape={modalConfig.closeOnEscape}
-        centered
-        ref={modalRef}
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Deactivate All</span>
+          <SuspendIcon />
+        </div>
+      </ModalButton>
+      <ModalButton
+        classname={"border-none transparent-bg w-100 p-0"}
+        // action={{ modalContent: BulkActivateCourse }}
+        bulkData={selectedCategories}
+        resetAll={resetAll}
       >
-        {modalConfig.component && (
-          <modalConfig.component
-            handleClose={handleCloseModal}
-            resetAll={resetAll}
-            modalData={modalConfig.data || selectedTransactions}
-            bulkData={{ selectedTransactions, resetAll }}
-          />
-        )}
-      </CustomModal>
+        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+          <span className="font-size-sm">Activate All</span>
+          <ActivateIcon />
+        </div>
+      </ModalButton>
     </>
   );
 }

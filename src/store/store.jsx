@@ -62,6 +62,9 @@ import expenseCategoryReducer from "../Slices/schoolExpense/expenseCategorySlice
 import resitFeeReducer from "../Slices/resitFee/resitFeeSlice";
 import resitFeeTransactionReducer from "../Slices/resitFee/resitFeeTransactionSlice";
 import tuitionFeeScheduleReducer from "../Slices/tuitionFee/tuitionFeeScheduleSlice";
+import registrationFeeTransactionReducer from "../Slices/registrationFee/registrationFeeTransacSlice";
+import additionalFeeBillingReducer from "../Slices/additionalFee/additionalFeeBillingSlice";
+import additionalFeeCategoryReducer from "../Slices/additionalFee/additionalFeeCategorySlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -117,6 +120,24 @@ const rootReducer = combineReducers({
   student: persistReducer({ key: "student", storage }, studentReducer),
   parent: persistReducer({ key: "parent", storage }, parentReducer),
   resitExam: persistReducer({ key: "resitExam", storage }, resitExamReducer),
+  additionalFeeCategory: persistReducer(
+    {
+      key: "additionalFeeCategory",
+      storage,
+    },
+    additionalFeeCategoryReducer,
+  ),
+  additionalFeeBilling: persistReducer(
+    { key: "additionalFeeBilling", storage },
+    additionalFeeBillingReducer,
+  ),
+  registrationFeeTransaction: persistReducer(
+    {
+      key: "registrationFeeTransaction",
+      storage,
+    },
+    registrationFeeTransactionReducer,
+  ),
   studentBatch: persistReducer(
     { key: "studentBatch", storage },
     studentBatchReducer,
@@ -127,6 +148,13 @@ const rootReducer = combineReducers({
       storage,
     },
     resitCandidateReducer,
+  ),
+  tuitionFeeSchedule: persistReducer(
+    {
+      key: "tuitionFeeSchedule",
+      storage,
+    },
+    tuitionFeeScheduleReducer,
   ),
   resit: persistReducer({ key: "resit", storage }, resitReducer),
   tuitionFee: persistReducer({ key: "tuitionFee", storage }, tuitionFeeReducer),

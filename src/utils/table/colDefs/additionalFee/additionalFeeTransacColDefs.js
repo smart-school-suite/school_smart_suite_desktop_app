@@ -6,15 +6,32 @@ import {
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
-import RegistrationFeeTableBadge from "../../../../components/Badges/RegistrationFeeTableBadge";
 
-export function additionalFeeColDefs({ ActionComponent }) {
+export function additionalFeeTransactionColDefs({ ActionComponent }) {
   return [
     textColumn({
-      field: "profile_picture",
-      headerName: "Avatar",
-      cellRenderer: TeacherAvatarComponent,
+      field: "transaction_id",
+      headerName: "Transaction Id",
+      hide: false,
+      cellRenderer: TextComponent,
+    }),
+    textColumn({
+      field: "payment_method",
+      headerName: "Payment Method",
+      hide: false,
+      cellRenderer: TextComponent,
+    }),
+    numberColumn({
+      field: "amount",
+      headerName: "Amount Paid",
+      hide: false,
+      cellRenderer: CurrencyComponent,
+    }),
+      numberColumn({
+      field: "additional_fees",
+      headerName: "Additional Fee",
+      hide: false,
+      cellRenderer: CurrencyComponent,
     }),
     textColumn({
       field: "student_name",
@@ -24,7 +41,7 @@ export function additionalFeeColDefs({ ActionComponent }) {
     }),
     textColumn({
       field: "specialty_name",
-      headerName: "Specialty",
+      headerName: "specialty",
       hide: false,
       cellRenderer: TextComponent,
     }),
@@ -37,32 +54,8 @@ export function additionalFeeColDefs({ ActionComponent }) {
     textColumn({
       field: "level_number",
       headerName: "Level Number",
-      hide: false,
-      cellRenderer: TextComponent,
-    }),
-    numberColumn({
-      field: "amount",
-      headerName: "Amount",
-      hide: false,
-      cellRenderer: CurrencyComponent,
-    }),
-    dateColumn({
-      field: "due_date",
-      headerName: "Due Date",
-      format: "dd/MM/yyyy",
-      hide: false,
-    }),
-     textColumn({
-      field: "reason",
-      headerName: "Reason",
       hide: true,
       cellRenderer: TextComponent,
-    }),
-    textColumn({
-      field: "status",
-      headerName: "Payment Status",
-      hide: false,
-      cellRenderer: RegistrationFeeTableBadge,
     }),
     dateColumn({
       field: "created_at",

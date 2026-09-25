@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
+import { useCreateAdditionalFeeCategory } from "../../hooks/additionalFee/useCreateAdditionalFeeCategory";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useCreateExpenseCategory } from "../../hooks/expenseCategory/useCreateExpenseCategory";
 import {
-  TextAreaInput,
   TextInput,
+  TextAreaInput,
 } from "../../components/FormComponents/InputComponents";
 import {
   nameSchema,
@@ -13,17 +13,20 @@ import { allFieldsValid } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-function CreateExpenseCategory({ handleClose }) {
+function CreateAdditionalFeeCategory({ handleClose }) {
   const titleRef = useRef();
   const descriptionRef = useRef();
   const [formData, setFormData] = useState({
-    name: "",
-    description: ""
+    title: "",
+    description: "",
   });
   const [isValid, setIsValid] = useState({
-    name: null,
-    description: null
+    title: "",
+    description: "",
   });
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
+  };
   const handlePrevalidation = async () => {
     const title = await titleRef.current.triggerValidation();
     const description = await descriptionRef.current.triggerValidation();
@@ -33,21 +36,14 @@ function CreateExpenseCategory({ handleClose }) {
     };
   };
   const { mutate: createCategory, isPending } =
-    useCreateExpenseCategory(handleClose);
-
-  const handleInputChange = (field, value, stateFn) => {
-    stateFn((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = async () => {
-    const prevalidation = await handlePrevalidation();
+    useCreateAdditionalFeeCategory(handleClose);
+  const handleCreateCategory = () => {
+    const prevalidation = handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
       toast.custom(
         <ToastWarning
-          title={"Invalid Fields 1"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
         />,
       );
       return;
@@ -55,10 +51,8 @@ function CreateExpenseCategory({ handleClose }) {
     if (!allFieldsValid(isValid)) {
       toast.custom(
         <ToastWarning
-          title={"Invalid Fields 2"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
+          title={"Invalid Fields"}
+          description={"Please Ensure All Fields Are Valid Before Submitting"}
         />,
       );
       return;
@@ -68,30 +62,30 @@ function CreateExpenseCategory({ handleClose }) {
   return (
     <>
       <div className="drawer-content px-2 pt-3">
-        <div className="d-flex flex-column gap-2">
+        <div className="d-flex flex-column gap-3">
           <div>
-            <label htmlFor="title" className="font-size-sm">
-              Title
+            <label htmlFor="categoryTitle" className="font-size-sm">
+              Category Name
             </label>
             <TextInput
               onChange={(value) =>
-                handleInputChange("name", value, setFormData)
+                handleStateChange("title", value, setFormData)
+              }
+              onValidationChange={(value) =>
+                handleStateChange("title", value, setIsValid)
               }
               validationSchema={nameSchema({
                 min: 3,
-                max: 150,
+                max: 100,
                 required: true,
                 messages: {
-                  min: "Category Title Must Be Atleast 3 Characters Long",
-                  max: "Category Title Must Not Exceed 150 Characters",
-                  required: "Category Title Required",
+                  min: "Category Name Must Be Atleast 3 Characters Long",
+                  max: "Category Name Must Not Exceed 100 Characters",
+                  required: "Category Name Required",
                 },
               })}
-              onValidationChange={(value) =>
-                handleInputChange("name", value, setIsValid)
-              }
-              placeholder={"e.g Graduation & Awards Ceremonies"}
-              value={formData.name}
+              placeholder={"e.g Student Id Card"}
+              value={formData.title}
               ref={titleRef}
             />
           </div>
@@ -135,7 +129,7 @@ function CreateExpenseCategory({ handleClose }) {
             </button>
             <button
               className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
-              onClick={() => handleSubmit()}
+              onClick={() => handleCreateCategory()}
               disabled={isPending}
             >
               {isPending ? <SingleSpinner /> : "Create Category"}
@@ -146,4 +140,4 @@ function CreateExpenseCategory({ handleClose }) {
     </>
   );
 }
-export default CreateExpenseCategory;
+export default CreateAdditionalFeeCategory;

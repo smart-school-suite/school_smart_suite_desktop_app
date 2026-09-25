@@ -1,100 +1,90 @@
 import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { useGetRegistrationFeeTransations } from "../../hooks/registrationFee/useGetRegistrationFeeTransations";
-import ReverseTransaction from "../../ModalContent/RegistrationFees/ReverseTransaction";
+import { Icon } from "@iconify/react";
 import React, {
   useState,
-  useMemo,
   useCallback,
   useRef,
   useEffect,
+  useMemo,
   Fragment,
 } from "react";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import DeleteTransaction from "../../ModalContent/RegistrationFees/DeleteTransaction";
-import TransactionDetails from "../../ModalContent/RegistrationFees/TransactionDetails";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+} from "../../components/DataTableComponents/ActionComponent";
+import { useGetStudents } from "../../hooks/student/useGetStudent";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import BulkDeleteRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFeeTransaction";
-import { DeleteIcon, DetailsIcon, ReverseIcon } from "../../icons/ActionIcons";
-import BulkReverseRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkReverseRegistrationFeeTransaction";
+import { CreateIcon } from "../../icons/ActionIcons";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { registrationFeeTransactionColDefs } from "../../utils/table/colDefs/registrationFee/registrationFeeTransactionColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
+import { studentColDefs } from "../../utils/table/colDefs/student/studentColDefs";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   resetAllCustomFilters,
   addCustomFilter,
   toggleGeneralFilter,
   removeCustomFilter,
   setCustomFilter,
-} from "../../Slices/registrationFee/registrationFeeTransacSlice";
-import { useSelector, useDispatch } from "react-redux";
+} from "../../Slices/schoolExpense/expenseCategorySlice";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import Export from "../../ModalContent/Export/Export";
 import SearchInput from "../../components/input/search";
 import { Drawer } from "../../components/drawer/Drawer";
-function RegistrationFeeTransactions() {
-  const {
-    data: transactions,
-    isLoading,
-    error,
-  } = useGetRegistrationFeeTransations();
+import { useSelector, useDispatch } from "react-redux";
+import StudentDetails from "../../DrawerContent/Student/StudentDetails";
+import BulkBillStudentAdditionalFees from "../../DrawerContent/AdditionalFeeBilling/BulkBillStudentAdditionalFees";
+import BillStudentAdditionalFee from "../../DrawerContent/AdditionalFeeBilling/BillStudentAdditionalFee";
+function AdditionalFeeBilling() {
+  const { data: students, isLoading, error } = useGetStudents();
+  const dispatch = useDispatch();
   const tableRef = useRef(null);
   const tableWrapperRef = useRef(null);
-  const dispatch = useDispatch();
-  const darkMode = useSelector((state) => state.theme.darkMode);
-  const tuitionFeeTransacState = useSelector(
-    (state) => state.registrationFeeTransaction,
-  );
-  const [searchText, setSearchText] = useState("");
+  const moduleState = useSelector((state) => state.additionalFeeBilling);
   const [rowCount, setRowCount] = useState(0);
   const [columns, setColumns] = useState({
     selectedColumns: [],
     availableColumns: [],
   });
-  const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [searchText, setSearchText] = useState("");
+
   const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedTransactions([]);
+      setSelectedStudents([]);
     }
   };
+  const memoizedColDefs = useMemo(() => {
+    return studentColDefs({
+      ActionComponent,
+    });
+  }, []);
+  const memoizedRowData = useMemo(() => {
+    return students?.data ?? [];
+  }, [students]);
   const handleRowDataFromChild = useCallback((Data) => {
-    setSelectedTransactions(Data);
+    setSelectedStudents(Data);
   }, []);
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  const memoizedColDefs = useMemo(() => {
-    return registrationFeeTransactionColDefs({
-      ActionComponent,
-    });
-  }, []);
-
-  const memoizedRowData = useMemo(() => {
-    return transactions?.data ?? [];
-  }, [transactions]);
-
   const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
     }
   };
-
   const handleReset = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedTransactions([]);
+      setSelectedStudents([]);
 
       if (tableRef.current.setGridOption) {
         tableRef.current.setGridOption("quickFilterText", "");
@@ -108,7 +98,6 @@ function RegistrationFeeTransactions() {
       }
     }
   };
-
   useEffect(() => {
     if (!isLoading && tableRef.current?.getColumnsState) {
       const timer = setTimeout(() => {
@@ -130,7 +119,7 @@ function RegistrationFeeTransactions() {
             selectedColumns: prev.availableColumns.slice(0, 4),
           }));
         }
-      }, 100);
+      }, 300);
 
       return () => clearTimeout(timer);
     }
@@ -219,7 +208,7 @@ function RegistrationFeeTransactions() {
                 <div className="d-flex flex-row justify-content-between align-items-center">
                   <div className="w-50">
                     <SearchInput
-                      placeholder={"Search Registration Fee Transaction......"}
+                      placeholder={"Search Student......"}
                       value={searchText}
                       onChange={(val) => handleSearch(val)}
                       hotkey="Ctrl+K"
@@ -232,8 +221,8 @@ function RegistrationFeeTransactions() {
                       rowData={{ tableRef, columns: columns.availableColumns }}
                     >
                       <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
+                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-2 white-bg"
+                        style={{ padding: "0.58rem" }}
                       >
                         <span style={{ lineHeight: "16px" }}>Export</span>
                         <span>
@@ -247,8 +236,8 @@ function RegistrationFeeTransactions() {
                       rowData={{ tableRef }}
                     >
                       <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
+                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-2 white-bg"
+                        style={{ padding: "0.58rem" }}
                       >
                         <span>
                           <Icon
@@ -272,9 +261,7 @@ function RegistrationFeeTransactions() {
                         damping: 30,
                       }}
                       style={{
-                        width: tuitionFeeTransacState.isGeneralFilterOpen
-                          ? "60%"
-                          : "100%",
+                        width: moduleState.isGeneralFilterOpen ? "60%" : "100%",
                       }}
                       ref={tableWrapperRef}
                     >
@@ -292,30 +279,30 @@ function RegistrationFeeTransactions() {
                           rowCount={rowCount}
                           label={`${
                             rowCount >= 1
-                              ? "Transaction Selected"
+                              ? "Student Selected"
                               : rowCount >= 2
-                                ? "Transactions Selected"
+                                ? "Student Selected"
                                 : null
                           }`}
                           resetAll={handleResetSelections}
                           dropDownItems={
                             <DropdownItems
-                              selectedTransactions={selectedTransactions}
+                              selectedStudents={selectedStudents}
                               resetAll={handleResetSelections}
                             />
                           }
                           actionButton={
                             <ActionButtons
-                              selectedTransactions={selectedTransactions}
+                              selectedStudents={selectedStudents}
                               resetAll={handleResetSelections}
                             />
                           }
                         />
                       )}
                     </motion.div>
-                    {tuitionFeeTransacState.isGeneralFilterOpen && (
+                    {moduleState.isGeneralFilterOpen && (
                       <AnimatePresence mode="popLayout">
-                        {tuitionFeeTransacState.isGeneralFilterOpen && (
+                        {moduleState.isGeneralFilterOpen && (
                           <motion.div
                             key="filter-panel"
                             className="card rounded-3 font-size-sm d-flex flex-column h-100"
@@ -335,8 +322,7 @@ function RegistrationFeeTransactions() {
                             >
                               <div className="d-flex flex-row align-items-center justify-content-between">
                                 <span>
-                                  Build a custom view of your Registration Fee
-                                  Transaction data.
+                                  Build a custom view of your Student data.
                                 </span>
                                 <button
                                   className="border-none bg-transparent"
@@ -360,9 +346,7 @@ function RegistrationFeeTransactions() {
                                       height={18}
                                     />
                                   </span>
-                                  <span>
-                                    Filter Registration Fee Transactions
-                                  </span>
+                                  <span>Filter Students</span>
                                 </div>
                                 <span>{memoizedRowData?.length} items</span>
                               </div>
@@ -371,16 +355,15 @@ function RegistrationFeeTransactions() {
                               className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
                               style={{ maxHeight: "52dvh" }}
                             >
-                              {tuitionFeeTransacState.customFilter.length >
-                              0 ? (
+                              {moduleState.customFilter.length > 0 ? (
                                 <div>
-                                  {tuitionFeeTransacState?.customFilter?.map(
+                                  {moduleState?.customFilter?.map(
                                     (cFilters) => (
                                       <Fragment key={cFilters.id}>
                                         <GeneralFilterWizzard
                                           cFilters={cFilters}
                                           columns={columns}
-                                          moduleState={tuitionFeeTransacState}
+                                          moduleState={moduleState}
                                           removeCustomFilter={
                                             removeCustomFilter
                                           }
@@ -398,8 +381,7 @@ function RegistrationFeeTransactions() {
                                     </span>
                                     <span className="text-muted">
                                       Create one or more conditions to narrow
-                                      down your registration fee transaction
-                                      list.
+                                      down your Student List.
                                     </span>
                                   </div>
                                   <button
@@ -417,8 +399,7 @@ function RegistrationFeeTransactions() {
                               )}
                             </div>
                             <div className="mt-auto">
-                              {tuitionFeeTransacState.customFilter.length >
-                                0 && (
+                              {moduleState.customFilter.length > 0 && (
                                 <div className="d-flex flex-row justify-content-start p-2">
                                   <button
                                     className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
@@ -461,7 +442,7 @@ function RegistrationFeeTransactions() {
     </>
   );
 }
-export default RegistrationFeeTransactions;
+export default AdditionalFeeBilling;
 
 export function ActionComponent(props) {
   const rowData = props.data;
@@ -538,17 +519,16 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowModal(ReverseTransaction, {
-              size: "md",
+            handleShowDrawer(BillStudentAdditionalFee, {
+              title: "Bill Student Additional Fee",
               closeOnOutsideClick: true,
-              closeOnEscape: true,
+              showHeader: true,
             })
           }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Reverse Transaction</span>
-              <ReverseIcon />
+              <span>Bill Student</span>
             </div>
           </div>
         </DropDownMenuItem>
@@ -557,30 +537,16 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowModal(DeleteTransaction, {
-              size: "md",
+            handleShowDrawer(StudentDetails, {
+              title: "Student Details",
               closeOnOutsideClick: true,
-              closeOnEscape: true,
+              showHeader: true,
             })
           }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Transaction</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(TransactionDetails, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span> Transaction Details</span>
-              <DetailsIcon />
+              <span>Student Details</span>
             </div>
           </div>
         </DropDownMenuItem>
@@ -619,25 +585,25 @@ export function ActionComponent(props) {
   );
 }
 
-function ActionButtons({ selectedTransactions, resetAll }) {
+function ActionButtons({ selectedStudents, resetAll }) {
   return (
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeleteRegistrationFeeTransaction }}
-        bulkData={selectedTransactions}
+        action={{ modalContent: BulkBillStudentAdditionalFees }}
+        bulkData={selectedStudents}
         resetAll={resetAll}
       >
-        <CustomTooltip tooltipText={"Delete All"}>
-          <span className="pointer-cursor hover-text-red-400">
-            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+        <CustomTooltip tooltipText={"Bill All Selected Student"}>
+          <span className="pointer-cursor hover-text-primary-400 ">
+            <CreateIcon />
           </span>
         </CustomTooltip>
       </ModalButton>
     </>
   );
 }
-function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
+function DropdownItems({ selectedStudents, resetAll, onModalStateChange }) {
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const modalRef = useRef(null);
@@ -719,32 +685,16 @@ function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
         onClick={() =>
-          handleShowModal(BulkReverseRegistrationFeeTransaction, {
-            size: "md",
+          handleShowDrawer(BulkBillStudentAdditionalFees, {
+            title: "Bill Student Additional Fee",
             closeOnOutsideClick: true,
-            closeOnEscape: true,
+            showHeader: true,
           })
         }
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
-          <span className="font-size-sm">Reverse All</span>
-          <ReverseIcon />
-        </div>
-      </DropDownMenuItem>
-      <hr />
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() =>
-          handleShowModal(BulkDeleteRegistrationFeeTransaction, {
-            size: "md",
-            closeOnOutsideClick: true,
-            closeOnEscape: true,
-          })
-        }
-      >
-        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-red-400 text-color">
-          <span className="font-size-sm">Delete All</span>
-          <DeleteIcon />
+          <span className="font-size-sm">Bill All</span>
+          <CreateIcon />
         </div>
       </DropDownMenuItem>
       <Drawer
@@ -761,7 +711,7 @@ function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
             resetAll={resetAll}
             drawerData={
               drawerConfig.data || {
-                selectedTransactions,
+                selectedStudents,
                 resetAll,
               }
             }
@@ -782,8 +732,8 @@ function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
           <modalConfig.component
             handleClose={handleCloseModal}
             resetAll={resetAll}
-            modalData={modalConfig.data || selectedTransactions}
-            bulkData={{ selectedTransactions, resetAll }}
+            modalData={modalConfig.data || selectedStudents}
+            bulkData={{ selectedStudents, resetAll }}
           />
         )}
       </CustomModal>

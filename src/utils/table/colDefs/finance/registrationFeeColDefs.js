@@ -47,8 +47,8 @@ export function registrationFeeColDefs({ ActionComponent }) {
       cellRenderer: CurrencyComponent,
     }),
     textColumn({
-      field: "Payment Status",
-      headerName: "Status",
+      field: "status",
+      headerName: "Payment Status",
       hide: false,
       cellRenderer: RegistrationFeeTableBadge,
     }),

@@ -1,87 +1,88 @@
 import Table from "../../components/Tables/Tables";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { useGetRegistrationFeeTransations } from "../../hooks/registrationFee/useGetRegistrationFeeTransations";
-import ReverseTransaction from "../../ModalContent/RegistrationFees/ReverseTransaction";
+import DeleteAdditionalFees from "../../ModalContent/AdditionalFees/DeleteAdditionalFees";
+import AdditionalFeeDetail from "../../ModalContent/AdditionalFees/AdditionalFeesDetails";
+import { useGetAdditionalFees } from "../../hooks/additionalFee/useGetAdditionalFees";
 import React, {
   useState,
-  useMemo,
   useCallback,
   useRef,
   useEffect,
+  useMemo,
   Fragment,
 } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import DeleteTransaction from "../../ModalContent/RegistrationFees/DeleteTransaction";
-import TransactionDetails from "../../ModalContent/RegistrationFees/TransactionDetails";
+import {
+  CreateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import BulkDeleteRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFeeTransaction";
-import { DeleteIcon, DetailsIcon, ReverseIcon } from "../../icons/ActionIcons";
-import BulkReverseRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkReverseRegistrationFeeTransaction";
+import BulkDeleteAdditionalFee from "../../ModalContent/AdditionalFees/BulkDeleteAdditionalFee";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { registrationFeeTransactionColDefs } from "../../utils/table/colDefs/registrationFee/registrationFeeTransactionColDefs";
+import { additionalFeeColDefs } from "../../utils/table/colDefs/finance/additionalFeeColDefs";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
 import { motion, AnimatePresence } from "framer-motion";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import {
   resetAllCustomFilters,
   addCustomFilter,
   toggleGeneralFilter,
   removeCustomFilter,
   setCustomFilter,
-} from "../../Slices/registrationFee/registrationFeeTransacSlice";
+} from "../../Slices/finance/additionalFeeSlice";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import { useSelector, useDispatch } from "react-redux";
 import SearchInput from "../../components/input/search";
+import PayAdditionalFee from "../../DrawerContent/AdditionalFee/PayAdditionalFee";
+import UpdateAdditionalFee from "../../DrawerContent/AdditionalFee/UpdateAdditionalFee";
 import { Drawer } from "../../components/drawer/Drawer";
-function RegistrationFeeTransactions() {
-  const {
-    data: transactions,
-    isLoading,
-    error,
-  } = useGetRegistrationFeeTransations();
-  const tableRef = useRef(null);
+import BulkPayAdditionalFee from "../../DrawerContent/AdditionalFee/BulkPayAdditionalFee";
+import BulkUpdateAdditionalFee from "../../DrawerContent/AdditionalFee/BulkUpdateAdditionalFee";
+function AdditionalFees() {
+  const { data: additionalFee, isLoading, error } = useGetAdditionalFees();
+  const tableRef = useRef();
   const tableWrapperRef = useRef(null);
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const tuitionFeeTransacState = useSelector(
-    (state) => state.registrationFeeTransaction,
-  );
+  const additionalFeeState = useSelector((state) => state.additionalFee);
   const [searchText, setSearchText] = useState("");
   const [rowCount, setRowCount] = useState(0);
   const [columns, setColumns] = useState({
     selectedColumns: [],
     availableColumns: [],
   });
-  const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const [selectedAdditionalFees, setSelectedAdditionalFee] = useState([]);
   const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedTransactions([]);
+      setSelectedAdditionalFee([]);
     }
   };
   const handleRowDataFromChild = useCallback((Data) => {
-    setSelectedTransactions(Data);
+    setSelectedAdditionalFee(Data);
   }, []);
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
   const memoizedColDefs = useMemo(() => {
-    return registrationFeeTransactionColDefs({
+    return additionalFeeColDefs({
       ActionComponent,
     });
   }, []);
 
   const memoizedRowData = useMemo(() => {
-    return transactions?.data ?? [];
-  }, [transactions]);
+    return additionalFee?.data ?? [];
+  }, [additionalFee]);
 
   const handleSearch = (value) => {
     setSearchText(value);
@@ -94,7 +95,7 @@ function RegistrationFeeTransactions() {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
-      setSelectedTransactions([]);
+      setSelectedAdditionalFee([]);
 
       if (tableRef.current.setGridOption) {
         tableRef.current.setGridOption("quickFilterText", "");
@@ -135,6 +136,7 @@ function RegistrationFeeTransactions() {
       return () => clearTimeout(timer);
     }
   }, [isLoading, memoizedRowData]);
+
   return (
     <>
       <main className="main-container gap-2 h-100">
@@ -219,7 +221,7 @@ function RegistrationFeeTransactions() {
                 <div className="d-flex flex-row justify-content-between align-items-center">
                   <div className="w-50">
                     <SearchInput
-                      placeholder={"Search Registration Fee Transaction......"}
+                      placeholder={"Search Additional Fees......"}
                       value={searchText}
                       onChange={(val) => handleSearch(val)}
                       hotkey="Ctrl+K"
@@ -272,7 +274,7 @@ function RegistrationFeeTransactions() {
                         damping: 30,
                       }}
                       style={{
-                        width: tuitionFeeTransacState.isGeneralFilterOpen
+                        width: additionalFeeState.isGeneralFilterOpen
                           ? "60%"
                           : "100%",
                       }}
@@ -292,30 +294,30 @@ function RegistrationFeeTransactions() {
                           rowCount={rowCount}
                           label={`${
                             rowCount >= 1
-                              ? "Transaction Selected"
+                              ? "Additional Fee Selected"
                               : rowCount >= 2
-                                ? "Transactions Selected"
+                                ? "Additional Fees Selected"
                                 : null
                           }`}
                           resetAll={handleResetSelections}
                           dropDownItems={
                             <DropdownItems
-                              selectedTransactions={selectedTransactions}
+                              selectedAdditionalFees={selectedAdditionalFees}
                               resetAll={handleResetSelections}
                             />
                           }
                           actionButton={
                             <ActionButtons
-                              selectedTransactions={selectedTransactions}
+                              selectedAdditionalFees={selectedAdditionalFees}
                               resetAll={handleResetSelections}
                             />
                           }
                         />
                       )}
                     </motion.div>
-                    {tuitionFeeTransacState.isGeneralFilterOpen && (
+                    {additionalFeeState.isGeneralFilterOpen && (
                       <AnimatePresence mode="popLayout">
-                        {tuitionFeeTransacState.isGeneralFilterOpen && (
+                        {additionalFeeState.isGeneralFilterOpen && (
                           <motion.div
                             key="filter-panel"
                             className="card rounded-3 font-size-sm d-flex flex-column h-100"
@@ -335,8 +337,8 @@ function RegistrationFeeTransactions() {
                             >
                               <div className="d-flex flex-row align-items-center justify-content-between">
                                 <span>
-                                  Build a custom view of your Registration Fee
-                                  Transaction data.
+                                  Build a custom view of your Additional Fee
+                                  data.
                                 </span>
                                 <button
                                   className="border-none bg-transparent"
@@ -360,9 +362,7 @@ function RegistrationFeeTransactions() {
                                       height={18}
                                     />
                                   </span>
-                                  <span>
-                                    Filter Registration Fee Transactions
-                                  </span>
+                                  <span>Filter Additional Fee</span>
                                 </div>
                                 <span>{memoizedRowData?.length} items</span>
                               </div>
@@ -371,16 +371,15 @@ function RegistrationFeeTransactions() {
                               className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
                               style={{ maxHeight: "52dvh" }}
                             >
-                              {tuitionFeeTransacState.customFilter.length >
-                              0 ? (
+                              {additionalFeeState.customFilter.length > 0 ? (
                                 <div>
-                                  {tuitionFeeTransacState?.customFilter?.map(
+                                  {additionalFeeState?.customFilter?.map(
                                     (cFilters) => (
                                       <Fragment key={cFilters.id}>
                                         <GeneralFilterWizzard
                                           cFilters={cFilters}
                                           columns={columns}
-                                          moduleState={tuitionFeeTransacState}
+                                          moduleState={additionalFeeState}
                                           removeCustomFilter={
                                             removeCustomFilter
                                           }
@@ -398,8 +397,7 @@ function RegistrationFeeTransactions() {
                                     </span>
                                     <span className="text-muted">
                                       Create one or more conditions to narrow
-                                      down your registration fee transaction
-                                      list.
+                                      down your Additional Fee list.
                                     </span>
                                   </div>
                                   <button
@@ -417,8 +415,7 @@ function RegistrationFeeTransactions() {
                               )}
                             </div>
                             <div className="mt-auto">
-                              {tuitionFeeTransacState.customFilter.length >
-                                0 && (
+                              {additionalFeeState.customFilter.length > 0 && (
                                 <div className="d-flex flex-row justify-content-start p-2">
                                   <button
                                     className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
@@ -461,9 +458,9 @@ function RegistrationFeeTransactions() {
     </>
   );
 }
-export default RegistrationFeeTransactions;
+export default AdditionalFees;
 
-export function ActionComponent(props) {
+function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
@@ -538,17 +535,30 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowModal(ReverseTransaction, {
-              size: "md",
+            handleShowDrawer(PayAdditionalFee, {
+              title: "Pay Additional Fees",
               closeOnOutsideClick: true,
-              closeOnEscape: true,
+              showHeader: true,
             })
           }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Reverse Transaction</span>
-              <ReverseIcon />
+              <span>Pay Fee</span>
+              <CreateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(AdditionalFeeDetail, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Fee Details</span>
+              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -557,7 +567,26 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowModal(DeleteTransaction, {
+            handleShowDrawer(UpdateAdditionalFee, {
+              title: "Pay Additional Fees",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Update Fee</span>
+              <UpdateIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeleteAdditionalFees, {
               size: "md",
               closeOnOutsideClick: true,
               closeOnEscape: true,
@@ -566,21 +595,8 @@ export function ActionComponent(props) {
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Transaction</span>
+              <span>Delete Fee</span>
               <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(TransactionDetails, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span> Transaction Details</span>
-              <DetailsIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -600,6 +616,7 @@ export function ActionComponent(props) {
           />
         )}
       </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
@@ -618,14 +635,13 @@ export function ActionComponent(props) {
     </>
   );
 }
-
-function ActionButtons({ selectedTransactions, resetAll }) {
+function ActionButtons({ selectedAdditionalFee, resetAll }) {
   return (
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeleteRegistrationFeeTransaction }}
-        bulkData={selectedTransactions}
+        action={{ modalContent: BulkPayAdditionalFee }}
+        bulkData={selectedAdditionalFee}
         resetAll={resetAll}
       >
         <CustomTooltip tooltipText={"Delete All"}>
@@ -637,7 +653,11 @@ function ActionButtons({ selectedTransactions, resetAll }) {
     </>
   );
 }
-function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
+function DropdownItems({
+  selectedAdditionalFee,
+  resetAll,
+  onModalStateChange,
+}) {
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const modalRef = useRef(null);
@@ -719,23 +739,39 @@ function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
         onClick={() =>
-          handleShowModal(BulkReverseRegistrationFeeTransaction, {
-            size: "md",
+          handleShowDrawer(BulkPayAdditionalFee, {
+            title: "Pay Additional Fees",
             closeOnOutsideClick: true,
-            closeOnEscape: true,
+            showHeader: true,
           })
         }
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
-          <span className="font-size-sm">Reverse All</span>
-          <ReverseIcon />
+          <span className="font-size-sm">Pay All</span>
+          <CreateIcon />
         </div>
       </DropDownMenuItem>
       <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
         onClick={() =>
-          handleShowModal(BulkDeleteRegistrationFeeTransaction, {
+          handleShowDrawer(BulkUpdateAdditionalFee, {
+            title: "Update Additional Fees",
+            closeOnOutsideClick: true,
+            showHeader: true,
+          })
+        }
+      >
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
+          <span className="font-size-sm">Update All</span>
+          <UpdateIcon />
+        </div>
+      </DropDownMenuItem>
+      <hr />
+      <DropDownMenuItem
+        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+        onClick={() =>
+          handleShowModal(BulkDeleteAdditionalFee, {
             size: "md",
             closeOnOutsideClick: true,
             closeOnEscape: true,
@@ -761,7 +797,7 @@ function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
             resetAll={resetAll}
             drawerData={
               drawerConfig.data || {
-                selectedTransactions,
+                selectedAdditionalFee,
                 resetAll,
               }
             }
@@ -782,8 +818,8 @@ function DropdownItems({ selectedTransactions, resetAll, onModalStateChange }) {
           <modalConfig.component
             handleClose={handleCloseModal}
             resetAll={resetAll}
-            modalData={modalConfig.data || selectedTransactions}
-            bulkData={{ selectedTransactions, resetAll }}
+            modalData={modalConfig.data || selectedAdditionalFee}
+            bulkData={{ selectedAdditionalFee, resetAll }}
           />
         )}
       </CustomModal>
