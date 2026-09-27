@@ -1,0 +1,232 @@
+import { createSlice } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from "uuid";
+
+const initialState = {
+  announcement: null,
+  isGeneralFilterOpen: false,
+  tableRef: null,
+  selectedAnnouncements: [],
+  rowCount: 0,
+  searchText: "",
+  columns: {
+    selectedColumns: [],
+    availableColumns: [],
+  },
+  customFilter: [],
+  import: {
+    status: "IDLE",
+    selectedFile: null,
+    mapping: {},
+  },
+  createAnnouncement: {
+    isDirty: false,
+    content: {
+      category: {
+        error: "",
+        value: "",
+      },
+      label: {
+        error: "",
+        value: "",
+      },
+      title: {
+        isValid: "",
+        value: "",
+      },
+      content: {
+        isValid: "",
+        value: "",
+      },
+      tags: {
+        value: [],
+        error: "",
+      },
+    },
+    audience: {
+      types: [],
+      targetingContext: null,
+      targeting: {
+        students: {
+          mode: "criteria", // 'all' | 'criteria' | 'individuals'
+          criteria: {
+            departmentIds: [],
+            specialtyIds: [],
+            levelIds: [],
+          },
+          individualIds: [],
+        },
+
+        teachers: {
+          mode: "all", // 'all' | 'criteria' | 'individuals'
+          criteria: {
+            departmentIds: [],
+          },
+          individualIds: [],
+        },
+
+        administrators: {
+          mode: "all", // 'all' | 'individuals'
+          individualIds: [],
+        },
+      },
+    },
+  },
+  updateContent: {},
+};
+
+const announcementSlice = createSlice({
+  name: "announcement",
+  initialState,
+  reducers: {
+    setImportStatus: (state, action) => {
+      const { status } = action.payload;
+      state.import.status = status;
+    },
+    setImportSelectedFile: (state, action) => {
+      const { selectedFile } = action.payload;
+      state.import.selectedFile = selectedFile;
+    },
+    setImportReset: (state, action) => {
+      state.import = {
+        status: "IDLE",
+        selectedFile: null,
+      };
+    },
+    setColumnMapping: (state, action) => {
+      state.import.mapping = action.payload;
+    },
+    addCustomFilter: (state, action) => {
+      const myId = uuidv4();
+      state.customFilter.push({
+        id: myId,
+        column: null,
+        match: null,
+        value: null,
+      });
+    },
+    resetAllCustomFilters: (state) => {
+      state.customFilter = [];
+    },
+    removeCustomFilter: (state, action) => {
+      const { id } = action.payload;
+      const customFilterIndex = state.customFilter.findIndex(
+        (cf) => cf.id === id,
+      );
+      state.customFilter.splice(customFilterIndex, 1);
+    },
+    setCustomFilter: (state, action) => {
+      const { id, field, value } = action.payload;
+      const customFilter = state.customFilter.find((cf) => cf.id === id);
+      if (!customFilter) return;
+
+      if (field === "column") customFilter.column = value;
+      if (field === "match") customFilter.match = value;
+      if (field === "value") customFilter.value = value;
+    },
+    setTableRef: (state, action) => {
+      const { tableRef } = action.payload;
+      state.tableRef = tableRef;
+    },
+    toggleGeneralFilter: (state) => {
+      state.isGeneralFilterOpen = !state.isGeneralFilterOpen;
+    },
+    setSelectedAnnouncements: (state, action) => {
+      state.selectedAnnouncements = action.payload;
+    },
+    setRowCount: (state, action) => {
+      state.rowCount = action.payload;
+    },
+    setSearchText: (state, action) => {
+      state.searchText = action.payload;
+    },
+    setColumns: (state, action) => {
+      state.columns = {
+        ...state.columns,
+        ...action.payload,
+      };
+    },
+    resetSelections: (state) => {
+      state.selectedAnnouncements = [];
+      state.rowCount = 0;
+    },
+    resetAll: (state) => {
+      state.selectedAnnouncements = [];
+      state.rowCount = 0;
+      state.searchText = "";
+      state.columns = {
+        selectedColumns: [],
+        availableColumns: [],
+      };
+    },
+    updateAvailableColumns: (state, action) => {
+      state.columns.availableColumns = action.payload;
+    },
+    updateSelectedColumns: (state, action) => {
+      state.columns.selectedColumns = action.payload;
+    },
+    setAnnouncementContent: (state, action) => {
+      const { field, value, error, isValid } = action.payload;
+      const targetField = state.createAnnouncement.content[field];
+      if (!targetField) return;
+      if (value !== undefined) targetField.value = value;
+      if (error !== undefined) targetField.error = error;
+      if (isValid !== undefined) targetField.isValid = isValid;
+
+      state.createAnnouncement.isDirty = true;
+    },
+    setAudienceType: (state, action) => {
+      const { audienceType } = action.payload;
+      const types = state.createAnnouncement.audience.types;
+      if (audienceType === "school_wide") {
+        state.createAnnouncement.audience.types = ["school_wide"];
+        return;
+      }
+      const swIndex = types.indexOf("school_wide");
+      if (swIndex !== -1) {
+        types.splice(swIndex, 1);
+      }
+      const existingIndex = types.indexOf(audienceType);
+      if (existingIndex !== -1) {
+        types.splice(existingIndex, 1);
+      } else {
+        types.push(audienceType);
+      }
+    },
+    setTargetingContext: (state, action) => {
+      const { targetContext } = action.payload;
+      state.createAnnouncement.audience.targetingContext = targetContext;
+      return;
+    },
+    resetTargetingContext: (state, action) => {
+       state.createAnnouncement.audience.targetingContext = initialState.createAnnouncement.audience.targetingContext;
+    }
+  },
+});
+
+export const {
+  addCustomFilter,
+  removeCustomFilter,
+  setCustomFilter,
+  setTeachers,
+  setSelectedAnnouncements,
+  setRowCount,
+  setSearchText,
+  setColumns,
+  resetSelections,
+  resetAll,
+  updateAvailableColumns,
+  updateSelectedColumns,
+  setTableRef,
+  toggleGeneralFilter,
+  resetAllCustomFilters,
+  setImportStatus,
+  setImportSelectedFile,
+  setImportReset,
+  setColumnMapping,
+  setAnnouncementContent,
+  setAudienceType,
+  setTargetingContext,
+  resetTargetingContext
+} = announcementSlice.actions;
+
+export default announcementSlice.reducer;

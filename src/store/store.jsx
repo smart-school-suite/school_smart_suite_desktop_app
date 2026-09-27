@@ -22,7 +22,6 @@ import createCaScoreReducer from "../Slices/Asynslices/CaScoreSlice";
 import createExamScoreReducer from "../Slices/Asynslices/ExamScoreSlice";
 import resitExamTimetableReducer from "../Slices/Asynslices/ResitExamTimetableSlice";
 import createResitExamScoreReducer from "../Slices/Asynslices/ResitScoreSlice";
-import announcementReducer from "../Slices/Asynslices/AnnouncementSlice";
 import autoGenTimetableSliceReducer from "../Slices/Asynslices/AutoGenTimetableSlice";
 import themeReducer from "../Slices/Asynslices/ThemeSlice";
 import semesterTimetableReducer from "../Slices/Asynslices/semesterTimetableSlice";
@@ -57,7 +56,6 @@ import resitReducer from "../Slices/resit/resitSlice";
 import resitExamReducer from "../Slices/resit/resitExamSlice";
 import resitCandidateReducer from "../Slices/resit/resitCandidateSlice";
 import resitEvaluationReducer from "../Slices/resit/resitEvaluationSlice";
-import announcementCatReducer from "../Slices/announcement/announcementCatSlice";
 import expenseCategoryReducer from "../Slices/schoolExpense/expenseCategorySlice";
 import resitFeeReducer from "../Slices/resitFee/resitFeeSlice";
 import resitFeeTransactionReducer from "../Slices/resitFee/resitFeeTransactionSlice";
@@ -69,6 +67,8 @@ import studentActivationCodeReducer from "../Slices/activationCode/studentActiva
 import teacherActivationCodeReducer from "../Slices/activationCode/teacherActivationCodeSlice";
 import activationCodeUsageReducer from "../Slices/activationCode/activationCodeUsageSlice";
 import activationCodeTransactionReducer from "../Slices/activationCode/activationCodeTransactionSlice";
+import announcementCatReducer from "../Slices/announcement/announcementCatSlice";
+import announcementReducer from "../Slices/announcement/announcementSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -115,7 +115,6 @@ const rootReducer = combineReducers({
   createExamScore: createExamScoreReducer,
   resitExamTimetable: resitExamTimetableReducer,
   createResitExamScore: createResitExamScoreReducer,
-  announcement: announcementReducer,
   autoGenTimetable: autoGenTimetableSliceReducer,
   semesterTimetable: semesterTimetableReducer,
   teachers: persistReducer(teacherPersistConfig, teacherReducer),
@@ -124,6 +123,10 @@ const rootReducer = combineReducers({
   student: persistReducer({ key: "student", storage }, studentReducer),
   parent: persistReducer({ key: "parent", storage }, parentReducer),
   resitExam: persistReducer({ key: "resitExam", storage }, resitExamReducer),
+  announcement: persistReducer(
+    { key: "announcement", storage },
+    announcementReducer,
+  ),
   activationCodeTransaction: persistReducer(
     {
       key: "activationCodeTransaction",

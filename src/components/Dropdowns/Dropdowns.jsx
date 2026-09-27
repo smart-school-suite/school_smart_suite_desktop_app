@@ -193,7 +193,7 @@ const CustomDropdown = forwardRef(
                   ? "border-success text-success"
                   : ""
               }`}
-              style={{ padding: "0.4rem" }}
+              style={{ padding: "0.5rem" }}
             >
               <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm text-capitalize">
                 {selectedItem ? selectedItem[displayKey[0]] : placeholder}
@@ -556,7 +556,7 @@ export const MultiSelectDropdown = forwardRef(
                   ? "border-success text-success"
                   : ""
               }`}
-              style={{ padding: "0.35rem" }}
+              style={{ padding: "0.5rem" }}
             >
               {renderSelectedItems()}
               <span>

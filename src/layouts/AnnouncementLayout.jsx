@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { Megaphone } from "lucide-react";
 import JobPopOver from "../components/Popover/JobPopover";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import CreateAnnouncementWizzard from "../DrawerContent/Announcement/CreateAnnouncement/CreateAnnouncementWizzard";
 function AnnouncementLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
@@ -62,6 +64,7 @@ function AnnouncementLayout() {
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Hall"} />
               <ModalButton
+                action={{ modalContent: CreateAnnouncement }}
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
@@ -85,15 +88,15 @@ function AnnouncementLayout() {
                   />
                 </span>
               </ModalButton>
-              <ModalButton
-                action={{ modalContent: CreateAnnouncement }}
-                size={"lg"}
-                classname={
-                  "border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
-                }
+              <DrawerTrigger
+                title="Create Announcement"
+                placement="right"
+                drawerChildren={CreateAnnouncementWizzard}
               >
-                <span>Create Announcement</span>
-              </ModalButton>
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Create Announcement</span>
+                </button>
+              </DrawerTrigger>
             </div>
           </div>
           <hr />
