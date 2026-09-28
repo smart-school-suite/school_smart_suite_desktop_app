@@ -837,19 +837,6 @@ button.disabled {
   overflow-x: hidden;
 }
 
-.scrollable-dropdown::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 10px;
-}
-
-.scrollable-dropdown::-webkit-scrollbar-thumb:hover {
-  background: #ccc;
-}
-
-.scrollable-dropdown::-webkit-scrollbar {
-  width: 4px;
-}
-
 .selected-school-year {
   background-color: var(--primary-color-50);
   color: var(--primary-color);
@@ -2201,4 +2188,12 @@ textarea::-webkit-scrollbar-thumb:hover {
 }
 .ev-custom-progress .progress-bar {
   background-color: var(--primary-color-400) !important; /* Custom purple filler */
+}
+
+.scrollable-dropdown::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollable-dropdown::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 999px;
 }

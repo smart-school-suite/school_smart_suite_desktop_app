@@ -273,7 +273,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                   return;
                 }
                 dispatch(
-                  setAnnouncementContent({
+                   setAnnouncementContent({
                     field: "tags",
                     value: value,
                   }),

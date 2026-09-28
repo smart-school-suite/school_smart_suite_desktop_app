@@ -16,7 +16,9 @@ import {
   resetTargetingContext,
 } from "../../../Slices/announcement/announcementSlice";
 import { ANNOUNCEMENT_TARGET_MAP } from "../../../utils/maps/announcement/announcementTargetMap";
-
+import { useGetAudienceSummary } from "../../../hooks/Audience/useGetAudienceSummary";
+import { NotFoundError } from "../../../components/errors/Error";
+import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 const tokens = {
   blue: "#0EA7E9",
   blueTint: "#EAF7FD",
@@ -70,7 +72,7 @@ function AudienceCard({
     dispatch(
       setTargetingContext({
         targetContext: cardKey,
-      })
+      }),
     );
   };
 
@@ -94,7 +96,8 @@ function AudienceCard({
         cursor: "pointer",
         boxShadow:
           hovered && !selected ? "0 4px 16px rgba(8,48,73,0.07)" : "none",
-        transition: "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
+        transition:
+          "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
         userSelect: "none",
       }}
       whileHover={{ scale: 1.005 }}
@@ -251,6 +254,11 @@ function AnnouncementAudience({
     (state) => state.announcement.createAnnouncement.audience,
   );
 
+  const {
+    data: summary,
+    isLoading: isSummaryLoading,
+    error: summaryError,
+  } = useGetAudienceSummary();
   const TargetComponent =
     ANNOUNCEMENT_TARGET_MAP[moduleState?.targetingContext]?.component;
 
@@ -311,7 +319,7 @@ function AnnouncementAudience({
               Choose the group of people this announcement should be visible to.
             </p>
           </div>
-          <div className="drawer-content px-2 pt-3">
+          <div className="drawer-content" style={{ background: "#f9f9f9", paddingBottom:"10rem" }}>
             {TargetComponent && <TargetComponent />}
           </div>
           <div className="drawer-footer font-size-sm ">
@@ -342,7 +350,8 @@ function AnnouncementAudience({
             <div className="d-flex flex-column">
               <span className="fw-medium">Announcement Audience</span>
               <p className="text-iron-400">
-                Choose the group of people this announcement should be visible to.
+                Choose the group of people this announcement should be visible
+                to.
               </p>
             </div>
             <div className="d-flex flex-row align-items-center gap-1 fw-semibold text-capitalize">
@@ -373,26 +382,43 @@ function AnnouncementAudience({
                   width: "100%",
                 }}
               >
-                {audiences.map((a) => (
-                  <AudienceCard
-                    key={a.key}
-                    cardKey={a.key}
-                    icon={a.icon}
-                    title={a.title}
-                    description={a.description}
-                    count={a.count}
-                    countLabel={a.countLabel}
-                    footer={a.footer}
-                    selected={moduleState?.types?.includes(a.key)}
-                    onSelect={() =>
-                      dispatch(
-                        setAudienceType({
-                          audienceType: a.key,
-                        })
-                      )
+                {isSummaryLoading ? (
+                  [...Array(4)].map((_, index) => (
+                    <RectangleSkeleton
+                      height="16dvh"
+                      width="100%"
+                      key={index}
+                    />
+                  ))
+                ) : summaryError ? (
+                  <NotFoundError
+                    title={summaryError?.response?.data?.errors?.title}
+                    description={
+                      summaryError?.response?.data?.errors?.description
                     }
-                  />
-                ))}
+                  ></NotFoundError>
+                ) : (
+                  audiences.map((a) => (
+                    <AudienceCard
+                      key={a.key}
+                      cardKey={a.key}
+                      icon={a.icon}
+                      title={a.title}
+                      description={a.description}
+                      count={summary?.data[a.key] ?? a?.count}
+                      countLabel={a.countLabel}
+                      footer={a.footer}
+                      selected={moduleState?.types?.includes(a.key)}
+                      onSelect={() =>
+                        dispatch(
+                          setAudienceType({
+                            audienceType: a.key,
+                          }),
+                        )
+                      }
+                    />
+                  ))
+                )}
               </div>
             </div>
           </div>

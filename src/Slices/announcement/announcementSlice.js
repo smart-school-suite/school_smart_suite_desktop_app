@@ -60,6 +60,8 @@ const initialState = {
           mode: "all", // 'all' | 'criteria' | 'individuals'
           criteria: {
             departmentIds: [],
+            specialtyIds: [],
+            levelIds: [],
           },
           individualIds: [],
         },
@@ -198,8 +200,60 @@ const announcementSlice = createSlice({
       return;
     },
     resetTargetingContext: (state, action) => {
-       state.createAnnouncement.audience.targetingContext = initialState.createAnnouncement.audience.targetingContext;
-    }
+      state.createAnnouncement.audience.targetingContext =
+        initialState.createAnnouncement.audience.targetingContext;
+    },
+    setTargetMode: (state, action) => {
+      const { targetGroup, mode } = action.payload;
+      if (state.audience.targeting[targetGroup]) {
+        state.audience.targeting[targetGroup].mode = mode;
+      }
+    },
+    setTargetCriteria: (state, action) => {
+      const { targetGroup, criteriaType, selectedIds } = action.payload;
+      const group = state.audience.targeting[targetGroup];
+
+      if (group && group.criteria && criteriaType in group.criteria) {
+        group.criteria[criteriaType] = selectedIds;
+      }
+    
+    },
+    setTargetIndividuals: (state, action) => {
+      const { targetGroup, selectedIds } = action.payload;
+      const group = state.audience.targeting[targetGroup];
+
+      if (group && "individualIds" in group) {
+        group.individualIds = selectedIds;
+      }
+   
+    },
+    setTargetSelection: (state, action) => {
+      const { targetGroup, targetKey, selectedIds } = action.payload;
+      const group = state.audience.targeting[targetGroup];
+
+      if (!group) return;
+
+      if (targetKey === "individualIds") {
+        group.individualIds = selectedIds;
+      } else if (group.criteria && targetKey in group.criteria) {
+        group.criteria[targetKey] = selectedIds;
+      }
+    },
+    resetTargetGroup: (state, action) => {
+      const { targetGroup } = action.payload;
+      if (targetGroup === "administrators") {
+        state.audience.targeting.administrators = {
+          mode: "all",
+          individualIds: [],
+        };
+      } else if (state.audience.targeting[targetGroup]) {
+        state.audience.targeting[targetGroup] = {
+          mode: "all",
+          criteria: { departmentIds: [], specialtyIds: [], levelIds: [] },
+          individualIds: [],
+        };
+      }
+    },
   },
 });
 
@@ -226,7 +280,12 @@ export const {
   setAnnouncementContent,
   setAudienceType,
   setTargetingContext,
-  resetTargetingContext
+  resetTargetingContext,
+  resetTargetGroup,
+  setTargetSelection,
+  setTargetIndividuals,
+  setTargetCriteria,
+  setTargetMode,
 } = announcementSlice.actions;
 
 export default announcementSlice.reducer;

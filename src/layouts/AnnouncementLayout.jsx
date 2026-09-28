@@ -92,6 +92,7 @@ function AnnouncementLayout() {
                 title="Create Announcement"
                 placement="right"
                 drawerChildren={CreateAnnouncementWizzard}
+                closeOnOutsideClick={false}
               >
                 <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
                   <span>Create Announcement</span>
