@@ -16,17 +16,23 @@ import { useGetAnnouncementTags } from "../../../hooks/announcement/useGetAnnoun
 import { useSelector, useDispatch } from "react-redux";
 import { setAnnouncementContent } from "../../../Slices/announcement/announcementSlice";
 import { useRef } from "react";
-import { ShieldAlert, Info, TriangleAlert, CircleCheck } from "lucide-react";
+import { ShieldAlert, Info, TriangleAlert, CircleCheck, X } from "lucide-react";
 import toast from "react-hot-toast";
 import ToastWarning from "../../../components/Toast/ToastWarning";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { motion, AnimatePresence } from "framer-motion";
+import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
+import { allFieldsValid } from "../../../utils/functions";
+import { useState } from "react";
+import { resetCreateAnnouncement } from "../../../Slices/announcement/announcementSlice";
+import AnnouncementDiscardWarning from "../../../ModalContent/Announcement/AnnouncementDiscardWarning";
 function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
   const dispatch = useDispatch();
   const titleRef = useRef();
   const contentRef = useRef();
   const tagRef = useRef();
   const categoryRef = useRef();
+  const [errors, setErrors] = useState(null);
   const moduleState = useSelector(
     (state) => state.announcement.createAnnouncement,
   );
@@ -35,24 +41,133 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
   const { data: tags, isLoading: isTagLoading } = useGetAnnouncementTags();
   const { data: labels, isLoading: isLabelLoading } =
     useGetAnnouncementLabels();
+
+  const handlePrevalidation = async () => {
+    const title = await titleRef.current.triggerValidation();
+    const content = await contentRef.current.triggerValidation();
+    const tag = await tagRef.current.triggerValidation();
+    const category = await categoryRef.current.triggerValidation();
+    return {
+      title,
+      content,
+      tag,
+      category,
+    };
+  };
+
+  const handleNext = async () => {
+    const prevalidation = await handlePrevalidation();
+    if (!allFieldsValid(prevalidation)) {
+      setErrors({
+        title: "Invalid Fields",
+        message:
+          "Some Fields are invalid please ensure that all fields are valid before proceeding to the next step",
+      });
+      return;
+    }
+    if (!moduleState?.content?.label?.value?.id) {
+      setErrors({
+        title: "Announcement Label Required",
+        message:
+          "Announcement Label Required, You must select atleast one label before proceeding to the next step",
+      });
+      return;
+    }
+    nextStep();
+  };
   return (
     <>
-      <div className="drawer-content px-2 pt-3 font-size-sm">
-        <div className="d-flex flex-row align-items-center justify-content-between">
-          <div className="d-flex flex-column">
-            <span className="fw-medium">Announcement content</span>
-            <p className="text-iron-400">
-              Give your announcement a clear identity and message.
-            </p>
-          </div>
-          <div className="d-flex flex-row align-items-center gap-1 fw-semibold text-capitalize">
-            <span>step</span>
-            <span>{currentStep}</span>
-            <span>of</span>
-            <span>{fullStep}</span>
-            <span>Completed</span>
+      <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
+        <span className="fw-medium">Create Announcement </span>
+        {moduleState.isDirty ? (
+          <ModalButton
+            action={{
+              modalContent: AnnouncementDiscardWarning,
+            }}
+            size={"md"}
+            rowData={{ handleCloseDrawer: handleClose }}
+            closeOnOutsideClick={false}
+            closeOnEscape={false}
+          >
+            <button
+              className="bg-none border-none border rounded-circle"
+              style={{
+                width: "2rem",
+                height: "2rem",
+                display: "grid",
+                placeItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <X size={16} />
+            </button>
+          </ModalButton>
+        ) : (
+          <button
+            className="bg-none border-none border rounded-circle"
+            aria-label="Close drawer"
+            onClick={() => {
+              handleClose();
+              dispatch(resetCreateAnnouncement());
+            }}
+            style={{
+              width: "2rem",
+              height: "2rem",
+              display: "grid",
+              placeItems: "center",
+              cursor: "pointer",
+            }}
+          >
+            <X size={16} />
+          </button>
+        )}
+      </div>
+      <div className="d-flex flex-row align-items-center justify-content-between font-size-sm px-2 pt-2">
+        <div className="d-flex flex-column">
+          <span className="fw-medium">Announcement content</span>
+          <p className="text-iron-400">
+            Give your announcement a clear identity and message.
+          </p>
+        </div>
+        <div className="d-flex flex-row align-items-center gap-1 fw-semibold text-capitalize">
+          <span>step</span>
+          <span>{currentStep}</span>
+          <span>of</span>
+          <span>{fullStep}</span>
+          <span>Completed</span>
+        </div>
+      </div>
+      {errors && (
+        <div className="p-2">
+          <div className="bg-red-50 text-red-800 font-size-sm rounded-2 px-2 py-1">
+            <div className="d-flex flex-row align-items-center justify-content-between">
+              <span className="fw-semibold">{errors?.title}</span>
+              <button
+                className="bg-none border-none rounded-circle"
+                aria-label="Close drawer"
+                onClick={() => {
+                  setErrors(null);
+                }}
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  display: "grid",
+                  placeItems: "center",
+                  cursor: "pointer",
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <ul>
+              <li>
+                <p>{errors?.message}</p>
+              </li>
+            </ul>
           </div>
         </div>
+      )}
+      <div className="drawer-content px-2 pt-2 font-size-sm">
         <div className="d-flex flex-column gap-3">
           <div className="d-flex flex-column gap-1">
             <span className="fw-medium">Category</span>
@@ -61,14 +176,14 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
               displayKey={["name"]}
               valueKey={["id"]}
               direction="up"
-              onSelect={(value) =>
+              onSelect={(value) => {
                 dispatch(
                   setAnnouncementContent({
                     field: "category",
-                    value: value,
+                    value: category?.data?.find((g) => g.id === value.id) || {},
                   }),
-                )
-              }
+                );
+              }}
               placeholder="Select Announcement Category"
               error={moduleState.content.category.error}
               isLoading={isCategoryLoading}
@@ -82,7 +197,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                 )
               }
               ref={categoryRef}
-              value={moduleState.content.category.value}
+              value={moduleState?.content?.category?.value?.id}
             />
           </div>
           <div className="d-flex flex-column gap-1">
@@ -93,7 +208,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                   <RectangleSkeleton
                     key={index}
                     className={"flex-fill"}
-                    height="14dvh"
+                    height="12dvh"
                   />
                 ))}
               </div>
@@ -110,7 +225,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                          : "border-none border shadow-sm"
                      }
                     `}
-                  style={{ height: "14dvh", borderRadius: "0.85rem" }}
+                  style={{ height: "12dvh", borderRadius: "0.85rem" }}
                   onClick={() => {
                     dispatch(
                       setAnnouncementContent({
@@ -123,7 +238,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                   <div className="d-flex flex-row align-items-center justify-content-between">
                     <div className="d-flex flex-row align-items-center gap-2">
                       <Info size={16} />
-                      <span className="fw-medium">Info</span>
+                      <span className="fw-medium">Info </span>
                     </div>
                     <AnimatePresence>
                       {moduleState?.content?.label?.value?.id ==
@@ -159,7 +274,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                          : "border-none border shadow-sm"
                      }
                     `}
-                  style={{ height: "14dvh", borderRadius: "0.85rem" }}
+                  style={{ height: "12dvh", borderRadius: "0.85rem" }}
                   onClick={() => {
                     dispatch(
                       setAnnouncementContent({
@@ -210,7 +325,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                          : "border-none border shadow-sm"
                      }
                     `}
-                  style={{ height: "14dvh", borderRadius: "0.85rem" }}
+                  style={{ height: "12dvh", borderRadius: "0.85rem" }}
                   onClick={() => {
                     dispatch(
                       setAnnouncementContent({
@@ -260,8 +375,8 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
               isLoading={isTagLoading}
               placeholder={"Select Tags"}
               errorMessage={"Announcement Tags Required"}
-              onSelect={(value) => {
-                if (value.length > 5) {
+              onSelect={(selectedIds) => {
+                if (selectedIds.length > 5) {
                   toast.custom(
                     <ToastWarning
                       title={"Max Amount Reached"}
@@ -273,9 +388,11 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                   return;
                 }
                 dispatch(
-                   setAnnouncementContent({
+                  setAnnouncementContent({
                     field: "tags",
-                    value: value,
+                    value: tags?.data.filter((t) =>
+                      selectedIds.some((id) => id.id == t.id),
+                    ),
                   }),
                 );
               }}
@@ -368,15 +485,33 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
         <div className="d-flex flex-column w-100">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
-            <button
-              className="border-none bg-none"
-              onClick={() => handleClose()}
-            >
-              Cancel
-            </button>
+            {moduleState.isDirty ? (
+              <ModalButton
+                action={{
+                  modalContent: AnnouncementDiscardWarning,
+                }}
+                size={"md"}
+                rowData={{ handleCloseDrawer: handleClose }}
+                closeOnOutsideClick={false}
+                closeOnEscape={false}
+              >
+                <button
+                  className="border-none bg-none"
+                >
+                  Cancel
+                </button>
+              </ModalButton>
+            ) : (
+              <button
+                className="border-none bg-none"
+                onClick={() => handleClose()}
+              >
+                Cancel
+              </button>
+            )}
             <button
               className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
-              onClick={() => nextStep()}
+              onClick={() => handleNext()}
             >
               Next
             </button>

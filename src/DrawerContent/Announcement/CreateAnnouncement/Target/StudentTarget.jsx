@@ -28,6 +28,7 @@ function StudentTarget() {
     <>
       <div className="d-flex flex-column gap-3 font-size-sm px-2 pt-2">
         <MultiSelectAccordion
+          intialState={true}
           label="Department"
           placeholder="Select Student By Department"
           searchPlaceholder="Search Department"

@@ -52,7 +52,7 @@ import {
   UserPlus,
   Settings,
   LogOut,
-  UnfoldHorizontal
+  UnfoldHorizontal,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
@@ -556,6 +556,22 @@ function SideBarLg() {
                           </NavLink>
                         </div>
                       </div>
+                      <div
+                        className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
+                      >
+                        <div className="subbox-nav">
+                          <NavLink
+                            to="/exam-result"
+                            className={({ isActive }) =>
+                              isActive
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
+                            }
+                          >
+                            <p style={{ fontSize: "0.75rem" }}>Exam Result</p>
+                          </NavLink>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -676,7 +692,7 @@ function SideBarLg() {
                           </NavLink>
                         </div>
                       </div>
-                          <div
+                      <div
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
                         <div className="subbox-nav">
@@ -688,7 +704,27 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize: "0.75rem" }}>Resit Invigilator</p>
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Resit Invigilator
+                            </p>
+                          </NavLink>
+                        </div>
+                      </div>
+                      <div
+                        className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
+                      >
+                        <div className="subbox-nav">
+                          <NavLink
+                            to="/resit-result"
+                            className={({ isActive }) =>
+                              isActive
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
+                            }
+                          >
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Resit Result
+                            </p>
                           </NavLink>
                         </div>
                       </div>

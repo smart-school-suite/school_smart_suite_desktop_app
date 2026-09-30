@@ -1,6 +1,3 @@
-import { useGetTeacherAudience } from "../../../../hooks/Audience/useGetTeacherAudience";
-import { Dot, Users } from "lucide-react";
-import { formatNumber } from "../../../../utils/functions";
 import { MultiSelectAccordion } from "../../../../components/Accordion/MultiSelectAccordion";
 import { useGetSchoolAdminAudience } from "../../../../hooks/Audience/useGetSchoolAdminAudience";
 import { useDispatch, useSelector } from "react-redux";

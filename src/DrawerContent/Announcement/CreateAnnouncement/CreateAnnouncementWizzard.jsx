@@ -12,6 +12,10 @@ function CreateAnnouncementWizzard({ handleClose, drawerData }) {
   const previousStep = () => {
     setStepIndex((prev) => prev - 1);
   };
+
+  const handleNavigate = (step) => {
+     setStepIndex(step);
+  }
   return (
     <>
       <CurrentComponent
@@ -21,6 +25,7 @@ function CreateAnnouncementWizzard({ handleClose, drawerData }) {
         previousStep={previousStep}
         fullStep={CREATE_ANNOUNCEMENT_STEP_FLOW.length}
         drawerData={drawerData}
+        handleNavigate={handleNavigate}
       />
     </>
   );

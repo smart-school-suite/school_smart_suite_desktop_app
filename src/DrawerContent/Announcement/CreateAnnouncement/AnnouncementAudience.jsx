@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   ChevronRight,
   Check,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,6 +20,8 @@ import { ANNOUNCEMENT_TARGET_MAP } from "../../../utils/maps/announcement/announ
 import { useGetAudienceSummary } from "../../../hooks/Audience/useGetAudienceSummary";
 import { NotFoundError } from "../../../components/errors/Error";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
+import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
+import AnnouncementDiscardWarning from "../../../ModalContent/Announcement/AnnouncementDiscardWarning";
 const tokens = {
   blue: "#0EA7E9",
   blueTint: "#EAF7FD",
@@ -247,13 +250,13 @@ function AnnouncementAudience({
   nextStep,
   previousStep,
   fullStep,
-  drawerData,
 }) {
   const dispatch = useDispatch();
   const moduleState = useSelector(
     (state) => state.announcement.createAnnouncement.audience,
   );
-
+  const isDirty = useSelector((state) => state.announcement.createAnnouncement.isDirty)
+  const [error, setError] = useState(null);
   const {
     data: summary,
     isLoading: isSummaryLoading,
@@ -309,17 +312,116 @@ function AnnouncementAudience({
     audiences.some((a) => a.key !== "school_wide") &&
     Boolean(moduleState?.targetingContext);
 
+  const handleNext = () => {
+    if (moduleState.types.length == 0) {
+      setError({
+        title: "Student Audience Required",
+        message:
+          "Student Audience Required, to create announcement you must select atleast one group of people to create announcement",
+      });
+      return;
+    }
+    if (!moduleState.types.includes("school_wide")) {
+      if (
+        moduleState.targeting.students.individualIds.length == 0 &&
+        Object.values(moduleState.targeting.students.criteria).every(
+          (g) => g.length === 0,
+        ) &&
+        moduleState.types.includes("students")
+      ) {
+        setError({
+          title: "Audience Target Required",
+          message:
+            "Student Audience Target Not Configured Configure Student Target Audience Before Continueing",
+        });
+        return;
+      }
+      if (
+        moduleState.targeting.teachers.individualIds.length == 0 &&
+        Object.values(moduleState.targeting.teachers.criteria).every(
+          (g) => g.length === 0,
+        ) &&
+        moduleState.types.includes("teachers")
+      ) {
+        setError({
+          title: "Teacher Audience Target Required",
+          message:
+            "Teacher Audience Target Not Configured Configure Teacher Target Audience Before Continueing",
+        });
+        return;
+      }
+      if (
+        moduleState.targeting.administrators.individualIds.length == 0 &&
+        moduleState.types.includes("schoolAdmins")
+      ) {
+        setError({
+          title: "Administrator Target Required",
+          message:
+            "Administrator Audience Target Not Configured Configure Administrator Target Audience Before Continueing",
+        });
+        return;
+      }
+    }
+    nextStep();
+  };
   return (
     <>
       {isTargetingActive ? (
         <>
+          <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
+            <span className="fw-medium">Create Announcement</span>
+            {isDirty ? (
+              <ModalButton
+                action={{
+                  modalContent: AnnouncementDiscardWarning,
+                }}
+                size={"md"}
+                rowData={{ handleCloseDrawer: handleClose }}
+                closeOnOutsideClick={false}
+                closeOnEscape={false}
+              >
+                <button
+                  className="bg-none border-none border rounded-circle"
+                  style={{
+                    width: "2rem",
+                    height: "2rem",
+                    display: "grid",
+                    placeItems: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <X size={16} />
+                </button>
+              </ModalButton>
+            ) : (
+              <button
+                className="bg-none border-none border rounded-circle"
+                aria-label="Close drawer"
+                onClick={() => {
+                  handleClose();
+                }}
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  display: "grid",
+                  placeItems: "center",
+                  cursor: "pointer",
+                }}
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
           <div className="d-flex flex-column px-2 pt-2 font-size-sm">
             <span className="fw-medium">Audience Targeting</span>
             <p className="text-iron-400">
               Choose the group of people this announcement should be visible to.
             </p>
           </div>
-          <div className="drawer-content" style={{ background: "#f9f9f9", paddingBottom:"10rem" }}>
+          <div
+            className="drawer-content"
+            style={{ background: "#f9f9f9", paddingBottom: "10rem" }}
+          >
             {TargetComponent && <TargetComponent />}
           </div>
           <div className="drawer-footer font-size-sm ">
@@ -346,6 +448,80 @@ function AnnouncementAudience({
         </>
       ) : (
         <>
+          <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
+            <span className="fw-medium">Create Announcement</span>
+            {isDirty ? (
+              <ModalButton
+                action={{
+                  modalContent: AnnouncementDiscardWarning,
+                }}
+                size={"md"}
+                rowData={{ handleCloseDrawer: handleClose }}
+                closeOnOutsideClick={false}
+                closeOnEscape={false}
+              >
+                <button
+                  className="bg-none border-none border rounded-circle"
+                  style={{
+                    width: "2rem",
+                    height: "2rem",
+                    display: "grid",
+                    placeItems: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <X size={16} />
+                </button>
+              </ModalButton>
+            ) : (
+              <button
+                className="bg-none border-none border rounded-circle"
+                aria-label="Close drawer"
+                onClick={() => {
+                  handleClose();
+                }}
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  display: "grid",
+                  placeItems: "center",
+                  cursor: "pointer",
+                }}
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+          {error && (
+            <div className="p-2">
+              <div className="bg-red-50 text-red-800 font-size-sm rounded-2 px-2 py-1">
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <span className="fw-semibold">{error?.title}</span>
+                  <button
+                    className="bg-none border-none rounded-circle"
+                    aria-label="Close drawer"
+                    onClick={() => {
+                      setError(null);
+                    }}
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      display: "grid",
+                      placeItems: "center",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+                <ul>
+                  <li>
+                    <p>{error?.message}</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
           <div className="d-flex flex-row align-items-center justify-content-between font-size-sm px-2 pt-2">
             <div className="d-flex flex-column">
               <span className="fw-medium">Announcement Audience</span>
@@ -362,6 +538,7 @@ function AnnouncementAudience({
               <span>Completed</span>
             </div>
           </div>
+
           <div className="drawer-content font-size-sm">
             <div
               style={{
@@ -440,7 +617,7 @@ function AnnouncementAudience({
                 </button>
                 <button
                   className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2 cursor-pointer"
-                  onClick={() => nextStep()}
+                  onClick={() => handleNext()}
                 >
                   Next
                 </button>

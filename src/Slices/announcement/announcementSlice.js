@@ -72,6 +72,13 @@ const initialState = {
         },
       },
     },
+    publication:{
+      type:"",
+      schedule:{
+        value:"",
+        isValid:""         
+      }
+    }
   },
   updateContent: {},
 };
@@ -205,13 +212,13 @@ const announcementSlice = createSlice({
     },
     setTargetMode: (state, action) => {
       const { targetGroup, mode } = action.payload;
-      if (state.audience.targeting[targetGroup]) {
-        state.audience.targeting[targetGroup].mode = mode;
+      if (state.createAnnouncement.audience.targeting[targetGroup]) {
+        state.createAnnouncement.audience.targeting[targetGroup].mode = mode;
       }
     },
     setTargetCriteria: (state, action) => {
       const { targetGroup, criteriaType, selectedIds } = action.payload;
-      const group = state.audience.targeting[targetGroup];
+      const group = state.createAnnouncement.audience.targeting[targetGroup];
 
       if (group && group.criteria && criteriaType in group.criteria) {
         group.criteria[criteriaType] = selectedIds;
@@ -220,7 +227,7 @@ const announcementSlice = createSlice({
     },
     setTargetIndividuals: (state, action) => {
       const { targetGroup, selectedIds } = action.payload;
-      const group = state.audience.targeting[targetGroup];
+      const group = state.createAnnouncement.audience.targeting[targetGroup];
 
       if (group && "individualIds" in group) {
         group.individualIds = selectedIds;
@@ -229,7 +236,7 @@ const announcementSlice = createSlice({
     },
     setTargetSelection: (state, action) => {
       const { targetGroup, targetKey, selectedIds } = action.payload;
-      const group = state.audience.targeting[targetGroup];
+      const group = state.createAnnouncement.audience.targeting[targetGroup];
 
       if (!group) return;
 
@@ -238,22 +245,37 @@ const announcementSlice = createSlice({
       } else if (group.criteria && targetKey in group.criteria) {
         group.criteria[targetKey] = selectedIds;
       }
+    
     },
     resetTargetGroup: (state, action) => {
       const { targetGroup } = action.payload;
       if (targetGroup === "administrators") {
-        state.audience.targeting.administrators = {
+        state.createAnnouncement.audience.targeting.administrators = {
           mode: "all",
           individualIds: [],
         };
       } else if (state.audience.targeting[targetGroup]) {
-        state.audience.targeting[targetGroup] = {
+        state.createAnnouncement.audience.targeting[targetGroup] = {
           mode: "all",
           criteria: { departmentIds: [], specialtyIds: [], levelIds: [] },
           individualIds: [],
         };
       }
+    
     },
+
+    setPublicationType: (state, action) => {
+        const { type } = action.payload;
+        state.createAnnouncement.publication.type = type;
+    },
+
+    setPublicationValue: (state, action) => {
+       const { field, value } = action.payload;
+       state.createAnnouncement.publication.schedule[field] = value;
+    },
+    resetCreateAnnouncement: (state) => {
+       state.createAnnouncement = initialState.createAnnouncement; 
+    }
   },
 });
 
@@ -286,6 +308,9 @@ export const {
   setTargetIndividuals,
   setTargetCriteria,
   setTargetMode,
+  setPublicationType,
+  setPublicationValue, 
+  resetCreateAnnouncement
 } = announcementSlice.actions;
 
 export default announcementSlice.reducer;

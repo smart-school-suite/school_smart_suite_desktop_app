@@ -1,8 +1,6 @@
 import { NumberInput } from "../../../components/FormComponents/InputComponents";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { useRef, useState } from "react";
-import ToastDanger from "../../../components/Toast/ToastDanger";
-import ToastSuccess from "../../../components/Toast/ToastSuccess";
 import ToastWarning from "../../../components/Toast/ToastWarning";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";

@@ -45,7 +45,7 @@ export const examRoutes = [
   "/exam",
   "/exam-candidate",
   "/exam-timetable",
-  "/exam-results",
+  "/exam-result",
   "/exam-invigilator",
 ];
 
@@ -54,7 +54,8 @@ export const resitRoutes = [
   "/resit-exams",
   "/resit-timetable",
   "/student-resit",
-  "/resit-invigilator"
+  "/resit-invigilator",
+  "/resit-result"
 ];
 
 export const StudentRoutes = [

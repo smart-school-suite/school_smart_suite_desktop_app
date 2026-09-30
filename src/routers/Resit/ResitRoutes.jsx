@@ -11,6 +11,7 @@ const StudentResit = React.lazy(() => import("../../pages/Resit/StudentResit"));
 const ResitInvigilator = React.lazy(
   () => import("../../pages/Resit/ResitInvigilator"),
 );
+const ResitResult = React.lazy(() => import("../../pages/Resit/ResitResult"));
 const ResitRoutes = [
   <Route
     key="ResitCandidate"
@@ -27,6 +28,15 @@ const ResitRoutes = [
     element={
       <Suspense>
         <ResitExam />
+      </Suspense>
+    }
+  />,
+  <Route
+    key={"resit-result"}
+    path="/resit-result"
+    element={
+      <Suspense>
+        <ResitResult />
       </Suspense>
     }
   />,
