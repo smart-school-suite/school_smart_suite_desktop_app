@@ -1,6 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import CreateAnnouncement from "../ModalContent/Announcement/CreateAnnouncement";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
@@ -64,7 +63,6 @@ function AnnouncementLayout() {
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Hall"} />
               <ModalButton
-                action={{ modalContent: CreateAnnouncement }}
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }

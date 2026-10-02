@@ -72,15 +72,61 @@ const initialState = {
         },
       },
     },
-    publication:{
-      type:"",
-      schedule:{
-        value:"",
-        isValid:""         
-      }
-    }
+    publication: {
+      type: "",
+      schedule: {
+        value: "",
+        isValid: "",
+      },
+    },
   },
-  updateContent: {},
+  updateContent: {
+    isDirty: false,
+    initial: {
+      category: {
+        error: "",
+        value: "",
+      },
+      label: {
+        error: "",
+        value: "",
+      },
+      title: {
+        isValid: "",
+        value: "",
+      },
+      content: {
+        isValid: "",
+        value: "",
+      },
+      tags: {
+        value: [],
+        error: "",
+      },
+    },
+    draft: {
+      category: {
+        error: "",
+        value: "",
+      },
+      label: {
+        error: "",
+        value: "",
+      },
+      title: {
+        isValid: "",
+        value: "",
+      },
+      content: {
+        isValid: "",
+        value: "",
+      },
+      tags: {
+        value: [],
+        error: "",
+      },
+    },
+  },
 };
 
 const announcementSlice = createSlice({
@@ -174,8 +220,20 @@ const announcementSlice = createSlice({
       state.columns.selectedColumns = action.payload;
     },
     setAnnouncementContent: (state, action) => {
-      const { field, value, error, isValid } = action.payload;
-      const targetField = state.createAnnouncement.content[field];
+      const { field, value, error, isValid, actionType } = action.payload;
+      if (actionType === "updateContent") {
+        const targetField = state[actionType].draft[field];
+        if (!targetField) return;
+        if (value !== undefined) targetField.value = value;
+        if (error !== undefined) targetField.error = error;
+        if (isValid !== undefined) targetField.isValid = isValid;
+        state.updateContent.isDirty = hasFormChanged(
+          state.updateContent.initial,
+          state.updateContent.draft,
+        );
+        return;
+      }
+      const targetField = state[actionType].content[field];
       if (!targetField) return;
       if (value !== undefined) targetField.value = value;
       if (error !== undefined) targetField.error = error;
@@ -223,7 +281,6 @@ const announcementSlice = createSlice({
       if (group && group.criteria && criteriaType in group.criteria) {
         group.criteria[criteriaType] = selectedIds;
       }
-    
     },
     setTargetIndividuals: (state, action) => {
       const { targetGroup, selectedIds } = action.payload;
@@ -232,7 +289,6 @@ const announcementSlice = createSlice({
       if (group && "individualIds" in group) {
         group.individualIds = selectedIds;
       }
-   
     },
     setTargetSelection: (state, action) => {
       const { targetGroup, targetKey, selectedIds } = action.payload;
@@ -245,7 +301,6 @@ const announcementSlice = createSlice({
       } else if (group.criteria && targetKey in group.criteria) {
         group.criteria[targetKey] = selectedIds;
       }
-    
     },
     resetTargetGroup: (state, action) => {
       const { targetGroup } = action.payload;
@@ -261,21 +316,42 @@ const announcementSlice = createSlice({
           individualIds: [],
         };
       }
-    
     },
 
     setPublicationType: (state, action) => {
-        const { type } = action.payload;
-        state.createAnnouncement.publication.type = type;
+      const { type } = action.payload;
+      state.createAnnouncement.publication.type = type;
     },
 
     setPublicationValue: (state, action) => {
-       const { field, value } = action.payload;
-       state.createAnnouncement.publication.schedule[field] = value;
+      const { field, value } = action.payload;
+      state.createAnnouncement.publication.schedule[field] = value;
     },
     resetCreateAnnouncement: (state) => {
-       state.createAnnouncement = initialState.createAnnouncement; 
-    }
+      state.createAnnouncement = initialState.createAnnouncement;
+    },
+    setUpdateContentInitial: (state, action) => {
+      const { announcement } = action.payload;
+      const formattedPayload = {
+        category: {
+          error: "",
+          value: announcement?.announcement_category ?? "",
+        },
+        label: { error: "", value: announcement?.announcement_label ?? "" },
+        title: { isValid: "", value: announcement?.title ?? "" },
+        content: { isValid: "", value: announcement?.content ?? "" },
+        tags: {
+          value: announcement?.tags ? JSON.parse(announcement.tags) : [],
+          error: "",
+        },
+      };
+      state.updateContent.initial = formattedPayload;
+      state.updateContent.draft = formattedPayload;
+      state.updateContent.isDirty = false;
+    },
+    resetUpdateContent: (state) => {
+      state.updateContent = initialState.updateContent;
+    },
   },
 });
 
@@ -309,8 +385,47 @@ export const {
   setTargetCriteria,
   setTargetMode,
   setPublicationType,
-  setPublicationValue, 
-  resetCreateAnnouncement
+  setPublicationValue,
+  resetCreateAnnouncement,
+  setUpdateContentInitial,
+  resetUpdateContent
 } = announcementSlice.actions;
 
 export default announcementSlice.reducer;
+
+function hasFormChanged(initialObj, draftObj) {
+  function extractComparableValue(field) {
+    if (!field || field.value === undefined) return null;
+
+    const val = field.value;
+
+    if (val === null || typeof val !== 'object') {
+      return val;
+    }
+
+    if (Array.isArray(val)) {
+      return val
+        .map(item => (item && typeof item === 'object' && item.id !== undefined ? item.id : item))
+        .sort();
+    }
+
+    if (typeof val === 'object') {
+      return val.id !== undefined ? val.id : val;
+    }
+
+    return val;
+  }
+
+  const keys = new Set([...Object.keys(initialObj || {}), ...Object.keys(draftObj || {})]);
+
+  for (const key of keys) {
+    const initialVal = extractComparableValue(initialObj[key]);
+    const draftVal = extractComparableValue(draftObj[key]);
+
+    if (JSON.stringify(initialVal) !== JSON.stringify(draftVal)) {
+      return true;
+    }
+  }
+
+  return false;
+}

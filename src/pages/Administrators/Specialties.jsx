@@ -66,6 +66,7 @@ import CreateSpecialty from "../../DrawerContent/Specialty/CreateSpecialty";
 import UpdateSpecialty from "../../DrawerContent/Specialty/UpdateSpecialty";
 import SpecialtyDetails from "../../DrawerContent/Specialty/SpecialtyDetails";
 import { Drawer } from "../../components/drawer/Drawer";
+import SearchInput from "../../components/input/search";
 function Specialties() {
   const { data: specialty, isLoading, error } = useGetSpecialties();
   const tableRef = useRef();
@@ -102,8 +103,7 @@ function Specialties() {
     return specialty?.data ?? [];
   }, [specialty]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
@@ -298,13 +298,14 @@ function Specialties() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Specialty"
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Specialty......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}

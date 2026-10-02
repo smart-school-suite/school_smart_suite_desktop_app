@@ -76,6 +76,7 @@ import JobPopOver from "../../components/Popover/JobPopover";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import CreateSchoolAdmin from "../../DrawerContent/SchoolAdmin/CreateSchoolAdmin";
+import SearchInput from "../../components/input/search";
 function SchoolAdmins() {
   const tableRef = useRef();
   const dispatch = useDispatch();
@@ -112,8 +113,7 @@ function SchoolAdmins() {
     return schoolAdmins?.data ?? [];
   }, [schoolAdmins]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
@@ -198,7 +198,7 @@ function SchoolAdmins() {
                   </span>
                 </div>
                 <div className="d-flex flex-row align-item-center gap-2">
-                  <JobPopOver category={"School Admin"}/>
+                  <JobPopOver category={"School Admin"} />
                   <ModalButton
                     action={{ modalContent: ImportWizzard }}
                     size={"xl"}
@@ -229,7 +229,7 @@ function SchoolAdmins() {
                     <span style={{ lineHeight: "16px" }}>Actions</span>
                     <ChevronDown size={16} />
                   </ModalButton>
-                   <DrawerTrigger
+                  <DrawerTrigger
                     title="Create Admin"
                     placement="right"
                     drawerChildren={CreateSchoolAdmin}
@@ -309,13 +309,14 @@ function SchoolAdmins() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Specialty"
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Admin......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}

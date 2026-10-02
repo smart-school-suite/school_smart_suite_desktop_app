@@ -66,7 +66,6 @@ export const StudentRoutes = [
 ];
 
 export const electionRoutes = [
-  "/election-overview",
   "/elections",
   "/election-history",
   "/election-application",

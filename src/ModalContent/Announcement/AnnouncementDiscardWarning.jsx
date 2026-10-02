@@ -15,8 +15,8 @@ function AnnouncementDiscardWarning({ handleClose, rowData }) {
   );
 
   const handleDiscard = () => {
-    dispatch(resetCreateAnnouncement());
     handleCloseDrawer();
+    dispatch(resetCreateAnnouncement());
   };
 
   const handleSaveToDraft = () => {

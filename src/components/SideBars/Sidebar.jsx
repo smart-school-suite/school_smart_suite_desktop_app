@@ -922,7 +922,7 @@ function SideBarLg() {
                         <div className="subbox-nav">
                           <div
                             onClick={() => {
-                              navigate("/election-overview");
+                              navigate("/elections");
                             }}
                             className={
                               IsPathInRoutes(electionRoutes)

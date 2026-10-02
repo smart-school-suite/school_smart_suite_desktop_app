@@ -69,6 +69,10 @@ import activationCodeUsageReducer from "../Slices/activationCode/activationCodeU
 import activationCodeTransactionReducer from "../Slices/activationCode/activationCodeTransactionSlice";
 import announcementCatReducer from "../Slices/announcement/announcementCatSlice";
 import announcementReducer from "../Slices/announcement/announcementSlice";
+import electionTypeReducer from "../Slices/election/electionTypeSlice";
+import electionRoleReducer from "../Slices/election/electionRoleSlice";
+import electionCandidateReducer from "../Slices/election/electionCandidateSlice";
+import electionReducer from "../Slices/election/electionSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -123,9 +127,37 @@ const rootReducer = combineReducers({
   student: persistReducer({ key: "student", storage }, studentReducer),
   parent: persistReducer({ key: "parent", storage }, parentReducer),
   resitExam: persistReducer({ key: "resitExam", storage }, resitExamReducer),
+  election: persistReducer(
+    {
+      key: "election",
+      storage,
+    },
+    electionReducer,
+  ),
   announcement: persistReducer(
     { key: "announcement", storage },
     announcementReducer,
+  ),
+  electionCandidate: persistReducer(
+    {
+      key: "electionCandidate",
+      storage,
+    },
+    electionCandidateReducer,
+  ),
+  electionType: persistReducer(
+    {
+      key: "electionType",
+      storage,
+    },
+    electionTypeReducer,
+  ),
+  electionRole: persistReducer(
+    {
+      key: "electionRole",
+      storage,
+    },
+    electionRoleReducer,
   ),
   activationCodeTransaction: persistReducer(
     {

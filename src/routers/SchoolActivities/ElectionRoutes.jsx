@@ -1,8 +1,5 @@
 import React, { Suspense } from "react";
 import { Route } from "react-router-dom";
-const ElectionOverview = React.lazy(() =>
-  import("../../pages/Elections/ElectionOverview")
-);
 const ElectionApplication = React.lazy(() =>
   import("../../pages/Elections/ElectionApplication")
 );
@@ -20,16 +17,6 @@ const ElectionHistory = React.lazy(() => import("../../pages/Elections/ElectionH
 import SchoolElectionLayout from "../../layouts/SchoolElectionLayout";
 const SchoolElectionRoutes = [
   <Route key={"schoolElection"} element={<SchoolElectionLayout />}>
-    <Route
-      key="schoolElection"
-      path="/election-overview"
-      element={
-        <Suspense>
-          <ElectionOverview />
-        </Suspense>
-      }
-    />
-    ,
     <Route
       key="electionHistory"
       path="/election-history"

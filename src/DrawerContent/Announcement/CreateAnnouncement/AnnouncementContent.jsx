@@ -180,6 +180,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                 dispatch(
                   setAnnouncementContent({
                     field: "category",
+                    actionType: "createAnnouncement",
                     value: category?.data?.find((g) => g.id === value.id) || {},
                   }),
                 );
@@ -192,6 +193,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                 dispatch(
                   setAnnouncementContent({
                     field: "category",
+                    actionType: "createAnnouncement",
                     error: msg,
                   }),
                 )
@@ -229,6 +231,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                   onClick={() => {
                     dispatch(
                       setAnnouncementContent({
+                        actionType: "createAnnouncement",
                         value: labels?.data?.find((l) => l.name === "info"),
                         field: "label",
                       }),
@@ -282,6 +285,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                           (l) => l.name === "important",
                         ),
                         field: "label",
+                        actionType: "createAnnouncement",
                       }),
                     );
                   }}
@@ -331,6 +335,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                       setAnnouncementContent({
                         value: labels?.data?.find((l) => l.name === "urgent"),
                         field: "label",
+                        actionType: "createAnnouncement",
                       }),
                     );
                   }}
@@ -390,6 +395,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                 dispatch(
                   setAnnouncementContent({
                     field: "tags",
+                    actionType: "createAnnouncement",
                     value: tags?.data.filter((t) =>
                       selectedIds.some((id) => id.id == t.id),
                     ),
@@ -400,6 +406,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                 dispatch(
                   setAnnouncementContent({
                     field: "tags",
+                    actionType: "createAnnouncement",
                     error: error,
                   }),
                 )
@@ -419,6 +426,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                   setAnnouncementContent({
                     field: "title",
                     value: value,
+                    actionType: "createAnnouncement",
                   }),
                 )
               }
@@ -427,6 +435,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                   setAnnouncementContent({
                     field: "title",
                     isValid: value,
+                    actionType: "createAnnouncement",
                   }),
                 )
               }
@@ -453,6 +462,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                   setAnnouncementContent({
                     field: "content",
                     value: value,
+                    actionType: "createAnnouncement",
                   }),
                 )
               }
@@ -461,6 +471,7 @@ function AnnouncementContent({ handleClose, currentStep, nextStep, fullStep }) {
                   setAnnouncementContent({
                     field: "content",
                     isValid: value,
+                    actionType: "createAnnouncement",
                   }),
                 )
               }

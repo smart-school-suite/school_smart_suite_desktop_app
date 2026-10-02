@@ -1,15 +1,14 @@
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useDeleteAnnouncement } from "../../hooks/announcement/useDeleteAnnouncement.jsx";
 import { CircleX } from "lucide-react";
-function DeleteAnnouncement({ handleClose, rowData }) {
-  const { id: announcementId } = rowData;
-  const { mutate: deleteAnnouncement, isPending } = useDeleteAnnouncement(
-    handleClose,
-    "active",
-    announcementId,
-  );
-  const handleDeleteAnnouncement = () => {
-    deleteAnnouncement(announcementId);
+import { useDispatch } from "react-redux";
+import { resetUpdateContent } from "../../Slices/announcement/announcementSlice";
+function UpdateContentDiscardWarning({ handleClose, rowData }) {
+  const { handleCloseDrawer } = rowData;
+  const dispatch = useDispatch();
+  const handleContinue = () => {
+    handleClose();
+  };
+  const handleDiscard = () => {
+    (handleClose(), handleCloseDrawer(), dispatch(resetUpdateContent()));
   };
   return (
     <>
@@ -21,7 +20,7 @@ function DeleteAnnouncement({ handleClose, rowData }) {
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
               <span className="font-size-sm fw-semibold">
-                Delete Announcement
+                Dont Loose Progress
               </span>
             </div>
             <button
@@ -50,17 +49,17 @@ function DeleteAnnouncement({ handleClose, rowData }) {
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button
               className="border-none px-3 py-2 border rounded-3 font-size-sm w-50 bg-none"
-              onClick={handleClose}
+              onClick={() => handleDiscard()}
             >
-              Cancel
+              Discard
             </button>
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeleteAnnouncement();
+                handleContinue();
               }}
             >
-              {isPending ? <SingleSpinner /> : <>Yes, Delete</>}
+              Yes, Continue
             </button>
           </div>
         </div>
@@ -68,4 +67,4 @@ function DeleteAnnouncement({ handleClose, rowData }) {
     </>
   );
 }
-export default DeleteAnnouncement;
+export default UpdateContentDiscardWarning;

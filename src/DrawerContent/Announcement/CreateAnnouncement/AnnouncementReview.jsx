@@ -13,6 +13,7 @@ import { ModalButton } from "../../../components/DataTableComponents/ActionCompo
 import { useCreateAnnouncement } from "../../../hooks/announcement/useCreateAnnouncement";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import AnnouncementDiscardWarning from "../../../ModalContent/Announcement/AnnouncementDiscardWarning";
+import { Megaphone } from "lucide-react";
 function AnnouncementReview({
   handleClose,
   currentStep,
@@ -37,7 +38,7 @@ function AnnouncementReview({
       published_at: moduleState?.publication?.schedule?.value,
       category_id: content?.category?.value?.id,
       label_id: content?.label?.value?.id,
-      tag_ids: content?.tags?.value?.map((t) => t.id),
+      tag_ids: content?.tags?.value?.map((t) => ({ tag_id: t.id })),
       admin_audience: [
         {
           individual_ids:
@@ -157,9 +158,9 @@ function AnnouncementReview({
                       display: "grid",
                       placeItems: "center",
                     }}
-                    className="primary-background-100 rounded-2"
+                    className="primary-background-50 rounded-2 text-primary-600"
                   >
-                    <span>IC</span>
+                    <Megaphone size={20} />
                   </div>
                   <div className="d-flex flex-column">
                     <span className="fw-light text-iron-500">
@@ -174,9 +175,12 @@ function AnnouncementReview({
                 <div
                   className="d-flex flex-row align-items-center px-2 rounded-pill "
                   style={{
-                    background: JSON.parse(content?.label?.value?.color)
-                      .color_light,
-                    color: JSON.parse(content?.label?.value?.color).color_thick,
+                    background: content?.label?.value?.color
+                      ? JSON?.parse(content?.label?.value?.color).color_light
+                      : "",
+                    color: content?.label?.value?.color
+                      ? JSON?.parse(content?.label?.value?.color).color_thick
+                      : "",
                   }}
                 >
                   <span>{content?.label?.value?.name}</span>
@@ -227,7 +231,7 @@ function AnnouncementReview({
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 className={`card shadow-sm p-2 d-flex flex-column gap-4 w-50  transition-all hover-bg-primary-50 hover-text-primary-500
-                   ${moduleState?.publication?.type === "published" ? "bg-primary-100 text-primary-500 border-primary-500" : "border border-none "}
+                   ${moduleState?.publication?.type === "published" ? "bg-primary-50 text-primary-500 border-primary-500" : "border border-none "}
                   `}
                 style={{
                   borderRadius: "0.75rem",
@@ -259,7 +263,7 @@ function AnnouncementReview({
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 className={`card  shadow-sm p-2 d-flex flex-column gap-4 w-50  transition-all hover-bg-primary-50 hover-text-primary-500
-                   ${moduleState?.publication?.type === "scheduled" ? "bg-primary-100 text-primary-500 border-primary-500 border-1" : "border border-none"}
+                   ${moduleState?.publication?.type === "scheduled" ? "bg-primary-50 text-primary-500 border-primary-500 border-1" : "border border-none"}
                   `}
                 style={{
                   borderRadius: "0.75rem",
