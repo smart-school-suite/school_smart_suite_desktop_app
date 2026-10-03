@@ -9,12 +9,17 @@ const STATUS_CONFIG = {
   },
   draft: {
     className: "primary-background-50 color-primary",
-    icon: "icon-park-solid:check-one",
+    icon: "carbon:license-maintenance-draft",
     label: "Draft",
+  },
+  scheduled: {
+    className: "primary-background-50 color-primary",
+    icon: "ant-design:schedule-outlined",
+    label: "Scheduled",
   },
   expired: {
     className: "bg-iron-100 text-iron-800",
-    icon: "icon-park-solid:check-one",
+    icon: "pajamas:expire",
     label: "Expired",
   },
   default: {

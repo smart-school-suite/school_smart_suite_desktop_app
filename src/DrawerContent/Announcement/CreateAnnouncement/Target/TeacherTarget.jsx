@@ -6,6 +6,10 @@ import { useGetTeacherAudienceByDepartment } from "../../../../hooks/Audience/us
 import { useGetTeacherAudienceByLevel } from "../../../../hooks/Audience/useGetTeacherAudienceByLevel";
 import { useGetTeacherAudienceBySpecialty } from "../../../../hooks/Audience/useGetTeacherAudienceBySpecialty";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  setTargetIndividuals,
+  setTargetSelection,
+} from "../../../../Slices/announcement/announcementSlice";
 function TeacherTarget() {
   const dispatch = useDispatch();
   const moduleState = useSelector(
@@ -24,18 +28,22 @@ function TeacherTarget() {
     <>
       <div className="d-flex flex-column gap-3 font-size-sm px-2 pt-2">
         <MultiSelectAccordion
-          intialState ={true}
+          intialState={true}
           label="Department"
           placeholder="Select Teacher By Department"
           searchPlaceholder="Search Department"
           items={dTeacherAudience?.data || []}
-          selectedIds={moduleState.criteria.departmentIds}
+          selectedIds={moduleState.criteria.departmentIds.map(
+            (items) => items.id,
+          )}
           onChange={(selectedIds) => {
             dispatch(
               setTargetSelection({
                 targetGroup: "teachers",
                 targetKey: "departmentIds",
-                selectedIds,
+                selectedIds: dTeacherAudience?.data.filter((t) =>
+                  selectedIds.some((id) => id == t.id),
+                ),
               }),
             );
           }}
@@ -67,13 +75,17 @@ function TeacherTarget() {
           placeholder="Select Teacher By Level"
           searchPlaceholder="Search Level"
           items={lTeacherAudience?.data || []}
-          selectedIds={moduleState.criteria.levelIds}
+          selectedIds={moduleState.criteria.levelIds.map(
+            (items) => items.id,
+          )}
           onChange={(selectedIds) => {
             dispatch(
               setTargetSelection({
                 targetGroup: "teachers",
                 targetKey: "levelIds",
-                selectedIds,
+                selectedIds: lTeacherAudience?.data.filter((t) =>
+                  selectedIds.some((id) => id == t.id),
+                ),
               }),
             );
           }}
@@ -102,20 +114,23 @@ function TeacherTarget() {
                 </span>
               </div>
             </div>
-          )}
+          )
+        }
         />
         <MultiSelectAccordion
           label="Specialty"
           placeholder="Select Teacher By Specialty"
           searchPlaceholder="Search Specialty"
           items={sTeacherAudience?.data || []}
-          selectedIds={moduleState.criteria.specialtyIds}
+          selectedIds={moduleState.criteria.specialtyIds.map((items) => items.id)}
           onChange={(selectedIds) => {
             dispatch(
               setTargetSelection({
                 targetGroup: "teachers",
                 targetKey: "specialtyIds",
-                selectedIds,
+                selectedIds: sTeacherAudience?.data.filter((t) =>
+                  selectedIds.some((id) => id == t.id),
+                ),
               }),
             );
           }}
@@ -146,7 +161,8 @@ function TeacherTarget() {
                 </span>
               </div>
             </div>
-          )}
+          
+        )}
         />
         <MultiSelectAccordion
           label="Teacher"

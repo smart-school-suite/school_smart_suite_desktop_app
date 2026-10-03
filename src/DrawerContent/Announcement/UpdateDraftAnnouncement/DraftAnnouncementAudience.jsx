@@ -15,13 +15,13 @@ import {
   setAudienceType,
   setTargetingContext,
   resetTargetingContext,
-} from "../../../Slices/announcement/announcementSlice";
-import { ANNOUNCEMENT_TARGET_MAP } from "../../../utils/maps/announcement/announcementTargetMap";
+} from "../../../Slices/announcement/draftAnnouncementSlice";
+import { ANNOUNCEMENT_DRAFT_TARGET_MAP } from "../../../utils/maps/announcement/announcementDraftTargetMap";
 import { useGetAudienceSummary } from "../../../hooks/Audience/useGetAudienceSummary";
 import { NotFoundError } from "../../../components/errors/Error";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
-import AnnouncementDiscardWarning from "../../../ModalContent/Announcement/AnnouncementDiscardWarning";
+import UpdateDraftDiscardWarning from "../../../ModalContent/Announcement/UpdateDraftDiscardWarning";
 const tokens = {
   blue: "#0EA7E9",
   blueTint: "#EAF7FD",
@@ -71,16 +71,21 @@ function AudienceCard({
   const dispatch = useDispatch();
 
   const handleConfigureClick = (e) => {
+    console.log(".............dipatching targeting context 1");
     e.stopPropagation();
     if (e.type === "keydown") e.preventDefault();
     if (!selected) {
       onSelect();
     }
+    console.log(".............dipatching targeting context 2");
+
     dispatch(
       setTargetingContext({
         targetContext: cardKey,
       }),
     );
+    console.log(cardKey);
+
   };
 
   return (
@@ -248,19 +253,20 @@ function AudienceCard({
   );
 }
 
-function AnnouncementAudience({
+function DraftAnnouncementAudience({
   handleClose,
   currentStep,
   nextStep,
   previousStep,
   fullStep,
+  drawerData,
 }) {
   const dispatch = useDispatch();
   const moduleState = useSelector(
-    (state) => state.announcement.createAnnouncement.audience,
+    (state) => state.draftAnnouncement.updateDraftAnnouncement.draft.audience,
   );
   const isDirty = useSelector(
-    (state) => state.announcement.createAnnouncement.isDirty,
+    (state) => state.draftAnnouncement.updateDraftAnnouncement.isDirty,
   );
   const [error, setError] = useState(null);
   const {
@@ -269,7 +275,7 @@ function AnnouncementAudience({
     error: summaryError,
   } = useGetAudienceSummary();
   const TargetComponent =
-    ANNOUNCEMENT_TARGET_MAP[moduleState?.targetingContext]?.component;
+    ANNOUNCEMENT_DRAFT_TARGET_MAP[moduleState?.targetingContext]?.component;
 
   const audiences = [
     {
@@ -375,14 +381,17 @@ function AnnouncementAudience({
       {isTargetingActive ? (
         <>
           <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
-            <span className="fw-medium">Create Announcement</span>
+            <span className="fw-medium">Update Draft Announcement</span>
             {isDirty ? (
               <ModalButton
                 action={{
-                  modalContent: AnnouncementDiscardWarning,
+                  modalContent: UpdateDraftDiscardWarning,
                 }}
                 size={"md"}
-                rowData={{ handleCloseDrawer: handleClose }}
+                rowData={{
+                  handleCloseDrawer: handleClose,
+                  announcement: drawerData,
+                }}
                 closeOnOutsideClick={false}
                 closeOnEscape={false}
               >
@@ -454,15 +463,15 @@ function AnnouncementAudience({
         </>
       ) : (
         <>
-          <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
-            <span className="fw-medium">Create Announcement</span>
+         <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
+            <span className="fw-medium">Update Draft Announcement</span>
             {isDirty ? (
               <ModalButton
                 action={{
-                  modalContent: AnnouncementDiscardWarning,
+                  modalContent: UpdateDraftDiscardWarning,
                 }}
                 size={"md"}
-                rowData={{ handleCloseDrawer: handleClose }}
+                rowData={{ handleCloseDrawer: handleClose, announcement:drawerData }}
                 closeOnOutsideClick={false}
                 closeOnEscape={false}
               >
@@ -635,5 +644,4 @@ function AnnouncementAudience({
     </>
   );
 }
-
-export default AnnouncementAudience;
+export default DraftAnnouncementAudience;

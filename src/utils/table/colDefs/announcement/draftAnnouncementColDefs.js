@@ -8,7 +8,7 @@ import TextComponent from "../../../../components/DataTableComponents/TextCompon
 import AnnouncementStatusRenderer from "../../../../components/Badges/AnnouncementStatusRenderer";
 import AnnouncementLabelRenderer from "../../../../components/Badges/AnnouncementLabelRenderer";
 import { AnnouncementAuthorRenderer } from "../../../../components/Badges/AnnouncementAuthorRenderer";
-export function announcementColDefs({ ActionComponent }) {
+export function draftAnnouncementColDefs({ ActionComponent }) {
   return [
     textColumn({
       field: "author",
@@ -53,7 +53,7 @@ export function announcementColDefs({ ActionComponent }) {
     dateColumn({
       field: "published_at",
       headerName: "Published At",
-      hide: false,
+      hide: true,
     }),
     dateColumn({
       field: "expires_at",

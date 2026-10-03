@@ -10,28 +10,29 @@ import {
   setPublicationValue,
 } from "../../../Slices/announcement/announcementSlice";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
-import { useCreateAnnouncement } from "../../../hooks/announcement/useCreateAnnouncement";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
-import AnnouncementDiscardWarning from "../../../ModalContent/Announcement/AnnouncementDiscardWarning";
 import { Megaphone } from "lucide-react";
-function AnnouncementReview({
+import UpdateDraftDiscardWarning from "../../../ModalContent/Announcement/UpdateDraftDiscardWarning";
+import { useUpdateAnnouncementDraft } from "../../../hooks/announcement/useUpdateAnnouncementDraft";
+function DraftAnnouncementReview({
   handleClose,
   currentStep,
   previousStep,
   fullStep,
   handleNavigate,
+  drawerData,
 }) {
-  const { mutate: createAnnouncement, isPending } =
-    useCreateAnnouncement(handleClose);
+  const { mutate: update, isPending } = useUpdateAnnouncementDraft(handleClose);
   const dispatch = useDispatch();
   const moduleState = useSelector(
-    (state) => state.announcement.createAnnouncement,
+    (state) => state.draftAnnouncement.updateDraftAnnouncement.draft,
   );
   const publishedAtRef = useRef();
   const content = moduleState?.content;
 
-  const handleCreate = () => {
+  const handleUpdate = () => {
     const payload = {
+      announcement_id: drawerData?.id,
       title: content?.title?.value,
       content: content?.content?.value,
       status: moduleState?.publication?.type,
@@ -72,7 +73,7 @@ function AnnouncementReview({
       ],
     };
 
-    createAnnouncement(payload);
+    update({ updateData: payload });
   };
   return (
     <>
@@ -81,10 +82,13 @@ function AnnouncementReview({
         {moduleState.isDirty ? (
           <ModalButton
             action={{
-              modalContent: AnnouncementDiscardWarning,
+              modalContent: UpdateDraftDiscardWarning,
             }}
             size={"md"}
-            rowData={{ handleCloseDrawer: handleClose }}
+            rowData={{
+              handleCloseDrawer: handleClose,
+              announcement: drawerData,
+            }}
             closeOnOutsideClick={false}
             closeOnEscape={false}
           >
@@ -341,17 +345,19 @@ function AnnouncementReview({
                 <span>Back To Audience</span>
               </div>
             </button>
-            <button
-              className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2 cursor-pointer"
-              onClick={() => handleCreate()}
-              disabled={isPending}
-            >
-              {isPending ? <SingleSpinner /> : <>Create Announcement</>}
-            </button>
+            {moduleState.isDirty && (
+              <button
+                className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2 cursor-pointer"
+                onClick={() => handleUpdate()}
+                disabled={isPending}
+              >
+                {isPending ? <SingleSpinner /> : <>Update Draft</>}
+              </button>
+            )}
           </div>
         </div>
       </div>
     </>
   );
 }
-export default AnnouncementReview;
+export default DraftAnnouncementReview;

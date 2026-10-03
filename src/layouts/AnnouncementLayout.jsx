@@ -7,29 +7,35 @@ import { Megaphone } from "lucide-react";
 import JobPopOver from "../components/Popover/JobPopover";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import CreateAnnouncementWizzard from "../DrawerContent/Announcement/CreateAnnouncement/CreateAnnouncementWizzard";
+import { useGetAnnouncementSummary } from "../hooks/announcement/useGetAnnouncementSummary";
 function AnnouncementLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const { data: summary, isLoading } = useGetAnnouncementSummary();
   const navigate = useNavigate();
   const sideBarData = [
     {
       title: "All",
       icon: "f7:speaker-2-fill",
       path: "/all-announcement",
+      count: isLoading ? 0 : (summary?.data?.draft + summary?.data?.active + summary?.data?.expired + summary?.data?.scheduled)
     },
     {
       title: "Scheduled",
       icon: "material-symbols:schedule-send-rounded",
       path: "/scheduled-announcement",
+      count: isLoading ? 0 : summary?.data?.scheduled
     },
     {
       title: "Active",
       icon: "ion:archive",
       path: "/active-announcement",
+      count: isLoading? 0 : summary?.data?.active
     },
     {
       title: "Draft",
       icon: "pajamas:expire",
       path: "/draft-announcement",
+      count: isLoading ? 0 : summary?.data?.draft
     },
     {
       title: "Category",
@@ -37,7 +43,6 @@ function AnnouncementLayout() {
       path: "/announcement-category",
     },
   ];
-
   return (
     <>
       <main className="main-container gap-2">
@@ -117,6 +122,7 @@ function AnnouncementLayout() {
                   >
                     <div className="d-flex flex-row align-items-center gap-1">
                       <span>{tab.title}</span>
+                      <span>{tab?.count}</span>
                     </div>
                   </button>
                   <div

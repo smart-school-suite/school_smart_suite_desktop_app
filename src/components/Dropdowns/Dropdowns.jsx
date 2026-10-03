@@ -648,7 +648,7 @@ export const MultiSelectDropdown = forwardRef(
                             onClick={() => handleSelect(item)}
                             onMouseEnter={() => setHighlightedIndex(index)}
                           >
-                            <div className="d-flex flex-column">
+                            <div className="d-flex flex-column text-capitalize">
                               <span className="my-0 font-size-sm">
                                 {item[displayKey[0]]}
                               </span>

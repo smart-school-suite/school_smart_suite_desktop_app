@@ -9,12 +9,12 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   setTargetIndividuals,
   setTargetSelection,
-} from "../../../../Slices/announcement/announcementSlice";
+} from "../../../../Slices/announcement/draftAnnouncementSlice";
 function StudentTarget() {
   const dispatch = useDispatch();
   const moduleState = useSelector(
     (state) =>
-      state.announcement.createAnnouncement.audience.targeting.students,
+      state.draftAnnouncement.updateDraftAnnouncement.draft.audience.targeting.students,
   );
   const { data: studentAudience, isLoading: isStudentAudienceLoading } =
     useGetStudentAudience();

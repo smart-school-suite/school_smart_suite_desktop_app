@@ -37,8 +37,6 @@ import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
 import SearchInput from "../../components/input/search";
 import { Drawer } from "../../components/drawer/Drawer";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { Plus } from "lucide-react";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { useSelector, useDispatch } from "react-redux";
 import Table from "../../components/Tables/Tables";

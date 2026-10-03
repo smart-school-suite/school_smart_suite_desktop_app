@@ -1,33 +1,35 @@
 import { CircleX } from "lucide-react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useSelector, useDispatch } from "react-redux";
-import { resetCreateAnnouncement } from "../../Slices/announcement/announcementSlice";
-import { useCreateAnnouncement } from "../../hooks/announcement/useCreateAnnouncement";
-function AnnouncementDiscardWarning({ handleClose, rowData }) {
-  const { handleCloseDrawer } = rowData;
-  const { mutate: createAnnouncement, isPending } = useCreateAnnouncement(
+import { resetUpdateDraftState } from "../../Slices/announcement/draftAnnouncementSlice";
+import { useUpdateAnnouncementDraft } from "../../hooks/announcement/useUpdateAnnouncementDraft";
+function UpdateDraftDiscardWarning({ handleClose, rowData }) {
+  const { handleCloseDrawer, announcement } = rowData;
+  const { mutate: updateDraft, isPending } = useUpdateAnnouncementDraft(
+    announcement?.id,
     handleClose,
     handleCloseDrawer,
   );
   const dispatch = useDispatch();
   const moduleState = useSelector(
-    (state) => state.announcement.createAnnouncement,
+    (state) => state.draftAnnouncement.updateDraftAnnouncement.draft,
   );
 
   const handleDiscard = () => {
     handleCloseDrawer();
-    dispatch(resetCreateAnnouncement());
+    dispatch(resetUpdateDraftState());
   };
 
   const handleSaveToDraft = () => {
     const payload = {
+      announcement_id: announcement?.id,
       title: moduleState?.content?.title?.value || null,
       content: moduleState?.content?.content?.value || null,
       status: "draft",
       published_at: moduleState?.publication?.schedule?.value || null,
       category_id: moduleState?.content?.category?.value?.id || null,
       label_id: moduleState?.content?.label?.value?.id || null,
-      tag_ids: moduleState?.content?.tags?.value?.map((t) => ({ tag_id: t.id })) || [],
+      tag_ids: content?.tags?.value?.map((t) => ({ tag_id: t.id })) || [],
       school_wide: moduleState?.audience?.types.includes("school_wide"),
       admin_audience: [
         {
@@ -61,7 +63,7 @@ function AnnouncementDiscardWarning({ handleClose, rowData }) {
       ],
     };
 
-    createAnnouncement(payload);
+    updateDraft({ updateData: payload });
   };
   return (
     <>
@@ -117,7 +119,7 @@ function AnnouncementDiscardWarning({ handleClose, rowData }) {
               }}
               disabled={isPending}
             >
-              {isPending ? <SingleSpinner /> : "Yes, Save to draft"}
+              {isPending ? <SingleSpinner /> : "Yes, Update Draft"}
             </button>
           </div>
         </div>
@@ -125,5 +127,4 @@ function AnnouncementDiscardWarning({ handleClose, rowData }) {
     </>
   );
 }
-
-export default AnnouncementDiscardWarning;
+export default UpdateDraftDiscardWarning;

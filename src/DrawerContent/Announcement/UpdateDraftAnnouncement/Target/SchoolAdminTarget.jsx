@@ -1,12 +1,12 @@
 import { MultiSelectAccordion } from "../../../../components/Accordion/MultiSelectAccordion";
 import { useGetSchoolAdminAudience } from "../../../../hooks/Audience/useGetSchoolAdminAudience";
 import { useDispatch, useSelector } from "react-redux";
-import { setTargetIndividuals } from "../../../../Slices/announcement/announcementSlice";
+import { setTargetIndividuals } from "../../../../Slices/announcement/draftAnnouncementSlice";
 function SchoolAdminTarget() {
   const dispatch = useDispatch();
   const moduleState = useSelector(
     (state) =>
-      state.announcement.createAnnouncement.audience.targeting.administrators,
+      state.draftAnnouncement.updateDraftAnnouncement.draft.audience.targeting.administrators,
   );
   const { data: schoolAdminAudience, isLoading: isSchoolAdminAudienceLoading } =
     useGetSchoolAdminAudience();

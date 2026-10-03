@@ -82,6 +82,7 @@ export const Drawer = ({
   placement = "right",
   className = "",
   closeOnOutsideClick = true,
+  closeOnEscape = true,
   showHeader = true,
 }) => {
   const { refs, context } = useFloating({
@@ -91,7 +92,7 @@ export const Drawer = ({
 
   const dismiss = useDismiss(context, {
     outsidePress: closeOnOutsideClick,
-    escapeKey: true,
+    escapeKey: closeOnEscape,
   });
   const role = useRole(context, { role: "dialog" });
   const { getFloatingProps } = useInteractions([dismiss, role]);
