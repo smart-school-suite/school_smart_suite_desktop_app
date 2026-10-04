@@ -29,7 +29,7 @@ function UpdateDraftDiscardWarning({ handleClose, rowData }) {
       published_at: moduleState?.publication?.schedule?.value || null,
       category_id: moduleState?.content?.category?.value?.id || null,
       label_id: moduleState?.content?.label?.value?.id || null,
-      tag_ids: content?.tags?.value?.map((t) => ({ tag_id: t.id })) || [],
+      tag_ids: moduleState?.content?.tags?.value?.map((t) => ({ tag_id: t.id })) || [],
       school_wide: moduleState?.audience?.types.includes("school_wide"),
       admin_audience: [
         {

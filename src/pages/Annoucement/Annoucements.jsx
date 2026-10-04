@@ -45,6 +45,7 @@ import EngagementStats from "../../DrawerContent/Announcement/EngagementStats";
 import AnnouncementDetails from "../../DrawerContent/Announcement/AnnouncementDetails";
 import DeleteAnnouncement from "../../ModalContent/Announcement/DeleteAnnouncement";
 import UpdateAnnouncementContent from "../../DrawerContent/Announcement/UpdateAnnouncementContent";
+import DraftAnnouncementWizzard from "../../DrawerContent/Announcement/UpdateDraftAnnouncement/DraftAnnouncementWizzard";
 function Annoucements() {
   const {
     data: announcement,
@@ -530,25 +531,48 @@ export function ActionComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(UpdateAnnouncementContent, {
-              title: "Update Announcement Content",
-              closeOnOutsideClick: true,
-              showHeader: false,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update Content</span>
-              <UpdateIcon />
+        {rowData?.status == "draft" && (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowDrawer(DraftAnnouncementWizzard, {
+                title: "Update Announcement Content",
+                closeOnOutsideClick: false,
+                showHeader: false,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Continue Editing</span>
+                <UpdateIcon />
+              </div>
             </div>
-          </div>
-        </DropDownMenuItem>
+          </DropDownMenuItem>
+        )}
+        {rowData?.status != "draft" && (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowDrawer(UpdateAnnouncementContent, {
+                title: "Update Announcement Content",
+                closeOnOutsideClick: true,
+                showHeader: false,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Update Content</span>
+                <UpdateIcon />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        )}
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -568,44 +592,48 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(AnnouncementDetails, {
-              title: "Announcement Details",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Announcement Details</span>
-              <DetailsIcon />
+        {rowData.status != "draft" && (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowDrawer(AnnouncementDetails, {
+                title: "Announcement Details",
+                closeOnOutsideClick: true,
+                showHeader: true,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Announcement Details</span>
+                <DetailsIcon />
+              </div>
             </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(EngagementStats, {
-              title: "Announcement Engagement Statistics",
-              closeOnOutsideClick: false,
-              showHeader: false,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Engagement Stats</span>
-              <Icon icon="hugeicons:touch-interaction-01" size={20}/>
+          </DropDownMenuItem>
+        )}
+        {rowData?.status != "draft" && (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowDrawer(EngagementStats, {
+                title: "Announcement Engagement Statistics",
+                closeOnOutsideClick: false,
+                showHeader: true,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Engagement Stats</span>
+                <Icon icon="hugeicons:touch-interaction-01" size={20} />
+              </div>
             </div>
-          </div>
-        </DropDownMenuItem>
+          </DropDownMenuItem>
+        )}
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}
@@ -647,7 +675,7 @@ function ActionButtons({ selectedAnnouncements, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-      //  action={{ modalContent: BulkDeleteExam }}
+        //  action={{ modalContent: BulkDeleteExam }}
         bulkData={selectedAnnouncements}
         resetAll={resetAll}
       >
@@ -661,7 +689,11 @@ function ActionButtons({ selectedAnnouncements, resetAll }) {
   );
 }
 
-function DropdownItems({ selectedAnnouncements, resetAll, onModalStateChange }) {
+function DropdownItems({
+  selectedAnnouncements,
+  resetAll,
+  onModalStateChange,
+}) {
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const modalRef = useRef(null);
