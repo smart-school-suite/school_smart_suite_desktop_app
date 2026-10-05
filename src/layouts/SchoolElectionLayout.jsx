@@ -1,12 +1,12 @@
-import SchoolElectionSideBar from "../components/SideBars/SchoolElection";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ElectionIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
-import CreateElection from "../ModalContent/Elections/CreateElection";
 import { Icon } from "@iconify/react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import JobPopOver from "../components/Popover/JobPopover";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import CreateElection from "../DrawerContent/Election/CreateElection";
 function SchoolElectionLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
@@ -89,15 +89,15 @@ function SchoolElectionLayout() {
                   />
                 </span>
               </ModalButton>
-              <ModalButton
-                action={{ modalContent: CreateElection }}
-                size={"lg"}
-                classname={
-                  "border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
-                }
+              <DrawerTrigger
+                title="Create Election"
+                placement="right"
+                drawerChildren={CreateElection}
               >
-                <span>Create Election</span>
-              </ModalButton>
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Create Election</span>
+                </button>
+              </DrawerTrigger>
             </div>
           </div>
           <hr />

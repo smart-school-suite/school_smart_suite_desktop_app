@@ -76,6 +76,9 @@ import electionReducer from "../Slices/election/electionSlice";
 import draftAnnouncementReducer from "../Slices/announcement/draftAnnouncementSlice";
 import activeAnnouncementReducer from "../Slices/announcement/activeAnnouncementSlice";
 import scheduledAnnouncementReducer from "../Slices/announcement/scheduledAnnouncementSlice";
+import electionApplicationReducer from "../Slices/election/electionApplicationSlice";
+import eventCategoryReducer from "../Slices/schoolEvent/eventCategorySlice";
+import schoolEventReducer from "../Slices/schoolEvent/schoolEventSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -130,6 +133,27 @@ const rootReducer = combineReducers({
   student: persistReducer({ key: "student", storage }, studentReducer),
   parent: persistReducer({ key: "parent", storage }, parentReducer),
   resitExam: persistReducer({ key: "resitExam", storage }, resitExamReducer),
+  electionApplication: persistReducer(
+    {
+      key: "electionApplication",
+      storage,
+    },
+    electionApplicationReducer,
+  ),
+  schoolEvent: persistReducer(
+    {
+      key: "schoolEvent",
+      storage,
+    },
+    schoolEventReducer,
+  ),
+  eventCategory: persistReducer(
+    {
+      key: "eventCategory",
+      storage,
+    },
+    eventCategoryReducer,
+  ),
   activeAnnouncement: persistReducer(
     { key: "activeAnnouncement", storage },
     activeAnnouncementReducer,

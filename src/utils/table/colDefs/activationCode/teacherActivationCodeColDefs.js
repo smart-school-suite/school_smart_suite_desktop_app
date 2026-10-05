@@ -4,14 +4,14 @@ import {
   dateColumn
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
+import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
 import TeacherAction from "../../../../components/Badges/ActivationCode/TeacherAction";
 export function teacherActivationCodeColDefs() {
   return [
     textColumn({
       field: "profile_picture",
       headerName: "Avatar",
-      cellRenderer: TeacherAvatarComponent,
+      cellRenderer:  AvatarRenderer,
     }),
     textColumn({
       field: "teacher_name",

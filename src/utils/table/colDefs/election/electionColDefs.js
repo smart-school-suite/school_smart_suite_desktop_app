@@ -1,6 +1,9 @@
 import { textColumn, actionsColumn, dateColumn } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
+import ElectionVoteStatusRenderer from "../../../../components/Renderer/Election/ElectionVoteStatusRenderer";
+import ElectionApplicationStatusRenderer from "../../../../components/Renderer/Election/ElectionApplicationStatusRenderer";
+import ElectionStatusRenderer from "../../../../components/Renderer/Election/ElectionStatusRenderer";
 
 export function electionColDef({ ActionComponent }) {
   return [
@@ -17,22 +20,10 @@ export function electionColDef({ ActionComponent }) {
       cellRenderer: TextComponent,
     }),
     textColumn({
-      field: "application_status",
-      headerName: "Application Status",
-      hide: false,
-      cellRenderer: TextComponent,
-    }),
-    textColumn({
-      field: "voting_status",
-      headerName: "Vote Status",
-      hide: false,
-      cellRenderer: TextComponent,
-    }),
-    textColumn({
       field: "status",
       headerName: "Election Status",
       hide: false,
-      cellRenderer: TextComponent,
+      cellRenderer: ElectionStatusRenderer,
     }),
     dateColumn({
       field: "application_start",
@@ -44,6 +35,12 @@ export function electionColDef({ ActionComponent }) {
       headerName: "Appication End",
       hide: false,
     }),
+    textColumn({
+      field: "application_status",
+      headerName: "Application Status",
+      hide: false,
+      cellRenderer: ElectionApplicationStatusRenderer,
+    }),
     dateColumn({
       field: "vote_start",
       headerName: "Vote Start",
@@ -53,6 +50,12 @@ export function electionColDef({ ActionComponent }) {
       field: "vote_end",
       headerName: "Vote End",
       hide: false,
+    }),
+    textColumn({
+      field: "voting_status",
+      headerName: "Vote Status",
+      hide: false,
+      cellRenderer: ElectionVoteStatusRenderer,
     }),
     dateColumn({
       field: "created_at",

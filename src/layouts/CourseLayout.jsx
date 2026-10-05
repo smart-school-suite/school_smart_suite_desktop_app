@@ -7,25 +7,6 @@ import JobPopOver from "../components/Popover/JobPopover";
 import { motion, AnimatePresence } from "framer-motion";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  removeRepeatableGroup,
-  addRepeatableGroup,
-  setRepeatableGroupValue,
-  setStandardGroupValue,
-} from "../Slices/administrator/courseSlice";
-import { COURSE_COLUMNS } from "../utils/course/courseColumns";
-import { courseImportColDefs } from "../utils/table/colDefs/course/courseImportColDefs";
-import ImportWizzard from "../ModalContent/Import/ImportWizzard";
-import { courseInstanceMap } from "../utils/maps/course/courseInstanceMap";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import CreateCourse from "../DrawerContent/Course/CreateCourse";
 import { COURSE_IMPORT_TRIGGER_MAP } from "../utils/maps/course/courseImportTriggerMap";
