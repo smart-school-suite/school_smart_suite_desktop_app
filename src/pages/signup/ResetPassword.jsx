@@ -10,6 +10,7 @@ import { allFieldsValid } from "../../utils/functions";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { TextInput } from "../../components/FormComponents/InputComponents";
+import AuthHero from "../../components/Hero/AuthHero";
 function ResetPassword() {
   const { handlePasswordReset, loading } = useAuth();
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ function ResetPassword() {
           description={
             "Some Fields Seem To Be Invalid Please Go Through the form and try again"
           }
-        />
+        />,
       );
       return;
     }
@@ -50,7 +51,7 @@ function ResetPassword() {
           description={
             "Some Fields Seem To Be Invalid Please Go Through the form and try again"
           }
-        />
+        />,
       );
       return;
     }
@@ -59,50 +60,66 @@ function ResetPassword() {
   };
   return (
     <>
-      <div
-        className={`${
-          darkMode ? "dark-bg dark-mode-text" : "white-bg"
-        } w-100 height-100 pt-3 d-flex flex-column pb-5`}
-      >
-        <div className="login-container px-4">
-          <div className=" login-container-logo-box ps-5">
-            <img src="./logo/blue_logo.png" className="login-logo" />
-          </div>
-
-          <div className="login-container-form" style={{ height: "70%" }}>
-            <div className="login-container-form-box-two">
-              <img src="./svg/password-forgotten.svg" alt="" />
+      <div className="d-flex flex-row align-items-center">
+        <AuthHero />
+        <div
+          style={{ height: "100dvh", width: "40%" }}
+          className="p-3 font-size-sm d-flex flex-column justify-content-between bg-white"
+        >
+          <div>
+            <div className="d-flex flex-row align-items-center justify-content-between">
+              <div className="app-logo">
+                <img
+                  src="/logo/logo-transparent.png"
+                  alt="Logo"
+                  style={{
+                    width: "2rem",
+                    height: "2rem",
+                    objectFit: "contain",
+                    borderRadius: "0.4rem",
+                  }}
+                />
+              </div>
+              <span style={{ cursor: "pointer" }}>Need help ?</span>
             </div>
-            <div className="login-container-form-box-one">
-              <h1 className="fw-bold my-4 text-white">Reset Password</h1>
-                <div className="mb-4">
-                  <label htmlFor="email" className="font-size-sm text-white">
-                    E-mail
-                  </label>
-                  <TextInput
-                    type="email"
-                    placeholder={"e.g example@mail.com"}
-                    value={formData?.email}
-                    onChange={(value) =>
-                      handleStateChange("email", value, setFormData)
-                    }
-                    onValidationChange={(value) =>
-                      handleStateChange("email", value, setIsValid)
-                    }
-                    validationSchema={emailValidationSchema({
-                      required: true,
-                    })}
-                    ref={emailRef}
-                  />
-                </div>
-                <button
-                  className="w-100 mt-2 border-none rounded-3 p-2 primary-background text-white font-size-sm"
-                  type="submit"
-                  disabled={loading.passwordReset}
-                  onClick={() => handleSubmit()}
-                >
-                  {loading.passwordReset ? <SingleSpinner /> : "Send Code"}
-                </button>
+            <div>
+              <div
+                className="d-flex flex-column gap-1"
+                style={{ marginBottom: "2rem", marginTop:"8rem" }}
+              >
+                <span className="fw-semibold font-size-md">Reset Password</span>
+                <span className="fw-light text-iron-400">
+                  Sign in to your smart school suite workspace
+                </span>
+              </div>
+              <div className="mb-4">
+                <label htmlFor="email" className="font-size-sm">
+                  E-mail
+                </label>
+                <TextInput
+                  type="email"
+                  placeholder={"e.g example@mail.com"}
+                  value={formData?.email}
+                  onChange={(value) =>
+                    handleStateChange("email", value, setFormData)
+                  }
+                  onValidationChange={(value) =>
+                    handleStateChange("email", value, setIsValid)
+                  }
+                  validationSchema={emailValidationSchema({
+                    required: true,
+                  })}
+                  ref={emailRef}
+                />
+              </div>
+              <button
+                className="w-100 mt-2 border-none fw-light text-white  rounded-3 p-2 primary-background font-size-sm"
+                type="submit"
+                disabled={loading.passwordReset}
+                onClick={() => handleSubmit()}
+              >
+                {loading.passwordReset ? <SingleSpinner /> : "Send Code"}
+              </button>
               <div
                 className="pointer-cursor font-size-sm mt-4"
                 onClick={() => {
@@ -111,12 +128,12 @@ function ResetPassword() {
               ></div>
             </div>
           </div>
-          <div className=" login-container-logo-box mt-auto ps-5">
-            <div
-              className="d-flex flex-row gap-2 align-items-center pointer-cursor color-primary"
+          <div className=" mt-auto">
+            <button
               onClick={() => {
                 navigate("/hero");
               }}
+              className="d-flex flex-row gap-2 align-items-center pointer-cursor border-none bg-none border-bottom text-iron-500 fw-normal"
             >
               <span>
                 <Icon
@@ -125,8 +142,8 @@ function ResetPassword() {
                   height="18"
                 />
               </span>
-              <span className="font-size-sm fw-semibold">Back To Login</span>
-            </div>
+              <span>Back To Login</span>
+            </button>
           </div>
         </div>
       </div>

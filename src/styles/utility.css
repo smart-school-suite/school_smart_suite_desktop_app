@@ -80,7 +80,7 @@
 
   /* Topography */
   --primary-font-family: "Poppins", sans-serif;
-  --font-size-base: 1rem; /* 16px */
+  --font-size-base: 0.5rem; /* 16px */
   --scale-ratio: 1.25;
   --font-size-xs: calc(
     var(--font-size-base) / var(--scale-ratio) * 0.75

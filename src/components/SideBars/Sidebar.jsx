@@ -53,10 +53,12 @@ import {
   Settings,
   LogOut,
   UnfoldHorizontal,
+  PanelLeftClose,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
 import useScreenSize from "../../hooks/ui/useScreenSize";
+import HorizontalDashedLine from "../DashedLine/HorizonetalDashedLine";
 function Sidebar() {
   const { is } = useScreenSize();
   return <>{is.sm || is.md ? <SideBarSm /> : <SideBarLg />}</>;
@@ -125,23 +127,28 @@ function SideBarLg() {
         <aside
           className={`${
             darkMode
-              ? "dark-bg d-flex flex-column ps-2  pt-2 pb-2"
-              : "white-bg  d-flex flex-column ps-2  pt-2 pb-2"
+              ? "dark-bg d-flex flex-column "
+              : "white-bg  d-flex flex-column"
           }`}
         >
-          <div className="logo-area mb-3">
+          <div className="logo-area mb-1 ps-2  pt-2 pb-2">
             <div className="d-flex justify-content-between flex-row gap-2 px-2  align-items-center">
-              <div className="app-logo">
-                <img
-                  src="./logo/logo-transparent.png"
-                  alt=""
-                  className="app-logo"
-                />
+              <div className="d-flex flex-row align-items-center gap-2">
+                <div className="app-logo">
+                  <img
+                    src="./logo/logo-transparent.png"
+                    alt=""
+                    className="app-logo"
+                  />
+                </div>
               </div>
-              <UnfoldHorizontal size={16} />
+              <button className="border-none bg-none mb-1">
+                <PanelLeftClose size={16} className="text-iron-500" />
+              </button>
             </div>
           </div>
-          <div className="nav-container mt-1">
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.3} />
+          <div className="nav-container mt-1 ps-2  pt-2 pb-2">
             <div className="nav-items">
               <div className="d-flex flex-column gap-1 px-2">
                 {/*Dashoard*/}
@@ -722,9 +729,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize: "0.75rem" }}>
-                              Resit Result
-                            </p>
+                            <p style={{ fontSize: "0.75rem" }}>Resit Result</p>
                           </NavLink>
                         </div>
                       </div>
@@ -1130,32 +1135,35 @@ function SideBarLg() {
               </div>
             </div>
           </div>
-          <div className="mt-auto d-flex gap-2 flex-column justify-content-center align-items-center w-100 px-2">
-            <div
-              className={`${
-                IsPathInRoutes(settingRoutes)
-                  ? `${darkMode ? "sidebar-active-dark" : "sidebar-active"}`
-                  : ""
-              } sidebar-item  text-dark`}
-              onClick={() => {
-                navigate("/settings/general-settings");
-              }}
-            >
-              <span style={{ fontSize: "0.75rem" }}>Setting</span>
-              <span style={{ lineHeight: 0 }}>
-                <Settings size={16} />
-              </span>
-            </div>
-            <div className="w-100">
-              <ModalButton
-                action={{ modalContent: Logout }}
-                classname="sidebar-item transparent-bg  text-dark"
+          <div className="mt-auto ">
+            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.3} />
+            <div className="d-flex flex-column gap-2 justify-content-center align-items-center w-100 d-flex gap-1 pt-2 pb-3 flex-column  px-2">
+              <div
+                className={`${
+                  IsPathInRoutes(settingRoutes)
+                    ? `${darkMode ? "sidebar-active-dark" : "sidebar-active"}`
+                    : ""
+                } sidebar-item  text-dark`}
+                onClick={() => {
+                  navigate("/settings/general-settings");
+                }}
               >
-                <span style={{ fontSize: "0.75rem" }}>Logout</span>
+                <span style={{ fontSize: "0.75rem" }}>Setting</span>
                 <span style={{ lineHeight: 0 }}>
-                  <LogOut size={16} />
+                  <Settings size={16} />
                 </span>
-              </ModalButton>
+              </div>
+              <div className="w-100">
+                <ModalButton
+                  action={{ modalContent: Logout }}
+                  classname="sidebar-item transparent-bg  text-dark"
+                >
+                  <span style={{ fontSize: "0.75rem" }}>Logout</span>
+                  <span style={{ lineHeight: 0 }}>
+                    <LogOut size={16} />
+                  </span>
+                </ModalButton>
+              </div>
             </div>
           </div>
         </aside>

@@ -15,6 +15,7 @@ import {
   passwordSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import AuthHero from "../../components/Hero/AuthHero";
 function RegisterSchoolAdmin() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const nameRef = useRef();
@@ -63,32 +64,32 @@ function RegisterSchoolAdmin() {
     };
   };
 
-  const handleCreateSchoolAdmin = async () => {d
-      const prevalidation = await handlePrevalidation();
-      if (!allFieldsValid(prevalidation)) {
-        toast.custom(
-          <ToastWarning
-            title={"Invalid Fields"}
-            description={
-              "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-            }
-          />
-        );
-        return;
-      }
-      if (!allFieldsValid(isValid)) {
-        toast.custom(
-          <ToastWarning
-            title={"Invalid Fields"}
-            description={
-              "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-            }
-          />
-        );
-        return;
-      }
-      await handleCreateSuperAdmin(navigate, adminCredentials, apiKey);
-      dispatch(resetSchoolAuthData());
+  const handleCreateSchoolAdmin = async () => {
+    const prevalidation = await handlePrevalidation();
+    if (!allFieldsValid(prevalidation)) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={
+            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
+          }
+        />,
+      );
+      return;
+    }
+    if (!allFieldsValid(isValid)) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={
+            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
+          }
+        />,
+      );
+      return;
+    }
+    await handleCreateSuperAdmin(navigate, adminCredentials, apiKey);
+    dispatch(resetSchoolAuthData());
   };
 
   const name = adminCredentials.name ? adminCredentials.name.trim() : "";
@@ -104,269 +105,273 @@ function RegisterSchoolAdmin() {
     : "";
   const totalSteps = 5;
   const fieldsFilled = [name, firstName, lastName, email, password].filter(
-    Boolean
+    Boolean,
   ).length;
 
   const progressPercentage = (fieldsFilled / totalSteps) * 100;
   const isStepComplete = fieldsFilled === totalSteps;
   return (
     <>
-      <div
-        className={`${
-          darkMode ? "dark-bg dark-mode-text" : "white-bg"
-        } w-100 height-100 pt-3 d-flex flex-column pb-5`}
-      >
-        <div className="d-flex flex-row align-items-center w-100 justify-content-between px-3">
-          <div className="signup-app-logo">
-            <img src="/logo/blue_logo.png" alt="" className="signup-app-logo" />
+      <div className="d-flex flex-row align-items-center">
+        <AuthHero />
+        <div
+          style={{ height: "100dvh", width: "40%" }}
+          className="p-3 font-size-sm d-flex flex-column justify-content-between bg-white"
+        >
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <div className="app-logo">
+              <img
+                src="/logo/logo-transparent.png"
+                alt="Logo"
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  objectFit: "contain",
+                  borderRadius: "0.4rem",
+                }}
+              />
+            </div>
+            <span style={{ cursor: "pointer" }}>Need help ?</span>
           </div>
-          <div className="d-flex flex-row gap-4">
-            <button
-              className={`${
-                darkMode
-                  ? "dark-bg-light dark-mode-text border-none"
-                  : "bg-white border"
-              }  rounded-pill px-3 py-2  font-size-sm`}
-            >
-              Save And Exit
-            </button>
-            <button
-              className={`${
-                darkMode
-                  ? "dark-bg-light dark-mode-text border-none"
-                  : "bg-white border"
-              }  rounded-pill px-3 py-2  font-size-sm`}
-            >
-              Questions?
-            </button>
-          </div>
-        </div>
-        <div className="d-flex flex-row align-items-center justify-content-around w-100 mt-2">
-          <div className="w-50 rounded-4 px-2  py-4">
-            <form>
-              <h4 className="text-center">Create School Admin</h4>
-              <div className="d-flex flex-row align-items-center w-100 gap-2">
+          <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1">
+            <div className="w-100">
+              <div
+                className="d-flex flex-column gap-1"
+                style={{ marginBottom: "2rem" }}
+              >
+                <span className="fw-semibold font-size-md">
+                  Create School Admin
+                </span>
+                <span className="fw-light text-iron-400">
+                  Sign in to your smart school suite workspace
+                </span>
+              </div>
+                <div className="d-flex flex-row align-items-center w-100 gap-2">
+                  <div className="my-1 w-100">
+                    <label htmlFor="fullnames" className="font-size-sm">
+                      Full Names
+                    </label>
+                    <TextInput
+                      placeholder={"Enter Full Names"}
+                      value={adminCredentials.name}
+                      onChange={(value) =>
+                        handleStateChange("name", value, setAdminCredentails)
+                      }
+                      onValidationChange={(value) =>
+                        handleStateChange("name", value, setIsValid)
+                      }
+                      validationSchema={nameSchema({
+                        min: 3,
+                        max: 150,
+                        required: true,
+                        messages: {
+                          min: "Full Names Must Be Atleast 3 Characters Long",
+                          max: "Full Names Must Not Exceed 150 Characters",
+                          required: "Full Names Required",
+                        },
+                      })}
+                      ref={nameRef}
+                    />
+                  </div>
+                </div>
+                <div className="w-100 d-flex flex-row align-items-center gap-2">
+                  <div className="w-50">
+                    <label htmlFor="firstname" className="font-size-sm">
+                      First Name
+                    </label>
+                    <TextInput
+                      placeholder={"Enter First Name"}
+                      value={adminCredentials.first_name}
+                      onChange={(value) =>
+                        handleStateChange(
+                          "first_name",
+                          value,
+                          setAdminCredentails,
+                        )
+                      }
+                      onValidationChange={(value) =>
+                        handleStateChange("first_name", value, setIsValid)
+                      }
+                      validationSchema={nameSchema({
+                        min: 3,
+                        max: 50,
+                        required: true,
+                        messages: {
+                          min: "First Name Must Be Atleast 3 Characters Long",
+                          max: "First Name Must Not Exceed 50 Characters",
+                          required: "First Name Required",
+                        },
+                      })}
+                      ref={firstNameRef}
+                    />
+                  </div>
+                  <div className="w-50">
+                    <label htmlFor="lastname" className="font-size-sm">
+                      Last Name
+                    </label>
+                    <TextInput
+                      placeholder={"Enter Last Name"}
+                      value={adminCredentials.last_name}
+                      onChange={(value) =>
+                        handleStateChange(
+                          "last_name",
+                          value,
+                          setAdminCredentails,
+                        )
+                      }
+                      onValidationChange={(value) =>
+                        handleStateChange("last_name", value, setIsValid)
+                      }
+                      validationSchema={nameSchema({
+                        min: 3,
+                        max: 50,
+                        required: true,
+                        messages: {
+                          min: "Last Name Must Be Atleast 3 Characters Long",
+                          max: "Last Name Must Not Exceed 50 Characters",
+                          required: "Last Name Required",
+                        },
+                      })}
+                      ref={lastNameRef}
+                    />
+                  </div>
+                </div>
                 <div className="my-1 w-100">
-                  <label htmlFor="fullnames" className="font-size-sm">
-                    Full Names
+                  <label htmlFor="email" className="font-size-sm">
+                    E-mail
                   </label>
                   <TextInput
-                    placeholder={"Enter Full Names"}
-                    value={adminCredentials.name}
+                    type="email"
+                    placeholder={"e.g example@mail.com"}
+                    value={adminCredentials.email}
                     onChange={(value) =>
-                      handleStateChange("name", value, setAdminCredentails)
+                      handleStateChange("email", value, setAdminCredentails)
                     }
                     onValidationChange={(value) =>
-                      handleStateChange("name", value, setIsValid)
+                      handleStateChange("email", value, setIsValid)
                     }
-                    validationSchema={nameSchema({
-                      min: 3,
-                      max: 150,
+                    validationSchema={emailValidationSchema({
                       required: true,
-                      messages: {
-                        min: "Full Names Must Be Atleast 3 Characters Long",
-                        max: "Full Names Must Not Exceed 150 Characters",
-                        required: "Full Names Required",
-                      },
                     })}
-                    ref={nameRef}
+                    ref={emailRef}
                   />
                 </div>
-              </div>
-              <div className="w-100 d-flex flex-row align-items-center gap-2">
-                <div className="w-50">
-                  <label htmlFor="firstname" className="font-size-sm">
-                    First Name
+                <div className="my-1 w-100">
+                  <label htmlFor="password" className="font-size-sm">
+                    Password
                   </label>
                   <TextInput
-                    placeholder={"Enter First Name"}
-                    value={adminCredentials.first_name}
+                    type={"password"}
+                    placeholder={"Enter Password"}
+                    value={adminCredentials.password}
                     onChange={(value) =>
-                      handleStateChange(
-                        "first_name",
-                        value,
-                        setAdminCredentails
-                      )
+                      handleStateChange("password", value, setAdminCredentails)
                     }
                     onValidationChange={(value) =>
-                      handleStateChange("first_name", value, setIsValid)
+                      handleStateChange("password", value, setIsValid)
                     }
-                    validationSchema={nameSchema({
-                      min: 3,
-                      max: 50,
-                      required: true,
-                      messages: {
-                        min: "First Name Must Be Atleast 3 Characters Long",
-                        max: "First Name Must Not Exceed 50 Characters",
-                        required: "First Name Required",
-                      },
+                    validationSchema={passwordSchema({
+                      min: 8,
                     })}
-                    ref={firstNameRef}
+                    ref={passwordRef}
                   />
                 </div>
-                <div className="w-50">
-                  <label htmlFor="lastname" className="font-size-sm">
-                    Last Name
-                  </label>
-                  <TextInput
-                    placeholder={"Enter Last Name"}
-                    value={adminCredentials.last_name}
-                    onChange={(value) =>
-                      handleStateChange("last_name", value, setAdminCredentails)
-                    }
-                    onValidationChange={(value) =>
-                      handleStateChange("last_name", value, setIsValid)
-                    }
-                    validationSchema={nameSchema({
-                      min: 3,
-                      max: 50,
-                      required: true,
-                      messages: {
-                        min: "Last Name Must Be Atleast 3 Characters Long",
-                        max: "Last Name Must Not Exceed 50 Characters",
-                        required: "Last Name Required",
-                      },
-                    })}
-                    ref={lastNameRef}
-                  />
+                <div className="d-flex flex-row align-items-center w-100 justify-content-end mt-3 font-size-sm">
+                  <div className="w-100">
+                    <button
+                      className="border-none p-2 rounded-2 font-size-sm px-4 primary-background text-white w-100"
+                      onClick={() => {
+                        console.log("Running Create School Admins")
+                        handleCreateSchoolAdmin();
+                      }}
+                      disabled={!isStepComplete || loading.admin}
+                    >
+                      {loading.admin ? (
+                        <>
+                          <SingleSpinner />
+                        </>
+                      ) : (
+                        <>Create School Admin</>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div className="my-1 w-100">
-                <label htmlFor="email" className="font-size-sm">
-                  E-mail
-                </label>
-                <TextInput
-                  type="email"
-                  placeholder={"e.g example@mail.com"}
-                  value={adminCredentials.email}
-                  onChange={(value) =>
-                    handleStateChange("email", value, setAdminCredentails)
-                  }
-                  onValidationChange={(value) =>
-                    handleStateChange("email", value, setIsValid)
-                  }
-                  validationSchema={emailValidationSchema({
-                    required: true,
-                  })}
-                  ref={emailRef}
-                />
-              </div>
-              <div className="my-1 w-100">
-                <label htmlFor="password" className="font-size-sm">
-                  Password
-                </label>
-                <TextInput
-                  type={"password"}
-                  placeholder={"Enter Password"}
-                  value={adminCredentials.password}
-                  onChange={(value) =>
-                    handleStateChange("password", value, setAdminCredentails)
-                  }
-                  onValidationChange={(value) =>
-                    handleStateChange("password", value, setIsValid)
-                  }
-                  validationSchema={passwordSchema({
-                    min: 8,
-                  })}
-                  ref={passwordRef}
-                />
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
-        <div className="mt-auto w-100 px-3">
-          <div className="mb-2">
-            <div className="d-flex flex-row align-items-center gap-2">
-              <AnimatePresence mode="wait">
-                {isStepComplete ? (
-                  <div className="d-flex flex-row align-items-center gap-2">
+          <div className="mt-auto w-100 px-3">
+            <div className="mb-2">
+              <div className="d-flex flex-row align-items-center gap-2">
+                <AnimatePresence mode="wait">
+                  {isStepComplete ? (
+                    <div className="d-flex flex-row align-items-center gap-2">
+                      <motion.span
+                        key="completed"
+                        className="font-size-sm"
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        Step 4 of 4 Completed
+                      </motion.span>
+                      <Icon
+                        icon="icon-park-solid:check-one"
+                        className={`font-size-md ${
+                          isStepComplete ? "green-color" : ""
+                        }`}
+                      />
+                    </div>
+                  ) : (
                     <motion.span
-                      key="completed"
+                      key="incomplete"
                       className="font-size-sm"
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 5 }}
                       transition={{ duration: 0.3 }}
                     >
-                      Step 4 of 4 Completed
+                      Step 4 of 4 Incomplete
                     </motion.span>
-                    <Icon
-                      icon="icon-park-solid:check-one"
-                      className={`font-size-md ${
-                        isStepComplete ? "green-color" : ""
-                      }`}
-                    />
-                  </div>
-                ) : (
-                  <motion.span
-                    key="incomplete"
-                    className="font-size-sm"
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 5 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    Step 4 of 4 Incomplete
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          <div className="d-flex flex-row justify-content-center w-100">
-            <div className="w-100 d-flex flex-row align-items-center gap-2">
-              <div className="auth-progress-bar">
-                <motion.div
-                  className="primary-background h-100"
-                  initial={{ width: 0 }}
-                  animate={{ width: `100%` }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                />
-              </div>
-              <div className="auth-progress-bar">
-                <motion.div
-                  className="primary-background h-100"
-                  initial={{ width: 0 }}
-                  animate={{ width: `100%` }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                />
-              </div>
-              <div className="auth-progress-bar">
-                <motion.div
-                  className="primary-background h-100"
-                  initial={{ width: 0 }}
-                  animate={{ width: `100%` }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                />
-              </div>
-              <div className="auth-progress-bar">
-                <motion.div
-                  className="primary-background h-100"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressPercentage}%` }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                />
+                  )}
+                </AnimatePresence>
               </div>
             </div>
-          </div>
 
-          <div className="d-flex flex-row align-items-center w-100 justify-content-end mt-3 font-size-sm">
-            <div>
-              <button
-                className="border-none p-2 rounded-2 font-size-sm px-4 primary-background text-white"
-                onClick={() => {
-                  handleCreateSchoolAdmin();
-                }}
-                disabled={!isStepComplete || loading.admin}
-              >
-                {loading.admin ? (
-                  <>
-                    <SingleSpinner />
-                  </>
-                ) : (
-                  <>Finish</>
-                )}
-              </button>
+            <div className="d-flex flex-row justify-content-center w-100">
+              <div className="w-100 d-flex flex-row align-items-center gap-2">
+                <div className="auth-progress-bar">
+                  <motion.div
+                    className="primary-background h-100"
+                    initial={{ width: 0 }}
+                    animate={{ width: `100%` }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  />
+                </div>
+                <div className="auth-progress-bar">
+                  <motion.div
+                    className="primary-background h-100"
+                    initial={{ width: 0 }}
+                    animate={{ width: `100%` }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  />
+                </div>
+                <div className="auth-progress-bar">
+                  <motion.div
+                    className="primary-background h-100"
+                    initial={{ width: 0 }}
+                    animate={{ width: `100%` }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  />
+                </div>
+                <div className="auth-progress-bar">
+                  <motion.div
+                    className="primary-background h-100"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercentage}%` }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

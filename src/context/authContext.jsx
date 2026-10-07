@@ -151,7 +151,7 @@ export const AuthProvider = ({ children }) => {
     [handleAdminLogout]
   );
 
-  const handleSubscription = async (navigate, subscriptionCredentials) => {
+  const handleSubscription = async (navigate, subscriptionCredentials, handleCloseDrawer, handleCloseModal) => {
     setLoading((prevalue) => ({ ...prevalue, subscribe: true }));
     setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
     try {
@@ -163,6 +163,12 @@ export const AuthProvider = ({ children }) => {
       setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
       dispatch(handleSetSubcription({ apiKey: response.data.data.api_key }));
       navigate("/register/school-admin");
+      if(handleCloseDrawer){
+         handleCloseDrawer();
+      }
+      if(handleCloseModal){
+         handleCloseModal();
+      }
     } catch (e) {
       setCreateError((prevState) => ({
         ...prevState,
