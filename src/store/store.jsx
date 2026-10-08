@@ -385,13 +385,6 @@ const rootReducer = combineReducers({
     },
     resitFeeTransactionReducer,
   ),
-  tuitionFeeSchedule: persistReducer(
-    {
-      key: "tuitionFeeSchedule",
-      storage,
-    },
-    tuitionFeeReducer,
-  ),
   schoolAdmin: schoolAdminReducer,
   hall: hallReducer,
   course: courseReducer,

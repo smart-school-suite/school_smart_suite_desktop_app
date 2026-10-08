@@ -3,13 +3,17 @@ import { purchaseActivationCode } from "../../services/activationCode";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
-export const usePurchaseActivationCode = (handleClose) => {
+export const usePurchaseActivationCode = (handleClose, handleCloseDrawer) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: purchaseActivationCode,
     onSuccess: () => {
       if (handleClose) {
         handleClose();
+      }
+
+      if(handleCloseDrawer){
+         handleCloseDrawer();
       }
       queryClient.invalidateQueries({ queryKey: ["activationCodes"] });
       toast.custom(

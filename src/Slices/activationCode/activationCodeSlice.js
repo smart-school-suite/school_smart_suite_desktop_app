@@ -19,6 +19,9 @@ const initialState = {
     headers: [],
     preview: [],
   },
+  purchaseCode: {
+     
+  }
 };
 
 const activationCodeSlice = createSlice({
@@ -86,10 +89,19 @@ const activationCodeSlice = createSlice({
     updateSelectedColumns: (state, action) => {
       state.columns.selectedColumns = action.payload;
     },
+    setPurchaseCodeContext: (state, action) => {
+       const { context } = action.payload;
+       state.purchaseCode = context;
+    },
+    resetPurchaseCodeState: (state, action) => {
+       state.purchaseCode = initialState.purchaseCode;
+    }
   },
 });
 
 export const {
+  setPurchaseCodeContext,
+  resetPurchaseCodeState,
   addCustomFilter,
   removeCustomFilter,
   setCustomFilter,

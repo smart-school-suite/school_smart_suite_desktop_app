@@ -258,7 +258,7 @@ function RegisterSchool() {
                     className="color-primary"
                   />
                 </span>
-                <Link className="p-0 m-0 color-primary" to="/">
+                <Link className="p-0 m-0 color-primary" to="/login-school-admin">
                   Back
                 </Link>
               </div>
@@ -272,6 +272,7 @@ function RegisterSchool() {
                 </button>
               </div>
             </div>
+          
           </div>
         </div>
       </div>

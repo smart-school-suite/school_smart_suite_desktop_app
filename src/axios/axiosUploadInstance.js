@@ -1,8 +1,8 @@
 import { store } from "../store/store";
 import axios from 'axios';
-
+import { API_BASE_URL} from "@/constants";
 const axiosUploadInstance = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/v1/',
+  baseURL: API_BASE_URL.DEV,
   withCredentials: true,
   withXSRFToken: true,
   timeout: 0, // no timeout — large uploads can take a while; set a value (e.g. 60000) if you want a cap

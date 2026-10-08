@@ -6,6 +6,9 @@ import JobPopOver from "../components/Popover/JobPopover";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import PurchaseActivationCode from "../ModalContent/ActivationCode/PurchaseActivationCode";
+import ActivationCodePurchaseWizzard from "../DrawerContent/ActivationCode/ActivationCodePurchaseWizzard";
 function ActivationCodeLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
@@ -80,6 +83,17 @@ function ActivationCodeLayout() {
                   />
                 </span>
               </ModalButton>
+              <DrawerTrigger
+                title="Purchase Activation Code"
+                placement="right"
+                drawerChildren={ActivationCodePurchaseWizzard}
+                closeOnOutsideClick={false}
+                closeOnEscape={false}
+              >
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Purchase Activation Code</span>
+                </button>
+              </DrawerTrigger>
             </div>
           </div>
           <hr />

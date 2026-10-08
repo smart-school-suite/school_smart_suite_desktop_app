@@ -1,5 +1,6 @@
 import axios from "axios";
+import { API_BASE_URL} from "@/constants";
 export default axios.create({
-    baseURL:"http://127.0.0.1:8000/api/v1/",
+    baseURL:API_BASE_URL.DEV,
     withCredentials:true
 })

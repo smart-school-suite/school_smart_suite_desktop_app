@@ -128,7 +128,7 @@ export const AuthProvider = ({ children }) => {
        },
       });
       dispatch(handleSetUserLogout());
-      navigate("/hero");
+      navigate("/login-school-admin");
     } catch (error) {
       console.error("Logout failed", error);
     }
