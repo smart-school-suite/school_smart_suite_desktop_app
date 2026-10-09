@@ -1,15 +1,16 @@
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import Table from "../../components/Tables/Tables";
 import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import { ParentsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import DeleteParent from "../../ModalContent/Parent/DeleteParent";
-import ParentDetails from "../../ModalContent/Parent/ParentDetails";
-import UpdateParent from "../../ModalContent/Parent/UpdateParent";
-import CreateParent from "../../ModalContent/Parent/CreateParent";
 import { useGetAllParents } from "../../hooks/parent/useGetParents";
-import React, { useState, useCallback, useRef, useEffect, useMemo, Fragment } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+  Fragment,
+} from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
@@ -18,25 +19,10 @@ import { useSelector } from "react-redux";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Icon } from "@iconify/react";
-import BulkDeleteParent from "../../ModalContent/Parent/BulkDeleteParent";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
@@ -59,6 +45,14 @@ import JobPopOver from "../../components/Popover/JobPopover";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { PARENT_COLUMNS } from "../../utils/parent/parentColumn";
 import { parentColDefs } from "../../utils/table/colDefs/parent/parentColDefs";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import SearchInput from "../../components/input/search";
+import GuardianDetails from "../../DrawerContent/Guardian/GuardianDetails";
+import UpdateGuardian from "../../DrawerContent/Guardian/UpdateGuardian";
+import CreateGuardian from "../../DrawerContent/Guardian/CreateGuardian";
+import DeleteGuardian from "../../ModalContent/Parent/DeleteGuardian";
+import BulkDeleteGuardian from "../../ModalContent/Parent/BulkDeleteGuardian";
 function Parents() {
   const { data: guardians, isLoading, error } = useGetAllParents();
   const tableRef = useRef();
@@ -95,8 +89,7 @@ function Parents() {
     return guardians?.data ?? [];
   }, [guardians]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
@@ -150,7 +143,7 @@ function Parents() {
   }, [isLoading, memoizedRowData]);
   return (
     <>
-     <main className="main-container gap-2">
+      <main className="main-container gap-2">
         {isLoading ? (
           <RectangleSkeleton width="100%" height="100%" speed={0.5} />
         ) : error ? (
@@ -176,7 +169,7 @@ function Parents() {
                     <ParentIcon />
                   </div>
                   <span className="fw-semibold font-size-sm">
-                    Manage Parent
+                    Manage Guardian
                   </span>
                 </div>
                 <div className="d-flex flex-row align-item-center gap-2">
@@ -197,30 +190,31 @@ function Parents() {
                       importModuleColDefs: parentColDefs,
                     }}
                     classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+                      "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                     }
+                    style={{ padding: "0.6rem" }}
                   >
                     <span style={{ lineHeight: "16px" }}>Import</span>
                     <ArrowDown size={16} />
                   </ModalButton>
                   <ModalButton
                     classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+                      "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                     }
+                    style={{ padding: "0.6rem" }}
                   >
                     <span style={{ lineHeight: "16px" }}>Actions</span>
                     <ChevronDown size={16} />
                   </ModalButton>
-                  <ModalButton
-                    action={{ modalContent: CreateParent }}
-                    size={"lg"}
-                    classname={
-                      "border-none border rounded-3 font-size-sm  primary-background px-2 text-white text-capitalize"
-                    }
-                    style={{ padding: "0.4rem" }}
+                  <DrawerTrigger
+                    title="Create Guardian"
+                    placement="right"
+                    drawerChildren={CreateGuardian}
                   >
-                    <span>Create Parent</span>
-                  </ModalButton>
+                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                      <span>Create Guardian</span>
+                    </button>
+                  </DrawerTrigger>
                 </div>
               </div>
               <div className="d-flex flex-column gap-2">
@@ -292,13 +286,14 @@ function Parents() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Parent......................."
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Guardian......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}
@@ -521,25 +516,65 @@ export default Parents;
 export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
 
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
   };
 
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
+  };
   return (
     <>
       <ActionButtonDropdown
@@ -552,11 +587,17 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateParent, "lg")}
+          onClick={() =>
+            handleShowDrawer(UpdateGuardian, {
+              title: "Update Guardian",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update Parent</span>
+              <span>Update Guardian</span>
               <UpdateIcon />
             </div>
           </div>
@@ -565,11 +606,17 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ParentDetails)}
+          onClick={() =>
+            handleShowDrawer(GuardianDetails, {
+              title: "Guardian Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Parent Details</span>
+              <span>Guardian Details</span>
               <DetailsIcon />
             </div>
           </div>
@@ -578,23 +625,52 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteParent)}
+          onClick={() =>
+            handleShowModal(DeleteGuardian, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Parent</span>
+              <span>Delete Guardian</span>
               <DeleteIcon />
             </div>
           </div>
         </DropDownMenuItem>
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );
@@ -604,7 +680,7 @@ function ActionButtons({ selectedParents, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        action={{ modalContent: BulkDeleteParent }}
+        action={{ modalContent: BulkDeleteGuardian }}
         bulkData={selectedParents}
         resetAll={resetAll}
       >
@@ -646,7 +722,7 @@ function DropdownItems({ selectedParents, resetAll, onModalStateChange }) {
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteParent, "md")}
+        onClick={() => handleShowModal(BulkDeleteGuardian, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>

@@ -7,6 +7,7 @@ import {
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
 import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
+import RegistrationFeeTableBadge from "../../../../components/Badges/RegistrationFeeTableBadge";
 
 export function additionalFeeColDefs({ ActionComponent }) {
   return [
@@ -22,8 +23,8 @@ export function additionalFeeColDefs({ ActionComponent }) {
       cellRenderer: TextComponent,
     }),
     textColumn({
-      field: "specialty",
-      headerName: "specialty",
+      field: "specialty_name",
+      headerName: "Specialty",
       hide: false,
       cellRenderer: TextComponent,
     }),
@@ -50,6 +51,18 @@ export function additionalFeeColDefs({ ActionComponent }) {
       headerName: "Due Date",
       format: "dd/MM/yyyy",
       hide: false,
+    }),
+     textColumn({
+      field: "reason",
+      headerName: "Reason",
+      hide: true,
+      cellRenderer: TextComponent,
+    }),
+    textColumn({
+      field: "status",
+      headerName: "Payment Status",
+      hide: false,
+      cellRenderer: RegistrationFeeTableBadge,
     }),
     dateColumn({
       field: "created_at",

@@ -10,7 +10,7 @@ export const useLogout = () => {
          mutationFn:logout,
          onSuccess:() => {
             dispatch(handleSetUserLogout());
-            navigate("/hero");
+            navigate("/login-school-admin");
          }
     })
 }

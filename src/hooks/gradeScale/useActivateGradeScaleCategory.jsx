@@ -8,7 +8,8 @@ export const useActivateGradeScaleCategory = (handleClose, categoryId) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (categoryId) => activateGradeScaleCategory(categoryId),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const categoryId = data?.data?.id ?? data?.id;
       toast.custom(
         <ToastSuccess
           title={"Activated"}

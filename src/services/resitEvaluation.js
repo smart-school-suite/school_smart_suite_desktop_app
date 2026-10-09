@@ -1,22 +1,31 @@
 import axiosInstance from "../axios/authAxios";
 
-
-export const submitResitScores = async (candidateId, data) => {
-  const response = await axiosInstance.post(`student-resit/candidates/${candidateId}/resit-results`, data);
+export const submitResitScores = async (data) => {
+  const response = await axiosInstance.post(
+    "resit-evaluation/resit-scores/create",
+    data,
+  );
   return response.data;
 };
 
-export const updateResitScores = async (candidateId, data) => {
-  const response = await axiosInstance.put(`student-resit/student-resits/${candidateId}`, data);
+export const updateResitScores = async (data) => {
+  const response = await axiosInstance.put(
+    "resit-evaluation/resit-scores/update",
+    data,
+  );
   return response.data;
 };
 
-export const getResitEvaluationHelperData = async (resitExamId, candidateId) => {
-  const response = await axiosInstance.get(`student-resit/resit-exams/${resitExamId}/candidates/${candidateId}/evaluation-data`);
+export const getResitEvaluationHelperData = async (candidateId) => {
+  const response = await axiosInstance.get(
+    `resit-evaluation-helper/candidate/${candidateId}/exam-helper`,
+  );
   return response.data;
 };
 
-export const getResitScoresByCandidate = async (candidateId) => {
-   const response = await axiosInstance.get(`student-resit/resit-scores/candidate/${candidateId}`);
-   return response.data;
-}
+export const getResitUpdateEvaluationHelperData = async (candidateId) => {
+  const response = await axiosInstance.get(
+    `resit-evaluation-helper/candidate/${candidateId}/update-helper`,
+  );
+  return response.data;
+};

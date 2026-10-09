@@ -8,7 +8,8 @@ export const useDeactivateGradeScaleCategory = (handleClose, categoryId) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (categoryId) => deactivateGradeScaleCategory(categoryId),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const categoryId = data?.data?.id ?? data?.id;
       toast.custom(
         <ToastSuccess
           title={"Deactivation Succesfull"}
@@ -20,7 +21,7 @@ export const useDeactivateGradeScaleCategory = (handleClose, categoryId) => {
       }
       queryClient.invalidateQueries({ queryKey: ["grade-scale-categories"] });
       queryClient.invalidateQueries({
-        queryKey: ["grade-scale-category-details", hallId],
+        queryKey: ["grade-scale-category-details", categoryId],
       });
     },
     onError: (error) => {

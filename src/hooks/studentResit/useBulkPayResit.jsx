@@ -8,8 +8,8 @@ export const useBulkPayStudentResit = (handleClose, resetAll) => {
   return useMutation({
     mutationFn: bulkPayStudentResit,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["studentResits"] });
-      queryClient.invalidateQueries({ queryKey: ["resitTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["student-resits"] });
+      queryClient.invalidateQueries({ queryKey: ["resit-transactions"] });
 
       if (handleClose) {
         handleClose();

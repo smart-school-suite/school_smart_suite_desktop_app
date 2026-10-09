@@ -30,6 +30,21 @@ export function gradeScaleColDefs({ ActionComponent }) {
       headerName: "Exam Score",
       hide: false,
     }),
+     numberColumn({
+      field: "total_grade_scale",
+      headerName: "Total Scales",
+      hide: false,
+    }),
+     numberColumn({
+      field: "passing_grade_count",
+      headerName: "Pass Grade Count",
+      hide: true,
+    }),
+    numberColumn({
+      field: "failing_grade_count",
+      headerName: "Fail Grade Count",
+      hide: true,
+    }),
     textColumn({
       field: "status",
       headerName: "Status",

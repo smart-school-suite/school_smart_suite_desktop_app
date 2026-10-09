@@ -1,13 +1,14 @@
 import { Outlet } from "react-router-dom";
-import ActivationCodeSideBar from "../components/SideBars/ActivationCodeSideBar";
 import { ActivationCodeIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
-import { motion, AnimatePresence } from "framer-motion";
-import ImportWizzard from "../ModalContent/Import/ImportWizzard";
+import { motion } from "framer-motion";
 import JobPopOver from "../components/Popover/JobPopover";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import PurchaseActivationCode from "../ModalContent/ActivationCode/PurchaseActivationCode";
+import ActivationCodePurchaseWizzard from "../DrawerContent/ActivationCode/ActivationCodePurchaseWizzard";
 function ActivationCodeLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
@@ -56,13 +57,6 @@ function ActivationCodeLayout() {
                 Manage Activation Code
               </span>
             </div>
-            <div className="w-50">
-              <input
-                type="search"
-                className="form-control font-size-sm w-100"
-                placeholder="Search For Anything"
-              />
-            </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Activation Code"} />
               <ModalButton
@@ -89,6 +83,17 @@ function ActivationCodeLayout() {
                   />
                 </span>
               </ModalButton>
+              <DrawerTrigger
+                title="Purchase Activation Code"
+                placement="right"
+                drawerChildren={ActivationCodePurchaseWizzard}
+                closeOnOutsideClick={false}
+                closeOnEscape={false}
+              >
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Purchase Activation Code</span>
+                </button>
+              </DrawerTrigger>
             </div>
           </div>
           <hr />

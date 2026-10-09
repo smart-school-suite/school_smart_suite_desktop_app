@@ -1,18 +1,20 @@
 import Table from "../../components/Tables/Tables";
 import { Icon } from "@iconify/react";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import { StudentBatchesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import CreateStudentBatch from "../../ModalContent/StudentBatches/CreateStudentBatch";
-import UpdateStudentBatch from "../../ModalContent/StudentBatches/UpdateStudentBatch";
 import ActivateBatch from "../../ModalContent/StudentBatches/ActivateBatch";
 import DeactivateBatch from "../../ModalContent/StudentBatches/DeactivateBatch";
 import DeleteStudentBatch from "../../ModalContent/StudentBatches/DeleteStudentBatch";
-import StudentBatchDetails from "../../ModalContent/StudentBatches/StudentBatchDetails";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
-import React, { useState, useCallback, useRef, useEffect, useMemo, Fragment } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+  Fragment,
+} from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import {
@@ -30,20 +32,6 @@ import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
@@ -66,6 +54,12 @@ import JobPopOver from "../../components/Popover/JobPopover";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { STUDENT_BATCHES_COLUMNS } from "../../utils/student/studentBatchColumns";
 import { studentBatchColDefs } from "../../utils/table/colDefs/student/studentBatchColDefs";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import SearchInput from "../../components/input/search";
+import BatchDetails from "../../DrawerContent/StudentBatch/BatchDetails";
+import UpdateBatch from "../../DrawerContent/StudentBatch/UpdateBatch";
+import CreateBatch from "../../DrawerContent/StudentBatch/CreateBatch";
 function StudentBatches() {
   const { data: studentBatches, isLoading, error } = useGetBatches();
   const tableRef = useRef();
@@ -94,7 +88,7 @@ function StudentBatches() {
   }, []);
   const memoizedColDefs = useMemo(() => {
     return studentBatchColDefs({
-      ActionComponent
+      ActionComponent,
     });
   }, []);
 
@@ -204,30 +198,31 @@ function StudentBatches() {
                       importModuleColDefs: studentBatchColDefs,
                     }}
                     classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+                      "border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
                     }
+                     style={{ padding: "0.6rem" }}
                   >
                     <span style={{ lineHeight: "16px" }}>Import</span>
                     <ArrowDown size={16} />
                   </ModalButton>
                   <ModalButton
                     classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+                      "border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
                     }
+                     style={{ padding: "0.6rem" }}
                   >
                     <span style={{ lineHeight: "16px" }}>Actions</span>
                     <ChevronDown size={16} />
                   </ModalButton>
-                  <ModalButton
-                    action={{ modalContent: CreateStudentBatch }}
-                    size={"lg"}
-                    classname={
-                      "border-none border rounded-3 font-size-sm  primary-background px-2 text-white text-capitalize"
-                    }
-                    style={{ padding: "0.4rem" }}
+                  <DrawerTrigger
+                    title="Create Batch"
+                    placement="right"
+                    drawerChildren={CreateBatch}
                   >
-                    <span>Create Batch</span>
-                  </ModalButton>
+                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                      <span>Create Batch</span>
+                    </button>
+                  </DrawerTrigger>
                 </div>
               </div>
               <div className="d-flex flex-column gap-2">
@@ -299,13 +294,14 @@ function StudentBatches() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Batch......................."
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Batch......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}
@@ -354,7 +350,9 @@ function StudentBatches() {
                       damping: 30,
                     }}
                     style={{
-                      width: studentBatchState.isGeneralFilterOpen ? "60%" : "100%",
+                      width: studentBatchState.isGeneralFilterOpen
+                        ? "60%"
+                        : "100%",
                     }}
                   >
                     <Table
@@ -410,7 +408,8 @@ function StudentBatches() {
                           >
                             <div className="d-flex flex-row align-items-center justify-content-between">
                               <span>
-                                Build a custom view of your Student Batches data.
+                                Build a custom view of your Student Batches
+                                data.
                               </span>
                               <button
                                 className="border-none bg-transparent"
@@ -443,17 +442,19 @@ function StudentBatches() {
                           >
                             {studentBatchState.customFilter.length > 0 ? (
                               <div>
-                                {studentBatchState?.customFilter?.map((cFilters) => (
-                                  <Fragment key={cFilters.id}>
-                                    <GeneralFilterWizzard
-                                      cFilters={cFilters}
-                                      columns={columns}
-                                      moduleState={studentBatchState}
-                                      removeCustomFilter={removeCustomFilter}
-                                      setCustomFilter={setCustomFilter}
-                                    />
-                                  </Fragment>
-                                ))}
+                                {studentBatchState?.customFilter?.map(
+                                  (cFilters) => (
+                                    <Fragment key={cFilters.id}>
+                                      <GeneralFilterWizzard
+                                        cFilters={cFilters}
+                                        columns={columns}
+                                        moduleState={studentBatchState}
+                                        removeCustomFilter={removeCustomFilter}
+                                        setCustomFilter={setCustomFilter}
+                                      />
+                                    </Fragment>
+                                  ),
+                                )}
                               </div>
                             ) : (
                               <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1 p-4">
@@ -528,25 +529,65 @@ export default StudentBatches;
 export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
 
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "md") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
   };
 
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
+  };
   return (
     <>
       <ActionButtonDropdown
@@ -559,7 +600,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateStudentBatch)}
+          onClick={() =>
+            handleShowDrawer(UpdateBatch, {
+              title: "Update Batch",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -572,7 +619,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateStudentBatch)}
+          onClick={() =>
+            handleShowModal(DeleteStudentBatch, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -585,7 +638,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(StudentBatchDetails)}
+          onClick={() =>
+            handleShowDrawer(BatchDetails, {
+              title: "Batch Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -599,7 +658,13 @@ export function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() => handleShowModal(DeactivateBatch, "md")}
+            onClick={() =>
+              handleShowModal(DeactivateBatch, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -613,7 +678,13 @@ export function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() => handleShowModal(ActivateBatch, "md")}
+            onClick={() =>
+              handleShowModal(ActivateBatch, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -624,13 +695,36 @@ export function ActionComponent(props) {
           </DropDownMenuItem>
         )}
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );

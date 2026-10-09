@@ -3,7 +3,7 @@ import { useBulkDeleteSchoolExpenses } from "../../hooks/schoolExpenses/useBulkD
 function BulkDeleteExpense({ handleClose, resetAll, bulkData }) {
   const { mutate: deleteAll, isPending } = useBulkDeleteSchoolExpenses(
     resetAll,
-    handleClose
+    handleClose,
   );
   const formattedData = bulkData.map((items) => ({ expense_id: items.id }));
   const handleDeleteExpenses = () => {
@@ -12,15 +12,40 @@ function BulkDeleteExpense({ handleClose, resetAll, bulkData }) {
   return (
     <>
       <div className="w-100">
-        <h4 className="fw-semibold">Are you Absolutely sure ?</h4>
-        <p className="my-3" style={{ fontSize: "0.85rem" }}>
-          This action cannot be undone. This will Permanently delete This
-          account and remove this account data from our servers
-        </p>
-        <div className="mt-4">
+        <div
+          className="border-bottom rounded-top-4 p-2 d-flex flex-column justify-content-center"
+          style={{ height: "6dvh", background: "#f9f9f9" }}
+        >
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <div>
+              <span className="font-size-sm fw-semibold">Delete Expense</span>
+            </div>
+            <button
+              onClick={() => handleClose()}
+              className="border-none border rounded-circle bg-transparent p-0"
+              style={{
+                width: "2rem",
+                height: "2rem",
+                display: "grid",
+                placeItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <CircleX size={16} />
+            </button>
+          </div>
+        </div>
+        <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
+          <span className="fw-semibold">Are you Absolutely sure ?</span>
+          <p>
+            This action cannot be undone. This will Permanently delete This
+            account and remove this account data from our servers
+          </p>
+        </div>
+        <div className="mt-auto border-top p-2" style={{ height: "8dvh" }}>
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button
-              className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"
+              className="border-none px-3 py-2 border rounded-3 font-size-sm w-50 bg-none"
               onClick={handleClose}
             >
               Cancel
@@ -31,7 +56,7 @@ function BulkDeleteExpense({ handleClose, resetAll, bulkData }) {
                 handleDeleteExpenses();
               }}
             >
-              {isPending ? <SingleSpinner /> : "Yes, Delete"}
+              {isPending ? <SingleSpinner /> : <>Yes, Delete</>}
             </button>
           </div>
         </div>

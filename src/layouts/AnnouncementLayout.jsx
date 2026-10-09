@@ -1,48 +1,48 @@
-import { Outlet } from "react-router-dom";
-import AnnoucementSideBar from "../components/SideBars/AnnoucementSideBar";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import CreateAnnouncement from "../ModalContent/Announcement/CreateAnnouncement";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
-import { AnnouncementIcon } from "../icons/ActionIcons";
 import { useSelector } from "react-redux";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Megaphone } from "lucide-react";
 import JobPopOver from "../components/Popover/JobPopover";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import CreateAnnouncementWizzard from "../DrawerContent/Announcement/CreateAnnouncement/CreateAnnouncementWizzard";
+import { useGetAnnouncementSummary } from "../hooks/announcement/useGetAnnouncementSummary";
 function AnnouncementLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const { data: summary, isLoading } = useGetAnnouncementSummary();
+  const navigate = useNavigate();
   const sideBarData = [
     {
-      title: "Overview",
-      icon: "mage:dashboard-4-fill",
-      path: "/announcement-overview",
-    },
-    {
-      title: "Active Announcement",
+      title: "All",
       icon: "f7:speaker-2-fill",
-      path: "/announcement",
+      path: "/all-announcement",
+      count: isLoading ? 0 : (summary?.data?.draft + summary?.data?.active + summary?.data?.expired + summary?.data?.scheduled)
     },
     {
-      title: "Schedule Annoucements",
+      title: "Scheduled",
       icon: "material-symbols:schedule-send-rounded",
-      path: "/scheduled-annoucement",
+      path: "/scheduled-announcement",
+      count: isLoading ? 0 : summary?.data?.scheduled
     },
     {
-      title: "Draft Announcements",
+      title: "Active",
       icon: "ion:archive",
-      path: "/draft-annoucement",
+      path: "/active-announcement",
+      count: isLoading? 0 : summary?.data?.active
     },
     {
-      title: "Expired Annoucements",
+      title: "Draft",
       icon: "pajamas:expire",
-      path: "/expired-annoucement",
+      path: "/draft-announcement",
+      count: isLoading ? 0 : summary?.data?.draft
     },
     {
-      title: "Announcement Category",
+      title: "Category",
       icon: "stash:engagement",
       path: "/announcement-category",
     },
   ];
-
   return (
     <>
       <main className="main-container gap-2">
@@ -64,13 +64,6 @@ function AnnouncementLayout() {
               <span className="font-size-sm fw-semibold">
                 Manage Announcements
               </span>
-            </div>
-            <div className="w-50">
-              <input
-                type="search"
-                className="form-control font-size-sm w-100"
-                placeholder="Search For Anything"
-              />
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Hall"} />
@@ -98,15 +91,18 @@ function AnnouncementLayout() {
                   />
                 </span>
               </ModalButton>
-              <ModalButton
-                action={{ modalContent: CreateAnnouncement }}
-                size={"lg"}
-                classname={
-                  "border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
-                }
+              <DrawerTrigger
+                title="Create Announcement"
+                placement="right"
+                drawerChildren={CreateAnnouncementWizzard}
+                closeOnOutsideClick={false}
+                closeOnEscape={false}
+                showHeader={false}
               >
-                <span>Create Announcement</span>
-              </ModalButton>
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Create Announcement</span>
+                </button>
+              </DrawerTrigger>
             </div>
           </div>
           <hr />
@@ -126,6 +122,7 @@ function AnnouncementLayout() {
                   >
                     <div className="d-flex flex-row align-items-center gap-1">
                       <span>{tab.title}</span>
+                      <span>{tab?.count}</span>
                     </div>
                   </button>
                   <div

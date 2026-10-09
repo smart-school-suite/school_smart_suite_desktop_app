@@ -1,5 +1,4 @@
 import TeacherTableBadge from "../../../../components/Badges/TeacherTableBadge";
-import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
 import {
   textColumn,
   actionsColumn,
@@ -7,12 +6,13 @@ import {
   numberColumn,
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
+import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
 export function teacherColDefs({ ActionComponent }) {
   return [
     textColumn({
       field: "profile_picture",
       headerName: "Avatar",
-      cellRenderer: TeacherAvatarComponent,
+      cellRenderer: AvatarRenderer,
     }),
     textColumn({
       field: "first_name",

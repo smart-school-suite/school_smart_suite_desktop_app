@@ -2,22 +2,22 @@ import axiosInstance from "../axios/authAxios";
 
 
 export const getResitPaymentTransactions = async () => {
-  const response = await axiosInstance.get("student-resit/resit-transactions");
+  const response = await axiosInstance.get("resit-payment/resit-transactions");
   return response.data;
 };
 
 export const bulkDeleteStudentResitTransactions = async (deleteData) => {
-  const response = await axiosInstance.post("student-resit/resit-transactions/bulk-delete", deleteData);
+  const response = await axiosInstance.post("resit-payment/resit-transactions/bulk-delete", deleteData);
   return response.data;
 };
 
 export const bulkReverseTransaction = async (deleteData) => {
-  const response = await axiosInstance.post("student-resit/resit-transactions/bulk-reverse", deleteData);
+  const response = await axiosInstance.post("resit-payment/resit-transactions/bulk-reverse", deleteData);
   return response.data;
 };
 
 export const deleteResitTransaction = async (transactionId) => {
-  const response = await axiosInstance.delete(`student-resit/resit-transactions/${transactionId}`);
+  const response = await axiosInstance.delete(`resit-payment/resit-transactions/${transactionId}`);
   return response.data;
 };
 
@@ -27,7 +27,7 @@ export const getTransactionDetails = async (transactionId) => {
 };
 
 export const reverseTransaction = async (transactionId) => {
-  const response = await axiosInstance.delete(`student-resit/resit-transactions/${transactionId}/reverse`);
+  const response = await axiosInstance.delete(`resit-payment/resit-transactions/${transactionId}/reverse`);
   return response.data;
 };
 
@@ -52,7 +52,7 @@ export const bulkDeleteStudentResit = async (deleteData) => {
 };
 
 export const bulkPayStudentResit = async (payments) => {
-  const response = await axiosInstance.post("student-resit/student-resits/bulk-pay", payments);
+  const response = await axiosInstance.post("resit-payment/bulk-pay", payments);
   return response.data;
 };
 

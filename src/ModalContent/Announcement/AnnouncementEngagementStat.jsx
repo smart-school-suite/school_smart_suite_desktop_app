@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
-import BarChart from "../../components/ChartComponents/barChart";
-import DoughnutChart from "../../components/ChartComponents/DoughnutChart";
+import BarChart from "../../components/chartcomponents/barChart";
+import DoughnutChart from "../../components/chartcomponents/DoughnutChart";
 import { useState } from "react";
 import { useGetAnnouncementEngagementStats } from "../../hooks/announcement/useGetAnnouncementEngagementStats";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";

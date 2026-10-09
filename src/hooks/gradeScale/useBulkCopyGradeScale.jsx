@@ -3,9 +3,11 @@ import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import { bulkCopyGradeScale } from "../../services/gradeScale";
-
+import { resetCopyScaleState } from "../../Slices/academics/gradeScaleSlice";
+import { useDispatch } from "react-redux";
 export const useBulkCopyGradeScale = (handleClose) => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   return useMutation({
     mutationFn: bulkCopyGradeScale,
     onSuccess: () => {
@@ -15,6 +17,7 @@ export const useBulkCopyGradeScale = (handleClose) => {
           description={"Grade Scale Copied Successfully"}
         />,
       );
+      dispatch(resetCopyScaleState());
       if (handleClose) {
         handleClose();
       }

@@ -55,6 +55,7 @@ import { hallColDefs } from "../../utils/table/colDefs/hall/hallColDefs";
 import { Drawer } from "../../components/drawer/Drawer";
 import UpdateHall from "../../DrawerContent/Hall/UpdateHall";
 import HallDetails from "../../DrawerContent/Hall/HallDetail";
+import SearchInput from "../../components/input/search";
 function Hall() {
   const { data: halls, isLoading, error } = useGetHalls();
   const tableRef = useRef();
@@ -77,8 +78,7 @@ function Hall() {
     return halls?.data ?? [];
   }, [halls]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
@@ -212,13 +212,14 @@ function Hall() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Hall........."
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Hall......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}

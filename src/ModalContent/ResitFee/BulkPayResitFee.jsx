@@ -130,7 +130,7 @@ function BulkPayResitFee({ handleClose, bulkData, resetAll }) {
           <div className="mt-3 d-flex gap-2">
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm w-100 primary-background text-white"
-              onClick={handleBulkPayResitFee}
+              onClick={handleSubmit}
               disabled={isPending}
             >
               {isPending ? <SingleSpinner /> : "Make Payment"}

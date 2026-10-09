@@ -6,13 +6,13 @@ import {
   numberColumn,
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-
+import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
 export function studentColDefs({ ActionComponent }) {
   return [
     textColumn({
       field: "profile_picture",
       headerName: "Avatar",
-      cellRenderer: TeacherAvatarComponent,
+      cellRenderer:  AvatarRenderer,
     }),
     textColumn({
       field: "name",

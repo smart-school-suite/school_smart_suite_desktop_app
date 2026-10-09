@@ -73,6 +73,10 @@ body {
   font-family: var(--primary-font-family) !important;
   color: #333 !important;
 }
+
+.text-color {
+  color: #333;
+}
 .ag-paging-panel {
   font-size: 0.7rem !important;
 }
@@ -833,19 +837,6 @@ button.disabled {
   overflow-x: hidden;
 }
 
-.scrollable-dropdown::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 10px;
-}
-
-.scrollable-dropdown::-webkit-scrollbar-thumb:hover {
-  background: #ccc;
-}
-
-.scrollable-dropdown::-webkit-scrollbar {
-  width: 4px;
-}
-
 .selected-school-year {
   background-color: var(--primary-color-50);
   color: var(--primary-color);
@@ -1233,18 +1224,6 @@ thead {
   height: auto;
   max-height: 83dvh;
   overflow-y: auto;
-}
-
-.table-toast-container.active {
-  top: -18dvh;
-  position: relative;
-  transition: top 0.3s ease;
-}
-
-.table-toast-container.inactive {
-  top: 0;
-  transition: top 0.3s ease;
-  opacity: 0;
 }
 
 .dropdown-content-sm {
@@ -2079,7 +2058,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1030; 
+  z-index: 1030;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2206,4 +2185,15 @@ textarea::-webkit-scrollbar-thumb:hover {
 }
 .drawer-content::-webkit-scrollbar-thumb:hover {
   background-color: #475569;
+}
+.ev-custom-progress .progress-bar {
+  background-color: var(--primary-color-400) !important; /* Custom purple filler */
+}
+
+.scrollable-dropdown::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollable-dropdown::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 999px;
 }

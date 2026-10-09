@@ -8,8 +8,8 @@ export const usePayResit = (handleClose) => {
   return useMutation({
     mutationFn: payResit,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["studentResits"] });
-      queryClient.invalidateQueries({ queryKey: ["resitTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["student-resits"] });
+      queryClient.invalidateQueries({ queryKey: ["resit-transactions"] });
 
       if (handleClose) {
         handleClose();

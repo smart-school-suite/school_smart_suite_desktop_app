@@ -4,15 +4,21 @@ import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import { useDispatch } from "react-redux";
-import { resetResitScoreState } from "../../Slices/Asynslices/ResitScoreSlice";
-export const useCreateResitScore = (handleClose) => {
+import { resetResitScoreState } from "../../Slices/resit/resitEvaluationSlice";
+export const useCreateResitScore = (handleClose, candidateId) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   return useMutation({
-    mutationFn: ({ candidateId, updateData }) =>
-      submitResitScores(candidateId, updateData),
+    mutationFn: submitResitScores,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resitCandidates"] });
+      queryClient.invalidateQueries({ queryKey: ["resit-candidates"] });
+      queryClient.invalidateQueries({ queryKey: ["student-resits"] });
+      queryClient.invalidateQueries({
+        queryKey: ["resit-evaluation-helper", candidateId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["resit-scores", candidateId],
+      });
       if (handleClose) {
         handleClose();
       }
@@ -21,7 +27,7 @@ export const useCreateResitScore = (handleClose) => {
         <ToastSuccess
           title={"Scores Submitted"}
           description={"Resit Scores Submited Successfully"}
-        />
+        />,
       );
       dispatch(resetResitScoreState());
     },
@@ -30,7 +36,7 @@ export const useCreateResitScore = (handleClose) => {
         <ToastDanger
           title={error.response.data.errors.title}
           description={error.response.data.errors.description}
-        />
+        />,
       );
     },
   });

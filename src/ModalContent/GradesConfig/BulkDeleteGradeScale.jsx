@@ -1,16 +1,25 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useBulkDeleteGradeScale } from "../../hooks/gradeScale/useBulkDeleteGradeScale";
 import { CircleX } from "lucide-react";
-function BulkDeleteGradeScale({ handleClose, bulkData }) {
+function BulkDeleteGradeScale({ handleClose, bulkData, rowData }) {
   const { mutate: bulkDelete, isPending } =
     useBulkDeleteGradeScale(handleClose);
   const handleBulkDelete = () => {
-    const payload = {
-      grade_scale_category_ids: bulkData.map((cat) => ({
-        category_id: cat.id,
-      })),
-    };
-    bulkDelete(payload);
+    if (bulkData) {
+      const payload = {
+        grade_scale_category_ids: bulkData.map((cat) => ({
+          category_id: cat.id,
+        })),
+      };
+      bulkDelete(payload);
+    } else {
+      const payload = {
+        grade_scale_category_ids: rowData.map((cat) => ({
+          category_id: cat.id,
+        })),
+      };
+      bulkDelete(payload);
+    }
   };
   return (
     <>

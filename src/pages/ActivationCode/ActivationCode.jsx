@@ -1,20 +1,14 @@
 import PurchaseActivationCode from "../../ModalContent/ActivationCode/PurchaseActivationCode";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
 import { useGetActivationCodes } from "../../hooks/activationCode/useGetActivationCode";
 import Table from "../../components/Tables/Tables";
-import React, { useMemo, useState, useRef, useEffect, useCallback, Fragment } from "react";
-import { activationCodesTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import React, { useMemo, useState, useRef, useEffect, Fragment } from "react";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { activationCodeColDefs } from "../../utils/table/colDefs/activationCode/activationCodeColDefs";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
@@ -25,8 +19,8 @@ import {
   setCustomFilter,
 } from "../../Slices/activationCode/activationCodeSlice";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { useDispatch, useSelector } from "react-redux";
+import SearchInput from "../../components/input/search";
 function ActivationCode() {
   const { data: activationCodes, isLoading, error } = useGetActivationCodes();
   const tableRef = useRef();
@@ -47,8 +41,7 @@ function ActivationCode() {
     return activationCodes?.data ?? [];
   }, [activationCodes]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
@@ -181,13 +174,14 @@ function ActivationCode() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Activation Code...."
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Activation Code......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}

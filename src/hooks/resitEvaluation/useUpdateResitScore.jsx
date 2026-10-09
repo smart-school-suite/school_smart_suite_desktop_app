@@ -6,12 +6,13 @@ import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useUpdateResitScores = (handleClose, candidateId) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ candidateId, updateData }) =>
-      updateResitScores(candidateId, updateData),
+    mutationFn: updateResitScores,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resitCandidates"] });
-      queryClient.invalidateQueries({ queryKey: ["studentResits"] });
-      queryClient.invalidateQueries({ queryKey: ["resitScores", candidateId] });
+      queryClient.invalidateQueries({ queryKey: ["resit-candidates"] });
+      queryClient.invalidateQueries({ queryKey: ["student-resits"] });
+      queryClient.invalidateQueries({ queryKey: ["resit-evaluation-update-helper-data", candidateId]});
+      queryClient.invalidateQueries({ queryKey: ["resit-evaluation-helper", candidateId]});
+      queryClient.invalidateQueries({ queryKey: ["resit-scores", candidateId] });
       if (handleClose) {
         handleClose();
       }

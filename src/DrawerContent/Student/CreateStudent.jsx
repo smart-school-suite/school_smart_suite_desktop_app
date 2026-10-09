@@ -1,0 +1,390 @@
+import { useRef, useState } from "react";
+import { TextInput } from "../../components/FormComponents/InputComponents";
+import {
+  emailValidationSchema,
+  nameSchema,
+} from "../../ComponentConfig/YupValidationSchema";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useCreateStudent } from "../../hooks/student/useCreateStudent";
+import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
+import { useGetAllParents } from "../../hooks/parent/useGetParents";
+import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
+import { allFieldsValid } from "../../utils/functions";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import { useGetActiveGender } from "../../hooks/gender/useGetActiveGender";
+import { useGetStudentParentRelationship } from "../../hooks/student/useGetStudentParentRelationship";
+import { useGetStudentSource } from "../../hooks/student/useGetStudentSource";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+function CreateStudent({ handleClose }) {
+  const nameRef = useRef();
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
+  const specialtyRef = useRef();
+  const studentBatchRef = useRef();
+  const guardianRef = useRef();
+  const genderRef = useRef();
+  const emailRef = useRef();
+  const relationshipRef = useRef();
+  const studentSourceRef = useRef();
+  const [formData, setFormData] = useState({
+    name: "",
+    first_name: "",
+    last_name: "",
+    specialty_id: "",
+    student_batch_id: "",
+    guardian_id: "",
+    gender: "",
+    email: "",
+    relationship: "",
+    student_source: "",
+  });
+  const [isValid, setIsValid] = useState({
+    name: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+  });
+  const [errors, setErrors] = useState({
+    specialty_id: "",
+    student_batch_id: "",
+    guardian_id: "",
+    gender: "",
+    relationship: "",
+    student_source: "",
+  });
+  const { mutate: createStudent, isPending } = useCreateStudent(handleClose);
+  const handlePrevalidation = async () => {
+    const email = await emailRef.current.triggerValidation();
+    const firstName = await firstNameRef.current.triggerValidation();
+    const lastName = await lastNameRef.current.triggerValidation();
+    const fullName = await nameRef.current.triggerValidation();
+    const specialty = await specialtyRef.current.triggerValidation();
+    const studentBatch = await studentBatchRef.current.triggerValidation();
+    const gender = await genderRef.current.triggerValidation();
+    const guardian = await guardianRef.current.triggerValidation();
+    const relationship = await relationshipRef.current.triggerValidation();
+    const studentSource = await studentSourceRef.current.triggerValidation();
+    return {
+      email,
+      firstName,
+      lastName,
+      fullName,
+      specialty,
+      studentBatch,
+      gender,
+      guardian,
+      relationship,
+      studentSource,
+    };
+  };
+  const handleStateChange = (field, value, stateFn) => {
+    stateFn((prev) => ({ ...prev, [field]: value }));
+  };
+  const { data: specialties, isFetching: isSpecialtiesLoading } =
+    useGetSpecialties();
+  const { data: studentBatch, isFetching: isStudentBatchLoading } =
+    useGetBatches();
+  const { data: parents, isFetching: isParentsLoading } = useGetAllParents();
+  const { data: gender, isLoading: isGenderLoading } = useGetActiveGender();
+  const { data: relationships, isLoading: isRelationshipLoading } =
+    useGetStudentParentRelationship();
+  const { data: studentSource, isLoading: isStudentSourceLoading } =
+    useGetStudentSource();
+  const handleCreateStudent = async () => {
+    const prevalidation = await handlePrevalidation();
+    if (!allFieldsValid(prevalidation)) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={
+            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
+          }
+        />,
+      );
+      return;
+    }
+    if (!allFieldsValid(isValid)) {
+      toast.custom(
+        <ToastWarning
+          title={"Invalid Fields"}
+          description={
+            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
+          }
+        />,
+      );
+      return;
+    }
+    createStudent({
+      ...formData,
+      specialty_id: formData.specialty_id.id,
+      student_batch_id: formData.student_batch_id.id,
+      gender_id: formData.gender.id,
+      relationship_id: formData.relationship.id,
+      guardian_id: formData.guardian_id.id,
+      student_source_id: formData.student_source.id,
+    });
+  };
+  return (
+    <>
+      <div className="drawer-content px-2 pt-4">
+        <div className="d-flex flex-row align-items-center gap-2">
+          <div className="w-50">
+            <label htmlFor="firstName" className="font-size-sm fw-medium">
+              First Name
+            </label>
+            <TextInput
+              onChange={(value) =>
+                handleStateChange("first_name", value, setFormData)
+              }
+              onValidationChange={(value) =>
+                handleStateChange("first_name", value, setIsValid)
+              }
+              value={formData.first_name}
+              validationSchema={nameSchema({
+                min: 3,
+                max: 50,
+                required: true,
+                messages: {
+                  required: "First Name Required",
+                  min: "First Name Must Be Atleast 3 characters Long",
+                  max: "First Name Must Not Exceed 50 Characters",
+                },
+              })}
+              placeholder={"Enter Student First Name"}
+              ref={firstNameRef}
+            />
+          </div>
+          <div className="w-50">
+            <label htmlFor="lastName" className="font-size-sm fw-medium">
+              Last Name
+            </label>
+            <TextInput
+              onChange={(value) =>
+                handleStateChange("last_name", value, setFormData)
+              }
+              onValidationChange={(value) =>
+                handleStateChange("last_name", value, setIsValid)
+              }
+              validationSchema={nameSchema({
+                min: 3,
+                max: 50,
+                required: true,
+                messages: {
+                  required: "Last Name Required",
+                  min: "Last Name Must Be Atleast 3 Characters Long",
+                  max: "Last Name Must Not Exceed 50 Characters",
+                },
+              })}
+              placeholder={"Enter Student Last Name"}
+              ref={lastNameRef}
+            />
+          </div>
+        </div>
+        <div>
+          <label htmlFor="fullNames" className="font-size-sm fw-medium">
+            Full Names
+          </label>
+          <TextInput
+            onChange={(value) => handleStateChange("name", value, setFormData)}
+            onValidationChange={(value) =>
+              handleStateChange("name", value, setIsValid)
+            }
+            validationSchema={nameSchema({
+              min: 3,
+              max: 150,
+              messages: {
+                required: "Full Name Required",
+                min: "Full Names Must Be Atleast 3 Characters Long",
+                max: "Full Name Must Not Exceed 150 Characters",
+              },
+            })}
+            placeholder={"Enter Full Names"}
+            ref={nameRef}
+          />
+        </div>
+        <div>
+          <label htmlFor="email" className="font-size-sm fw-medium">
+            Email
+          </label>
+          <TextInput
+            onChange={(value) => handleStateChange("email", value, setFormData)}
+            onValidationChange={(value) =>
+              handleStateChange("email", value, setIsValid)
+            }
+            validationSchema={emailValidationSchema({
+              required: true,
+            })}
+            value={formData.email}
+            placeholder={"e.g example@gmail.com"}
+            ref={emailRef}
+          />
+        </div>
+        <div className="d-flex flex-row align-items-center gap-2 w-100">
+          <div className="w-50">
+            <label htmlFor="gender" className="font-size-sm fw-medium">
+              Gender
+            </label>
+            <CustomDropdown
+              data={gender?.data || []}
+              displayKey={["name"]}
+              valueKey={["id"]}
+              direction="up"
+              onSelect={(value) =>
+                handleStateChange("gender", value, setFormData)
+              }
+              onError={(value) => handleStateChange("gender", value, setErrors)}
+              isLoading={isGenderLoading}
+              errorMessage="Gender Required"
+              error={errors.gender}
+              placeholder="Select Gender"
+              ref={genderRef}
+              value={formData.gender}
+            />
+          </div>
+          <div className="w-50">
+            <label htmlFor="studentSource" className="font-size-sm fw-medium">
+              Student Source
+            </label>
+            <CustomDropdown
+              data={studentSource?.data || []}
+              displayKey={["name", "description"]}
+              valueKey={["id"]}
+              direction="up"
+              onSelect={(value) =>
+                handleStateChange("student_source", value, setFormData)
+              }
+              onError={(value) =>
+                handleStateChange("student_source", value, setErrors)
+              }
+              isLoading={isStudentSourceLoading}
+              errorMessage="Student Source Required"
+              error={errors.student_source}
+              placeholder="Select Student Source"
+              ref={studentSourceRef}
+              value={formData.student_source}
+            />
+          </div>
+        </div>
+        <div className="d-flex flex-row align-items-center gap-2">
+          <div className="w-50">
+            <label htmlFor="studentBatch" className="font-size-sm fw-medium">
+              Student Batch
+            </label>
+            <CustomDropdown
+              data={studentBatch?.data || []}
+              displayKey={["name"]}
+              valueKey={["id"]}
+              direction="up"
+              onSelect={(value) =>
+                handleStateChange("student_batch_id", value, setFormData)
+              }
+              isLoading={isStudentBatchLoading}
+              onError={(value) =>
+                handleStateChange("student_batch_id", value, setErrors)
+              }
+              errorMessage="Student Batch Required"
+              error={errors.student_batch_id}
+              placeholder="Select Student Batch"
+              ref={studentBatchRef}
+              value={formData.student_batch_id}
+            />
+          </div>
+          <div className="w-50">
+            <label htmlFor="specialty" className="font-size-sm fw-medium">
+              Specialty
+            </label>
+            <CustomDropdown
+              data={specialties?.data || []}
+              displayKey={["specialty_name", "level_name"]}
+              valueKey={["id"]}
+              direction="up"
+              onSelect={(value) =>
+                handleStateChange("specialty_id", value, setFormData)
+              }
+              placeholder="Select Specialty"
+              isLoading={isSpecialtiesLoading}
+              error={errors.specialty_id}
+              onError={(value) =>
+                handleStateChange("specialty_id", value, setErrors)
+              }
+              errorMessage="Specialty Required"
+              ref={specialtyRef}
+              value={formData.specialty_id}
+            />
+          </div>
+        </div>
+        <div className="d-flex flex-row align-items-center gap-2 w-100">
+          <div className="my-1 w-50">
+            <label htmlFor="guardian" className="font-size-sm fw-medium">
+              Select Guardian
+            </label>
+            <CustomDropdown
+              data={parents?.data || []}
+              displayKey={["guardian_name"]}
+              valueKey={["id"]}
+              direction="up"
+              onSelect={(value) =>
+                handleStateChange("guardian_id", value, setFormData)
+              }
+              isLoading={isParentsLoading}
+              error={errors.guardian_id}
+              onError={(value) =>
+                handleStateChange("guardian_id", value, setErrors)
+              }
+              errorMessage="Guardian Required"
+              placeholder="Select Guardian"
+              ref={guardianRef}
+              value={formData.guardian_id}
+            />
+          </div>
+          <div className="my-1 w-50">
+            <label htmlFor="guardian" className="font-size-sm fw-medium">
+              Select Relationship
+            </label>
+            <CustomDropdown
+              data={relationships?.data || []}
+              displayKey={["name"]}
+              valueKey={["id"]}
+              direction="up"
+              onSelect={(value) =>
+                handleStateChange("relationship", value, setFormData)
+              }
+              isLoading={isRelationshipLoading}
+              error={errors.relationship}
+              onError={(value) =>
+                handleStateChange("relationship", value, setErrors)
+              }
+              errorMessage="Relationship Required"
+              placeholder="Select Relationship"
+              ref={relationshipRef}
+              value={formData.relationship}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="drawer-footer font-size-sm">
+        <div className="d-flex flex-column w-100">
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+          <div className="d-flex flex-row align-items-center justify-content-between p-2">
+            <button
+              className="border-none bg-none"
+              onClick={() => handleClose()}
+            >
+              Cancel
+            </button>
+            <button
+              className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+              onClick={() => handleCreateStudent()}
+              disabled={isPending}
+            >
+              {isPending ? <SingleSpinner /> : "Create Student"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+export default CreateStudent;

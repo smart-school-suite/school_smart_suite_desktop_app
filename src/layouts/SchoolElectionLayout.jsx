@@ -1,45 +1,39 @@
-import SchoolElectionSideBar from "../components/SideBars/SchoolElection";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ElectionIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
-import CreateElection from "../ModalContent/Elections/CreateElection";
 import { Icon } from "@iconify/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Megaphone } from "lucide-react";
+import { motion } from "framer-motion";
 import JobPopOver from "../components/Popover/JobPopover";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import CreateElection from "../DrawerContent/Election/CreateElection";
 function SchoolElectionLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
   const sideBarData = [
     {
-      id: 1,
-      title: "Overview",
-      path: "/election-overview",
-    },
-    {
       id: 2,
-      title: "Upcoming Elections",
+      title: "Elections",
       path: "/elections",
     },
     {
       id: 3,
-      title: "Election Type",
+      title: "Type",
       path: "/election-type",
     },
     {
       id: 4,
-      title: "Election Roles",
+      title: "Roles",
       path: "/election-roles",
     },
     {
       id: 5,
-      title: "Election Candidates",
+      title: "Candidates",
       path: "/election-candidates",
     },
     {
       id: 6,
-      title: "Election Applications",
+      title: "Applications",
       path: "/election-application",
     },
     {
@@ -66,17 +60,9 @@ function SchoolElectionLayout() {
               >
                 <ElectionIcon size={16} />
               </div>
-              <span className="font-size-sm fw-semibold">
-                Manage Elections
-              </span>
+              <span className="font-size-sm fw-semibold">Manage Elections</span>
             </div>
-            <div className="w-50">
-              <input
-                type="search"
-                className="form-control font-size-sm w-100"
-                placeholder="Search For Anything"
-              />
-            </div>
+
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Hall"} />
               <ModalButton
@@ -103,15 +89,15 @@ function SchoolElectionLayout() {
                   />
                 </span>
               </ModalButton>
-              <ModalButton
-                action={{ modalContent: CreateElection }}
-                size={"lg"}
-                classname={
-                  "border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
-                }
+              <DrawerTrigger
+                title="Create Election"
+                placement="right"
+                drawerChildren={CreateElection}
               >
-                <span>Create Election</span>
-              </ModalButton>
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Create Election</span>
+                </button>
+              </DrawerTrigger>
             </div>
           </div>
           <hr />

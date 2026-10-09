@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createFeeWaiver } from "../../services/FeeWaiver";
+import { createFeeWaiver } from "../../services/feeWaiver";
 
 export const useCreateFeeWaiver = () => {
     const queryClient = useQueryClient();

@@ -22,7 +22,6 @@ import createCaScoreReducer from "../Slices/Asynslices/CaScoreSlice";
 import createExamScoreReducer from "../Slices/Asynslices/ExamScoreSlice";
 import resitExamTimetableReducer from "../Slices/Asynslices/ResitExamTimetableSlice";
 import createResitExamScoreReducer from "../Slices/Asynslices/ResitScoreSlice";
-import announcementReducer from "../Slices/Asynslices/AnnouncementSlice";
 import autoGenTimetableSliceReducer from "../Slices/Asynslices/AutoGenTimetableSlice";
 import themeReducer from "../Slices/Asynslices/ThemeSlice";
 import semesterTimetableReducer from "../Slices/Asynslices/semesterTimetableSlice";
@@ -49,7 +48,38 @@ import teacherSpecialtyReducer from "../Slices/teacher/teacherSpecialtySlice";
 import teacherCourseReducer from "../Slices/teacher/teacherCourseSlice";
 import teacherTimePrefReducer from "../Slices/teacher/teacherTimePrefSlice";
 import jointCourseReducer from "../Slices/academics/jointCourseSlice";
-
+import examCandidateReducer from "../Slices/exam/examCandidateSlice";
+import examInvigilatorReducer from "../Slices/exam/examInvigilatorSlice";
+import caEvaluationReducer from "../Slices/examEvaluation/caEvaluationSlice";
+import examEvaluationReducer from "../Slices/examEvaluation/examEvaluationSlice";
+import resitReducer from "../Slices/resit/resitSlice";
+import resitExamReducer from "../Slices/resit/resitExamSlice";
+import resitCandidateReducer from "../Slices/resit/resitCandidateSlice";
+import resitEvaluationReducer from "../Slices/resit/resitEvaluationSlice";
+import expenseCategoryReducer from "../Slices/schoolExpense/expenseCategorySlice";
+import resitFeeReducer from "../Slices/resitFee/resitFeeSlice";
+import resitFeeTransactionReducer from "../Slices/resitFee/resitFeeTransactionSlice";
+import tuitionFeeScheduleReducer from "../Slices/tuitionFee/tuitionFeeScheduleSlice";
+import registrationFeeTransactionReducer from "../Slices/registrationFee/registrationFeeTransacSlice";
+import additionalFeeBillingReducer from "../Slices/additionalFee/additionalFeeBillingSlice";
+import additionalFeeCategoryReducer from "../Slices/additionalFee/additionalFeeCategorySlice";
+import studentActivationCodeReducer from "../Slices/activationCode/studentActivationCodeSlice";
+import teacherActivationCodeReducer from "../Slices/activationCode/teacherActivationCodeSlice";
+import activationCodeUsageReducer from "../Slices/activationCode/activationCodeUsageSlice";
+import activationCodeTransactionReducer from "../Slices/activationCode/activationCodeTransactionSlice";
+import announcementCatReducer from "../Slices/announcement/announcementCatSlice";
+import announcementReducer from "../Slices/announcement/announcementSlice";
+import electionTypeReducer from "../Slices/election/electionTypeSlice";
+import electionRoleReducer from "../Slices/election/electionRoleSlice";
+import electionCandidateReducer from "../Slices/election/electionCandidateSlice";
+import electionReducer from "../Slices/election/electionSlice";
+import draftAnnouncementReducer from "../Slices/announcement/draftAnnouncementSlice";
+import activeAnnouncementReducer from "../Slices/announcement/activeAnnouncementSlice";
+import scheduledAnnouncementReducer from "../Slices/announcement/scheduledAnnouncementSlice";
+import electionApplicationReducer from "../Slices/election/electionApplicationSlice";
+import eventCategoryReducer from "../Slices/schoolEvent/eventCategorySlice";
+import schoolEventReducer from "../Slices/schoolEvent/schoolEventSlice";
+import semesterJointCourseReducer from "../Slices/jointCourse/semesterJointCourseSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -96,7 +126,6 @@ const rootReducer = combineReducers({
   createExamScore: createExamScoreReducer,
   resitExamTimetable: resitExamTimetableReducer,
   createResitExamScore: createResitExamScoreReducer,
-  announcement: announcementReducer,
   autoGenTimetable: autoGenTimetableSliceReducer,
   semesterTimetable: semesterTimetableReducer,
   teachers: persistReducer(teacherPersistConfig, teacherReducer),
@@ -104,10 +133,145 @@ const rootReducer = combineReducers({
   department: persistReducer({ key: "department", storage }, departmentReducer),
   student: persistReducer({ key: "student", storage }, studentReducer),
   parent: persistReducer({ key: "parent", storage }, parentReducer),
+  resitExam: persistReducer({ key: "resitExam", storage }, resitExamReducer),
+  semesterJointCourse: persistReducer(
+    { key: "semesterJointCourse", storage },
+    semesterJointCourseReducer,
+  ),
+  electionApplication: persistReducer(
+    {
+      key: "electionApplication",
+      storage,
+    },
+    electionApplicationReducer,
+  ),
+  schoolEvent: persistReducer(
+    {
+      key: "schoolEvent",
+      storage,
+    },
+    schoolEventReducer,
+  ),
+  eventCategory: persistReducer(
+    {
+      key: "eventCategory",
+      storage,
+    },
+    eventCategoryReducer,
+  ),
+  activeAnnouncement: persistReducer(
+    { key: "activeAnnouncement", storage },
+    activeAnnouncementReducer,
+  ),
+  draftAnnouncement:
+    ({
+      key: "draftAnnouncement",
+      storage,
+    },
+    draftAnnouncementReducer),
+  scheduledAnnouncement:
+    ({
+      key: "scheduledAnnouncement",
+      storage,
+    },
+    scheduledAnnouncementReducer),
+  election: persistReducer(
+    {
+      key: "election",
+      storage,
+    },
+    electionReducer,
+  ),
+  announcement: persistReducer(
+    { key: "announcement", storage },
+    announcementReducer,
+  ),
+  electionCandidate: persistReducer(
+    {
+      key: "electionCandidate",
+      storage,
+    },
+    electionCandidateReducer,
+  ),
+  electionType: persistReducer(
+    {
+      key: "electionType",
+      storage,
+    },
+    electionTypeReducer,
+  ),
+  electionRole: persistReducer(
+    {
+      key: "electionRole",
+      storage,
+    },
+    electionRoleReducer,
+  ),
+  activationCodeTransaction: persistReducer(
+    {
+      key: "activationCodeTransaction",
+      storage,
+    },
+    activationCodeTransactionReducer,
+  ),
+  activationCodeUsage: persistReducer(
+    {
+      key: "activationCodeUsage",
+      storage,
+    },
+    activationCodeUsageReducer,
+  ),
+  teacherActivationCode: persistReducer(
+    {
+      key: "teacherActivationCode",
+      storage,
+    },
+    teacherActivationCodeReducer,
+  ),
+  studentActivationCode: persistReducer(
+    {
+      key: "studentActivationCode",
+      storage,
+    },
+    studentActivationCodeReducer,
+  ),
+  additionalFeeCategory: persistReducer(
+    {
+      key: "additionalFeeCategory",
+      storage,
+    },
+    additionalFeeCategoryReducer,
+  ),
+  additionalFeeBilling: persistReducer(
+    { key: "additionalFeeBilling", storage },
+    additionalFeeBillingReducer,
+  ),
+  registrationFeeTransaction: persistReducer(
+    {
+      key: "registrationFeeTransaction",
+      storage,
+    },
+    registrationFeeTransactionReducer,
+  ),
   studentBatch: persistReducer(
     { key: "studentBatch", storage },
     studentBatchReducer,
   ),
+  resitCandidate: persistReducer(
+    {
+      key: "resitCandidate",
+      storage,
+    },
+    resitCandidateReducer,
+  ),
+  tuitionFeeSchedule: persistReducer(
+    {
+      key: "tuitionFeeSchedule",
+      storage,
+    },
+    tuitionFeeScheduleReducer,
+  ),
+  resit: persistReducer({ key: "resit", storage }, resitReducer),
   tuitionFee: persistReducer({ key: "tuitionFee", storage }, tuitionFeeReducer),
   tuitionFeeTransaction: persistReducer(
     { key: "tuitionFeeTransaction", storage },
@@ -149,6 +313,20 @@ const rootReducer = combineReducers({
     },
     teacherCourseReducer,
   ),
+  caEvaluation: persistReducer(
+    {
+      key: "caEvalutation",
+      storage,
+    },
+    caEvaluationReducer,
+  ),
+  resitEvaluation: persistReducer(
+    {
+      key: "resitEvaluation",
+      storage,
+    },
+    resitEvaluationReducer,
+  ),
   teacherTimePref: persistReducer(
     {
       key: "teacherTimePref",
@@ -163,6 +341,55 @@ const rootReducer = combineReducers({
     },
     jointCourseReducer,
   ),
+  examCandidate: persistReducer(
+    {
+      key: "examCandidate",
+      storage,
+    },
+    examCandidateReducer,
+  ),
+  examEvaluation: persistReducer(
+    {
+      key: "examEvaluation",
+      storage,
+    },
+    examEvaluationReducer,
+  ),
+  examInvigilator: persistReducer(
+    {
+      key: "examInvigilator",
+      storage,
+    },
+    examInvigilatorReducer,
+  ),
+  announcementCategory: persistReducer(
+    {
+      key: "announcementCategory",
+      storage,
+    },
+    announcementCatReducer,
+  ),
+  expenseCategory: persistReducer(
+    {
+      key: "expenseCategory",
+      storage,
+    },
+    expenseCategoryReducer,
+  ),
+  resitFee: persistReducer(
+    {
+      key: "resitFee",
+      storage,
+    },
+    resitFeeReducer,
+  ),
+  resitFeeTransaction: persistReducer(
+    {
+      key: "resitFeeTransaction",
+      storage,
+    },
+    resitFeeTransactionReducer,
+  ),
   schoolAdmin: schoolAdminReducer,
   hall: hallReducer,
   course: courseReducer,
@@ -176,7 +403,7 @@ export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      immutableCheck: { warnAfter: 128 },
+      immutableCheck: { warnAfter: 1000 },
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },

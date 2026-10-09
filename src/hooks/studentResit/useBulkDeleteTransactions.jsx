@@ -8,7 +8,7 @@ export const useBulkDeleteResitTransactions = (handleClose, resetAll) => {
   return useMutation({
     mutationFn: bulkDeleteStudentResitTransactions,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resitTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["resit-transactions"] });
 
       if (handleClose) {
         handleClose();

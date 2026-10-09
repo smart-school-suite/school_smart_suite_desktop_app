@@ -8,6 +8,7 @@ import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBad
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
 import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
+import AcademicYearStatusRenderer from "../../../../components/Renderer/AcademicYear/AcademicYearRenderer";
 
 export function academicYearColDefs({ ActionComponent }) {
   return [
@@ -39,7 +40,7 @@ export function academicYearColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: TextComponent,
+      cellRenderer: AcademicYearStatusRenderer,
     }),
 
     textColumn({

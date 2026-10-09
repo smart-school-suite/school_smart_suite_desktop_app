@@ -82,6 +82,7 @@ export const Drawer = ({
   placement = "right",
   className = "",
   closeOnOutsideClick = true,
+  closeOnEscape = true,
   showHeader = true,
 }) => {
   const { refs, context } = useFloating({
@@ -91,11 +92,31 @@ export const Drawer = ({
 
   const dismiss = useDismiss(context, {
     outsidePress: closeOnOutsideClick,
-    escapeKey: true,
+    escapeKey: false, // Escape is handled manually below
   });
   const role = useRole(context, { role: "dialog" });
   const { getFloatingProps } = useInteractions([dismiss, role]);
   useScrollLock(isOpen);
+
+  // Keep the latest onClose without re-subscribing the listener on every render
+  const onCloseRef = React.useRef(onClose);
+  React.useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // Manual Escape handling (capture phase so children can't swallow the event)
+  React.useEffect(() => {
+    if (!isOpen || !closeOnEscape) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && !e.isComposing) {
+        onCloseRef.current?.();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown, true);
+    return () => document.removeEventListener("keydown", handleKeyDown, true);
+  }, [isOpen, closeOnEscape]);
 
   return (
     <FloatingPortal>

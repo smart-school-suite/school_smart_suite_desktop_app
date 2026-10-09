@@ -1,24 +1,25 @@
-import SchoolEventSideBar from "../components/SideBars/SchoolEventSideBar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import CreateEvent from "../ModalContent/Events/CreateEvent";
 import { EventIcon } from "../icons/Icons";
-import { motion, AnimatePresence } from "framer-motion";
-import { Megaphone } from "lucide-react";
+import { motion } from "framer-motion";
 import JobPopOver from "../components/Popover/JobPopover";
+import CreateEventWizzard from "../DrawerContent/SchoolEvent/CreateSchoolEvent/CreateEventWizzard";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+
 function SchoolEventLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
-   const sideBarData = [
-    { title: "Ongoing Events", path: "/events" },
-    { title: "Expired Events", path: "/expired-event" },
-    { title: "Draft Events", path: "/draft-event" },
-    { title: "Scheduled Events", path: "/schedule-event" },
-    { title: "Event Category", path: "/event-categories" },
+  const sideBarData = [
+    { title: "All", path: "/events" },
+    { title: "Expired", path: "/expired-event" },
+    { title: "Draft", path: "/draft-event" },
+    { title: "Scheduled", path: "/schedule-event" },
+    { title: "Category", path: "/event-categories" },
   ];
-  
+
   return (
     <>
       <main className="main-container gap-2">
@@ -39,13 +40,6 @@ function SchoolEventLayout() {
               </div>
               <span className="font-size-sm fw-semibold">Manage Elections</span>
             </div>
-            <div className="w-50">
-              <input
-                type="search"
-                className="form-control font-size-sm w-100"
-                placeholder="Search For Anything"
-              />
-            </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Hall"} />
               <ModalButton
@@ -59,6 +53,7 @@ function SchoolEventLayout() {
                 </span>
               </ModalButton>
               <ModalButton
+                action={{ modalContent: CreateEvent }}
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
@@ -72,15 +67,18 @@ function SchoolEventLayout() {
                   />
                 </span>
               </ModalButton>
-              <ModalButton
-                action={{ modalContent: CreateEvent }}
-                size={"lg"}
-                classname={
-                  "border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
-                }
+              <DrawerTrigger
+                title="Create School Event"
+                placement="right"
+                drawerChildren={CreateEventWizzard}
+                closeOnOutsideClick={false}
+                closeOnEscape={false}
+                showHeader={false}
               >
-                <span>Create Event</span>
-              </ModalButton>
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Create Event</span>
+                </button>
+              </DrawerTrigger>
             </div>
           </div>
           <hr />

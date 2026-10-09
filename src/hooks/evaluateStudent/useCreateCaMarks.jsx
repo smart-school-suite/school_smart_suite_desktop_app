@@ -4,7 +4,7 @@ import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { resetCaScoreState } from "../../Slices/Asynslices/CaScoreSlice";
+import { resetCaScoreState } from "../../Slices/examEvaluation/caEvaluationSlice";
 export const useCreateCaMark = (handleClose) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
@@ -12,7 +12,6 @@ export const useCreateCaMark = (handleClose) => {
     mutationFn: createCaMark,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["examCandidates"] });
-      queryClient.invalidateQueries({ queryKey: ["examResults"] });
       if (handleClose) {
         handleClose();
       }

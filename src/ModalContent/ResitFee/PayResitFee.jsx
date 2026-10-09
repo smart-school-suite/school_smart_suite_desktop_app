@@ -10,26 +10,27 @@ import { paymentMethods } from "../../data/data";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import toast from "react-hot-toast";
 import { allFieldsValid } from "../../utils/functions";
+import { CircleX } from "lucide-react";
 function PayStudentResitFee({ rowData, handleClose }) {
-  const { id:resitFeeId, resit_fee:amount } = rowData;
+  const { id: resitFeeId, resit_fee: amount } = rowData;
   const amountRef = useRef();
   const methodRef = useRef();
   const currencyState = useSelector((state) => state.auth.user);
-    const userCurrencySymbol =
-      currencyState?.schoolDetails?.school?.country?.currency || "";
+  const userCurrencySymbol =
+    currencyState?.schoolDetails?.school?.country?.currency || "";
   const [formData, setFormData] = useState({
     amount: "",
     payment_method: "",
     student_resit_id: resitFeeId,
   });
   const [isValid, setIsValid] = useState({
-     amount:null
-  })
+    amount: null,
+  });
   const [errors, setErrors] = useState({
-     payment_method:null
-  })
+    payment_method: null,
+  });
   const { mutate: payResitFee, isPending } = usePayResit(handleClose);
-    const handlePrevalidation = async () => {
+  const handlePrevalidation = async () => {
     const amount = await amountRef.current.triggerValidation();
     const paymentMethod = await methodRef.current.triggerValidation();
     return {
@@ -41,13 +42,13 @@ function PayStudentResitFee({ rowData, handleClose }) {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
-        const prevalidation = await handlePrevalidation();
+    const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
       toast.custom(
         <ToastWarning
           title={"Invalid Fields"}
           description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
+        />,
       );
       return;
     }
@@ -56,34 +57,52 @@ function PayStudentResitFee({ rowData, handleClose }) {
         <ToastWarning
           title={"Invalid Fields"}
           description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
+        />,
       );
       return;
     }
-    payResitFee({...formData, payment_method:formData.payment_method.value});
+    payResitFee({ ...formData, payment_method: formData.payment_method.value });
   };
   return (
     <>
-      <span>
-        <div>
-          <div className="block">
-            <div className="d-flex flex-row align-items-center justify-content-between mb-3">
-              <span>Make Resit Fee Payment</span>
-              <span
-                className="m-0"
-                onClick={() => {
-                  handleClose();
-                }}
-              >
-                <Icon icon="charm:cross"  />
+      <div>
+        <div
+          className="border-bottom rounded-top-4 p-2 d-flex flex-column justify-content-center"
+          style={{ height: "6dvh", background: "#f9f9f9" }}
+        >
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <div>
+              <span className="font-size-sm fw-semibold">
+                Make Resit Fee Payment
               </span>
             </div>
+            <button
+              onClick={() => handleClose()}
+              className="border-none border rounded-circle bg-transparent p-0"
+              style={{
+                width: "2rem",
+                height: "2rem",
+                display: "grid",
+                placeItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <CircleX size={16} />
+            </button>
           </div>
+        </div>
+        <div className="px-2 pt-4">
           <div>
-            <label htmlFor="amount" className="font-size-sm">Amount</label>
-            <InputGroup 
-               onChange={(value) => handleStateChange("amount", value, setFormData)}
-               onValidationChange={(value) => handleStateChange("amount", value, setIsValid)}
+            <label htmlFor="amount" className="font-size-sm">
+              Amount
+            </label>
+            <InputGroup
+              onChange={(value) =>
+                handleStateChange("amount", value, setFormData)
+              }
+              onValidationChange={(value) =>
+                handleStateChange("amount", value, setIsValid)
+              }
               InputGroupText={userCurrencySymbol}
               validationSchema={numberSchema({
                 min: amount,
@@ -96,18 +115,22 @@ function PayStudentResitFee({ rowData, handleClose }) {
                   max: `Maximum amount is ${amount} ${userCurrencySymbol}`,
                 },
               })}
-              placeholder={'Enter Amount Paid'}
+              placeholder={"Enter Amount Paid"}
               ref={amountRef}
             />
           </div>
           <div>
-            <label htmlFor="paymentMethod" className="font-size-sm">Payment Method</label>
+            <label htmlFor="paymentMethod" className="font-size-sm">
+              Payment Method
+            </label>
             <CustomDropdown
               data={paymentMethods}
               valueKey={["value"]}
               displayKey={["label"]}
               direction="down"
-              onError={(value) => handleStateChange("payment_method", value, setErrors)}
+              onError={(value) =>
+                handleStateChange("payment_method", value, setErrors)
+              }
               onSelect={(value) =>
                 handleStateChange("payment_method", value, setFormData)
               }
@@ -118,17 +141,17 @@ function PayStudentResitFee({ rowData, handleClose }) {
               value={formData.payment_method}
             />
           </div>
-          <div className="mt-3 d-flex gap-2">
-            <button
-              className="border-none px-3 py-2 rounded-3 font-size-sm w-100 primary-background text-white"
-              onClick={handleSubmit}
-              disabled={isPending}
-            >
-              {isPending ? <SingleSpinner /> : "Make Payment"}
-            </button>
-          </div>
         </div>
-      </span>
+        <div className="mt-3 d-flex gap-2 px-2 mb-3">
+          <button
+            className="border-none px-3 py-2 rounded-3 font-size-sm w-100 primary-background text-white"
+            onClick={handleSubmit}
+            disabled={isPending}
+          >
+            {isPending ? <SingleSpinner /> : "Make Payment"}
+          </button>
+        </div>
+      </div>
     </>
   );
 }

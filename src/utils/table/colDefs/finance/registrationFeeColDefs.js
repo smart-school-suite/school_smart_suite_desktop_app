@@ -23,7 +23,7 @@ export function registrationFeeColDefs({ ActionComponent }) {
       cellRenderer: TextComponent,
     }),
      textColumn({
-      field: "specialty",
+      field: "specialty_name",
       headerName: "specialty",
       hide: false,
       cellRenderer: TextComponent,
@@ -37,7 +37,7 @@ export function registrationFeeColDefs({ ActionComponent }) {
     textColumn({
       field: "level_number",
       headerName: "Level Number",
-      hide: false,
+      hide: true,
       cellRenderer: TextComponent,
     }),
     numberColumn({
@@ -47,8 +47,8 @@ export function registrationFeeColDefs({ ActionComponent }) {
       cellRenderer: CurrencyComponent,
     }),
     textColumn({
-      field: "Payment Status",
-      headerName: "Status",
+      field: "status",
+      headerName: "Payment Status",
       hide: false,
       cellRenderer: RegistrationFeeTableBadge,
     }),

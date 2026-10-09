@@ -7,25 +7,6 @@ import JobPopOver from "../components/Popover/JobPopover";
 import { motion, AnimatePresence } from "framer-motion";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  removeRepeatableGroup,
-  addRepeatableGroup,
-  setRepeatableGroupValue,
-  setStandardGroupValue,
-} from "../Slices/administrator/courseSlice";
-import { COURSE_COLUMNS } from "../utils/course/courseColumns";
-import { courseImportColDefs } from "../utils/table/colDefs/course/courseImportColDefs";
-import ImportWizzard from "../ModalContent/Import/ImportWizzard";
-import { courseInstanceMap } from "../utils/maps/course/courseInstanceMap";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import CreateCourse from "../DrawerContent/Course/CreateCourse";
 import { COURSE_IMPORT_TRIGGER_MAP } from "../utils/maps/course/courseImportTriggerMap";
@@ -71,13 +52,6 @@ function CourseLayout() {
                 <CourseIcon />
               </div>
               <span className="font-size-sm fw-semibold">Manage Courses</span>
-            </div>
-            <div className="w-50">
-              <input
-                type="search"
-                className="form-control font-size-sm w-100"
-                placeholder="Search For Anything"
-              />
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Course"} />

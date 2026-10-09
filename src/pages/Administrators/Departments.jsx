@@ -79,6 +79,7 @@ import { departmentImportColDefs } from "../../utils/table/colDefs/department/de
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import CreateDepartment from "../../DrawerContent/Department/CreateDepartment";
 import { Drawer } from "../../components/drawer/Drawer";
+import SearchInput from "../../components/input/search";
 function Departments() {
   const tableRef = useRef();
   const dispatch = useDispatch();
@@ -115,8 +116,7 @@ function Departments() {
     return departments?.data ?? [];
   }, [departments]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setSearchText(value);
     if (tableRef.current && tableRef.current.setGridOption) {
       tableRef.current.setGridOption("quickFilterText", value);
@@ -311,13 +311,14 @@ function Departments() {
                   </div>
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <input
-                    type="search"
-                    placeholder="Search Department"
-                    onChange={handleSearch}
-                    value={searchText}
-                    className="font-size-sm form-control w-25"
-                  />
+                  <div className="w-50">
+                    <SearchInput
+                      placeholder={"Search Department......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
+                  </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}
@@ -541,7 +542,6 @@ function Departments() {
 }
 export default Departments;
 
-
 export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
@@ -610,7 +610,9 @@ export function ActionComponent(props) {
 
         <DropDownMenuItem
           className={menuItemClassName}
-          onClick={() => handleShowDrawer(DepartmentDetails, "Department Details")}
+          onClick={() =>
+            handleShowDrawer(DepartmentDetails, "Department Details")
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">

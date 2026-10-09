@@ -8,17 +8,17 @@ export default function DrawerTrigger({
   placement = "right",
   title,
   drawerData,
-  drawerChildren
+  drawerChildren,
+  showHeader = true,
+  closeOnOutsideClick = true,
+  closeOnEscape = true,
 }) {
   const [showDrawer, setShowDrawer] = useState(false);
   const [drawerContent, setDrawerContent] = useState(null);
 
   const handleShow = (Component) => {
     setDrawerContent(
-      <Component
-        handleClose={handleClose}
-        drawerData={drawerData}
-      />,
+      <Component handleClose={handleClose} drawerData={drawerData} />,
     );
     setShowDrawer(true);
   };
@@ -46,6 +46,9 @@ export default function DrawerTrigger({
         isOpen={showDrawer}
         onClose={handleClose}
         placement={placement}
+        showHeader={showHeader}
+        closeOnOutsideClick={closeOnOutsideClick}
+        closeOnEscape={closeOnEscape}
         title={title ?? action.title}
       >
         {drawerContent}

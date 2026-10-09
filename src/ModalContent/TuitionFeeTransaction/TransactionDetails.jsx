@@ -1,4 +1,4 @@
-import { useGetTuitionFeeTransactionDetails } from "../../hooks/feePayment/useGetTuitionFeeTransactionDetails";
+import { useGetTuitionFeeTransactionDetails } from "../../hooks/FeePayment/useGetTuitionFeeTransactionDetails";
 import { Icon } from "@iconify/react";
 import { formatISODate } from "../../utils/functions";
 import { useSelector } from "react-redux";

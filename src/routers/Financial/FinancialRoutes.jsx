@@ -1,39 +1,43 @@
 import React, { Suspense } from "react";
 import { Route } from "react-router-dom";
-const RegistrationFees = React.lazy(() =>
-  import("../../pages/Finances/RegistrationFees")
+const RegistrationFees = React.lazy(
+  () => import("../../pages/registrationFee/RegistrationFees"),
 );
-const RegistrationFeeTransactions = React.lazy(() =>
-  import("../../pages/Finances/Transactions/RegistrationFeesTransactions")
+const RegistrationFeeTransactions = React.lazy(
+  () =>
+    import("../../pages/registrationFee/RegistrationFeesTransactions"),
 );
-const ResitFee = React.lazy(() => import("../../pages/Finances/ResitFee"));
-const ResitFeeTransactions = React.lazy(() =>
-  import("../../pages/Finances/Transactions/ResitFeeTransactions")
+const ResitFee = React.lazy(() => import("../../pages/ResitFee/ResitFee"));
+const ResitFeeTransactions = React.lazy(
+  () => import("../../pages/ResitFee/ResitFeeTransactions"),
 );
-const SchoolExpenses = React.lazy(() =>
-  import("../../pages/Finances/Schoolexpenses")
+const SchoolExpenses = React.lazy(
+  () => import("../../pages/schoolExpense/SchoolExpenses"),
 );
-const TuitionFees = React.lazy(() => import("../../pages/Finances/TuitionFee"));
-const TuitionFeeTransactions = React.lazy(() =>
-  import("../../pages/Finances/Transactions/TuitionFeeTransactions")
+const TuitionFees = React.lazy(() => import("../../pages/TuitionFee/TuitionFee"));
+const TuitionFeeTransactions = React.lazy(
+  () => import("../../pages/TuitionFee/TuitionFeeTransactions"),
 );
-const AdditionalFees = React.lazy(() =>
-  import("../../pages/Finances/AdditionalFees")
+
+const AdditionalFees = React.lazy(
+  () => import("../../pages/AdditionalFee/AdditionalFees"),
 );
-const AdditionalFeeTransactions = React.lazy(() =>
-  import("../../pages/Finances/Transactions/AdditionalFeesTransactions")
+const AdditionalFeeTransactions = React.lazy(
+  () => import("../../pages/AdditionalFee/AdditionalFeesTransactions"),
 );
-const SchoolExpensesCategory = React.lazy(() =>
-  import("../../pages/Finances/SchoolExpensesCategory")
+
+const SchoolExpensesCategory = React.lazy(
+  () => import("../../pages/schoolExpense/SchoolExpensesCategory"),
 );
-const FeeSchedule = React.lazy(() =>
-  import("../../pages/Finances/FeeSchedule")
+const FeeSchedule = React.lazy(
+  () => import("../../pages/TuitionFeeSchedule/FeeSchedule"),
 );
-const BillStudentAdditionalFee = React.lazy(() =>
-  import("../../pages/Finances/BillStudentAdditionalFee")
+
+const AdditionalFeeBilling = React.lazy(
+  () => import("../../pages/AdditionalFee/AdditionalFeeBilling"),
 );
-const AdditionalFeeCategory = React.lazy(() =>
-  import("../../pages/Finances/AdditionalFeeCategory")
+const AdditionalFeeCategory = React.lazy(
+  () => import("../../pages/AdditionalFee/AdditionalFeeCategory"),
 );
 import SchoolExpensesLayout from "../../layouts/SchoolExpensesLayout";
 import RegistrationFeeLayout from "../../layouts/RegistrationFeeLayout";
@@ -43,23 +47,24 @@ import ResitFeeLayout from "../../layouts/ResitFeeLayout";
 const FinancialRoutes = [
   <Route key={"resitFeeLayout"} element={<ResitFeeLayout />}>
     <Route
-    key={"resitFee"}
-    path="/resit-payments"
-    element={
-      <Suspense>
-        <ResitFee />
-      </Suspense>
-    }
-  />,
-  <Route
-    key={"resitFeeTransactions"}
-    path="/resitfee-transaction"
-    element={
-      <Suspense>
-        <ResitFeeTransactions />
-      </Suspense>
-    }
-  />
+      key={"resitFee"}
+      path="/resit-payments"
+      element={
+        <Suspense>
+          <ResitFee />
+        </Suspense>
+      }
+    />
+    ,
+    <Route
+      key={"resitFeeTransactions"}
+      path="/resitfee-transaction"
+      element={
+        <Suspense>
+          <ResitFeeTransactions />
+        </Suspense>
+      }
+    />
   </Route>,
   <Route key={"registrationFeeLayout"} element={<RegistrationFeeLayout />}>
     <Route
@@ -129,7 +134,7 @@ const FinancialRoutes = [
       path="/additional-fee/student-billing"
       element={
         <Suspense>
-          <BillStudentAdditionalFee />
+          <AdditionalFeeBilling />
         </Suspense>
       }
     />

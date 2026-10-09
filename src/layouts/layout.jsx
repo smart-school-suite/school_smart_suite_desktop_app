@@ -1,4 +1,4 @@
-import Sidebar from "../components/Sidebars/Sidebar";
+import Sidebar from "../components/SideBars/Sidebar";
 import { Outlet } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";

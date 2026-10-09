@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
-import { resetExamScoreState } from "../../Slices/Asynslices/ExamScoreSlice";
+import { resetExamScoreState } from "../../Slices/examEvaluation/examEvaluationSlice";
 import { useDispatch } from "react-redux";
 export const useCreateExamMarks = (handleClose) => {
   const queryClient = useQueryClient();
@@ -12,7 +12,7 @@ export const useCreateExamMarks = (handleClose) => {
     mutationFn: createExamMark,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["examCandidates"] });
-
+      queryClient.invalidateQueries({ queryKey: ["studentResits"]});
       if (handleClose) {
         handleClose();
       }

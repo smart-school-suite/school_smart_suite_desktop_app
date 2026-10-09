@@ -1,4 +1,3 @@
-import { Icon } from "@iconify/react";
 import { useCreateHall } from "../../hooks/hall/useCreateHall";
 import { useRef, useState, useCallback } from "react";
 import { useGetHallTypes } from "../../hooks/hall/useGetHallTypes";

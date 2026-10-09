@@ -2,12 +2,9 @@ import {
   textColumn,
   actionsColumn,
   dateColumn,
-  numberColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
+import SemesterStatusRenderer from "../../../../components/Renderer/Semester/SemesterStatusRenderer";
 
 export function semesterColDefs({ ActionComponent }) {
   return [
@@ -33,7 +30,7 @@ export function semesterColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: TextComponent,
+      cellRenderer: SemesterStatusRenderer,
     }),
      dateColumn({
       field: "start_date",

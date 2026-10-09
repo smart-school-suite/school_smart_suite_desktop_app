@@ -8,7 +8,7 @@ export const useDeleteResitTransaction = (handleClose) => {
   return useMutation({
     mutationFn: deleteResitTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resitTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["resit-transactions"] });
 
       if (handleClose) {
         handleClose();

@@ -52,11 +52,31 @@ import {
   UserPlus,
   Settings,
   LogOut,
-  UnfoldHorizontal
+  UnfoldHorizontal,
+  PanelLeftClose,
+  ShieldCheck,
+  Building2,
+  Boxes,
+  GraduationCap,
+  Award,
+  Calendar,
+  BookOpen,
+  Clock,
+  FileCheck2,
+  BarChart2,
+  UserX,
+  Megaphone,
+  Vote,
+  CalendarDays,
+  Receipt,
+  CircleDollarSign,
+  PlusCircle,
+  Eye,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import useScreenSize from "../../hooks/ui/useScreenSize";
+import HorizontalDashedLine from "../DashedLine/HorizonetalDashedLine";
 function Sidebar() {
   const { is } = useScreenSize();
   return <>{is.sm || is.md ? <SideBarSm /> : <SideBarLg />}</>;
@@ -85,7 +105,7 @@ function SideBarSm() {
               }}
             />
           </div>
-          <div className="d-flex flex-column gap-2">
+          <div className="d-flex flex-column gap-3">
             {sideBarData.map((items, index) => (
               <SideBarSmTab items={items} key={index} />
             ))}
@@ -101,13 +121,13 @@ function SideBarSm() {
                 navigate("/settings/general-settings");
               }}
             >
-              <Icon icon="uil:setting" />
+              <Settings size={16} strokeWidth={1.75} />
             </div>
             <ModalButton
               action={{ modalContent: Logout }}
               classname="sidebar-sm menu-tab inactive hover-danger"
             >
-              <Icon icon="mynaui:logout" />
+              <LogOut size={16} strokeWidth={1.75} />
             </ModalButton>
           </div>
         </div>
@@ -125,37 +145,34 @@ function SideBarLg() {
         <aside
           className={`${
             darkMode
-              ? "dark-bg d-flex flex-column ps-2  pt-2 pb-2"
-              : "white-bg  d-flex flex-column ps-2  pt-2 pb-2"
+              ? "dark-bg d-flex flex-column "
+              : "white-bg  d-flex flex-column"
           }`}
         >
-          <div className="logo-area mb-3">
+          <div className="logo-area mb-1 ps-2  pt-2 pb-2">
             <div className="d-flex justify-content-between flex-row gap-2 px-2  align-items-center">
-              <div className="app-logo">
-                <img
-                  src="./logo/logo-transparent.png"
-                  alt=""
-                  className="app-logo"
-                />
+              <div className="d-flex flex-row align-items-center gap-2">
+                <div className="app-logo">
+                  <img
+                    src="./logo/logo-transparent.png"
+                    alt=""
+                    className="app-logo"
+                  />
+                </div>
               </div>
-              <UnfoldHorizontal size={16} />
+              <button className="border-none bg-none mb-1">
+                <PanelLeftClose size={16} className="text-iron-500" />
+              </button>
             </div>
           </div>
-          <div className="nav-container mt-1">
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.3} />
+          <div className="nav-container mt-1 ps-2  pt-2 pb-2">
             <div className="nav-items">
               <div className="d-flex flex-column gap-1 px-2">
                 {/*Dashoard*/}
-                <div
-                  className={
-                    IsPathInRoutes(dashboardRoutes)
-                      ? `${
-                          darkMode
-                            ? "nav-items-box-active-dark"
-                            : "nav-item-box-active"
-                        }`
-                      : "nav-item-box-inactive"
-                  }
-                  onClick={() => navigate("/")}
+                {/* <div
+                  className="cursor-not-allowed text-iron-200 nav-item-box-inactive"
+                  // onClick={() => navigate("/")}
                 >
                   <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
                     <span style={{ lineHeight: 0 }}>
@@ -163,11 +180,11 @@ function SideBarLg() {
                     </span>
                     <span style={{ fontSize: "0.75rem" }}>Dashboard</span>
                   </div>
-                </div>
+                </div> */}
                 {/*Dashoard*/}
 
                 {/*Administrator*/}
-                <div>
+                <div className="mt-2">
                   <div
                     className={
                       IsPathInRoutes(adminRoutes)
@@ -525,6 +542,24 @@ function SideBarLg() {
                       >
                         <div className="subbox-nav">
                           <NavLink
+                            to="/exam-invigilator"
+                            className={({ isActive }) =>
+                              isActive
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
+                            }
+                          >
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Exam Invigilator
+                            </p>
+                          </NavLink>
+                        </div>
+                      </div>
+                      <div
+                        className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
+                      >
+                        <div className="subbox-nav">
+                          <NavLink
                             to="/exam-timetable"
                             className={({ isActive }) =>
                               isActive
@@ -543,14 +578,14 @@ function SideBarLg() {
                       >
                         <div className="subbox-nav">
                           <NavLink
-                            to="/exam-results"
+                            to="/exam-result"
                             className={({ isActive }) =>
                               isActive
                                 ? "text-decoration-none  color-primary"
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize: "0.75rem" }}>Exam Results</p>
+                            <p style={{ fontSize: "0.75rem" }}>Exam Result</p>
                           </NavLink>
                         </div>
                       </div>
@@ -674,6 +709,40 @@ function SideBarLg() {
                           </NavLink>
                         </div>
                       </div>
+                      <div
+                        className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
+                      >
+                        <div className="subbox-nav">
+                          <NavLink
+                            to="/resit-invigilator"
+                            className={({ isActive }) =>
+                              isActive
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
+                            }
+                          >
+                            <p style={{ fontSize: "0.75rem" }}>
+                              Resit Invigilator
+                            </p>
+                          </NavLink>
+                        </div>
+                      </div>
+                      <div
+                        className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
+                      >
+                        <div className="subbox-nav">
+                          <NavLink
+                            to="/resit-result"
+                            className={({ isActive }) =>
+                              isActive
+                                ? "text-decoration-none  color-primary"
+                                : "text-decoration-none text-dark "
+                            }
+                          >
+                            <p style={{ fontSize: "0.75rem" }}>Resit Result</p>
+                          </NavLink>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -770,7 +839,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize: "0.75rem" }}>Parents</p>
+                            <p style={{ fontSize: "0.75rem" }}>Guardian</p>
                           </NavLink>
                         </div>
                       </div>
@@ -810,7 +879,7 @@ function SideBarLg() {
                         : "nav-item-box-inactive"
                     }
                     onClick={() => {
-                      navigate("/announcement-overview");
+                      navigate("/all-announcement");
                     }}
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
@@ -850,7 +919,7 @@ function SideBarLg() {
                         <div className="subbox-nav">
                           <div
                             onClick={() => {
-                              navigate("/announcement-overview");
+                              navigate("/all-announcement");
                             }}
                             className={
                               IsPathInRoutes(announcementRoutes)
@@ -868,7 +937,7 @@ function SideBarLg() {
                         <div className="subbox-nav">
                           <div
                             onClick={() => {
-                              navigate("/election-overview");
+                              navigate("/elections");
                             }}
                             className={
                               IsPathInRoutes(electionRoutes)
@@ -1076,32 +1145,35 @@ function SideBarLg() {
               </div>
             </div>
           </div>
-          <div className="mt-auto d-flex gap-2 flex-column justify-content-center align-items-center w-100 px-2">
-            <div
-              className={`${
-                IsPathInRoutes(settingRoutes)
-                  ? `${darkMode ? "sidebar-active-dark" : "sidebar-active"}`
-                  : ""
-              } sidebar-item  text-dark`}
-              onClick={() => {
-                navigate("/settings/general-settings");
-              }}
-            >
-              <span style={{ fontSize: "0.75rem" }}>Setting</span>
-              <span style={{ lineHeight: 0 }}>
-                <Settings size={16} />
-              </span>
-            </div>
-            <div className="w-100">
-              <ModalButton
-                action={{ modalContent: Logout }}
-                classname="sidebar-item transparent-bg  text-dark"
+          <div className="mt-auto ">
+            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.3} />
+            <div className="d-flex flex-column gap-2 justify-content-center align-items-center w-100 d-flex pt-2 pb-1 flex-column  px-2">
+              <div
+                className={`${
+                  IsPathInRoutes(settingRoutes)
+                    ? `${darkMode ? "sidebar-active-dark" : "sidebar-active"}`
+                    : ""
+                } sidebar-item  text-dark`}
+                onClick={() => {
+                  navigate("/settings/general-settings");
+                }}
               >
-                <span style={{ fontSize: "0.75rem" }}>Logout</span>
+                <span style={{ fontSize: "0.75rem" }}>Setting</span>
                 <span style={{ lineHeight: 0 }}>
-                  <LogOut size={16} />
+                  <Settings size={16} />
                 </span>
-              </ModalButton>
+              </div>
+              <div className="w-100">
+                <ModalButton
+                  action={{ modalContent: Logout }}
+                  classname="sidebar-item transparent-bg  text-dark"
+                >
+                  <span style={{ fontSize: "0.75rem" }}>Logout</span>
+                  <span style={{ lineHeight: 0 }}>
+                    <LogOut size={16} />
+                  </span>
+                </ModalButton>
+              </div>
             </div>
           </div>
         </aside>
@@ -1115,11 +1187,25 @@ function SideBarSmTab({ items }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
+  const routeMap = {
+    dashboard: dashboardRoutes,
+    administrator: adminRoutes,
+    academics: academicRoutes,
+    exams: examRoutes,
+    resit: resitRoutes,
+    student: StudentRoutes,
+    schoolActivities: schoolActivities,
+    finances: financialRoutes,
+    activationCode: activationCodeRoutes,
+  };
+
+  const isActive = IsPathInRoutes(routeMap[items.key]);
+
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
-    placement: "left-center",
-    middleware: [offset(100), flip(), shift()],
+    placement: "right-start", // Recommended for sidebar popovers
+    middleware: [offset(10), flip(), shift()],
     whileElementsMounted: autoUpdate,
   });
 
@@ -1137,77 +1223,72 @@ function SideBarSmTab({ items }) {
     (e) => {
       const floatingOnClick = getReferenceProps().onClick;
       if (floatingOnClick) floatingOnClick(e);
-      if (!items.menu) {
+      if (!items.menu && items.path) {
         navigate(items.path);
       }
     },
-    [getReferenceProps],
+    [getReferenceProps, items.menu, items.path, navigate],
   );
-  const routeMap = {
-    dashboard: dashboardRoutes,
-    administrator: adminRoutes,
-    academics: academicRoutes,
-    exams: examRoutes,
-    resit: resitRoutes,
-    student: StudentRoutes,
-    schoolActivities: schoolActivities,
-    finances: financialRoutes,
-  };
+
+  // Dynamic Icon Component references from Lucide
+  const MainIcon = items.icon;
+
   return (
     <div className="position-relative inline-block">
       <button
         ref={refs.setReference}
         {...getReferenceProps()}
-        className={`sidebar-sm menu-tab ${
-          IsPathInRoutes(routeMap[items.key]) ? "active" : "inactive"
-        }`}
+        className={`sidebar-sm menu-tab ${isActive ? "active" : "inactive"}`}
         aria-expanded={isOpen}
         onClick={handleTriggerClick}
       >
-        <Icon
-          icon={`${
-            IsPathInRoutes(routeMap[items.key])
-              ? items.iconFilled
-              : items.iconOutlined
-          }`}
-        />
+        {MainIcon && (
+          <MainIcon
+            size={16}
+            strokeWidth={isActive ? 2.5 : 1.75}
+            className="sidebar-icon"
+          />
+        )}
       </button>
-      {items.menu && (
+
+      {items.menu && items.menuItems && (
         <AnimatePresence>
           {isOpen && (
             <motion.div
               ref={refs.setFloating}
               style={{
                 ...floatingStyles,
-                position: "absolute",
                 zIndex: 9999,
               }}
               {...getFloatingProps()}
-              className={`sidebar-sm  menu border p-2 ${
+              className={`sidebar-sm menu border p-2 ${
                 darkMode ? "dark-bg" : "bg-white"
               } rounded shadow-lg`}
-              initial={{ opacity: 0, x: 16 }}
+              initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 16 }}
+              exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
             >
               {items.menuItems.map((item, index) => {
                 const isLastElement = index === items.menuItems.length - 1;
+                const SubMenuIcon = item.icon;
+
                 return (
-                  <>
+                  <React.Fragment key={item.path || index}>
                     <div
-                      className="d-flex flex-row align-items-center justify-content-between px-2  pointer-cursor sidebar-sm menu-item"
-                      key={index}
+                      className="d-flex flex-row align-items-center justify-content-between px-2 pointer-cursor sidebar-sm menu-item gap-3 py-1"
                       onClick={() => {
                         navigate(item.path);
                         setIsOpen(false);
                       }}
                     >
                       <span>{item.title}</span>
-                      <Icon icon={item.iconOutlined} className="fs-6" />
+                      {SubMenuIcon && (
+                        <SubMenuIcon size={16} strokeWidth={1.75} />
+                      )}
                     </div>
-                    {!isLastElement && <hr />}
-                  </>
+                    {!isLastElement && <hr className="my-1 opacity-25" />}
+                  </React.Fragment>
                 );
               })}
             </motion.div>
@@ -1217,251 +1298,243 @@ function SideBarSmTab({ items }) {
     </div>
   );
 }
-const sideBarData = [
+
+export const sideBarData = [
   {
-    title: "Dasboard",
-    iconFilled: "mage:dashboard-fill",
-    iconOutlined: "mage:dashboard",
+    title: "Dashboard",
+    icon: LayoutDashboard,
     menu: false,
     path: "/",
     key: "dashboard",
   },
   {
     title: "Administrator",
-    iconFilled: "clarity:administrator-solid",
-    iconOutlined: "clarity:administrator-line",
+    icon: ShieldCheck,
     menu: true,
     path: "/school-admins",
     key: "administrator",
     menuItems: [
       {
         title: "School Admins",
-        iconFilled: "clarity:administrator-solid",
-        iconOutlined: "clarity:administrator-line",
+        icon: ShieldCheck,
         path: "/school-admins",
       },
       {
         title: "Departments",
-        iconFilled: "mingcute:department-fill",
-        iconOutlined: "mingcute:department-line",
+        icon: Building2,
         path: "/departments",
       },
       {
         title: "Specialties",
-        iconFilled: "pepicons-pop:ruler-circle-filled",
-        iconOutlined: "pepicons-pop:ruler-circle",
+        icon: Boxes,
         path: "/specialties",
       },
       {
         title: "Teachers",
-        iconFilled: "ph:chalkboard-teacher-fill",
-        iconOutlined: "ph:chalkboard-teacher-light",
-        path: "/teachers",
+        icon: GraduationCap,
+        path: "/teacher",
       },
     ],
   },
   {
     title: "Academics",
-    iconFilled: "heroicons:academic-cap-16-solid",
-    iconOutlined: "heroicons:academic-cap",
+    icon: GraduationCap,
     path: "/grades-configuration",
     menu: true,
     key: "academics",
     menuItems: [
       {
-        title: "Grades Configuration",
-        iconFilled: "healthicons:i-exam-qualification",
-        iconOutlined: "healthicons:i-exam-qualification-outline",
+        title: "Grades Scale",
+        icon: Award,
         path: "/grades-configuration",
       },
       {
         title: "Semester",
-        iconFilled: "ph:calendar-fill",
-        iconOutlined: "ph:calendar-light",
+        icon: Calendar,
         path: "/semesters",
       },
       {
         title: "Course",
-        iconFilled: "si:book-fill",
-        iconOutlined: "si:book-line",
+        icon: BookOpen,
         path: "/courses",
       },
       {
         title: "Timetable",
-        iconFilled: "ant-design:schedule-filled",
-        iconOutlined: "ant-design:schedule-outlined",
+        icon: Clock,
         path: "/time-table",
+      },
+      {
+        title: "Academic Year",
+        icon: CalendarDays,
+        path: "/academic-year",
       },
     ],
   },
   {
     title: "Manage Exams",
-    iconFilled: "healthicons:i-exam-multiple-choice",
-    iconOutlined: "healthicons:i-exam-multiple-choice-outline",
+    icon: FileCheck2,
     path: "/exam",
     menu: true,
     key: "exams",
     menuItems: [
       {
         title: "Exam",
-        iconFilled: "healthicons:i-exam-multiple-choice",
-        iconOutlined: "healthicons:i-exam-multiple-choice-outline",
+        icon: FileCheck2,
         path: "/exam",
       },
       {
         title: "Exam Candidate",
-        iconFilled: "fluent:document-person-16-filled",
-        iconOutlined: "fluent:document-person-16-regular",
+        icon: FileSpreadsheet,
         path: "/exam-candidate",
       },
       {
+         title:"Exam Invigilator",
+         icon: Eye,
+         path:"/exam-invigilator"
+      },
+      {
         title: "Exam Timetable",
-        iconFilled: "ant-design:schedule-filled",
-        iconOutlined: "ant-design:schedule-outlined",
+        icon: Clock,
         path: "/exam-timetable",
       },
       {
         title: "Exam Results",
-        iconFilled: "lets-icons:chart",
-        iconOutlined: "lets-icons:chart-fill",
-        path: "/exam-results",
+        icon: BarChart2,
+        path: "/exam-result",
       },
     ],
   },
   {
     title: "Manage Resit",
-    iconFilled: "pepicons-pop:repeat-circle-filled",
-    iconOutlined: "pepicons-pop:repeat-circle",
+    icon: RotateCcw,
     path: "/resit-exams",
     menu: true,
     key: "resit",
     menuItems: [
       {
         title: "Resit Exam",
-        iconFilled: "healthicons:i-exam-multiple-choice",
-        iconOutlined: "healthicons:i-exam-multiple-choice-outline",
+        icon: FileCheck2,
         path: "/resit-exams",
       },
       {
         title: "Resit Candidate",
-        iconFilled: "fluent:document-person-16-filled",
-        iconOutlined: "fluent:document-person-16-regular",
+        icon: FileSpreadsheet,
         path: "/resit-candidate",
       },
       {
         title: "Resit Timetable",
-        iconFilled: "ant-design:schedule-filled",
-        iconOutlined: "ant-design:schedule-outlined",
+        icon: Clock,
         path: "/resit-timetable",
       },
       {
         title: "Student Resit",
-        iconFilled: "pepicons-pop:repeat-circle-filled",
-        iconOutlined: "pepicons-pop:repeat-circle",
+        icon: RotateCcw,
         path: "/student-resit",
+      },
+      {
+        title: "Resit Invigilator",
+        icon: Eye,
+        path: "/resit-invigilator",
+      },
+      {
+        title: "Resit Result",
+        icon: BarChart2,
+        path: "/resit-result",
       },
     ],
   },
   {
     title: "Manage Student",
-    iconOutlined: "mdi:account-student-outline",
-    iconFilled: "mdi:account-student",
+    icon: Users,
     path: "/students",
     menu: true,
     key: "student",
     menuItems: [
       {
         title: "Students",
-        iconOutlined: "mdi:account-student-outline",
-        iconFilled: "mdi:account-student",
+        icon: Users,
         path: "/students",
       },
       {
         title: "Student Dropouts",
-        iconFilled: "clarity:sign-out-solid",
-        iconOutlined: "clarity:sign-out-line",
+        icon: UserX,
         path: "/studentDropout",
       },
       {
         title: "Parents",
-        iconFilled: "ri:parent-fill",
-        iconOutlined: "ri:parent-line",
+        icon: Users,
         path: "/parents",
       },
       {
         title: "Student Batches",
-        iconFilled: "typcn:group",
-        iconOutlined: "typcn:group-outline",
+        icon: Boxes,
         path: "/student-batches",
       },
     ],
   },
   {
     title: "School Activities",
-    iconFilled: "mynaui:activity-square-solid",
-    iconOutlined: "mynaui:activity-square",
-    path: "/announcement-overview",
+    icon: CalendarDays,
+    path: "/all-announcement",
     menu: true,
     key: "schoolActivities",
     menuItems: [
       {
         title: "Announcements",
-        iconFilled: "streamline-plump:announcement-megaphone-solid",
-        iconOutlined: "streamline-plump:announcement-megaphone",
-        path: "/announcement-overview",
+        icon: Megaphone,
+        path: "/all-announcement",
       },
       {
         title: "School Elections",
-        iconFilled: "streamline-flex:politics-vote-2-solid",
-        iconOutlined: "streamline-flex:politics-vote-2-remix",
-        path: "/election-overview",
+        icon: Vote,
+        path: "/elections",
       },
       {
         title: "Events",
-        iconFilled: "clarity:event-solid",
-        iconOutlined: "clarity:event-line",
+        icon: CalendarDays,
         path: "/events",
       },
     ],
   },
   {
     title: "Finances",
-    iconFilled: "healthicons:money-bag",
-    iconOutlined: "healthicons:money-bag-outline",
+    icon: Wallet,
     menu: true,
     path: "/school-expenses",
     key: "finances",
     menuItems: [
       {
         title: "School Expenses",
-        iconFilled: "fluent:money-hand-20-filled",
-        iconOutlined: "fluent:money-hand-16-regular",
+        icon: Receipt,
         path: "/school-expenses",
       },
       {
         title: "Resit Fees",
-        iconFilled: "pepicons-pop:repeat-circle-filled",
-        iconOutlined: "pepicons-pop:repeat-circle",
+        icon: RotateCcw,
         path: "/resit-payments",
       },
       {
         title: "Tuition Fees",
-        iconFilled: "solar:money-bag-bold",
-        iconOutlined: "solar:money-bag-linear",
+        icon: CircleDollarSign,
         path: "/fee-payments",
       },
       {
         title: "Registration Fees",
-        iconFilled: "mdi:register",
-        iconOutlined: "mdi:register-outline",
+        icon: UserPlus,
         path: "/registration-fees",
       },
       {
         title: "Additional Fees",
-        iconFilled: "teenyicons:bag-plus-solid",
-        iconOutlined: "teenyicons:bag-plus-outline",
+        icon: PlusCircle,
         path: "/additional-fees",
       },
     ],
+  },
+  {
+    title: "Activation Code",
+    icon: UserPlus,
+    menu: false,
+    path: "/activation-code",
+    key: "activationCode",
   },
 ];

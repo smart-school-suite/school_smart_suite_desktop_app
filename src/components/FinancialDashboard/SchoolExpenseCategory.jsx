@@ -1,4 +1,4 @@
-import DoughnutChart from "../ChartComponents/DoughnutChart";
+import DoughnutChart from "../chartcomponents/DoughnutChart";
 import { useGetSchoolExpenseTotalByCategory } from "../../hooks/financialAnalytics/useGetSchoolExpenseCategory";
 import { useSelector } from "react-redux";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";

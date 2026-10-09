@@ -1,4 +1,4 @@
-import { createSlice, createSelector } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
@@ -17,6 +17,13 @@ const initialState = {
     status: "IDLE",
     selectedFile: null,
     mapping: {},
+  },
+  createExam: {
+    examType: {},
+    academicYear: {},
+  },
+  gradeScale: {
+    selectedGradeScale: {},
   },
 };
 
@@ -110,6 +117,20 @@ const examSlice = createSlice({
     updateSelectedColumns: (state, action) => {
       state.columns.selectedColumns = action.payload;
     },
+    setCreateExamValue: (state, action) => {
+      const { value, field } = action.payload;
+      state.createExam[field] = value;
+    },
+    resetCreateExamState: (state, action) => {
+      state.createExam = initialState.createExam;
+    },
+    setSelectedGradeScale: (state, action) => {
+      const { gradeScale } = action.payload;
+      state.gradeScale.selectedGradeScale = gradeScale;
+    },
+    resetGradeScaleState: (state, action) => {
+      state.gradeScale.selectedGradeScale = initialState.gradeScale;
+    },
   },
 });
 
@@ -133,6 +154,10 @@ export const {
   setImportSelectedFile,
   setImportReset,
   setColumnMapping,
+  setCreateExamValue,
+  resetCreateExamState,
+  setSelectedGradeScale,
+  resetGradeScaleState
 } = examSlice.actions;
 
 export default examSlice.reducer;

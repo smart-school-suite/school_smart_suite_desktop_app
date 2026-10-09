@@ -3,7 +3,7 @@ import { getResitPaymentTransactions } from "../../services/studentResit";
 
 export const useGetResitTransactions = () => {
     return useQuery({
-        queryKey:["resitTransactions"],
+        queryKey:["resit-transactions"],
         queryFn:() => getResitPaymentTransactions()
     })
 }

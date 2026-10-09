@@ -36,27 +36,27 @@ export const getAdditionalFeeTransactions = async () => {
 }
 
 export const bulkDeleteAdditionalFeeTransactions = async (deleteData) => {
-     const response = await axiosInstance.post("additional-fees/additional-fee-transactions/bulk-delete", deleteData);
+     const response = await axiosInstance.post("additional-fees/transaction/bulk-delete", deleteData);
      return response.data;
 }
 
 export const bulkReverseAdditionalFeeTransactions = async (transactionData) => {
-     const response = await axiosInstance.delete("additional-fees/additional-fee-transactions/bulk-reverse", transactionData);
+     const response = await axiosInstance.delete("additional-fees/transaction/bulk-reverse", transactionData);
      return response.data;
 }
 
 export const getAdditionalFeeTransactionDetails = async (transactionId) => {
-     const response = await axiosInstance.get(`additional-fees/additional-fee-transactions/${transactionId}`);
+     const response = await axiosInstance.get(`additional-fees/transaction/${transactionId}`);
      return response.data;
 }
 
 export const deleteAdditionalFeeTransaction = async (transactionId) => {
-     const response = await axiosInstance.delete(`additional-fees/additional-fee-transactions/${transactionId}`);
+     const response = await axiosInstance.delete(`additional-fees/transaction/${transactionId}`);
      return response.data;
 }
 
 export const reverseAdditionalFeeTransaction = async (transactionId) => {
-     const response = await axiosInstance.delete(`additional-fees/additional-fee-transactions/${transactionId}/reverse`);
+     const response = await axiosInstance.delete(`additional-fees/transaction/${transactionId}/reverse`);
      return response.data;
 }
 

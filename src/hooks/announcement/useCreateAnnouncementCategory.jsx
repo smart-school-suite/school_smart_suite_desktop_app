@@ -21,7 +21,7 @@ export const useCreateAnnouncementCategory = (handleClose) => {
                 />
              )
          },
-         onError:() => {
+         onError:(error) => {
              toast.custom(
                 <ToastDanger 
                   title={"Creation Failed"}

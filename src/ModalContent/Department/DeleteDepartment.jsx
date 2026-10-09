@@ -51,7 +51,7 @@ function DeleteDepartment({ handleClose, rowData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeleteSpeccialty();
+               handleDeleteDepartment();
               }}
             >
               {isPending ? <SingleSpinner /> : <>Yes, Delete</>}
