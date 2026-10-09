@@ -1,7 +1,7 @@
 export const API_BASE_URL = Object.freeze({
   DEV: "http://127.0.0.1:8000/api/v1/",
-  STAGE: "https://staging-api.yourdomain.com/api/v1/",
-  PROD: "https://api.yourdomain.com/api/v1/",
+  STAGE: "https://staging-api.smartschoolsuite.com/api/v1/",
+  PROD: "https://api.smartschoolsuite.com/api/v1/",
 });
 
 export const API_ENV = Object.freeze({

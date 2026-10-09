@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
           apiKey: responseData.apiKey,
         })
       );
-      navigate("/");
+      navigate("/school-admins");
     } catch (error) {
       setAuthError((prevalue) => ({
         ...prevalue,

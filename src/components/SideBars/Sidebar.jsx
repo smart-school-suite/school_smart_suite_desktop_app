@@ -170,17 +170,9 @@ function SideBarLg() {
             <div className="nav-items">
               <div className="d-flex flex-column gap-1 px-2">
                 {/*Dashoard*/}
-                <div
-                  className={
-                    IsPathInRoutes(dashboardRoutes)
-                      ? `${
-                          darkMode
-                            ? "nav-items-box-active-dark"
-                            : "nav-item-box-active"
-                        }`
-                      : "nav-item-box-inactive"
-                  }
-                  onClick={() => navigate("/")}
+                {/* <div
+                  className="cursor-not-allowed text-iron-200 nav-item-box-inactive"
+                  // onClick={() => navigate("/")}
                 >
                   <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
                     <span style={{ lineHeight: 0 }}>
@@ -188,11 +180,11 @@ function SideBarLg() {
                     </span>
                     <span style={{ fontSize: "0.75rem" }}>Dashboard</span>
                   </div>
-                </div>
+                </div> */}
                 {/*Dashoard*/}
 
                 {/*Administrator*/}
-                <div>
+                <div className="mt-2">
                   <div
                     className={
                       IsPathInRoutes(adminRoutes)

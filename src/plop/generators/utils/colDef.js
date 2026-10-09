@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { COL_DEFS_ROOT, TEMPLATES_ROOT } from '../../config.js';
 
 export default {
@@ -15,12 +16,29 @@ export default {
         return true;
       },
     },
+    {
+      type: 'input',
+      name: 'folder',
+      message: () => {
+        let hint = 'Subfolder inside colDefs:';
+        if (fs.existsSync(COL_DEFS_ROOT)) {
+          const subs = fs
+            .readdirSync(COL_DEFS_ROOT, { withFileTypes: true })
+            .filter((e) => e.isDirectory())
+            .map((e) => e.name);
+          if (subs.length) hint += `\n  Existing: ${subs.join(', ')}`;
+        }
+        return hint;
+      },
+      validate: (input) =>
+        input ? true : 'Folder name is required (e.g. jointCourse)',
+    },
   ],
   actions: [
     {
       type: 'add',
-      path: `${COL_DEFS_ROOT}/{{camelCase name}}ColDefs.js`,
-      templateFile: `${TEMPLATES_ROOT}/colDef/colDef.js.hbs`,
+      path: `${COL_DEFS_ROOT}/{{folder}}/{{camelCase name}}ColDefs.js`,
+      templateFile: `${TEMPLATES_ROOT}/utils/colDef.js.hbs`,
     },
   ],
 };

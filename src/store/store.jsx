@@ -79,6 +79,7 @@ import scheduledAnnouncementReducer from "../Slices/announcement/scheduledAnnoun
 import electionApplicationReducer from "../Slices/election/electionApplicationSlice";
 import eventCategoryReducer from "../Slices/schoolEvent/eventCategorySlice";
 import schoolEventReducer from "../Slices/schoolEvent/schoolEventSlice";
+import semesterJointCourseReducer from "../Slices/jointCourse/semesterJointCourseSlice";
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -133,6 +134,10 @@ const rootReducer = combineReducers({
   student: persistReducer({ key: "student", storage }, studentReducer),
   parent: persistReducer({ key: "parent", storage }, parentReducer),
   resitExam: persistReducer({ key: "resitExam", storage }, resitExamReducer),
+  semesterJointCourse: persistReducer(
+    { key: "semesterJointCourse", storage },
+    semesterJointCourseReducer,
+  ),
   electionApplication: persistReducer(
     {
       key: "electionApplication",
