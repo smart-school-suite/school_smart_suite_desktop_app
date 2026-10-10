@@ -1,5 +1,5 @@
-import { getAssignedHalls } from "../../services/specialtyHall";
 import { useQuery } from "@tanstack/react-query";
+import { getAssignedHalls } from "../../services/specialtyHall";
 
 export const useGetAssignedHalls = (specialtyId) => {
   return useQuery({

@@ -1,32 +1,32 @@
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  UserCheck,
+  ArrowDown,
   ChevronDown,
   Dot,
-  ArrowDown,
   Mail,
   Phone,
+  UserCheck,
 } from "lucide-react";
-import JobPopOver from "../../components/Popover/JobPopover";
-import SearchInput from "../../components/input/search";
-import { useGetExams } from "../../hooks/exam/useGetExams";
-import { Fragment, useState } from "react";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { isLastElement } from "../../utils/functions";
-import { AnimatePresence, motion } from "framer-motion";
-import { Icon } from "@iconify/react";
+import { Fragment } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import SearchInput from "../../components/input/search";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import AssignInvigilator from "../../DrawerContent/Invigilator/AssignInvigilator";
+import { useGetExams } from "../../hooks/exam/useGetExams";
 import { useGetAssignedInvigilators } from "../../hooks/invigilator/useGetAssignedInvigilators";
 import { useRemoveInvigilator } from "../../hooks/invigilator/useRemoveInvigilator";
 import {
-  setSelectedExam,
   setSelectedAcademicYear,
+  setSelectedExam,
 } from "../../Slices/exam/examInvigilatorSlice";
-import { useSelector, useDispatch } from "react-redux";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { isLastElement } from "../../utils/functions";
 function ExamInvigilator() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const moduleState = useSelector((state) => state.examInvigilator);

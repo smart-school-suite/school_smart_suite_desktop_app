@@ -1,58 +1,57 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import { useGetAllParents } from "../../hooks/parent/useGetParents";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
 import React, {
-  useState,
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
-import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
-import { ParentIcon } from "../../icons/Icons";
-import { useSelector } from "react-redux";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  setStandardGroupValue,
-} from "../../Slices/student/parentSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useDispatch } from "react-redux";
-import JobPopOver from "../../components/Popover/JobPopover";
-import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
-import { PARENT_COLUMNS } from "../../utils/parent/parentColumn";
-import { parentColDefs } from "../../utils/table/colDefs/parent/parentColDefs";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import SearchInput from "../../components/input/search";
+import CustomModal from "../../components/Modals/Modal";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import CreateGuardian from "../../DrawerContent/Guardian/CreateGuardian";
 import GuardianDetails from "../../DrawerContent/Guardian/GuardianDetails";
 import UpdateGuardian from "../../DrawerContent/Guardian/UpdateGuardian";
-import CreateGuardian from "../../DrawerContent/Guardian/CreateGuardian";
-import DeleteGuardian from "../../ModalContent/Parent/DeleteGuardian";
+import { useGetAllParents } from "../../hooks/parent/useGetParents";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { ParentIcon } from "../../icons/Icons";
+import Export from "../../ModalContent/Export/Export";
+import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import BulkDeleteGuardian from "../../ModalContent/Parent/BulkDeleteGuardian";
+import DeleteGuardian from "../../ModalContent/Parent/DeleteGuardian";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setColumnMapping,
+  setCustomFilter,
+  setImportReset,
+  setImportSelectedFile,
+  setImportStatus,
+  setStandardGroupValue,
+  toggleGeneralFilter,
+} from "../../Slices/student/parentSlice";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { PARENT_COLUMNS } from "../../utils/parent/parentColumn";
+import { parentColDefs } from "../../utils/table/colDefs/parent/parentColDefs";
 function Parents() {
   const { data: guardians, isLoading, error } = useGetAllParents();
   const tableRef = useRef();

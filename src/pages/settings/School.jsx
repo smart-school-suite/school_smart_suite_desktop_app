@@ -1,16 +1,14 @@
 import { Icon } from "@iconify/react";
-import SettingSideBar from "../../components/SideBars/SetttingSideBar";
 import { useSelector } from "react-redux";
-import Pageloaderspinner from "../../components/Spinners/Spinners";
-import { useGetSchoolDetails } from "../../hooks/school/useGetSchoolDetails";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import UpdateSchoolName from "../../ModalContent/School/UpdateSchoolName";
-import UpdateSchoolMotor from "../../ModalContent/School/UpdateSchoolMotor";
-import UploadSchoolLogo from "../../ModalContent/School/UploadSchoolLogo";
-import { formatDate, timeSince } from "../../utils/functions";
-import UpdateEstablishedDate from "../../ModalContent/School/UpdateEstablishedDate";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { useGetSchoolDetails } from "../../hooks/school/useGetSchoolDetails";
+import UpdateEstablishedDate from "../../ModalContent/School/UpdateEstablishedDate";
+import UpdateSchoolMotor from "../../ModalContent/School/UpdateSchoolMotor";
+import UpdateSchoolName from "../../ModalContent/School/UpdateSchoolName";
+import UploadSchoolLogo from "../../ModalContent/School/UploadSchoolLogo";
+import { formatDate } from "../../utils/functions";
 function School() {
   const userData = useSelector((state) => state.auth.user);
   const darkMode = useSelector((state) => state.theme.darkMode);

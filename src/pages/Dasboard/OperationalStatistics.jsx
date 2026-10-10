@@ -1,9 +1,9 @@
-import TotalStudents from "../../components/OperationalDashboard/TotalStudent";
 import OperationalDashboardCard from "../../components/OperationalDashboard/Card";
-import StudentRegistrationCard from "../../components/OperationalDashboard/StudentRegistrationCard";
-import StudentRegistrationLevelCard from "../../components/OperationalDashboard/StudentLevelRegistrationCard";
-import StudentLevelDropoutRate from "../../components/OperationalDashboard/StudentLevelDropoutRate";
 import StudentDropoutRate from "../../components/OperationalDashboard/StudentDropoutRate";
+import StudentLevelDropoutRate from "../../components/OperationalDashboard/StudentLevelDropoutRate";
+import StudentRegistrationLevelCard from "../../components/OperationalDashboard/StudentLevelRegistrationCard";
+import StudentRegistrationCard from "../../components/OperationalDashboard/StudentRegistrationCard";
+import TotalStudents from "../../components/OperationalDashboard/TotalStudent";
 function OperationalStatistics() {
   return (
     <>

@@ -1,46 +1,44 @@
-import { announcementCategoryColDefs } from "../../utils/table/colDefs/announcement/announcementCategoryColDefs";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import DeleteAnnouncementCategory from "../../ModalContent/AnnouncementCategory/DeleteAnnouncementCategory";
-import Table from "../../components/Tables/Tables";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Plus } from "lucide-react";
 import React, {
-  useState,
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { useDispatch, useSelector } from "react-redux";
+import AnnouncementCategoryDetails from "../../DrawerContent/AnnouncementCategory/AnnouncementCategoryDetails";
+import CreateAnnouncementCategory from "../../DrawerContent/AnnouncementCategory/CreateAnnouncementCategory";
+import UpdateAnnouncementCategory from "../../DrawerContent/AnnouncementCategory/UpdateAnnouncementCategory";
+import DeleteAnnouncementCategory from "../../ModalContent/AnnouncementCategory/DeleteAnnouncementCategory";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/announcement/announcementCatSlice";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import SearchInput from "../../components/input/search";
 import { useGetAnnouncementCategories } from "../../hooks/announcement/useGetAnnouncementCategories";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
-import { useSelector, useDispatch } from "react-redux";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
 import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/announcement/announcementCatSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
-import AnnouncementCategoryDetails from "../../DrawerContent/AnnouncementCategory/AnnouncementCategoryDetails";
-import UpdateAnnouncementCategory from "../../DrawerContent/AnnouncementCategory/UpdateAnnouncementCategory";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import CreateAnnouncementCategory from "../../DrawerContent/AnnouncementCategory/CreateAnnouncementCategory";
-import { Plus } from "lucide-react";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { announcementCategoryColDefs } from "../../utils/table/colDefs/announcement/announcementCategoryColDefs";
 function AnnouncementCategory() {
   const dispatch = useDispatch();
   const tableRef = useRef(null);

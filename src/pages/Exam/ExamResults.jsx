@@ -1,26 +1,21 @@
-import Table from "../../components/Tables/Tables";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
-import { GradeIcon } from "../../icons/Icons";
-import { useGetExamResults } from "../../hooks/examResults/useGetExamResults";
-import { ExamResultsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import React, { useState, useRef, useCallback } from "react";
-import CustomModal from "../../components/Modals/Modal";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import {
-  CreateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
-import ExamResultDetails from "../../ModalContent/ExamResults/ResultDetails";
+import { Icon } from "@iconify/react";
+import React, { useCallback, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { ExamResultsTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { NotFoundError } from "../../components/errors/Error";
+import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { Icon } from "@iconify/react";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
+import { useGetExamResults } from "../../hooks/examResults/useGetExamResults";
+import {
+  DeleteIcon,
+  DetailsIcon
+} from "../../icons/ActionIcons";
+import { GradeIcon } from "../../icons/Icons";
+import ExamResultDetails from "../../ModalContent/ExamResults/ResultDetails";
 function ExamResults() {
   const { data: examResults, isLoading, error } = useGetExamResults();
   const darkMode = useSelector((state) => state.theme.darkMode);

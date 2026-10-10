@@ -1,13 +1,55 @@
-import Table from "../../components/Tables/Tables";
-import { SpecialtyTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import DeleteSpecialty from "../../ModalContent/Specialty/DeleteSpecialty";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import CreateSpecialty from "../../DrawerContent/Specialty/CreateSpecialty";
+import SpecialtyDetails from "../../DrawerContent/Specialty/SpecialtyDetails";
+import UpdateSpecialty from "../../DrawerContent/Specialty/UpdateSpecialty";
+import Export from "../../ModalContent/Export/Export";
+import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
+import ActivateSpecialty from "../../ModalContent/Specialty/ActivateSpecialty";
+import BulkActivateSpecialty from "../../ModalContent/Specialty/BulkActivateSpecialty";
+import BulkDeactivateSpecialty from "../../ModalContent/Specialty/BulkDeactivateSpecialty";
+import BulkDeleteSpecialty from "../../ModalContent/Specialty/BulkDeleteSpecialty";
 import DeactivateSpecialty from "../../ModalContent/Specialty/DeactivateSpecialty";
+import DeleteSpecialty from "../../ModalContent/Specialty/DeleteSpecialty";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setColumnMapping,
+  setCustomFilter,
+  setImportReset,
+  setImportSelectedFile,
+  setImportStatus,
+  setStandardGroupValue,
+  toggleGeneralFilter,
+} from "../../Slices/administrator/specialtySlice";
 import ActionButtonDropdown, {
   DropDownMenuItem,
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
-import { Icon } from "@iconify/react";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import CustomModal from "../../components/Modals/Modal";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import SearchInput from "../../components/input/search";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import {
   ActivateIcon,
@@ -16,57 +58,11 @@ import {
   SuspendIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useRef,
-  useEffect,
-  Fragment,
-} from "react";
-import CustomModal from "../../components/Modals/Modal";
-import ActivateSpecialty from "../../ModalContent/Specialty/ActivateSpecialty";
 import { SpecialtyIcon } from "../../icons/Icons";
-import { useDispatch, useSelector } from "react-redux";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import BulkDeleteSpecialty from "../../ModalContent/Specialty/BulkDeleteSpecialty";
-import BulkActivateSpecialty from "../../ModalContent/Specialty/BulkActivateSpecialty";
-import BulkDeactivateSpecialty from "../../ModalContent/Specialty/BulkDeactivateSpecialty";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import { specialtyColDefs } from "../../utils/table/colDefs/specialty/specialtyColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  setStandardGroupValue,
-} from "../../Slices/administrator/specialtySlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
-import { specialtyImportColDefs } from "../../utils/table/colDefs/specialty/specialtyImportColDefs";
 import { SPECIALTY_COLUMNS } from "../../utils/specialty/specialtyColumns";
-import JobPopOver from "../../components/Popover/JobPopover";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import CreateSpecialty from "../../DrawerContent/Specialty/CreateSpecialty";
-import UpdateSpecialty from "../../DrawerContent/Specialty/UpdateSpecialty";
-import SpecialtyDetails from "../../DrawerContent/Specialty/SpecialtyDetails";
-import { Drawer } from "../../components/drawer/Drawer";
-import SearchInput from "../../components/input/search";
+import { specialtyColDefs } from "../../utils/table/colDefs/specialty/specialtyColDefs";
+import { specialtyImportColDefs } from "../../utils/table/colDefs/specialty/specialtyImportColDefs";
 function Specialties() {
   const { data: specialty, isLoading, error } = useGetSpecialties();
   const tableRef = useRef();

@@ -1,45 +1,43 @@
-import { useGetStudentResits } from "../../hooks/studentResit/useGetStudentResits";
-import React, {
-  useState,
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { CreditCard } from "lucide-react";
+import {
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import Table from "../../components/Tables/Tables";
-import { CreateIcon, DetailsIcon } from "../../icons/ActionIcons";
-import ResitFeeDetails from "../../ModalContent/ResitFee/ResitFeeDetails";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/resitFee/resitFeeSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
-import { useSelector, useDispatch } from "react-redux";
-import { resitFeeColDefs } from "../../utils/table/colDefs/resitFee/resitFeeColDefs";
-import PayResitFee from "../../DrawerContent/ResitFee/PayResitFee";
-import { CreditCard } from "lucide-react";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import BulkPayResitFee from "../../DrawerContent/ResitFee/BulkPayResitFee";
+import PayResitFee from "../../DrawerContent/ResitFee/PayResitFee";
+import { useGetStudentResits } from "../../hooks/studentResit/useGetStudentResits";
+import { CreateIcon, DetailsIcon } from "../../icons/ActionIcons";
+import Export from "../../ModalContent/Export/Export";
+import ResitFeeDetails from "../../ModalContent/ResitFee/ResitFeeDetails";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/resitFee/resitFeeSlice";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { resitFeeColDefs } from "../../utils/table/colDefs/resitFee/resitFeeColDefs";
 function ResitFee() {
   const dispatch = useDispatch();
   const tableRef = useRef(null);

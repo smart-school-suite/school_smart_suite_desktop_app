@@ -1,21 +1,19 @@
-import { useGetAnnouncementByStatus } from "../../hooks/announcement/useGetAnnouncementByStatus";
-import Table from "../../components/Tables/Tables";
+import React, { useMemo, useState } from "react";
 import { AnnouncementTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { useMemo } from "react";
 import AnnouncementDetails from "../../ModalContent/Announcement/AnnouncementDetails";
 import DeleteAnnouncement from "../../ModalContent/Announcement/DeleteAnnouncement";
 import UpdateAnnouncementContent from "../../ModalContent/Announcement/UpdateAnnouncementContent";
+import ActionButtonDropdown, { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import { NotFoundError } from "../../components/errors/Error";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { useGetAnnouncementByStatus } from "../../hooks/announcement/useGetAnnouncementByStatus";
 import {
   DeleteIcon,
   DetailsIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import React, {useState} from "react";
-import CustomModal from "../../components/Modals/Modal";
 function ExpiredAnnoucement() {
   const {
     data: announcement,

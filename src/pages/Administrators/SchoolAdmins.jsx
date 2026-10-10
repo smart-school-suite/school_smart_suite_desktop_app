@@ -1,22 +1,50 @@
 import { Icon } from "@iconify/react";
-import { SchoolAdminTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import React, { Fragment } from "react";
-import { ImageComponent } from "../../components/DataTableComponents/ImageComponent";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
-import ManagePermission from "../../ModalContent/SchoolAdmin/ManagePermission";
-import ManageRoles from "../../ModalContent/SchoolAdmin/ManageRole";
-import { useMemo, useCallback, useState, useRef, useEffect } from "react";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import CreateSchoolAdmin from "../../DrawerContent/SchoolAdmin/CreateSchoolAdmin";
+import Export from "../../ModalContent/Export/Export";
+import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
+import ActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Activate";
 import BulkActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkActivate";
 import BulkDeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/BulkDeactivate";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import Table from "../../components/Tables/Tables";
-import { useGetSchoolAdmins } from "../../hooks/schoolAdmin/useGetSchoolAdmins";
+import BulkDelete from "../../ModalContent/SchoolAdmin/BulkDelete";
+import DeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Deactivate";
+import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
+import ManagePermission from "../../ModalContent/SchoolAdmin/ManagePermission";
+import ManageRoles from "../../ModalContent/SchoolAdmin/ManageRole";
+import SchoolAdminDetails from "../../ModalContent/SchoolAdmin/SchoolAdminDetails";
+import UpdateSchoolAdmin from "../../ModalContent/SchoolAdmin/UpdateSchoolAdmin";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setColumnMapping,
+  setCustomFilter,
+  setImportReset,
+  setImportSelectedFile,
+  setImportStatus,
+  setStandardGroupValue,
+  toggleGeneralFilter,
+} from "../../Slices/administrator/schoolAdminSlice";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import SearchInput from "../../components/input/search";
+import { useGetSchoolAdmins } from "../../hooks/schoolAdmin/useGetSchoolAdmins";
 import {
   ActivateIcon,
   DeleteIcon,
@@ -26,57 +54,10 @@ import {
   SuspendIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import DeleteSchoolAdmin from "../../ModalContent/SchoolAdmin/DeleteSchoolAdmin";
-import DeactivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Deactivate";
-import ActivateSchoolAdmin from "../../ModalContent/SchoolAdmin/Activate";
-import SchoolAdminDetails from "../../ModalContent/SchoolAdmin/SchoolAdminDetails";
-import UpdateSchoolAdmin from "../../ModalContent/SchoolAdmin/UpdateSchoolAdmin";
-import DataTablePageLoader from "../../components/PageLoaders/DataTablesPageLoader";
 import { SchoolAdminIcon } from "../../icons/Icons";
-import { useSelector } from "react-redux";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import { schoolAdminColDefs } from "../../utils/table/colDefs/schoolAdmin/schoolAdminColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  setStandardGroupValue,
-} from "../../Slices/administrator/schoolAdminSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useDispatch } from "react-redux";
-import { schoolAdminImportColDefs } from "../../utils/table/colDefs/schoolAdmin/schoolAdminImportColDefs";
 import { SCHOOL_ADMIN_COLUMNS } from "../../utils/administrator/schoolAdminColumns";
-import JobPopOver from "../../components/Popover/JobPopover";
-import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import CreateSchoolAdmin from "../../DrawerContent/SchoolAdmin/CreateSchoolAdmin";
-import SearchInput from "../../components/input/search";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { schoolAdminColDefs } from "../../utils/table/colDefs/schoolAdmin/schoolAdminColDefs";
 function SchoolAdmins() {
   const tableRef = useRef();
   const dispatch = useDispatch();

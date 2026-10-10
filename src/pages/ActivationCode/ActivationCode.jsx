@@ -1,26 +1,25 @@
-import PurchaseActivationCode from "../../ModalContent/ActivationCode/PurchaseActivationCode";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
-import { useGetActivationCodes } from "../../hooks/activationCode/useGetActivationCode";
-import Table from "../../components/Tables/Tables";
-import React, { useMemo, useState, useRef, useEffect, Fragment } from "react";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { activationCodeColDefs } from "../../utils/table/colDefs/activationCode/activationCodeColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import { AnimatePresence, motion } from "framer-motion";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/activationCode/activationCodeSlice";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useDispatch, useSelector } from "react-redux";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import SearchInput from "../../components/input/search";
+import { useGetActivationCodes } from "../../hooks/activationCode/useGetActivationCode";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { activationCodeColDefs } from "../../utils/table/colDefs/activationCode/activationCodeColDefs";
 function ActivationCode() {
   const { data: activationCodes, isLoading, error } = useGetActivationCodes();
   const tableRef = useRef();

@@ -1,18 +1,16 @@
-import { useNavigate, Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
-import { setSchoolAuthData } from "../../Slices/Asynslices/AuthSlice";
-import { useGetCountries } from "../../hooks/country/useGetCountry";
-import { motion, AnimatePresence } from "framer-motion";
-import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import { schoolTypes } from "../../data/data";
-import { TextInput } from "../../components/FormComponents/InputComponents";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
-import { updateSchoolAuthError } from "../../Slices/Asynslices/AuthSlice";
-import { useRef } from "react";
-import { allFieldsValid } from "../../utils/functions";
-import { useState } from "react";
+import { setSchoolAuthData, updateSchoolAuthError } from "../../Slices/Asynslices/AuthSlice";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { TextInput } from "../../components/FormComponents/InputComponents";
 import AuthHero from "../../components/Hero/AuthHero";
+import { schoolTypes } from "../../data/data";
+import { useGetCountries } from "../../hooks/country/useGetCountry";
+import { allFieldsValid } from "../../utils/functions";
 function RegisterSchool() {
   const { data: country, isPending: isLoading } = useGetCountries();
   const [clientError, setClientError] = useState(null);

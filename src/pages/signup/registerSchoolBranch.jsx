@@ -1,15 +1,13 @@
-import { useNavigate, Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
-import { setSchoolAuthData } from "../../Slices/Asynslices/AuthSlice";
-import { motion, AnimatePresence } from "framer-motion";
-import { useRef } from "react";
-import { TextInput } from "../../components/FormComponents/InputComponents";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
-import { updateSchoolAuthError } from "../../Slices/Asynslices/AuthSlice";
-import { allFieldsValid } from "../../utils/functions";
+import { TextInput } from "../../components/FormComponents/InputComponents";
 import AuthHero from "../../components/Hero/AuthHero";
-import { useState } from "react";
+import { setSchoolAuthData, updateSchoolAuthError } from "../../Slices/Asynslices/AuthSlice";
+import { allFieldsValid } from "../../utils/functions";
 function RegisterSchoolBranch() {
   const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
   const schoolAuthError = useSelector((state) => state.auth.schoolAuthError);

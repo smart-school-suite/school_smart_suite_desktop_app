@@ -1,14 +1,14 @@
 import { Icon } from "@iconify/react";
-import { Fragment, useRef } from "react";
-import { useSelector } from "react-redux";
 import NumberFlow from "@number-flow/react";
-import { useGetSubscriptionPlans } from "../../hooks/subscription/useGetSubscriptionPlans";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { ArrowLeft } from "lucide-react";
+import { Fragment } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import SubscriptionCheckOutWizzard from "../../DrawerContent/Subscription/SubscriptionCheckout/SubscriptionCheckoutWizzard";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import { useGetSubscriptionPlans } from "../../hooks/subscription/useGetSubscriptionPlans";
 function SubcriptionPlan() {
   const navigate = useNavigate();
   const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);

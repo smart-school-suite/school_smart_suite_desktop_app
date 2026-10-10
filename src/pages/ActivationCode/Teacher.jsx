@@ -1,25 +1,25 @@
-import Table from "../../components/Tables/Tables";
-import React, { useMemo, useState, useRef, useEffect, Fragment } from "react";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { useGetTeacherActivationCodeStatus } from "../../hooks/activationCode/useGetTeacherActivationCodeStatus";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { NotFoundError } from "../../components/errors/Error";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import { useGetTeacherActivationCodeStatus } from "../../hooks/activationCode/useGetTeacherActivationCodeStatus";
 import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/activationCode/teacherActivationCodeSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useDispatch, useSelector } from "react-redux";
-import SearchInput from "../../components/input/search";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { Icon } from "@iconify/react";
+import filterPopOverMap from "../../utils/maps/FilterMap";
 import { teacherActivationCodeColDefs } from "../../utils/table/colDefs/activationCode/teacherActivationCodeColDefs";
 function Teacher() {
   const {

@@ -1,20 +1,25 @@
-import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionTypes";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Plus } from "lucide-react";
 import React, {
-  useState,
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
-import Table from "../../components/Tables/Tables";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { Icon } from "@iconify/react";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionTypes";
 import {
   ActivateIcon,
   DeleteIcon,
@@ -22,32 +27,24 @@ import {
   SuspendIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import CreateElectionType from "../../ModalContent/ElectionType/CreateElectionType";
-import UpdateElectionType from "../../ModalContent/ElectionType/UpdateElectionType";
-import DeleteElectionType from "../../ModalContent/ElectionType/DeleteElectionType";
-import DeactivateElectionType from "../../ModalContent/ElectionType/DeactivateElectionType";
 import ActivateElectionType from "../../ModalContent/ElectionType/ActivateElectionType";
+import CreateElectionType from "../../ModalContent/ElectionType/CreateElectionType";
+import DeactivateElectionType from "../../ModalContent/ElectionType/DeactivateElectionType";
+import DeleteElectionType from "../../ModalContent/ElectionType/DeleteElectionType";
 import ElectionTypeDetails from "../../ModalContent/ElectionType/ElectionTypeDetails";
-import { electionTypeColDefs } from "../../utils/table/colDefs/election/electionTypeColDefs";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/election/electionTypeSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import UpdateElectionType from "../../ModalContent/ElectionType/UpdateElectionType";
 import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { Plus } from "lucide-react";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { useSelector, useDispatch } from "react-redux";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/election/electionTypeSlice";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { electionTypeColDefs } from "../../utils/table/colDefs/election/electionTypeColDefs";
 function ElectionType() {
   const { data: electionTypes, isLoading, error } = useGetElectionTypes();
   const dispatch = useDispatch();

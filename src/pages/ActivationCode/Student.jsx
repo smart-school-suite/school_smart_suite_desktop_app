@@ -1,26 +1,26 @@
-import Table from "../../components/Tables/Tables";
-import React, { useMemo, useState, useRef, useEffect, Fragment } from "react";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { useGetStudentActivationCodeStatus } from "../../hooks/activationCode/useGetStudentActivationCodeStatus";
-import { NotFoundError } from "../../components/errors/Error";
-import { studentActivationCodeColDefs } from "../../utils/table/colDefs/activationCode/studentActivationCodeColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/activationCode/studentActivationCodeSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useDispatch, useSelector } from "react-redux";
-import SearchInput from "../../components/input/search";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { Icon } from "@iconify/react";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import { NotFoundError } from "../../components/errors/Error";
+import SearchInput from "../../components/input/search";
+import { useGetStudentActivationCodeStatus } from "../../hooks/activationCode/useGetStudentActivationCodeStatus";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { studentActivationCodeColDefs } from "../../utils/table/colDefs/activationCode/studentActivationCodeColDefs";
 function Student() {
   const {
     data: studentActivationStatus,

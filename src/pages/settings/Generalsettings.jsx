@@ -1,4 +1,3 @@
-import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 function Generalsettings() {
   const darkMode = useSelector((state) => state.theme.darkMode);

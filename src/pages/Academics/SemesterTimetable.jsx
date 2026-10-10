@@ -1,8 +1,8 @@
-import { useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
-import ConstraintVersionWrapper from "../../components/SemesterTimetable/SemesterTimetableVersion";
-import TimetableGridWrapper from "../../components/SemesterTimetable/SemesterTimetableGrid";
+import { useSelector } from "react-redux";
 import DiagnosticWrapper from "../../components/SemesterTimetable/SemesterTimetableDiagnostics";
+import TimetableGridWrapper from "../../components/SemesterTimetable/SemesterTimetableGrid";
+import ConstraintVersionWrapper from "../../components/SemesterTimetable/SemesterTimetableVersion";
 function SemesterTimetable() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   return (

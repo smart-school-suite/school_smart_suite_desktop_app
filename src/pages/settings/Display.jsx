@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setDarkMode } from "../../Slices/Asynslices/ThemeSlice";
 function Display() {
   const darkMode = useSelector((state) => state.theme.darkMode);

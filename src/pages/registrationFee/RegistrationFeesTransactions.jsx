@@ -1,45 +1,43 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { useGetRegistrationFeeTransations } from "../../hooks/registrationFee/useGetRegistrationFeeTransations";
-import ReverseTransaction from "../../ModalContent/RegistrationFees/ReverseTransaction";
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useRef,
-  useEffect,
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
   Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import DeleteTransaction from "../../ModalContent/RegistrationFees/DeleteTransaction";
-import TransactionDetails from "../../ModalContent/RegistrationFees/TransactionDetails";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import BulkDeleteRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFeeTransaction";
+import { useGetRegistrationFeeTransations } from "../../hooks/registrationFee/useGetRegistrationFeeTransations";
 import { DeleteIcon, DetailsIcon, ReverseIcon } from "../../icons/ActionIcons";
-import BulkReverseRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkReverseRegistrationFeeTransaction";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { registrationFeeTransactionColDefs } from "../../utils/table/colDefs/registrationFee/registrationFeeTransactionColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import BulkDeleteRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFeeTransaction";
+import BulkReverseRegistrationFeeTransaction from "../../ModalContent/RegistrationFees/BulkReverseRegistrationFeeTransaction";
+import DeleteTransaction from "../../ModalContent/RegistrationFees/DeleteTransaction";
+import ReverseTransaction from "../../ModalContent/RegistrationFees/ReverseTransaction";
+import TransactionDetails from "../../ModalContent/RegistrationFees/TransactionDetails";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/registrationFee/registrationFeeTransacSlice";
-import { useSelector, useDispatch } from "react-redux";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { registrationFeeTransactionColDefs } from "../../utils/table/colDefs/registrationFee/registrationFeeTransactionColDefs";
 function RegistrationFeeTransactions() {
   const {
     data: transactions,

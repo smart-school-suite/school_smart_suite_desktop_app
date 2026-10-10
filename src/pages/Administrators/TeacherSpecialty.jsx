@@ -1,18 +1,15 @@
 import { Icon } from "@iconify/react";
-import { Fragment, useState } from "react";
-import { useGetLevelSpecialties } from "../../hooks/specialty/useGetLevelSpecialties";
 import { AnimatePresence, motion } from "framer-motion";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { useGetCourseSpecialtyId } from "../../hooks/course/useGetCourseSpecialtyId";
-import { useNavigate } from "react-router-dom";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpecialty";
-import AssignTeacherSpecialty from "../../DrawerContent/TeacherSpecialty/AssignTeacherSpecialty";
-import { NotFoundError } from "../../components/errors/Error";
-import { isLastElement } from "../../utils/functions";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { ArrowDown } from "lucide-react";
+import { Fragment, useState } from "react";
+import AssignTeacherSpecialty from "../../DrawerContent/TeacherSpecialty/AssignTeacherSpecialty";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
+import { useGetLevelSpecialties } from "../../hooks/specialty/useGetLevelSpecialties";
+import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpecialty";
+import { isLastElement } from "../../utils/functions";
 function TeacherSpecialty() {
   const [specialty, setSpecialty] = useState(null);
   const {

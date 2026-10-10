@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 function Hero() {
   const navigate = useNavigate();
   const darkMode = useSelector((state) => state.theme.darkMode);

@@ -1,54 +1,52 @@
-import { useGetResitCandidates } from "../../hooks/resitCandidate/useGetResitCandidates";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
   DropDownMenuItem,
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  useMemo,
-  Fragment,
-} from "react";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
+import ResitExamScoreDetails from "../../DrawerContent/ResitEvaluation/ResitExamScoreDetails";
+import { useGetResitCandidates } from "../../hooks/resitCandidate/useGetResitCandidates";
 import {
   CreateIcon,
   DeleteIcon,
-  UpdateIcon,
   DetailsIcon,
+  UpdateIcon,
 } from "../../icons/ActionIcons";
 import { ExamCandidateIcon } from "../../icons/Icons";
-import { useSelector, useDispatch } from "react-redux";
-import UpdateResitScore from "../../ModalContent/ResitCandidate/UpdateResitScores";
+import Export from "../../ModalContent/Export/Export";
+import AddResitScores from "../../ModalContent/ResitCandidate/AddResitScores";
 import DeleteCandidate from "../../ModalContent/ResitCandidate/DeleteCandidate";
-import toast from "react-hot-toast";
-import { Icon } from "@iconify/react";
-import ToastWarning from "../../components/Toast/ToastWarning";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { resitCandidateColDefs } from "../../utils/table/colDefs/resit/resitCandidateColDefs";
-import JobPopOver from "../../components/Popover/JobPopover";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import DeleteResitScores from "../../ModalContent/ResitCandidate/DeleteResitScores";
+import UpdateResitScore from "../../ModalContent/ResitCandidate/UpdateResitScores";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/resit/resitCandidateSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
-import AddResitScores from "../../ModalContent/ResitCandidate/AddResitScores";
-import DeleteResitScores from "../../ModalContent/ResitCandidate/DeleteResitScores";
-import ResitExamScoreDetails from "../../DrawerContent/ResitEvaluation/ResitExamScoreDetails";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { resitCandidateColDefs } from "../../utils/table/colDefs/resit/resitCandidateColDefs";
 function ResitCandidates() {
   const { data: resitCandidates, isLoading, error } = useGetResitCandidates();
   const dispatch = useDispatch();

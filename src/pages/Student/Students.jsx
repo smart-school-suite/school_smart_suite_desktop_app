@@ -1,70 +1,69 @@
-import ActionButtonDropdown, {
-  ModalButton,
-  DropDownMenuItem,
-} from "../../components/DataTableComponents/ActionComponent";
-import DeactivateStudent from "../../ModalContent/Student/DeactivateStudent";
-import DeleteStudent from "../../ModalContent/Student/DeleteStudent";
-import StudentDetails from "../../DrawerContent/Student/StudentDetails";
-import MarkAsDropout from "../../ModalContent/Student/MarkAsDropout";
-import { useGetStudents } from "../../hooks/student/useGetStudent";
-import Table from "../../components/Tables/Tables";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
 import React, {
-  useState,
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
-import ActivateStudent from "../../ModalContent/Student/ActivateStudent";
-import {
-  DetailsIcon,
-  UpdateIcon,
-  DeleteIcon,
-  SuspendIcon,
-  ActivateIcon,
-} from "../../icons/ActionIcons";
-import { StudentIcon } from "../../icons/Icons";
-import { useSelector } from "react-redux";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
+import CreateStudent from "../../DrawerContent/Student/CreateStudent";
+import StudentDetails from "../../DrawerContent/Student/StudentDetails";
+import UpdateStudent from "../../DrawerContent/Student/UpdateStudent";
+import { useGetStudents } from "../../hooks/student/useGetStudent";
+import {
+  ActivateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  SuspendIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
+import { StudentIcon } from "../../icons/Icons";
+import Export from "../../ModalContent/Export/Export";
+import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
+import ActivateStudent from "../../ModalContent/Student/ActivateStudent";
 import BulkActivateStudent from "../../ModalContent/Student/BulkActivateStudent";
 import BulkDeactivateStudent from "../../ModalContent/Student/BulkDeactivateStudent";
-import BulkMarkStudentAsDropout from "../../ModalContent/Student/BulkMarkStudentAsDropout";
 import BulkDeleteStudent from "../../ModalContent/Student/BulkDeleteStudent";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { studentColDefs } from "../../utils/table/colDefs/student/studentColDefs";
+import BulkMarkStudentAsDropout from "../../ModalContent/Student/BulkMarkStudentAsDropout";
+import DeactivateStudent from "../../ModalContent/Student/DeactivateStudent";
+import DeleteStudent from "../../ModalContent/Student/DeleteStudent";
+import MarkAsDropout from "../../ModalContent/Student/MarkAsDropout";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
-  setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
+  resetAllCustomFilters,
   setColumnMapping,
+  setCustomFilter,
+  setImportReset,
+  setImportSelectedFile,
+  setImportStatus,
   setStandardGroupValue,
+  toggleGeneralFilter,
 } from "../../Slices/student/studentSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useDispatch } from "react-redux";
-import JobPopOver from "../../components/Popover/JobPopover";
-import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
+import filterPopOverMap from "../../utils/maps/FilterMap";
 import { STUDENT_COLUMNS } from "../../utils/student/studentColumns";
-import SearchInput from "../../components/input/search";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import CreateStudent from "../../DrawerContent/Student/CreateStudent";
-import UpdateStudent from "../../DrawerContent/Student/UpdateStudent";
-import { Drawer } from "../../components/drawer/Drawer";
+import { studentColDefs } from "../../utils/table/colDefs/student/studentColDefs";
 function Students() {
   const { data: students, isLoading, error } = useGetStudents();
   const tableWrapperRef = useRef(null);

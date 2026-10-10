@@ -1,13 +1,13 @@
-import { useSelector } from "react-redux";
-import { useAuth } from "../../context/authContext";
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { TextInput } from "../../components/FormComponents/InputComponents";
+import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { passwordSchema } from "../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid } from "../../utils/functions";
+import { TextInput } from "../../components/FormComponents/InputComponents";
 import AuthHero from "../../components/Hero/AuthHero";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useAuth } from "../../context/authContext";
+import { allFieldsValid } from "../../utils/functions";
 function ChangePassword() {
   const { handleChangePassword, loading, authError } = useAuth();
   const passwordRef = useRef();

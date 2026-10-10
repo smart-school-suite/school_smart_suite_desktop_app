@@ -1,47 +1,46 @@
-import { useGetSemesterJointCourse } from "../../hooks/semesterJointCourse/useGetSemesterJointCourse";
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  useMemo,
-  Fragment,
-} from "react";
-import CustomModal from "../../components/Modals/Modal";
-import {
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-  CreateIcon,
-} from "../../icons/ActionIcons";
 import { Icon } from "@iconify/react";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/jointCourse/semesterJointCourseSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { useSelector, useDispatch } from "react-redux";
-import { semesterJointCourseColDefs } from "../../utils/table/colDefs/jointCourse/semesterJointCourseColDefs";
-import UpdateJointCourseTimetable from "../../DrawerContent/JointCourseTimetable/UpdateJointCourseTimetable";
-import JointCourseAffectedSpecialties from "../../DrawerContent/JointCourseTimetable/JointCourseAffectedSpecialties";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
+import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import CreateJointCourseSlotWizzard from "../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/CreateJointCourseSlotWizzard";
+import JointCourseAffectedSpecialties from "../../DrawerContent/JointCourseTimetable/JointCourseAffectedSpecialties";
+import UpdateJointCourseTimetable from "../../DrawerContent/JointCourseTimetable/UpdateJointCourseTimetable";
+import { useGetSemesterJointCourse } from "../../hooks/semesterJointCourse/useGetSemesterJointCourse";
+import {
+  CreateIcon,
+  DetailsIcon,
+  UpdateIcon
+} from "../../icons/ActionIcons";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/jointCourse/semesterJointCourseSlice";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { semesterJointCourseColDefs } from "../../utils/table/colDefs/jointCourse/semesterJointCourseColDefs";
 function JointCourseTimetable() {
   const { data: jointCourse, isLoading, error } = useGetSemesterJointCourse();
   const dispatch = useDispatch();

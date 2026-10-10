@@ -1,45 +1,43 @@
-import Table from "../../components/Tables/Tables";
-import RegistrationFeeDetail from "../../ModalContent/RegistrationFees/RegistrationFeeDetail";
-import DeleteRegistrationFee from "../../ModalContent/RegistrationFees/DeleteRegistrationFees";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { useGetRegistrationFees } from "../../hooks/registrationFee/useGetRegistrationFees";
-import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
-import React, {
-  useState,
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import BulkDeleteRegistrationFee from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFee";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { registrationFeeColDefs } from "../../utils/table/colDefs/finance/registrationFeeColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import BulkPayRegistrationFees from "../../DrawerContent/RegistrationFee/BulkPayRegistrationFees";
+import PayRegistrationFees from "../../DrawerContent/RegistrationFee/PayRegistrationFees";
+import { useGetRegistrationFees } from "../../hooks/registrationFee/useGetRegistrationFees";
+import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
 import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import BulkDeleteRegistrationFee from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFee";
+import DeleteRegistrationFee from "../../ModalContent/RegistrationFees/DeleteRegistrationFees";
+import RegistrationFeeDetail from "../../ModalContent/RegistrationFees/RegistrationFeeDetail";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/finance/registrationFeeSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useSelector, useDispatch } from "react-redux";
-import { Drawer } from "../../components/drawer/Drawer";
-import SearchInput from "../../components/input/search";
-import PayRegistrationFees from "../../DrawerContent/RegistrationFee/PayRegistrationFees";
-import BulkPayRegistrationFees from "../../DrawerContent/RegistrationFee/BulkPayRegistrationFees";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { registrationFeeColDefs } from "../../utils/table/colDefs/finance/registrationFeeColDefs";
 function RegistrationFees() {
   const { data: registrationFees, isLoading, error } = useGetRegistrationFees();
   const tableRef = useRef();

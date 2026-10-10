@@ -1,31 +1,30 @@
-import { Icon } from "@iconify/react";
-import ActionButtonDropdown, {
-  ModalButton,
-  DropDownMenuItem,
-} from "../../components/DataTableComponents/ActionComponent";
-import React, { useState, useRef, useCallback, useEffect } from "react";
-import { useGetActiveEventCategories } from "../../hooks/eventCategory/useGetActiveEventCategories";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { formatISODate } from "../../utils/functions";
-import { NotFoundError } from "../../components/errors/Error";
-import TextDisplay from "../../components/TextComponents/TextDisplay";
-import { useLikeSchoolEvent } from "../../hooks/schoolEvent/useLikeSchoolEvent";
 import {
-  useFloating,
-  offset,
-  flip,
-  shift,
   autoUpdate,
+  flip,
+  offset,
+  shift,
+  useFloating,
 } from "@floating-ui/react";
+import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
-import EventDetails from "../../ModalContent/Events/EventDetails";
-import UpdateEventContent from "../../ModalContent/Events/UpdateEventContent";
+import {
+  DropDownMenuItem
+} from "../../components/DataTableComponents/ActionComponent";
+import { NotFoundError } from "../../components/errors/Error";
 import CustomModal from "../../components/Modals/Modal";
-import DeleteEvent from "../../ModalContent/Events/DeleteEvent";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import TextDisplay from "../../components/TextComponents/TextDisplay";
+import { useGetActiveEventCategories } from "../../hooks/eventCategory/useGetActiveEventCategories";
 import { useGetExpiredSchoolEvents } from "../../hooks/schoolEvent/useGetExpiredSchoolEvents";
 import { useGetExpiredSchoolEventsByCategory } from "../../hooks/schoolEvent/useGetExpiredSchoolEventsByCategory";
+import { useLikeSchoolEvent } from "../../hooks/schoolEvent/useLikeSchoolEvent";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import DeleteEvent from "../../ModalContent/Events/DeleteEvent";
+import EventDetails from "../../ModalContent/Events/EventDetails";
+import UpdateEventContent from "../../ModalContent/Events/UpdateEventContent";
+import { formatISODate } from "../../utils/functions";
 function ExpiredEvents() {
   const [category, setCategory] = useState("all");
   const {

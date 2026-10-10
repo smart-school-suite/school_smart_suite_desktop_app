@@ -1,43 +1,43 @@
-import { useGetAllResitExams } from "../../hooks/resitExam/useGetResitExams";
-import Table from "../../components/Tables/Tables";
-import React, { useState, useRef, useEffect, useMemo, useCallback, Fragment } from "react";
-import CustomModal from "../../components/Modals/Modal";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { ExamIcon, GradeIcon } from "../../icons/Icons";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
+import CustomModal from "../../components/Modals/Modal";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import ConfigureGradeScaleWizzard from "../../DrawerContent/ResitExam/ConfigureGradeScale/ConfigureGradeScaleWizzard";
+import ResitExamDetails from "../../DrawerContent/ResitExam/ResitExamDetails";
+import UpdateResitExam from "../../DrawerContent/ResitExam/UpdateResitExam";
+import { useGetAllResitExams } from "../../hooks/resitExam/useGetResitExams";
 import {
   CreateIcon,
   DeleteIcon,
   DetailsIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { resitExamColDefs } from "../../utils/table/colDefs/resit/resitExamColDefs";
-import { useDispatch, useSelector } from "react-redux";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import JobPopOver from "../../components/Popover/JobPopover";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import { ExamIcon, GradeIcon } from "../../icons/Icons";
+import Export from "../../ModalContent/Export/Export";
+import DeleteResitExam from "../../ModalContent/ResitExam/DeleteResitExam";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/resit/resitExamSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Icon } from "@iconify/react";
-import { Drawer } from "../../components/drawer/Drawer";
-import ConfigureGradeScaleWizzard from "../../DrawerContent/ResitExam/ConfigureGradeScale/ConfigureGradeScaleWizzard";
-import UpdateResitExam from "../../DrawerContent/ResitExam/UpdateResitExam";
-import DeleteResitExam from "../../ModalContent/ResitExam/DeleteResitExam";
-import ResitExamDetails from "../../DrawerContent/ResitExam/ResitExamDetails";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { resitExamColDefs } from "../../utils/table/colDefs/resit/resitExamColDefs";
 function ResitExam() {
   const { data: resitExams, isLoading, error } = useGetAllResitExams();
   const darkMode = useSelector((state) => state.theme.darkMode);

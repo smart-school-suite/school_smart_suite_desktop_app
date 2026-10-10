@@ -1,16 +1,15 @@
-import { useGetPastElections } from "../../hooks/election/useGetPastElections";
-import Table from "../../components/Tables/Tables";
-import { pastElectionTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import React, { useState } from "react";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { pastElectionTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import ActionButtonDropdown, { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { NotFoundError } from "../../components/errors/Error";
 import CustomModal from "../../components/Modals/Modal";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
-import ElectionDetails from "../../ModalContent/Elections/ElectionDetails";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import { useGetPastElections } from "../../hooks/election/useGetPastElections";
+import { DetailsIcon } from "../../icons/ActionIcons";
 import { StatsIcon } from "../../icons/Icons";
 import PastElectionResults from "../../ModalContent/ElectionHistory/PastElectionResults";
+import ElectionDetails from "../../ModalContent/Elections/ElectionDetails";
 function ElectionHistory(){
   const { data:pastElections, isLoading, error } = useGetPastElections();
      return(

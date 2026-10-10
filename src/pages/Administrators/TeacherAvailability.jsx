@@ -1,33 +1,28 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown, { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import React, { useMemo, useState, useRef, useEffect, Fragment, useCallback } from "react";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import CustomModal from "../../components/Modals/Modal";
-import { DetailsIcon } from "../../icons/ActionIcons";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import { useGetTeacherAvailability } from "../../hooks/teacherAvailability/useGetTeacherAvailability";
-import TeacherAvailabilitySlot from "../../ModalContent/TeacherAvailability/TeacherAvailabilitySlot";
-import { teacherPrefTimeColDefs } from "../../utils/table/colDefs/teachers/teacherPrefTimeColDefs";
-import ExportTeacher from "../../ModalContent/Teacher/ExportTeacher";
-import {
-  toggleGeneralFilter,
-  addCustomFilter,
-  removeCustomFilter,
-  setCustomFilter,
-  resetAllCustomFilters,
-} from "../../Slices/teacher/teacherTimePrefSlice";
-import { motion, AnimatePresence } from "framer-motion";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import TextFilter from "../../ModalContent/Filter/TextFilterPopOver";
-import TextFilterPopOver from "../../ModalContent/Filter/TextFilterPopOver";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import TeacherAvailabilitySlot from "../../ModalContent/TeacherAvailability/TeacherAvailabilitySlot";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/teacher/teacherTimePrefSlice";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { Icon } from "@iconify/react";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import { useGetTeacherAvailability } from "../../hooks/teacherAvailability/useGetTeacherAvailability";
+import { DetailsIcon } from "../../icons/ActionIcons";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { teacherPrefTimeColDefs } from "../../utils/table/colDefs/teachers/teacherPrefTimeColDefs";
 function TeacherAvailability() {
   const { data: availability, isLoading, error } = useGetTeacherAvailability();
   const teacherTimePrefState = useSelector((state) => state.teacherTimePref);

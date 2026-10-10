@@ -1,16 +1,16 @@
-import { useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/authContext";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { TextInput } from "../../components/FormComponents/InputComponents";
+import { useRef, useState } from "react";
+import Form from "react-bootstrap/Form";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   emailValidationSchema,
   passwordSchema,
 } from "../../ComponentConfig/YupValidationSchema";
-import { useSelector } from "react-redux";
-import { allFieldsValid } from "../../utils/functions";
-import Form from "react-bootstrap/Form";
+import { TextInput } from "../../components/FormComponents/InputComponents";
 import AuthHero from "../../components/Hero/AuthHero";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useAuth } from "../../context/authContext";
+import { allFieldsValid } from "../../utils/functions";
 function LoginSchoolAdmin() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const emailRef = useRef();

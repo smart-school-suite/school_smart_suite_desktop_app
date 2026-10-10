@@ -1,14 +1,13 @@
-import { useState } from "react";
-import { useAuth } from "../../context/authContext";
-import { useNavigate } from "react-router-dom";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
-import { useRef } from "react";
-import { emailValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { allFieldsValid } from "../../utils/functions";
+import { useNavigate } from "react-router-dom";
+import { emailValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import AuthHero from "../../components/Hero/AuthHero";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useAuth } from "../../context/authContext";
+import { allFieldsValid } from "../../utils/functions";
 function ResetPassword() {
   const { handlePasswordReset, loading, authError } = useAuth();
   const navigate = useNavigate();

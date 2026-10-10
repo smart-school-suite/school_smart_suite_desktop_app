@@ -1,66 +1,48 @@
 import { Icon } from "@iconify/react";
-import Table from "../../components/Tables/Tables";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { semesterTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import DeleteSemester from "../../ModalContent/Semesters/DeleteSemester";
-import UpdateSemester from "../../DrawerContent/Semester/UpdateSemester";
-import SemesterDetails from "../../DrawerContent/Semester/SemesterDetails";
-import CreateSemester from "../../DrawerContent/Semester/CreateSemester";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
 import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
   Fragment,
+  useCallback,
+  useEffect,
   useMemo,
+  useRef,
+  useState,
 } from "react";
-import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { DetailsIcon, UpdateIcon, DeleteIcon } from "../../icons/ActionIcons";
-import { SemesterIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
+import CreateSemester from "../../DrawerContent/Semester/CreateSemester";
+import SemesterDetails from "../../DrawerContent/Semester/SemesterDetails";
+import UpdateSemester from "../../DrawerContent/Semester/UpdateSemester";
+import Export from "../../ModalContent/Export/Export";
 import BulkDeleteSemester from "../../ModalContent/Semesters/BulkDeleteSemester";
 import BulkUpdateSemester from "../../ModalContent/Semesters/BulkUpdateSemester";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
-import JobPopOver from "../../components/Popover/JobPopover";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import DeleteSemester from "../../ModalContent/Semesters/DeleteSemester";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/academics/semesterSlice";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { semesterColDefs } from "../../utils/table/colDefs/semester/semesterColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
+import CustomModal from "../../components/Modals/Modal";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import CreateAcademicYear from "../../DrawerContent/AcademicYear/CreateAcademicYear";
+import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
+import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { SemesterIcon } from "../../icons/Icons";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { semesterColDefs } from "../../utils/table/colDefs/semester/semesterColDefs";
 function Semester() {
   const { data: schoolSemesters, isLoading, error } = useGetSchoolSemesters();
   const darkMode = useSelector((state) => state.theme.darkMode);

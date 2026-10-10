@@ -1,17 +1,17 @@
 import { Icon } from "@iconify/react";
-import { formatDate } from "../../utils/functions";
 import { useSelector } from "react-redux";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useGetAuthSchoolAdmin } from "../../hooks/schoolAdmin/useGetAuthSchoolAdmin";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import UpdateFullNames from "../../ModalContent/Profile/UpdateFullNames";
-import UpdateLastName from "../../ModalContent/Profile/UpdateLastName";
-import UpdateDOB from "../../ModalContent/Profile/UpdateDOB";
-import UpdateCulturalBackground from "../../ModalContent/Profile/UpdateCulturalBackground";
-import UpdateEmail from "../../ModalContent/Profile/UpdateEmail";
+import UpdateAddress from "../../ModalContent/Profile/UpdateAddress";
 import UpdateContactOne from "../../ModalContent/Profile/UpdateContactOne";
 import UpdateContactTwo from "../../ModalContent/Profile/UpdateContactTwo";
-import UpdateAddress from "../../ModalContent/Profile/UpdateAddress";
+import UpdateCulturalBackground from "../../ModalContent/Profile/UpdateCulturalBackground";
+import UpdateDOB from "../../ModalContent/Profile/UpdateDOB";
+import UpdateEmail from "../../ModalContent/Profile/UpdateEmail";
+import UpdateFullNames from "../../ModalContent/Profile/UpdateFullNames";
+import UpdateLastName from "../../ModalContent/Profile/UpdateLastName";
+import { formatDate } from "../../utils/functions";
 
 function Profile() {
   const { data: schoolAdmin, isLoading } = useGetAuthSchoolAdmin();

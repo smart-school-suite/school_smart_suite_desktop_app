@@ -1,17 +1,16 @@
 import { Icon } from "@iconify/react";
-import { Fragment, useState } from "react";
-import { useGetLevelSpecialties } from "../../hooks/specialty/useGetLevelSpecialties";
 import { AnimatePresence, motion } from "framer-motion";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { useGetCourseSpecialtyId } from "../../hooks/course/useGetCourseSpecialtyId";
-import { useNavigate } from "react-router-dom";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import AssignCourse from "../../DrawerContent/Course/AssignCourse";
-import { NotFoundError } from "../../components/errors/Error";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import ManageCourseAssignment from "../../DrawerContent/Course/ManageCourseAssignment";
 import { ArrowDown } from "lucide-react";
+import { Fragment, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import AssignCourse from "../../DrawerContent/Course/AssignCourse";
+import ManageCourseAssignment from "../../DrawerContent/Course/ManageCourseAssignment";
+import { useGetCourseSpecialtyId } from "../../hooks/course/useGetCourseSpecialtyId";
+import { useGetLevelSpecialties } from "../../hooks/specialty/useGetLevelSpecialties";
 function TeacherCourse() {
   const [specialty, setSpecialty] = useState(null);
   const navigate = useNavigate();

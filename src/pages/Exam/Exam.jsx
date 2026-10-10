@@ -1,57 +1,57 @@
-import Table from "../../components/Tables/Tables";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
+  DropDownMenuItem,
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import DeleteExam from "../../ModalContent/Exams/DeleteExam";
-import { Icon } from "@iconify/react";
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  Fragment,
-  useMemo,
-} from "react";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import ConfigureGradeScaleWizzard from "../../DrawerContent/Exam/ConfigureGradeScale/ConfigureGradeScaleWizzard";
+import CreateExamWizzard from "../../DrawerContent/Exam/CreateExam/CreateExamWizzard";
+import ExamDetails from "../../DrawerContent/Exam/ExamDetails";
+import UpdateExamWizzard from "../../DrawerContent/Exam/UpdateExam/UpdateExamWizzard";
+import { useGetExams } from "../../hooks/exam/useGetExams";
 import {
   CreateIcon,
   DeleteIcon,
   DetailsIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import { useGetExams } from "../../hooks/exam/useGetExams";
 import { ExamIcon, GradeIcon } from "../../icons/Icons";
-import { useDispatch, useSelector } from "react-redux";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import BulkDeleteExam from "../../ModalContent/Exams/BulkDeleteExam";
 import BulkAddExamGrading from "../../ModalContent/Exams/BulkAddExamGrading";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import JobPopOver from "../../components/Popover/JobPopover";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import BulkDeleteExam from "../../ModalContent/Exams/BulkDeleteExam";
+import DeleteExam from "../../ModalContent/Exams/DeleteExam";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/exam/examSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
+import filterPopOverMap from "../../utils/maps/FilterMap";
 import { examColDefs } from "../../utils/table/colDefs/exam/examColDefs";
-import SearchInput from "../../components/input/search";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { Drawer } from "../../components/drawer/Drawer";
-import UpdateExamWizzard from "../../DrawerContent/Exam/UpdateExam/UpdateExamWizzard";
-import CreateExamWizzard from "../../DrawerContent/Exam/CreateExam/CreateExamWizzard";
-import ConfigureGradeScaleWizzard from "../../DrawerContent/Exam/ConfigureGradeScale/ConfigureGradeScaleWizzard";
-import ExamDetails from "../../DrawerContent/Exam/ExamDetails";
 function Exam() {
   const { data: exams, isLoading, error } = useGetExams();
   const tableWrapperRef = useRef(null);

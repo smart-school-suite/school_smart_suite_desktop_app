@@ -1,59 +1,57 @@
-import { useGetExamCandidates } from "../../hooks/examCandidate/useGetExamCandidates";
-import Table from "../../components/Tables/Tables";
-import React, {
-  useState,
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
+import {
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import CaScoreDetails from "../../DrawerContent/Evaluation/CaScoreDetails";
+import ExamScoreDetails from "../../DrawerContent/Evaluation/ExamScoreDetails";
+import { useGetExamCandidates } from "../../hooks/examCandidate/useGetExamCandidates";
 import {
   CreateIcon,
   DeleteIcon,
   DetailsIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import { ExamCandidateIcon } from "../../icons/Icons";
-import { useSelector, useDispatch } from "react-redux";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { Icon } from "@iconify/react";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { examCandidateColDefs } from "../../utils/table/colDefs/exam/examCandidateColDefs";
-import JobPopOver from "../../components/Popover/JobPopover";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/exam/examCandidateSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
-import DeleteExamCandidate from "../../ModalContent/ExamCandidate/DeleteCandidate";
-import UpdateExamScores from "../../ModalContent/ExamCandidate/UpdateExamScores";
-import UpdateCaScores from "../../ModalContent/ExamCandidate/UpdateCaScores";
-import AddExamScores from "../../ModalContent/ExamCandidate/AddExamScores";
 import AddCaScore from "../../ModalContent/ExamCandidate/AddCaScore";
+import AddExamScores from "../../ModalContent/ExamCandidate/AddExamScores";
+import DeleteExamCandidate from "../../ModalContent/ExamCandidate/DeleteCandidate";
 import DeleteCaScores from "../../ModalContent/ExamCandidate/DeleteCaScores";
 import DeleteExamScores from "../../ModalContent/ExamCandidate/DeleteExamScores";
-import ExamScoreDetails from "../../DrawerContent/Evaluation/ExamScoreDetails";
-import CaScoreDetails from "../../DrawerContent/Evaluation/CaScoreDetails";
+import UpdateCaScores from "../../ModalContent/ExamCandidate/UpdateCaScores";
+import UpdateExamScores from "../../ModalContent/ExamCandidate/UpdateExamScores";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/exam/examCandidateSlice";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { examCandidateColDefs } from "../../utils/table/colDefs/exam/examCandidateColDefs";
 function ExamCandidates() {
   const { data: examCandidates, isLoading, error } = useGetExamCandidates();
   const dispatch = useDispatch();

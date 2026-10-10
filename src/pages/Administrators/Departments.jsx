@@ -1,26 +1,34 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import DeleteDepartment from "../../ModalContent/Department/DeleteDepartment";
-import DepartmentDetails from "../../DrawerContent/Department/DepartmentDetails";
-import UpdateDepartment from "../../DrawerContent/Department/UpdateDepartment";
-import DeactivateDepartment from "../../ModalContent/Department/DeactivateDepartment";
-import { DepartmentTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import DataTableNavLoader from "../../components/PageLoaders/DataTableNavLoader";
 import { Icon } from "@iconify/react";
-import { useGetDepartments } from "../../hooks/department/useGetDepartments";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import ActivateDepartment from "../../ModalContent/Department/ActivateDepartment";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
 import React, {
-  useState,
-  useRef,
-  useMemo,
+  Fragment,
   useCallback,
   useEffect,
-  Fragment,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import CreateDepartment from "../../DrawerContent/Department/CreateDepartment";
+import DepartmentDetails from "../../DrawerContent/Department/DepartmentDetails";
+import UpdateDepartment from "../../DrawerContent/Department/UpdateDepartment";
+import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 import {
   ActivateIcon,
   DeleteIcon,
@@ -29,57 +37,32 @@ import {
   UpdateIcon,
 } from "../../icons/ActionIcons";
 import { DepartmentIcon } from "../../icons/Icons";
-import { useSelector } from "react-redux";
+import ActivateDepartment from "../../ModalContent/Department/ActivateDepartment";
 import BulkActivateDepartment from "../../ModalContent/Department/BulkActivateDepartment";
 import BulkDeactivateDepartment from "../../ModalContent/Department/BulkDeactivateDepartment";
 import BulkDeleteDepartment from "../../ModalContent/Department/BulkDeleteDepartment";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import { departmentColDefs } from "../../utils/table/colDefs/department/departmentColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import DeactivateDepartment from "../../ModalContent/Department/DeactivateDepartment";
+import DeleteDepartment from "../../ModalContent/Department/DeleteDepartment";
 import Export from "../../ModalContent/Export/Export";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
-  setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
+  resetAllCustomFilters,
   setColumnMapping,
+  setCustomFilter,
+  setImportReset,
+  setImportSelectedFile,
+  setImportStatus,
   setStandardGroupValue,
+  toggleGeneralFilter,
 } from "../../Slices/administrator/departmentSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useDispatch } from "react-redux";
-import JobPopOver from "../../components/Popover/JobPopover";
-import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { DEPARTMENT_COLUMNS } from "../../utils/department/departmentColumns";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { departmentColDefs } from "../../utils/table/colDefs/department/departmentColDefs";
 import { departmentImportColDefs } from "../../utils/table/colDefs/department/departmentImportColDefs";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import CreateDepartment from "../../DrawerContent/Department/CreateDepartment";
-import { Drawer } from "../../components/drawer/Drawer";
-import SearchInput from "../../components/input/search";
 function Departments() {
   const tableRef = useRef();
   const dispatch = useDispatch();

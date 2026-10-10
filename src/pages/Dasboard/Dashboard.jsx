@@ -1,7 +1,7 @@
 import FinanceDashboardCard from "../../components/FinancialDashboard/Card";
+import MonthlyExpense from "../../components/FinancialDashboard/MonthlyExpense";
 import Revenue from "../../components/FinancialDashboard/Revenue";
 import SchoolExpenseCategory from "../../components/FinancialDashboard/SchoolExpenseCategory";
-import MonthlyExpense from "../../components/FinancialDashboard/MonthlyExpense";
 import TuitionFeeLevelBreakDown from "../../components/FinancialDashboard/TuitionFeeLevelBreakDown";
 import TuitionFeePaymentRate from "../../components/FinancialDashboard/TuitionFeePaymentRate";
 function Dashboard() {

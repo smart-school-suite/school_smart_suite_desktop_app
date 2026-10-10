@@ -1,52 +1,50 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import DeleteAdditionalFees from "../../ModalContent/AdditionalFees/DeleteAdditionalFees";
-import AdditionalFeeDetail from "../../ModalContent/AdditionalFees/AdditionalFeesDetails";
-import { useGetAdditionalFees } from "../../hooks/additionalFee/useGetAdditionalFees";
-import React, {
-  useState,
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import BulkPayAdditionalFee from "../../DrawerContent/AdditionalFee/BulkPayAdditionalFee";
+import BulkUpdateAdditionalFee from "../../DrawerContent/AdditionalFee/BulkUpdateAdditionalFee";
+import PayAdditionalFee from "../../DrawerContent/AdditionalFee/PayAdditionalFee";
+import UpdateAdditionalFee from "../../DrawerContent/AdditionalFee/UpdateAdditionalFee";
+import { useGetAdditionalFees } from "../../hooks/additionalFee/useGetAdditionalFees";
 import {
   CreateIcon,
   DeleteIcon,
   DetailsIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import AdditionalFeeDetail from "../../ModalContent/AdditionalFees/AdditionalFeesDetails";
 import BulkDeleteAdditionalFee from "../../ModalContent/AdditionalFees/BulkDeleteAdditionalFee";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { additionalFeeColDefs } from "../../utils/table/colDefs/finance/additionalFeeColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import DeleteAdditionalFees from "../../ModalContent/AdditionalFees/DeleteAdditionalFees";
 import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/finance/additionalFeeSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useSelector, useDispatch } from "react-redux";
-import SearchInput from "../../components/input/search";
-import PayAdditionalFee from "../../DrawerContent/AdditionalFee/PayAdditionalFee";
-import UpdateAdditionalFee from "../../DrawerContent/AdditionalFee/UpdateAdditionalFee";
-import { Drawer } from "../../components/drawer/Drawer";
-import BulkPayAdditionalFee from "../../DrawerContent/AdditionalFee/BulkPayAdditionalFee";
-import BulkUpdateAdditionalFee from "../../DrawerContent/AdditionalFee/BulkUpdateAdditionalFee";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { additionalFeeColDefs } from "../../utils/table/colDefs/finance/additionalFeeColDefs";
 function AdditionalFees() {
   const { data: additionalFee, isLoading, error } = useGetAdditionalFees();
   const tableRef = useRef();

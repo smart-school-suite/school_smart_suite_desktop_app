@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { removeAssignedHall } from "../../services/specialtyHall";
 import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import { removeAssignedHall } from "../../services/specialtyHall";
 export const useRemoveAssignedSpecialtyHall = (specialtyId) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -14,9 +14,15 @@ export const useRemoveAssignedSpecialtyHall = (specialtyId) => {
           description={"Specialty Hall Removed Successfully"}
         />
       );
-      queryClient.removeQueries(["assignableHalls", specialtyId]);
-      queryClient.removeQueries(["assignedHalls", specialtyId]);
-      queryClient.invalidateQueries({ queryKey: ["specialties"] });
+      queryClient.invalidateQueries({
+        queryKey: ["assignableHalls", specialtyId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["assignedHalls", specialtyId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["specialty-hall-specialties"],
+      });
     },
     onError: (error) => {
       toast.custom(

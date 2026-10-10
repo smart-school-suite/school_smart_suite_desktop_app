@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../../context/authContext";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import OtpInput from "../../components/FormComponents/StepInput";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import AuthHero from "../../components/Hero/AuthHero";
 import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import OtpInput from "../../components/FormComponents/StepInput";
+import AuthHero from "../../components/Hero/AuthHero";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useAuth } from "../../context/authContext";
 function TwoStepVerification() {
   const [otp, setOtp] = useState("");
   const { handleTwoStepVerification, loading, authError } = useAuth();

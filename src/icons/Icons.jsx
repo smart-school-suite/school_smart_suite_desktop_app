@@ -225,31 +225,6 @@ const ActivationCodeIcon = ({ iconStyle }) => {
 };
 
 export {
-  AdditionalFeeIconFilled,
-  ExpensesIconFilled,
-  TuitionFeeIconFilled,
-  EventIcon,
-  LiveIcon,
-  ElectionIcon,
-  StatsIcon,
-  DepartmentIcon,
-  SpecialtyIcon,
-  TuitionFeeIcon,
-  AdditionalFeeIcon,
-  ExpensesIcon,
-  MoneyIcon,
-  BatchIcon,
-  ParentIcon,
-  StudentIcon,
-  TeacherIcon,
-  SchoolAdminIcon,
-  CourseIcon,
-  SemesterIcon,
-  GradeIcon,
-  TimetableIcon,
-  ExamIcon,
-  ExamCandidateIcon,
-  HallIcon,
-  ActivationCodeIcon,
-  AcademicYearIcon
+  AcademicYearIcon, ActivationCodeIcon, AdditionalFeeIcon, AdditionalFeeIconFilled, BatchIcon, CourseIcon, DepartmentIcon, ElectionIcon, EventIcon, ExamCandidateIcon, ExamIcon, ExpensesIcon, ExpensesIconFilled, GradeIcon, HallIcon, LiveIcon, MoneyIcon, ParentIcon, SchoolAdminIcon, SemesterIcon, SpecialtyIcon, StatsIcon, StudentIcon,
+  TeacherIcon, TimetableIcon, TuitionFeeIcon, TuitionFeeIconFilled
 };

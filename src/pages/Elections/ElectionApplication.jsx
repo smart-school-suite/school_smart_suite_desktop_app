@@ -1,51 +1,46 @@
-import { useGetElectionApplications } from "../../hooks/electionApplication/useGetElectionApplications";
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
 import React, {
-  useState,
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
+import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { useGetElectionApplications } from "../../hooks/electionApplication/useGetElectionApplications";
 import {
   ActivateIcon,
   CreateIcon,
   DeleteIcon,
   DetailsIcon,
-  SuspendIcon,
-  UpdateIcon,
+  SuspendIcon
 } from "../../icons/ActionIcons";
-import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import ApplicationDetails from "../../ModalContent/ElectionApplication/ApplicationDetails";
 import ApproveApplication from "../../ModalContent/ElectionApplication/ApproveApplication";
 import DeleteApplication from "../../ModalContent/ElectionApplication/DeleteApplication";
-import { electionApplicationColDef } from "../../utils/table/colDefs/election/electionApplicationColDefs";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/election/electionApplicationSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { Plus } from "lucide-react";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { useSelector, useDispatch } from "react-redux";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/election/electionApplicationSlice";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { electionApplicationColDef } from "../../utils/table/colDefs/election/electionApplicationColDefs";
 function ElectionApplication() {
   const { data: applications, isLoading, error } = useGetElectionApplications();
   const dispatch = useDispatch();

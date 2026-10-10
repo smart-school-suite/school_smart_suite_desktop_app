@@ -1,51 +1,49 @@
-import { useGetAnnouncementByStatus } from "../../hooks/announcement/useGetAnnouncementByStatus";
-import CustomModal from "../../components/Modals/Modal";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import AnnouncementDetails from "../../DrawerContent/Announcement/AnnouncementDetails";
+import EngagementStats from "../../DrawerContent/Announcement/EngagementStats";
+import UpdateAnnouncementContent from "../../DrawerContent/Announcement/UpdateAnnouncementContent";
+import DraftAnnouncementWizzard from "../../DrawerContent/Announcement/UpdateDraftAnnouncement/DraftAnnouncementWizzard";
+import DeleteAnnouncement from "../../ModalContent/Announcement/DeleteAnnouncement";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/announcement/announcementSlice";
 import ActionButtonDropdown, {
   DropDownMenuItem,
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import SearchInput from "../../components/input/search";
+import { useGetAnnouncementByStatus } from "../../hooks/announcement/useGetAnnouncementByStatus";
 import {
-  ActivateIcon,
   DeleteIcon,
   DetailsIcon,
-  SuspendIcon,
-  UpdateIcon,
+  UpdateIcon
 } from "../../icons/ActionIcons";
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  useMemo,
-  Fragment,
-} from "react";
-import { Icon } from "@iconify/react";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
 import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/announcement/announcementSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { useSelector, useDispatch } from "react-redux";
-import Table from "../../components/Tables/Tables";
 import { announcementColDefs } from "../../utils/table/colDefs/announcement/announcementColDefs";
-import EngagementStats from "../../DrawerContent/Announcement/EngagementStats";
-import AnnouncementDetails from "../../DrawerContent/Announcement/AnnouncementDetails";
-import DeleteAnnouncement from "../../ModalContent/Announcement/DeleteAnnouncement";
-import UpdateAnnouncementContent from "../../DrawerContent/Announcement/UpdateAnnouncementContent";
-import DraftAnnouncementWizzard from "../../DrawerContent/Announcement/UpdateDraftAnnouncement/DraftAnnouncementWizzard";
 function Annoucements() {
   const {
     data: announcement,

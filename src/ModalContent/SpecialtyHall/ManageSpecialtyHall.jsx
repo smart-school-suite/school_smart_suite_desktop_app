@@ -1,12 +1,12 @@
+import { Icon } from "@iconify/react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useState, useMemo, useEffect, Fragment } from "react";
+import { useAssignSpecialtyHall } from "../../hooks/specialtyHall/useAssignSpecialtyHall";
 import { useGetAssignableHalls } from "../../hooks/specialtyHall/useGetAssignableHalls";
 import { useGetAssignedHalls } from "../../hooks/specialtyHall/useGetAssignedHalls";
-import { useAssignSpecialtyHall } from "../../hooks/specialtyHall/useAssignSpecialtyHall";
 import { useRemoveAssignedSpecialtyHall } from "../../hooks/specialtyHall/useRemoveAssignedSpecialtyHall";
 function ManageSpecialtyHall({ handleClose, rowData }) {
   const darkMode = useSelector((state) => state.theme.darkMode);

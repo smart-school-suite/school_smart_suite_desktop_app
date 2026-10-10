@@ -1,7 +1,6 @@
-import { Icon } from "@iconify/react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useAuth } from "../../context/authContext";
-import { useState } from "react";
 function Security() {
    const darkMode = useSelector((state) => state.theme.darkMode);
   return (

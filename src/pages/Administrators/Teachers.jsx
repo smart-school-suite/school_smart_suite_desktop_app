@@ -1,58 +1,51 @@
-import Table from "../../components/Tables/Tables";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import { teacherTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import DeactivateTeacher from "../../ModalContent/Teacher/DeactivateTeacher";
-import DeleteTeacher from "../../ModalContent/Teacher/DeleteTeacher";
-import TeacherDetails from "../../ModalContent/Teacher/TeacherDetails";
-import UpdateTeacher from "../../ModalContent/Teacher/UpdateTeacher";
-import CreateTeacher from "../../ModalContent/Teacher/CreateTeacher";
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  Fragment,
-} from "react";
 import { Icon } from "@iconify/react";
-import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import CustomModal from "../../components/Modals/Modal";
-import ActivateTeacher from "../../ModalContent/Teacher/ActivateTeacher";
-import {
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-  SuspendIcon,
-  ActivateIcon,
-} from "../../icons/ActionIcons";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import BulkDeleteTeacher from "../../ModalContent/Teacher/BulkDeleteTeacher";
-import BulkDeactivateTeacher from "../../ModalContent/Teacher/BulkDeactivateTeacher";
-import BulkActivateTeacher from "../../ModalContent/Teacher/BulkActivateTeacher";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import ExportTeacher from "../../ModalContent/Teacher/ExportTeacher";
-import { teacherColDefs } from "../../utils/table/colDefs/teachers/teacherColDefs";
-import {
-  toggleGeneralFilter,
-  addCustomFilter,
-  removeCustomFilter,
-  setCustomFilter,
-  resetAllCustomFilters
-} from "../../Slices/teacher/teacherSlice";
-import { motion, AnimatePresence } from "framer-motion";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import TextFilter from "../../ModalContent/Filter/TextFilterPopOver";
-import TextFilterPopOver from "../../ModalContent/Filter/TextFilterPopOver";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import { AnimatePresence, motion } from "framer-motion";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import ActivateTeacher from "../../ModalContent/Teacher/ActivateTeacher";
+import BulkActivateTeacher from "../../ModalContent/Teacher/BulkActivateTeacher";
+import BulkDeactivateTeacher from "../../ModalContent/Teacher/BulkDeactivateTeacher";
+import BulkDeleteTeacher from "../../ModalContent/Teacher/BulkDeleteTeacher";
+import DeactivateTeacher from "../../ModalContent/Teacher/DeactivateTeacher";
+import DeleteTeacher from "../../ModalContent/Teacher/DeleteTeacher";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import TeacherDetails from "../../ModalContent/Teacher/TeacherDetails";
+import UpdateTeacher from "../../ModalContent/Teacher/UpdateTeacher";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter
+} from "../../Slices/teacher/teacherSlice";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
+import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
+import {
+  ActivateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  SuspendIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { teacherColDefs } from "../../utils/table/colDefs/teachers/teacherColDefs";
 function Teachers() {
   const dispatch = useDispatch();
   const teacherState = useSelector((state) => state.teachers);

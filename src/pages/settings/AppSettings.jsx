@@ -1,11 +1,11 @@
-import { useGetSchoolBranchSetting } from "../../hooks/schoolBranchSetting/useGetSchoolBranchSetting";
-import { useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { useSelector } from "react-redux";
 import { settinActionsConfig } from "../../ComponentConfig/SettingActionsConfig";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { NotFoundError } from "../../components/errors/Error";
 import SettingToggle from "../../components/Setting/SettingToggle";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { useGetSchoolBranchSetting } from "../../hooks/schoolBranchSetting/useGetSchoolBranchSetting";
 function AppSettings() {
   const {
     data: schoolBranchSetting,

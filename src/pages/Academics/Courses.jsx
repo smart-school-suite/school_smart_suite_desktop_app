@@ -1,21 +1,46 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import CourseDetails from "../../DrawerContent/Course/CourseDetails";
-import DeactivateCourse from "../../ModalContent/Course/DeactivateCourse";
-import UpdateCourse from "../../DrawerContent/Course/UpdateCourse";
-import { useGetCourses } from "../../hooks/course/useGetCourses";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
 import React, {
-  useState,
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import CourseDetails from "../../DrawerContent/Course/CourseDetails";
+import UpdateCourse from "../../DrawerContent/Course/UpdateCourse";
+import ActivateCourse from "../../ModalContent/Course/ActivateCourse";
+import BulkActivateCourse from "../../ModalContent/Course/BulkActivateCourse";
+import BulkDeactivateCourse from "../../ModalContent/Course/BulkDeactivateCourse";
+import BulkDeleteCourse from "../../ModalContent/Course/BulkDeleteCourse";
+import DeactivateCourse from "../../ModalContent/Course/DeactivateCourse";
+import DeleteCourse from "../../ModalContent/Course/DeleteCourse";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/administrator/courseSlice";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import SearchInput from "../../components/input/search";
+import { useGetCourses } from "../../hooks/course/useGetCourses";
 import {
   ActivateIcon,
   DeleteIcon,
@@ -23,33 +48,8 @@ import {
   SuspendIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import ActivateCourse from "../../ModalContent/Course/ActivateCourse";
-import DeleteCourse from "../../ModalContent/Course/DeleteCourse";
-import { useSelector, useDispatch } from "react-redux";
-import { Icon } from "@iconify/react";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import BulkDeleteCourse from "../../ModalContent/Course/BulkDeleteCourse";
-import BulkDeactivateCourse from "../../ModalContent/Course/BulkDeactivateCourse";
-import BulkActivateCourse from "../../ModalContent/Course/BulkActivateCourse";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
 import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/administrator/courseSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import { courseColDefs } from "../../utils/table/colDefs/course/courseColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
 function Courses() {
   const dispatch = useDispatch();
   const courseState = useSelector((state) => state.course);

@@ -1,47 +1,47 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import DeleteExpense from "../../ModalContent/SchoolExpenses/DeleteExpense";
-import { useGetExpenses } from "../../hooks/schoolExpenses/useGetSchoolExpenses";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
 import React, {
-  useState,
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
+import SchoolExpenseDetails from "../../DrawerContent/SchoolExpenses/SchoolExpenseDetails";
+import UpdateSchoolExpense from "../../DrawerContent/SchoolExpenses/UpdateSchoolExpense";
+import { useGetExpenses } from "../../hooks/schoolExpenses/useGetSchoolExpenses";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import BulkDeleteAdditionalFee from "../../ModalContent/AdditionalFees/BulkDeleteAdditionalFee";
+import Export from "../../ModalContent/Export/Export";
 import BulkDeleteExpense from "../../ModalContent/SchoolExpenses/BulkDeleteExpense";
 import BulkUpdateExpense from "../../ModalContent/SchoolExpenses/BulkUpdateExpense";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { schoolExpenseColDefs } from "../../utils/table/colDefs/finance/schoolExpenseColDefs";
+import DeleteExpense from "../../ModalContent/SchoolExpenses/DeleteExpense";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import filterPopOverMap from "../../utils/maps/FilterMap";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/finance/schoolExpenseSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useSelector, useDispatch } from "react-redux";
-import SearchInput from "../../components/input/search";
-import UpdateSchoolExpense from "../../DrawerContent/SchoolExpenses/UpdateSchoolExpense";
-import SchoolExpenseDetails from "../../DrawerContent/SchoolExpenses/SchoolExpenseDetails";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { schoolExpenseColDefs } from "../../utils/table/colDefs/finance/schoolExpenseColDefs";
 function SchoolExpenses() {
   const { data: schoolExpenses, isLoading, error } = useGetExpenses();
   const tableRef = useRef();

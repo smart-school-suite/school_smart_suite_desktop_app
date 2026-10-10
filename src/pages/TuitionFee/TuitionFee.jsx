@@ -1,43 +1,42 @@
-import Table from "../../components/Tables/Tables";
-import { useGetTuitionFees } from "../../hooks/FeePayment/useGetTuitionFees";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
+  DropDownMenuItem,
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import PayStudentTuitionFee from "../../ModalContent/TuitionFee/PayTuitionFee";
-import TuitionFeeDetails from "../../ModalContent/TuitionFee/TuitionFeeDetails";
-import DeleteTuitionFee from "../../ModalContent/TuitionFee/DeleteTuitionFee";
-import PayTuitionFee from "../../DrawerContent/TuitionFee/PayTuitionFee";
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useRef,
-  useEffect,
-  Fragment,
-} from "react";
-import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { tuitionFeeColDefs } from "../../utils/table/colDefs/tuitionfee/tuitionFeeColDefs";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/tuitionFee/tuitionFeeSlice";
-import { useSelector, useDispatch } from "react-redux";
-import { Icon } from "@iconify/react";
-import SearchInput from "../../components/input/search";
 import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
+import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import PayTuitionFee from "../../DrawerContent/TuitionFee/PayTuitionFee";
+import { useGetTuitionFees } from "../../hooks/FeePayment/useGetTuitionFees";
+import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import DeleteTuitionFee from "../../ModalContent/TuitionFee/DeleteTuitionFee";
+import TuitionFeeDetails from "../../ModalContent/TuitionFee/TuitionFeeDetails";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/tuitionFee/tuitionFeeSlice";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { tuitionFeeColDefs } from "../../utils/table/colDefs/tuitionfee/tuitionFeeColDefs";
 function TuitionFees() {
   const { data: tuitionFees, isLoading, error } = useGetTuitionFees();
   const tableRef = useRef();

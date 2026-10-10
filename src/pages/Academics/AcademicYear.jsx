@@ -1,69 +1,51 @@
-import { useGetSchoolAcademicYears } from "../../hooks/academicYear/useGetSchoolAcademicYears";
-import { useSelector } from "react-redux";
-import Table from "../../components/Tables/Tables";
-import React, {
-  useMemo,
-  useState,
-  useRef,
-  useEffect,
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
+import {
   Fragment,
   useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import { academicYearTableConfig } from "../../ComponentConfig/AgGridTableConfig";
+import { useSelector } from "react-redux";
+import AcademicYearDetails from "../../DrawerContent/AcademicYear/AcademicYearDetails";
+import CreateAcademicYear from "../../DrawerContent/AcademicYear/CreateAcademicYear";
+import UpdateAcademicYear from "../../DrawerContent/AcademicYear/UpdateAcademicYear";
+import DeleteAcademicYear from "../../ModalContent/AcademicYear/DeleteAcademicYear";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/academics/academicYearSlice";
 import ActionButtonDropdown, {
   DropDownMenuItem,
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import CustomModal from "../../components/Modals/Modal";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import SearchInput from "../../components/input/search";
+import { useGetSchoolAcademicYears } from "../../hooks/academicYear/useGetSchoolAcademicYears";
 import {
-  ActivateIcon,
   DeleteIcon,
   DetailsIcon,
-  SuspendIcon,
-  UpdateIcon,
+  UpdateIcon
 } from "../../icons/ActionIcons";
 import { AcademicYearIcon } from "../../icons/Icons";
-import AcademicYearDetails from "../../DrawerContent/AcademicYear/AcademicYearDetails";
-import CreateAcademicYear from "../../DrawerContent/AcademicYear/CreateAcademicYear";
-import DeleteAcademicYear from "../../ModalContent/AcademicYear/DeleteAcademicYear";
-import UpdateAcademicYear from "../../DrawerContent/AcademicYear/UpdateAcademicYear";
-import { Icon } from "@iconify/react";
-import JobPopOver from "../../components/Popover/JobPopover";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/academics/academicYearSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { semesterColDefs } from "../../utils/table/colDefs/semester/semesterColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
 import { academicYearColDefs } from "../../utils/table/colDefs/academicYear/academicYearColDefs";
-import SearchInput from "../../components/input/search";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { Drawer } from "../../components/drawer/Drawer";
 function AcademicYear() {
   const {
     data: schoolAcademicYears,

@@ -1,20 +1,27 @@
-import { useGetElectionRoles } from "../../hooks/electionRole/useGetElectionRoles";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import React, {
-  useState,
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Plus } from "lucide-react";
+import {
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
-import Table from "../../components/Tables/Tables";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { Icon } from "@iconify/react";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { useGetElectionRoles } from "../../hooks/electionRole/useGetElectionRoles";
 import {
   ActivateIcon,
   DeleteIcon,
@@ -22,36 +29,27 @@ import {
   SuspendIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import CreateElectionRole from "../../ModalContent/ElectionRoles/CreateElectionRole";
-import UpdateElectionRole from "../../ModalContent/ElectionRoles/UpdateElectionRole";
-import DeactivateRole from "../../ModalContent/ElectionRoles/DeactivateRole";
 import ActivateElectionRole from "../../ModalContent/ElectionRoles/ActivateElectionRole";
-import DeleteElectionRole from "../../ModalContent/ElectionRoles/DeleteElectionRole";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import BulkDeleteElectionRole from "../../ModalContent/ElectionRoles/BulkDeleteElectionRole";
-import BulkDeactivateElectionRole from "../../ModalContent/ElectionRoles/BulkDeactivateElectionRole";
 import BulkActivateElectionRole from "../../ModalContent/ElectionRoles/BulkActivateElectionRole";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
+import BulkDeactivateElectionRole from "../../ModalContent/ElectionRoles/BulkDeactivateElectionRole";
+import BulkDeleteElectionRole from "../../ModalContent/ElectionRoles/BulkDeleteElectionRole";
+import CreateElectionRole from "../../ModalContent/ElectionRoles/CreateElectionRole";
+import DeactivateRole from "../../ModalContent/ElectionRoles/DeactivateRole";
+import DeleteElectionRole from "../../ModalContent/ElectionRoles/DeleteElectionRole";
 import ElectionRoleDetails from "../../ModalContent/ElectionRoles/ElectionRoleDetails";
-import { electionRoleColDefs } from "../../utils/table/colDefs/election/electionRoleColDefs";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/election/electionRoleSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import UpdateElectionRole from "../../ModalContent/ElectionRoles/UpdateElectionRole";
 import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { Plus } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/election/electionRoleSlice";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { electionRoleColDefs } from "../../utils/table/colDefs/election/electionRoleColDefs";
 function ElectionRoles() {
   const { data: electionRoles, isLoading, error } = useGetElectionRoles();
   const dispatch = useDispatch();

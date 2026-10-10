@@ -1,18 +1,43 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import { useGetCourses } from "../../hooks/course/useGetCourses";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
 import React, {
-  useState,
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import JointCourseDetails from "../../DrawerContent/JointCourse/JointCourseDetails";
+import UpdateJointCourse from "../../DrawerContent/JointCourse/UpdateJointCourse";
+import Export from "../../ModalContent/Export/Export";
+import ActivateJointCourse from "../../ModalContent/JointCourse/ActivateJointCourse";
+import DeactivateJointCourse from "../../ModalContent/JointCourse/DeactivateJointCourse";
+import DeleteJointCourse from "../../ModalContent/JointCourse/DeleteJointCourse";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/academics/jointCourseSlice";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import SearchInput from "../../components/input/search";
+import { useGetJointCourses } from "../../hooks/jointCourse/useGetJointCourse";
 import {
   ActivateIcon,
   DeleteIcon,
@@ -20,41 +45,8 @@ import {
   SuspendIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import DeleteJointCourse from "../../ModalContent/JointCourse/DeleteJointCourse";
-import DeactivateJointCourse from "../../ModalContent/JointCourse/DeactivateJointCourse";
-import ActivateJointCourse from "../../ModalContent/JointCourse/ActivateJointCourse";
-import UpdateJointCourse from "../../DrawerContent/JointCourse/UpdateJointCourse";
-import { CourseIcon } from "../../icons/Icons";
-import { useSelector, useDispatch } from "react-redux";
-import { Icon } from "@iconify/react";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import BulkDeleteCourse from "../../ModalContent/Course/BulkDeleteCourse";
-import BulkDeactivateCourse from "../../ModalContent/Course/BulkDeactivateCourse";
-import BulkActivateCourse from "../../ModalContent/Course/BulkActivateCourse";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import { useGetJointCourses } from "../../hooks/jointCourse/useGetJointCourse";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
 import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/academics/jointCourseSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import jointCourseColDefs from "../../utils/table/colDefs/course/jointCourseColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
-import JointCourseDetails from "../../DrawerContent/JointCourse/JointCourseDetails";
 function JointCourse() {
   const dispatch = useDispatch();
   const courseState = useSelector((state) => state.jointCourse);

@@ -1,47 +1,47 @@
-import Table from "../../components/Tables/Tables";
-import { useGetExpensesCategories } from "../../hooks/expenseCategory/useGetExpensesCategories";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import React, {
-  useState,
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Plus } from "lucide-react";
+import {
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
-import CustomModal from "../../components/Modals/Modal";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
-import DeleteCategory from "../../ModalContent/ExpenseCategory/DeleteCategory";
-import UpdateExpenseCategory from "../../DrawerContent/ExpenseCategory/UpdateExpenseCategory";
-import CreateExpenseCategory from "../../DrawerContent/ExpenseCategory/CreateExpenseCategory";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { Icon } from "@iconify/react";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/schoolExpense/expenseCategorySlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { Plus } from "lucide-react";
-import { expenseCategoryColDefs } from "../../utils/table/colDefs/schoolExpense/expenseCategoryColDefs";
-import { useSelector, useDispatch } from "react-redux";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
+import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import CreateExpenseCategory from "../../DrawerContent/ExpenseCategory/CreateExpenseCategory";
 import ExpenseCategoryDetails from "../../DrawerContent/ExpenseCategory/ExpenseCategoryDetails";
+import UpdateExpenseCategory from "../../DrawerContent/ExpenseCategory/UpdateExpenseCategory";
+import { useGetExpensesCategories } from "../../hooks/expenseCategory/useGetExpensesCategories";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import DeleteCategory from "../../ModalContent/ExpenseCategory/DeleteCategory";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/schoolExpense/expenseCategorySlice";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { expenseCategoryColDefs } from "../../utils/table/colDefs/schoolExpense/expenseCategoryColDefs";
 function SchoolExpensesCategory() {
   const dispatch = useDispatch();
   const tableRef = useRef(null);

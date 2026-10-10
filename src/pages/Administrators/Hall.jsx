@@ -1,61 +1,43 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import React, { useMemo, useState, useRef, Fragment, useEffect } from "react";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import CustomModal from "../../components/Modals/Modal";
-import {
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-  SuspendIcon,
-  ActivateIcon,
-} from "../../icons/ActionIcons";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import { hallTableConfig } from "../../ComponentConfig/AgGridTableConfig";
-import { useGetHalls } from "../../hooks/hall/useGetHalls";
 import { Icon } from "@iconify/react";
-import DeactivateHall from "../../ModalContent/Hall/DeactivateHall";
-import ActivateHall from "../../ModalContent/Hall/ActivateHall";
-import DeleteHall from "../../ModalContent/Hall/DeleteHall";
-import { departmentColDefs } from "../../utils/table/colDefs/department/departmentColDefs";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import { AnimatePresence, motion } from "framer-motion";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import HallDetails from "../../DrawerContent/Hall/HallDetail";
+import UpdateHall from "../../DrawerContent/Hall/UpdateHall";
 import Export from "../../ModalContent/Export/Export";
-import JobPopOver from "../../components/Popover/JobPopover";
-import { isLastElement } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-} from "@floating-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import ActivateHall from "../../ModalContent/Hall/ActivateHall";
+import DeactivateHall from "../../ModalContent/Hall/DeactivateHall";
+import DeleteHall from "../../ModalContent/Hall/DeleteHall";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
+  resetAllCustomFilters,
   setCustomFilter,
+  toggleGeneralFilter,
 } from "../../Slices/administrator/hallSlice";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useSelector, useDispatch } from "react-redux";
-import { hallColDefs } from "../../utils/table/colDefs/hall/hallColDefs";
+import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import { Drawer } from "../../components/drawer/Drawer";
-import UpdateHall from "../../DrawerContent/Hall/UpdateHall";
-import HallDetails from "../../DrawerContent/Hall/HallDetail";
+import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
+import { useGetHalls } from "../../hooks/hall/useGetHalls";
+import {
+  ActivateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  SuspendIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { hallColDefs } from "../../utils/table/colDefs/hall/hallColDefs";
 function Hall() {
   const { data: halls, isLoading, error } = useGetHalls();
   const tableRef = useRef();

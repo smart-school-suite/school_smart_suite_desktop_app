@@ -1,22 +1,34 @@
-import Table from "../../components/Tables/Tables";
 import { Icon } from "@iconify/react";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import ActivateBatch from "../../ModalContent/StudentBatches/ActivateBatch";
-import DeactivateBatch from "../../ModalContent/StudentBatches/DeactivateBatch";
-import DeleteStudentBatch from "../../ModalContent/StudentBatches/DeleteStudentBatch";
-import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
-import React, {
-  useState,
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
+import {
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import BatchDetails from "../../DrawerContent/StudentBatch/BatchDetails";
+import CreateBatch from "../../DrawerContent/StudentBatch/CreateBatch";
+import UpdateBatch from "../../DrawerContent/StudentBatch/UpdateBatch";
+import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 import {
   ActivateIcon,
   DeleteIcon,
@@ -25,41 +37,28 @@ import {
   UpdateIcon,
 } from "../../icons/ActionIcons";
 import { BatchIcon } from "../../icons/Icons";
-import { useSelector } from "react-redux";
-import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import Export from "../../ModalContent/Export/Export";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
+import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
+import ActivateBatch from "../../ModalContent/StudentBatches/ActivateBatch";
+import DeactivateBatch from "../../ModalContent/StudentBatches/DeactivateBatch";
+import DeleteStudentBatch from "../../ModalContent/StudentBatches/DeleteStudentBatch";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  resetAllCustomFilters,
   addCustomFilter,
-  toggleGeneralFilter,
   removeCustomFilter,
-  setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
+  resetAllCustomFilters,
   setColumnMapping,
+  setCustomFilter,
+  setImportReset,
+  setImportSelectedFile,
+  setImportStatus,
   setStandardGroupValue,
+  toggleGeneralFilter,
 } from "../../Slices/student/studentBatchSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import { useDispatch } from "react-redux";
-import JobPopOver from "../../components/Popover/JobPopover";
-import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
+import filterPopOverMap from "../../utils/maps/FilterMap";
 import { STUDENT_BATCHES_COLUMNS } from "../../utils/student/studentBatchColumns";
 import { studentBatchColDefs } from "../../utils/table/colDefs/student/studentBatchColDefs";
-import { Drawer } from "../../components/drawer/Drawer";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import SearchInput from "../../components/input/search";
-import BatchDetails from "../../DrawerContent/StudentBatch/BatchDetails";
-import UpdateBatch from "../../DrawerContent/StudentBatch/UpdateBatch";
-import CreateBatch from "../../DrawerContent/StudentBatch/CreateBatch";
 function StudentBatches() {
   const { data: studentBatches, isLoading, error } = useGetBatches();
   const tableRef = useRef();

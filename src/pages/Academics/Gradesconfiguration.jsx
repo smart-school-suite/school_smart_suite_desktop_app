@@ -1,71 +1,69 @@
-import Table from "../../components/Tables/Tables";
 import { Icon } from "@iconify/react";
-import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
-import DeleteGradeScale from "../../ModalContent/GradesConfig/DeleteGradeScale";
-import DeactivateGradeScaleCategory from "../../ModalContent/GradesConfig/DeactivateGradeScaleCategory";
-import ActivateGradeScaleCategory from "../../ModalContent/GradesConfig/ActivateGradeScaleCategory";
-import GradeScaleCategoryDetail from "../../DrawerContent/GradeScale/GradeScaleCategoryDetail";
-import BulkDeleteGradeScale from "../../ModalContent/GradesConfig/BulkDeleteGradeScale";
-import CopyScaleWizzard from "../../DrawerContent/GradeScale/CopyScale/CopyScaleWizzard";
-import CustomModal from "../../components/Modals/Modal";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  Fragment,
-  useMemo,
-} from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ChevronDown } from "lucide-react";
 import {
-  CreateIcon,
-  DeleteIcon,
-  ReuseIcon,
-  UpdateIcon,
-  SuspendIcon,
-  ActivateIcon,
-  DetailsIcon,
-} from "../../icons/ActionIcons";
-import { GradeIcon } from "../../icons/Icons";
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
+import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
+import CustomModal from "../../components/Modals/Modal";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { gradeScaleColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleColDefs";
-import JobPopOver from "../../components/Popover/JobPopover";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  setStandardGroupValue,
-  resetScaleState,
-} from "../../Slices/academics/gradeScaleSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
+import CopyScaleWizzard from "../../DrawerContent/GradeScale/CopyScale/CopyScaleWizzard";
 import ScaleWizzard from "../../DrawerContent/GradeScale/CreateGradeScale/ScaleWizzard";
 import GradeScale from "../../DrawerContent/GradeScale/GradeScale";
-import { GRADE_SCALE_COLUMNS } from "../../utils/gradeScale/gradeScaleColumns";
-import { gradeScaleImportColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleImportColDefs";
-import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
-import { useGetGradeScaleCategories } from "../../hooks/gradeScale/useGetGradeScaleCategories";
+import GradeScaleCategoryDetail from "../../DrawerContent/GradeScale/GradeScaleCategoryDetail";
 import UpdateGradeScaleWizzard from "../../DrawerContent/GradeScale/UpdateGradeScale/UpdateGradeScaleWizzard";
+import { useGetGradeScaleCategories } from "../../hooks/gradeScale/useGetGradeScaleCategories";
+import {
+  ActivateIcon,
+  CreateIcon,
+  DeleteIcon,
+  DetailsIcon,
+  ReuseIcon,
+  SuspendIcon,
+  UpdateIcon,
+} from "../../icons/ActionIcons";
+import { GradeIcon } from "../../icons/Icons";
+import Export from "../../ModalContent/Export/Export";
+import ActivateGradeScaleCategory from "../../ModalContent/GradesConfig/ActivateGradeScaleCategory";
 import BulkActivateGradeScaleCategory from "../../ModalContent/GradesConfig/BulkActivateGradeScaleCategory";
 import BulkDeactivateGradeScaleCategory from "../../ModalContent/GradesConfig/BulkDeactivateGradeScaleCategory";
+import BulkDeleteGradeScale from "../../ModalContent/GradesConfig/BulkDeleteGradeScale";
+import DeactivateGradeScaleCategory from "../../ModalContent/GradesConfig/DeactivateGradeScaleCategory";
+import DeleteGradeScale from "../../ModalContent/GradesConfig/DeleteGradeScale";
+import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  resetScaleState,
+  setColumnMapping,
+  setCustomFilter,
+  setImportReset,
+  setImportSelectedFile,
+  setImportStatus,
+  setStandardGroupValue,
+  toggleGeneralFilter,
+} from "../../Slices/academics/gradeScaleSlice";
+import { GRADE_SCALE_COLUMNS } from "../../utils/gradeScale/gradeScaleColumns";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { gradeScaleColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleColDefs";
+import { gradeScaleImportColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleImportColDefs";
 function Gradesconfiguration() {
   const { data: gradeScales, isLoading, error } = useGetGradeScaleCategories();
   const tableWrapperRef = useRef(null);

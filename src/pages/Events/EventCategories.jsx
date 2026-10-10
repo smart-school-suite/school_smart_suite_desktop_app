@@ -1,17 +1,45 @@
-import Table from "../../components/Tables/Tables";
-import ActionButtonDropdown, {
-  ModalButton,
-} from "../../components/DataTableComponents/ActionComponent";
-import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Plus } from "lucide-react";
 import React, {
-  useState,
+  Fragment,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
-  Fragment,
+  useRef,
+  useState,
 } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import CategoryDetails from "../../DrawerContent/EventCategory/CategoryDetails";
+import CreateCategory from "../../DrawerContent/EventCategory/CreateCategory";
+import UpdateCategory from "../../DrawerContent/EventCategory/UpdateCategory";
+import ActivateEventCategory from "../../ModalContent/EventCategory/ActivateEventCategory";
+import DeactivateEventCategory from "../../ModalContent/EventCategory/DeactivateEventCategory";
+import DeleteCategory from "../../ModalContent/EventCategory/DeleteCategory";
+import Export from "../../ModalContent/Export/Export";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/schoolEvent/eventCategorySlice";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import CustomModal from "../../components/Modals/Modal";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import { NotFoundError } from "../../components/errors/Error";
+import SearchInput from "../../components/input/search";
+import { useGetEventCategories } from "../../hooks/eventCategory/useGetEventCategories";
 import {
   ActivateIcon,
   DeleteIcon,
@@ -19,35 +47,7 @@ import {
   SuspendIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import { useGetEventCategories } from "../../hooks/eventCategory/useGetEventCategories";
-import { Icon } from "@iconify/react";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import DeactivateEventCategory from "../../ModalContent/EventCategory/DeactivateEventCategory";
-import UpdateCategory from "../../DrawerContent/EventCategory/UpdateCategory";
-import CreateCategory from "../../DrawerContent/EventCategory/CreateCategory";
-import ActivateEventCategory from "../../ModalContent/EventCategory/ActivateEventCategory";
-import DeleteCategory from "../../ModalContent/EventCategory/DeleteCategory";
-import CategoryDetails from "../../DrawerContent/EventCategory/CategoryDetails";
 import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/schoolEvent/eventCategorySlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
-import { Drawer } from "../../components/drawer/Drawer";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { Plus } from "lucide-react";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
-import { useSelector, useDispatch } from "react-redux";
 import { eventCategoryColDefs } from "../../utils/table/colDefs/schoolEvent/eventCategoryColDefs";
 function EventCategories() {
   const { data: eventCategories, isLoading, error } = useGetEventCategories();
