@@ -8,13 +8,13 @@ import { TextInput } from "../../components/FormComponents/InputComponents";
 import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
 import { updateSchoolAuthError } from "../../Slices/Asynslices/AuthSlice";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import AuthHero from "../../components/Hero/AuthHero";
+import { useState } from "react";
 function RegisterSchoolBranch() {
   const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
   const schoolAuthError = useSelector((state) => state.auth.schoolAuthError);
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const [clientError, setClientError] = useState(null);
   const schoolBranchNameRef = useRef();
   const abbreviationRef = useRef();
   const navigate = useNavigate();
@@ -31,13 +31,8 @@ function RegisterSchoolBranch() {
   const handleNext = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
+      setClientError(
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
       );
       return;
     }
@@ -47,13 +42,8 @@ function RegisterSchoolBranch() {
         abbreviation: schoolAuthError.abbreviation.isValid,
       })
     ) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
+      setClientError(
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
       );
       return;
     }
@@ -101,8 +91,12 @@ function RegisterSchoolBranch() {
           </div>
           <div className="w-100 d-flex flex-row align-items-center justify-content-center mt-5">
             <div className="w-100">
-            
               <div className="d-flex flex-column gap-3">
+                {clientError ? (
+                  <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-4">
+                    <p>{clientError}</p>
+                  </div>
+                ) : null}
                 <div className="d-flex flex-column gap-1">
                   <label htmlFor="school branch name" className="font-size-sm">
                     School Branch Name

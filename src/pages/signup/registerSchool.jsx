@@ -11,11 +11,11 @@ import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
 import { updateSchoolAuthError } from "../../Slices/Asynslices/AuthSlice";
 import { useRef } from "react";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
+import { useState } from "react";
 import AuthHero from "../../components/Hero/AuthHero";
 function RegisterSchool() {
   const { data: country, isPending: isLoading } = useGetCountries();
+  const [clientError, setClientError] = useState(null);
   const countryRef = useRef();
   const schoolNameRef = useRef();
   const schoolTypeRef = useRef();
@@ -38,24 +38,14 @@ function RegisterSchool() {
   const handleNext = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
+      setClientError(
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
       );
       return;
     }
     if (!allFieldsValid({ school_name: schoolAuthError.school_name.isValid })) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
+      setClientError(
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
       );
       return;
     }
@@ -63,6 +53,9 @@ function RegisterSchool() {
   };
   const handleChange = (field, value) => {
     dispatch(setSchoolAuthData({ field, value }));
+    if (clientError !== null) {
+      setClientError(null);
+    }
   };
 
   const handleSchoolAuthError = (field, isValid, error) => {
@@ -116,7 +109,11 @@ function RegisterSchool() {
                     Sign in to your smart school suite workspace
                   </span>
                 </div>
-
+                {clientError ? (
+                  <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-4">
+                    <p>{clientError}</p>
+                  </div>
+                ) : null}
                 <div className="d-flex flex-column gap-3">
                   <div className="mt-5 d-flex flex-column gap-1">
                     <label
@@ -258,7 +255,10 @@ function RegisterSchool() {
                     className="color-primary"
                   />
                 </span>
-                <Link className="p-0 m-0 color-primary" to="/login-school-admin">
+                <Link
+                  className="p-0 m-0 color-primary"
+                  to="/login-school-admin"
+                >
                   Back
                 </Link>
               </div>
@@ -272,7 +272,6 @@ function RegisterSchool() {
                 </button>
               </div>
             </div>
-          
           </div>
         </div>
       </div>

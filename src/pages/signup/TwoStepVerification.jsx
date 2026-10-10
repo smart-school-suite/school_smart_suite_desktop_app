@@ -4,16 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import OtpInput from "../../components/FormComponents/StepInput";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import AuthHero from "../../components/Hero/AuthHero";
 import { ArrowLeft } from "lucide-react";
 function TwoStepVerification() {
   const [otp, setOtp] = useState("");
-  const { handleTwoStepVerification, loading } = useAuth();
+  const { handleTwoStepVerification, loading, authError } = useAuth();
   const otpTokenHeader = useSelector((state) => state.auth.otpTokenHeader);
   const darkMode = useSelector((state) => state.theme.darkMode);
-
+  const [clientError, setClientError] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     if (!otpTokenHeader) {
@@ -32,11 +30,8 @@ function TwoStepVerification() {
     e?.preventDefault();
 
     if (submittedOtp.length !== 6) {
-      toast.custom(
-        <ToastWarning
-          title={"OTP Error"}
-          description={"OTP must be atleast 6 digits long"}
-        />,
+      setClientError(
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
       );
       return;
     }
@@ -80,6 +75,11 @@ function TwoStepVerification() {
                   Sign in to your smart school suite workspace
                 </span>
               </div>
+              {clientError || authError?.otp ? (
+                <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-4">
+                  <p>{clientError || authError.otp}</p>
+                </div>
+              ) : null}
               <div className="d-flex flex-column gap-2">
                 <span className="fw-semibold">Enter OTP Code</span>
                 <OtpInput length={6} onComplete={handleOtpComplete} />

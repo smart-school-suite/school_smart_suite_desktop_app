@@ -1,11 +1,11 @@
 import ResetPassword from "../../pages/Signup/ResetPassword";
 import ValidatePasswordResetOtp from "../../pages/Signup/ValidatePasswordResetOtp";
 import ChangePassword from "../../pages/Signup/ChangePassword";
-import RegisterSchool from "../../pages/Signup/registerSchool";
-import RegisterSchoolAdmin from "../../pages/Signup/registerSchoolAdmin";
-import RegisterSchoolBranch from "../../pages/Signup/registerSchoolBranch";
+import RegisterSchool from "../../pages/Signup/RegisterSchool";
+import RegisterSchoolAdmin from "../../pages/Signup/RegisterSchoolAdmin";
+import RegisterSchoolBranch from "../../pages/Signup/RegisterSchoolBranch";
 // import Hero from "../../pages/Signup/Hero";
-import SubcriptionPlan from "../../pages/Signup/subcriptionPlans";
+import SubcriptionPlan from "../../pages/Signup/SubcriptionPlans";
 import TwoStepVerification from "../../pages/Signup/TwoStepVerification";
 import LoginSchoolAdmin from "../../pages/Signup/LoginSchoolAdmin";
 import { Route } from "react-router-dom";

@@ -9,14 +9,13 @@ import {
 } from "../../ComponentConfig/YupValidationSchema";
 import { useSelector } from "react-redux";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import Form from "react-bootstrap/Form";
 import AuthHero from "../../components/Hero/AuthHero";
 function LoginSchoolAdmin() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const emailRef = useRef();
   const passwordRef = useRef();
+  const [clientError, setClientError] = useState(null);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -35,31 +34,25 @@ function LoginSchoolAdmin() {
   };
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
+    if(clientError !== null){
+      setClientError(null);
+    }
   };
-  const { handleLogin, loading } = useAuth();
+  const { handleLogin, loading, authError } = useAuth();
   const navigate = useNavigate();
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+     setClientError("Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Some Fields Seem To Be Invalid Please Go Through the form and try again");
+      return;
+    }
+
+    if(!formData.email || !formData.password){
+      setClientError("Please Fill All Fields");
       return;
     }
     const { email, password } = formData;
@@ -100,7 +93,11 @@ function LoginSchoolAdmin() {
                   Sign in to your smart school suite workspace
                 </span>
               </div>
-
+              {clientError || authError?.login ? (
+                <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-4">
+                  <p>{clientError || authError.login}</p>
+                </div>
+              ) : null}
               <div className="d-flex flex-column gap-2">
                 <div>
                   <label htmlFor="email" className="font-size-sm fw-medium">
@@ -175,8 +172,9 @@ function LoginSchoolAdmin() {
                   >
                     {loading.login ? <SingleSpinner /> : "Login"}
                   </button>
-                  <div className="d-flex flex-row align-items-center gap-2 pointer-cursor"
-                   onClick={() => navigate("/register-school")}
+                  <div
+                    className="d-flex flex-row align-items-center gap-2 pointer-cursor"
+                    onClick={() => navigate("/register-school")}
                   >
                     <span>Already Have An Account? </span>
                     <span className="text-primary-400 fw-medium">Sign up</span>

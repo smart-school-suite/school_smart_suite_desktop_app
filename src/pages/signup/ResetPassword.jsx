@@ -7,15 +7,14 @@ import { useRef } from "react";
 import { emailValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import { useSelector } from "react-redux";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import AuthHero from "../../components/Hero/AuthHero";
 function ResetPassword() {
-  const { handlePasswordReset, loading } = useAuth();
+  const { handlePasswordReset, loading, authError } = useAuth();
   const navigate = useNavigate();
   const emailRef = useRef();
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const [clientError, setClientError] = useState(null);
   const [formData, setFormData] = useState({
     email: "",
   });
@@ -24,6 +23,9 @@ function ResetPassword() {
   });
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
+      if(clientError !== null){
+      setClientError(null);
+    }
   };
   const handlePrevalidation = async () => {
     const email = await emailRef.current.triggerValidation();
@@ -34,24 +36,14 @@ function ResetPassword() {
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
+      setClientError(
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
       );
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
+      setClientError(
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
       );
       return;
     }
@@ -85,13 +77,18 @@ function ResetPassword() {
             <div>
               <div
                 className="d-flex flex-column gap-1"
-                style={{ marginBottom: "2rem", marginTop:"8rem" }}
+                style={{ marginBottom: "2rem", marginTop: "8rem" }}
               >
                 <span className="fw-semibold font-size-md">Reset Password</span>
                 <span className="fw-light text-iron-400">
                   Sign in to your smart school suite workspace
                 </span>
               </div>
+                {clientError || authError?.passwordResetError ? (
+                <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-4">
+                  <p>{clientError || authError.passwordResetError}</p>
+                </div>
+              ) : null}
               <div className="mb-4">
                 <label htmlFor="email" className="font-size-sm">
                   E-mail
@@ -131,7 +128,7 @@ function ResetPassword() {
           <div className=" mt-auto">
             <button
               onClick={() => {
-                navigate("/hero");
+                navigate("/login-school-admin");
               }}
               className="d-flex flex-row gap-2 align-items-center pointer-cursor border-none bg-none border-bottom text-iron-500 fw-normal"
             >

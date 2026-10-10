@@ -6,18 +6,17 @@ import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import { passwordSchema } from "../../ComponentConfig/YupValidationSchema";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { allFieldsValid } from "../../utils/functions";
 import AuthHero from "../../components/Hero/AuthHero";
 function ChangePassword() {
-  const { handleChangePassword, loading } = useAuth();
+  const { handleChangePassword, loading, authError } = useAuth();
   const passwordRef = useRef();
   const passwordConfirmationRef = useRef();
   const passwordResetToken = useSelector(
     (state) => state.auth.passwordResetToken,
   );
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const [clientError, setClientError] = useState(null);
   const [formData, setFormData] = useState({
     new_password: "",
     new_password_confirmation: "",
@@ -28,6 +27,9 @@ function ChangePassword() {
   });
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
+    if (clientError !== null) {
+      setClientError(null);
+    }
   };
   const handlePrevalidation = async () => {
     const password = await passwordRef.current.triggerValidation();
@@ -43,24 +45,14 @@ function ChangePassword() {
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
+      setClientError(
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
       );
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
+      setClientError(
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
       );
       return;
     }
@@ -102,6 +94,11 @@ function ChangePassword() {
                   Sign in to your smart school suite workspace
                 </span>
               </div>
+              {clientError || authError?.changePassword ? (
+                <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-4">
+                  <p>{clientError || authError.changePassword}</p>
+                </div>
+              ) : null}
               <div className="mb-4">
                 <label htmlFor="password" className="font-size-sm">
                   Password

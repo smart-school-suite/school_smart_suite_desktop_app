@@ -12,22 +12,24 @@ import {
   handleSetValidatePasswordResetOtp,
 } from "../Slices/Asynslices/AuthSlice";
 const AuthContext = createContext();
-import toast from "react-hot-toast";
-import ToastDanger from "../components/Toast/ToastDanger";
-import ToastSuccess from "../components/Toast/ToastSuccess";
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
 export const AuthProvider = ({ children }) => {
-  const [authError, setAuthError] = useState({ 
-       login: null,
-       otp: null,
-       changePassword: null,
-       passwordResetError: null,
-       passwordRestOtp: null,
-       changeAuthPassword: null
-    });
+  const [authError, setAuthError] = useState({
+    login: null,
+    otp: null,
+    changePassword: null,
+    passwordResetError: null,
+    passwordRestOtp: null,
+    changeAuthPassword: null,
+    createSchool: null,
+    createSchoolBranch: null,
+    subscribe: null,
+    admin: null,
+    logout: null,
+  });
   const dispatch = useDispatch();
   const [loading, setLoading] = useState({
     login: false,
@@ -39,14 +41,7 @@ export const AuthProvider = ({ children }) => {
     changeAuthPassword: false,
     passwordReset: false,
     passwordResetOtp: false,
-    changePassword: false
-  });
-
-  const [createError, setCreateError] = useState({
-    createSchool: null,
-    createSchoolBranch: null,
-    subscribe: null,
-    admin: null,
+    changePassword: false,
   });
 
   const handleLogin = async (email, password, navigate) => {
@@ -59,25 +54,23 @@ export const AuthProvider = ({ children }) => {
       });
       const responseData = response.data.data;
       dispatch(
-        handleSetUserLogin({ otpTokenHeader: responseData.otp_token_header })
+        handleSetUserLogin({ otpTokenHeader: responseData.otp_token_header }),
       );
       navigate("/verify-otp");
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Login failed. Please try again.";
+
       setAuthError((prevalue) => ({
         ...prevalue,
-        login: "Login failed. Please check your credentials.",
+        login: errorMessage,
       }));
-      toast.custom(
-        <ToastDanger 
-          title={"Login Failed"}
-          description={"Login Failed Due to an error please check your credential and try again"}
-        />
-      )
     } finally {
       setLoading((prevalue) => ({ ...prevalue, login: false }));
     }
   };
-
   const handleTwoStepVerification = async (otp, navigate, otpTokenHeader) => {
     setLoading((prevalue) => ({ ...prevalue, otp: true }));
     setAuthError((prevalue) => ({ ...prevalue, otp: null }));
@@ -89,7 +82,7 @@ export const AuthProvider = ({ children }) => {
         },
         {
           headers: { OTP_TOKEN_HEADER: otpTokenHeader },
-        }
+        },
       );
       const responseData = response.data.data;
       await getAuthenticatedUser(responseData.authToken);
@@ -97,43 +90,52 @@ export const AuthProvider = ({ children }) => {
         handleSetTwoFA({
           authToken: responseData.authToken,
           apiKey: responseData.apiKey,
-        })
+        }),
       );
       navigate("/school-admins");
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Two step verification failed. Please check credentials and try again";
+
       setAuthError((prevalue) => ({
         ...prevalue,
-        otp: "Two step verification failed Please check credentials and try again",
+        otp: errorMessage,
       }));
-      toast.custom(
-        <ToastDanger 
-           title={"OTP Verfication Failed"}
-           description={"OTP Verification Failed Due to an error please check credentails and try again"}
-        />
-      )
     } finally {
       setLoading((prevalue) => ({ ...prevalue, otp: false }));
     }
   };
-
   const handleAdminLogout = async (navigate, token) => {
+    setLoading((prevalue) => ({ ...prevalue, admin: true }));
+    setAuthError((prevalue) => ({ ...prevalue, logout: null }));
     try {
-      await axios.post("auth/school-admin/logout", 
-         {
-
-         },
+      await axios.post(
+        "auth/school-admin/logout",
+        {},
         {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-       },
-      });
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       dispatch(handleSetUserLogout());
       navigate("/login-school-admin");
     } catch (error) {
-      console.error("Logout failed", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Logout failed";
+
+      setAuthError((prevalue) => ({
+        ...prevalue,
+        logout: errorMessage,
+      }));
+    } finally {
+      setLoading((prevalue) => ({ ...prevalue, admin: false }));
     }
   };
-
   const getAuthenticatedUser = useCallback(
     async (token) => {
       try {
@@ -148,52 +150,50 @@ export const AuthProvider = ({ children }) => {
         handleAdminLogout();
       }
     },
-    [handleAdminLogout]
+    [handleAdminLogout],
   );
-
-  const handleSubscription = async (navigate, subscriptionCredentials, handleCloseDrawer, handleCloseModal) => {
+  const handleSubscription = async (
+    navigate,
+    subscriptionCredentials,
+    handleCloseDrawer,
+    handleCloseModal,
+  ) => {
     setLoading((prevalue) => ({ ...prevalue, subscribe: true }));
-    setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
+    setAuthError((prevalue) => ({ ...prevalue, subscribe: null }));
     try {
       const response = await axios.post(
         "school-subscription/subscribe",
-        subscriptionCredentials
+        subscriptionCredentials,
       );
-      setLoading((prevalue) => ({ ...prevalue, subscribe: false }));
-      setCreateError((prevalue) => ({ ...prevalue, subscribe: null }));
       dispatch(handleSetSubcription({ apiKey: response.data.data.api_key }));
       navigate("/register/school-admin");
-      if(handleCloseDrawer){
-         handleCloseDrawer();
+      if (handleCloseDrawer) {
+        handleCloseDrawer();
       }
-      if(handleCloseModal){
-         handleCloseModal();
+      if (handleCloseModal) {
+        handleCloseModal();
       }
     } catch (e) {
-      setCreateError((prevState) => ({
+      const errorMessage =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Something went wrong trying to create school";
+
+      setAuthError((prevState) => ({
         ...prevState,
-        subscribe:
-          e.response?.data?.message ||
-          "Something went wrong trying to create school",
+        subscribe: errorMessage,
       }));
-      toast.custom(
-        <ToastDanger 
-          title={"Failed To Subcribe"}
-          description={"Failed to subscribe due to an internal error please try again"}
-        />
-      )
     } finally {
       setLoading((prevState) => ({ ...prevState, subscribe: false }));
     }
   };
-
   const handleCreateSuperAdmin = async (
     navigate,
     schoolAdminCredentials,
-    apiKey
+    apiKey,
   ) => {
     setLoading((prevalue) => ({ ...prevalue, admin: true }));
-    setCreateError((prevalue) => ({ ...prevalue, admin: null }));
+    setAuthError((prevalue) => ({ ...prevalue, admin: null }));
     try {
       await axios.post(
         "auth/school-admin/register/super-admin",
@@ -202,32 +202,26 @@ export const AuthProvider = ({ children }) => {
           headers: {
             "API-KEY": apiKey,
           },
-        }
+        },
       );
-      setLoading((prevalue) => ({ ...prevalue, admin: false }));
-      setCreateError((prevalue) => ({ ...prevalue, admin: false }));
       navigate("/login-school-admin");
     } catch (e) {
-      setCreateError((prevState) => ({
+      const errorMessage =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Something went wrong trying to create admin";
+
+      setAuthError((prevState) => ({
         ...prevState,
-        admin:
-          e.response?.data?.message ||
-          "Something went wrong trying to create school",
+        admin: errorMessage,
       }));
-      toast.custom(
-        <ToastDanger 
-          title={"Failed To Create School Admin"}
-          description={"Failed to create school admin due to an error please try again later"}
-        />
-      )
     } finally {
       setLoading((prevState) => ({ ...prevState, admin: false }));
     }
   };
-
   const handlePasswordReset = async (navigate, email) => {
     setLoading((prevalue) => ({ ...prevalue, passwordReset: true }));
-    setAuthError((prevalue) => ({ ...prevalue, passordResetError: null }));
+    setAuthError((prevalue) => ({ ...prevalue, passwordResetError: null }));
     try {
       const response = await axios.post("auth/school-admin/password/reset", {
         email,
@@ -236,29 +230,27 @@ export const AuthProvider = ({ children }) => {
       dispatch(
         handleSetPasswordReset({
           resetPasswordOtpToken: responseData.otp_header,
-        })
+        }),
       );
       navigate("/validate-otp");
     } catch (e) {
+      const errorMessage =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Oops! Something went wrong, please try again";
+
       setAuthError((prevalue) => ({
         ...prevalue,
-        passordResetError: "Opps Something went wrong try again",
+        passwordResetError: errorMessage,
       }));
-      toast.custom(
-        <ToastDanger 
-           title={"Password Reset Failed"}
-           description={"Password Reset Failed Due to an error please try again"}
-        />
-      )
     } finally {
       setLoading((prevalue) => ({ ...prevalue, passwordReset: false }));
     }
   };
-
   const handleValidatePasswordResetOtp = async (
     navigate,
     otp,
-    resetPasswordOtpToken
+    resetPasswordOtpToken,
   ) => {
     setLoading((prevalue) => ({ ...prevalue, passwordResetOtp: true }));
     setAuthError((prevalue) => ({ ...prevalue, passwordRestOtp: null }));
@@ -270,94 +262,107 @@ export const AuthProvider = ({ children }) => {
         },
         {
           headers: { OTP_TOKEN_HEADER: resetPasswordOtpToken },
-        }
+        },
       );
       const responseData = response.data.data;
-      dispatch(handleSetValidatePasswordResetOtp({ passwordResetToken: responseData.password_reset_token }));
+      dispatch(
+        handleSetValidatePasswordResetOtp({
+          passwordResetToken: responseData.password_reset_token,
+        }),
+      );
       navigate("/change-password");
     } catch (e) {
+      const errorMessage =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Something went wrong trying to validate OTP, try again";
+
       setAuthError((prevalue) => ({
         ...prevalue,
-        passwordResetOtp:
-          "Something went wrong trying to validate opt try again",
+        passwordRestOtp: errorMessage,
       }));
-      toast.custom(
-        <ToastDanger 
-          title={"OTP Validation Failed"}
-          description={"OTP Token Expired Or OTP Token Invalid Please Check Credentials And Try Again"}
-        />
-      )
     } finally {
       setLoading((prevalue) => ({ ...prevalue, passwordResetOtp: false }));
     }
   };
-
-  const handleChangePassword = async (navigate, passwordCredentails, passwordResetToken) => {
-    setLoading((prevalue) => ({ ...prevalue, changePassword:true }));
-    setAuthError((prevalue) => ({ ...prevalue, changePassword:null }))
+  const handleChangePassword = async (
+    navigate,
+    passwordCredentails,
+    passwordResetToken,
+  ) => {
+    setLoading((prevalue) => ({ ...prevalue, changePassword: true }));
+    setAuthError((prevalue) => ({ ...prevalue, changePassword: null }));
     try {
-      await axios.post("auth/school-admin/password/reset/update",
+      await axios.post(
+        "auth/school-admin/password/reset/update",
         {
-          new_password:passwordCredentails.new_password,
-          new_password_confirmation:passwordCredentails.new_password_confirmation
+          new_password: passwordCredentails.new_password,
+          new_password_confirmation:
+            passwordCredentails.new_password_confirmation,
         },
         {
-          headers:{
-            "password-reset-token":passwordResetToken
-          }
-        }
-      )
+          headers: {
+            "password-reset-token": passwordResetToken,
+          },
+        },
+      );
       dispatch(handleSetChangePassword());
-      toast.success(
-        <ToastSuccess 
-        title={"Password Change Successfully"}
-        description={"You've successfully Reset Your Password, You Can Now Login With the new Password"}
-        />
-      )
       navigate("/login-school-admin");
     } catch (e) {
-        setAuthError((prevalue) => ({ ...prevalue,  changePassword:"Something went wrong try again"}));
-        toast.custom(
-          <ToastDanger 
-            title={"Failed To Change Password"}
-            description={"Failed to change Password, new Password and old password do not match, please try again"}
-          />
-        )
-    }
-    finally{
-       setLoading((prevalue) => ({ ...prevalue, changePassword:false }))
+      const errorMessage =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Something went wrong, please try again";
+
+      setAuthError((prevalue) => ({
+        ...prevalue,
+        changePassword: errorMessage,
+      }));
+    } finally {
+      setLoading((prevalue) => ({ ...prevalue, changePassword: false }));
     }
   };
-
-  const handleChangePasswordAuthUser = async (handleClose, authToken, apiKey, passwordCredentails) => {
-      setLoading((prevalue) => ({ ...prevalue, changeAuthPassword:true }))
-      setAuthError((prevalue) => ({ ...prevalue, changeAuthPassword:null }));
-      try{
-         await axios.post("school-admin/change-password",
-          {
-            current_password:passwordCredentails.current_password,
-            new_password:passwordCredentails.new_password
+  const handleChangePasswordAuthUser = async (
+    handleClose,
+    authToken,
+    apiKey,
+    passwordCredentails,
+  ) => {
+    setLoading((prevalue) => ({ ...prevalue, changeAuthPassword: true }));
+    setAuthError((prevalue) => ({ ...prevalue, changeAuthPassword: null }));
+    try {
+      await axios.post(
+        "school-admin/change-password",
+        {
+          current_password: passwordCredentails.current_password,
+          new_password: passwordCredentails.new_password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "API-KEY": apiKey,
           },
-          {
-            headers:{
-                Authorization: `Bearer ${authToken}`,
-                "API-KEY":apiKey   
-            }
-         })
-        handleClose();
-      }
-      catch(e){
-         setAuthError((prevalue) => ({ ...prevalue, changeAuthPassword:"Somethine went wrong" }));
-      }
-      finally{
-        setLoading((prevalue) => ({ ...prevalue, changeAuthPassword:false }))
-      }
-  }
+        },
+      );
+      handleClose();
+    } catch (e) {
+      const errorMessage =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Something went wrong while updating your password";
+
+      setAuthError((prevalue) => ({
+        ...prevalue,
+        changeAuthPassword: errorMessage,
+      }));
+    } finally {
+      setLoading((prevalue) => ({ ...prevalue, changeAuthPassword: false }));
+    }
+  };
   const contextValue = React.useMemo(
     () => ({
       authError,
       loading,
-      createError,
       handlePasswordReset,
       handleLogin,
       handleAdminLogout,
@@ -367,12 +372,11 @@ export const AuthProvider = ({ children }) => {
       handleValidatePasswordResetOtp,
       handleChangePassword,
       handleChangePasswordAuthUser,
-      getAuthenticatedUser 
+      getAuthenticatedUser,
     }),
     [
       authError,
       loading,
-      createError,
       handlePasswordReset,
       handleLogin,
       handleAdminLogout,
@@ -382,8 +386,8 @@ export const AuthProvider = ({ children }) => {
       handleValidatePasswordResetOtp,
       handleChangePassword,
       handleChangePasswordAuthUser,
-      getAuthenticatedUser 
-    ]
+      getAuthenticatedUser,
+    ],
   );
 
   return (

@@ -2,25 +2,23 @@ import { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Icon } from "@iconify/react";
 import OtpInput from "../../components/FormComponents/StepInput";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import AuthHero from "../../components/Hero/AuthHero";
 import { ArrowLeft } from "lucide-react";
 function ValidatePasswordResetOtp() {
   const [otp, setOtp] = useState("");
+  const [clientError, setClientError] = useState(null);
   const navigate = useNavigate();
   const resetPasswordOtpToken = useSelector(
     (state) => state.auth.passwordResetOtpToken,
   );
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const { handleValidatePasswordResetOtp, loading } = useAuth();
+  const { handleValidatePasswordResetOtp, loading, authError } = useAuth();
 
   const handleOtpComplete = (otpValue) => {
     setOtp(otpValue);
-    if (otpValue.length === 6 && !loading.otp) {
+    if (otpValue.length === 6 && !loading.passwordRestOtp) {
       handleSubmit(null, otpValue);
     }
   };
@@ -29,11 +27,8 @@ function ValidatePasswordResetOtp() {
     e?.preventDefault();
 
     if (submittedOtp.length !== 6) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid OTP"}
-          description={"OTP must be atlease 6 Numbers"}
-        />,
+      setClientError(
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
       );
       return;
     }
@@ -80,6 +75,11 @@ function ValidatePasswordResetOtp() {
                   Sign in to your smart school suite workspace
                 </span>
               </div>
+              {clientError || authError?.passwordRestOtp ? (
+                <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-4">
+                  <p>{clientError || authError.passwordRestOtp}</p>
+                </div>
+              ) : null}
               <div className="d-flex flex-column gap-3">
                 <span>Enter OTP Code</span>
                 <OtpInput length={6} onComplete={handleOtpComplete} />
@@ -88,9 +88,9 @@ function ValidatePasswordResetOtp() {
                 className="w-100 mt-4 border-none rounded-3 p-2 primary-background text-white font-size-sm"
                 type="submit"
                 onClick={handleSubmit}
-                disabled={loading.otp || otp.length !== 6}
+                disabled={loading.passwordRestOtp || otp.length !== 6}
               >
-                {loading.otp ? <SingleSpinner /> : "Submit"}
+                {loading.passwordRestOtp ? <SingleSpinner /> : "Submit"}
               </button>
             </div>
           </div>
