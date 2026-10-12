@@ -18,11 +18,11 @@ import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
+import ElectionDetails from "../../DrawerContent/Election/ElectionDetails";
 import { useGetElections } from "../../hooks/election/useGetElections";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { LiveIcon } from "../../icons/Icons";
 import DeleteElection from "../../ModalContent/Elections/DeleteElection";
-import ElectionDetails from "../../ModalContent/Elections/ElectionDetails";
 import UpdateElection from "../../ModalContent/Elections/UpdateElection";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
@@ -515,7 +515,11 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ElectionDetails, "md")}
+          onClick={() => handleShowDrawer(ElectionDetails, {
+              title: "Election Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">

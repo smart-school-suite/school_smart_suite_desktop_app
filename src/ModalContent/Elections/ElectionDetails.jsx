@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
-import { useGetElectionDetails } from "../../hooks/election/useGetElectionDetail";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { useGetElectionDetails } from "../../hooks/election/useGetElectionDetail";
 import { formatISODate } from "../../utils/functions";
 function ElectionDetails({ handleClose, rowData }) {
   const { id: electionId } = rowData;

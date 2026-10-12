@@ -1,6 +1,6 @@
-import { useDeleteElection } from "../../hooks/election/useDeleteElection";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useDeleteElection } from "../../hooks/election/useDeleteElection";
 function DeleteElection({ handleClose, rowData }) {
   const { id: electionId } = rowData;
   const { mutate: deleteElection, isPending } = useDeleteElection(
@@ -20,7 +20,7 @@ function DeleteElection({ handleClose, rowData }) {
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
               <span className="font-size-sm fw-semibold">
-                Delete Department
+                Delete Election
               </span>
             </div>
             <button

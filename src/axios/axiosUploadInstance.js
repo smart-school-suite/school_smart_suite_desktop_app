@@ -2,12 +2,12 @@ import { API_BASE_URL } from "@/constants";
 import axios from 'axios';
 import { store } from "../store/store";
 const axiosUploadInstance = axios.create({
-  baseURL: API_BASE_URL.PROD,
+  baseURL: API_BASE_URL.DEV,
   withCredentials: true,
   withXSRFToken: true,
-  timeout: 0, // no timeout — large uploads can take a while; set a value (e.g. 60000) if you want a cap
+  timeout: 0, 
   maxContentLength: Infinity,
-  maxBodyLength: Infinity, // needed so axios doesn't choke on large multipart bodies
+  maxBodyLength: Infinity, 
 });
 
 axiosUploadInstance.interceptors.request.use(
