@@ -1,8 +1,8 @@
-import { bulkReinstateCandidates } from "../../services/electionCandidate";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { bulkReinstateCandidates } from "../../services/electionCandidate";
 
 export const useBulkReinstateCandidates = (handleClose, resetAll) => {
      const queryClient = useQueryClient();

@@ -281,17 +281,17 @@ function Elections() {
                                 ? "Elections Selected"
                                 : null
                           }`}
-                          resetAll={handleReset}
+                          resetAll={handleResetSelections}
                           dropDownItems={
                             <DropdownItems
                               selectedElections={selectedElections}
-                              resetAll={handleReset}
+                              resetAll={handleResetSelections}
                             />
                           }
                           actionButton={
                             <ActionButtons
                               selectedElections={selectedElections}
-                              resetAll={handleReset}
+                              resetAll={handleResetSelections}
                             />
                           }
                         />

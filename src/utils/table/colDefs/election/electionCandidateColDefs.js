@@ -1,31 +1,50 @@
-import { textColumn, actionsColumn, dateColumn } from "@/utils/table/columns";
+import { actionsColumn, dateColumn, textColumn } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
+import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
+import ElectionCandidateStatusRenderer from "../../../../components/Renderer/Election/ElectionCandidateStatusRenderer";
 
 export function electionCandidateColDefs({ ActionComponent }) {
   return [
     textColumn({
-      field: "student_name",
-      headerName: "Student",
+      field: "Avatar",
+      headerName: "Avatar",
       hide: false,
+      cellRenderer: AvatarRenderer,
+    }),
+    textColumn({
+      field: "name",
+      headerName: "Student",
+      hide: true,
+      cellRenderer: TextComponent,
+    }),
+    textColumn({
+      field: "first_name",
+      headerName: "First Name",
+      hide: true,
+      cellRenderer: TextComponent,
+    }),
+    textColumn({
+      field: "last_name",
+      headerName: "Last Name",
+      hide: true,
       cellRenderer: TextComponent,
     }),
     textColumn({
       field: "specialty",
       headerName: "Specialty",
-      hide: false,
+       hide: true,
       cellRenderer: TextComponent,
     }),
     textColumn({
-      field: "level",
-      headerName: "Level",
-      hide: true,
-      cellRenderer: TextComponent,
+      field: "status",
+      headerName: "Status",
+      hide: false,
+      cellRenderer: ElectionCandidateStatusRenderer,
     }),
     textColumn({
       field: "level_name",
       headerName: "Level Name",
-      hide: false,
+       hide: true,
       cellRenderer: TextComponent,
     }),
     textColumn({

@@ -9,7 +9,10 @@ import {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
@@ -18,14 +21,17 @@ import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
+import ElectionCandidateDetails from "../../DrawerContent/ElectionCandidate/ElectionCandidateDetails";
 import { useGetElectionCandidates } from "../../hooks/electionCandidate/useGetElectionCandidates";
 import {
   ActivateIcon,
-  DeleteIcon,
   DetailsIcon,
   SuspendIcon,
-  UpdateIcon,
 } from "../../icons/ActionIcons";
+import BulkDisqualifyCandidate from "../../ModalContent/ElectionCandidate/BulkDisqualifyCandidate";
+import BulkReinstateCandidate from "../../ModalContent/ElectionCandidate/BulkReinstateCandidate";
+import DisqualifyCandidate from "../../ModalContent/ElectionCandidate/DisqualifyCandidate";
+import ReinstateCandidate from "../../ModalContent/ElectionCandidate/ReinstateCandidate";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
@@ -278,22 +284,22 @@ function ElectionCandidate() {
                           rowCount={rowCount}
                           label={`${
                             rowCount >= 1
-                              ? "Election Candidates Selected"
+                              ? "Candidates Selected"
                               : rowCount >= 2
-                                ? "Election Candidatess Selected"
+                                ? "Candidates Selected"
                                 : null
                           }`}
-                          resetAll={handleReset}
+                          resetAll={handleResetSelections}
                           dropDownItems={
                             <DropdownItems
                               selectedCandidates={selectedCandidates}
-                              resetAll={handleReset}
+                              resetAll={handleResetSelections}
                             />
                           }
                           actionButton={
                             <ActionButtons
                               selectedCandidates={selectedCandidates}
-                              resetAll={handleReset}
+                              resetAll={handleResetSelections}
                             />
                           }
                         />
@@ -518,11 +524,17 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          //onClick={() => handleShowModal(ElectionDetails, "md")}
+          onClick={() =>
+            handleShowDrawer(ElectionCandidateDetails, {
+              title: "Candidate Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Election Details</span>
+              <span>Candidate Details</span>
               <DetailsIcon />
             </div>
           </div>
@@ -531,12 +543,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          // onClick={() => handleShowModal(UpdateElection, "md")}
+          onClick={() =>
+            handleShowModal(DisqualifyCandidate, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update</span>
-              <UpdateIcon />
+              <span>Disqualify Candidate</span>
+              <SuspendIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -544,12 +562,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          //onClick={() => handleShowModal(DeleteElection, "md")}
+          onClick={() =>
+            handleShowModal(ReinstateCandidate, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete</span>
-              <DeleteIcon />
+              <span>Reinstate Candidate</span>
+              <ActivateIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -569,7 +593,6 @@ export function ActionComponent(props) {
           />
         )}
       </Drawer>
-
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
@@ -594,13 +617,13 @@ function ActionButtons({ selectedCandidates, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        action={{ modalContent: BulkDeleteElectionRole }}
+        action={{ modalContent: BulkDisqualifyCandidate }}
         bulkData={selectedCandidates}
         resetAll={resetAll}
       >
-        <CustomTooltip tooltipText={"Delete All"}>
+        <CustomTooltip tooltipText={"Disqualify All"}>
           <span className="pointer-cursor">
-            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+            <SuspendIcon />
           </span>
         </CustomTooltip>
       </ModalButton>
@@ -686,29 +709,33 @@ function DropdownItems({ selectedCandidates, resetAll, onModalStateChange }) {
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeactivateElectionRole, "md")}
+        onClick={() =>
+          handleShowModal(BulkReinstateCandidate, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Deactivate All</span>
-          <SuspendIcon />
-        </div>
-      </DropDownMenuItem>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkActivateElectionRole, "md")}
-      >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Activate All</span>
+          <span className="font-size-sm">Reinstate All</span>
           <ActivateIcon />
         </div>
       </DropDownMenuItem>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteElectionRole, "md")}
+        onClick={() =>
+          handleShowModal(BulkDisqualifyCandidate, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
-          <span className="font-size-sm">Delete All</span>
-          <DeleteIcon />
+          <span className="font-size-sm">Disqualify All</span>
+
+          <SuspendIcon />
         </div>
       </DropDownMenuItem>
       <Drawer
@@ -744,6 +771,7 @@ function DropdownItems({ selectedCandidates, resetAll, onModalStateChange }) {
             rowData={{
               selectedCandidates: selectedCandidates,
               ...modalConfig.modalData,
+              resetAll: resetAll,
             }}
             handleClose={handleCloseModal}
           />

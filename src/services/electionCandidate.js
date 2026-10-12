@@ -27,7 +27,7 @@ export const reinstateCandidate = async (candidateId) => {
 };
 
 export const getElectionCandidateDetails = async (candidateId) => {
-  const response = await axiosInstance.get(`election-candidate/${candidateId}`);
+  const response = await axiosInstance.get(`election-candidate/${candidateId}/details`);
   return response.data;
 };
 

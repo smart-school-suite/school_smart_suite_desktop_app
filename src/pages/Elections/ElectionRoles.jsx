@@ -68,7 +68,7 @@ function ElectionRoles() {
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [searchText, setSearchText] = useState("");
 
-  const handleResetSelectionsSelections = () => {
+  const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
@@ -96,7 +96,7 @@ function ElectionRoles() {
       tableRef.current.setGridOption("quickFilterText", value);
     }
   };
-  const handleResetSelections = () => {
+  const handleReset= () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
@@ -200,7 +200,7 @@ function ElectionRoles() {
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
                       className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
-                      onClick={handleResetSelections}
+                      onClick={handleReset}
                       style={{ padding: "0.45rem" }}
                     >
                       <span>

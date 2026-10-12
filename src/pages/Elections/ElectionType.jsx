@@ -310,17 +310,17 @@ function ElectionType() {
                                 ? "Election Types Selected"
                                 : null
                           }`}
-                          resetAll={handleReset}
+                          resetAll={handleResetSelections}
                           dropDownItems={
                             <DropdownItems
                               selectedTypes={selectedTypes}
-                              resetAll={handleReset}
+                              resetAll={handleResetSelections}
                             />
                           }
                           actionButton={
                             <ActionButtons
                               selectedTypes={selectedTypes}
-                              resetAll={handleReset}
+                              resetAll={handleResetSelections}
                             />
                           }
                         />

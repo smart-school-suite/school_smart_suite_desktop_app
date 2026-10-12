@@ -1,8 +1,8 @@
-import { bulkDisqualifyCandidates } from "../../services/electionCandidate";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import ToastDanger from "../../components/Toast/ToastDanger";
+import ToastSuccess from "../../components/Toast/ToastSuccess";
+import { bulkDisqualifyCandidates } from "../../services/electionCandidate";
 export const useBulkDisqualifyCandidates = (handleClose, resetAll) => {
   const queryClient = useQueryClient();
   return useMutation({
