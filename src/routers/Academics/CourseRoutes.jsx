@@ -8,9 +8,6 @@ const JointCourse = React.lazy(
   () => import("../../pages/Academics/JointCourse"),
 );
 const Courses = React.lazy(() => import("../../pages/Academics/Courses"));
-const Gradesconfiguration = React.lazy(
-  () => import("../../pages/Academics/Gradesconfiguration"),
-);
 
 const CourseRoute = [
   <Route key={"courseLayout"} element={<CourseLayout />}>

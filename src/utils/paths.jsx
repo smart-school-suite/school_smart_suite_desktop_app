@@ -11,6 +11,11 @@ export const settingRoutes = [
   "/settings/school",
 ];
 
+export const promotionRoutes = [
+  "/promotion-runs",
+  "/promotion-student-record"
+]
+
 export const teacherRoutes = [
   "/teacher",
   "/teacher-course",
@@ -31,6 +36,7 @@ export const adminRoutes = [
   "/specialties",
   ...teacherRoutes,
   ...hallRoutes,
+  ...promotionRoutes
 ];
 
 export const academicRoutes = [

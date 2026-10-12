@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Check, X } from "lucide-react";
 import React, {
   Fragment,
   useCallback,
@@ -9,7 +10,10 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
@@ -18,17 +22,17 @@ import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
+import ElectionApplicationDetails from "../../DrawerContent/ElectionApplication/ElectionApplicationDetails";
 import { useGetElectionApplications } from "../../hooks/electionApplication/useGetElectionApplications";
 import {
   ActivateIcon,
-  CreateIcon,
   DeleteIcon,
   DetailsIcon,
-  SuspendIcon
+  SuspendIcon,
 } from "../../icons/ActionIcons";
-import ApplicationDetails from "../../ModalContent/ElectionApplication/ApplicationDetails";
 import ApproveApplication from "../../ModalContent/ElectionApplication/ApproveApplication";
 import DeleteApplication from "../../ModalContent/ElectionApplication/DeleteApplication";
+import RejectApplication from "../../ModalContent/ElectionApplication/RejectApplication";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
@@ -521,7 +525,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ApplicationDetails, "md")}
+          onClick={() =>
+            handleShowDrawer(ElectionApplicationDetails, {
+              title: "Election Application Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -534,12 +544,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ApproveApplication, "md")}
+          onClick={() =>
+            handleShowModal(ApproveApplication, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Approve Application</span>
-              <CreateIcon />
+              <Check size={16} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -547,12 +563,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          // onClick={() => handleShowModal(ActivateElectionRole, "md")}
+          onClick={() =>
+            handleShowModal(RejectApplication, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Reject Application</span>
-              <ActivateIcon />
+              <X size={16} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -560,7 +582,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteApplication, "md")}
+          onClick={() =>
+            handleShowModal(DeleteApplication, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -615,7 +643,7 @@ function ActionButtons({ selectedApplications, resetAll }) {
       >
         <CustomTooltip tooltipText={"Delete All"}>
           <span className="pointer-cursor">
-            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+            <Check size={16} />
           </span>
         </CustomTooltip>
       </ModalButton>
@@ -689,4 +717,3 @@ function DropdownItems({ selectedApplications, resetAll, onModalStateChange }) {
     </>
   );
 }
-

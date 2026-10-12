@@ -25,6 +25,7 @@ import {
   hallRoutes,
   activationCodeRoutes,
   courseRoutes,
+  promotionRoutes
 } from "../../utils/paths";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import Logout from "../../ModalContent/Auth/Logout";
@@ -432,6 +433,25 @@ function SideBarLg() {
                             }
                           >
                             <p style={{ fontSize: "0.75rem" }}>Courses</p>
+                          </div>
+                        </div>
+                      </div>
+
+                         <div
+                        className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
+                      >
+                        <div className="subbox-nav">
+                          <div
+                            onClick={() => {
+                              navigate("/promotion-runs");
+                            }}
+                            className={
+                              IsPathInRoutes(promotionRoutes)
+                                ? "text-decoration-none  color-primary pointer-cursor"
+                                : "text-decoration-none text-dark  pointer-cursor"
+                            }
+                          >
+                            <p style={{ fontSize: "0.75rem" }}>Promotion</p>
                           </div>
                         </div>
                       </div>

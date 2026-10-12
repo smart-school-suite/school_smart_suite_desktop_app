@@ -1,18 +1,19 @@
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import "./styles/utility.css";
 import "./styles/global.css";
+import "./styles/responsive.css";
 import "./styles/richText.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "./styles/responsive.css"
+import "./styles/utility.css";
 //import "./styles/component.css"
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from "react-redux";
-import { store, persistor } from "./store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { AuthProvider } from "./context/authContext";
 import Links from "./routers/Links";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { persistor, store } from "./store/store";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

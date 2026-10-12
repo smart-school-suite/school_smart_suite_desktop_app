@@ -1,28 +1,29 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "../layouts/layout";
+import { AblyProvider, ChannelProvider } from "ably/react";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { createAblyClient } from "../ably/ably";
 import {
-  ProtectedRoute,
   ProtectedLoginRoute,
+  ProtectedRoute,
 } from "../components/RouteComponentHelpers/ProtectedRoutes";
 import AuthLayout from "../layouts/AuthLayout";
-import AuthRoutes from "./Auth/AuthRoutes";
+import Layout from "../layouts/layout";
 import AcademicRoutes from "./Academics/AcademicRoutes";
+import CourseRoute from "./Academics/CourseRoutes";
+import PromotionRoute from "./Academics/PromotionRoutes";
+import ActivationCodeRoutes from "./ActivationCode/ActivationCode";
 import AdministratorsRoutes from "./Administrator/AdminRoutes";
+import AuthRoutes from "./Auth/AuthRoutes";
+import DashboardRoutes from "./Dasboard/DashboardRoutes";
+import ExamRoutes from "./Exam/ExamRoutes";
+import FinancialRoutes from "./Financial/FinancialRoutes";
+import ResitRoutes from "./Resit/ResitRoutes";
 import AnnoucementsRoutes from "./SchoolActivities/AnnoucementRoutes";
 import SchoolElectionRoutes from "./SchoolActivities/ElectionRoutes";
-import DashboardRoutes from "./Dasboard/DashboardRoutes";
 import EventRoutes from "./SchoolActivities/EventRoutes";
-import FinancialRoutes from "./Financial/FinancialRoutes";
 import SettingsRoutes from "./Settings/SettingsRoutes";
 import StudentRoutes from "./Student/StudentRoutes";
-import ExamRoutes from "./Exam/ExamRoutes";
-import ResitRoutes from "./Resit/ResitRoutes";
-import CourseRoute from "./Academics/CourseRoutes";
-import ActivationCodeRoutes from "./ActivationCode/ActivationCode";
-import { useSelector } from "react-redux";
-import { AblyProvider, ChannelProvider } from "ably/react";
-import { createAblyClient } from "../ably/ably";
-import { useMemo } from "react";
 function Links() {
   const token = useSelector((state) => state.auth?.token);
   const apiKey = useSelector((state) => state.auth?.apiKey);
@@ -76,7 +77,8 @@ function Links() {
                 ...ExamRoutes,
                 ...ResitRoutes,
                 ...ActivationCodeRoutes,
-                ...CourseRoute
+                ...CourseRoute,
+                ...PromotionRoute
               ]}
             </Route>
           </Routes>
