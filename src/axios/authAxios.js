@@ -1,8 +1,8 @@
-import { store } from "../store/store";
+import { API_BASE_URL } from "@/constants";
 import axios from 'axios';
-import { API_BASE_URL} from "@/constants";
+import { store } from "../store/store";
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL.DEV, 
+  baseURL: API_BASE_URL.PROD, 
   withCredentials:true,
   withXSRFToken:true
 });
