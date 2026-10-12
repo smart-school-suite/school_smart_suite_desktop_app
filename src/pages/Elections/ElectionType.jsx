@@ -10,7 +10,10 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { NotFoundError } from "../../components/errors/Error";
@@ -19,6 +22,9 @@ import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
+import CreateElectionType from "../../DrawerContent/ElectionType/CreateElectionType";
+import ElectionTypeDetail from "../../DrawerContent/ElectionType/ElectionTypeDetail";
+import UpdateElectionType from "../../DrawerContent/ElectionType/UpdateElectionType";
 import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionTypes";
 import {
   ActivateIcon,
@@ -28,11 +34,8 @@ import {
   UpdateIcon,
 } from "../../icons/ActionIcons";
 import ActivateElectionType from "../../ModalContent/ElectionType/ActivateElectionType";
-import CreateElectionType from "../../ModalContent/ElectionType/CreateElectionType";
 import DeactivateElectionType from "../../ModalContent/ElectionType/DeactivateElectionType";
 import DeleteElectionType from "../../ModalContent/ElectionType/DeleteElectionType";
-import ElectionTypeDetails from "../../ModalContent/ElectionType/ElectionTypeDetails";
-import UpdateElectionType from "../../ModalContent/ElectionType/UpdateElectionType";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
@@ -543,7 +546,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateElectionType, "md")}
+          onClick={() =>
+            handleShowDrawer(UpdateElectionType, {
+              title: "Update Election Type",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -556,7 +565,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeactivateElectionType, "md")}
+          onClick={() =>
+            handleShowModal(DeactivateElectionType, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -569,7 +584,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ActivateElectionType, "md")}
+          onClick={() =>
+            handleShowModal(ActivateElectionType, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -582,7 +603,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ElectionTypeDetails, "md")}
+          onClick={() =>
+            handleShowDrawer(ElectionTypeDetail, {
+              title: "Election Type Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -595,7 +622,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteElectionType, "md")}
+          onClick={() =>
+            handleShowModal(DeleteElectionType, {
+              title: "Update Election Type",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">

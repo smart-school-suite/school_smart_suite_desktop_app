@@ -10,7 +10,10 @@ import {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { NotFoundError } from "../../components/errors/Error";
@@ -21,6 +24,9 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
+import CreateElectionRole from "../../DrawerContent/ElectionRole/CreateElectionRole";
+import ElectionRoleDetails from "../../DrawerContent/ElectionRole/ElectionRoleDetails";
+import UpdateElectionRole from "../../DrawerContent/ElectionRole/UpdateElectionRole";
 import { useGetElectionRoles } from "../../hooks/electionRole/useGetElectionRoles";
 import {
   ActivateIcon,
@@ -33,11 +39,8 @@ import ActivateElectionRole from "../../ModalContent/ElectionRoles/ActivateElect
 import BulkActivateElectionRole from "../../ModalContent/ElectionRoles/BulkActivateElectionRole";
 import BulkDeactivateElectionRole from "../../ModalContent/ElectionRoles/BulkDeactivateElectionRole";
 import BulkDeleteElectionRole from "../../ModalContent/ElectionRoles/BulkDeleteElectionRole";
-import CreateElectionRole from "../../ModalContent/ElectionRoles/CreateElectionRole";
 import DeactivateRole from "../../ModalContent/ElectionRoles/DeactivateRole";
 import DeleteElectionRole from "../../ModalContent/ElectionRoles/DeleteElectionRole";
-import ElectionRoleDetails from "../../ModalContent/ElectionRoles/ElectionRoleDetails";
-import UpdateElectionRole from "../../ModalContent/ElectionRoles/UpdateElectionRole";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
@@ -50,6 +53,7 @@ import {
 } from "../../Slices/election/electionRoleSlice";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import { electionRoleColDefs } from "../../utils/table/colDefs/election/electionRoleColDefs";
+
 function ElectionRoles() {
   const { data: electionRoles, isLoading, error } = useGetElectionRoles();
   const dispatch = useDispatch();
@@ -64,7 +68,7 @@ function ElectionRoles() {
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [searchText, setSearchText] = useState("");
 
-  const handleResetSelections = () => {
+  const handleResetSelectionsSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
@@ -92,7 +96,7 @@ function ElectionRoles() {
       tableRef.current.setGridOption("quickFilterText", value);
     }
   };
-  const handleReset = () => {
+  const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
       setRowCount(0);
@@ -196,7 +200,7 @@ function ElectionRoles() {
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
                       className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
-                      onClick={handleReset}
+                      onClick={handleResetSelections}
                       style={{ padding: "0.45rem" }}
                     >
                       <span>
@@ -308,22 +312,22 @@ function ElectionRoles() {
                           rowCount={rowCount}
                           label={`${
                             rowCount >= 1
-                              ? "Election Role Selected"
+                              ? "Role Selected"
                               : rowCount >= 2
-                                ? "Election Roles Selected"
+                                ? "Roles Selected"
                                 : null
                           }`}
-                          resetAll={handleReset}
+                          resetAll={handleResetSelections}
                           dropDownItems={
                             <DropdownItems
                               selectedRoles={selectedRoles}
-                              resetAll={handleReset}
+                              resetAll={handleResetSelections}
                             />
                           }
                           actionButton={
                             <ActionButtons
                               selectedRoles={selectedRoles}
-                              resetAll={handleReset}
+                              resetAll={handleResetSelections}
                             />
                           }
                         />
@@ -336,15 +340,13 @@ function ElectionRoles() {
                             key="filter-panel"
                             className="card rounded-3 font-size-sm d-flex flex-column h-100"
                             initial={{ x: "100%", opacity: 0 }}
-                            animate={{ x: 
-                              0, opacity: 1 }}
+                            animate={{ x: 0, opacity: 1 }}
                             exit={{ x: "100%", opacity: 0 }}
                             transition={{
                               type: "spring",
                               stiffness: 350,
                               damping: 32,
                             }}
-
                             style={{ width: "40%" }}
                           >
                             <div
@@ -550,7 +552,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateElectionRole, "md")}
+          onClick={() =>
+            handleShowDrawer(UpdateElectionRole, {
+              title: "Update Election Role",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -563,7 +571,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ElectionRoleDetails, "md")}
+          onClick={() =>
+            handleShowDrawer(ElectionRoleDetails, {
+              title: "Election Role Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -576,7 +590,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeactivateRole, "md")}
+          onClick={() =>
+            handleShowModal(DeactivateRole, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -589,7 +609,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ActivateElectionRole, "md")}
+          onClick={() =>
+            handleShowModal(ActivateElectionRole, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -602,7 +628,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteElectionRole, "md")}
+          onClick={() =>
+            handleShowModal(DeleteElectionRole, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -744,7 +776,13 @@ function DropdownItems({ selectedRoles, resetAll, onModalStateChange }) {
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeactivateElectionRole, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeactivateElectionRole, {
+            size: "md",
+            closeOnOutsideClick: false,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Deactivate All</span>
@@ -753,7 +791,13 @@ function DropdownItems({ selectedRoles, resetAll, onModalStateChange }) {
       </DropDownMenuItem>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkActivateElectionRole, "md")}
+        onClick={() =>
+          handleShowModal(BulkActivateElectionRole, {
+            size: "md",
+            closeOnOutsideClick: false,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Activate All</span>
@@ -762,7 +806,13 @@ function DropdownItems({ selectedRoles, resetAll, onModalStateChange }) {
       </DropDownMenuItem>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteElectionRole, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeleteElectionRole, {
+            size: "md",
+            closeOnOutsideClick: false,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
@@ -802,6 +852,7 @@ function DropdownItems({ selectedRoles, resetAll, onModalStateChange }) {
             rowData={{
               selectedRoles: selectedRoles,
               ...modalConfig.modalData,
+              resetAll: resetAll
             }}
             handleClose={handleCloseModal}
           />

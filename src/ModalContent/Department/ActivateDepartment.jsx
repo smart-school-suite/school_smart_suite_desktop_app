@@ -1,6 +1,6 @@
+import { CircleX } from "lucide-react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useActivateDepartment } from "../../hooks/department/useActivateDepartment";
-import { CircleX } from "lucide-react";
 function ActivateDepartment({ handleClose, rowData }) {
   const { mutate: deactivateDepartment, isPending } =
     useActivateDepartment(handleClose);
