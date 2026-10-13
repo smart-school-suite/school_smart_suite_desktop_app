@@ -11,10 +11,7 @@ export const settingRoutes = [
   "/settings/school",
 ];
 
-export const promotionRoutes = [
-  "/promotion-runs",
-  "/promotion-student-record"
-]
+export const promotionRoutes = ["/promotion-runs", "/promotion-student-record"];
 
 export const teacherRoutes = [
   "/teacher",
@@ -36,7 +33,6 @@ export const adminRoutes = [
   "/specialties",
   ...teacherRoutes,
   ...hallRoutes,
-  ...promotionRoutes
 ];
 
 export const academicRoutes = [
@@ -45,6 +41,7 @@ export const academicRoutes = [
   "/grades-configuration",
   "/academic-year",
   ...courseRoutes,
+  ...promotionRoutes,
 ];
 
 export const examRoutes = [
@@ -61,7 +58,7 @@ export const resitRoutes = [
   "/resit-timetable",
   "/student-resit",
   "/resit-invigilator",
-  "/resit-result"
+  "/resit-result",
 ];
 
 export const StudentRoutes = [

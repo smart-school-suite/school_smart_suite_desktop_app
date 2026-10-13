@@ -43,7 +43,6 @@ import { electionColDef } from "../../utils/table/colDefs/election/electionColDe
 import LiveElection from "./LiveElection";
 function Elections() {
   const moduleState = useSelector((state) => state?.election?.voting);
-  console.log(moduleState);
   return moduleState?.context?.id ? <LiveElection /> : <ElectionTable />;
 }
 export default Elections;
