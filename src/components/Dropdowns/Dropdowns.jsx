@@ -1,22 +1,22 @@
  import {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  forwardRef,
-  useImperativeHandle,
-} from "react";
-import { Icon } from "@iconify/react";
-import { SingleSpinner } from "../Spinners/Spinners";
-import {
-  useFloating,
-  offset,
-  flip,
-  shift,
   autoUpdate,
+  flip,
+  offset,
+  shift,
+  useFloating,
 } from "@floating-ui/react";
+import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { useSelector } from "react-redux";
+import { SingleSpinner } from "../Spinners/Spinners";
 
 const CustomDropdown = forwardRef(
   (
@@ -193,7 +193,7 @@ const CustomDropdown = forwardRef(
                   ? "border-success text-success"
                   : ""
               }`}
-              style={{ padding: "0.5rem" }}
+              style={{ padding: "0.3rem" }}
             >
               <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm text-capitalize">
                 {selectedItem ? selectedItem[displayKey[0]] : placeholder}

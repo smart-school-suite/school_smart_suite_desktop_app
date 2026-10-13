@@ -1,36 +1,39 @@
-import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionTypes";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useRef, useState } from "react";
-import { useCreateElection } from "../../hooks/election/useCreateElection";
-import { DateTimeRangeInput } from "../../components/FormComponents/InputComponents";
-import { SchoolYearSelector } from "../../components/FormComponents/YearPicker";
-import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import {
-  dateTimeRangeValidationSchema,
-  timeValidationSchema,
-} from "../../ComponentConfig/YupValidationSchema";
-import { Icon } from "@iconify/react";
-import { allFieldsValid, formatToMySQLDateTime } from "../../utils/functions";
 import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
+import { dateTimeRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { DateTimeRangeInput } from "../../components/FormComponents/InputComponents";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import { useGetAllSystemAcademicYear } from "../../hooks/academicYear/useGetAllSystemAcademicYear";
+import { useCreateElection } from "../../hooks/election/useCreateElection";
+import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionTypes";
+import { allFieldsValid } from "../../utils/functions";
 function CreateElection({ handleClose }) {
   const applicationDateRangeRef = useRef();
   const votingDateRangeRef = useRef();
   const schoolYearRef = useRef();
   const electionTypeRef = useRef();
-  const { data: electionType, isLoading } = useGetElectionTypes();
+  const {
+    data: academicYears,
+    isLoading: isAcademicYearLoading,
+  } = useGetAllSystemAcademicYear();
+  const {
+    data: electionType,
+    isLoading: isElectionTypeLoading,
+  } = useGetElectionTypes();
   const { mutate: createElection, isPending } = useCreateElection(handleClose);
   const [formData, setFormData] = useState({
     application_start: "",
     application_end: "",
     voting_start: "",
     voting_end: "",
-    school_year: "",
+    school_year_id: "",
     election_type_id: "",
   });
   const [error, setError] = useState({
-    school_year: "",
+    school_year_id: "",
     election_type_id: "",
   });
   const [isValid, setIsValid] = useState({
@@ -90,7 +93,7 @@ function CreateElection({ handleClose }) {
       application_end: formData.application_end,
       voting_start: formData.voting_start,
       voting_end: formData.voting_end,
-      school_year: formData.school_year,
+      school_year_id: formData.school_year_id.id,
       election_type_id: formData.election_type_id.id,
     };
     createElection(payload);
@@ -161,13 +164,22 @@ function CreateElection({ handleClose }) {
             <label htmlFor="schoolYear" className="font-size-sm">
               School Year
             </label>
-            <SchoolYearSelector
+            <CustomDropdown
+              data={academicYears?.data || []}
+              isLoading={isAcademicYearLoading}
               onSelect={(value) =>
-                handleStateChange("school_year", value, setFormData)
+                handleStateChange("school_year_id", value, setFormData)
               }
-              onError={(msg) => handleStateChange("school_year", msg, setError)}
-              error={error.school_year}
-              required={true}
+              displayKey={["name"]}
+              valueKey={["id"]}
+              direction="up"
+              placeholder="Select Academic Year"
+              error={error.school_year_id}
+              errorMessage="Academic Year Required"
+              onError={(msg) =>
+                handleStateChange("school_year_id", msg, setError)
+              }
+              value={formData.school_year_id}
               ref={schoolYearRef}
             />
           </div>
@@ -177,7 +189,7 @@ function CreateElection({ handleClose }) {
             </label>
             <CustomDropdown
               data={electionType?.data || []}
-              isLoading={isLoading}
+              isLoading={isElectionTypeLoading}
               onSelect={(value) =>
                 handleStateChange("election_type_id", value, setFormData)
               }

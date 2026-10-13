@@ -1,8 +1,9 @@
+import { Fragment } from "react";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useGetElectionDetails } from "../../hooks/election/useGetElectionDetail";
-import { formatISODate } from "../../utils/functions";
+import { formatISODate, isLastElement } from "../../utils/functions";
 function ElectionDetails({ handleClose, drawerData }) {
   const { id: electionId } = drawerData;
   const {
@@ -12,14 +13,28 @@ function ElectionDetails({ handleClose, drawerData }) {
   } = useGetElectionDetails(electionId);
   return (
     <>
-      <div className="drawer-content ps-2 pt-3">
-        <div className="modal-content-container">
+      <div
+        className="drawer-content ps-2 pt-3 font-size-sm"
+        style={{ paddingBottom: "10rem" }}
+      >
+        <div className="d-flex flex-column gap-3">
           {isLoading ? (
-            <div className="d-flex flex-column gap-2">
-              <RectangleSkeleton width="100%" height="10dvh" speed={0.5} />
-              <RectangleSkeleton width="100%" height="10dvh" speed={0.5} />
-              <RectangleSkeleton width="100%" height="10dvh" speed={0.5} />
-              <RectangleSkeleton width="100%" height="10dvh" speed={0.5} />
+            <div className="d-flex flex-column gap-4">
+              {[...Array(10)].map((index) => (
+                <Fragment key={index}>
+                  <div className="d-flex flex-column gap-2">
+                    <RectangleSkeleton width="25%" height="1dvh" speed={0.5} />
+                    <RectangleSkeleton width="75%" height="1dvh" speed={0.5} />
+                  </div>
+                  {!isLastElement(index, [...Array(3)]) && (
+                    <HorizontalDashedLine
+                      dashed={false}
+                      color="#ccc"
+                      thickness={0.2}
+                    />
+                  )}
+                </Fragment>
+              ))}
             </div>
           ) : error ? (
             <NotFoundError
@@ -28,91 +43,106 @@ function ElectionDetails({ handleClose, drawerData }) {
             ></NotFoundError>
           ) : (
             <>
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className="py-2">
-                  <p className="my-0 font-size-sm">Election Title</p>
-                  <p className="my-0 gainsboro-color font-size-sm">
-                    {electionDetails.data.election_type.election_title}
-                  </p>
-                </div>
+              <div className="d-flex flex-column gap-2">
+                <span className="fw-light">Election Title</span>
+                <span className="fw-medium">
+                  {electionDetails?.data?.election_type?.election_title}
+                </span>
               </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className="py-2">
-                  <p className="my-0 font-size-sm">Election Description</p>
-                  <p className="my-0 gainsboro-color font-size-sm">
-                    {electionDetails.data.election_type.description}
-                  </p>
-                </div>
+              <HorizontalDashedLine
+                dashed={false}
+                color="#ccc"
+                thickness={0.2}
+              />
+
+              <div className="d-flex flex-column gap-2">
+                <span className="fw-light">Election Description</span>
+                <span className="fw-medium">
+                  {electionDetails?.data?.election_type?.description}
+                </span>
               </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className="py-2">
-                  <p className="my-0 font-size-sm">School Year</p>
-                  <p className="my-0 gainsboro-color font-size-sm">
-                    {electionDetails.data.school_year}
-                  </p>
-                </div>
+              <HorizontalDashedLine
+                dashed={false}
+                color="#ccc"
+                thickness={0.2}
+              />
+
+              <div className="d-flex flex-column gap-2">
+                <span className="fw-light">School Year</span>
+                <span className="fw-medium">
+                  {electionDetails?.data?.academic_year?.name}
+                </span>
               </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className="py-2">
-                  <p className="my-0 font-size-sm">
-                    Application Start Date And Time
-                  </p>
-                  <p className="my-0 gainsboro-color font-size-sm">
-                    {formatISODate(electionDetails.data.application_start)}
-                  </p>
-                </div>
+              <HorizontalDashedLine
+                dashed={false}
+                color="#ccc"
+                thickness={0.2}
+              />
+
+              <div className="d-flex flex-column gap-2">
+                <span className="fw-light">
+                  Application Start Date And Time
+                </span>
+                <span className="fw-medium">
+                  {formatISODate(electionDetails?.data?.application_start)}
+                </span>
               </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className="py-2">
-                  <p className="my-0 font-size-sm">
-                    Application End Date And Time
-                  </p>
-                  <p className="my-0 gainsboro-color font-size-sm">
-                    {formatISODate(electionDetails.data.application_end)}
-                  </p>
-                </div>
+              <HorizontalDashedLine
+                dashed={false}
+                color="#ccc"
+                thickness={0.2}
+              />
+
+              <div className="d-flex flex-column gap-2">
+                <span className="fw-light">Application End Date And Time</span>
+                <span className="fw-medium">
+                  {formatISODate(electionDetails?.data?.application_end)}
+                </span>
               </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className="py-2">
-                  <p className="my-0 font-size-sm">Vote Start Date And Time</p>
-                  <p className="my-0 gainsboro-color font-size-sm">
-                    {formatISODate(electionDetails.data.voting_start)}
-                  </p>
-                </div>
+              <HorizontalDashedLine
+                dashed={false}
+                color="#ccc"
+                thickness={0.2}
+              />
+
+              <div className="d-flex flex-column gap-2">
+                <span className="fw-light">Vote Start Date And Time</span>
+                <span className="fw-medium">
+                  {formatISODate(electionDetails?.data?.voting_start)}
+                </span>
               </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className="py-2">
-                  <p className="my-0 font-size-sm">Vote End Date And Time</p>
-                  <p className="my-0 gainsboro-color font-size-sm">
-                    {formatISODate(electionDetails.data.voting_end)}
-                  </p>
-                </div>
+              <HorizontalDashedLine
+                dashed={false}
+                color="#ccc"
+                thickness={0.2}
+              />
+
+              <div className="d-flex flex-column gap-2">
+                <span className="fw-light">Vote End Date And Time</span>
+                <span className="fw-medium">
+                  {formatISODate(electionDetails?.data?.voting_end)}
+                </span>
               </div>
-              <span className="font-size-xs gainsboro-color">system info</span>
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className="py-2">
-                  <p className="my-0 font-size-sm">Created At</p>
-                  <p className="my-0 gainsboro-color font-size-sm">
-                    {formatISODate(electionDetails.data.created_at)}
-                  </p>
-                </div>
+              <span className="text-iron-400">System info</span>
+
+              <div className="d-flex flex-column gap-2">
+                <span className="fw-light">Created At</span>
+                <span className="fw-medium">
+                  {formatISODate(electionDetails?.data?.created_at)}
+                </span>
               </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className="py-2">
-                  <p className="my-0 font-size-sm">Updated At</p>
-                  <p className="my-0 gainsboro-color font-size-sm">
-                    {formatISODate(electionDetails.data.updated_at)}
-                  </p>
-                </div>
+              <HorizontalDashedLine
+                dashed={false}
+                color="#ccc"
+                thickness={0.2}
+              />
+
+              <div className="d-flex flex-column gap-2">
+                <span className="fw-light">Updated At</span>
+                <span className="fw-medium">
+                  {formatISODate(electionDetails?.data?.updated_at)}
+                </span>
               </div>
-              <hr />
             </>
           )}
         </div>

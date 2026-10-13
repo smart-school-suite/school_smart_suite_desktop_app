@@ -1,21 +1,12 @@
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { useCastVote } from "../../hooks/election/useCastVote";
-import { Icon } from "@iconify/react";
+import { ChartLine, Clock, Dot, UserRoundGroup, Users, Vote } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useEffect, useState, useMemo } from "react";
-import NumberFlow from "@number-flow/react";
-import { useGetLiveElectionResults } from "../../hooks/election/useGetLiveElectionResult";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
-function LiveElection({ liveElection }) {
-  const { mutate: castVote } = useCastVote(liveElection.election_id);
-  const [results, setResults] = useState([]);
-  const {
-    data: electionResults,
-    error,
-    isLoading,
-  } = useGetLiveElectionResults(liveElection.election_id);
+function LiveElection() {
+  const moduleState = useSelector((state) => state?.election?.voting);
+  const context = moduleState.context;
+  const gridStyle = {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+  };
   // const userData = useSelector((state) => state.auth.user);
   // const token = useSelector((state) => state.auth.token);
   // const echo = useMemo(() => createEcho(token), [token]);
@@ -47,139 +38,126 @@ function LiveElection({ liveElection }) {
   //     );
   //   };
   // }, [liveElection.election_id, echo, electionResults]);
-  const handleCastVote = (data) => {
-    castVote(data);
-  };
   return (
     <>
-      {isLoading ? (
-        <div className="container">
-          <div className="row">
-            <div className="col-4 my-1">
-              <RectangleSkeleton height="40dvh" width="100%" speed={0.5} />
-            </div>
-            <div className="col-4 my-1">
-              <RectangleSkeleton height="40dvh" width="100%" speed={0.5} />
-            </div>
-            <div className="col-4 my-1">
-              <RectangleSkeleton height="40dvh" width="100%" speed={0.5} />
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-4 my-1">
-              <RectangleSkeleton height="40dvh" width="100%" speed={0.5} />
-            </div>
-            <div className="col-4 my-1">
-              <RectangleSkeleton height="40dvh" width="100%" speed={0.5} />
-            </div>
-            <div className="col-4 my-1">
-              <RectangleSkeleton height="40dvh" width="100%" speed={0.5} />
-            </div>
-          </div>
-        </div>
-      ) : error ? (
-        <NotFoundError
-          title={error?.response?.data?.errors?.title}
-          description={error?.response?.data?.errors?.description}
-        ></NotFoundError>
-      ) : (
-        <div className="container h-100 w-100">
-          <h5 className="text-uppercase fw-bold">
-            {electionResults?.data?.election?.election_type?.election_title}
-          </h5>
-          <div className="candidate-container">
-            {results?.map((categories) => (
-              <div className="row" key={categories.role_id}>
-                <span className="fw-medium my-1">{categories.role_name}</span>
-                {sortCandidatesByVotes(categories?.candidates).map((candidate) => (
-                  <div className="col-lg-4" key={candidate.candidate_id}>
-                    <div className="card rounded-4 border-none shadow-sm d-flex flex-column gap-4 my-1">
-                      <div className="position-relative">
-                        <img
-                          src={
-                            candidate.student_profile_picture
-                              ? ``
-                              : "./images/user.png"
-                          }
-                          alt=""
-                          className="rounded-top-3"
-                          style={{
-                            width: "100%",
-                            height: "25dvh",
-                            objectFit: "contain",
-                          }}
-                        />
-                      </div>
-                      <div className="p-2  d-flex flex-column gap-3">
-                        <div className="d-flex flex-column">
-                          <span className="font-size-sm fw-semibold">
-                            {candidate.student_name}
-                          </span>
-                          <span className="gainsboro-color font-size-sm">
-                            {candidate?.specialty_name || "N/A"}, Level{" "}
-                            {candidate.level}
-                          </span>
-                        </div>
-                        <div className="d-flex flex-row align-items-center w-100 justify-content-between">
-                          <div className="d-flex flex-row align-items-center gap-1">
-                            <h3 className="fw-semibold m-0 p-0">
-                              {<NumberFlow value={candidate.vote_count} />}
-                            </h3>
-                            <span className="m-0 p-0 font-size-sm">votes</span>
-                          </div>
-                          <div>
-                            <button
-                              style={{
-                                border: "none",
-                                background: "transparent",
-                                outline: "none",
-                              }}
-                              onClick={() => {
-                                 if(categories.has_user_voted){
-                                     toast.custom(
-                                       <ToastWarning 
-                                         title={"Vote Limit Reached"}
-                                         description={"You’ve already cast your vote for this position. Please choose a different position to keep the voting fair and transparent. Thank you!"}
-                                       />
-                                     )
-                                     return 
-                                 }
-                                 handleCastVote({
-                                  candidate_id: candidate.candidate_id,
-                                  position_id: candidate.position_id,
-                                  election_id: liveElection.election_id,
-                                });
-                              }}
-                            >
-                             {
-                              candidate.user_voted_for_candidate ? (
-                                 <Icon icon="mynaui:heart-solid" width="24" height="24" 
-                                   style={{ color:"#ff9494" }}
-                                 />
-                              ) : (
-                                 <Icon icon="mynaui:heart" width="24" height="24" />
-                              )
-                             }
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+      <main className="font-size-sm d-flex flex-column gap-2">
+        <div className="card border-none border p-2 rounded-3 d-flex flex-column gap-2">
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <div className="d-flex flex-column gap-2">
+              <div className="d-flex flex-column">
+                <span className="fw-light text-iron-400">
+                  ELECTIONS / LIVE MONITOR
+                </span>
+                <span className="fw-medium">{context?.election_title}</span>
               </div>
-            ))}
+              <div className="d-flex flex-row align-items-center fw-light">
+                <div className="d-flex flex-row align-items-center gap-2">
+                  <Users size={16} strokeWidth={1.25} />
+                  <span>Candidates</span>
+                </div>
+                <Dot size={16} />
+                <span>45</span>
+              </div>
+            </div>
+            <div className="d-flex flex-column align-items-end gap-1">
+              <div className="d-flex flex-row align-items-center gap-2">
+                <span
+                  style={{ width: "fit-content", fontSize: "0.75rem" }}
+                  className="bg-fern-100 pe-2 rounded-2 text-fern-700 fw-semibold d-flex flex-row align-items-center text-uppercase"
+                >
+                  <Dot size={16} />
+                  Live
+                </span>
+                <span className="text-fern-500">Live Updates Connected</span>
+              </div>
+              <span className="text-iron-500">Last updated just now</span>
+            </div>
           </div>
         </div>
-      )}
+        <div style={gridStyle} className="gap-2">
+          <div
+            className="card border-none border p-2 d-flex flex-column gap-5"
+            style={{ borderRadius: "0.75rem" }}
+          >
+            <div className="d-flex flex-row align-items-center justify-content-between">
+              <span className="text-iron-500">Eligible Voters</span>
+              <span
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+                className="bg-iron-100 rounded-circle text-iron-500"
+              >
+                <UserRoundGroup size={16} strokeWidth={1.50}/>
+              </span>
+            </div>
+            <span className="font-size-lg mt-auto fw-semibold">1,400</span>
+          </div>
+          <div
+            className="card border-none border p-2 d-flex flex-column gap-5"
+            style={{ borderRadius: "0.75rem" }}
+          >
+            <div className="d-flex flex-row align-items-center justify-content-between">
+              <span className="text-iron-500">Vote Cast</span>
+              <span
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+                className="bg-iron-100 rounded-circle text-iron-500"
+              >
+                <Vote size={16}/>
+              </span>
+            </div>
+            <span className="font-size-lg mt-auto fw-semibold">1,400</span>
+          </div>
+          <div
+            className="card border-none border p-2 d-flex flex-column gap-5"
+            style={{ borderRadius: "0.75rem" }}
+          >
+            <div className="d-flex flex-row align-items-center justify-content-between">
+              <span className="text-iron-500">Voter Turn Out</span>
+              <span
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+                className="bg-iron-100 rounded-circle text-iron-500"
+              >
+                <ChartLine size={16} />
+              </span>
+            </div>
+            <span className="font-size-lg mt-auto fw-semibold">69.1 %</span>
+          </div>
+          <div
+            className="card border-none border p-2 d-flex flex-column gap-5"
+            style={{ borderRadius: "0.75rem" }}
+          >
+            <div className="d-flex flex-row align-items-center justify-content-between">
+              <span className="text-iron-500">Time Remaining</span>
+              <span
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+                className="bg-iron-100 rounded-circle text-iron-500"
+              >
+                <Clock size={16}/>
+              </span>
+            </div>
+            <span className="font-size-lg mt-auto fw-semibold">1,400</span>
+          </div>
+        </div>
+      </main>
     </>
   );
 }
 export default LiveElection;
-
-const sortCandidatesByVotes = (candidates) => {
-    if (!candidates) return []; 
-    return candidates.slice().sort((a, b) => {
-        return b.vote_count - a.vote_count;
-    });
-};

@@ -8,6 +8,11 @@ const initialState = {
   selectedTypes: [],
   rowCount: 0,
   searchText: "",
+  voting: {
+     context: {
+
+     }
+  },
   columns: {
     selectedColumns: [],
     availableColumns: [],
@@ -24,6 +29,13 @@ const electionSlice = createSlice({
   name: "election",
   initialState,
   reducers: {
+    setVoteContext: (state, action) => {
+       const { election } =  action.payload;
+       state.voting.context = election; 
+    },
+    resetVoteContext: (state) => {
+       state.voting.context = initialState.voting; 
+    },
     setImportStatus: (state, action) => {
       const { status } = action.payload;
       state.import.status = status;
@@ -114,6 +126,8 @@ const electionSlice = createSlice({
 });
 
 export const {
+  setVoteContext,
+  resetVoteContext,
   addCustomFilter,
   removeCustomFilter,
   setCustomFilter,

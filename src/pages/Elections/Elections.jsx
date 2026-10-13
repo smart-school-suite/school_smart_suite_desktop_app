@@ -9,7 +9,10 @@ import {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
@@ -19,11 +22,11 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import Table from "../../components/Tables/Tables";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import ElectionDetails from "../../DrawerContent/Election/ElectionDetails";
+import UpdateElection from "../../DrawerContent/Election/UpdateElection";
 import { useGetElections } from "../../hooks/election/useGetElections";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { LiveIcon } from "../../icons/Icons";
 import DeleteElection from "../../ModalContent/Elections/DeleteElection";
-import UpdateElection from "../../ModalContent/Elections/UpdateElection";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
@@ -32,11 +35,20 @@ import {
   removeCustomFilter,
   resetAllCustomFilters,
   setCustomFilter,
+  setVoteContext,
   toggleGeneralFilter,
 } from "../../Slices/election/electionSlice";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import { electionColDef } from "../../utils/table/colDefs/election/electionColDefs";
+import LiveElection from "./LiveElection";
 function Elections() {
+  const moduleState = useSelector((state) => state?.election?.voting);
+  console.log(moduleState);
+  return moduleState?.context?.id ? <LiveElection /> : <ElectionTable />;
+}
+export default Elections;
+
+function ElectionTable() {
   const { data: elections, isLoading, error } = useGetElections();
   const dispatch = useDispatch();
   const tableRef = useRef(null);
@@ -439,10 +451,9 @@ function Elections() {
     </>
   );
 }
-export default Elections;
-
 export function ActionComponent(props) {
   const rowData = props.data;
+  const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [modalConfig, setModalConfig] = useState({
@@ -515,11 +526,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowDrawer(ElectionDetails, {
+          onClick={() =>
+            handleShowDrawer(ElectionDetails, {
               title: "Election Details",
               closeOnOutsideClick: true,
               showHeader: true,
-            })}
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -528,31 +541,36 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        {rowData.voting_status == "ongoing" && (
-          <DropDownMenuItem
-            className={
-              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-            }
-            // onClick={() => {
-            //   setLiveElection((prev) => ({
-            //     ...prev,
-            //     ["election_id"]: rowData.id,
-            //   }));
-            // }}
-          >
-            <div>
-              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-                <span>Follow Life Election</span>
-                <LiveIcon />
-              </div>
-            </div>
-          </DropDownMenuItem>
-        )}
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateElection, "lg")}
+          onClick={() => {
+            dispatch(
+              setVoteContext({
+                election: rowData,
+              }),
+            );
+          }}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Follow Life Election</span>
+              <LiveIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowDrawer(UpdateElection, {
+              title: "Update Election",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -565,7 +583,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteElection, "md")}
+          onClick={() =>
+            handleShowModal(DeleteElection, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -609,7 +633,6 @@ export function ActionComponent(props) {
     </>
   );
 }
-
 function ActionButtons({ selectedElections, resetAll }) {
   return (
     <>
