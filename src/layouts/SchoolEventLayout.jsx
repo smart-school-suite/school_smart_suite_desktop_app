@@ -1,13 +1,13 @@
-import { Outlet, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import { useSelector } from "react-redux";
-import { ModalButton } from "../components/DataTableComponents/ActionComponent";
-import CreateEvent from "../ModalContent/Events/CreateEvent";
-import { EventIcon } from "../icons/Icons";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { Outlet, useNavigate } from "react-router-dom";
+import { ModalButton } from "../components/DataTableComponents/ActionComponent";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import JobPopOver from "../components/Popover/JobPopover";
 import CreateEventWizzard from "../DrawerContent/SchoolEvent/CreateSchoolEvent/CreateEventWizzard";
-import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import { EventIcon } from "../icons/Icons";
+import CreateEvent from "../ModalContent/Events/CreateEvent";
 
 function SchoolEventLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -38,7 +38,7 @@ function SchoolEventLayout() {
               >
                 <EventIcon size={16} />
               </div>
-              <span className="font-size-sm fw-semibold">Manage Elections</span>
+              <span className="font-size-sm fw-semibold">Manage School Events</span>
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Hall"} />

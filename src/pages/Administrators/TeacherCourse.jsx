@@ -401,7 +401,7 @@ function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
                               p-2 w-100 text-start transition-all  ${
                                 spec.id == specialty
                                   ? "primary-background-100 color-primary"
-                                  : "bg-transparent hover-bg-primary-50 hover-text-primary-400"
+                                  : "bg-transparent hover-bg-primary-50 hover-text-primary-400 text-iron-500 "
                               }`}
                               onClick={() => setSpecialty(spec.id)}
                             >

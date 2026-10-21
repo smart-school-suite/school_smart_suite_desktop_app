@@ -1,15 +1,15 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useImperativeHandle,
-  forwardRef,
-  useRef,
-} from "react";
 import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import InputMask from "react-input-mask";
 import { useSelector } from "react-redux";
-import { motion, AnimatePresence } from "framer-motion";
 function PhoneNumberInputComponent(
   { onChange, value, onValidationChange, validationSchema, optional = false },
   ref,

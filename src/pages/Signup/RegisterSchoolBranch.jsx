@@ -6,7 +6,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import AuthHero from "../../components/Hero/AuthHero";
-import { setSchoolAuthData, updateSchoolAuthError } from "../../Slices/Asynslices/AuthSlice";
+import {
+  setSchoolAuthData,
+  updateSchoolAuthError,
+} from "../../Slices/Asynslices/AuthSlice";
 import { allFieldsValid } from "../../utils/functions";
 function RegisterSchoolBranch() {
   const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
@@ -72,6 +75,7 @@ function RegisterSchoolBranch() {
           style={{ height: "100dvh", width: "40%" }}
           className="p-3 font-size-sm d-flex flex-column justify-content-between bg-white"
         >
+          {/* Header Logo & Help */}
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="app-logo">
               <img
@@ -87,16 +91,36 @@ function RegisterSchoolBranch() {
             </div>
             <span style={{ cursor: "pointer" }}>Need help ?</span>
           </div>
-          <div className="w-100 d-flex flex-row align-items-center justify-content-center mt-5">
+
+          {/* Centered Main Content Area */}
+          <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1">
             <div className="w-100">
+              {/* Title & Subtitle */}
+              <div
+                className="d-flex flex-column gap-1"
+                style={{ marginBottom: "2rem" }}
+              >
+                <span className="fw-semibold font-size-md">
+                  Add School Branch
+                </span>
+                <span className="fw-light text-iron-400">
+                  Enter details to set up your primary campus or main branch
+                </span>
+              </div>
+
+              {clientError && (
+                <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-4">
+                  <p className="m-0">{clientError}</p>
+                </div>
+              )}
+
+              {/* Inputs Section */}
               <div className="d-flex flex-column gap-3">
-                {clientError ? (
-                  <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-4">
-                    <p>{clientError}</p>
-                  </div>
-                ) : null}
                 <div className="d-flex flex-column gap-1">
-                  <label htmlFor="school branch name" className="font-size-sm">
+                  <label
+                    htmlFor="school_branch_name"
+                    className="font-size-sm fw-semibold"
+                  >
                     School Branch Name
                   </label>
                   <TextInput
@@ -121,22 +145,23 @@ function RegisterSchoolBranch() {
                     ref={schoolBranchNameRef}
                   />
                 </div>
+
                 <div className="d-flex flex-column gap-1">
                   <label
-                    htmlFor="school branch Abbreviation"
-                    className="font-size-sm"
+                    htmlFor="abbreviation"
+                    className="font-size-sm fw-semibold"
                   >
                     Abbreviation
                   </label>
                   <TextInput
-                    placeholder="Enter School Branch Name"
+                    placeholder="e.g. HQ or MAIN"
                     validationSchema={nameSchema({
                       required: true,
                       min: 2,
                       max: 10,
                       messages: {
                         required: "School Branch Abbreviation Name Required",
-                        min: "School Branch Abbreviation  Name Must Be At Least 2 Characters Long",
+                        min: "School Branch Abbreviation Name Must Be At Least 2 Characters Long",
                         max: "School Branch Abbreviation Must Not Exceed 10 Characters",
                       },
                     })}
@@ -151,6 +176,8 @@ function RegisterSchoolBranch() {
               </div>
             </div>
           </div>
+
+          {/* Stepper & Action Controls Footer */}
           <div className="mt-auto w-100">
             <div className="mb-2">
               <div className="d-flex flex-row align-items-center gap-2">

@@ -1,22 +1,34 @@
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
+import { Podium } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import JobPopOver from "../components/Popover/JobPopover";
-import { MoneyIcon } from "../icons/Icons";
 function PromotionLayout() {
       const darkMode = useSelector((state) => state.theme.darkMode);
       const navigate = useNavigate();
       const sideBarData = [
       {
-        title: "Runs",
+        title: "Promotion Run",
         path: "/promotion-runs",
       },
       {
-        title: "Student Records",
+        title: "Promotion Records",
         path: "/promotion-student-record",
       },
+      {
+        title:"Graduation Batch",
+        path: "/graduation-batch"
+      },
+      {
+         title:"Graduation Record",
+         path:"/graduation-record"
+      },
+      {
+         title:"Alumni",
+         path:"/alumni"
+      }
     ];
   return (
     <>
@@ -34,9 +46,9 @@ function PromotionLayout() {
                   borderRadius: "0.5rem",
                 }}
               >
-                <MoneyIcon size={16} />
+                <Podium size={16} />
               </div>
-              <span className="font-size-sm fw-semibold">Manage Resit Fee</span>
+              <span className="font-size-sm fw-semibold">Manage Promotion</span>
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Resit Fee"} />

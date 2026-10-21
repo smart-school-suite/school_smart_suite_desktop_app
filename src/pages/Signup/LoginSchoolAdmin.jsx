@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   emailValidationSchema,
@@ -12,7 +12,7 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useAuth } from "../../context/authContext";
 import { allFieldsValid } from "../../utils/functions";
 function LoginSchoolAdmin() {
-  const darkMode = useSelector((state) => state.theme.darkMode);
+  const dispatch = useDispatch();
   const emailRef = useRef();
   const passwordRef = useRef();
   const [clientError, setClientError] = useState(null);
@@ -56,7 +56,7 @@ function LoginSchoolAdmin() {
       return;
     }
     const { email, password } = formData;
-    await handleLogin(email, password, navigate);
+    await handleLogin(email, password, navigate, dispatch);
   };
 
   return (
@@ -157,14 +157,14 @@ function LoginSchoolAdmin() {
                   />
                   <span
                     style={{ cursor: "pointer" }}
-                    className="text-primary-400 fw-medium"
+                    className="text-primary-400 fw-medium border-bottom"
                     onClick={() => navigate("/reset-password")}
                   >
                     Forgot Password ?
                   </span>
                 </div>
 
-                <div className="d-flex flex-column gap-2">
+                <div className="d-flex flex-column gap-4">
                   <button
                     className="border-none primary-background text-white rounded-3  w-100"
                     style={{ padding: "0.6rem" }}
@@ -173,11 +173,13 @@ function LoginSchoolAdmin() {
                     {loading.login ? <SingleSpinner /> : "Login"}
                   </button>
                   <div
-                    className="d-flex flex-row align-items-center gap-2 pointer-cursor"
+                    className="d-flex flex-row align-items-center gap-2 pointer-cursor "
                     onClick={() => navigate("/register-school")}
                   >
-                    <span>Already Have An Account? </span>
+                    <div className="d-flex flex-row align-items-center gap-2 border-bottom">
+                      <span>Already Have An Account? </span>
                     <span className="text-primary-400 fw-medium">Sign up</span>
+                    </div>
                   </div>
                 </div>
               </div>

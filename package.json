@@ -96,6 +96,7 @@
     "slate-history": "^0.110.3",
     "slate-hyperscript": "^0.100.0",
     "slate-react": "^0.110.3",
+    "tauri-plugin-secure-keystore": "^0.0.2",
     "uuid": "^11.0.3",
     "xlsx": "^0.18.5",
     "yup": "^1.5.0"

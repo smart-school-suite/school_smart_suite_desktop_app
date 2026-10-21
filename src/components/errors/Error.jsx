@@ -7,7 +7,7 @@ export function Error({ title, description, children, maxHeight="250px", maxWidt
           >
             <div>
               <img
-                src="./sss-maskot/error.png"
+                src="/sss-maskot/error.png"
                 style={{
                   maxWidth: maxWidth,
                   maxHeight: maxHeight,
@@ -37,7 +37,7 @@ export function NotFoundError({ title, description, children, maxHeight="250px",
           >
             <div>
               <img
-                src="./sss-maskot/404.png"
+                src="/sss-maskot/404.png"
                 style={{
                   maxWidth: maxWidth,
                   maxHeight: maxHeight,

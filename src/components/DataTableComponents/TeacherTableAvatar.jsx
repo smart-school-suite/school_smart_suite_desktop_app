@@ -29,7 +29,7 @@ export const TeacherAvatarComponent = (props) => {
             className="rounded-circle"
           >
             <img
-              src="./images/user.png"
+              src="/images/user.png"
               alt=""
               className="object-fit-cover w-100 h-100 rounded-circle" 
             />

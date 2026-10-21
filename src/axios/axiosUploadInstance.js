@@ -1,6 +1,8 @@
 import { API_BASE_URL } from "@/constants";
 import axios from 'axios';
+import { secureTokenStorage } from "../services/secureStore/secureTokenStorage";
 import { store } from "../store/store";
+
 const axiosUploadInstance = axios.create({
   baseURL: API_BASE_URL.DEV,
   withCredentials: true,
@@ -11,19 +13,22 @@ const axiosUploadInstance = axios.create({
 });
 
 axiosUploadInstance.interceptors.request.use(
-  (config) => {
+  async (config) => {
     const state = store.getState();
 
+    const token = await secureTokenStorage.get("authToken");
     const apiKey = state.auth?.apiKey;
-    const token = state.auth?.token;
 
     if (!config.headers) {
       config.headers = {};
     }
 
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+
     if (apiKey) {
       config.headers["API-KEY"] = apiKey;
-      config.headers["Authorization"] = `Bearer ${token}`;
     }
 
     if (config.data instanceof FormData) {

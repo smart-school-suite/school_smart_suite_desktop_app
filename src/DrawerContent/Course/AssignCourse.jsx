@@ -1,12 +1,12 @@
 import { Icon } from "@iconify/react";
-import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpecialty";
 import { Fragment, useState } from "react";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { useAssignTeacherCourse } from "../../hooks/teacherCourse/useAssignTeacherCourse";
 import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpecialty";
+import { useAssignTeacherCourse } from "../../hooks/teacherCourse/useAssignTeacherCourse";
 function AssignCourse({ handleClose, drawerData }) {
   const { mutate: assignTeacherCourse, isPending } = useAssignTeacherCourse(
     drawerData.specialtyId,
@@ -45,9 +45,9 @@ function AssignCourse({ handleClose, drawerData }) {
             <div className="d-flex flex-column gap-1">
               <div className="d-flex flex-row align-items-center justify-content-between">
                 <span style={{ width: "65%" }} className="fw-semibold">
-                  {rowData?.course_title}
+                  {drawerData?.course_title}
                 </span>
-                {rowData.assignment_status === "unassigned" ? (
+                {drawerData.assignment_status === "unassigned" ? (
                   <div
                     style={{
                       background: "#fbedd9",
@@ -91,7 +91,7 @@ function AssignCourse({ handleClose, drawerData }) {
                   <span style={{ lineHeight: 0 }}>
                     <Icon icon="iconoir:medal" width={18} height={18} />
                   </span>
-                  <span>{rowData.course_credit} Credit</span>
+                  <span>{drawerData.course_credit} Credit</span>
                 </div>
                 <span>
                   <Icon icon="icon-park-outline:dot" />
@@ -100,7 +100,7 @@ function AssignCourse({ handleClose, drawerData }) {
                   <span style={{ lineHeight: 0 }}>
                     <Icon icon="mynaui:hash-waves" width={18} height={18} />
                   </span>
-                  <span>{rowData.course_code}</span>
+                  <span>{drawerData.course_code}</span>
                 </div>
               </div>
             </div>
@@ -117,10 +117,10 @@ function AssignCourse({ handleClose, drawerData }) {
                   wordBreak: "break-word",
                 }}
               >
-                {rowData?.description}
+                {drawerData?.description}
               </p>
               <div className="d-flex flex-row gap-2">
-                {rowData.types.map((type) => (
+                {drawerData.types.map((type) => (
                   <Fragment key={type.id}>
                     <div
                       style={{

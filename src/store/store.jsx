@@ -62,7 +62,12 @@ import additionalFeeReducer from "../Slices/finance/additionalFeeSlice";
 import registrationFeeReducer from "../Slices/finance/registrationFeeSlice";
 import schoolExpenseReducer from "../Slices/finance/schoolExpenseSlice";
 import tuitionFeeTransactionReducer from "../Slices/finance/tuitionFeeTransacSlice";
+import alumniReducer from "../Slices/graduation/alumniSlice";
+import graduationBatchReducer from "../Slices/graduation/graduationBatchSlice";
+import graduationRecordReducer from "../Slices/graduation/graduationRecordSlice";
 import semesterJointCourseReducer from "../Slices/jointCourse/semesterJointCourseSlice";
+import promotionRecordReducer from "../Slices/promotion/promotionRecordSlice";
+import promotionRunReducer from "../Slices/promotion/promotionRunSlice";
 import registrationFeeTransactionReducer from "../Slices/registrationFee/registrationFeeTransacSlice";
 import resitCandidateReducer from "../Slices/resit/resitCandidateSlice";
 import resitEvaluationReducer from "../Slices/resit/resitEvaluationSlice";
@@ -117,7 +122,7 @@ const teacherPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-  auth: persistReducer(authPersistConfig, authReducer),
+  auth: persistReducer({ key: "auth", storage }, authReducer),
   theme: persistReducer(themePersistConfig, themeReducer),
   pricing: pricingReducer,
   timetable: timetableReducer,
@@ -137,6 +142,23 @@ const rootReducer = combineReducers({
   parent: persistReducer({ key: "parent", storage }, parentReducer),
   resitExam: persistReducer({ key: "resitExam", storage }, resitExamReducer),
   examResult: persistReducer({ key: "examResult", storage }, examResultReducer),
+  alumni: persistReducer({ key: "alumni", storage }, alumniReducer),
+  graduationRecord: persistReducer(
+    { key: "graduationRecord", storage },
+    graduationRecordReducer,
+  ),
+  graduationBatch: persistReducer(
+    { key: "graduationBatch", storage },
+    graduationBatchReducer,
+  ),
+  promotionRecord: persistReducer(
+    { key: "promotionRecord", storage },
+    promotionRecordReducer,
+  ),
+  promotionRun: persistReducer(
+    { key: "promotionRun", storage },
+    promotionRunReducer,
+  ),
   hallSpecialty: persistReducer(
     {
       key: "hallSpecialty",

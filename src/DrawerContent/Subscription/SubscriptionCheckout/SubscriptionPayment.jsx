@@ -1,14 +1,14 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, Check, Minus } from "lucide-react";
-import { formatNumber } from "../../../utils/functions";
-import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetPaymentMethod } from "../../../hooks/paymentMethod/useGetPaymentMethod";
+import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
+import CustomModal from "../../../components/Modals/Modal";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../../components/errors/Error";
-import { motion, AnimatePresence } from "framer-motion";
+import { useGetPaymentMethod } from "../../../hooks/paymentMethod/useGetPaymentMethod";
+import { formatNumber } from "../../../utils/functions";
 import { PAYMENT_MAP } from "../../../utils/maps/paymentMethod/paymentMethodMap";
-import CustomModal from "../../../components/Modals/Modal";
 function SubscriptionPayment({
   handleClose,
   nextStep,
@@ -45,7 +45,14 @@ function SubscriptionPayment({
       <div className="drawer-content font-size-sm bg-iron-100">
         <div className="d-flex flex-column gap-3 px-2 pt-2">
           {isLoading ? (
-            <RectangleSkeleton height="1dvh" width="15%" />
+            [...Array(3)].map((_, index) => (
+              <Fragment key={index}>
+                <div className="d-flex flex-column gap-2">
+                  <RectangleSkeleton height="1dvh" width="15%" />
+                  <RectangleSkeleton height="18dvh" width="100%" />
+                </div>
+              </Fragment>
+            ))
           ) : error ? (
             <NotFoundError
               title={error?.response?.data?.errors?.title}
@@ -96,12 +103,18 @@ function SubscriptionPayment({
 }
 export default SubscriptionPayment;
 
-function MethodCard({ method, onSelect, selectedMethod, handleCloseDrawer, plan }) {
+function MethodCard({
+  method,
+  onSelect,
+  selectedMethod,
+  handleCloseDrawer,
+  plan,
+}) {
   const isSelected = selectedMethod?.id === method?.id;
   const rowData = {
     method,
     handleCloseDrawer,
-    plan
+    plan,
   };
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === " ") {

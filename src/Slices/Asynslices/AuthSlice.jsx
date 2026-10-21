@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { addSeconds } from "date-fns";
 const initialState = {
   isAuthenticated: false,
   user: null,
@@ -10,6 +10,14 @@ const initialState = {
   schoolBranchId: null,
   passwordResetOtpToken: null,
   passwordResetToken: null,
+  loginContext: {
+    email: "",
+    cooldownExpiresAt: null,
+  },
+  passwordResetContext: {
+    email: "",
+    cooldownExpiresAt: null,
+  },
   schoolAuthData: {
     school_name: "",
     country_id: "",
@@ -40,6 +48,23 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setLoginContext: (state, action) => {
+      const { value, field } = action.payload;
+      state.loginContext[field] = value;
+    },
+    setPasswordResetContext: (state, action) => {
+      const { value, field } = action.payload;
+      state.passwordResetContext[field] = value;
+    },
+    startOtpCooldown: (state, action) => {
+      const { cooldownSeconds, context } = action.payload;
+      const expiryDate = addSeconds(new Date(), cooldownSeconds);
+      state[context].cooldownExpiresAt = expiryDate.getTime();
+    },
+    clearOtpCooldown: (state, action) => {
+      const { context } = action.payload;
+      state[context].cooldownExpiresAt = null;
+    },
     handleSetUserLogin: (state, action) => {
       state.otpTokenHeader = action.payload.otpTokenHeader;
     },
@@ -117,6 +142,10 @@ export const {
   handleSetChangePassword,
   setSchoolAuthData,
   resetSchoolAuthData,
-  updateSchoolAuthError
+  updateSchoolAuthError,
+  setLoginContext,
+  startOtpCooldown,
+  clearOtpCooldown,
+  setPasswordResetContext
 } = authSlice.actions;
 export default authSlice.reducer;

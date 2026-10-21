@@ -193,7 +193,7 @@ const CustomDropdown = forwardRef(
                   ? "border-success text-success"
                   : ""
               }`}
-              style={{ padding: "0.3rem" }}
+              style={{ padding: "0.5rem" }}
             >
               <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm text-capitalize">
                 {selectedItem ? selectedItem[displayKey[0]] : placeholder}

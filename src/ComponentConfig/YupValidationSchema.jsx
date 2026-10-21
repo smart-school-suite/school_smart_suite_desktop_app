@@ -474,6 +474,42 @@ export const nameSchema = ({
   return schema;
 };
 
+export const titleSchema = ({
+  min = 3,
+  max = 100,
+  required = true,
+  messages = {},
+} = {}) => {
+  let schema = Yup.string()
+    .transform((value) => sanitizeInput(value?.trim() || "", true))
+    .min(min, messages.min || `Title must be at least ${min} characters long.`)
+    .max(max, messages.max || `Title must not exceed ${max} characters.`)
+    .matches(
+      /^[A-Za-z0-9À-ÖØ-öø-ÿ' &.,()\-–—:;/!?]+$/u,
+      messages.invalid ||
+        "Title can only contain letters, numbers, spaces, and common punctuation (& . , ( ) - : ; / ! ? ').",
+    )
+    .test(
+      "no-html",
+      messages.html || "Title cannot contain HTML tags.",
+      (val) => !/<[^>]*>/g.test(val || ""),
+    )
+    .test(
+      "no-leading-trailing-symbols",
+      messages.symbols || "Title cannot start or end with punctuation.",
+      (val) => !val || /^[A-Za-z0-9À-ÖØ-öø-ÿ]/.test(val) && /[A-Za-z0-9À-ÖØ-öø-ÿ]$/.test(val),
+    )
+    .transform((value) => (value === "" ? null : value));
+
+  if (required) {
+    schema = schema.required(messages.required || "This field is required.");
+  } else {
+    schema = schema.nullable();
+  }
+
+  return schema;
+};
+
 export const numberSchema = ({
   min = 0,
   max = 1000,

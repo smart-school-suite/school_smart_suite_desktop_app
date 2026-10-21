@@ -1,16 +1,16 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
-import axios from "../axios/axios";
+import { TOKEN_KEY } from "@/constants";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   handleSetAuthUser,
-  handleSetChangePassword,
-  handleSetPasswordReset,
   handleSetSubcription,
-  handleSetTwoFA,
-  handleSetUserLogin,
   handleSetUserLogout,
-  handleSetValidatePasswordResetOtp,
+  setLoginContext,
+  setPasswordResetContext,
+  startOtpCooldown
 } from "../Slices/Asynslices/AuthSlice";
+import axios from "../axios/axios";
+import { secureTokenStorage } from "../services/secureStore/secureTokenStorage";
 const AuthContext = createContext();
 export const useAuth = () => {
   return useContext(AuthContext);
@@ -22,13 +22,15 @@ export const AuthProvider = ({ children }) => {
     otp: null,
     changePassword: null,
     passwordResetError: null,
-    passwordRestOtp: null,
+    passwordResetOtp: null,
     changeAuthPassword: null,
     createSchool: null,
     createSchoolBranch: null,
     subscribe: null,
     admin: null,
     logout: null,
+    resendLoginOtp: null,
+    resendPasswordResetOtp: null,
   });
   const dispatch = useDispatch();
   const [loading, setLoading] = useState({
@@ -42,9 +44,11 @@ export const AuthProvider = ({ children }) => {
     passwordReset: false,
     passwordResetOtp: false,
     changePassword: false,
+    resendLoginOtp: false,
+    resendPasswordResetOtp: false,
   });
 
-  const handleLogin = async (email, password, navigate) => {
+  const handleLogin = async (email, password, navigate, dispatch) => {
     setLoading((prevalue) => ({ ...prevalue, login: true }));
     setAuthError((prevalue) => ({ ...prevalue, login: null }));
     try {
@@ -53,9 +57,24 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       const responseData = response.data.data;
-      dispatch(
-        handleSetUserLogin({ otpTokenHeader: responseData.otp_token_header }),
+      await secureTokenStorage.save(
+        TOKEN_KEY.OTP_TOKEN,
+        responseData.otp_token_header,
       );
+      if (dispatch) {
+        dispatch(
+          setLoginContext({
+            field: "email",
+            value: email,
+          }),
+        );
+        dispatch(
+          startOtpCooldown({
+            cooldownSeconds: 60,
+            context: "loginContext",
+          }),
+        );
+      }
       navigate("/verify-otp");
     } catch (error) {
       const errorMessage =
@@ -71,9 +90,10 @@ export const AuthProvider = ({ children }) => {
       setLoading((prevalue) => ({ ...prevalue, login: false }));
     }
   };
-  const handleTwoStepVerification = async (otp, navigate, otpTokenHeader) => {
+  const handleTwoStepVerification = async (otp, navigate) => {
     setLoading((prevalue) => ({ ...prevalue, otp: true }));
     setAuthError((prevalue) => ({ ...prevalue, otp: null }));
+    const tokenHeader = await secureTokenStorage.get(TOKEN_KEY.OTP_TOKEN);
     try {
       const response = await axios.post(
         "auth/school-admin/verify-otp",
@@ -81,18 +101,17 @@ export const AuthProvider = ({ children }) => {
           otp,
         },
         {
-          headers: { OTP_TOKEN_HEADER: otpTokenHeader },
+          headers: { "X-OTP-Token": tokenHeader },
         },
       );
       const responseData = response.data.data;
-      await getAuthenticatedUser(responseData.authToken);
-      dispatch(
-        handleSetTwoFA({
-          authToken: responseData.authToken,
-          apiKey: responseData.apiKey,
-        }),
+      await secureTokenStorage.save(
+        TOKEN_KEY.AUTH_TOKEN,
+        responseData.authToken,
       );
+      await getAuthenticatedUser(responseData.authToken);
       navigate("/school-admins");
+      await secureTokenStorage.remove(TOKEN_KEY.OTP_TOKEN);
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||
@@ -121,6 +140,8 @@ export const AuthProvider = ({ children }) => {
         },
       );
       dispatch(handleSetUserLogout());
+      await secureTokenStorage.remove(TOKEN_KEY.OTP_TOKEN);
+      await secureTokenStorage.remove(TOKEN_KEY.AUTH_TOKEN);
       navigate("/login-school-admin");
     } catch (error) {
       const errorMessage =
@@ -227,11 +248,24 @@ export const AuthProvider = ({ children }) => {
         email,
       });
       const responseData = response.data.data;
-      dispatch(
-        handleSetPasswordReset({
-          resetPasswordOtpToken: responseData.otp_header,
-        }),
+      await secureTokenStorage.save(
+        TOKEN_KEY.OTP_TOKEN,
+        responseData.otp_token_header,
       );
+      if (dispatch) {
+        dispatch(
+          setPasswordResetContext({
+            field: "email",
+            value: email,
+          }),
+        );
+        dispatch(
+          startOtpCooldown({
+            cooldownSeconds: 60,
+            context: "passwordResetContext",
+          }),
+        );
+      }
       navigate("/validate-otp");
     } catch (e) {
       const errorMessage =
@@ -247,13 +281,10 @@ export const AuthProvider = ({ children }) => {
       setLoading((prevalue) => ({ ...prevalue, passwordReset: false }));
     }
   };
-  const handleValidatePasswordResetOtp = async (
-    navigate,
-    otp,
-    resetPasswordOtpToken,
-  ) => {
+  const handleValidatePasswordResetOtp = async (navigate, otp) => {
     setLoading((prevalue) => ({ ...prevalue, passwordResetOtp: true }));
-    setAuthError((prevalue) => ({ ...prevalue, passwordRestOtp: null }));
+    setAuthError((prevalue) => ({ ...prevalue, passwordResetOtp: null }));
+    const tokenHeader = await secureTokenStorage.get(TOKEN_KEY.OTP_TOKEN);
     try {
       const response = await axios.post(
         "auth/school-admin/password/reset/verify-otp",
@@ -261,14 +292,13 @@ export const AuthProvider = ({ children }) => {
           otp,
         },
         {
-          headers: { OTP_TOKEN_HEADER: resetPasswordOtpToken },
+          headers: { "X-OTP-Token": tokenHeader },
         },
       );
       const responseData = response.data.data;
-      dispatch(
-        handleSetValidatePasswordResetOtp({
-          passwordResetToken: responseData.password_reset_token,
-        }),
+      await secureTokenStorage.save(
+        TOKEN_KEY.PASSWORD_RESET_TOKEN,
+        responseData.reset_token,
       );
       navigate("/change-password");
     } catch (e) {
@@ -287,11 +317,11 @@ export const AuthProvider = ({ children }) => {
   };
   const handleChangePassword = async (
     navigate,
-    passwordCredentails,
-    passwordResetToken,
+    passwordCredentails
   ) => {
     setLoading((prevalue) => ({ ...prevalue, changePassword: true }));
     setAuthError((prevalue) => ({ ...prevalue, changePassword: null }));
+     const passwordResetToken = await secureTokenStorage.get(TOKEN_KEY.PASSWORD_RESET_TOKEN);
     try {
       await axios.post(
         "auth/school-admin/password/reset/update",
@@ -302,11 +332,12 @@ export const AuthProvider = ({ children }) => {
         },
         {
           headers: {
-            "password-reset-token": passwordResetToken,
+            "X-PASSWORD-RESET-Token": passwordResetToken,
           },
         },
       );
-      dispatch(handleSetChangePassword());
+      await secureTokenStorage.remove(TOKEN_KEY.PASSWORD_RESET_TOKEN);
+      await secureTokenStorage.remove(TOKEN_KEY.OTP_TOKEN);
       navigate("/login-school-admin");
     } catch (e) {
       const errorMessage =
@@ -359,6 +390,75 @@ export const AuthProvider = ({ children }) => {
       setLoading((prevalue) => ({ ...prevalue, changeAuthPassword: false }));
     }
   };
+  const handleResendOtp = async (dispatch) => {
+    setLoading((prevalue) => ({ ...prevalue, resendLoginOtp: true }));
+    setAuthError((prevalue) => ({ ...prevalue, resendLoginOtp: null }));
+    const tokenHeader = await secureTokenStorage.get(TOKEN_KEY.OTP_TOKEN);
+    try {
+      await axios.post(
+        "auth/school-admin/resend-otp",
+        {},
+        {
+          headers: { "X-OTP-Token": tokenHeader },
+        },
+      );
+      if (dispatch) {
+        dispatch(
+          startOtpCooldown({
+            cooldownSeconds: 60,
+            context: "loginContext",
+          }),
+        );
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Login failed. Please try again.";
+
+      setAuthError((prevalue) => ({
+        ...prevalue,
+        resendLoginOtp: errorMessage,
+      }));
+    } finally {
+      setLoading((prevalue) => ({ ...prevalue, resendLoginOtp: false }));
+    }
+  };
+  const handleResendPasswordReseOtp = async (dispatch) => {
+    console.log("Resend Otp ran");
+    setLoading((prevalue) => ({ ...prevalue, resendPasswordResetOtp: true }));
+    setAuthError((prevalue) => ({ ...prevalue, resendPasswordResetOtp: null }));
+    const tokenHeader = await secureTokenStorage.get(TOKEN_KEY.OTP_TOKEN);
+    try {
+      await axios.post(
+        "auth/school-admin/resend-otp",
+        {},
+        {
+          headers: { "X-OTP-Token": tokenHeader },
+        },
+      );
+      if (dispatch) {
+        dispatch(
+          startOtpCooldown({
+            cooldownSeconds: 60,
+            context: "passwordResetContext",
+          }),
+        );
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Login failed. Please try again.";
+
+      setAuthError((prevalue) => ({
+        ...prevalue,
+        resendPasswordResetOtp: errorMessage,
+      }));
+    } finally {
+      setLoading((prevalue) => ({ ...prevalue, resendPasswordResetOtp: false }));
+    }
+  };
   const contextValue = React.useMemo(
     () => ({
       authError,
@@ -373,6 +473,8 @@ export const AuthProvider = ({ children }) => {
       handleChangePassword,
       handleChangePasswordAuthUser,
       getAuthenticatedUser,
+      handleResendOtp,
+      handleResendPasswordReseOtp
     }),
     [
       authError,
@@ -387,6 +489,8 @@ export const AuthProvider = ({ children }) => {
       handleChangePassword,
       handleChangePasswordAuthUser,
       getAuthenticatedUser,
+      handleResendOtp,
+      handleResendPasswordReseOtp
     ],
   );
 
