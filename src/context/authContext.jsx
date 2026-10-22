@@ -3,8 +3,8 @@ import React, { createContext, useCallback, useContext, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   handleSetAuthUser,
-  handleSetSubcription,
-  handleSetUserLogout,
+  resetAllState,
+  resetAuthState,
   setLoginContext,
   setPasswordResetContext,
   startOtpCooldown
@@ -93,8 +93,8 @@ export const AuthProvider = ({ children }) => {
   const handleTwoStepVerification = async (otp, navigate) => {
     setLoading((prevalue) => ({ ...prevalue, otp: true }));
     setAuthError((prevalue) => ({ ...prevalue, otp: null }));
-    const tokenHeader = await secureTokenStorage.get(TOKEN_KEY.OTP_TOKEN);
     try {
+      const tokenHeader = await secureTokenStorage.get(TOKEN_KEY.OTP_TOKEN);
       const response = await axios.post(
         "auth/school-admin/verify-otp",
         {
@@ -125,11 +125,13 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading((prevalue) => ({ ...prevalue, otp: false }));
     }
+  
   };
-  const handleAdminLogout = async (navigate, token) => {
+  const handleAdminLogout = async (navigate) => {
     setLoading((prevalue) => ({ ...prevalue, admin: true }));
     setAuthError((prevalue) => ({ ...prevalue, logout: null }));
     try {
+      const token = await secureTokenStorage.get(TOKEN_KEY.AUTH_TOKEN);
       await axios.post(
         "auth/school-admin/logout",
         {},
@@ -139,9 +141,10 @@ export const AuthProvider = ({ children }) => {
           },
         },
       );
-      dispatch(handleSetUserLogout());
-      await secureTokenStorage.remove(TOKEN_KEY.OTP_TOKEN);
-      await secureTokenStorage.remove(TOKEN_KEY.AUTH_TOKEN);
+      dispatch(resetAllState());
+      if(token) {
+        await secureTokenStorage.remove(TOKEN_KEY.OTP_TOKEN);
+      }
       navigate("/login-school-admin");
     } catch (error) {
       const errorMessage =
@@ -158,7 +161,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
   const getAuthenticatedUser = useCallback(
-    async (token) => {
+    async () => {
+       const token = await secureTokenStorage.get(TOKEN_KEY.AUTH_TOKEN);
       try {
         const response = await axios.get("auth/school-admin/me", {
           headers: {
@@ -167,8 +171,8 @@ export const AuthProvider = ({ children }) => {
         });
         dispatch(handleSetAuthUser({ user: response.data.data }));
       } catch (error) {
-        console.error("Error fetching authenticated user", error);
         handleAdminLogout();
+        navigate("/login-school-admin");
       }
     },
     [handleAdminLogout],
@@ -178,15 +182,15 @@ export const AuthProvider = ({ children }) => {
     subscriptionCredentials,
     handleCloseDrawer,
     handleCloseModal,
+    dispatch
   ) => {
     setLoading((prevalue) => ({ ...prevalue, subscribe: true }));
     setAuthError((prevalue) => ({ ...prevalue, subscribe: null }));
     try {
-      const response = await axios.post(
+      const response =  await axios.post(
         "school-subscription/subscribe",
         subscriptionCredentials,
       );
-      dispatch(handleSetSubcription({ apiKey: response.data.data.api_key }));
       navigate("/register/school-admin");
       if (handleCloseDrawer) {
         handleCloseDrawer();
@@ -194,6 +198,16 @@ export const AuthProvider = ({ children }) => {
       if (handleCloseModal) {
         handleCloseModal();
       }
+      if(dispatch){
+         dispatch(resetAuthState())
+      }
+      const responseData = response.data.data;
+      await secureTokenStorage.save(
+        TOKEN_KEY.AUTH_TOKEN,
+        responseData.authToken,
+      );
+      await getAuthenticatedUser(responseData.authToken);
+      navigate("/school-admins");
     } catch (e) {
       const errorMessage =
         e.response?.data?.message ||
@@ -206,38 +220,6 @@ export const AuthProvider = ({ children }) => {
       }));
     } finally {
       setLoading((prevState) => ({ ...prevState, subscribe: false }));
-    }
-  };
-  const handleCreateSuperAdmin = async (
-    navigate,
-    schoolAdminCredentials,
-    apiKey,
-  ) => {
-    setLoading((prevalue) => ({ ...prevalue, admin: true }));
-    setAuthError((prevalue) => ({ ...prevalue, admin: null }));
-    try {
-      await axios.post(
-        "auth/school-admin/register/super-admin",
-        schoolAdminCredentials,
-        {
-          headers: {
-            "API-KEY": apiKey,
-          },
-        },
-      );
-      navigate("/login-school-admin");
-    } catch (e) {
-      const errorMessage =
-        e.response?.data?.message ||
-        e.response?.data?.error ||
-        "Something went wrong trying to create admin";
-
-      setAuthError((prevState) => ({
-        ...prevState,
-        admin: errorMessage,
-      }));
-    } finally {
-      setLoading((prevState) => ({ ...prevState, admin: false }));
     }
   };
   const handlePasswordReset = async (navigate, email) => {
@@ -467,7 +449,6 @@ export const AuthProvider = ({ children }) => {
       handleLogin,
       handleAdminLogout,
       handleTwoStepVerification,
-      handleCreateSuperAdmin,
       handleSubscription,
       handleValidatePasswordResetOtp,
       handleChangePassword,
@@ -483,7 +464,6 @@ export const AuthProvider = ({ children }) => {
       handleLogin,
       handleAdminLogout,
       handleTwoStepVerification,
-      handleCreateSuperAdmin,
       handleSubscription,
       handleValidatePasswordResetOtp,
       handleChangePassword,

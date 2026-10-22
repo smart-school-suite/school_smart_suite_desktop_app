@@ -17,12 +17,12 @@ function SubscriptionPayment({
   currentStep,
   drawerData,
 }) {
-  const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
+    const schoolCredentials = useSelector((state) => state.auth.signUpForm);
   const {
     data: methods,
     isLoading,
     error,
-  } = useGetPaymentMethod(schoolCredentials?.country_id?.id);
+  } = useGetPaymentMethod(schoolCredentials?.countryId?.id);
   const [method, setMethod] = useState(null);
   const { plan } = drawerData;
   return (

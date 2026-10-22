@@ -1,15 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { addSeconds } from "date-fns";
+
 const initialState = {
   isAuthenticated: false,
   user: null,
-  token: null,
-  otpTokenHeader: null,
-  apiKey: null,
-  schoolId: null,
-  schoolBranchId: null,
-  passwordResetOtpToken: null,
-  passwordResetToken: null,
   loginContext: {
     email: "",
     cooldownExpiresAt: null,
@@ -18,29 +12,31 @@ const initialState = {
     email: "",
     cooldownExpiresAt: null,
   },
-  schoolAuthData: {
-    school_name: "",
-    country_id: "",
+  signUpForm: {
+    schoolName: "",
+    countryId: "",
     type: "",
-    school_branch_name: "",
+    schoolBranchName: "",
     abbreviation: "",
+    adminFullName: "",
+    adminFirstName: "",
+    adminLastName: "",
+    adminEmail: "",
+    adminPassword: ""
   },
-  schoolAuthError: {
-    school_name: {
-      isValid: null,
-    },
-    country_id: {
-      error: null,
-    },
-    type: {
-      error: null,
-    },
-    school_branch_name: {
-      isValid: null,
-    },
-    abbreviation: {
-      isValid: null,
-    },
+  signUpErrors: {
+    countryId: null,
+    type: null,
+  },
+  signUpFieldValidity: {
+    schoolName: null,
+    schoolBranchName: null,
+    abbreviation: null,
+    adminFullName: null,
+    adminFirstName: null,
+    adminLastName: null,
+    adminEmail: null,
+    adminPassword: null
   },
 };
 
@@ -65,87 +61,41 @@ const authSlice = createSlice({
       const { context } = action.payload;
       state[context].cooldownExpiresAt = null;
     },
-    handleSetUserLogin: (state, action) => {
-      state.otpTokenHeader = action.payload.otpTokenHeader;
-    },
-    handleSetTwoFA: (state, action) => {
-      state.token = action.payload.authToken;
-      state.apiKey = action.payload.apiKey;
-      state.authUser = true;
-      state.isAuthenticated = true;
-      state.otpTokenHeader = null;
-    },
     handleSetAuthUser: (state, action) => {
       state.user = action.payload.user;
+      state.isAuthenticated = Boolean(action.payload.user);
     },
-    handleSetUserLogout: (state) => {
-      state.user = null;
-      state.isAuthenticated = false;
-      state.token = null;
-      state.otpTokenHeader = null;
-      state.apiKey = null;
-    },
-    handleSetSchoolRegistration: (state, action) => {
-      state.schoolId = action.payload.schoolId;
-    },
-    handleSetSchoolBranchRegistration: (state, action) => {
-      state.schoolBranchId = action.payload.schoolBranchId;
-      state.schoolId = null;
-    },
-    handleSetSubcription: (state, action) => {
-      state.apiKey = action.payload.apiKey;
-      state.schoolBranchId = null;
-    },
-    handleSetCreateAdmin: (state) => {
-      state.apiKey = null;
-    },
-    handleSetPasswordReset: (state, action) => {
-      state.passwordResetOtpToken = action.payload.resetPasswordOtpToken;
-    },
-    handleSetValidatePasswordResetOtp: (state, action) => {
-      state.passwordResetOtpToken = null;
-      state.passwordResetToken = action.payload.passwordResetToken;
-    },
-    handleSetChangePassword: (state) => {
-      state.passwordResetToken = null;
-    },
-    setSchoolAuthData: (state, action) => {
+    updateSignUpFormField: (state, action) => {
       const { field, value } = action.payload;
-      state.schoolAuthData[field] = value;
+      state.signUpForm[field] = value;
     },
-    updateSchoolAuthError: (state, action) => {
-      const { field, isValid, error } = action.payload;
-
-      if (state.schoolAuthError.hasOwnProperty(field)) {
-        state.schoolAuthError[field].isValid = isValid;
-        state.schoolAuthError[field].error = error;
-      }
+    setSignUpFieldError: (state, action) => {
+      const { field, value } = action.payload;
+      state.signUpErrors[field] = value;
     },
-    resetSchoolAuthData: (state) => {
-      state.schoolAuthData = initialState.schoolAuthData;
-      state.schoolAuthError = initialState.schoolAuthError;
+    setSignUpFieldValidity: (state, action) => {
+      const { field, value } = action.payload;
+      state.signUpFieldValidity[field] = value;
     },
+    resetAuthState: (state) => {
+      state.isAuthenticated = initialState.isAuthenticated;
+      state.user = initialState.user;
+    },
+    resetAllState: () => initialState,
   },
 });
 
 export const {
-  handleSetAuthUser,
-  handleSetPasswordReset,
-  handleSetTwoFA,
-  handleSetUserLogin,
-  handleSetUserLogout,
-  handleSetSchoolBranchRegistration,
-  handleSetSchoolRegistration,
-  handleSetSubcription,
-  handleSetValidatePasswordResetOtp,
-  handleSetCreateAdmin,
-  handleSetChangePassword,
-  setSchoolAuthData,
-  resetSchoolAuthData,
-  updateSchoolAuthError,
   setLoginContext,
   startOtpCooldown,
   clearOtpCooldown,
-  setPasswordResetContext
+  setPasswordResetContext,
+  handleSetAuthUser,
+  updateSignUpFormField,
+  setSignUpFieldError,
+  setSignUpFieldValidity,
+  resetAuthState,
+  resetAllState,
 } = authSlice.actions;
+
 export default authSlice.reducer;

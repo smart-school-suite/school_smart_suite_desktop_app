@@ -35,14 +35,9 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import Table from "../../components/Tables/Tables";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
 import { useGetSchoolAcademicYears } from "../../hooks/academicYear/useGetSchoolAcademicYears";
-import {
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon
-} from "../../icons/ActionIcons";
+import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { AcademicYearIcon } from "../../icons/Icons";
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import { academicYearColDefs } from "../../utils/table/colDefs/academicYear/academicYearColDefs";
@@ -140,65 +135,97 @@ function AcademicYear() {
   return (
     <>
       <main className="main-container gap-2">
-        {isLoading ? (
-          <RectangleSkeleton width="100%" height="100%" speed={0.5} />
-        ) : error ? (
-          <NotFoundError
-            title={error?.response?.data?.errors?.title}
-            description={error?.response?.data?.errors?.description}
-          ></NotFoundError>
-        ) : (
-          <>
-            <div className="d-flex flex-column gap-3 h-100">
-              <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
-                <div className="d-flex align-items-center gap-2">
-                  <div
-                    className={`${
-                      darkMode ? "dark-mode-active" : "light-mode-active"
-                    } d-flex justify-content-center align-items-center`}
-                    style={{
-                      width: "2rem",
-                      height: "2rem",
-                      borderRadius: "0.5rem",
-                    }}
-                  >
-                    <AcademicYearIcon />
-                  </div>
-                  <span className="fw-semibold font-size-sm">
-                    Manage Academic Year
-                  </span>
-                </div>
-                <div className="d-flex flex-row align-item-center gap-2">
-                  <JobPopOver />
-                  <ModalButton
-                    classname={
-                      "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
-                    }
-                    style={{ padding: "0.6rem" }}
-                  >
-                    <span style={{ lineHeight: "16px" }}>Import</span>
-                    <ArrowDown size={16} />
-                  </ModalButton>
-                  <ModalButton
-                    classname={
-                      "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
-                    }
-                    style={{ padding: "0.6rem" }}
-                  >
-                    <span style={{ lineHeight: "16px" }}>Actions</span>
-                    <ChevronDown size={16} />
-                  </ModalButton>
-                  <DrawerTrigger
-                    title="Create Academic Year"
-                    placement="right"
-                    drawerChildren={CreateAcademicYear}
-                  >
-                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
-                      <span>Create Academic Year</span>
-                    </button>
-                  </DrawerTrigger>
-                </div>
+        <div className="d-flex flex-column gap-3 h-100">
+          {/* Always Visible Header / Navbar */}
+          <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
+            <div className="d-flex align-items-center gap-2">
+              <div
+                className={`${
+                  darkMode ? "dark-mode-active" : "light-mode-active"
+                } d-flex justify-content-center align-items-center`}
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  borderRadius: "0.5rem",
+                }}
+              >
+                <AcademicYearIcon />
               </div>
+              <span className="fw-semibold font-size-sm">
+                Manage Academic Year
+              </span>
+            </div>
+            <div className="d-flex flex-row align-item-center gap-2">
+              <JobPopOver />
+              <ModalButton
+                classname={
+                  "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
+                }
+                style={{ padding: "0.6rem" }}
+              >
+                <span style={{ lineHeight: "16px" }}>Import</span>
+                <ArrowDown size={16} />
+              </ModalButton>
+              <ModalButton
+                classname={
+                  "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
+                }
+                style={{ padding: "0.6rem" }}
+              >
+                <span style={{ lineHeight: "16px" }}>Actions</span>
+                <ChevronDown size={16} />
+              </ModalButton>
+              <DrawerTrigger
+                title="Create Academic Year"
+                placement="right"
+                drawerChildren={CreateAcademicYear}
+              >
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Create Academic Year</span>
+                </button>
+              </DrawerTrigger>
+            </div>
+          </div>
+
+          {/* Dynamic Content Body (Loading / Error / Data View) */}
+          {isLoading ? (
+            <div className="flex-grow-1 w-100">
+              <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+            </div>
+          ) : error ? (
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto">
+              <img
+                src="/sss-maskot/404.png"
+                alt="Error loading academic years"
+                style={{
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
+                }}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">
+                {error?.response?.data?.errors?.title ??
+                  "Unable to Load Academic Years"}
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                {error?.response?.data?.errors?.description ??
+                  "Something went wrong while fetching the academic year data. Please try again or create a new academic year."}
+              </p>
+              <div className="d-flex align-items-center gap-2">
+                <DrawerTrigger
+                  title="Create Academic Year"
+                  placement="right"
+                  drawerChildren={CreateAcademicYear}
+                >
+                  <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
+                    <span>Create Academic Year</span>
+                  </button>
+                </DrawerTrigger>
+              </div>
+            </div>
+          ) : (
+            <>
               <div className="d-flex flex-column gap-2">
                 <div className="d-flex flex-row align-items-center justify-content-between">
                   <div className="d-flex flex-row align-items-center gap-2">
@@ -227,7 +254,7 @@ function AcademicYear() {
                       </button>
                     </ModalButton>
                     <button
-                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                       style={{
                         fontSize: "0.7rem",
                         cursor: "pointer",
@@ -245,7 +272,7 @@ function AcademicYear() {
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
-                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
                       onClick={handleReset}
                       style={{ padding: "0.45rem" }}
                     >
@@ -313,6 +340,7 @@ function AcademicYear() {
                   </div>
                 </div>
               </div>
+
               <div className="h-100">
                 <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
                   <motion.div
@@ -381,10 +409,10 @@ function AcademicYear() {
                                     height={18}
                                   />
                                 </span>
-                                <span>Filter Teacher</span>
+                                <span>Filter Academic Year</span>
                               </div>
                               <span>
-                                {schoolAcademicYears?.data.length} items
+                                {schoolAcademicYears?.data?.length ?? 0} items
                               </span>
                             </div>
                           </div>
@@ -469,9 +497,9 @@ function AcademicYear() {
                   )}
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </main>
     </>
   );

@@ -11,13 +11,13 @@ import { NotFoundError } from "../../components/errors/Error";
 import { useGetSubscriptionPlans } from "../../hooks/subscription/useGetSubscriptionPlans";
 function SubcriptionPlan() {
   const navigate = useNavigate();
-  const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
+  const schoolCredentials = useSelector((state) => state.auth.signUpForm);
   const darkMode = useSelector((state) => state.theme.darkMode);
   const {
     data: data,
     isLoading,
     error,
-  } = useGetSubscriptionPlans(schoolCredentials.country_id.id);
+  } = useGetSubscriptionPlans(schoolCredentials?.countryId?.id);
   return (
     <>
       <div
@@ -172,10 +172,10 @@ function SubcriptionPlan() {
         <div className="mt-auto px-3">
           <button 
            className="border-none bg-none border-bottom font-size-sm d-flex flex-row align-items-center gap-1"
-           onClick={() => navigate("/create-schoolbranch")}
+           onClick={() => navigate("/register/school-admin")}
            >
             <ArrowLeft size={16}/>
-            <span>Back to Create Branch</span>
+            <span>Back to Create Admin</span>
           </button>
         </div>
       </div>

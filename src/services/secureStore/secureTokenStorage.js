@@ -6,10 +6,18 @@ export const secureTokenStorage = {
   },
 
   async get(tokenKey) {
-    return await getItem(tokenKey);
+    try {
+      return (await getItem(tokenKey)) ?? null;
+    } catch {
+      return null;
+    }
   },
 
   async remove(tokenKey) {
-    await deleteItem(tokenKey);
+    try {
+      await deleteItem(tokenKey);
+    } catch {
+      // Nothing to delete
+    }
   },
 };

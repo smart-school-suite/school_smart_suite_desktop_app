@@ -118,8 +118,20 @@ export const daysOfWeek = [
 ];
 
 export const schoolTypes = [
-  { id: 1, name: "Private" },
-  { id: 2, name: "Government" },
+  {
+    id: 1,
+    key: "private",
+    name: "Private",
+    description:
+      "A school owned and managed by an individual, church, or association rather than the government.",
+  },
+  {
+    id: 2,
+    key: "government",
+    name: "Government",
+    description:
+      "A school owned and funded by the State and managed by the government.",
+  },
 ];
 
 export const announcementStatus = [

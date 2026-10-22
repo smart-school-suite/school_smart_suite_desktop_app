@@ -1,6 +1,6 @@
+import { CircleX } from "lucide-react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useLogout } from "../../hooks/auth/useLogout";
-import { CircleX } from "lucide-react";
 function Logout({ handleClose }) {
   const { mutate:logout, isPending } = useLogout();
   const handleLogout = () => {

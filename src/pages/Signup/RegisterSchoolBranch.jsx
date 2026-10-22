@@ -2,19 +2,18 @@ import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import AuthHero from "../../components/Hero/AuthHero";
 import {
-  setSchoolAuthData,
-  updateSchoolAuthError,
+  setSignUpFieldValidity,
+  updateSignUpFormField,
 } from "../../Slices/Asynslices/AuthSlice";
 import { allFieldsValid } from "../../utils/functions";
-function RegisterSchoolBranch() {
-  const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
-  const schoolAuthError = useSelector((state) => state.auth.schoolAuthError);
-  const darkMode = useSelector((state) => state.theme.darkMode);
+function RegisterSchoolBranch() {  
+  const signUpForm = useSelector((state) => state.auth.signUpForm);
+  const signUpFieldValidity = useSelector((state) => state.auth.signUpFieldValidity);
   const [clientError, setClientError] = useState(null);
   const schoolBranchNameRef = useRef();
   const abbreviationRef = useRef();
@@ -39,8 +38,8 @@ function RegisterSchoolBranch() {
     }
     if (
       !allFieldsValid({
-        school_branch_name: schoolAuthError.school_branch_name.isValid,
-        abbreviation: schoolAuthError.abbreviation.isValid,
+        schoolBranchName: signUpFieldValidity.schoolBranchName,
+        abbreviation: signUpFieldValidity.abbreviation,
       })
     ) {
       setClientError(
@@ -48,19 +47,22 @@ function RegisterSchoolBranch() {
       );
       return;
     }
-    navigate("/subcription/plan");
+    navigate("/register/school-admin");
   };
-  const handleChange = (field, value) => {
-    dispatch(setSchoolAuthData({ field, value }));
+  const handleSetFormField = (field, value) => {
+    dispatch(updateSignUpFormField({ field, value }));
+      if (clientError !== null) {
+      setClientError(null);
+    }
   };
-  const handleSchoolAuthError = (field, isValid, error) => {
-    dispatch(updateSchoolAuthError({ field, isValid, error }));
+  const handleSetValidity = (field, value) => {
+    dispatch(setSignUpFieldValidity({ field, value }));
   };
-  const branchName = schoolCredentials.school_branch_name
-    ? schoolCredentials.school_branch_name.trim()
+  const branchName = signUpForm.schoolBranchName
+    ? signUpForm.schoolBranchName.trim()
     : "";
-  const abbreviation = schoolCredentials.abbreviation
-    ? schoolCredentials.abbreviation.trim()
+  const abbreviation = signUpForm.abbreviation
+    ? signUpForm.abbreviation.trim()
     : "";
   const totalSteps = 2;
   const fieldsFilled = [branchName, abbreviation].filter(Boolean).length;
@@ -75,7 +77,6 @@ function RegisterSchoolBranch() {
           style={{ height: "100dvh", width: "40%" }}
           className="p-3 font-size-sm d-flex flex-column justify-content-between bg-white"
         >
-          {/* Header Logo & Help */}
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="app-logo">
               <img
@@ -92,10 +93,8 @@ function RegisterSchoolBranch() {
             <span style={{ cursor: "pointer" }}>Need help ?</span>
           </div>
 
-          {/* Centered Main Content Area */}
           <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1">
             <div className="w-100">
-              {/* Title & Subtitle */}
               <div
                 className="d-flex flex-column gap-1"
                 style={{ marginBottom: "2rem" }}
@@ -114,11 +113,10 @@ function RegisterSchoolBranch() {
                 </div>
               )}
 
-              {/* Inputs Section */}
               <div className="d-flex flex-column gap-3">
                 <div className="d-flex flex-column gap-1">
                   <label
-                    htmlFor="school_branch_name"
+                    htmlFor="schoolBranchName"
                     className="font-size-sm fw-semibold"
                   >
                     School Branch Name
@@ -136,12 +134,12 @@ function RegisterSchoolBranch() {
                       },
                     })}
                     onChange={(value) =>
-                      handleChange("school_branch_name", value)
+                      handleSetFormField("schoolBranchName", value)
                     }
                     onValidationChange={(value) =>
-                      handleSchoolAuthError("school_branch_name", value, null)
+                      handleSetValidity("schoolBranchName", value)
                     }
-                    value={schoolCredentials.school_branch_name}
+                    value={signUpForm.schoolBranchName}
                     ref={schoolBranchNameRef}
                   />
                 </div>
@@ -165,11 +163,13 @@ function RegisterSchoolBranch() {
                         max: "School Branch Abbreviation Must Not Exceed 10 Characters",
                       },
                     })}
-                    onChange={(value) => handleChange("abbreviation", value)}
-                    onValidationChange={(value) =>
-                      handleSchoolAuthError("abbreviation", value, null)
+                    onChange={(value) =>
+                      handleSetFormField("abbreviation", value)
                     }
-                    value={schoolCredentials.abbreviation}
+                    onValidationChange={(value) =>
+                      handleSetValidity("abbreviation", value)
+                    }
+                    value={signUpForm.abbreviation}
                     ref={abbreviationRef}
                   />
                 </div>
@@ -177,7 +177,6 @@ function RegisterSchoolBranch() {
             </div>
           </div>
 
-          {/* Stepper & Action Controls Footer */}
           <div className="mt-auto w-100">
             <div className="mb-2">
               <div className="d-flex flex-row align-items-center gap-2">
@@ -241,16 +240,15 @@ function RegisterSchoolBranch() {
             </div>
 
             <div className="d-flex flex-row align-items-center w-100 justify-content-between mt-3 font-size-sm">
-              <div className="d-flex flex-row align-items-center gap-2">
-                <span>
-                  <Icon
-                    icon="material-symbols:arrow-back-rounded"
-                    className="color-primary"
-                  />
-                </span>
-                <Link className="p-0 m-0 color-primary" to="/register-school">
-                  Back
-                </Link>
+              <div
+                className="d-flex flex-row align-items-center gap-2 cursor-pointer"
+                onClick={() => navigate("/register-school")}
+              >
+                <Icon
+                  icon="material-symbols:arrow-back-rounded"
+                  className="color-primary"
+                />
+                <span>Back</span>
               </div>
               <div>
                 <button

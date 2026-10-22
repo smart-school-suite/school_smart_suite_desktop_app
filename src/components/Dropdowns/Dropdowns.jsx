@@ -1,4 +1,4 @@
- import {
+import {
   autoUpdate,
   flip,
   offset,
@@ -9,6 +9,7 @@ import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   forwardRef,
+  Fragment,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -16,12 +17,13 @@ import {
   useState,
 } from "react";
 import { useSelector } from "react-redux";
+import HorizontalDashedLine from "../DashedLine/HorizonetalDashedLine";
 import { SingleSpinner } from "../Spinners/Spinners";
 
 const CustomDropdown = forwardRef(
   (
     {
-      data,
+      data = [],
       displayKey,
       valueKey,
       onSelect,
@@ -36,7 +38,7 @@ const CustomDropdown = forwardRef(
       value = null,
       defaultValue = null,
     },
-    ref
+    ref,
   ) => {
     const [selectedItem, setSelectedItem] = useState(defaultValue ?? null);
     const [isToggled, setIsToggled] = useState(false);
@@ -76,11 +78,11 @@ const CustomDropdown = forwardRef(
     /** ========== Filter Logic ========== **/
     useEffect(() => {
       const timer = setTimeout(() => {
-        if (searchTerm) {
+        if (searchTerm && Array.isArray(data)) {
           const filtered = data.filter((item) =>
             item[displayKey[0]]
               ?.toLowerCase()
-              .includes(searchTerm.toLowerCase())
+              .includes(searchTerm.toLowerCase()),
           );
           setFilteredData(filtered);
         } else {
@@ -114,9 +116,9 @@ const CustomDropdown = forwardRef(
 
     /** ========== Highlight Selected Item When Dropdown Opens ========== **/
     useEffect(() => {
-      if (isToggled && selectedItem && filteredData.length > 0) {
+      if (isToggled && selectedItem && filteredData?.length > 0) {
         const index = filteredData.findIndex((item) =>
-          valueKey.every((key) => item[key] === selectedItem[key])
+          valueKey.every((key) => item[key] === selectedItem[key]),
         );
         setHighlightedIndex(index);
       } else {
@@ -165,7 +167,7 @@ const CustomDropdown = forwardRef(
           onSelect(selectedValues, item);
         }
       },
-      [onSelect, valueKey, onError]
+      [onSelect, valueKey, onError],
     );
 
     /** ========== Render ========== **/
@@ -177,7 +179,6 @@ const CustomDropdown = forwardRef(
             onClick={toggleDropdown}
             aria-haspopup="true"
             aria-expanded={isToggled}
-            
           >
             <div
               className={`${
@@ -190,10 +191,10 @@ const CustomDropdown = forwardRef(
                 error
                   ? "border-danger text-danger"
                   : selectedItem
-                  ? "border-success text-success"
-                  : ""
+                    ? "border-success text-success"
+                    : ""
               }`}
-              style={{ padding: "0.5rem" }}
+              style={{ padding: "0.4rem" }}
             >
               <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm text-capitalize">
                 {selectedItem ? selectedItem[displayKey[0]] : placeholder}
@@ -224,7 +225,7 @@ const CustomDropdown = forwardRef(
                 left: x ?? 0,
                 width: dropdownWidth,
                 zIndex: 9999,
-               
+                borderRadius: "0.8rem",
               }}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -235,13 +236,12 @@ const CustomDropdown = forwardRef(
               }}
               className={`${
                 darkMode ? "dark-bg dark-mode-border" : "bg-white border"
-              } 
-                d-flex flex-column p-2 rounded-3 shadow`}
+              } d-flex flex-column p-2  shadow`}
             >
               <input
                 ref={inputRef}
                 type="text"
-                className={`rounded-2 my-2 p-2 form-control font-size-sm ${
+                className={`rounded-2 mt-2 mb-3 p-2 form-control font-size-sm ${
                   darkMode ? "dark-mode-input" : ""
                 }`}
                 placeholder="Search for anything"
@@ -251,42 +251,98 @@ const CustomDropdown = forwardRef(
 
               <div className="scrollable-dropdown d-flex flex-column">
                 {isLoading ? (
-                  <SingleSpinner />
-                ) : filteredData.length > 0 ? (
+                  <div className="py-3 d-flex justify-content-center align-items-center">
+                    <SingleSpinner />
+                  </div>
+                ) : filteredData && filteredData.length > 0 ? (
                   filteredData.map((item, index) => {
                     const isSelected = selectedItem
-                      ? valueKey.every(
-                          (key) => item[key] === selectedItem[key]
-                        )
+                      ? valueKey.every((key) => item[key] === selectedItem[key])
                       : false;
                     return (
-                      <div
-                        key={index}
-                        className={`my-2 ms-1 dropdown-listitems p-2 font-size-md ${
-                          isSelected
-                            ? "primary-background-50 color-primary"
-                            : highlightedIndex === index
-                            ? "color-primary"
-                            : ""
-                        }`}
-                        onClick={() => handleSelect(item)}
-                        onMouseEnter={() => setHighlightedIndex(index)}
-                      >
-                        <div className="d-flex flex-column">
-                          <span className="my-0 font-size-sm">
-                            {item[displayKey[0]]}
-                          </span>
-                          {displayKey[1] && (
-                            <span className="my-0 font-size-sm gainsboro-color fw-light">
-                              {item[displayKey[1]]}
+                      <Fragment key={index}>
+                        <div
+                          className={`my-2 ms-1 me-2 dropdown-listitems p-2 font-size-md pointer-cursor rounded-2 ${
+                            isSelected
+                              ? "primary-background-50 color-primary"
+                              : highlightedIndex === index
+                                ? "color-primary"
+                                : ""
+                          }`}
+                          onClick={() => handleSelect(item)}
+                          onMouseEnter={() => setHighlightedIndex(index)}
+                        >
+                          <div className="d-flex flex-column">
+                            <span className="my-0 font-size-sm">
+                              {item[displayKey[0]]}
                             </span>
-                          )}
+                            {displayKey[1] && (
+                              <span className="my-0 font-size-sm gainsboro-color fw-light">
+                                {item[displayKey[1]]}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                       <div className="px-2">
+                         <HorizontalDashedLine
+                          thickness={0.3}
+                          color="#ccc"
+                          dashed={false}
+                        />
+                       </div>
+                      </Fragment>
                     );
                   })
                 ) : (
-                  <div className="no-results text-center">No results found</div>
+                  <div className="py-3">
+                    {searchTerm ? (
+                      /* Fallback 1: Active Search yields 0 results */
+                      <div className="d-flex flex-column align-items-center gap-2 text-center my-2 px-2">
+                        <img
+                          src="/sss-maskot/404.png"
+                          alt="No matching results found"
+                          style={{
+                            height: "90px",
+                            width: "90px",
+                            objectFit: "contain",
+                          }}
+                        />
+                        <span className="fw-semibold font-size-sm">
+                          No matching results found
+                        </span>
+                        <p className="text-muted font-size-sm mb-1">
+                          No items match &quot;{searchTerm}&quot;. Check for
+                          typos or try another search term.
+                        </p>
+                        <button
+                          type="button"
+                          className="btn btn-link btn-sm text-decoration-none p-0 font-size-sm"
+                          onClick={() => setSearchTerm("")}
+                        >
+                          Clear Search
+                        </button>
+                      </div>
+                    ) : (
+                      /* Fallback 2: No option data available in dropdown */
+                      <div className="d-flex flex-column align-items-center gap-2 text-center my-2 px-2">
+                        <img
+                          src="/sss-maskot/404.png"
+                          alt="No options available"
+                          style={{
+                            height: "90px",
+                            width: "90px",
+                            objectFit: "contain",
+                          }}
+                        />
+                        <span className="fw-semibold font-size-sm">
+                          No Options Available
+                        </span>
+                        <p className="text-muted font-size-sm mb-0">
+                          There are currently no options to display.
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </motion.div>
@@ -294,11 +350,10 @@ const CustomDropdown = forwardRef(
         </AnimatePresence>
       </div>
     );
-  }
+  },
 );
 
 export default CustomDropdown;
-
 
 export const MultiSelectDropdown = forwardRef(
   (
@@ -318,7 +373,7 @@ export const MultiSelectDropdown = forwardRef(
       value = null, // New prop for controlled value
       defaultValue = null, // New prop for uncontrolled default value
     },
-    ref
+    ref,
   ) => {
     const [selectedItems, setSelectedItems] = useState(defaultValue ?? []);
     const [isToggled, setIsToggled] = useState(false);
@@ -386,7 +441,9 @@ export const MultiSelectDropdown = forwardRef(
       const timer = setTimeout(() => {
         if (searchTerm) {
           const filtered = data.filter((item) =>
-            item[displayKey[0]]?.toLowerCase().includes(searchTerm.toLowerCase())
+            item[displayKey[0]]
+              ?.toLowerCase()
+              .includes(searchTerm.toLowerCase()),
           );
           setFilteredData(filtered);
         } else {
@@ -428,13 +485,13 @@ export const MultiSelectDropdown = forwardRef(
     const handleSelect = useCallback(
       (item) => {
         const isAlreadySelected = selectedItems.some(
-          (selected) => selected[valueKey[0]] === item[valueKey[0]]
+          (selected) => selected[valueKey[0]] === item[valueKey[0]],
         );
 
         let newSelectedItems;
         if (isAlreadySelected) {
           newSelectedItems = selectedItems.filter(
-            (selected) => selected[valueKey[0]] !== item[valueKey[0]]
+            (selected) => selected[valueKey[0]] !== item[valueKey[0]],
           );
         } else {
           newSelectedItems = [...selectedItems, item];
@@ -447,14 +504,14 @@ export const MultiSelectDropdown = forwardRef(
           valueKey.reduce((acc, key) => {
             acc[key] = selected[key];
             return acc;
-          }, {})
+          }, {}),
         );
 
         if (onSelect) {
           onSelect(selectedValues);
         }
       },
-      [onSelect, valueKey, onError, selectedItems]
+      [onSelect, valueKey, onError, selectedItems],
     );
 
     const handleSelectAll = useCallback(() => {
@@ -474,7 +531,7 @@ export const MultiSelectDropdown = forwardRef(
         valueKey.reduce((acc, key) => {
           acc[key] = selected[key];
           return acc;
-        }, {})
+        }, {}),
       );
 
       if (onSelect) {
@@ -553,8 +610,8 @@ export const MultiSelectDropdown = forwardRef(
                 error
                   ? "border-danger text-danger"
                   : selectedItems.length > 0
-                  ? "border-success text-success"
-                  : ""
+                    ? "border-success text-success"
+                    : ""
               }`}
               style={{ padding: "0.5rem" }}
             >
@@ -633,7 +690,8 @@ export const MultiSelectDropdown = forwardRef(
                     {filteredData.length > 0 ? (
                       filteredData.map((item, index) => {
                         const isSelected = selectedItems.some(
-                          (selected) => selected[valueKey[0]] === item[valueKey[0]]
+                          (selected) =>
+                            selected[valueKey[0]] === item[valueKey[0]],
                         );
                         return (
                           <div
@@ -642,8 +700,8 @@ export const MultiSelectDropdown = forwardRef(
                               isSelected
                                 ? "primary-background-50 color-primary"
                                 : highlightedIndex === index
-                                ? "color-primary"
-                                : ""
+                                  ? "color-primary"
+                                  : ""
                             }`}
                             onClick={() => handleSelect(item)}
                             onMouseEnter={() => setHighlightedIndex(index)}
@@ -682,5 +740,5 @@ export const MultiSelectDropdown = forwardRef(
         </AnimatePresence>
       </div>
     );
-  }
+  },
 );

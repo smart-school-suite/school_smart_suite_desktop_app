@@ -48,7 +48,6 @@ import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import {
@@ -154,77 +153,109 @@ function Specialties() {
   return (
     <>
       <main className="main-container gap-2">
-        {isLoading ? (
-          <RectangleSkeleton width="100%" height="100%" speed={1} />
-        ) : error ? (
-          <NotFoundError
-            title={error.response.data.errors.title}
-            description={error.response.data.errors.description}
-          ></NotFoundError>
-        ) : (
-          <>
-            <div className="d-flex flex-column gap-3 h-100">
-              <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
-                <div className="d-flex align-items-center gap-2">
-                  <div
-                    className={`${
-                      darkMode ? "dark-mode-active" : "light-mode-active"
-                    } d-flex justify-content-center align-items-center`}
-                    style={{
-                      width: "2rem",
-                      height: "2rem",
-                      borderRadius: "0.5rem",
-                    }}
-                  >
-                    <SpecialtyIcon />
-                  </div>
-                  <span className="fw-semibold font-size-sm">
-                    Manage Specialties
-                  </span>
-                </div>
-                <div className="d-flex flex-row align-item-center gap-2">
-                  <JobPopOver category={"Specialty"} />
-                  <ModalButton
-                    action={{ modalContent: ImportWizzard }}
-                    size={"xl"}
-                    rowData={{
-                      moduleState: "specialty",
-                      setImportStatus: setImportStatus,
-                      setImportReset: setImportReset,
-                      setImportSelectedFile: setImportSelectedFile,
-                      moduleColumns: SPECIALTY_COLUMNS,
-                      setColumnMapping: setColumnMapping,
-                      setStandardGroupValue: setStandardGroupValue,
-                      moduleInstanceMap: [],
-                      module: { name: "Specialty" },
-                      importModuleColDefs: specialtyImportColDefs,
-                    }}
-                    classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
-                    }
-                  >
-                    <span style={{ lineHeight: "16px" }}>Import</span>
-                    <ArrowDown size={16} />
-                  </ModalButton>
-                  <ModalButton
-                    classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
-                    }
-                  >
-                    <span style={{ lineHeight: "16px" }}>Actions</span>
-                    <ChevronDown size={16} />
-                  </ModalButton>
-                  <DrawerTrigger
-                    title="Create Specialty"
-                    placement="right"
-                    drawerChildren={CreateSpecialty}
-                  >
-                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
-                      <span>Create Specialty</span>
-                    </button>
-                  </DrawerTrigger>
-                </div>
+        <div className="d-flex flex-column gap-3 h-100">
+          {/* Always Visible Header / Navbar */}
+          <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
+            <div className="d-flex align-items-center gap-2">
+              <div
+                className={`${
+                  darkMode ? "dark-mode-active" : "light-mode-active"
+                } d-flex justify-content-center align-items-center`}
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  borderRadius: "0.5rem",
+                }}
+              >
+                <SpecialtyIcon />
               </div>
+              <span className="fw-semibold font-size-sm">
+                Manage Specialties
+              </span>
+            </div>
+            <div className="d-flex flex-row align-item-center gap-2">
+              <JobPopOver category={"Specialty"} />
+              <ModalButton
+                action={{ modalContent: ImportWizzard }}
+                size={"xl"}
+                rowData={{
+                  moduleState: "specialty",
+                  setImportStatus: setImportStatus,
+                  setImportReset: setImportReset,
+                  setImportSelectedFile: setImportSelectedFile,
+                  moduleColumns: SPECIALTY_COLUMNS,
+                  setColumnMapping: setColumnMapping,
+                  setStandardGroupValue: setStandardGroupValue,
+                  moduleInstanceMap: [],
+                  module: { name: "Specialty" },
+                  importModuleColDefs: specialtyImportColDefs,
+                }}
+                classname={
+                  "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+                }
+              >
+                <span style={{ lineHeight: "16px" }}>Import</span>
+                <ArrowDown size={16} />
+              </ModalButton>
+              <ModalButton
+                classname={
+                  "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+                }
+              >
+                <span style={{ lineHeight: "16px" }}>Actions</span>
+                <ChevronDown size={16} />
+              </ModalButton>
+              <DrawerTrigger
+                title="Create Specialty"
+                placement="right"
+                drawerChildren={CreateSpecialty}
+              >
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Create Specialty</span>
+                </button>
+              </DrawerTrigger>
+            </div>
+          </div>
+
+          {/* Dynamic Content Body (Loading / Error / Data View) */}
+          {isLoading ? (
+            <div className="flex-grow-1 w-100">
+              <RectangleSkeleton width="100%" height="100%" speed={1} />
+            </div>
+          ) : error ? (
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto">
+              <img
+                src="/sss-maskot/404.png"
+                alt="Error loading specialties"
+                style={{
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
+                }}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">
+                {error?.response?.data?.errors?.title ??
+                  "Unable to Load Specialties"}
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                {error?.response?.data?.errors?.description ??
+                  "Something went wrong while fetching the specialty data. Please try again or create a new specialty."}
+              </p>
+              <div className="d-flex align-items-center gap-2">
+                <DrawerTrigger
+                  title="Create Specialty"
+                  placement="right"
+                  drawerChildren={CreateSpecialty}
+                >
+                  <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
+                    <span>Create Specialty</span>
+                  </button>
+                </DrawerTrigger>
+              </div>
+            </div>
+          ) : (
+            <>
               <div className="d-flex flex-column gap-2">
                 <div className="d-flex flex-row align-items-center justify-content-between">
                   <div className="d-flex flex-row align-items-center gap-2">
@@ -253,7 +284,7 @@ function Specialties() {
                       </button>
                     </ModalButton>
                     <button
-                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                       style={{
                         fontSize: "0.7rem",
                         cursor: "pointer",
@@ -271,7 +302,7 @@ function Specialties() {
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
-                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
                       onClick={handleReset}
                       style={{ padding: "0.45rem" }}
                     >
@@ -339,6 +370,7 @@ function Specialties() {
                   </div>
                 </div>
               </div>
+
               <div className="h-100">
                 <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
                   <motion.div
@@ -432,7 +464,7 @@ function Specialties() {
                                 </span>
                                 <span>Filter Specialty</span>
                               </div>
-                              <span>{specialty?.data.length} items</span>
+                              <span>{specialty?.data?.length ?? 0} items</span>
                             </div>
                           </div>
                           <div
@@ -516,9 +548,9 @@ function Specialties() {
                   )}
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </main>
     </>
   );

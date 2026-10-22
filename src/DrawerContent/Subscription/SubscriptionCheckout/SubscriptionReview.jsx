@@ -1,8 +1,8 @@
 import { ArrowRight, Check, Dot, University } from "lucide-react";
-import { formatNumber } from "../../../utils/functions";
-import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { Fragment } from "react";
 import { useSelector } from "react-redux";
+import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
+import { formatNumber } from "../../../utils/functions";
 function SubscriptionReview({
   handleClose,
   nextStep,
@@ -11,7 +11,7 @@ function SubscriptionReview({
   currentStep,
   drawerData,
 }) {
-  const schoolCredentials = useSelector((state) => state.auth.schoolAuthData);
+  const schoolCredentials = useSelector((state) => state.auth.signUpForm);
   const { plan } = drawerData;
   return (
     <>
@@ -83,9 +83,9 @@ function SubscriptionReview({
                     {schoolCredentials?.school_name}
                   </span>
                   <div className="d-flex flex-row align-items-center gap-1 text-iron-400 fw-light">
-                    <span>{schoolCredentials?.type?.name}</span>
+                    <span>{schoolCredentials?.type}</span>
                     <Dot />
-                    <span>{schoolCredentials?.school_branch_name}</span>
+                    <span>{schoolCredentials?.schoolBranchName}</span>
                     <Dot />
                     <span>Yaounde</span>
                   </div>

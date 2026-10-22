@@ -1,19 +1,17 @@
-import { Icon } from "@iconify/react";
-import {
-  DateRangeInput,
-  NumberInput,
-} from "../../components/FormComponents/InputComponents";
-import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import { useGetCurrentSystemAcademicYear } from "../../hooks/academicYear/useGetCurrentSystemAcademicYear";
-import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
-import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import {
+  DateRangeInput
+} from "../../components/FormComponents/InputComponents";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { useCreateSchoolAcademicYear } from "../../hooks/academicYear/useCreateSchoolAcademicYear";
+import { useGetCurrentSystemAcademicYear } from "../../hooks/academicYear/useGetCurrentSystemAcademicYear";
+import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { allFieldsValid } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 function CreateAcademicYear({ handleClose }) {
   const dateRangeRef = useRef();
   const specialtyRef = useRef();
@@ -93,72 +91,76 @@ function CreateAcademicYear({ handleClose }) {
   return (
     <>
       <div className="drawer-content px-2">
-        <div>
-          <DateRangeInput
-            validationSchema={dateRangeValidationSchema({
-              futureOnly: true,
-              optional: false,
-            })}
-            onStartDateChange={(value) =>
-              handleStateChange("start_date", value, setFormData)
-            }
-            onEndDateChange={(value) =>
-              handleStateChange("end_date", value, setFormData)
-            }
-            onStartDateValidationChange={(value) =>
-              handleStateChange("start_date", value, setIsInvalid)
-            }
-            onEndDateValidationChange={(value) =>
-              handleStateChange("end_date", value, setIsInvalid)
-            }
-            ref={dateRangeRef}
-            startValue={formData.start_date}
-            endValue={formData.end_date}
-          />
-        </div>
-        <div>
-          <label htmlFor="specialty" className="font-size-sm">
-            Specialty
-          </label>
-          <CustomDropdown
-            data={specialties?.data || []}
-            displayKey={["specialty_name", "level_name"]}
-            valueKey={["id"]}
-            direction="up"
-            onSelect={(value) =>
-              handleStateChange("specialty_id", value, setFormData)
-            }
-            placeholder="Select Specialty"
-            error={errors.specialty_id}
-            isLoading={isSpecialtyLoading}
-            errorMessage="Specialty Required"
-            onError={(msg) => handleStateChange("specialty_id", msg, setErrors)}
-            ref={specialtyRef}
-            value={formData.specialty_id}
-          />
-        </div>
-        <div>
-          <label htmlFor="academicYear" className="font-size-sm">
-            Academic Year
-          </label>
-          <CustomDropdown
-            data={academicYears?.data || []}
-            displayKey={["name"]}
-            valueKey={["id"]}
-            direction="up"
-            onSelect={(value) =>
-              handleStateChange("system_academic_year_id", value, setFormData)
-            }
-            placeholder="Select Academic Year"
-            error={errors.system_academic_year_id}
-            isLoading={isAcademicYearLoading}
-            errorMessage="System Academic Year Required"
-            onError={(msg) =>
-              handleStateChange("system_academic_year_id", msg, setErrors)
-            }
-            ref={academicYearRef}
-            value={formData.system_academic_year_id}
-          />
+        <div className="d-flex flex-column gap-3">
+          <div>
+            <DateRangeInput
+              validationSchema={dateRangeValidationSchema({
+                futureOnly: true,
+                optional: false,
+              })}
+              onStartDateChange={(value) =>
+                handleStateChange("start_date", value, setFormData)
+              }
+              onEndDateChange={(value) =>
+                handleStateChange("end_date", value, setFormData)
+              }
+              onStartDateValidationChange={(value) =>
+                handleStateChange("start_date", value, setIsInvalid)
+              }
+              onEndDateValidationChange={(value) =>
+                handleStateChange("end_date", value, setIsInvalid)
+              }
+              ref={dateRangeRef}
+              startValue={formData.start_date}
+              endValue={formData.end_date}
+            />
+          </div>
+          <div>
+            <label htmlFor="specialty" className="font-size-sm">
+              Specialty
+            </label>
+            <CustomDropdown
+              data={specialties?.data || []}
+              displayKey={["specialty_name", "level_name"]}
+              valueKey={["id"]}
+              direction="up"
+              onSelect={(value) =>
+                handleStateChange("specialty_id", value, setFormData)
+              }
+              placeholder="Select Specialty"
+              error={errors.specialty_id}
+              isLoading={isSpecialtyLoading}
+              errorMessage="Specialty Required"
+              onError={(msg) =>
+                handleStateChange("specialty_id", msg, setErrors)
+              }
+              ref={specialtyRef}
+              value={formData.specialty_id}
+            />
+          </div>
+          <div>
+            <label htmlFor="academicYear" className="font-size-sm">
+              Academic Year
+            </label>
+            <CustomDropdown
+              data={academicYears?.data || []}
+              displayKey={["name"]}
+              valueKey={["id"]}
+              direction="up"
+              onSelect={(value) =>
+                handleStateChange("system_academic_year_id", value, setFormData)
+              }
+              placeholder="Select Academic Year"
+              error={errors.system_academic_year_id}
+              isLoading={isAcademicYearLoading}
+              errorMessage="System Academic Year Required"
+              onError={(msg) =>
+                handleStateChange("system_academic_year_id", msg, setErrors)
+              }
+              ref={academicYearRef}
+              value={formData.system_academic_year_id}
+            />
+          </div>
         </div>
       </div>
       <div className="drawer-footer font-size-sm">
@@ -176,7 +178,7 @@ function CreateAcademicYear({ handleClose }) {
               onClick={() => handleSubmit()}
               disabled={isPending}
             >
-              {isPending ? <SingleSpinner /> : "Create Course"}
+              {isPending ? <SingleSpinner /> : "Create Academic Year♠"}
             </button>
           </div>
         </div>
