@@ -4,12 +4,10 @@ import {
   Ban,
   MessageSquareCode,
   Play,
-  RotateCcw,
-  SquareText,
+  RotateCcw
 } from "lucide-react";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import PromotionDetails from "../../DrawerContent/PromotionRun/PromotionDetails";
 import PromotionRunLog from "../../DrawerContent/PromotionRun/PromotionRunLog";
 import TriggerPromotionRun from "../../DrawerContent/PromotionRun/TriggerPromotionRun";
 import Export from "../../ModalContent/Export/Export";
@@ -489,7 +487,7 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        <DropDownMenuItem
+        {/* <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -507,7 +505,7 @@ export function ActionComponent(props) {
               <SquareText size={16} strokeWidth={1.5} />
             </div>
           </div>
-        </DropDownMenuItem>
+        </DropDownMenuItem> */}
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"

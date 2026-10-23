@@ -1,18 +1,68 @@
+import {
+  autoUpdate,
+  flip,
+  offset,
+  shift,
+  useClick,
+  useDismiss,
+  useFloating,
+  useInteractions,
+  useRole,
+} from "@floating-ui/react";
 import { Icon } from "@iconify/react";
-import { useNavigate } from "react-router-dom";
-import { NavLink } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Activity,
+  Award,
+  BarChart2,
+  BookOpen,
+  BookOpenCheck,
+  Boxes,
+  Building2,
+  Calendar,
+  CalendarDays,
+  CircleDollarSign,
+  Clock,
+  Eye,
+  FileCheck2,
+  FileSpreadsheet,
+  GraduationCap,
+  LayoutDashboard,
+  LogOut,
+  Megaphone,
+  PanelLeftClose,
+  PlusCircle,
+  Receipt,
+  RotateCcw,
+  Settings,
+  ShieldCheck,
+  UserPlus,
+  UserRoundCog,
+  Users,
+  UserX,
+  Vote,
+  Wallet
+} from "lucide-react";
+import React, { useCallback, useState } from "react";
+import { useSelector } from "react-redux";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import useScreenSize from "../../hooks/ui/useScreenSize";
+import Logout from "../../ModalContent/Auth/Logout";
 import { IsPathInRoutes } from "../../utils/functions";
 import {
   academicRoutes,
+  activationCodeRoutes,
   additionalFeeRoutes,
   adminRoutes,
   announcementRoutes,
+  courseRoutes,
   dashboardRoutes,
   electionRoutes,
   eventRoutes,
   examRoutes,
   financialRoutes,
+  hallRoutes,
+  promotionRoutes,
   registrationFeeRoutes,
   resitFeeRoutes,
   resitRoutes,
@@ -20,64 +70,11 @@ import {
   schoolExpenseRoutes,
   settingRoutes,
   StudentRoutes,
-  tuitionFeeRoutes,
   teacherRoutes,
-  hallRoutes,
-  activationCodeRoutes,
-  courseRoutes,
-  promotionRoutes
+  tuitionFeeRoutes
 } from "../../utils/paths";
-import { ModalButton } from "../DataTableComponents/ActionComponent";
-import Logout from "../../ModalContent/Auth/Logout";
-import { useSelector } from "react-redux";
-import {
-  useFloating,
-  offset,
-  flip,
-  shift,
-  autoUpdate,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-} from "@floating-ui/react";
-import {
-  LayoutDashboard,
-  UserRoundCog,
-  BookOpenCheck,
-  FileSpreadsheet,
-  RotateCcw,
-  Users,
-  Activity,
-  Wallet,
-  UserPlus,
-  Settings,
-  LogOut,
-  UnfoldHorizontal,
-  PanelLeftClose,
-  ShieldCheck,
-  Building2,
-  Boxes,
-  GraduationCap,
-  Award,
-  Calendar,
-  BookOpen,
-  Clock,
-  FileCheck2,
-  BarChart2,
-  UserX,
-  Megaphone,
-  Vote,
-  CalendarDays,
-  Receipt,
-  CircleDollarSign,
-  PlusCircle,
-  Eye,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import React, { useState, useCallback } from "react";
-import useScreenSize from "../../hooks/ui/useScreenSize";
 import HorizontalDashedLine from "../DashedLine/HorizonetalDashedLine";
+import { ModalButton } from "../DataTableComponents/ActionComponent";
 function Sidebar() {
   const { is } = useScreenSize();
   return <>{is.sm || is.md ? <SideBarSm /> : <SideBarLg />}</>;
@@ -455,7 +452,7 @@ function SideBarLg() {
                           </div>
                         </div>
                       </div>
-                      <div
+                      {/* <div
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
                         <div className="subbox-nav">
@@ -470,7 +467,7 @@ function SideBarLg() {
                             <p style={{ fontSize: "0.75rem" }}>Time-table</p>
                           </NavLink>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -575,7 +572,7 @@ function SideBarLg() {
                           </NavLink>
                         </div>
                       </div>
-                      <div
+                      {/* <div
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
                         <div className="subbox-nav">
@@ -592,7 +589,7 @@ function SideBarLg() {
                             </p>
                           </NavLink>
                         </div>
-                      </div>
+                      </div> */}
                       <div
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
@@ -695,7 +692,7 @@ function SideBarLg() {
                           </NavLink>
                         </div>
                       </div>
-                      <div
+                      {/* <div
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
                         <div className="subbox-nav">
@@ -712,7 +709,7 @@ function SideBarLg() {
                             </p>
                           </NavLink>
                         </div>
-                      </div>
+                      </div> */}
                       <div
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
@@ -1378,11 +1375,11 @@ export const sideBarData = [
         icon: BookOpen,
         path: "/courses",
       },
-      {
-        title: "Timetable",
-        icon: Clock,
-        path: "/time-table",
-      },
+      // {
+      //   title: "Timetable",
+      //   icon: Clock,
+      //   path: "/time-table",
+      // },
       {
         title: "Academic Year",
         icon: CalendarDays,
@@ -1441,11 +1438,11 @@ export const sideBarData = [
         icon: FileSpreadsheet,
         path: "/resit-candidate",
       },
-      {
-        title: "Resit Timetable",
-        icon: Clock,
-        path: "/resit-timetable",
-      },
+      // {
+      //   title: "Resit Timetable",
+      //   icon: Clock,
+      //   path: "/resit-timetable",
+      // },
       {
         title: "Student Resit",
         icon: RotateCcw,

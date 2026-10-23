@@ -1,6 +1,6 @@
+import { useDispatch, useSelector } from "react-redux";
 import { MultiSelectAccordion } from "../../../../components/Accordion/MultiSelectAccordion";
 import { useGetSchoolAdminAudience } from "../../../../hooks/Audience/useGetSchoolAdminAudience";
-import { useDispatch, useSelector } from "react-redux";
 import { setTargetIndividuals } from "../../../../Slices/announcement/announcementSlice";
 function SchoolAdminTarget() {
   const dispatch = useDispatch();

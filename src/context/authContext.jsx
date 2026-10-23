@@ -191,7 +191,6 @@ export const AuthProvider = ({ children }) => {
         "school-subscription/subscribe",
         subscriptionCredentials,
       );
-      navigate("/register/school-admin");
       if (handleCloseDrawer) {
         handleCloseDrawer();
       }
@@ -221,6 +220,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading((prevState) => ({ ...prevState, subscribe: false }));
     }
+  
   };
   const handlePasswordReset = async (navigate, email) => {
     setLoading((prevalue) => ({ ...prevalue, passwordReset: true }));

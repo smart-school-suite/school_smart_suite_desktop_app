@@ -186,7 +186,7 @@ const CustomDropdown = forwardRef(
                   ? "dark-mode-text dark-mode-border dark-bg-light"
                   : "bg-white border"
               } 
-              d-flex flex-row justify-content-between rounded-2 pointer-cursor align-items-center
+              d-flex flex-row px-2 justify-content-between rounded-2 pointer-cursor align-items-center
               ${
                 error
                   ? "border-danger text-danger"
@@ -194,7 +194,7 @@ const CustomDropdown = forwardRef(
                     ? "border-success text-success"
                     : ""
               }`}
-              style={{ padding: "0.4rem" }}
+              style={{ height: 36 }}
             >
               <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm text-capitalize">
                 {selectedItem ? selectedItem[displayKey[0]] : placeholder}
@@ -285,7 +285,7 @@ const CustomDropdown = forwardRef(
                         </div>
                        <div className="px-2">
                          <HorizontalDashedLine
-                          thickness={0.3}
+                          thickness={0.2}
                           color="#ccc"
                           dashed={false}
                         />

@@ -1,17 +1,15 @@
-import ResitFeeSideBar from "../components/SideBars/ResitFeeSideBar";
-import { Outlet, useNavigate } from "react-router-dom";
-import { CourseIcon } from "../icons/Icons";
-import { useSelector } from "react-redux";
-import CourseSideBar from "../components/SideBars/CourseSideBar";
-import JobPopOver from "../components/Popover/JobPopover";
-import { motion, AnimatePresence } from "framer-motion";
-import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
-import DrawerTrigger from "../components/drawer/DrawerTrigger";
-import CreateCourse from "../DrawerContent/Course/CreateCourse";
-import { COURSE_IMPORT_TRIGGER_MAP } from "../utils/maps/course/courseImportTriggerMap";
+import { motion } from "framer-motion";
 import { useMemo } from "react";
+import { useSelector } from "react-redux";
+import { Outlet, useNavigate } from "react-router-dom";
+import { ModalButton } from "../components/DataTableComponents/ActionComponent";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import JobPopOver from "../components/Popover/JobPopover";
+import CreateCourse from "../DrawerContent/Course/CreateCourse";
 import CreateJointCourse from "../DrawerContent/JointCourse/CreateJointCourse";
+import { CourseIcon } from "../icons/Icons";
+import { COURSE_IMPORT_TRIGGER_MAP } from "../utils/maps/course/courseImportTriggerMap";
 function CourseLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
@@ -24,10 +22,10 @@ function CourseLayout() {
       title: "Joint Course",
       path: "/joint-course",
     },
-    {
-      title: "Joint Course Timetable",
-      path: "/joint-course-timetable",
-    },
+    // {
+    //   title: "Joint Course Timetable",
+    //   path: "/joint-course-timetable",
+    // },
   ];
   const ImportTrigger = useMemo(() => {
     const path = location.pathname;

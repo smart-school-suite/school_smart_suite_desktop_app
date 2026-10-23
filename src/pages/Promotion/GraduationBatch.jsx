@@ -1,9 +1,8 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { PenLine, SquareText } from "lucide-react";
+import { PenLine } from "lucide-react";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import GraduationBatchDetails from "../../DrawerContent/GraduationBatch/GraduationBatchDetails";
 import UpdateGraduationBatch from "../../DrawerContent/GraduationBatch/UpdateGraduationBatch";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
@@ -480,7 +479,7 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        <DropDownMenuItem
+        {/* <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -498,7 +497,7 @@ export function ActionComponent(props) {
               <SquareText size={16} strokeWidth={1.5} />
             </div>
           </div>
-        </DropDownMenuItem>
+        </DropDownMenuItem> */}
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}

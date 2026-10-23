@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { LayerArrowUp, MessageSquareCode, RotateCcw, SquareText } from "lucide-react";
+import { LayerArrowUp, MessageSquareCode, RotateCcw } from "lucide-react";
 import {
   Fragment,
   useCallback,
@@ -12,7 +12,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import ApprovePromotion from "../../DrawerContent/PromotionRecord/ApprovePromotion";
 import ApproveRepeat from "../../DrawerContent/PromotionRecord/ApproveRepeat";
-import PromotionRecordDetails from "../../DrawerContent/PromotionRecord/PromotionRecordDetails";
 import PromotionRecordLog from "../../DrawerContent/PromotionRecord/PromotionRecordLog";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
@@ -548,7 +547,7 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        <DropDownMenuItem
+        {/* <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -566,7 +565,7 @@ export function ActionComponent(props) {
               <SquareText size={16} strokeWidth={1.5} />
             </div>
           </div>
-        </DropDownMenuItem>
+        </DropDownMenuItem> */}
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}

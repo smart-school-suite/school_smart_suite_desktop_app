@@ -143,6 +143,7 @@ const rootReducer = combineReducers({
   resitExam: persistReducer({ key: "resitExam", storage }, resitExamReducer),
   examResult: persistReducer({ key: "examResult", storage }, examResultReducer),
   alumni: persistReducer({ key: "alumni", storage }, alumniReducer),
+  examResult: persistReducer({ key: "examResult", storage }, examResultReducer),
   graduationRecord: persistReducer(
     { key: "graduationRecord", storage },
     graduationRecordReducer,

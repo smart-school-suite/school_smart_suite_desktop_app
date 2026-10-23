@@ -1,7 +1,8 @@
-import { useGetEventCategoryDetails } from "../../hooks/eventCategory/useGetEventCategoryDetails";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { formatISODate } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import { NotFoundError } from "../../components/errors/Error";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { useGetEventCategoryDetails } from "../../hooks/eventCategory/useGetEventCategoryDetails";
+import { formatISODate } from "../../utils/functions";
 function CategoryDetails({ handleClose, drawerData }) {
   const { id: categoryId } = drawerData;
   const {

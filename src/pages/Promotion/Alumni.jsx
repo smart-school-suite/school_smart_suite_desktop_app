@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { PenLine, SquareText } from "lucide-react";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AlumnusDetails from "../../DrawerContent/Alumni/AlumnusDetails";
 import ReinstateAlumnus from "../../DrawerContent/Alumni/ReinstateAlumnus";
 import AddAdminNote from "../../ModalContent/Alumni/AddAdminNote";
 import Export from "../../ModalContent/Export/Export";
@@ -461,7 +460,7 @@ export function ActionComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        <DropDownMenuItem
+        {/* <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
@@ -479,7 +478,7 @@ export function ActionComponent(props) {
               <PenLine size={16} strokeWidth={1.5} />
             </div>
           </div>
-        </DropDownMenuItem>
+        </DropDownMenuItem> */}
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
