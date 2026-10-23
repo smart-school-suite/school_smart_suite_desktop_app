@@ -35,7 +35,7 @@
     "@tauri-apps/api": ">=2.0.0",
     "@tauri-apps/plugin-dialog": "^2.7.2",
     "@tauri-apps/plugin-fs": "^2.5.1",
-    "@tauri-apps/plugin-http": "^2.5.9",
+    "@tauri-apps/plugin-http": "^2.8.3",
     "@tauri-apps/plugin-notification": "^2.3.0",
     "@tauri-apps/plugin-shell": ">=2.0.0",
     "@tiptap/extension-color": "^2.27.3",

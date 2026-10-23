@@ -14,6 +14,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_secure_keystore::init())
+        .plugin(tauri_plugin_http::init())
         .setup(|app| {
             // Force DevTools to open automatically on startup
             if let Some(window) = app.get_webview_window("main") {
