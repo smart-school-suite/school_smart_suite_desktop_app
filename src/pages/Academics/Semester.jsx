@@ -26,7 +26,10 @@ import {
   setCustomFilter,
   toggleGeneralFilter,
 } from "../../Slices/academics/semesterSlice";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import CustomModal from "../../components/Modals/Modal";
 import JobPopOver from "../../components/Popover/JobPopover";
@@ -36,7 +39,6 @@ import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
 import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
@@ -133,65 +135,94 @@ function Semester() {
   return (
     <>
       <main className="main-container gap-2">
-        {isLoading ? (
-          <RectangleSkeleton width="100%" height="100%" speed={1} />
-        ) : error ? (
-          <NotFoundError
-            title={error.response.data.errors.title}
-            description={error.response.data.errors.description}
-          ></NotFoundError>
-        ) : (
-          <>
-            <div className="d-flex flex-column gap-3 h-100">
-              <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
-                <div className="d-flex align-items-center gap-2">
-                  <div
-                    className={`${
-                      darkMode ? "dark-mode-active" : "light-mode-active"
-                    } d-flex justify-content-center align-items-center`}
-                    style={{
-                      width: "2rem",
-                      height: "2rem",
-                      borderRadius: "0.5rem",
-                    }}
-                  >
-                    <SemesterIcon />
-                  </div>
-                  <span className="fw-semibold font-size-sm">
-                    Manage Semester
-                  </span>
-                </div>
-                <div className="d-flex flex-row align-item-center gap-2">
-                  <JobPopOver />
-                  <ModalButton
-                    classname={
-                      "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
-                    }
-                    style={{ padding: "0.6rem" }}
-                  >
-                    <span style={{ lineHeight: "16px" }}>Import</span>
-                    <ArrowDown size={16} />
-                  </ModalButton>
-                  <ModalButton
-                    classname={
-                      "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
-                    }
-                    style={{ padding: "0.6rem" }}
-                  >
-                    <span style={{ lineHeight: "16px" }}>Actions</span>
-                    <ChevronDown size={16} />
-                  </ModalButton>
-                  <DrawerTrigger
-                    title="Create Semester"
-                    placement="right"
-                    drawerChildren={CreateSemester}
-                  >
-                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
-                      <span>Create Semester</span>
-                    </button>
-                  </DrawerTrigger>
-                </div>
+        <div className="d-flex flex-column gap-3 h-100">
+          {/* Always Visible Header / Navbar */}
+          <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
+            <div className="d-flex align-items-center gap-2">
+              <div
+                className={`${
+                  darkMode ? "dark-mode-active" : "light-mode-active"
+                } d-flex justify-content-center align-items-center`}
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  borderRadius: "0.5rem",
+                }}
+              >
+                <SemesterIcon />
               </div>
+              <span className="fw-semibold font-size-sm">Manage Semester</span>
+            </div>
+            <div className="d-flex flex-row align-item-center gap-2">
+              <JobPopOver />
+              <ModalButton
+                classname={
+                  "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
+                }
+                style={{ padding: "0.6rem" }}
+              >
+                <span style={{ lineHeight: "16px" }}>Import</span>
+                <ArrowDown size={16} />
+              </ModalButton>
+              <ModalButton
+                classname={
+                  "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
+                }
+                style={{ padding: "0.6rem" }}
+              >
+                <span style={{ lineHeight: "16px" }}>Actions</span>
+                <ChevronDown size={16} />
+              </ModalButton>
+              <DrawerTrigger
+                title="Create Semester"
+                placement="right"
+                drawerChildren={CreateSemester}
+              >
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <span>Create Semester</span>
+                </button>
+              </DrawerTrigger>
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="flex-grow-1 w-100">
+              <RectangleSkeleton width="100%" height="100%" speed={1} />
+            </div>
+          ) : error ? (
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto">
+              <img
+                src="/sss-maskot/404.png"
+                alt="Error loading semesters"
+                style={{
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
+                }}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">
+                {error?.response?.data?.errors?.title ??
+                  "Unable to Load Semesters"}
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                {error?.response?.data?.errors?.description ??
+                  "Something went wrong while fetching the semester data. Please try again or create a new semester."}
+              </p>
+              <div className="d-flex align-items-center gap-2">
+                <DrawerTrigger
+                  title="Create Semester"
+                  placement="right"
+                  drawerChildren={CreateSemester}
+                >
+                  <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
+                    <span>Create Semester</span>
+                  </button>
+                </DrawerTrigger>
+              </div>
+            </div>
+          ) : (
+            <>
               <div className="d-flex flex-column gap-2">
                 <div className="d-flex flex-row align-items-center justify-content-between">
                   <div className="d-flex flex-row align-items-center gap-2">
@@ -220,7 +251,7 @@ function Semester() {
                       </button>
                     </ModalButton>
                     <button
-                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                       style={{
                         fontSize: "0.7rem",
                         cursor: "pointer",
@@ -238,7 +269,7 @@ function Semester() {
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
-                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
                       onClick={handleReset}
                       style={{ padding: "0.45rem" }}
                     >
@@ -263,11 +294,11 @@ function Semester() {
                 <div className="d-flex flex-row justify-content-between align-items-center">
                   <div className="w-50">
                     <SearchInput
-                    placeholder={"Search Semester......"}
-                    value={searchText}
-                    onChange={(val) => handleSearch(val)}
-                    hotkey="Ctrl+K"
-                  />
+                      placeholder={"Search Semester......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
@@ -306,6 +337,7 @@ function Semester() {
                   </div>
                 </div>
               </div>
+
               <div className="h-100">
                 <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
                   <motion.div
@@ -373,7 +405,7 @@ function Semester() {
                           >
                             <div className="d-flex flex-row align-items-center justify-content-between">
                               <span>
-                                Build a custom view of your teacher data.
+                                Build a custom view of your semester data.
                               </span>
                               <button
                                 className="border-none bg-transparent"
@@ -395,9 +427,11 @@ function Semester() {
                                     height={18}
                                   />
                                 </span>
-                                <span>Filter Teacher</span>
+                                <span>Filter Semester</span>
                               </div>
-                              <span>{schoolSemesters?.data.length} items</span>
+                              <span>
+                                {schoolSemesters?.data?.length ?? 0} items
+                              </span>
                             </div>
                           </div>
                           <div
@@ -481,9 +515,9 @@ function Semester() {
                   )}
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </main>
     </>
   );

@@ -136,7 +136,6 @@ function AcademicYear() {
     <>
       <main className="main-container gap-2">
         <div className="d-flex flex-column gap-3 h-100">
-          {/* Always Visible Header / Navbar */}
           <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
             <div className="d-flex align-items-center gap-2">
               <div
@@ -187,7 +186,6 @@ function AcademicYear() {
             </div>
           </div>
 
-          {/* Dynamic Content Body (Loading / Error / Data View) */}
           {isLoading ? (
             <div className="flex-grow-1 w-100">
               <RectangleSkeleton width="100%" height="100%" speed={0.5} />

@@ -1,19 +1,18 @@
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
-import { useGetSchoolBranchDetails } from "../../hooks/schoolBranch/useGetSchoolBranchDetail";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import UpdateSchoolBranchName from "../../ModalContent/SchoolBranch/UpdateBranchName";
-import UpdateSchoolBranchAbbreviation from "../../ModalContent/SchoolBranch/UpdateBranchAbbrevaition";
-import UpdateSchoolBranchAddress from "../../ModalContent/SchoolBranch/UpdateBranchAddress";
-import UpdateSchoolBranchState from "../../ModalContent/SchoolBranch/UpdateBranchState";
-import UpdateSchoolBranchEmail from "../../ModalContent/SchoolBranch/UpdateBranchEmail";
-import UpdateSchoolBranchContactTwo from "../../ModalContent/SchoolBranch/UpdateBranchContactTwo";
-import UpdateSchoolBranchContactOne from "../../ModalContent/SchoolBranch/UpdateBranchContactOne";
-import UpdateSchoolBranchWebsite from "../../ModalContent/SchoolBranch/UpdateBranchWebsite";
-import UpdateSchoolBranchCity from "../../ModalContent/SchoolBranch/UpdateBranchCity";
-import UpdateBranchPostalCode from "../../ModalContent/SchoolBranch/UpdateBranchPostalCode";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { useGetSchoolBranchDetails } from "../../hooks/schoolBranch/useGetSchoolBranchDetail";
+import UpdateSchoolBranchAbbreviation from "../../ModalContent/SchoolBranch/UpdateBranchAbbrevaition";
+import UpdateSchoolBranchAddress from "../../ModalContent/SchoolBranch/UpdateBranchAddress";
+import UpdateSchoolBranchCity from "../../ModalContent/SchoolBranch/UpdateBranchCity";
+import UpdateSchoolBranchContactOne from "../../ModalContent/SchoolBranch/UpdateBranchContactOne";
+import UpdateSchoolBranchContactTwo from "../../ModalContent/SchoolBranch/UpdateBranchContactTwo";
+import UpdateSchoolBranchEmail from "../../ModalContent/SchoolBranch/UpdateBranchEmail";
+import UpdateBranchPostalCode from "../../ModalContent/SchoolBranch/UpdateBranchPostalCode";
+import UpdateSchoolBranchState from "../../ModalContent/SchoolBranch/UpdateBranchState";
+import UpdateSchoolBranchWebsite from "../../ModalContent/SchoolBranch/UpdateBranchWebsite";
 function SchoolBranch() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const { data: schoolBranch, isLoading, error } = useGetSchoolBranchDetails();
@@ -50,22 +49,6 @@ function SchoolBranch() {
                 } card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1`}
                 style={{ fontSize: "0.87rem" }}
               >
-                <ModalButton
-                  classname={`${
-                    darkMode ? "gainsboro-color" : null
-                  } w-100 d-flex flex-row align-items-center justify-content-between w-100 remove-button-style`}
-                  action={{ modalContent: UpdateSchoolBranchName }}
-                >
-                  <div className="d-flex flex-column text-start">
-                    <span className="fw-semibold">School Branch Name</span>
-                    <span className="gainsboro-color fw-light">
-                      {schoolBranch.data.name}
-                    </span>
-                  </div>
-                  <div>
-                    <Icon icon="iconamoon:edit-thin" width="24" height="24" />
-                  </div>
-                </ModalButton>
                 <hr />
                 <div>
                   <ModalButton

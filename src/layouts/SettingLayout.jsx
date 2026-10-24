@@ -1,8 +1,8 @@
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import SettingSideBar from "../components/SideBars/SetttingSideBar";
 import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
+import { Plus } from "lucide-react";
 import { useSelector } from "react-redux";
-import { motion, AnimatePresence } from "framer-motion";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 function SetttingLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const location = useLocation();
@@ -24,11 +24,6 @@ function SetttingLayout() {
       path: "/settings/profile",
     },
     {
-      id: 4,
-      title: "Security",
-      path: "/settings/security",
-    },
-    {
       id: 5,
       title: "School",
       path: "/settings/school",
@@ -37,11 +32,6 @@ function SetttingLayout() {
       id: 6,
       title: "Subscriptions",
       path: "/settings/subscription",
-    },
-    {
-      id: 7,
-      title: "School Branch",
-      path: "/settings/school-branch",
     },
     {
       id: 8,
@@ -53,12 +43,12 @@ function SetttingLayout() {
     <>
       <main className="main-container gap-2">
         <div className="card rounded-3 border border-none d-flex flex-column gap-1 pb-2" style={{ borderRadius:"0.75rem" }}>
-          <div className="p-2">
+          <div className="p-2 d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex flex-row align-items-center gap-2">
               <div
                 style={{
-                  width: "2rem",
-                  height: "2rem",
+                  width: "2.5rem",
+                  height: "2.5rem",
                   borderRadius: "0.5rem",
                 }}
                 className={`${darkMode ? "dark-mode-active" : "light-mode-active"} d-flex flex-row align-items-center justify-content-center`}
@@ -73,6 +63,12 @@ function SetttingLayout() {
                 </span>
               </div>
             </div>
+            <button className="rounded-3 border-none p-2 font-size-sm border-none bg-primary-500 text-white d-flex flex-row align-items-center gap-2">
+              <span>
+                 <Plus size={16}/>
+              </span>
+              <span>Create Branch</span>
+            </button>
           </div>
           <hr />
           <div className="d-flex flex-row align-items-center gap-4 font-size-sm px-2">

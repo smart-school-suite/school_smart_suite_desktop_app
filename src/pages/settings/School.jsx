@@ -33,14 +33,6 @@ function School() {
           ></NotFoundError>
         ) : (
           <div className="d-flex flex-column justify-content-start gap-2 w-100">
-            <div className="w-100 d-flex flex-row align-items-center justify-content-end">
-              <button className="border-none p-3 rounded-3 font-size-sm d-flex flex-row gap-3 primary-background-100 color-primary">
-                <span className="m-0">
-                  <Icon icon="lucide:plus" width="20" height="20" />
-                </span>
-                <span className="m-0">Create New School Branch</span>
-              </button>
-            </div>
             <div>
               <span
                 className="my-1 fw-semibold"

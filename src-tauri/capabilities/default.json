@@ -13,6 +13,14 @@
     "dialog:allow-save",
     "fs:default",
     "fs:allow-write-file",
-    "secure-keystore:default"
+    "secure-keystore:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        { "url": "https://api.smartschoolsuite.com/**" },
+        { "url": "http://localhost:*" },
+        { "url": "http://127.0.0.1:*" }
+      ]
+    }
   ]
 }

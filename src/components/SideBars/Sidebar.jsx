@@ -22,7 +22,6 @@ import {
   Calendar,
   CalendarDays,
   CircleDollarSign,
-  Clock,
   Eye,
   FileCheck2,
   FileSpreadsheet,
@@ -91,10 +90,10 @@ function SideBarSm() {
           darkMode ? "dark-mode" : "white-bg"
         } py-2 h-100 align-items-center`}
       >
-        <div className="d-flex flex-column gap-5">
+        <div className="d-flex flex-column gap-4">
           <div className="app-logo">
             <img
-              src="./logo/logo-transparent.png"
+              src="/logo/logo-transparent.png"
               style={{
                 width: "2rem",
                 height: "2rem",
@@ -152,14 +151,14 @@ function SideBarLg() {
               <div className="d-flex flex-row align-items-center gap-2">
                 <div className="app-logo">
                   <img
-                    src="./logo/logo-transparent.png"
+                    src="/logo/logo-transparent.png"
                     alt=""
                     className="app-logo"
                   />
                 </div>
               </div>
               <button className="border-none bg-none mb-1">
-                <PanelLeftClose size={16} className="text-iron-500" />
+                <PanelLeftClose size={16} className="text-iron-500" strokeWidth={1.5} />
               </button>
             </div>
           </div>
@@ -199,7 +198,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <UserRoundCog size={16} />
+                        <UserRoundCog size={16} strokeWidth={1.5} />
                       </span>
                       <p style={{ fontSize: "0.75rem" }}>Administrator</p>
                     </div>
@@ -335,7 +334,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <BookOpenCheck size={16} />
+                        <BookOpenCheck size={16} strokeWidth={1.5} />
                       </span>
                       <p style={{ fontSize: "0.75rem" }}>Academics</p>
                     </div>
@@ -491,7 +490,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <FileSpreadsheet size={16} />
+                        <FileSpreadsheet size={16}  strokeWidth={1.5}/>
                       </span>
                       <p style={{ fontSize: "0.75rem" }}>Manage Exams</p>
                     </div>
@@ -629,7 +628,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <RotateCcw size={16} />
+                        <RotateCcw size={16} strokeWidth={1.5}/>
                       </span>
                       <p style={{ fontSize: "0.75rem" }}>Manage Resit</p>
                     </div>
@@ -783,7 +782,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Users size={16} />
+                        <Users size={16} strokeWidth={1.5} />
                       </span>
                       <p style={{ fontSize: "0.75rem" }}>Manage Students</p>
                     </div>
@@ -901,7 +900,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Activity size={16} />
+                        <Activity size={16} strokeWidth={1.5}/>
                       </span>
                       <p style={{ fontSize: "0.75rem" }}>School Activities</p>
                     </div>
@@ -1009,7 +1008,7 @@ function SideBarLg() {
                   >
                     <div className="nav-item w-100 d-flex flex-row gap-2">
                       <span style={{ lineHeight: 0 }}>
-                        <Wallet size={16} />
+                        <Wallet size={16} strokeWidth={1.5} />
                       </span>
                       <p style={{ fontSize: "0.75rem" }}>Finances</p>
                     </div>
@@ -1152,7 +1151,7 @@ function SideBarLg() {
                 >
                   <div className="nav-item font-size-sm w-100 d-flex flex-row gap-2">
                     <span style={{ lineHeight: 0 }}>
-                      <UserPlus size={16} />
+                      <UserPlus size={16} strokeWidth={1.5} />
                     </span>
                     <span style={{ fontSize: "0.75rem" }}>
                       Account Activation
@@ -1168,16 +1167,16 @@ function SideBarLg() {
               <div
                 className={`${
                   IsPathInRoutes(settingRoutes)
-                    ? `${darkMode ? "sidebar-active-dark" : "sidebar-active"}`
+                    ? `${darkMode ? "sidebar-active-dark" : "sidebar-active  text-primary-500"}`
                     : ""
-                } sidebar-item  text-dark`}
+                } sidebar-item`}
                 onClick={() => {
                   navigate("/settings/general-settings");
                 }}
               >
                 <span style={{ fontSize: "0.75rem" }}>Setting</span>
                 <span style={{ lineHeight: 0 }}>
-                  <Settings size={16} />
+                  <Settings size={16} strokeWidth={1.5} />
                 </span>
               </div>
               <div className="w-100">
@@ -1187,7 +1186,7 @@ function SideBarLg() {
                 >
                   <span style={{ fontSize: "0.75rem" }}>Logout</span>
                   <span style={{ lineHeight: 0 }}>
-                    <LogOut size={16} />
+                    <LogOut size={16} strokeWidth={1.5} />
                   </span>
                 </ModalButton>
               </div>
@@ -1409,11 +1408,11 @@ export const sideBarData = [
          icon: Eye,
          path:"/exam-invigilator"
       },
-      {
-        title: "Exam Timetable",
-        icon: Clock,
-        path: "/exam-timetable",
-      },
+      // {
+      //   title: "Exam Timetable",
+      //   icon: Clock,
+      //   path: "/exam-timetable",
+      // },
       {
         title: "Exam Results",
         icon: BarChart2,

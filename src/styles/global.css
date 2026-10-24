@@ -554,12 +554,12 @@ aside {
 }
 
 .top-section {
-  background: linear-gradient(-225deg, #5d9fff 0%, #b8dcff 48%, #6bbbff 100%);
-  height: 40%;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 60%, #bae6fd 100%);
+  height: 60%;
 }
 
 .profile-section {
-  height: 48dvh;
+  min-height: 36dvh;
 }
 
 .profile-img {
@@ -577,7 +577,7 @@ aside {
 }
 
 .profile-picture-group {
-  bottom: -5rem;
+  bottom: -3rem;
   position: relative;
 }
 
