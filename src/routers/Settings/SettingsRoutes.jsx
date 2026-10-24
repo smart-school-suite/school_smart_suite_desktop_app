@@ -1,10 +1,9 @@
 import React, { Suspense } from "react";
 import { Route } from "react-router-dom";
-const Generalsettings = React.lazy(() =>  import("../../pages/settings/Generalsettings"));
 import SetttingLayout from "../../layouts/SettingLayout";
+const Generalsettings = React.lazy(() =>  import("../../pages/settings/Generalsettings"));
 const Display = React.lazy(() => import("../../pages/settings/Display"));
 const Profile = React.lazy(() => import("../../pages/settings/Profile"));
-const Security = React.lazy(() => import("../../pages/settings/Security"));
 const School = React.lazy(() => import("../../pages/settings/School"));
 const SchoolBranch = React.lazy(() => import("../../pages/settings/SchoolBranch"))
 const AppSettings = React.lazy(() => import("../../pages/settings/AppSettings"));
@@ -31,11 +30,6 @@ const SettingsRoutes =  [
       <Profile />
     </Suspense>
   }/>,
-  <Route key={"securiy"} path="/settings/security" element={
-    <Suspense>
-      <Security />
-    </Suspense>
-  }></Route>,
   <Route key={"schoolBranch"}  path="/settings/school-branch" element={
     <Suspense>
       <SchoolBranch />
