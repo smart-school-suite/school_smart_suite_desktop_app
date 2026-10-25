@@ -17,7 +17,7 @@ function AppSettings() {
     <>
       <main
         className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-1 gap-2"
-        style={{ maxHeight: "84dvh" }}
+        style={{ maxHeight: "84dvh", paddingBottom:"10rem" }}
       >
           {isLoading ? (
             [...Array(6)].map((_, index) => (
@@ -33,15 +33,14 @@ function AppSettings() {
             ></NotFoundError>
           ) : (
             schoolBranchSetting.data.map((category) => (
-              <div key={category.category_id} className="d-flex flex-column gap-2">
-                <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
+              <div key={category.category_id} className="d-flex flex-column gap-1 font-size-sm">
+                <span className="fw-semibold">
                   {category.category_name}
                 </span>
                 <div
                   className={`${
                     darkMode ? "dark-bg gainsboro-color" : "white-bg"
-                  } card border w-100 d-flex flex-column rounded-4 gap-2`}
-                  style={{ fontSize: "0.87rem", padding:"0.75rem" }}
+                  } card border w-100 d-flex flex-column rounded-4 gap-2 p-3 font-size-sm`}
                 >
                   {category.setting.map((setting, index) => {
                     const settingType = setting.data_type;
@@ -56,7 +55,7 @@ function AppSettings() {
                         <div className="d-flex flex-row align-items-center justify-content-between">
                           <div className="d-flex flex-column gap-2">
                             <span className="fw-semibold font-size-sm">{setting.name}</span>
-                            <span className="w-75 font-size-sm">
+                            <span className="w-75 font-size-sm text-iron-500">
                               {setting.data_type == "boolean" ||
                               setting.data_type == "json"
                                 ? setting.description
@@ -90,7 +89,7 @@ function AppSettings() {
                         >
                           <div className="d-flex flex-column text-start">
                             <span className="fw-semibold">{setting.name}</span>
-                            <span className="w-75 font-size-sm">
+                            <span className="w-75 text-iron-500">
                               {setting.data_type == "boolean" ||
                               setting.data_type == "json"
                                 ? setting.description

@@ -37,8 +37,9 @@ function AnnouncementReview({
       published_at: moduleState?.publication?.schedule?.value,
       category_id: content?.category?.value?.id,
       label_id: content?.label?.value?.id,
-      tag_ids: content?.tags?.value?.map((t) => ({ tag_id: t.id })),
-      school_wide: moduleState?.audience?.types.includes("school_wide"),
+      tag_ids: content?.tags?.value?.map((t) => ({ tag_id: t?.id })),
+      school_wide:
+        moduleState?.audience?.types?.includes("school_wide") ?? false,
       admin_audience: [
         {
           individual_ids:
@@ -50,11 +51,17 @@ function AnnouncementReview({
           individual_ids:
             moduleState?.audience?.targeting?.students?.individualIds,
           department_ids:
-            moduleState?.audience?.targeting?.students?.criteria.departmentIds,
+            moduleState?.audience?.targeting?.students?.criteria?.departmentIds?.map(
+              (d) => d?.id,
+            ),
           specialty_ids:
-            moduleState?.audience?.targeting?.students?.criteria.specialtyIds,
+            moduleState?.audience?.targeting?.students?.criteria?.specialtyIds?.map(
+              (s) => s?.id,
+            ),
           level_ids:
-            moduleState?.audience?.targeting?.students?.criteria.levelIds,
+            moduleState?.audience?.targeting?.students?.criteria?.levelIds?.map(
+              (l) => l?.id,
+            ),
         },
       ],
       teacher_audience: [
@@ -62,11 +69,17 @@ function AnnouncementReview({
           individual_ids:
             moduleState?.audience?.targeting?.teachers?.individualIds,
           department_ids:
-            moduleState?.audience?.targeting?.teachers?.criteria.departmentIds,
+            moduleState?.audience?.targeting?.teachers?.criteria?.departmentIds?.map(
+              (d) => d?.id,
+            ),
           specialty_ids:
-            moduleState?.audience?.targeting?.teachers?.criteria.specialtyIds,
+            moduleState?.audience?.targeting?.teachers?.criteria?.specialtyIds?.map(
+              (s) => s?.id,
+            ),
           level_ids:
-            moduleState?.audience?.targeting?.teachers?.criteria.levelIds,
+            moduleState?.audience?.targeting?.teachers?.criteria?.levelIds?.map(
+              (l) => l?.id,
+            ),
         },
       ],
     };
