@@ -1,6 +1,6 @@
-import React, { useEffect, useId, useRef, useState } from "react";
+import { formatForDisplay, useHotkey } from "@tanstack/react-hotkeys";
 import { Search, X } from "lucide-react";
-import { useHotkey, formatForDisplay } from "@tanstack/react-hotkeys";
+import { useEffect, useId, useRef, useState } from "react";
 
 /**
  * SearchInput

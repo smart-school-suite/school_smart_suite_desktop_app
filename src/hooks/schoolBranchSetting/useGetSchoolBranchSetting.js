@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSchoolBranchSetting } from "../../services/schoolBranchSetting";
+import { getSettings } from "../../services/schoolBranchSetting";
 
 export const useGetSchoolBranchSetting = () => {
      return useQuery({
-         queryKey:["schoolBranchSettings"],
-         queryFn:() => getSchoolBranchSetting()
+         queryKey:["settings"],
+         queryFn:() => getSettings()
      })
 }

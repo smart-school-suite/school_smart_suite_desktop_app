@@ -1,22 +1,14 @@
-import { Fragment, useEffect } from "react";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { PenLine, Plus, Dot, Scale } from "lucide-react";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import { useDispatch, useSelector } from "react-redux";
 import {
-  updatedGradeContext,
-  setGradeScaleLoadData,
-} from "../../Slices/academics/gradeScaleSlice";
-import {
-  RESIT,
-  RESIT_META,
   RESIT_LABEL,
   RESULT,
-  RESULT_LABEL,
-  RESULT_META,
-  EXAM_TYPE,
+  RESULT_LABEL
 } from "@/constants";
+import { Dot, Scale } from "lucide-react";
+import { Fragment } from "react";
+import { useDispatch } from "react-redux";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 import { useGetGradeScaleCategoryId } from "../../hooks/gradeScale/useGetGradeScaleCategoryId";
 
 function GradeScale({ drawerData, handleClose }) {

@@ -26,7 +26,6 @@ import {
   FileCheck2,
   FileSpreadsheet,
   GraduationCap,
-  LayoutDashboard,
   LogOut,
   Megaphone,
   PanelLeftClose,
@@ -90,26 +89,26 @@ function SideBarSm() {
           darkMode ? "dark-mode" : "white-bg"
         } py-2 h-100 align-items-center`}
       >
-        <div className="d-flex flex-column gap-4">
-          <div className="app-logo">
+        <div className="d-flex flex-column gap-2">
+          <div className="app-logo d-flex flex-row align-items-center justify-content-center">
             <img
               src="/logo/logo-transparent.png"
               style={{
-                width: "2rem",
-                height: "2rem",
+                width: "1.4rem",
+                height: "1.4rem",
                 objectFit: "contain",
                 borderRadius: "0.4rem",
               }}
             />
           </div>
-          <div className="d-flex flex-column gap-3">
+          <div className="d-flex flex-column gap-2">
             {sideBarData.map((items, index) => (
               <SideBarSmTab items={items} key={index} />
             ))}
           </div>
         </div>
         <div className="mt-auto">
-          <div className="d-flex flex-column gap-3">
+          <div className="d-flex flex-column gap-2">
             <div
               className={`sidebar-sm menu-tab  ${
                 IsPathInRoutes(settingRoutes) ? "active" : "inactive"
@@ -1316,13 +1315,13 @@ function SideBarSmTab({ items }) {
 }
 
 export const sideBarData = [
-  {
-    title: "Dashboard",
-    icon: LayoutDashboard,
-    menu: false,
-    path: "/",
-    key: "dashboard",
-  },
+  // {
+  //   title: "Dashboard",
+  //   icon: LayoutDashboard,
+  //   menu: false,
+  //   path: "/",
+  //   key: "dashboard",
+  // },
   {
     title: "Administrator",
     icon: ShieldCheck,

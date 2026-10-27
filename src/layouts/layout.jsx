@@ -1,14 +1,11 @@
-import Sidebar from "../components/SideBars/Sidebar";
-import { Outlet } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
-import { useSelector } from "react-redux";
-import { useEffect, useRef } from "react";
-import useScreenSize from "../hooks/ui/useScreenSize";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { useRef } from "react";
+import { Toaster } from "react-hot-toast";
+import { useSelector } from "react-redux";
+import { Outlet } from "react-router-dom";
+import Sidebar from "../components/SideBars/Sidebar";
 import useNetworkStatus from "../hooks/network/useNetworkStatus";
-import ToastDanger from "../components/Toast/ToastDanger";
-import ToastSuccess from "../components/Toast/ToastSuccess";
-import NetworkStatusToast from "../components/Network/NetworkStatusToast";
+import useScreenSize from "../hooks/ui/useScreenSize";
 const appWindow = getCurrentWindow();
 
 function Layout() {
@@ -22,10 +19,10 @@ function Layout() {
       
       <div className={`${darkMode && "dark-bg-light"}`}>
         <div className="d-flex flex-row w-100 gap-2 ">
-          <div style={{ width: is.md || is.sm ? "5%" : "15%" }}>
+          <div style={{ width: is.md || is.sm ? "4%" : "15%" }}>
             <Sidebar />
           </div>
-          <div style={{ width: is.md || is.sm ? "95%" : "85%" }}>
+          <div style={{ width: is.md || is.sm ? "96%" : "85%" }}>
             <main className={`${darkMode ? "text-white" : null} pt-1 w-100`}>
               <div className="pe-2">
                 <Outlet />
