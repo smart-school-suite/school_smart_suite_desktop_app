@@ -13,8 +13,7 @@ import {
 import { AnimatePresence } from "framer-motion";
 import { NotFoundError } from "../../../components/errors/Error";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { useState, useRef } from "react";
-import toast from "react-hot-toast";
+import { useEffect, useState, useRef } from "react";
 import {
   DateRangeInput,
   NumberInput,
@@ -23,14 +22,17 @@ import {
   dateRangeValidationSchema,
   numberSchema,
 } from "../../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid } from "../../../utils/functions";
-import ToastWarning from "../../../components/Toast/ToastWarning";
+import { allFieldsValid, parseServerError } from "../../../utils/functions";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import { useGetRelatedCaExam } from "../../../hooks/exam/useGetRelatedCaExam";
 import { format, parseISO } from "date-fns";
 import { getDayWindow } from "../../../utils/time/date";
 import { resetCreateExamState } from "../../../Slices/exam/examSlice";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { useUpdateExam } from "../../../hooks/exam/useUpdateExam";
+
+const formatDate = (date) =>
+  date ? format(parseISO(date), "MMM d, yyyy") : "N/A";
 function UpdateExam({
   handleClose,
   nextStep,
@@ -41,45 +43,122 @@ function UpdateExam({
 }) {
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.exam.createExam);
+  const dateRangeRef = useRef();
+  const maxScoreRef = useRef();
+  const errorBannerRef = useRef(null);
   const { mutate: updateExam, isPending } = useUpdateExam(
     handleClose,
-    drawerData.id,
+    drawerData?.id,
   );
-  const [formData, setFormData] = useState({
+  const [initialData] = useState(() => ({
     start_date: drawerData?.start_date || "",
     end_date: drawerData?.end_date || "",
     max_score: drawerData?.max_score || "",
-  });
+  }));
+  const [formData, setFormData] = useState(initialData);
   const [isInvalid, setIsInvalid] = useState({
     start_date: "",
     end_date: "",
     max_score: "",
   });
+  const [clientError, setClientError] = useState(null);
+  const [serverError, setServerError] = useState(null);
+
+  const examType = moduleState?.examType?.type;
+  const isSemesterExam = examType == "exam";
+  const relatedCaQuery = useGetRelatedCaExam(
+    moduleState?.academicYear?.id,
+    moduleState?.examType?.id,
+    { enabled: isSemesterExam },
+  );
+
+  useEffect(() => {
+    if ((clientError || serverError) && errorBannerRef.current) {
+      errorBannerRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [clientError, serverError]);
+
+  const clearBannerErrors = () => {
+    setClientError(null);
+    setServerError(null);
+  };
+
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearBannerErrors();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
+
+  const changedFields = Object.keys(formData).filter(
+    (field) => String(formData[field]) !== String(initialData[field]),
+  );
+  const datesChanged =
+    changedFields.includes("start_date") || changedFields.includes("end_date");
+
+  // Only validate what changed, so an exam whose dates are already in the past can still be edited
+  const handlePrevalidation = async () => {
+    const results = {};
+    if (datesChanged && dateRangeRef.current) {
+      results.startDate = await dateRangeRef.current.preValidateStart();
+      results.endDate = await dateRangeRef.current.preValidateEnd();
+    }
+    if (changedFields.includes("max_score") && maxScoreRef.current) {
+      results.maxScore = await maxScoreRef.current.triggerValidation();
+    }
+    return results;
+  };
+
   const handleSubmit = async () => {
-    if (!allFieldsValid(isInvalid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+    clearBannerErrors();
+
+    if (!moduleState?.examType?.id || !moduleState?.academicYear?.id) {
+      setClientError({
+        title: "Missing selection.",
+        messages: [
+          "Please go back and select both an exam type and an academic year.",
+        ],
+      });
       return;
     }
+
+    if (isSemesterExam && !relatedCaQuery.data?.data) {
+      setClientError({
+        title: "No related Continuous Assessment (CA) found.",
+        messages: [
+          "A semester exam needs a CA exam for the same semester and academic year.",
+        ],
+      });
+      return;
+    }
+
+    const prevalidation = await handlePrevalidation();
+    if (!allFieldsValid(prevalidation)) {
+      setClientError({
+        title: "Please correct the highlighted fields before updating the exam.",
+        messages: [],
+      });
+      return;
+    }
+
     const payload = {
-      ...formData,
+      ...Object.fromEntries(
+        changedFields.map((field) => [field, formData[field]]),
+      ),
       school_year_id: moduleState.academicYear.id,
       exam_type_id: moduleState.examType.id,
     };
-    updateExam({
-      examId: drawerData?.id,
-      updateData: payload,
-    });
+
+    updateExam(
+      { examId: drawerData?.id, updateData: payload },
+      {
+        onError: (error) =>
+          setServerError(parseServerError(error, "Failed To Update Exam")),
+      },
+    );
   };
+
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
@@ -103,6 +182,11 @@ function UpdateExam({
         </button>
       </div>
       <div className="drawer-content px-2 font-size-sm pt-2 pb-5">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={clientError || serverError}
+          onDismiss={clearBannerErrors}
+        />
         <div className="d-flex flex-column gap-4">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex flex-row align-items-center gap-2">
@@ -129,23 +213,24 @@ function UpdateExam({
               {`step ${currentStep} of ${fullStep} completed`}
             </span>
           </div>
-          {moduleState?.examType?.type == "ca" ? (
+          {examType == "ca" ? (
             <CreateCAExam
               handleStateChange={handleStateChange}
               formData={formData}
-              isInvalid={isInvalid}
               setFormData={setFormData}
               setIsInvalid={setIsInvalid}
-              moduleState={moduleState}
+              dateRangeRef={dateRangeRef}
+              maxScoreRef={maxScoreRef}
             />
-          ) : moduleState?.examType?.type == "exam" ? (
+          ) : isSemesterExam ? (
             <CreateSemesterExam
               handleStateChange={handleStateChange}
               formData={formData}
-              isInvalid={isInvalid}
               setFormData={setFormData}
               setIsInvalid={setIsInvalid}
-              moduleState={moduleState}
+              dateRangeRef={dateRangeRef}
+              maxScoreRef={maxScoreRef}
+              relatedCaQuery={relatedCaQuery}
             />
           ) : null}
         </div>
@@ -155,14 +240,22 @@ function UpdateExam({
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
             <button
+              type="button"
               className="border-none bg-none p-2"
               onClick={() => previousStep()}
+              disabled={isPending}
             >
               Back (select School Year)
             </button>
             <button
+              type="button"
               className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
-              onClick={() => handleSubmit()}
+              onClick={handleSubmit}
+              disabled={
+                isPending ||
+                (isSemesterExam &&
+                  (relatedCaQuery.isLoading || !!relatedCaQuery.error))
+              }
             >
               {isPending ? <SingleSpinner /> : "Update Exam"}
             </button>
@@ -179,6 +272,8 @@ function CreateCAExam({
   setFormData,
   setIsInvalid,
   formData,
+  dateRangeRef,
+  maxScoreRef,
 }) {
   return (
     <>
@@ -202,6 +297,7 @@ function CreateCAExam({
           }
           startValue={formData.start_date}
           endValue={formData.end_date}
+          ref={dateRangeRef}
         />
       </div>
       <div>
@@ -222,10 +318,11 @@ function CreateCAExam({
             integerOnly: false,
             messages: {
               min: "Exam Score Must Be Atleast 1",
-              max: "Exam Score Must Not Exceed 100",
+              max: "Exam Score Must Not Exceed 500",
             },
           })}
           value={formData.max_score}
+          ref={maxScoreRef}
         />
       </div>
     </>
@@ -237,16 +334,11 @@ function CreateSemesterExam({
   setFormData,
   setIsInvalid,
   formData,
-  moduleState,
+  dateRangeRef,
+  maxScoreRef,
+  relatedCaQuery,
 }) {
-  const {
-    data: relatedCa,
-    isLoading,
-    error,
-  } = useGetRelatedCaExam(
-    moduleState?.academicYear?.id,
-    moduleState?.examType?.id,
-  );
+  const { data: relatedCa, isLoading, error } = relatedCaQuery;
   return isLoading ? (
     <div className="d-flex flex-column gap-2">
       <RectangleSkeleton height="20dvh" width="100%" />
@@ -322,13 +414,9 @@ function CreateSemesterExam({
             <div>
               <div className="d-flex flex-row align-items-center gap-2 fw-medium">
                 <Calendar size={16} style={{ color: "#ccc" }} />
-                <span>
-                  {format(parseISO(relatedCa?.data?.start_date), "MMM d, yyyy")}
-                </span>
+                <span>{formatDate(relatedCa?.data?.start_date)}</span>
                 <ArrowRight size={16} style={{ color: "#ccc" }} />
-                <span>
-                  {format(parseISO(relatedCa?.data?.end_date), "MMM d, yyyy")}
-                </span>
+                <span>{formatDate(relatedCa?.data?.end_date)}</span>
               </div>
             </div>
           </div>
@@ -352,6 +440,7 @@ function CreateSemesterExam({
           }
           startValue={formData.start_date}
           endValue={formData.end_date}
+          ref={dateRangeRef}
         />
         <div>
           <label htmlFor="maxScore" className="font-size-sm">
@@ -371,10 +460,11 @@ function CreateSemesterExam({
               integerOnly: false,
               messages: {
                 min: "Exam Max Score Must Be Atleast 1",
-                max: "Exam Max Score Must Not Exceed 100",
+                max: "Exam Max Score Must Not Exceed 500",
               },
             })}
             value={formData.max_score}
+            ref={maxScoreRef}
           />
         </div>
         {formData.max_score && (

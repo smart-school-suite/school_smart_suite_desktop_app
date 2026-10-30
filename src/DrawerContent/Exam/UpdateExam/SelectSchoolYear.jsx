@@ -8,7 +8,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import {
   setCreateExamValue,
   resetCreateExamState,
@@ -20,6 +21,9 @@ import { NotFoundError } from "../../../components/errors/Error";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { format, parseISO } from "date-fns";
 import { getTimeRemaining } from "../../../utils/time/date";
+
+const formatDate = (date) =>
+  date ? format(parseISO(date), "MMM d, yyyy") : "N/A";
 function SelectSchoolYear({
   handleClose,
   nextStep,
@@ -31,6 +35,26 @@ function SelectSchoolYear({
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.exam.createExam);
   const { data: academicYears, isLoading, error } = useGetSchoolAcademicYears();
+  const [stepError, setStepError] = useState(null);
+
+  const handleSelect = (academicYear) => {
+    setStepError(null);
+    dispatch(
+      setCreateExamValue({ value: academicYear, field: "academicYear" }),
+    );
+  };
+
+  const handleNext = () => {
+    if (!moduleState?.academicYear?.id) {
+      setStepError({
+        title: "No academic year selected.",
+        messages: ["Please select an academic year to continue."],
+      });
+      return;
+    }
+    nextStep();
+  };
+
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
@@ -54,6 +78,10 @@ function SelectSchoolYear({
         </button>
       </div>
       <div className="drawer-content px-2 font-size-sm pt-2 pb-5">
+        <FormErrorBanner
+          error={stepError}
+          onDismiss={() => setStepError(null)}
+        />
         <div className="d-flex flex-column gap-4">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex flex-row align-items-center gap-2">
@@ -104,8 +132,13 @@ function SelectSchoolYear({
                     description={error?.response?.data?.errors?.description}
                   ></NotFoundError>
                 </>
+              ) : !academicYears?.data?.length ? (
+                <div className="alert alert-warning font-size-sm m-0">
+                  No academic years are available. Please create an academic
+                  year first.
+                </div>
               ) : (
-                academicYears?.data?.map((academicYear) => (
+                academicYears.data.map((academicYear) => (
                   <Fragment key={academicYear.id}>
                     <motion.div
                       whileHover={{ scale: 1.01 }}
@@ -118,14 +151,7 @@ function SelectSchoolYear({
                       : "border-none border shadow-sm"
                   } `}
                       style={{ borderRadius: "0.85rem" }}
-                      onClick={() => {
-                        dispatch(
-                          setCreateExamValue({
-                            value: academicYear,
-                            field: "academicYear",
-                          }),
-                        );
-                      }}
+                      onClick={() => handleSelect(academicYear)}
                     >
                       <div className="d-flex flex-row align-items-center justify-content-between">
                         <div className="d-flex flex-row align-items-center gap-2">
@@ -224,19 +250,9 @@ function SelectSchoolYear({
                       />
                       <div className="d-flex flex-column">
                         <div className="d-flex flex-row gap-2 fw-medium">
-                          <span>
-                            {format(
-                              parseISO(academicYear?.start_date),
-                              "MMM d, yyyy",
-                            )}
-                          </span>
+                          <span>{formatDate(academicYear?.start_date)}</span>
                           <ArrowRight size={16} />
-                          <span>
-                            {format(
-                              parseISO(academicYear?.end_date),
-                              "MMM d, yyyy",
-                            )}
-                          </span>
+                          <span>{formatDate(academicYear?.end_date)}</span>
                         </div>
                         {academicYear.status == "upcoming" ? (
                           <span className="color-primary text-capitalize fw-medium">
@@ -245,19 +261,11 @@ function SelectSchoolYear({
                           </span>
                         ) : academicYear.status == "active" ? (
                           <span className="text-fern-500 text-capitalize fw-medium">
-                            Ends
-                            {format(
-                              parseISO(academicYear?.end_date),
-                              "MMM d, yyyy",
-                            )}
+                            Ends {formatDate(academicYear?.end_date)}
                           </span>
                         ) : (
                           <span className="color-primary text-capitalize fw-medium">
-                            Ended
-                            {format(
-                              parseISO(academicYear?.end_date),
-                              "MMM d, yyyy",
-                            )}
+                            Ended {formatDate(academicYear?.end_date)}
                           </span>
                         )}
                       </div>
@@ -274,19 +282,20 @@ function SelectSchoolYear({
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
             <button
+              type="button"
               className="border-none bg-none p-2"
               onClick={() => previousStep()}
             >
               Back (select exam type)
             </button>
-            {moduleState.academicYear && (
-              <button
-                className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
-                onClick={() => nextStep()}
-              >
-                Next
-              </button>
-            )}
+            <button
+              type="button"
+              className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
+              onClick={handleNext}
+              disabled={isLoading || !!error}
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

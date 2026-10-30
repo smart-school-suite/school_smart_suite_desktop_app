@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Dot, X, BookOpenCheck, CircleCheck } from "lucide-react";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { Fragment, useEffect } from "react";
+import { Fragment, useState } from "react";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import { useGetExamTypes } from "../../../ModalContent/ExamType/useGetExamType";
 import { motion, AnimatePresence } from "framer-motion";
 import { NotFoundError } from "../../../components/errors/Error";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
-import { useGetExamDetails } from "../../../hooks/exam/useGetExamDetails";
 import {
   setCreateExamValue,
   resetCreateExamState,
@@ -17,36 +17,31 @@ function SelectExamType({
   nextStep,
   fullStep,
   currentStep,
-  drawerData,
 }) {
   const dispatch = useDispatch();
-  const examId = drawerData?.id;
-
-  const { data: examDetails, isLoading: isExamLoading } =
-    useGetExamDetails(examId);
   const { data: examTypes, isLoading, error } = useGetExamTypes();
   const moduleState = useSelector((state) => state.exam.createExam);
+  const [stepError, setStepError] = useState(null);
 
-  useEffect(() => {
-    if (!isExamLoading && examDetails?.data) {
-      if (examDetails.data.exam_type) {
-        dispatch(
-          setCreateExamValue({
-            field: "examType",
-            value: examDetails.data.exam_type,
-          }),
-        );
-      }
-      if (examDetails.data.school_year) {
-        dispatch(
-          setCreateExamValue({
-            field: "academicYear",
-            value: examDetails.data.school_year,
-          }),
-        );
-      }
+  const selectableExamTypes =
+    examTypes?.data?.filter((t) => t.type !== "resit") ?? [];
+
+  const handleSelect = (examType) => {
+    setStepError(null);
+    dispatch(setCreateExamValue({ value: examType, field: "examType" }));
+  };
+
+  const handleNext = () => {
+    if (!moduleState?.examType?.id) {
+      setStepError({
+        title: "No exam type selected.",
+        messages: ["Please select an exam type to continue."],
+      });
+      return;
     }
-  }, [dispatch, isExamLoading, examDetails, examId]);
+    nextStep();
+  };
+
 
   return (
     <>
@@ -71,7 +66,7 @@ function SelectExamType({
         </button>
       </div>
       <div className="drawer-content px-2 font-size-sm pt-2 pb-5">
-        {isLoading || isExamLoading ? (
+        {isLoading ? (
           <div className="d-flex flex-column gap-2 px-2">
             {[...Array(8)].map((_, index) => (
               <Fragment key={index}>
@@ -93,11 +88,19 @@ function SelectExamType({
                 {`step ${currentStep} of ${fullStep} completed`}
               </span>
             </div>
+            <FormErrorBanner
+              error={stepError}
+              onDismiss={() => setStepError(null)}
+              className="mb-2"
+            />
             <span className="fw-medium">Select Exam Type</span>
+            {selectableExamTypes.length === 0 && (
+              <div className="alert alert-warning font-size-sm m-0">
+                No exam types are available. Please create an exam type first.
+              </div>
+            )}
             <div className="d-flex flex-column gap-3">
-              {examTypes?.data
-                ?.filter((t) => t.type !== "resit")
-                .map((examType) => (
+              {selectableExamTypes.map((examType) => (
                   <Fragment key={examType.id}>
                     <motion.div
                       whileHover={{ scale: 1.01 }}
@@ -109,14 +112,7 @@ function SelectExamType({
                           : "border-none border shadow-sm"
                       }`}
                       style={{ borderRadius: "0.8rem", gap: "2rem" }}
-                      onClick={() => {
-                        dispatch(
-                          setCreateExamValue({
-                            value: examType,
-                            field: "examType",
-                          }),
-                        );
-                      }}
+                      onClick={() => handleSelect(examType)}
                     >
                       <div className="d-flex flex-row align-items-center justify-content-between">
                         <div className="d-flex flex-row align-items-center gap-2">
@@ -128,16 +124,16 @@ function SelectExamType({
                           </div>
                           <div className="d-flex flex-column">
                             <span className="fw-semibold">
-                              {drawerData?.exam_name}
+                              {examType.exam_name}
                             </span>
                             <div className="d-flex flex-row align-items-center gap-1 text-capitalize">
-                              <span>{drawerData?.specialty_name}</span>
+                              <small className="text-muted">
+                                {examType.semester} Semester
+                              </small>
                               <Dot size={16} />
-                              <span>{drawerData?.level_name}</span>
-                              <Dot size={16} />
-                              <span>{drawerData?.max_score}</span>
-                              <Dot size={16} />
-                              <span>{drawerData?.school_year}</span>
+                              <small className="text-muted">
+                                {examType.type}
+                              </small>
                             </div>
                           </div>
                         </div>
@@ -174,6 +170,7 @@ function SelectExamType({
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
             <button
+              type="button"
               className="border-none bg-none p-2"
               onClick={() => {
                 handleClose();
@@ -182,14 +179,14 @@ function SelectExamType({
             >
               cancel
             </button>
-            {moduleState?.examType && (
-              <button
-                className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
-                onClick={() => nextStep()}
-              >
-                Next
-              </button>
-            )}
+            <button
+              type="button"
+              className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
+              onClick={handleNext}
+              disabled={isLoading || !!error}
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>
