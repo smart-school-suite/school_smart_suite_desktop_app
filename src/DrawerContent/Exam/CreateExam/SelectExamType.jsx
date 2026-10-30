@@ -5,7 +5,8 @@ import { Dot, CircleCheck, X, BookOpenCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NotFoundError } from "../../../components/errors/Error";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import {
   setCreateExamValue,
   resetCreateExamState,
@@ -14,6 +15,27 @@ function SelectExamType({ handleClose, nextStep, fullStep, currentStep }) {
   const dispatch = useDispatch();
   const { data: examTypes, isLoading, error } = useGetExamTypes();
   const moduleState = useSelector((state) => state.exam.createExam);
+  const [stepError, setStepError] = useState(null);
+
+  const selectableExamTypes =
+    examTypes?.data?.filter((t) => t.type !== "resit") ?? [];
+
+  const handleSelect = (examType) => {
+    setStepError(null);
+    dispatch(setCreateExamValue({ value: examType, field: "examType" }));
+  };
+
+  const handleNext = () => {
+    if (!moduleState?.examType?.id) {
+      setStepError({
+        title: "No exam type selected.",
+        messages: ["Please select an exam type to continue."],
+      });
+      return;
+    }
+    nextStep();
+  };
+
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
@@ -59,9 +81,19 @@ function SelectExamType({ handleClose, nextStep, fullStep, currentStep }) {
                 {`step ${currentStep} of ${fullStep} completed`}
               </span>
             </div>
+            <FormErrorBanner
+              error={stepError}
+              onDismiss={() => setStepError(null)}
+              className="mb-2"
+            />
             <span className="fw-medium">Select Exam Type</span>
+            {selectableExamTypes.length === 0 && (
+              <div className="alert alert-warning font-size-sm m-0">
+                No exam types are available. Please create an exam type first.
+              </div>
+            )}
             <div className="d-flex flex-column gap-3">
-              {examTypes?.data?.filter((t) => t.type !== "resit").map((examType) => (
+              {selectableExamTypes.map((examType) => (
                 <Fragment key={examType.id}>
                   <motion.div
                     whileHover={{ scale: 1.01 }}
@@ -74,14 +106,7 @@ function SelectExamType({ handleClose, nextStep, fullStep, currentStep }) {
                       : "border-none border shadow-sm"
                   } `}
                     style={{ borderRadius: "0.8rem", gap: "2rem" }}
-                    onClick={() => {
-                      dispatch(
-                        setCreateExamValue({
-                          value: examType,
-                          field: "examType",
-                        }),
-                      );
-                    }}
+                    onClick={() => handleSelect(examType)}
                   >
                     <div className="d-flex flex-row align-items-center justify-content-between">
                       <div className="d-flex flex-row align-items-center gap-2">
@@ -138,6 +163,7 @@ function SelectExamType({ handleClose, nextStep, fullStep, currentStep }) {
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
             <button
+              type="button"
               className="border-none bg-none p-2"
               onClick={() => {
                 handleClose();
@@ -146,14 +172,14 @@ function SelectExamType({ handleClose, nextStep, fullStep, currentStep }) {
             >
               cancel
             </button>
-            {moduleState.examType && (
-              <button
-                className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
-                onClick={() => nextStep()}
-              >
-                Next
-              </button>
-            )}
+            <button
+              type="button"
+              className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
+              onClick={handleNext}
+              disabled={isLoading || !!error}
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>
