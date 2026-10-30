@@ -1,9 +1,19 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ChevronDown } from "lucide-react";
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
@@ -131,346 +141,364 @@ function ResitExam() {
   return (
     <>
       <main className="main-container gap-2">
-        <div className="d-flex flex-column gap-3 h-100">
-          <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
-            <div className="d-flex align-items-center gap-2">
-              <div
-                className={`${
-                  darkMode ? "dark-mode-active" : "light-mode-active"
-                } d-flex justify-content-center align-items-center`}
-                style={{
-                  width: "2rem",
-                  height: "2rem",
-                  borderRadius: "0.5rem",
-                }}
-              >
-                <ExamIcon />
-              </div>
-              <span className="fw-semibold font-size-sm">Manage Resit Exams</span>
-            </div>
-            <div className="d-flex flex-row align-item-center gap-2">
-              <JobPopOver category={"Exam"} />
-              <ModalButton>
-                <button
-                  className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg gap-2"
-                  style={{ padding: "0.65rem" }}
-                >
-                  <span style={{ lineHeight: "16px" }}>Import</span>
-                  <ArrowDown size={16} />
-                </button>
-              </ModalButton>
-              <ModalButton>
-                <button
-                  className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg gap-2"
-                  style={{ padding: "0.65rem" }}
-                >
-                  <span style={{ lineHeight: "16px" }}>Actions</span>
-                  <ChevronDown size={16} />
-                </button>
-              </ModalButton>
-            </div>
+        {isLoading ? (
+          <RectangleSkeleton width="100%" height="100%" speed={1} />
+        ) : error ? (
+          <NotFoundError
+            title={error?.response?.data?.errors?.title}
+            description={error?.response?.data?.errors?.description}
+          ></NotFoundError>
+        ) : memoizedRowData.length === 0 ? (
+          <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto">
+            <img
+              src="/sss-maskot/404.png"
+              alt="No resit exams found"
+              style={{
+                height: "140px",
+                width: "140px",
+                objectFit: "contain",
+              }}
+              className="mb-3"
+            />
+            <h5 className="fw-semibold font-size-md mb-1">
+              No Resit Exams Available
+            </h5>
+            <p className="text-muted font-size-sm mb-3 max-w-400">
+              No resit exam records were found in the system.
+            </p>
           </div>
+        ) : (
+          <div className="d-flex flex-column gap-3 h-100">
+            <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
+              <div className="d-flex align-items-center gap-2">
+                <div
+                  className={`${
+                    darkMode ? "dark-mode-active" : "light-mode-active"
+                  } d-flex justify-content-center align-items-center`}
+                  style={{
+                    width: "2rem",
+                    height: "2rem",
+                    borderRadius: "0.5rem",
+                  }}
+                >
+                  <ExamIcon />
+                </div>
+                <span className="fw-semibold font-size-sm">
+                  Manage Resit Exams
+                </span>
+              </div>
+              <div className="d-flex flex-row align-item-center gap-2">
+                <JobPopOver category={"Exam"} />
+                <ModalButton>
+                  <button
+                    className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg gap-2"
+                    style={{ padding: "0.65rem" }}
+                  >
+                    <span style={{ lineHeight: "16px" }}>Import</span>
+                    <ArrowDown size={16} />
+                  </button>
+                </ModalButton>
+                <ModalButton>
+                  <button
+                    className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg gap-2"
+                    style={{ padding: "0.65rem" }}
+                  >
+                    <span style={{ lineHeight: "16px" }}>Actions</span>
+                    <ChevronDown size={16} />
+                  </button>
+                </ModalButton>
+              </div>
+            </div>
 
-          {isLoading ? (
-            <RectangleSkeleton width="100%" height="100%" speed={1} />
-          ) : error ? (
-            <NotFoundError
-              title={error.response.data.errors.title}
-              description={error.response.data.errors.description}
-            ></NotFoundError>
-          ) : (
-            <>
-              <div className="d-flex flex-column gap-2">
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    {columns?.selectedColumns?.map((c, index) => {
-                      const FilterPopOver = filterPopOverMap.find(
-                        (f) => f.cellDataType === c.cellDataType,
-                      ).component;
-                      return (
-                        <Fragment key={index}>
-                          <FilterPopOver column={c} tableRef={tableRef} />
-                        </Fragment>
-                      );
-                    })}
-                    <ModalButton
-                      action={{ modalContent: FilterColumns }}
-                      size={"xl"}
-                      rowData={{ setColumns, columns: columns }}
-                    >
-                      <button
-                        className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg"
-                        style={{ padding: "0.45rem" }}
-                      >
-                        <span>
-                          <Icon icon="ic:round-plus" width={14} height={14} />
-                        </span>
-                      </button>
-                    </ModalButton>
+            <div className="d-flex flex-column gap-2">
+              <div className="d-flex flex-row align-items-center justify-content-between">
+                <div className="d-flex flex-row align-items-center gap-2">
+                  {columns?.selectedColumns?.map((c, index) => {
+                    const FilterPopOver = filterPopOverMap.find(
+                      (f) => f.cellDataType === c.cellDataType,
+                    )?.component;
+                    if (!FilterPopOver) return null;
+                    return (
+                      <Fragment key={index}>
+                        <FilterPopOver column={c} tableRef={tableRef} />
+                      </Fragment>
+                    );
+                  })}
+                  <ModalButton
+                    action={{ modalContent: FilterColumns }}
+                    size={"xl"}
+                    rowData={{ setColumns, columns: columns }}
+                  >
                     <button
-                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
-                      style={{
-                        fontSize: "0.7rem",
-                        cursor: "pointer",
-                        padding: "0.45rem",
-                      }}
-                      onClick={() => {
-                        dispatch(toggleGeneralFilter());
-                      }}
+                      className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg"
+                      style={{ padding: "0.45rem" }}
                     >
                       <span>
-                        <Icon icon="mynaui:filter" width={16} height={16} />
+                        <Icon icon="ic:round-plus" width={14} height={14} />
                       </span>
-                      <span style={{ lineHeight: "16px" }}>Filter</span>
                     </button>
-                  </div>
-                  <div className="d-flex flex-row align-items-center gap-2">
+                  </ModalButton>
+                  <button
+                    className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                    style={{
+                      fontSize: "0.7rem",
+                      cursor: "pointer",
+                      padding: "0.45rem",
+                    }}
+                    onClick={() => {
+                      dispatch(toggleGeneralFilter());
+                    }}
+                  >
+                    <span>
+                      <Icon icon="mynaui:filter" width={16} height={16} />
+                    </span>
+                    <span style={{ lineHeight: "16px" }}>Filter</span>
+                  </button>
+                </div>
+                <div className="d-flex flex-row align-items-center gap-2">
+                  <button
+                    className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                    onClick={handleReset}
+                    style={{ padding: "0.45rem" }}
+                  >
+                    <span>
+                      <Icon
+                        icon="grommet-icons:revert"
+                        width={16}
+                        height={16}
+                      />
+                    </span>
+                  </button>
+                  <button
+                    className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
+                    style={{ padding: "0.45rem" }}
+                  >
+                    <span>
+                      <Icon icon="mage:copy" width={16} height={16} />
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div className="d-flex flex-row justify-content-between align-items-center">
+                <div className="w-50">
+                  <SearchInput
+                    placeholder={"Search Resit Exam......"}
+                    value={searchText}
+                    onChange={(val) => handleSearch(val)}
+                    hotkey="Ctrl+K"
+                  />
+                </div>
+                <div className="d-flex flex-row align-items-center gap-2">
+                  <ModalButton
+                    action={{ modalContent: Export }}
+                    size={"xl"}
+                    rowData={{ tableRef, columns: columns.availableColumns }}
+                  >
                     <button
-                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
-                      onClick={handleReset}
+                      className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
+                      style={{ padding: "0.45rem" }}
+                    >
+                      <span style={{ lineHeight: "16px" }}>Export</span>
+                      <span>
+                        <Icon icon="tabler:arrow-up" width={14} height={14} />
+                      </span>
+                    </button>
+                  </ModalButton>
+                  <ModalButton
+                    action={{ modalContent: TableColumnSetting }}
+                    size={"xl"}
+                    rowData={{ tableRef }}
+                  >
+                    <button
+                      className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
                       style={{ padding: "0.45rem" }}
                     >
                       <span>
                         <Icon
-                          icon="grommet-icons:revert"
-                          width={16}
-                          height={16}
+                          icon="lsicon:setting-outline"
+                          width={20}
+                          height={20}
                         />
                       </span>
                     </button>
-                    <button
-                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
-                      style={{ padding: "0.45rem" }}
-                    >
-                      <span>
-                        <Icon icon="mage:copy" width={16} height={16} />
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div className="d-flex flex-row justify-content-between align-items-center">
-                  <div className="w-50">
-                    <SearchInput
-                      placeholder={"Search Resit Exam......"}
-                      value={searchText}
-                      onChange={(val) => handleSearch(val)}
-                      hotkey="Ctrl+K"
-                    />
-                  </div>
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <ModalButton
-                      action={{ modalContent: Export }}
-                      size={"xl"}
-                      rowData={{ tableRef, columns: columns.availableColumns }}
-                    >
-                      <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
-                      >
-                        <span style={{ lineHeight: "16px" }}>Export</span>
-                        <span>
-                          <Icon icon="tabler:arrow-up" width={14} height={14} />
-                        </span>
-                      </button>
-                    </ModalButton>
-                    <ModalButton
-                      action={{ modalContent: TableColumnSetting }}
-                      size={"xl"}
-                      rowData={{ tableRef }}
-                    >
-                      <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
-                      >
-                        <span>
-                          <Icon
-                            icon="lsicon:setting-outline"
-                            width={20}
-                            height={20}
-                          />
-                        </span>
-                      </button>
-                    </ModalButton>
-                  </div>
+                  </ModalButton>
                 </div>
               </div>
-              <div className="h-100">
-                <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
-                  <motion.div
-                    className="h-100"
-                    layout
-                    transition={{
-                      type: "spring",
-                      stiffness: 300,
-                      damping: 30,
-                    }}
-                    style={{
-                      width: resitExamState.isGeneralFilterOpen ? "60%" : "100%",
-                    }}
-                    ref={tableWrapperRef}
-                  >
-                    <Table
-                      colDefs={memoizedColDefs}
-                      rowData={memoizedRowData}
-                      ref={tableRef}
-                      handleRowCountFromChild={handleRowCountFromChild}
-                      handleRowDataFromChild={handleRowDataFromChild}
+            </div>
+            <div className="h-100">
+              <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
+                <motion.div
+                  className="h-100"
+                  layout
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30,
+                  }}
+                  style={{
+                    width: resitExamState.isGeneralFilterOpen ? "60%" : "100%",
+                  }}
+                  ref={tableWrapperRef}
+                >
+                  <Table
+                    colDefs={memoizedColDefs}
+                    rowData={memoizedRowData}
+                    ref={tableRef}
+                    handleRowCountFromChild={handleRowCountFromChild}
+                    handleRowDataFromChild={handleRowDataFromChild}
+                  />
+                  {rowCount > 0 && (
+                    <BulkActionsToast
+                      key="bulk-actions-toast"
+                      anchorRef={tableWrapperRef}
+                      rowCount={rowCount}
+                      label={`${
+                        rowCount > 0 ? "Exam Selected" : "Exams Selected"
+                      }`}
+                      resetAll={handleResetSelections}
+                      dropDownItems={
+                        <DropdownItems
+                          selectedExams={selectedExams}
+                          resetAll={handleResetSelections}
+                        />
+                      }
+                      actionButton={
+                        <ActionButtons
+                          selectedExams={selectedExams}
+                          resetAll={handleResetSelections}
+                        />
+                      }
                     />
-                    {rowCount > 0 && (
-                      <BulkActionsToast
-                        key="bulk-actions-toast"
-                        anchorRef={tableWrapperRef}
-                        rowCount={rowCount}
-                        label={`${
-                          rowCount > 0 ? "Exam Selected" : "Exams Selected"
-                        }`}
-                        resetAll={handleResetSelections}
-                        dropDownItems={
-                          <DropdownItems
-                            selectedExams={selectedExams}
-                            resetAll={handleResetSelections}
-                          />
-                        }
-                        actionButton={
-                          <ActionButtons
-                            selectedExams={selectedExams}
-                            resetAll={handleResetSelections}
-                          />
-                        }
-                      />
-                    )}
-                  </motion.div>
-                  {resitExamState.isGeneralFilterOpen && (
-                    <AnimatePresence mode="popLayout">
-                      {resitExamState.isGeneralFilterOpen && (
-                        <motion.div
-                          key="filter-panel"
-                          className="card rounded-3 font-size-sm d-flex flex-column h-100"
-                          initial={{ x: "100%", opacity: 0 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          exit={{ x: "100%", opacity: 0 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 350,
-                            damping: 32,
-                          }}
-                          style={{ width: "40%" }}
+                  )}
+                </motion.div>
+                {resitExamState.isGeneralFilterOpen && (
+                  <AnimatePresence mode="popLayout">
+                    {resitExamState.isGeneralFilterOpen && (
+                      <motion.div
+                        key="filter-panel"
+                        className="card rounded-3 font-size-sm d-flex flex-column h-100"
+                        initial={{ x: "100%", opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: "100%", opacity: 0 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 350,
+                          damping: 32,
+                        }}
+                        style={{ width: "40%" }}
+                      >
+                        <div
+                          className="p-2 rounded-top-3 d-flex flex-column gap-2 border-bottom"
+                          style={{ background: "#f9f9f9" }}
                         >
-                          <div
-                            className="p-2 rounded-top-3 d-flex flex-column gap-2 border-bottom"
-                            style={{ background: "#f9f9f9" }}
-                          >
-                            <div className="d-flex flex-row align-items-center justify-content-between">
+                          <div className="d-flex flex-row align-items-center justify-content-between">
+                            <span>Build a custom view of your Exam data.</span>
+                            <button
+                              className="border-none bg-transparent"
+                              onClick={() => dispatch(toggleGeneralFilter())}
+                            >
+                              <Icon
+                                icon="iconoir:cancel"
+                                width={18}
+                                height={18}
+                              />
+                            </button>
+                          </div>
+                          <div className="d-flex flex-row align-items-center justify-content-between">
+                            <div className="d-flex flex-row align-items-center gap-2">
                               <span>
-                                Build a custom view of your Exam data.
-                              </span>
-                              <button
-                                className="border-none bg-transparent"
-                                onClick={() => dispatch(toggleGeneralFilter())}
-                              >
                                 <Icon
-                                  icon="iconoir:cancel"
+                                  icon="mynaui:filter"
                                   width={18}
                                   height={18}
                                 />
-                              </button>
+                              </span>
+                              <span>Filter Resit Exam</span>
                             </div>
-                            <div className="d-flex flex-row align-items-center justify-content-between">
-                              <div className="d-flex flex-row align-items-center gap-2">
-                                <span>
-                                  <Icon
-                                    icon="mynaui:filter"
-                                    width={18}
-                                    height={18}
+                            <span>{memoizedRowData.length ?? 0} items</span>
+                          </div>
+                        </div>
+                        <div
+                          className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
+                          style={{ maxHeight: "52dvh" }}
+                        >
+                          {resitExamState.customFilter.length > 0 ? (
+                            <div>
+                              {resitExamState?.customFilter?.map((cFilters) => (
+                                <Fragment key={cFilters.id}>
+                                  <GeneralFilterWizzard
+                                    cFilters={cFilters}
+                                    columns={columns}
+                                    moduleState={resitExamState}
+                                    removeCustomFilter={removeCustomFilter}
+                                    setCustomFilter={setCustomFilter}
                                   />
-                                </span>
-                                <span>Filter Resit Exam</span>
-                              </div>
-                              <span>{resitExams?.data.length} items</span>
+                                </Fragment>
+                              ))}
                             </div>
-                          </div>
-                          <div
-                            className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
-                            style={{ maxHeight: "52dvh" }}
-                          >
-                            {resitExamState.customFilter.length > 0 ? (
-                              <div>
-                                {resitExamState?.customFilter?.map((cFilters) => (
-                                  <Fragment key={cFilters.id}>
-                                    <GeneralFilterWizzard
-                                      cFilters={cFilters}
-                                      columns={columns}
-                                      moduleState={resitExamState}
-                                      removeCustomFilter={removeCustomFilter}
-                                      setCustomFilter={setCustomFilter}
-                                    />
-                                  </Fragment>
-                                ))}
+                          ) : (
+                            <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1 p-4">
+                              <div className="text-center d-flex flex-column gap-1 mb-3">
+                                <span className="fw-semibold">
+                                  Build a custom filter
+                                </span>
+                                <span className="text-muted">
+                                  Create one or more conditions to narrow down
+                                  your Resit Exam list.
+                                </span>
                               </div>
-                            ) : (
-                              <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1 p-4">
-                                <div className="text-center d-flex flex-column gap-1 mb-3">
-                                  <span className="fw-semibold">
-                                    Build a custom filter
-                                  </span>
-                                  <span className="text-muted">
-                                    Create one or more conditions to narrow down
-                                    your Resit Exam list.
-                                  </span>
-                                </div>
-                                <button
-                                  className="d-flex flex-row align-items-center gap-2 bg-transparent border-none border rounded-3 p-2 font-size-sm"
-                                  onClick={() => {
-                                    dispatch(addCustomFilter());
-                                  }}
-                                >
-                                  <span>
-                                    <Icon icon="mynaui:plus" />
-                                  </span>
-                                  <span>Add Condition</span>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                          <div className="mt-auto">
-                            {resitExamState.customFilter.length > 0 && (
-                              <div className="d-flex flex-row justify-content-start p-2">
-                                <button
-                                  className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
-                                  onClick={() => {
-                                    dispatch(addCustomFilter());
-                                  }}
-                                >
-                                  <span>
-                                    <Icon icon="ic:round-plus" />
-                                  </span>
-                                  <span>Add Condition</span>
-                                </button>
-                              </div>
-                            )}
-                            <div className="d-flex flex-row border-top justify-content-between p-2">
                               <button
-                                className="border-none border bg-transparent px-3 font-size-sm py-2 rounded-3"
+                                className="d-flex flex-row align-items-center gap-2 bg-transparent border-none border rounded-3 p-2 font-size-sm"
                                 onClick={() => {
-                                  dispatch(resetAllCustomFilters());
+                                  dispatch(addCustomFilter());
                                 }}
                               >
-                                Reset All
-                              </button>
-                              <button className="border-none border px-3 font-size-sm py-2 primary-background text-white rounded-3">
-                                Apply
+                                <span>
+                                  <Icon icon="mynaui:plus" />
+                                </span>
+                                <span>Add Condition</span>
                               </button>
                             </div>
+                          )}
+                        </div>
+                        <div className="mt-auto">
+                          {resitExamState.customFilter.length > 0 && (
+                            <div className="d-flex flex-row justify-content-start p-2">
+                              <button
+                                className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
+                                onClick={() => {
+                                  dispatch(addCustomFilter());
+                                }}
+                              >
+                                <span>
+                                  <Icon icon="ic:round-plus" />
+                                </span>
+                                <span>Add Condition</span>
+                              </button>
+                            </div>
+                          )}
+                          <div className="d-flex flex-row border-top justify-content-between p-2">
+                            <button
+                              className="border-none border bg-transparent px-3 font-size-sm py-2 rounded-3"
+                              onClick={() => {
+                                dispatch(resetAllCustomFilters());
+                              }}
+                            >
+                              Reset All
+                            </button>
+                            <button className="border-none border px-3 font-size-sm py-2 primary-background text-white rounded-3">
+                              Apply
+                            </button>
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  )}
-                </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                )}
               </div>
-            </>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );

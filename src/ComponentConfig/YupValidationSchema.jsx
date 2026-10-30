@@ -225,16 +225,22 @@ export const addressSchema = ({
     .trim()
     .min(
       min,
-      messages.min || `Address must be at least ${min} characters long.`,
+      messages.min || `Address must be at least ${min} characters long.`
     )
     .max(max, messages.max || `Address cannot be more than ${max} characters.`)
     .test(
       "valid-address",
       messages.invalid ||
-        "Address can only contain letters, numbers, and common punctuation like commas, periods, and hyphens.",
+        "Please enter a valid address using only letters, numbers, and common punctuation (e.g., #, -, ., ',', /).",
       (value) => {
-        return value === null || /^[A-Za-z0-9\s.,\-\/]*$/.test(value);
-      },
+        if (value === null || value === undefined || value === "") return true;
+        
+        // Uses Unicode property escapes (/u flag) to support:
+        // - \p{L}: International letters (accents, diacritics)
+        // - \p{N}: Numbers
+        // - Common address symbols: #, ', ", &, (, ), ,, ., -, /
+        return /^[\p{L}\p{N}\s.,\-\/#&'"()]+$/u.test(value);
+      }
     )
     .transform((val) => (val === "" ? null : val));
 

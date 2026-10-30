@@ -14,12 +14,13 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
+import CreateSpecialty from "../../DrawerContent/Specialty/CreateSpecialty";
 import AssignHall from "../../DrawerContent/SpecialtyHall/AssignHall";
 import RemoveAssignedHall from "../../DrawerContent/SpecialtyHall/RemoveAssignedHall";
 import ViewAssignedHall from "../../DrawerContent/SpecialtyHall/ViewAssignedHall";
@@ -39,7 +40,7 @@ import {
 import filterPopOverMap from "../../utils/maps/FilterMap";
 import { hallSpecialtyColDefs } from "../../utils/table/colDefs/hall/hallSpecialtyColDefs";
 function SpecialtyHall() {
-  const { data: speciaties, isLoading, error } = useGetSpecialties();
+  const { data: specialties, isLoading, error } = useGetSpecialties();
   const dispatch = useDispatch();
   const tableRef = useRef(null);
   const tableWrapperRef = useRef(null);
@@ -65,8 +66,8 @@ function SpecialtyHall() {
     });
   }, []);
   const memoizedRowData = useMemo(() => {
-    return speciaties?.data ?? [];
-  }, [speciaties]);
+    return specialties?.data ?? [];
+  }, [specialties]);
   const handleRowDataFromChild = useCallback((Data) => {
     setSelectedSpeciaties(Data);
   }, []);
@@ -129,12 +130,72 @@ function SpecialtyHall() {
       <main className="main-container gap-2 h-100">
         <div className="h-100">
           {isLoading ? (
-            <RectangleSkeleton width="100%" height="100%" />
+            <div className="flex-grow-1 w-100 h-100">
+              <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+            </div>
           ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto h-100">
+              <img
+                src="/sss-maskot/404.png"
+                alt="Error loading specialties"
+                style={{
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
+                }}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">
+                {error?.response?.data?.errors?.title ??
+                  "Unable to Load Specialties"}
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                {error?.response?.data?.errors?.description ??
+                  "Something went wrong while fetching the specialty data. Please try again or create a new specialty."}
+              </p>
+              <div className="d-flex align-items-center gap-2">
+                <DrawerTrigger
+                  title="Create Specialty"
+                  placement="right"
+                  drawerChildren={CreateSpecialty}
+                >
+                  <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
+                    <span>Create Specialty</span>
+                  </button>
+                </DrawerTrigger>
+              </div>
+            </div>
+          ) : !specialties?.data || specialties.data.length === 0 ? (
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto h-100">
+              <img
+                src="/sss-maskot/404.png"
+                alt="No specialties found"
+                style={{
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
+                }}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">
+                No Specialties Found
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                There are currently no specialty records available. Get started
+                by creating your first specialty.
+              </p>
+              <div className="d-flex align-items-center gap-2">
+                <DrawerTrigger
+                  title="Create Specialty"
+                  placement="right"
+                  drawerChildren={CreateSpecialty}
+                >
+                  <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
+                    <span>Create Specialty</span>
+                  </button>
+                </DrawerTrigger>
+              </div>
+            </div>
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">

@@ -16,7 +16,7 @@ const FormErrorBanner = forwardRef(function FormErrorBanner(
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
-          className={`bg-red-100 p-2 rounded-3 text-red-700 d-flex flex-row align-items-start justify-content-between gap-2 ${className}`}
+          className={`bg-red-50 p-2 rounded-3 text-red-700 d-flex flex-row align-items-start justify-content-between gap-2 ${className}`}
           role="alert"
         >
           <div className="d-flex flex-column gap-1">

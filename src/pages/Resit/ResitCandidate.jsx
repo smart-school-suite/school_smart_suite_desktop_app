@@ -144,9 +144,28 @@ function ResitCandidates() {
           <RectangleSkeleton width="100%" height="100%" speed={1} />
         ) : error ? (
           <NotFoundError
-            title={error.response.data.errors.title}
-            description={error.response.data.errors.description}
+            title={error?.response?.data?.errors?.title}
+            description={error?.response?.data?.errors?.description}
           ></NotFoundError>
+        ) : memoizedRowData.length === 0 ? (
+          <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto">
+            <img
+              src="/sss-maskot/404.png"
+              alt="No resit candidates found"
+              style={{
+                height: "140px",
+                width: "140px",
+                objectFit: "contain",
+              }}
+              className="mb-3"
+            />
+            <h5 className="fw-semibold font-size-md mb-1">
+              No Resit Candidates Available
+            </h5>
+            <p className="text-muted font-size-sm mb-3 max-w-400">
+              No resit candidate records were found for the selected session.
+            </p>
+          </div>
         ) : (
           <>
             <div className="d-flex flex-column gap-3 h-100">
@@ -180,13 +199,15 @@ function ResitCandidates() {
                   </ModalButton>
                 </div>
               </div>
+
               <div className="d-flex flex-column gap-2">
                 <div className="d-flex flex-row align-items-center justify-content-between">
                   <div className="d-flex flex-row align-items-center gap-2">
                     {columns?.selectedColumns?.map((c, index) => {
                       const FilterPopOver = filterPopOverMap.find(
                         (f) => f.cellDataType === c.cellDataType,
-                      ).component;
+                      )?.component;
+                      if (!FilterPopOver) return null;
                       return (
                         <Fragment key={index}>
                           <FilterPopOver column={c} tableRef={tableRef} />
@@ -208,7 +229,7 @@ function ResitCandidates() {
                       </button>
                     </ModalButton>
                     <button
-                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                       style={{
                         fontSize: "0.7rem",
                         cursor: "pointer",
@@ -226,7 +247,7 @@ function ResitCandidates() {
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
-                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
                       onClick={handleReset}
                       style={{ padding: "0.45rem" }}
                     >
@@ -248,6 +269,7 @@ function ResitCandidates() {
                     </button>
                   </div>
                 </div>
+
                 <div className="d-flex flex-row justify-content-between align-items-center">
                   <div className="w-50">
                     <SearchInput
@@ -294,6 +316,7 @@ function ResitCandidates() {
                   </div>
                 </div>
               </div>
+
               <div className="h-100">
                 <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
                   <motion.div
@@ -346,6 +369,7 @@ function ResitCandidates() {
                       )}
                     </AnimatePresence>
                   </motion.div>
+
                   {resitCandidateState.isGeneralFilterOpen && (
                     <AnimatePresence mode="popLayout">
                       {resitCandidateState.isGeneralFilterOpen && (
@@ -393,9 +417,10 @@ function ResitCandidates() {
                                 </span>
                                 <span>Filter Resit Candidates</span>
                               </div>
-                              <span>{resitCandidates?.data.length} items</span>
+                              <span>{memoizedRowData.length ?? 0} items</span>
                             </div>
                           </div>
+
                           <div
                             className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
                             style={{ maxHeight: "52dvh" }}
@@ -441,6 +466,7 @@ function ResitCandidates() {
                               </div>
                             )}
                           </div>
+
                           <div className="mt-auto">
                             {resitCandidateState.customFilter.length > 0 && (
                               <div className="d-flex flex-row justify-content-start p-2">

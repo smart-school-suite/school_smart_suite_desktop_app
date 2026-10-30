@@ -1,28 +1,25 @@
 import { useRef, useState } from "react";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { Icon } from "@iconify/react";
-import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import { useCreateCourse } from "../../hooks/course/useCreateCourse";
-import { useGetSemester } from "../../hooks/semester/useGetSemesters";
-import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
-import { useCreateJointCourse } from "../../hooks/jointCourse/useCreateJointCourse";
-import {
-  NumberInput,
-  TextAreaInput,
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
+import toast from "react-hot-toast";
 import {
   courseCodeSchema,
   nameSchema,
   numberSchema,
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
-import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
-import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import CustomDropdown, { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
+import {
+  NumberInput,
+  TextAreaInput,
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
+import { useCreateJointCourse } from "../../hooks/jointCourse/useCreateJointCourse";
+import { useGetSemester } from "../../hooks/semester/useGetSemesters";
+import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
+import { allFieldsValid } from "../../utils/functions";
 function CreateJointCourse({ handleClose }) {
   const courseCodeRef = useRef();
   const courseTitleRef = useRef();

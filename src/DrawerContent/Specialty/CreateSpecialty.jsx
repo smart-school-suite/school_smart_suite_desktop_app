@@ -1,25 +1,24 @@
 import { useRef, useState } from "react";
-import {
-  InputGroup,
-  TextAreaInput,
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
-import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import { Icon } from "@iconify/react";
-import { useCreateSpecialty } from "../../hooks/specialty/useCreateSpecialty";
-import { useGetDepartments } from "../../hooks/department/useGetDepartments";
-import { useGetLevels } from "../../hooks/level/useGetLevels";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
+import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import {
   nameSchema,
   numberSchema,
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import {
+  InputGroup,
+  TextAreaInput,
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import { useGetDepartments } from "../../hooks/department/useGetDepartments";
+import { useGetLevels } from "../../hooks/level/useGetLevels";
+import { useCreateSpecialty } from "../../hooks/specialty/useCreateSpecialty";
+import { allFieldsValid } from "../../utils/functions";
 
 function CreateSpecialty({ handleClose }) {
   const currency = useSelector(

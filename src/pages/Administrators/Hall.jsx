@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import CreateHall from "../../DrawerContent/Hall/CreateHall";
 import HallDetails from "../../DrawerContent/Hall/HallDetail";
 import UpdateHall from "../../DrawerContent/Hall/UpdateHall";
 import Export from "../../ModalContent/Export/Export";
@@ -26,7 +27,7 @@ import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import SearchInput from "../../components/input/search";
 import { useGetHalls } from "../../hooks/hall/useGetHalls";
 import {
@@ -117,12 +118,69 @@ function Hall() {
       <main className="main-container gap-2 h-100">
         <div className="h-100">
           {isLoading ? (
-            <RectangleSkeleton width="100%" height="100%" />
+            <div className="flex-grow-1 w-100 h-100">
+              <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+            </div>
           ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto h-100">
+              <img
+                src="/sss-maskot/404.png"
+                alt="Error loading halls"
+                style={{
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
+                }}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">
+                {error?.response?.data?.errors?.title ?? "Unable to Load Halls"}
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                {error?.response?.data?.errors?.description ??
+                  "Something went wrong while fetching the hall data. Please try again or create a new hall."}
+              </p>
+              <div className="d-flex align-items-center gap-2">
+                <DrawerTrigger
+                  title="Create Hall"
+                  placement="right"
+                  drawerChildren={CreateHall}
+                >
+                  <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
+                    <span>Create Hall</span>
+                  </button>
+                </DrawerTrigger>
+              </div>
+            </div>
+          ) : !halls?.data || halls.data.length === 0 ? (
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto h-100">
+              <img
+                src="/sss-maskot/404.png"
+                alt="No halls found"
+                style={{
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
+                }}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">No Halls Found</h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                There are currently no hall records available. Get started by
+                creating your first hall.
+              </p>
+              <div className="d-flex align-items-center gap-2">
+                <DrawerTrigger
+                  title="Create Hall"
+                  placement="right"
+                  drawerChildren={CreateHall}
+                >
+                  <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
+                    <span>Create Hall</span>
+                  </button>
+                </DrawerTrigger>
+              </div>
+            </div>
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">

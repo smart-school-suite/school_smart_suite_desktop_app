@@ -8,13 +8,7 @@ import {
   Podium,
   ReceiptText,
 } from "lucide-react";
-import {
-  Fragment,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
   DropDownMenuItem,
@@ -121,64 +115,84 @@ function ExamResults() {
   return (
     <>
       <main className="main-container gap-2">
-        <div className="d-flex flex-column gap-3 h-100">
-          <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
-            <div className="d-flex align-items-center gap-2">
-              <div
-                className={`${
-                  darkMode ? "dark-mode-active" : "light-mode-active"
-                } d-flex justify-content-center align-items-center`}
-                style={{
-                  width: "2rem",
-                  height: "2rem",
-                  borderRadius: "0.5rem",
-                }}
-              >
-                <ExamIcon />
-              </div>
-              <span className="fw-semibold font-size-sm">
-                Manage Exam Result
-              </span>
-            </div>
-            <div className="d-flex flex-row align-item-center gap-2">
-              <JobPopOver category={"Exam"} />
-              <ModalButton>
-                <button
-                  className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg gap-2"
-                  style={{ padding: "0.65rem" }}
-                >
-                  <span style={{ lineHeight: "16px" }}>Import</span>
-                  <ArrowDown size={16} />
-                </button>
-              </ModalButton>
-              <ModalButton>
-                <button
-                  className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg gap-2"
-                  style={{ padding: "0.65rem" }}
-                >
-                  <span style={{ lineHeight: "16px" }}>Actions</span>
-                  <ChevronDown size={16} />
-                </button>
-              </ModalButton>
-            </div>
+        {isLoading ? (
+          <RectangleSkeleton width="100%" height="100%" speed={1} />
+        ) : error ? (
+          <NotFoundError
+            title={error?.response?.data?.errors?.title}
+            description={error?.response?.data?.errors?.description}
+          ></NotFoundError>
+        ) : memoizedRowData.length === 0 ? (
+          <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto">
+            <img
+              src="/sss-maskot/404.png"
+              alt="No exam results found"
+              style={{
+                height: "140px",
+                width: "140px",
+                objectFit: "contain",
+              }}
+              className="mb-3"
+            />
+            <h5 className="fw-semibold font-size-md mb-1">
+              No Exam Results Available
+            </h5>
+            <p className="text-muted font-size-sm mb-3 max-w-400">
+              No exam result records were found in the system.
+            </p>
           </div>
+        ) : (
+          <>
+            <div className="d-flex flex-column gap-3 h-100">
+              <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
+                <div className="d-flex align-items-center gap-2">
+                  <div
+                    className={`${
+                      darkMode ? "dark-mode-active" : "light-mode-active"
+                    } d-flex justify-content-center align-items-center`}
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      borderRadius: "0.5rem",
+                    }}
+                  >
+                    <ExamIcon />
+                  </div>
+                  <span className="fw-semibold font-size-sm">
+                    Manage Exam Result
+                  </span>
+                </div>
+                <div className="d-flex flex-row align-item-center gap-2">
+                  <JobPopOver category={"Exam"} />
+                  <ModalButton>
+                    <button
+                      className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg gap-2"
+                      style={{ padding: "0.65rem" }}
+                    >
+                      <span style={{ lineHeight: "16px" }}>Import</span>
+                      <ArrowDown size={16} />
+                    </button>
+                  </ModalButton>
+                  <ModalButton>
+                    <button
+                      className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg gap-2"
+                      style={{ padding: "0.65rem" }}
+                    >
+                      <span style={{ lineHeight: "16px" }}>Actions</span>
+                      <ChevronDown size={16} />
+                    </button>
+                  </ModalButton>
+                </div>
+              </div>
 
-          {isLoading ? (
-            <RectangleSkeleton width="100%" height="100%" speed={1} />
-          ) : error ? (
-            <NotFoundError
-              title={error.response.data.errors.title}
-              description={error.response.data.errors.description}
-            ></NotFoundError>
-          ) : (
-            <>
               <div className="d-flex flex-column gap-2">
                 <div className="d-flex flex-row align-items-center justify-content-between">
                   <div className="d-flex flex-row align-items-center gap-2">
                     {columns?.selectedColumns?.map((c, index) => {
                       const FilterPopOver = filterPopOverMap.find(
                         (f) => f.cellDataType === c.cellDataType,
-                      ).component;
+                      )?.component;
+                      if (!FilterPopOver) return null;
                       return (
                         <Fragment key={index}>
                           <FilterPopOver column={c} tableRef={tableRef} />
@@ -200,7 +214,7 @@ function ExamResults() {
                       </button>
                     </ModalButton>
                     <button
-                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                       style={{
                         fontSize: "0.7rem",
                         cursor: "pointer",
@@ -218,7 +232,7 @@ function ExamResults() {
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
-                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
                       onClick={handleReset}
                       style={{ padding: "0.45rem" }}
                     >
@@ -305,7 +319,36 @@ function ExamResults() {
                       colDefs={memoizedColDefs}
                       rowData={memoizedRowData}
                       ref={tableRef}
+                      handleRowCountFromChild={handleRowCountFromChild}
+                      handleRowDataFromChild={handleRowDataFromChild}
                     />
+                    <AnimatePresence>
+                      {rowCount > 0 && (
+                        <BulkActionsToast
+                          key="bulk-actions-toast"
+                          anchorRef={tableWrapperRef}
+                          rowCount={rowCount}
+                          label={
+                            rowCount > 0
+                              ? "Result Selected"
+                              : "Results Selected"
+                          }
+                          resetAll={handleResetSelections}
+                          dropDownItems={
+                            <DropdownItems
+                              selectedResults={selectedResults}
+                              resetAll={handleResetSelections}
+                            />
+                          }
+                          actionButton={
+                            <ActionButtons
+                              selectedResults={selectedResults}
+                              resetAll={handleResetSelections}
+                            />
+                          }
+                        />
+                      )}
+                    </AnimatePresence>
                   </motion.div>
                   {examState.isGeneralFilterOpen && (
                     <AnimatePresence mode="popLayout">
@@ -351,9 +394,9 @@ function ExamResults() {
                                     height={18}
                                   />
                                 </span>
-                                <span>Filter Exam</span>
+                                <span>Filter Exam Result</span>
                               </div>
-                              <span>{exams?.data.length} items</span>
+                              <span>{memoizedRowData.length ?? 0} items</span>
                             </div>
                           </div>
                           <div
@@ -435,9 +478,9 @@ function ExamResults() {
                   )}
                 </div>
               </div>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </main>
     </>
   );

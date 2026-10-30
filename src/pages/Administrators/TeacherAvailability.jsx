@@ -18,7 +18,6 @@ import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFi
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
 import { useGetTeacherAvailability } from "../../hooks/teacherAvailability/useGetTeacherAvailability";
 import { DetailsIcon } from "../../icons/ActionIcons";
 import filterPopOverMap from "../../utils/maps/FilterMap";
@@ -113,15 +112,51 @@ function TeacherAvailability() {
   }, [isLoading, memoizedRowData]);
   return (
     <>
-      <main className="main-container gap-2 h-100">
+    <main className="main-container gap-2 h-100">
         <div className="h-100">
           {isLoading ? (
-            <RectangleSkeleton width="100%" height="100%" />
+            <div className="flex-grow-1 w-100 h-100">
+              <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+            </div>
           ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto h-100">
+              <img
+                src="/sss-maskot/404.png"
+                alt="Error loading teacher time preferences"
+                style={{
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
+                }}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">
+                {error?.response?.data?.errors?.title ?? "Unable to Load Teacher Time Preferences"}
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                {error?.response?.data?.errors?.description ??
+                  "Something went wrong while fetching the teacher time preference data. Please try again or create a new teacher time preference."}
+              </p>
+            </div>
+          ) : !availability?.data || availability.data.length === 0 ? (
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto h-100">
+              <img
+                src="/sss-maskot/404.png"
+                alt="No teacher time preferences found"
+                style={{
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
+                }}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">
+                No Teacher Time Preferences Found
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                There are currently no teacher time preference records available. Get started by creating your first teacher time preference.
+              </p>
+            </div>
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">

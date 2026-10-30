@@ -1,20 +1,20 @@
-import { useCreateHall } from "../../hooks/hall/useCreateHall";
-import { useRef, useState, useCallback } from "react";
-import { useGetHallTypes } from "../../hooks/hall/useGetHallTypes";
-import {
-  NumberInput,
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
-import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
+import { useCallback, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import {
   nameSchema,
   numberSchema,
 } from "../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid } from "../../utils/functions";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
+import {
+  NumberInput,
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import ToastWarning from "../../components/Toast/ToastWarning";
+import { useCreateHall } from "../../hooks/hall/useCreateHall";
+import { useGetHallTypes } from "../../hooks/hall/useGetHallTypes";
+import { allFieldsValid } from "../../utils/functions";
 function CreateHall({ handleClose }) {
   const { mutate: createHall, isPending } = useCreateHall(handleClose);
   const { data: hallTypes, isLoading: isHallTypeLoading } = useGetHallTypes();
@@ -38,7 +38,7 @@ function CreateHall({ handleClose }) {
   const [formData, setFormData] = useState({
     name: "",
     location: "",
-    capacity: 0,
+    capacity: "",
     type: [],
   });
   const [isFieldValid, setFieldValid] = useState({
@@ -93,102 +93,108 @@ function CreateHall({ handleClose }) {
   };
   return (
     <>
-      <div className="drawer-content px-2 pt-2">
-        <div>
-          <label htmlFor="courseTitle" className="font-size-sm">
-            Hall Name
-          </label>
-          <TextInput
-            placeholder={"e.g Amphitheater hall"}
-            onChange={(value) => handleStateChange("name", value, setFormData)}
-            onValidationChange={(value) =>
-              handleStateChange("name", value, setFieldValid)
-            }
-            validationSchema={nameSchema({
-              min: 3,
-              max: 150,
-              required: true,
-              messages: {
-                required: "Hall Name Required",
-                min: "Hall Name Must Be Atleast 3 Characters Long",
-                max: "Hall Name Must Not Exceed 150 Characters",
-              },
-            })}
-            ref={nameRef}
-            value={formData.name}
-          />
-        </div>
-        <div>
-          <label htmlFor="hallLocation" className="font-size-sm">
-            Hall Location
-          </label>
-          <TextInput
-            placeholder={"e.g Block C"}
-            onChange={(value) =>
-              handleStateChange("location", value, setFormData)
-            }
-            onValidationChange={(value) =>
-              handleStateChange("location", value, setFieldValid)
-            }
-            validationSchema={nameSchema({
-              min: 3,
-              max: 150,
-              required: true,
-              messages: {
-                required: "Hall Location Required",
-                min: "Hall Location Name Must Be Atleast 3 Characters Long",
-                max: "Hall Location Name Must Not Exceed 150 Characters",
-              },
-            })}
-            ref={locationRef}
-            value={formData.location}
-          />
-        </div>
-        <div>
-          <label htmlFor="hallCapacity" className="font-size-sm">
-            Hall Capacity
-          </label>
-          <NumberInput
-            placeholder={"e.g 100"}
-            onChange={(value) =>
-              handleStateChange("capacity", value, setFormData)
-            }
-            onValidationChange={(value) =>
-              handleStateChange("capacity", value, setFieldValid)
-            }
-            validationSchema={numberSchema({
-              min: 1,
-              max: 5000,
-              required: true,
-              messages: {
-                required: "Hall Capacity Required",
-                min: "Hall Capacity Must Be Atleast 1",
-                max: "Hall Capacity Must Not Exceed 5000",
-              },
-            })}
-            ref={capacityRef}
-            value={formData.capacity}
-          />
-        </div>
-        <div>
-          <label htmlFor="hallType" className="font-size-sm">
-            Hall Type
-          </label>
-          <MultiSelectDropdown
-            data={hallTypes?.data || []}
-            value={formData.type}
-            displayKey={["name", "description"]}
-            valueKey={["id"]}
-            direction="up"
-            isLoading={isHallTypeLoading}
-            placeholder={"Select Hall Type"}
-            errorMessage={"Hall Type Required"}
-            onSelect={(value) => handleStateChange("type", value, setFormData)}
-            onError={(error) => handleStateChange("type", error, setError)}
-            error={error.type}
-            optional={false}
-            ref={typeRef}
-          />
+      <div className="drawer-content ps-2 pt-2">
+        <div className="d-flex flex-column gap-3">
+          <div>
+            <label htmlFor="courseTitle" className="font-size-sm">
+              Hall Name
+            </label>
+            <TextInput
+              placeholder={"e.g Amphitheater hall"}
+              onChange={(value) =>
+                handleStateChange("name", value, setFormData)
+              }
+              onValidationChange={(value) =>
+                handleStateChange("name", value, setFieldValid)
+              }
+              validationSchema={nameSchema({
+                min: 3,
+                max: 150,
+                required: true,
+                messages: {
+                  required: "Hall Name Required",
+                  min: "Hall Name Must Be Atleast 3 Characters Long",
+                  max: "Hall Name Must Not Exceed 150 Characters",
+                },
+              })}
+              ref={nameRef}
+              value={formData.name}
+            />
+          </div>
+          <div>
+            <label htmlFor="hallLocation" className="font-size-sm">
+              Hall Location
+            </label>
+            <TextInput
+              placeholder={"e.g Block C"}
+              onChange={(value) =>
+                handleStateChange("location", value, setFormData)
+              }
+              onValidationChange={(value) =>
+                handleStateChange("location", value, setFieldValid)
+              }
+              validationSchema={nameSchema({
+                min: 3,
+                max: 150,
+                required: true,
+                messages: {
+                  required: "Hall Location Required",
+                  min: "Hall Location Name Must Be Atleast 3 Characters Long",
+                  max: "Hall Location Name Must Not Exceed 150 Characters",
+                },
+              })}
+              ref={locationRef}
+              value={formData.location}
+            />
+          </div>
+          <div>
+            <label htmlFor="hallCapacity" className="font-size-sm">
+              Hall Capacity
+            </label>
+            <NumberInput
+              placeholder={"e.g 100"}
+              onChange={(value) =>
+                handleStateChange("capacity", value, setFormData)
+              }
+              onValidationChange={(value) =>
+                handleStateChange("capacity", value, setFieldValid)
+              }
+              validationSchema={numberSchema({
+                min: 1,
+                max: 5000,
+                required: true,
+                messages: {
+                  required: "Hall Capacity Required",
+                  min: "Hall Capacity Must Be Atleast 1",
+                  max: "Hall Capacity Must Not Exceed 5000",
+                },
+              })}
+              ref={capacityRef}
+              value={formData.capacity}
+            />
+          </div>
+          <div>
+            <label htmlFor="hallType" className="font-size-sm">
+              Hall Type
+            </label>
+            <MultiSelectDropdown
+              data={hallTypes?.data || []}
+              value={formData.type}
+              displayKey={["name", "description"]}
+              valueKey={["id"]}
+              direction="up"
+              isLoading={isHallTypeLoading}
+              placeholder={"Select Hall Type"}
+              errorMessage={"Hall Type Required"}
+              onSelect={(value) =>
+                handleStateChange("type", value, setFormData)
+              }
+              onError={(error) => handleStateChange("type", error, setError)}
+              error={error.type}
+              optional={false}
+              ref={typeRef}
+            />
+          </div>
         </div>
       </div>
       <div className="drawer-footer font-size-sm">

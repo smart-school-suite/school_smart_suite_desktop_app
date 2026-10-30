@@ -1,17 +1,15 @@
-import { Icon } from "@iconify/react";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useState } from "react";
-import { useCreateSchoolSemester } from "../../hooks/schoolSemester/useCreateSchoolSemester";
-import { useGetSemester } from "../../hooks/semester/useGetSemesters";
-import { DateRangeInput } from "../../components/FormComponents/InputComponents";
-import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
-import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import { useRef } from "react";
-import { allFieldsValid } from "../../utils/functions";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import { DateRangeInput } from "../../components/FormComponents/InputComponents";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetSchoolAcademicYears } from "../../hooks/academicYear/useGetSchoolAcademicYears";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import { useCreateSchoolSemester } from "../../hooks/schoolSemester/useCreateSchoolSemester";
+import { useGetSemester } from "../../hooks/semester/useGetSemesters";
+import { allFieldsValid } from "../../utils/functions";
 function CreateSemester({ handleClose }) {
   const dateRangeRef = useRef();
   const semesterRef = useRef();
@@ -83,70 +81,74 @@ function CreateSemester({ handleClose }) {
   };
   return (
     <>
-      <div className="drawer-content px-2">
-        <div>
-          <DateRangeInput
-            validationSchema={dateRangeValidationSchema({
-              futureOnly: true,
-            })}
-            onEndDateChange={(value) =>
-              handleStateChange("end_date", value, setFormData)
-            }
-            onStartDateChange={(value) =>
-              handleStateChange("start_date", value, setFormData)
-            }
-            onStartDateValidationChange={(value) =>
-              handleStateChange("start_date", value, setIsValid)
-            }
-            onEndDateValidationChange={(value) =>
-              handleStateChange("end_date", value, setIsValid)
-            }
-            startValue={formData.start_date}
-            endValue={formData.end_date}
-            ref={dateRangeRef}
-          />
-        </div>
-        <div>
-          <label htmlFor="schoolYear" className="font-size-sm">
-            School Year
-          </label>
-          <CustomDropdown
-            data={schoolAcademicYears?.data || []}
-            displayKey={["specialty_name", "school_year"]}
-            valueKey={["id"]}
-            direction="up"
-            isLoading={isSchoolAcademicYearLoading}
-            onSelect={(value) =>
-              handleStateChange("school_year_id", value, setFormData)
-            }
-            error={errors.school_year_id}
-            errorMessage="School Academic Year Required"
-            onError={(msg) =>
-              handleStateChange("school_year_id", msg, setErrors)
-            }
-            ref={schoolYearRef}
-            value={formData.school_year_id}
-          />
-        </div>
-        <div>
-          <label htmlFor="semester" className="font-size-sm">
-            Semester
-          </label>
-          <CustomDropdown
-            data={semesters?.data || []}
-            displayKey={["name"]}
-            valueKey={["id"]}
-            direction="up"
-            isLoading={isFetchingSemesters}
-            onSelect={(value) =>
-              handleStateChange("semester_id", value, setFormData)
-            }
-            error={errors.semester_id}
-            errorMessage="Semester Required"
-            onError={(msg) => handleStateChange("semester_id", msg, setErrors)}
-            ref={semesterRef}
-            value={formData.semester_id}
-          />
+      <div className="drawer-content ps-2">
+        <div className="d-flex flex-column gap-3">
+          <div>
+            <DateRangeInput
+              validationSchema={dateRangeValidationSchema({
+                futureOnly: true,
+              })}
+              onEndDateChange={(value) =>
+                handleStateChange("end_date", value, setFormData)
+              }
+              onStartDateChange={(value) =>
+                handleStateChange("start_date", value, setFormData)
+              }
+              onStartDateValidationChange={(value) =>
+                handleStateChange("start_date", value, setIsValid)
+              }
+              onEndDateValidationChange={(value) =>
+                handleStateChange("end_date", value, setIsValid)
+              }
+              startValue={formData.start_date}
+              endValue={formData.end_date}
+              ref={dateRangeRef}
+            />
+          </div>
+          <div>
+            <label htmlFor="schoolYear" className="font-size-sm">
+              School Year
+            </label>
+            <CustomDropdown
+              data={schoolAcademicYears?.data || []}
+              displayKey={["specialty_name", "school_year"]}
+              valueKey={["id"]}
+              direction="up"
+              isLoading={isSchoolAcademicYearLoading}
+              onSelect={(value) =>
+                handleStateChange("school_year_id", value, setFormData)
+              }
+              error={errors.school_year_id}
+              errorMessage="School Academic Year Required"
+              onError={(msg) =>
+                handleStateChange("school_year_id", msg, setErrors)
+              }
+              ref={schoolYearRef}
+              value={formData.school_year_id}
+            />
+          </div>
+          <div>
+            <label htmlFor="semester" className="font-size-sm">
+              Semester
+            </label>
+            <CustomDropdown
+              data={semesters?.data || []}
+              displayKey={["name"]}
+              valueKey={["id"]}
+              direction="up"
+              isLoading={isFetchingSemesters}
+              onSelect={(value) =>
+                handleStateChange("semester_id", value, setFormData)
+              }
+              error={errors.semester_id}
+              errorMessage="Semester Required"
+              onError={(msg) =>
+                handleStateChange("semester_id", msg, setErrors)
+              }
+              ref={semesterRef}
+              value={formData.semester_id}
+            />
+          </div>
         </div>
       </div>
       <div className="drawer-footer font-size-sm">

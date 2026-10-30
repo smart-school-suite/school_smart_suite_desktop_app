@@ -462,7 +462,7 @@ function SideBarLg() {
                                 : "text-decoration-none text-dark "
                             }
                           >
-                            <p style={{ fontSize: "0.75rem" }}>Time-table</p>
+                            <p style={{ fontSize: "0.75rem" }}>Timetable</p>
                           </NavLink>
                         </div>
                       </div>
@@ -724,7 +724,7 @@ function SideBarLg() {
                           </NavLink>
                         </div>
                       </div>
-                      <div
+                      {/* <div
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
                         <div className="subbox-nav">
@@ -757,7 +757,7 @@ function SideBarLg() {
                             <p style={{ fontSize: "0.75rem" }}>Resit Result</p>
                           </NavLink>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

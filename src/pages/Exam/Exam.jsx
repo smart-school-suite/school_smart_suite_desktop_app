@@ -196,23 +196,58 @@ function Exam() {
               </DrawerTrigger>
             </div>
           </div>
-
           {isLoading ? (
-            <RectangleSkeleton width="100%" height="100%" speed={1} />
+            <div className="flex-grow-1 w-100">
+              <RectangleSkeleton width="100%" height="100%" speed={1} />
+            </div>
           ) : error ? (
             <NotFoundError
-              title={error.response.data.errors.title}
-              description={error.response.data.errors.description}
+              title={error?.response?.data?.errors?.title}
+              description={error?.response?.data?.errors?.description}
             ></NotFoundError>
+          ) : memoizedRowData.length === 0 ? (
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto">
+              <img
+                src="/sss-maskot/404.png"
+                alt="No exams found"
+                style={{
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
+                }}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">
+                No Exams Available
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                No exam records were found in the system. Create a new exam or
+                import data to get started.
+              </p>
+              <div className="d-flex align-items-center gap-2">
+                <DrawerTrigger
+                  title="Create Exam"
+                  placement="right"
+                  drawerChildren={CreateExamWizzard}
+                  showHeader={false}
+                  closeOnOutsideClick={false}
+                >
+                  <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
+                    <span>Create Exam</span>
+                  </button>
+                </DrawerTrigger>
+              </div>
+            </div>
           ) : (
-            <>
+            <div className="d-flex flex-column gap-3 h-100">
               <div className="d-flex flex-column gap-2">
                 <div className="d-flex flex-row align-items-center justify-content-between">
                   <div className="d-flex flex-row align-items-center gap-2">
                     {columns?.selectedColumns?.map((c, index) => {
                       const FilterPopOver = filterPopOverMap.find(
                         (f) => f.cellDataType === c.cellDataType,
-                      ).component;
+                      )?.component;
+                      if (!FilterPopOver) return null;
                       return (
                         <Fragment key={index}>
                           <FilterPopOver column={c} tableRef={tableRef} />
@@ -234,7 +269,7 @@ function Exam() {
                       </button>
                     </ModalButton>
                     <button
-                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                       style={{
                         fontSize: "0.7rem",
                         cursor: "pointer",
@@ -252,7 +287,7 @@ function Exam() {
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
-                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
                       onClick={handleReset}
                       style={{ padding: "0.45rem" }}
                     >
@@ -412,7 +447,7 @@ function Exam() {
                                 </span>
                                 <span>Filter Exam</span>
                               </div>
-                              <span>{exams?.data.length} items</span>
+                              <span>{memoizedRowData.length ?? 0} items</span>
                             </div>
                           </div>
                           <div
@@ -494,7 +529,7 @@ function Exam() {
                   )}
                 </div>
               </div>
-            </>
+            </div>
           )}
         </div>
       </main>

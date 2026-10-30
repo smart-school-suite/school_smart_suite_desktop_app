@@ -11,7 +11,10 @@ import {
 } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
@@ -149,9 +152,28 @@ function ExamCandidates() {
           <RectangleSkeleton width="100%" height="100%" speed={1} />
         ) : error ? (
           <NotFoundError
-            title={error.response.data.errors.title}
-            description={error.response.data.errors.description}
+            title={error?.response?.data?.errors?.title}
+            description={error?.response?.data?.errors?.description}
           ></NotFoundError>
+        ) : memoizedRowData.length === 0 ? (
+          <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto">
+            <img
+              src="/sss-maskot/404.png"
+              alt="No exam candidates found"
+              style={{
+                height: "140px",
+                width: "140px",
+                objectFit: "contain",
+              }}
+              className="mb-3"
+            />
+            <h5 className="fw-semibold font-size-md mb-1">
+              No Exam Candidates Available
+            </h5>
+            <p className="text-muted font-size-sm mb-3 max-w-400">
+              No candidate records were found for the selected exam session.
+            </p>
+          </div>
         ) : (
           <>
             <div className="d-flex flex-column gap-3 h-100">
@@ -191,7 +213,8 @@ function ExamCandidates() {
                     {columns?.selectedColumns?.map((c, index) => {
                       const FilterPopOver = filterPopOverMap.find(
                         (f) => f.cellDataType === c.cellDataType,
-                      ).component;
+                      )?.component;
+                      if (!FilterPopOver) return null;
                       return (
                         <Fragment key={index}>
                           <FilterPopOver column={c} tableRef={tableRef} />
@@ -213,7 +236,7 @@ function ExamCandidates() {
                       </button>
                     </ModalButton>
                     <button
-                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                       style={{
                         fontSize: "0.7rem",
                         cursor: "pointer",
@@ -231,7 +254,7 @@ function ExamCandidates() {
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
-                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
                       onClick={handleReset}
                       style={{ padding: "0.45rem" }}
                     >
@@ -398,7 +421,7 @@ function ExamCandidates() {
                                 </span>
                                 <span>Filter Exam Candidates</span>
                               </div>
-                              <span>{examCandidates?.data.length} items</span>
+                              <span>{memoizedRowData.length ?? 0} items</span>
                             </div>
                           </div>
                           <div

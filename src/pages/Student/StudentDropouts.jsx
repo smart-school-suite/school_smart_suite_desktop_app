@@ -10,7 +10,10 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
@@ -150,6 +153,25 @@ function StudentDropOuts() {
             title={error?.response?.data?.errors?.title}
             description={error?.response?.data?.errors?.description}
           ></NotFoundError>
+        ) : memoizedRowData.length === 0 ? (
+          <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto">
+            <img
+              src="/sss-maskot/404.png"
+              alt="No dropout students found"
+              style={{
+                height: "140px",
+                width: "140px",
+                objectFit: "contain",
+              }}
+              className="mb-3"
+            />
+            <h5 className="fw-semibold font-size-md mb-1">
+              No Dropout Students Available
+            </h5>
+            <p className="text-muted font-size-sm mb-3 max-w-400">
+              No dropout student records were found in the system.
+            </p>
+          </div>
         ) : (
           <>
             <div className="d-flex flex-column gap-3 h-100">
@@ -211,7 +233,8 @@ function StudentDropOuts() {
                     {columns?.selectedColumns?.map((c, index) => {
                       const FilterPopOver = filterPopOverMap.find(
                         (f) => f.cellDataType === c.cellDataType,
-                      ).component;
+                      )?.component;
+                      if (!FilterPopOver) return null;
                       return (
                         <Fragment key={index}>
                           <FilterPopOver column={c} tableRef={tableRef} />
@@ -233,7 +256,7 @@ function StudentDropOuts() {
                       </button>
                     </ModalButton>
                     <button
-                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                       style={{
                         fontSize: "0.7rem",
                         cursor: "pointer",
@@ -251,7 +274,7 @@ function StudentDropOuts() {
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
-                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
                       onClick={handleReset}
                       style={{ padding: "0.45rem" }}
                     >
@@ -346,7 +369,7 @@ function StudentDropOuts() {
                         label={`${
                           rowCount > 0
                             ? "Student Selected"
-                            : "Students  Selected"
+                            : "Students Selected"
                         }`}
                         resetAll={handleResetSelections}
                         dropDownItems={
@@ -408,9 +431,9 @@ function StudentDropOuts() {
                                     height={18}
                                   />
                                 </span>
-                                <span>Filter Teacher</span>
+                                <span>Filter Student</span>
                               </div>
-                              <span>{students?.data.length} items</span>
+                              <span>{memoizedRowData.length ?? 0} items</span>
                             </div>
                           </div>
                           <div
@@ -439,7 +462,7 @@ function StudentDropOuts() {
                                   </span>
                                   <span className="text-muted">
                                     Create one or more conditions to narrow down
-                                    your teacher list.
+                                    your student list.
                                   </span>
                                 </div>
                                 <button

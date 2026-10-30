@@ -1,43 +1,43 @@
-import { useGetStudentResits } from "../../hooks/studentResit/useGetStudentResits";
-import Table from "../../components/Tables/Tables";
-import React, {
-  useState,
-  useRef,
-  useMemo,
-  useCallback,
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
+import {
   Fragment,
+  useCallback,
   useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
-import CustomModal from "../../components/Modals/Modal";
+import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
   DropDownMenuItem,
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import { DeleteIcon, DetailsIcon, RepeatIcon } from "../../icons/ActionIcons";
-import DeleteStudentResit from "../../ModalContent/StudentResit/DeleteResit";
-import { resitColDefs } from "../../utils/table/colDefs/resit/resitColDefs";
-import { useDispatch, useSelector } from "react-redux";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import JobPopOver from "../../components/Popover/JobPopover";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
-import filterPopOverMap from "../../utils/maps/FilterMap";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import { Icon } from "@iconify/react";
-import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
-} from "../../Slices/resit/resitSlice";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import Export from "../../ModalContent/Export/Export";
-import SearchInput from "../../components/input/search";
 import { Drawer } from "../../components/drawer/Drawer";
+import { NotFoundError } from "../../components/errors/Error";
+import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
+import SearchInput from "../../components/input/search";
+import CustomModal from "../../components/Modals/Modal";
+import JobPopOver from "../../components/Popover/JobPopover";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import Table from "../../components/Tables/Tables";
 import ResitDetails from "../../DrawerContent/Resit/ResitDetails";
+import { useGetStudentResits } from "../../hooks/studentResit/useGetStudentResits";
+import { DeleteIcon, DetailsIcon, RepeatIcon } from "../../icons/ActionIcons";
+import Export from "../../ModalContent/Export/Export";
+import DeleteStudentResit from "../../ModalContent/StudentResit/DeleteResit";
+import TableColumnSetting from "../../ModalContent/Table/TableSetting";
+import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
+import {
+  addCustomFilter,
+  removeCustomFilter,
+  resetAllCustomFilters,
+  setCustomFilter,
+  toggleGeneralFilter,
+} from "../../Slices/resit/resitSlice";
+import filterPopOverMap from "../../utils/maps/FilterMap";
+import { resitColDefs } from "../../utils/table/colDefs/resit/resitColDefs";
 function StudentResit() {
   const { data: studentResits, isLoading, error } = useGetStudentResits();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -135,9 +135,28 @@ function StudentResit() {
           <RectangleSkeleton width="100%" height="100%" speed={1} />
         ) : error ? (
           <NotFoundError
-            title={error.response.data.errors.title}
-            description={error.response.data.errors.description}
+            title={error?.response?.data?.errors?.title}
+            description={error?.response?.data?.errors?.description}
           ></NotFoundError>
+        ) : memoizedRowData.length === 0 ? (
+          <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto">
+            <img
+              src="/sss-maskot/empty.png"
+              alt="No resits found"
+              style={{
+                height: "140px",
+                width: "140px",
+                objectFit: "contain",
+              }}
+              className="mb-3"
+            />
+            <h5 className="fw-semibold font-size-md mb-1">
+              No Resits Available
+            </h5>
+            <p className="text-muted font-size-sm mb-3 max-w-400">
+              No resit records were found in the system.
+            </p>
+          </div>
         ) : (
           <>
             <div className="d-flex flex-column gap-3 h-100">
@@ -171,13 +190,15 @@ function StudentResit() {
                   </ModalButton>
                 </div>
               </div>
+
               <div className="d-flex flex-column gap-2">
                 <div className="d-flex flex-row align-items-center justify-content-between">
                   <div className="d-flex flex-row align-items-center gap-2">
                     {columns?.selectedColumns?.map((c, index) => {
                       const FilterPopOver = filterPopOverMap.find(
                         (f) => f.cellDataType === c.cellDataType,
-                      ).component;
+                      )?.component;
+                      if (!FilterPopOver) return null;
                       return (
                         <Fragment key={index}>
                           <FilterPopOver column={c} tableRef={tableRef} />
@@ -199,7 +220,7 @@ function StudentResit() {
                       </button>
                     </ModalButton>
                     <button
-                      className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                       style={{
                         fontSize: "0.7rem",
                         cursor: "pointer",
@@ -217,7 +238,7 @@ function StudentResit() {
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <button
-                      className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
+                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
                       onClick={handleReset}
                       style={{ padding: "0.45rem" }}
                     >
@@ -239,6 +260,7 @@ function StudentResit() {
                     </button>
                   </div>
                 </div>
+
                 <div className="d-flex flex-row justify-content-between align-items-center">
                   <div className="w-50">
                     <SearchInput
@@ -285,6 +307,7 @@ function StudentResit() {
                   </div>
                 </div>
               </div>
+
               <div className="h-100">
                 <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
                   <motion.div
@@ -307,7 +330,33 @@ function StudentResit() {
                       handleRowCountFromChild={handleRowCountFromChild}
                       handleRowDataFromChild={handleRowDataFromChild}
                     />
+                    <AnimatePresence>
+                      {rowCount > 0 && (
+                        <BulkActionsToast
+                          key="bulk-actions-toast"
+                          anchorRef={tableWrapperRef}
+                          rowCount={rowCount}
+                          label={
+                            rowCount > 0 ? "Resit Selected" : "Resits Selected"
+                          }
+                          resetAll={handleResetSelections}
+                          dropDownItems={
+                            <DropdownItems
+                              selectedResits={selectedResits}
+                              resetAll={handleResetSelections}
+                            />
+                          }
+                          actionButton={
+                            <ActionButtons
+                              selectedResits={selectedResits}
+                              resetAll={handleResetSelections}
+                            />
+                          }
+                        />
+                      )}
+                    </AnimatePresence>
                   </motion.div>
+
                   {resitState.isGeneralFilterOpen && (
                     <AnimatePresence mode="popLayout">
                       {resitState.isGeneralFilterOpen && (
@@ -352,11 +401,12 @@ function StudentResit() {
                                     height={18}
                                   />
                                 </span>
-                                <span>Filter Exam Candidates</span>
+                                <span>Filter Resits</span>
                               </div>
-                              <span>{studentResits?.data.length} items</span>
+                              <span>{memoizedRowData.length ?? 0} items</span>
                             </div>
                           </div>
+
                           <div
                             className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
                             style={{ maxHeight: "52dvh" }}
@@ -383,7 +433,7 @@ function StudentResit() {
                                   </span>
                                   <span className="text-muted">
                                     Create one or more conditions to narrow down
-                                    Resit List.
+                                    your Resit list.
                                   </span>
                                 </div>
                                 <button
@@ -400,6 +450,7 @@ function StudentResit() {
                               </div>
                             )}
                           </div>
+
                           <div className="mt-auto">
                             {resitState.customFilter.length > 0 && (
                               <div className="d-flex flex-row justify-content-start p-2">
