@@ -149,14 +149,14 @@ function LevelResitBillingFeeSetting({ handleClose = () => {}, drawerData }) {
         </button>
       </div>
 
-      <div className="drawer-content pt-3 font-size-sm px-2">
+      <div className="drawer-content pt-3 font-size-sm ps-2">
         {error && (
           <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-3">
             <p className="m-0">{error}</p>
           </div>
         )}
 
-        <div className="d-flex flex-column gap-3">
+        <div className="d-flex flex-column gap-2">
           {isLevelLoading ? (
             [...Array(6)].map((_, index) => (
               <div className="d-flex flex-column gap-2 w-100" key={index}>

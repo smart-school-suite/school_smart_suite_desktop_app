@@ -1,5 +1,49 @@
 import * as Yup from "yup";
 
+
+export const academicYearSchema = ({
+  required = true,
+  minStartYear = 1950,
+  maxStartYear = new Date().getFullYear(),
+  messages = {},
+} = {}) => {
+  let schema = Yup.string()
+    .trim()
+    .matches(
+      /^\d{4}-\d{4}$/,
+      messages.format || "Invalid academic year format (YYYY-YYYY)",
+    )
+    .test(
+      "is-consecutive-years",
+      messages.consecutive ||
+        "The second year must be exactly one year after the first (e.g 2026-2027)",
+      (val) => {
+        if (!val || !/^\d{4}-\d{4}$/.test(val)) return true; // let format handle it
+        const [start, end] = val.split("-").map(Number);
+        return end === start + 1;
+      },
+    )
+    .test(
+      "is-within-range",
+      messages.range ||
+        `Academic year must start between ${minStartYear} and ${maxStartYear}`,
+      (val) => {
+        if (!val || !/^\d{4}-\d{4}$/.test(val)) return true; // let format handle it
+        const start = Number(val.split("-")[0]);
+        return start >= minStartYear && start <= maxStartYear;
+      },
+    )
+    .transform((val) => (val === "" ? null : val));
+
+  if (required) {
+    schema = schema.required(messages.required || "Academic year is required");
+  } else {
+    schema = schema.nullable();
+  }
+
+  return schema;
+};
+
 export const isValidMySQLDate = (value) => {
   if (!value) return false;
 

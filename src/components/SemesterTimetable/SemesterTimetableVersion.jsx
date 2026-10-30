@@ -1,43 +1,42 @@
-import { useSelector, useDispatch } from "react-redux";
-import { useGetSemesterTimetableVersions } from "../../hooks/semesterTimetable/useGetSemesterTimetableVersion";
-import { useState, Fragment, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Icon } from "@iconify/react";
+import { useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "framer-motion";
+import { Fragment, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setTimetableVersion,
   setTimetableVersionStatus,
-} from "../../Slices/Asynslices/semesterTimetableSlice";
-import { useCreateSemesterTimetableVersion } from "../../hooks/semesterTimetable/useCreateSemesterTimetableVersion";
-import toast from "react-hot-toast";
-import ToastWarning from "../Toast/ToastWarning";
-import { useGetSemesterTimetableConstraints } from "../../hooks/semesterTimetable/useGetSemesterTimetableConstraint";
-import { ModalButton } from "../DataTableComponents/ActionComponent";
+} from "../../Slices/SemesterTimetable/semesterTimetableSlice";
 import { constraintMap } from "../../constants/constraintMap";
+import { useCreateSemesterTimetableVersion } from "../../hooks/semesterTimetable/useCreateSemesterTimetableVersion";
+import { useGetSemesterTimetableConstraints } from "../../hooks/semesterTimetable/useGetSemesterTimetableConstraint";
+import { useGetSemesterTimetableVersions } from "../../hooks/semesterTimetable/useGetSemesterTimetableVersion";
+import { ModalButton } from "../DataTableComponents/ActionComponent";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import { useGetTimetableStatus } from "../../hooks/semesterTimetable/useGetTimetableStatus";
+import ToastWarning from "../Toast/ToastWarning";
 
 function ConstraintVersionWrapper() {
   const semesterTimetable = useSelector((state) => state.semesterTimetable);
   return (
     <>
       <div
-        className="bg-white rounded-4 px-2 py-3 d-flex flex-column gap-1"
-        style={{ width: "20%", height: "100%" }}
+        className="bg-white rounded-2 px-2 py-2 d-flex flex-column gap-3 border"
+        style={{ width: "25%", height: "100%" }}
       >
         <div style={{ height: "5%" }} className="w-100">
           <CreateVersion semesterTimetable={semesterTimetable} />
         </div>
         <div className="d-flex flex-column gap-4" style={{ height: "95%" }}>
           <div
-            className="d-flex flex-column align-items-start w-100 gap-2 scroll-bar-sm"
+            className="d-flex flex-column align-items-start w-100 gap-1 scroll-bar-sm"
             style={{ height: "40%" }}
           >
-            <span className="font-size-sm gainsboro-color ms-1">Versions</span>
+            <span className="font-size-sm text-iron-600 ms-1">Versions</span>
             <VersionDropdown semesterTimetable={semesterTimetable} />
           </div>
           <div
-            className="d-flex flex-column align-items-start w-100 gap-2 scroll-bar-sm"
+            className="d-flex flex-column align-items-start w-100 gap-1 scroll-bar-sm"
             style={{
               maxheight: "60%",
               height: "auto",
@@ -45,7 +44,7 @@ function ConstraintVersionWrapper() {
               overflowX: "hidden",
             }}
           >
-            <span className="font-size-sm gainsboro-color ms-1">
+            <span className="font-size-sm text-iron-600 ms-1">
               Constraints
             </span>
             <div className="d-flex flex-column gap-2 constraint-dd-container w-100">
@@ -108,7 +107,7 @@ function VersionDropdown({ semesterTimetable }) {
         <AnimatePresence initial={false}>
           {open && (
             <motion.div
-              className="d-flex flex-column gap-3 font-size-sm justify-content-start align-items-start scroll-bar-sm pb-5"
+              className="d-flex flex-column gap-2 font-size-sm justify-content-start align-items-start scroll-bar-sm pb-5"
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
@@ -152,7 +151,7 @@ function VersionDropdown({ semesterTimetable }) {
                         });
                       }}
                     >
-                      <span>{version?.label}</span>
+                      <span className="text-iron-600">{version?.label}</span>
                       {version.is_latest ? (
                         <div className="d-flex flex-row gap-2">
                           <span className="pill-sm-success">latest</span>
@@ -220,7 +219,7 @@ function CreateVersion({ semesterTimetable }) {
   }
   return (
     <button
-      className="d-flex flex-row align-items-center justify-content-between border-none transparent-bg w-100"
+      className="d-flex flex-row align-items-center justify-content-between border-none transparent-bg w-100 border p-2 rounded-2"
       disabled={isPending}
       onClick={handleCreateVersion}
     >
@@ -228,7 +227,7 @@ function CreateVersion({ semesterTimetable }) {
         <span style={{ lineHeight: 0 }}>
           <Icon icon="system-uicons:versions" width="20" height="20" />
         </span>
-        <span className="font-size-sm fw-semibold">New Version</span>
+        <span className="font-size-sm fw-medium">New Version</span>
       </div>
       <span style={{ lineHeight: 0 }}>
         <Icon icon="ic:round-plus" width="20" height="20" />
@@ -311,7 +310,7 @@ function ConstraintDropdown() {
                           }}
                           size={"lg"}
                         >
-                          <span>{constraint.name}</span>
+                          <span className="text-iron-600">{constraint.name}</span>
                         </ModalButton>
                       </Fragment>
                     ))}

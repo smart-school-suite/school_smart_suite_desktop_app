@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { daysOfWeek } from "../../data/data";
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 

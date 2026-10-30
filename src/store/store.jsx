@@ -42,7 +42,6 @@ import createExamScoreReducer from "../Slices/Asynslices/ExamScoreSlice";
 import examtimetableReducer from "../Slices/Asynslices/ExamTimetableSlice";
 import resitExamTimetableReducer from "../Slices/Asynslices/ResitExamTimetableSlice";
 import createResitExamScoreReducer from "../Slices/Asynslices/ResitScoreSlice";
-import semesterTimetableReducer from "../Slices/Asynslices/semesterTimetableSlice";
 import specialtyTimetableReducer from "../Slices/Asynslices/SpecialtyTimetableSlice";
 import studentScoreReducer from "../Slices/Asynslices/StudentScoreSlice";
 import pricingReducer from "../Slices/Asynslices/subcriptionPricingSlice";
@@ -78,6 +77,7 @@ import resitFeeTransactionReducer from "../Slices/resitFee/resitFeeTransactionSl
 import eventCategoryReducer from "../Slices/schoolEvent/eventCategorySlice";
 import schoolEventReducer from "../Slices/schoolEvent/schoolEventSlice";
 import expenseCategoryReducer from "../Slices/schoolExpense/expenseCategorySlice";
+import semesterTimetableReducer from "../Slices/SemesterTimetable/semesterTimetableSlice";
 import parentReducer from "../Slices/student/parentSlice";
 import studentBatchReducer from "../Slices/student/studentBatchSlice";
 import studentReducer from "../Slices/student/studentSlice";
@@ -125,7 +125,7 @@ const rootReducer = combineReducers({
   auth: persistReducer({ key: "auth", storage }, authReducer),
   theme: persistReducer(themePersistConfig, themeReducer),
   pricing: pricingReducer,
-  timetable: timetableReducer,
+  timetable: persistReducer({ key: "timetable", storage}, timetableReducer),
   examtimetable: examtimetableReducer,
   studentScore: studentScoreReducer,
   specialtyTimetable: specialtyTimetableReducer,
@@ -134,7 +134,7 @@ const rootReducer = combineReducers({
   resitExamTimetable: resitExamTimetableReducer,
   createResitExamScore: createResitExamScoreReducer,
   autoGenTimetable: autoGenTimetableSliceReducer,
-  semesterTimetable: semesterTimetableReducer,
+  semesterTimetable: persistReducer({ key: "semesterTimetable", storage}, semesterTimetableReducer),
   teachers: persistReducer(teacherPersistConfig, teacherReducer),
   specialty: persistReducer({ key: "specialties", storage }, specialtyReducer),
   department: persistReducer({ key: "department", storage }, departmentReducer),

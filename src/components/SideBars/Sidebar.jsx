@@ -450,7 +450,7 @@ function SideBarLg() {
                           </div>
                         </div>
                       </div>
-                      {/* <div
+                      <div
                         className={`${darkMode ? "box-nav-dark" : "box-nav"}`}
                       >
                         <div className="subbox-nav">
@@ -465,7 +465,7 @@ function SideBarLg() {
                             <p style={{ fontSize: "0.75rem" }}>Time-table</p>
                           </NavLink>
                         </div>
-                      </div> */}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1299,7 +1299,7 @@ function SideBarSmTab({ items }) {
                     >
                       <span>{item.title}</span>
                       {SubMenuIcon && (
-                        <SubMenuIcon size={16} strokeWidth={1.75} />
+                        <SubMenuIcon size={16} strokeWidth={1.5} />
                       )}
                     </div>
                     {!isLastElement && <hr className="my-1 opacity-25" />}

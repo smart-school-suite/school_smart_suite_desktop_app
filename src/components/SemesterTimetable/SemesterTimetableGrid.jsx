@@ -1,38 +1,39 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { useChannel } from "ably/react";
-import { useState, useMemo, useEffect, Fragment } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  setTimetableVersion,
-  setSchoolSemester,
-  setTimetableVersionStatus,
-  setGenerationStatus,
-} from "../../Slices/Asynslices/semesterTimetableSlice";
-import { checkConfiguration } from "../../utils/semesterTimetable/generateTimetable";
-import NumberFlow from "@number-flow/react";
-import { handleGenerateTimetable } from "../../utils/semesterTimetable/generateTimetable";
-import BreakPeriodCard from "../Card/BreakPeriodCard";
-import PeriodCard from "../Card/PeriodCard";
-import { useGenerateSemesterTimetable } from "../../hooks/semesterTimetable/useGenerateSemesterTimetable";
-import { Icon } from "@iconify/react";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   autoUpdate,
   flip,
+  FloatingPortal,
   offset,
   shift,
   useDismiss,
   useFloating,
   useInteractions,
   useRole,
-  FloatingPortal,
 } from "@floating-ui/react";
+import { Icon } from "@iconify/react";
+import NumberFlow from "@number-flow/react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useChannel } from "ably/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
-import { Error } from "../errors/Error";
+import { useGenerateSemesterTimetable } from "../../hooks/semesterTimetable/useGenerateSemesterTimetable";
 import { useGetTimetableSlots } from "../../hooks/semesterTimetable/useGetTimetableSlots";
-import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
-import { ModalButton } from "../DataTableComponents/ActionComponent";
 import GenerationFailedError from "../../ModalContent/SemesterTimetable/Errors/GenerationFailedError";
+import {
+  setGenerationStatus,
+  setSchoolSemester,
+  setTimetableVersion,
+  setTimetableVersionStatus,
+} from "../../Slices/SemesterTimetable/semesterTimetableSlice";
+import {
+  checkConfiguration,
+  handleGenerateTimetable,
+} from "../../utils/semesterTimetable/generateTimetable";
+import BreakPeriodCard from "../Card/BreakPeriodCard";
+import PeriodCard from "../Card/PeriodCard";
+import { ModalButton } from "../DataTableComponents/ActionComponent";
+import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../Spinners/Spinners";
 function TimetableGridWrapper() {
   const semesterTimetable = useSelector((state) => state.semesterTimetable);
@@ -42,7 +43,7 @@ function TimetableGridWrapper() {
   return (
     <>
       <div
-        style={{ width: "60%", height: "100%" }}
+        style={{ width: "75%", height: "100%" }}
         className="d-flex flex-column align-items-center px-2 gap-2"
       >
         <div className="d-flex flex-row justify-content-center w-100">
@@ -176,7 +177,7 @@ function TimetableGridPlaceholder() {
         </div>
       </div>
       <div className="d-flex flex-row w-100 justify-content-start gap-2 align-items-center">
-        <SingleSpinner />
+        <SingleSpinner classColor={"text-iron-700"} />
         <div className="d-flex flex align-items-center">
           <span className="font-size-sm fw-bold">
             {message?.details
@@ -242,7 +243,7 @@ function TimetableGridPlaceholder() {
                 semesterTimetable.hard_constraints,
                 generateTimetable,
                 semesterTimetable.schoolSemester,
-                semesterTimetable.timetableVersion
+                semesterTimetable.timetableVersion,
               );
               dispatch(setGenerationStatus(true));
             }}
@@ -383,22 +384,20 @@ function SemesterDropdown({
         <button
           ref={refs.setReference}
           type="button"
-          className="border-none outline-none w-100 px-3 py-2 bg-white font-size-sm d-flex flex-row gap-2 border rounded-pill justify-content-between"
+          className="border-none outline-none w-100 px-2 py-2 bg-white font-size-sm d-flex flex-row gap-2 border rounded-2 justify-content-between"
           onClick={() => setOpen((v) => !v)}
           {...getReferenceProps()}
         >
-          <span className="text-capitalize">{renderButtonLabel()}</span>
-          <span style={{ lineHeight: 0 }}>
-            <Icon
-              icon="mi:chevron-down"
-              width="16"
-              height="16"
-              style={{
-                transform: open ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.2s ease",
-              }}
-            />
-          </span>
+          <span className="text-capitalize text-iron-700">{renderButtonLabel()}</span>
+          <Icon
+            icon="mi:chevron-down"
+            width="16"
+            height="16"
+            style={{
+              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 0.2s ease",
+            }}
+          />
         </button>
         <FloatingPortal>
           <AnimatePresence>

@@ -1,6 +1,5 @@
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 function SetttingLayout() {
@@ -63,12 +62,6 @@ function SetttingLayout() {
                 </span>
               </div>
             </div>
-            <button className="rounded-3 border-none p-2 font-size-sm border-none bg-primary-500 text-white d-flex flex-row align-items-center gap-2">
-              <span>
-                 <Plus size={16}/>
-              </span>
-              <span>Create Branch</span>
-            </button>
           </div>
           <hr />
           <div className="d-flex flex-row align-items-center gap-4 font-size-sm px-2">

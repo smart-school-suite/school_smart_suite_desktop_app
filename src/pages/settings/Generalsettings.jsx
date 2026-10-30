@@ -4,17 +4,14 @@ function Generalsettings() {
   return (
     <>
       <div
-        className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-1 gap-2"
+        className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-1 gap-2 font-size-sm"
         style={{ maxHeight: "84dvh" }}
       >
         <div className="setting-container d-flex flex-column gap-2 px-2">
-          <div>
-            <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
-              Country Details
-            </span>
+          <div className="d-flex flex-column gap-1">
+            <span className="fw-medium">Country Details</span>
             <div
-              className={`${darkMode ? "dark-bg gainsboro-color" : "white-bg"} card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2`}
-              style={{ fontSize: "0.87rem" }}
+              className={` card border-none border p-2 w-100 d-flex flex-column rounded-4 gap-2 p-3`}
             >
               <div className="d-flex flex-column">
                 <span>Country Name</span>
@@ -32,13 +29,10 @@ function Generalsettings() {
               </div>
             </div>
           </div>
-          <div>
-            <span style={{ fontSize: "0.87rem" }} className="fw-semibold">
-              Application Details
-            </span>
+          <div className="d-flex flex-column gap-1">
+            <span className="fw-medium">Application Details</span>
             <div
-              className={`${darkMode ? "dark-bg gainsboro-color" : "white-bg"} card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2`}
-              style={{ fontSize: "0.87rem" }}
+              className={` card border-none p-2 w-100 d-flex flex-column rounded-4 gap-2 p-3 border`}
             >
               <div className="d-flex flex-column">
                 <span>App Name</span>

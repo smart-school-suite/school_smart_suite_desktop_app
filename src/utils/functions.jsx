@@ -1,3 +1,46 @@
+
+const DEFAULT_ERROR_TITLE = "Something went wrong. Please try again.";
+
+/**
+ * Turns an API error into { title, messages } for the inline error banner.
+ *
+ * Handles the shapes our Laravel API returns:
+ *  - Validation (422):  { message, errors: { field: ["msg", ...] } }
+ *  - AppException:      { message, errors: { title, description, path } }
+ *  - Generic error:     { message, errors: null }
+ * plus network failures where there is no response at all.
+ */
+export const parseServerError = (error, fallbackTitle = DEFAULT_ERROR_TITLE) => {
+  // Request never reached the server (offline, CORS, timeout)
+  if (error && !error.response) {
+    return {
+      title: "Unable to reach the server.",
+      messages: ["Please check your internet connection and try again."],
+    };
+  }
+
+  const data = error?.response?.data;
+  const errors = data?.errors;
+
+  // AppException / AuthException structured error
+  if (errors && !Array.isArray(errors) && (errors.title || errors.description)) {
+    return {
+      title: errors.title || data?.message || fallbackTitle,
+      messages: errors.description ? [errors.description] : [],
+    };
+  }
+
+  // Laravel validation errors: flatten every field's messages into one list
+  const fieldMessages =
+    errors && typeof errors === "object"
+      ? [...new Set(Object.values(errors).flat().filter(Boolean))]
+      : [];
+
+  return {
+    title: data?.message || fallbackTitle,
+    messages: fieldMessages,
+  };
+};
 function CleanArrayData(dataArray, keys, filterFn) {
     return dataArray
         .filter(filterFn || (() => true))
@@ -658,6 +701,10 @@ export const areAllFieldsFilled = (obj) => {
   return true; 
 };
 
+export function cleanAssetPath(path) {
+    if (!path || typeof path !== 'string') return '';
+    return path.replace(/\\\//g, '/');
+}
 
 export function objectHasEmpty(obj, strict = false) {
   return Object.values(obj).some(value => {

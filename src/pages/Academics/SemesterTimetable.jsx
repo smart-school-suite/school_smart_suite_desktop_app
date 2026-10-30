@@ -1,42 +1,37 @@
-import { Icon } from "@iconify/react";
-import { useSelector } from "react-redux";
-import DiagnosticWrapper from "../../components/SemesterTimetable/SemesterTimetableDiagnostics";
+import { CalendarRange } from "lucide-react";
 import TimetableGridWrapper from "../../components/SemesterTimetable/SemesterTimetableGrid";
 import ConstraintVersionWrapper from "../../components/SemesterTimetable/SemesterTimetableVersion";
 function SemesterTimetable() {
-  const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
-      <main className="main-container gap-2">
-        <div style={{ height: "5%" }}>
+      <main className="main-container gap-2 font-size-sm">
+       <div className="d-flex flex-column gap-1 h-100">
+         <div style={{ height: "6%" }} className="bg-white p-2 rounded-2 d-flex flex-column justify-content-center border">
           <div className="d-flex align-items-center gap-2">
             <div
-              className={`${
-                darkMode ? "dark-mode-active" : "light-mode-active"
-              } d-flex justify-content-center align-items-center`}
+              className={`d-flex justify-content-center align-items-center bg-primary-50 text-primary-500`}
               style={{
-                width: "2.5rem",
-                height: "2.5rem",
+                width: "2rem",
+                height: "2rem",
                 borderRadius: "0.5rem",
               }}
             >
-              <Icon
-                icon="ant-design:schedule-outlined"
-                width="24"
-                height="24"
+              <CalendarRange
+                size={16}
+                strokeWidth={1.5}
               />
             </div>
-            <span className="my-0 fw-semibold">Manage Semester Timetable</span>
+            <span className="fw-medium">Manage Semester Timetable</span>
           </div>
         </div>
         <div
           className="d-flex flex-row align-items-start"
-          style={{ height: "95%" }}
+          style={{ height: "94%" }}
         >
           <ConstraintVersionWrapper />
           <TimetableGridWrapper />
-          <DiagnosticWrapper />
         </div>
+       </div>
       </main>
     </>
   );

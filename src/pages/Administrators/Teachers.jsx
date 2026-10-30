@@ -9,6 +9,7 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import UpdateTeacher from "../../DrawerContent/Teacher/UpdateTeacher";
 import Export from "../../ModalContent/Export/Export";
 import TableColumnSetting from "../../ModalContent/Table/TableSetting";
 import ActivateTeacher from "../../ModalContent/Teacher/ActivateTeacher";
@@ -18,22 +19,24 @@ import BulkDeleteTeacher from "../../ModalContent/Teacher/BulkDeleteTeacher";
 import DeactivateTeacher from "../../ModalContent/Teacher/DeactivateTeacher";
 import DeleteTeacher from "../../ModalContent/Teacher/DeleteTeacher";
 import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import TeacherDetails from "../../ModalContent/Teacher/TeacherDetails";
-import UpdateTeacher from "../../ModalContent/Teacher/UpdateTeacher";
 import {
   addCustomFilter,
   removeCustomFilter,
   resetAllCustomFilters,
   setCustomFilter,
-  toggleGeneralFilter
+  toggleGeneralFilter,
 } from "../../Slices/teacher/teacherSlice";
-import ActionButtonDropdown, { DropDownMenuItem, ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import ActionButtonDropdown, {
+  DropDownMenuItem,
+  ModalButton,
+} from "../../components/DataTableComponents/ActionComponent";
 import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
+import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
 import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
@@ -81,12 +84,12 @@ function Teachers() {
     return teachers?.data ?? [];
   }, [teachers]);
 
-const handleSearch = (value) => {
-  setSearchText(value);
-  if (tableRef.current && tableRef.current.setGridOption) {
-    tableRef.current.setGridOption("quickFilterText", value);
-  }
-};
+  const handleSearch = (value) => {
+    setSearchText(value);
+    if (tableRef.current && tableRef.current.setGridOption) {
+      tableRef.current.setGridOption("quickFilterText", value);
+    }
+  };
 
   const handleReset = () => {
     if (tableRef.current) {
@@ -217,19 +220,18 @@ const handleSearch = (value) => {
                 </div>
                 <div className="d-flex flex-row justify-content-between align-items-center">
                   <div className="w-50">
-                    <SearchInput 
-                    placeholder={"Search Teacher......"}
-                    value={searchText}
-                    onChange={(val) => handleSearch(val)}
-                    hotkey="Ctrl+K" 
-                  />
+                    <SearchInput
+                      placeholder={"Search Teacher......"}
+                      value={searchText}
+                      onChange={(val) => handleSearch(val)}
+                      hotkey="Ctrl+K"
+                    />
                   </div>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <ModalButton
                       action={{ modalContent: Export }}
                       size={"xl"}
                       rowData={{ tableRef, columns: columns.availableColumns }}
-
                     >
                       <button
                         className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
@@ -369,7 +371,9 @@ const handleSearch = (value) => {
                                           cFilters={cFilters}
                                           columns={columns}
                                           moduleState={teacherState}
-                                          removeCustomFilter={removeCustomFilter}
+                                          removeCustomFilter={
+                                            removeCustomFilter
+                                          }
                                           setCustomFilter={setCustomFilter}
                                         />
                                       </Fragment>
@@ -418,10 +422,11 @@ const handleSearch = (value) => {
                                 </div>
                               )}
                               <div className="d-flex flex-row border-top justify-content-between p-2">
-                                <button className="border-none border bg-transparent px-3 font-size-sm py-2 rounded-3"
-                                 onClick={() => {
-                                   dispatch(resetAllCustomFilters())
-                                 }}
+                                <button
+                                  className="border-none border bg-transparent px-3 font-size-sm py-2 rounded-3"
+                                  onClick={() => {
+                                    dispatch(resetAllCustomFilters());
+                                  }}
                                 >
                                   Reset All
                                 </button>
@@ -449,23 +454,64 @@ export default Teachers;
 export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
 
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        rowData,
-        handleClose: handleCloseModal,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
   };
 
   return (
@@ -480,7 +526,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-3 pointer-cursor"
           }
-          onClick={() => handleShowModal(UpdateTeacher, "lg")}
+          onClick={() =>
+            handleShowDrawer(UpdateTeacher, {
+              title: "Update Teacher",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -493,7 +545,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-3 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteTeacher, "md")}
+          onClick={() =>
+            handleShowModal(DeleteTeacher, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -506,7 +564,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-3 pointer-cursor"
           }
-          onClick={() => handleShowModal(TeacherDetails, "md")}
+          // onClick={() =>
+          //   handleShowModal(TeacherDetails, {
+          //     size: "md",
+          //     closeOnOutsideClick: true,
+          //     closeOnEscape: true,
+          //   })
+          // }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -520,7 +584,13 @@ export function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-3 pointer-cursor"
             }
-            onClick={() => handleShowModal(DeactivateTeacher, "md")}
+            onClick={() =>
+              handleShowModal(DeactivateTeacher, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -534,7 +604,13 @@ export function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-3 pointer-cursor"
             }
-            onClick={() => handleShowModal(ActivateTeacher, "md")}
+            onClick={() =>
+              handleShowModal(ActivateTeacher, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -545,13 +621,36 @@ export function ActionComponent(props) {
           </DropDownMenuItem>
         )}
       </ActionButtonDropdown>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={rowData}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );
@@ -641,4 +740,3 @@ function DropdownItems({ selectedTeachers, resetAll, onModalStateChange }) {
     </>
   );
 }
-

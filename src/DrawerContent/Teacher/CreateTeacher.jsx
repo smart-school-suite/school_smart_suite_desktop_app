@@ -1,41 +1,39 @@
-import { Icon } from "@iconify/react";
-import { Fragment, useRef, useState } from "react";
-import { useCreateTeacher } from "../../hooks/teacher/useCreateTeacher";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import {
+  createDynamicRefCallback,
+  isValidationSuccessful,
+  removeDynamicFieldValidation,
+  removeDynamicRefs,
+  updateDynamicFieldValidation,
+  validateCustomRules,
+  validateDynamicSection,
+  validateRefs,
+} from "@/utils/form";
+import { AnimatePresence, motion } from "framer-motion";
+import { Plus, Trash2, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import {
+  academicYearSchema,
+  addressSchema,
   emailValidationSchema,
   nameSchema,
   phoneValidationSchema,
-  addressSchema
 } from "../../ComponentConfig/YupValidationSchema";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import {
+  AcademicYearInput,
   PhoneNumberInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
-import { gender as genderOptions } from "../../data/data";
-import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import { allFieldsValid, isLastElement } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetActiveGender } from "../../hooks/gender/useGetActiveGender";
 import { useGetLevels } from "../../hooks/level/useGetLevels";
-import { v4 as uuidv4 } from "uuid";
-import { Plus, Trash2 } from "lucide-react";
 import { useGetQualifications } from "../../hooks/qualification/useGetQualification";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { motion, AnimatePresence } from "framer-motion";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import {
-  createDynamicRefCallback,
-  removeDynamicRefs,
-  updateDynamicFieldValidation,
-  removeDynamicFieldValidation,
-  validateDynamicSection,
-  validateCustomRules,
-  validateRefs,
-  isValidationSuccessful,
-  updateFormField
-} from "@/utils/form";
+import { useCreateTeacher } from "../../hooks/teacher/useCreateTeacher";
+import { isLastElement } from "../../utils/functions";
+
 const qInstance = {
   qualification_id: "",
   field_of_study: "",
@@ -43,18 +41,9 @@ const qInstance = {
   institution: "",
 };
 
-const aLInstance = {
-  allowed_level: "",
-};
-
-// Motion Variant Presets
 const containerVariants = {
   hidden: { opacity: 0, y: 12 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.3, ease: "easeOut" },
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
 };
 
 const itemVariants = {
@@ -71,6 +60,34 @@ const itemVariants = {
     height: 0,
     transition: { duration: 0.2, ease: "easeIn" },
   },
+};
+
+// Normalises the two error shapes the API returns:
+//  - Laravel validation: { message, errors: { field: ["msg", ...] } }
+//  - AppException:       { message, errors: { title, description, path } }
+const parseServerError = (error) => {
+  const data = error?.response?.data;
+  const errors = data?.errors;
+
+  if (errors && (errors.title || errors.description)) {
+    return {
+      title: errors.title || data?.message || "Failed To Create Teacher",
+      messages: errors.description ? [errors.description] : [],
+    };
+  }
+
+  const fieldMessages =
+    errors && typeof errors === "object"
+      ? Object.values(errors).flat().filter(Boolean)
+      : [];
+
+  return {
+    title:
+      data?.message ||
+      error?.message ||
+      "Something went wrong while creating the teacher. Please try again.",
+    messages: fieldMessages,
+  };
 };
 
 function CreateTeacher({ handleClose }) {
@@ -98,6 +115,7 @@ function CreateTeacher({ handleClose }) {
   const phoneNumberRef = useRef();
   const addressRef = useRef();
   const formRefs = useRef({});
+  const errorBannerRef = useRef(null);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -119,26 +137,54 @@ function CreateTeacher({ handleClose }) {
     phone: "",
     address: "",
     allowed_levels: "",
+    qualifications: "",
   });
 
-  const [dynamicFieldValid, setDynamicFieldValid] = useState({});
+  // Only the setter is needed by the dynamic validation helpers
+  const [, setDynamicFieldValid] = useState({});
 
   const [errors, setErrors] = useState({
     gender: "",
-    qualification: {
-
-    }
+    qualifications: {},
   });
+
+  // Inline error banner (replaces the toast)
+  const [clientError, setClientError] = useState(null);
+  const [serverError, setServerError] = useState(null);
 
   const { mutate: createTeacherMutation, isPending } =
     useCreateTeacher(handleClose);
+
+  useEffect(() => {
+    if ((clientError || serverError) && errorBannerRef.current) {
+      errorBannerRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [clientError, serverError]);
+
+  const clearBannerErrors = () => {
+    setClientError(null);
+    setServerError(null);
+  };
+
+  // Every formData update goes through here so the banner clears once the user edits
+  const updateFormData = (updater) => {
+    clearBannerErrors();
+    setFormData(updater);
+  };
+
+  const handleFormChange = (field, value) => {
+    updateFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleStateChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleQualificationChange = (id, field, value) => {
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       qualifications: prev.qualifications.map((q) =>
         q.id === id ? { ...q, [field]: value } : q,
@@ -146,35 +192,54 @@ function CreateTeacher({ handleClose }) {
     }));
   };
 
+  const handleQualificationDropdownError = (id, value) => {
+    setErrors((prev) => ({
+      ...prev,
+      qualifications: { ...prev.qualifications, [id]: value },
+    }));
+  };
+
   const removeQualification = (id) => {
     removeDynamicRefs(formRefs, "qualifications", id);
-
     removeDynamicFieldValidation(setDynamicFieldValid, "qualifications", id);
-    setFormData((prev) => ({
-      ...prev,
-      qualifications: prev.qualifications.filter((q) => q.id !== id),
-    }));
+    setErrors((prev) => {
+      const { [id]: _removed, ...rest } = prev.qualifications;
+      return { ...prev, qualifications: rest };
+    });
+
+    const remaining = formData.qualifications.filter((q) => q.id !== id);
+    updateFormData((prev) => ({ ...prev, qualifications: remaining }));
+    if (isFieldValid.qualifications !== "") {
+      setFieldValid((prev) => ({
+        ...prev,
+        qualifications: remaining.length > 0,
+      }));
+    }
   };
 
   const addQualification = () => {
-    setFormData((prev) => ({
+    updateFormData((prev) => ({
       ...prev,
       qualifications: [...prev.qualifications, { ...qInstance, id: uuidv4() }],
     }));
+    if (isFieldValid.qualifications !== "") {
+      setFieldValid((prev) => ({ ...prev, qualifications: true }));
+    }
   };
 
   const toggleLevelSelection = (levelId) => {
-    setFormData((prev) => {
-      const exists = prev.allowed_levels.some(
-        (item) => item.allowed_level === levelId,
-      );
-      return {
-        ...prev,
-        allowed_levels: exists
-          ? prev.allowed_levels.filter((item) => item.allowed_level !== levelId)
-          : [...prev.allowed_levels, { allowed_level: levelId }],
-      };
-    });
+    const exists = formData.allowed_levels.some(
+      (item) => item.allowed_level === levelId,
+    );
+    const nextLevels = exists
+      ? formData.allowed_levels.filter((item) => item.allowed_level !== levelId)
+      : [...formData.allowed_levels, { allowed_level: levelId }];
+
+    updateFormData((prev) => ({ ...prev, allowed_levels: nextLevels }));
+    setFieldValid((prev) => ({
+      ...prev,
+      allowed_levels: nextLevels.length > 0,
+    }));
   };
 
   const handlePrevalidation = async () => {
@@ -194,6 +259,7 @@ function CreateTeacher({ handleClose }) {
 
     const customValidation = await validateCustomRules({
       allowed_levels: () => formData.allowed_levels.length > 0,
+      qualifications: () => formData.qualifications.length > 0,
     });
 
     return {
@@ -204,30 +270,49 @@ function CreateTeacher({ handleClose }) {
   };
 
   const handleCreateTeacher = async () => {
+    clearBannerErrors();
+
+    const hasLevels = formData.allowed_levels.length > 0;
+    const hasQualifications = formData.qualifications.length > 0;
+    setFieldValid((prev) => ({
+      ...prev,
+      allowed_levels: hasLevels,
+      qualifications: hasQualifications,
+    }));
+
     const validation = await handlePrevalidation();
-    const isValid = isValidationSuccessful(validation);
-    if (!isValid) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Please ensure all fields are valid before creating a teacher."
-          }
-        />,
-      );
+    if (!isValidationSuccessful(validation)) {
+      const messages = [];
+      if (!hasLevels) messages.push("Select at least one teaching level.");
+      if (!hasQualifications) messages.push("Add at least one qualification.");
+      setClientError({
+        title:
+          "Please correct the highlighted fields before creating a teacher.",
+        messages,
+      });
       return;
     }
 
     const payload = {
-      ...formData,
+      name: formData.name.trim(),
+      first_name: formData.first_name.trim(),
+      last_name: formData.last_name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone || null,
+      address: formData.address?.trim() || null,
       gender_id: formData.gender_id?.id || formData.gender_id,
+      allowed_level_ids: formData.allowed_levels.map((al) => al.allowed_level),
       qualifications: formData.qualifications.map((q) => ({
-        ...q,
         qualification_id: q.qualification_id?.id || q.qualification_id,
+        field_of_study: q.field_of_study.trim(),
+        institution: q.institution.trim(),
+        year: q.year.trim(),
       })),
     };
 
-    createTeacherMutation(payload);
+    createTeacherMutation(payload, {
+      onError: (error) => setServerError(parseServerError(error)),
+    });
   };
 
   const getValidationClass = (field) => {
@@ -236,17 +321,52 @@ function CreateTeacher({ handleClose }) {
     return "";
   };
 
+  const bannerError = clientError || serverError;
+
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="font-size-sm d-flex flex-column gap-4"
+      className="font-size-sm d-flex flex-column gap-4 pt-2"
       style={{ flex: 1, minHeight: 0 }}
     >
       <div className="drawer-content px-2">
+        <AnimatePresence>
+          {bannerError && (
+            <motion.div
+              key="form-error"
+              ref={errorBannerRef}
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="bg-red-100 p-2 rounded-3 text-red-700 mb-4 d-flex flex-row align-items-start justify-content-between gap-2"
+              role="alert"
+            >
+              <div className="d-flex flex-column gap-1">
+                <p className="m-0 fw-medium">{bannerError.title}</p>
+                {bannerError.messages?.length > 0 && (
+                  <ul className="m-0 ps-3">
+                    {bannerError.messages.map((msg, i) => (
+                      <li key={i}>{msg}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <button
+                type="button"
+                className="border-none bg-none p-0 text-red-700"
+                onClick={clearBannerErrors}
+                aria-label="Dismiss error"
+              >
+                <X size={16} />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="d-flex flex-column gap-2">
-          <span className="fw-medium text-muted">Personal Information</span>
+          <span className="fw-light text-iron-500">Personal Information</span>
           <div className="d-flex flex-column gap-1">
             <div className="d-flex flex-row align-items-center gap-2">
               <div className="w-50">
@@ -255,9 +375,7 @@ function CreateTeacher({ handleClose }) {
                 </label>
                 <TextInput
                   placeholder={"Enter Teacher First Name"}
-                  onChange={(value) =>
-                    handleStateChange("first_name", value, setFormData)
-                  }
+                  onChange={(value) => handleFormChange("first_name", value)}
                   onValidationChange={(value) =>
                     handleStateChange("first_name", value, setFieldValid)
                   }
@@ -265,7 +383,7 @@ function CreateTeacher({ handleClose }) {
                     min: 3,
                     max: 50,
                     required: true,
-                    message: {
+                    messages: {
                       min: "First Name Must Be Atleast 3 Characters Long",
                       max: "First Name Must Not Exceed 50 Characters",
                       required: "First Name Required",
@@ -281,9 +399,7 @@ function CreateTeacher({ handleClose }) {
                 </label>
                 <TextInput
                   placeholder={"Enter Teacher Last Name"}
-                  onChange={(value) =>
-                    handleStateChange("last_name", value, setFormData)
-                  }
+                  onChange={(value) => handleFormChange("last_name", value)}
                   onValidationChange={(value) =>
                     handleStateChange("last_name", value, setFieldValid)
                   }
@@ -291,7 +407,7 @@ function CreateTeacher({ handleClose }) {
                     min: 3,
                     max: 50,
                     required: true,
-                    message: {
+                    messages: {
                       min: "Last Name Must Be Atleast 3 Characters Long",
                       max: "Last Name Must Not Exceed 50 Characters",
                       required: "Last Name Required",
@@ -307,20 +423,18 @@ function CreateTeacher({ handleClose }) {
                 Full Names
               </label>
               <TextInput
-                onChange={(value) =>
-                  handleStateChange("name", value, setFormData)
-                }
+                onChange={(value) => handleFormChange("name", value)}
                 onValidationChange={(value) =>
                   handleStateChange("name", value, setFieldValid)
                 }
                 value={formData.name}
                 validationSchema={nameSchema({
                   min: 3,
-                  max: 150,
+                  max: 50,
                   required: true,
-                  message: {
+                  messages: {
                     min: "Name Must Be Atleast 3 Characters Long",
-                    max: "Name Must Not Exceed 150 Characters",
+                    max: "Name Must Not Exceed 50 Characters",
                     required: "Full Name Required",
                   },
                 })}
@@ -333,16 +447,13 @@ function CreateTeacher({ handleClose }) {
                 E-mail
               </label>
               <TextInput
-                onChange={(value) =>
-                  handleStateChange("email", value, setFormData)
-                }
+                type="email"
+                onChange={(value) => handleFormChange("email", value)}
                 onValidationChange={(value) =>
                   handleStateChange("email", value, setFieldValid)
                 }
                 placeholder={"e.g example@gmail.com"}
-                validationSchema={emailValidationSchema({
-                  required: true,
-                })}
+                validationSchema={emailValidationSchema({ required: true })}
                 value={formData.email}
                 ref={emailRef}
               />
@@ -352,20 +463,18 @@ function CreateTeacher({ handleClose }) {
                 Address
               </label>
               <TextInput
-                onChange={(value) =>
-                  handleStateChange("address", value, setFormData)
-                }
+                onChange={(value) => handleFormChange("address", value)}
                 onValidationChange={(value) =>
                   handleStateChange("address", value, setFieldValid)
                 }
-                placeholder={"e.g Yaounde Avenue Charles De Gaull"}
+                placeholder={"e.g Yaounde Avenue Charles De Gaulle"}
                 validationSchema={addressSchema({
                   min: 5,
-                  max: 100,
+                  max: 200,
                   required: true,
-                  message: {
-                    min: "Address Must Be Atleast 3 Characters Long",
-                    max: "Address Must Not Exceed 50 Characters",
+                  messages: {
+                    min: "Address Must Be Atleast 5 Characters Long",
+                    max: "Address Must Not Exceed 200 Characters",
                     required: "Address Required",
                   },
                 })}
@@ -377,32 +486,37 @@ function CreateTeacher({ handleClose }) {
               <label htmlFor="gender" className="font-size-sm fw-semibold">
                 Gender
               </label>
-              <CustomDropdown
-                data={genderData?.data || []}
-                displayKey={["name"]}
-                valueKey={["id"]}
-                direction="up"
-                onSelect={(value) =>
-                  handleStateChange("gender_id", value, setFormData)
-                }
-                onError={(value) =>
-                  handleStateChange("gender", value, setErrors)
-                }
-                errorMessage="Gender Required"
-                error={errors.gender}
-                placeholder="Select Gender"
-                ref={genderRef}
-                value={formData.gender_id?.id || formData.gender_id}
-              />
+              {isGenderLoading ? (
+                <RectangleSkeleton width="100%" height="5dvh" />
+              ) : (
+                <CustomDropdown
+                  data={genderData?.data || []}
+                  displayKey={["name"]}
+                  valueKey={["id"]}
+                  direction="up"
+                  onSelect={(value) => handleFormChange("gender_id", value)}
+                  onError={(value) =>
+                    handleStateChange("gender", value, setErrors)
+                  }
+                  errorMessage="Gender Required"
+                  error={errors.gender}
+                  placeholder="Select Gender"
+                  ref={genderRef}
+                  value={formData.gender_id?.id || formData.gender_id}
+                />
+              )}
+              {genderError && (
+                <span className="font-size-sm text-danger">
+                  Failed to load genders. Please refresh and try again.
+                </span>
+              )}
             </div>
             <div>
               <label htmlFor="phoneNumber" className="font-size-sm fw-semibold">
                 Phone Number
               </label>
               <PhoneNumberInput
-                onChange={(value) =>
-                  handleStateChange("phone", value, setFormData)
-                }
+                onChange={(value) => handleFormChange("phone", value)}
                 onValidationChange={(value) =>
                   handleStateChange("phone", value, setFieldValid)
                 }
@@ -410,9 +524,7 @@ function CreateTeacher({ handleClose }) {
                 validationSchema={phoneValidationSchema({
                   optional: false,
                   prefixes: ["6", "2"],
-                  messages: {
-                    required: "Phone Number Required",
-                  },
+                  messages: { required: "Phone Number Required" },
                 })}
                 ref={phoneNumberRef}
               />
@@ -422,79 +534,80 @@ function CreateTeacher({ handleClose }) {
         <hr />
         <div className="d-flex flex-column gap-4">
           <div className="d-flex flex-column gap-3">
-            <span className="fw-medium text-muted">Teaching Scope</span>
-            <div className="d-flex flex-column gap-1">
-              <div className="d-flex flex-column gap-3">
-                <div className="d-flex flex-column gap-1">
-                  <span className="fw-semibold">Teaching Levels</span>
-                  <div className="input-container">
-                    <div
-                      className={`card rounded-3 p-2 ${getValidationClass(isFieldValid.allowed_levels)}`}
-                    >
-                      <span className="font-size-sm text-muted">
-                        {formData.allowed_levels.length > 0
-                          ? `${formData.allowed_levels.length} Level(s) Selected`
-                          : "Selected Levels Will Appear here"}
+            <span className="fw-light text-iron-500">Teaching Scope</span>
+            <div className="d-flex flex-column gap-3">
+              <div className="d-flex flex-column gap-1">
+                <span className="fw-semibold">Teaching Levels</span>
+                <div className="input-container">
+                  <div
+                    className={`card rounded-3 p-2 ${getValidationClass(isFieldValid.allowed_levels)}`}
+                  >
+                    <span className="font-size-sm text-muted">
+                      {formData.allowed_levels.length > 0
+                        ? `${formData.allowed_levels.length} Level(s) Selected`
+                        : "Selected Levels Will Appear Here"}
+                    </span>
+                  </div>
+                  {isFieldValid.allowed_levels === false && (
+                    <div className="mt-auto">
+                      <span className="font-size-sm text-danger">
+                        At Least One Level Is Required
                       </span>
                     </div>
-                    {isFieldValid.allowed_levels === false && (
-                      <div className="mt-auto">
-                        <span className="font-size-sm text-danger">
-                          Alteast One Level Is Required
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
-                {isLevelLoading ? (
-                  <div className="d-flex flex-row flex-wrap gap-2">
-                    {[...Array(5)].map((_, index) => (
-                      <Fragment key={index}>
-                        <RectangleSkeleton width="10rem" height="5dvh" />
-                      </Fragment>
-                    ))}
-                  </div>
-                ) : levelError ? (
-                  <div className="alert alert-warning font-size-sm">
-                    An error occured when fetching levels please try refreshing
-                    again
-                  </div>
-                ) : (
-                  <div className="d-flex flex-row flex-wrap gap-2">
-                    {levels?.data?.map((level) => {
-                      const isSelected = formData.allowed_levels.some(
-                        (al) => al.allowed_level === level.id,
-                      );
-                      return (
-                        <Fragment key={level.id}>
-                          <motion.button
-                            type="button"
-                            whileHover={{ scale: 1.03 }}
-                            whileTap={{ scale: 0.95 }}
-                            transition={{
-                              type: "spring",
-                              stiffness: 400,
-                              damping: 17,
-                            }}
-                            onClick={() => toggleLevelSelection(level.id)}
-                            className={`font-size-sm px-3 py-2 border rounded-pill ${
-                              isSelected
-                                ? "primary-background-100 color-primary"
-                                : "bg-transparent"
-                            }`}
-                          >
-                            {level?.name}
-                          </motion.button>
-                        </Fragment>
-                      );
-                    })}
-                  </div>
-                )}
               </div>
+              {isLevelLoading ? (
+                <div className="d-flex flex-row flex-wrap gap-2">
+                  {[...Array(5)].map((_, index) => (
+                    <RectangleSkeleton key={index} width="10rem" height="5dvh" />
+                  ))}
+                </div>
+              ) : levelError ? (
+                <div className="alert alert-warning font-size-sm">
+                  An error occurred when fetching levels. Please try refreshing
+                  again.
+                </div>
+              ) : (
+                <div className="d-flex flex-row flex-wrap gap-2">
+                  {levels?.data?.map((level) => {
+                    const isSelected = formData.allowed_levels.some(
+                      (al) => al.allowed_level === level.id,
+                    );
+                    return (
+                      <motion.button
+                        key={level.id}
+                        type="button"
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 17,
+                        }}
+                        onClick={() => toggleLevelSelection(level.id)}
+                        className={`font-size-sm px-3 py-2 border rounded-pill ${
+                          isSelected
+                            ? "primary-background-100 color-primary"
+                            : "bg-transparent"
+                        }`}
+                      >
+                        {level?.name}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
           <div className="d-flex flex-column gap-3">
             <span className="fw-semibold">Qualifications</span>
+            {qualificationError && (
+              <div className="alert alert-warning font-size-sm m-0">
+                An error occurred when fetching qualifications. Please try
+                refreshing again.
+              </div>
+            )}
             <AnimatePresence mode="wait">
               {formData.qualifications.length === 0 ? (
                 <motion.div
@@ -505,12 +618,12 @@ function CreateTeacher({ handleClose }) {
                   exit="exit"
                 >
                   <div
-                    className="d-flex flex-column gap-3 align-items-center justify-content-center card rounded-4"
+                    className={`d-flex flex-column gap-3 align-items-center justify-content-center card rounded-4 ${getValidationClass(isFieldValid.qualifications)}`}
                     style={{ height: "40dvh" }}
                   >
                     <span>
-                      No Qualifications Found Please Click on the button below
-                      to create Qualifications
+                      No Qualifications Found. Please click on the button below
+                      to add qualifications.
                     </span>
                     <motion.button
                       whileHover={{ scale: 1.02 }}
@@ -519,11 +632,16 @@ function CreateTeacher({ handleClose }) {
                       className="border-none border p-2 font-size-sm outline-none bg-none rounded-3"
                       onClick={addQualification}
                     >
-                      <div className="d-flex flex-row align-items-center">
+                      <div className="d-flex flex-row align-items-center gap-2">
                         <Plus size={16} />
                         <span>Add Qualification</span>
                       </div>
                     </motion.button>
+                    {isFieldValid.qualifications === false && (
+                      <span className="font-size-sm text-danger">
+                        At Least One Qualification Is Required
+                      </span>
+                    )}
                   </div>
                 </motion.div>
               ) : (
@@ -564,7 +682,7 @@ function CreateTeacher({ handleClose }) {
                             </motion.button>
                           </div>
                           <div className="d-flex flex-column gap-1 w-100">
-                            <span className="">Field of Study</span>
+                            <span className="fw-semibold">Field of Study</span>
                             <TextInput
                               placeholder={"Enter Field of Study"}
                               onChange={(value) =>
@@ -576,11 +694,11 @@ function CreateTeacher({ handleClose }) {
                               }
                               validationSchema={nameSchema({
                                 min: 3,
-                                max: 50,
+                                max: 200,
                                 required: true,
-                                message: {
+                                messages: {
                                   min: "Field of Study Must Be Atleast 3 Characters Long",
-                                  max: "Field of Study Must Not Exceed 50 Characters",
+                                  max: "Field of Study Must Not Exceed 200 Characters",
                                   required: "Field of Study Required",
                                 },
                               })}
@@ -615,11 +733,11 @@ function CreateTeacher({ handleClose }) {
                               }
                               validationSchema={nameSchema({
                                 min: 3,
-                                max: 50,
+                                max: 150,
                                 required: true,
-                                message: {
+                                messages: {
                                   min: "Institution Must Be Atleast 3 Characters Long",
-                                  max: "Institution Must Not Exceed 50 Characters",
+                                  max: "Institution Must Not Exceed 150 Characters",
                                   required: "Institution Required",
                                 },
                               })}
@@ -642,9 +760,12 @@ function CreateTeacher({ handleClose }) {
                             />
                           </div>
                           <div className="d-flex flex-column gap-1 w-100">
-                            <span className="fw-semibold">Year</span>
-                            <TextInput
-                              placeholder={"Enter Year"}
+                            <span className="fw-semibold">Academic Year</span>
+                            <AcademicYearInput
+                              id={`year-${qualification.id}`}
+                              name={`year-${qualification.id}`}
+                              placeholder="e.g 2026-2027"
+                              value={qualification.year}
                               onChange={(value) =>
                                 handleQualificationChange(
                                   qualification.id,
@@ -652,14 +773,10 @@ function CreateTeacher({ handleClose }) {
                                   value,
                                 )
                               }
-                              validationSchema={nameSchema({
-                                min: 3,
-                                max: 50,
+                              validationSchema={academicYearSchema({
                                 required: true,
-                                message: {
-                                  min: "Year Must Be Atleast 3 Characters Long",
-                                  max: "Year Must Not Exceed 50 Characters",
-                                  required: "Year Required",
+                                messages: {
+                                  required: "Academic Year Required",
                                 },
                               })}
                               ref={createDynamicRefCallback(
@@ -677,36 +794,46 @@ function CreateTeacher({ handleClose }) {
                                   value,
                                 )
                               }
-                              value={qualification.year}
                             />
                           </div>
                           <div className="d-flex flex-column gap-1 w-100">
                             <span className="fw-semibold">Qualification</span>
-                            <CustomDropdown
-                              data={qualifications?.data || []}
-                              displayKey={["name"]}
-                              valueKey={["id"]}
-                              direction="up"
-                              onSelect={(value) =>
-                                handleQualificationChange(
+                            {isQualificationLoading ? (
+                              <RectangleSkeleton width="100%" height="5dvh" />
+                            ) : (
+                              <CustomDropdown
+                                data={qualifications?.data || []}
+                                displayKey={["name"]}
+                                valueKey={["id"]}
+                                direction="up"
+                                onSelect={(value) =>
+                                  handleQualificationChange(
+                                    qualification.id,
+                                    "qualification_id",
+                                    value,
+                                  )
+                                }
+                                onError={(value) =>
+                                  handleQualificationDropdownError(
+                                    qualification.id,
+                                    value,
+                                  )
+                                }
+                                error={errors.qualifications[qualification.id]}
+                                errorMessage="Qualification Required"
+                                placeholder="Select Qualification"
+                                value={
+                                  qualification.qualification_id?.id ||
+                                  qualification.qualification_id
+                                }
+                                ref={createDynamicRefCallback(
+                                  formRefs,
+                                  "qualifications",
                                   qualification.id,
                                   "qualification_id",
-                                  value,
-                                )
-                              }
-                              errorMessage="Qualification Required"
-                              placeholder="Select Qualification"
-                              value={
-                                qualification.qualification_id?.id ||
-                                qualification.qualification_id
-                              }
-                              ref={createDynamicRefCallback(
-                                formRefs,
-                                "qualifications",
-                                qualification.id,
-                                "qualification_id",
-                              )}
-                            />
+                                )}
+                              />
+                            )}
                           </div>
                         </div>
                         {!isLastElement(index, formData.qualifications) && (
@@ -745,14 +872,17 @@ function CreateTeacher({ handleClose }) {
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
             <button
+              type="button"
               className="border-none bg-none"
               onClick={() => handleClose()}
+              disabled={isPending}
             >
               Cancel
             </button>
             <button
+              type="button"
               className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
-              onClick={() => handleCreateTeacher()}
+              onClick={handleCreateTeacher}
               disabled={isPending}
             >
               {isPending ? <SingleSpinner /> : "Create Teacher"}

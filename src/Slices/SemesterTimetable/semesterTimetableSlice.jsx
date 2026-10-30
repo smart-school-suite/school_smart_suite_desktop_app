@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { daysOfWeek } from "../../data/data";
+import toast from "react-hot-toast";
+import ToastWarning from "../../components/Toast/ToastWarning";
 
 const makeTimeField = () => ({ value: null, isValid: null });
 const makeDurationField = () => ({ value: null, isValid: null });
@@ -48,21 +49,29 @@ const initialState = {
     break_period: {
       start_time: makeTimeField(),
       end_time: makeTimeField(),
-      day_exceptions: daysOfWeek.map((day) => makeDayException(day.value)),
+      day_exceptions: [],
       no_break_exceptions: [],
     },
     operational_period: {
-      operational_days: daysOfWeek.map((day) => day.value),
+      operational_days: [],
       start_time: makeTimeField(),
       end_time: makeTimeField(),
-      day_exceptions: daysOfWeek.map((day) => makeDayException(day.value)),
+      day_exceptions: [],
     },
     schedule_period_duration_minutes: {
-      duration_minutes: makeDurationField(),
-      day_exceptions: daysOfWeek.map((day) =>
-        makePeriodDurationException(day.value),
-      ),
-    }
+      duration_minutes: null,
+      day_exceptions: [],
+    },
+  },
+  soft_constraints: {
+    requested_free_periods: {
+      days: [],
+      slots: [],
+    },
+    requested_assignments: {
+      days: [],
+      slots: [],
+    },
   },
 };
 
@@ -80,28 +89,82 @@ const semesterTimetableSlice = createSlice({
       state.timetableVersion = action.payload;
     },
 
-    setTimetableVersionStatus(state, action){
-       state.timetableVersionStatus = action.payload;
+    setTimetableVersionStatus(state, action) {
+      state.timetableVersionStatus = action.payload;
     },
 
-    setGenerationStatus(state, action){
-       state.isGenerating = action.payload;
+    setGenerationStatus(state, action) {
+      state.isGenerating = action.payload;
     },
-   
+
     //hard constraint reducers
     setOperationalPeriodField(state, action) {
       const { field, value } = action.payload;
       const op = state.hard_constraints.operational_period;
 
       if (field === "operational_days") {
-        op.operational_days = value;
-        op.day_exceptions = value.map(makeDayException);
+        const day = value;
+        const index = op.operational_days.indexOf(day);
+
+        if (index !== -1) {
+          op.operational_days.splice(index, 1);
+        } else {
+          op.operational_days.push(day);
+        }
         return;
       }
 
       if (field === "day_exceptions") {
-        op.day_exceptions = updateDayExceptions(op.day_exceptions, value);
-        return;
+        const existingDayIndex = op.day_exceptions.findIndex(
+          (exception) => exception.day === value.day,
+        );
+        const existingDay =
+          existingDayIndex !== -1 ? op.day_exceptions[existingDayIndex] : null;
+
+        if (existingDay) {
+          if (!value.start_time && !value.end_time) {
+            op.day_exceptions.splice(existingDayIndex, 1);
+            return;
+          }
+
+          if (value.start_time) {
+            existingDay.start_time = {
+              value: value.start_time,
+              isValid: value.isValid ?? null,
+            };
+          }
+          if (value.end_time) {
+            existingDay.end_time = {
+              value: value.end_time,
+              isValid: value.isValid ?? null,
+            };
+          }
+          return;
+        }
+
+        if (!existingDay) {
+          const newDay = {
+            day: value.day,
+            start_time: makeTimeField(),
+            end_time: makeTimeField(),
+          };
+
+          if (value.start_time) {
+            newDay.start_time = {
+              value: value.start_time,
+              isValid: value.isValid ?? null,
+            };
+          }
+          if (value.end_time) {
+            newDay.end_time = {
+              value: value.end_time,
+              isValid: value.isValid ?? null,
+            };
+          }
+
+          op.day_exceptions.push(newDay);
+          return;
+        }
       }
       if (op[field]) {
         op[field].value = value;
@@ -147,6 +210,13 @@ const semesterTimetableSlice = createSlice({
         bp[field].isValid = value;
       }
     },
+    
+    //period duration
+    setDefaultPeriodDuration(state, action) {
+      const { duration } = action.payload;
+      state.hard_constraints.schedule_period_duration_minutes.duration_minutes =
+        duration;
+    },
     setPeriodDurationField(state, action) {
       const { field, value } = action.payload;
       const periodDuration =
@@ -178,6 +248,407 @@ const semesterTimetableSlice = createSlice({
         periodDuration[field].isValid = value;
       }
     },
+    addCustomPeriodDurationDays(state, action) {
+      const { day } = action.payload;
+      const cPds =
+        state.hard_constraints.schedule_period_duration_minutes.day_exceptions;
+      const eCpd = cPds.find((cPd) => cPd.day === day);
+      if (eCpd) {
+        toast.custom(
+          <ToastWarning
+            title={"Existing Day"}
+            description={`${day} as already been added as the custom break day`}
+          />,
+        );
+        return;
+      }
+      cPds.push({
+        day: day,
+        duration_minutes: null,
+      });
+    },
+    removeCustomPeriodDurationDays(state, action) {
+      const { day } = action.payload;
+      const cPds =
+        state.hard_constraints.schedule_period_duration_minutes.day_exceptions;
+      const dayIndex = cPds.findIndex((item) => item.day === day);
+      if (dayIndex !== -1) {
+        cPds.splice(dayIndex, 1);
+      }
+    },
+    setCustomPeriodDuration(state, action) {
+      const { day, value } = action.payload;
+      const cPds =
+        state.hard_constraints.schedule_period_duration_minutes.day_exceptions;
+      const eCpd = cPds.find((cPd) => cPd.day === day);
+      eCpd.duration_minutes = value;
+    },
+
+    //break period
+    setDefaultBreakPeriodField(state, action) {
+      const { field, value } = action.payload;
+      const breakPeriod = state.hard_constraints.break_period;
+      if (field === "start_time") {
+        breakPeriod.start_time.value = value;
+      }
+      if (field === "end_time") {
+        breakPeriod.end_time.value = value;
+      }
+    },
+    setDefaultBreakPeriodFieldValidation(state, action) {
+      const { field, value } = action.payload;
+      const breakPeriod = state.hard_constraints.break_period;
+      if (field === "start_time") {
+        breakPeriod.start_time.isValid = value;
+      }
+      if (field === "end_time") {
+        breakPeriod.end_time.isValid = value;
+      }
+    },
+    addNoBreakPeriodDays(state, action) {
+      const { day } = action.payload;
+      const noBreakDays =
+        state.hard_constraints.break_period.no_break_exceptions;
+      if (!noBreakDays.includes(day)) {
+        noBreakDays.push(day);
+      } else {
+        toast.custom(
+          <ToastWarning
+            title={"Existing Day"}
+            description={`${day} already exists you can only add days that has not been already added`}
+          />,
+        );
+      }
+    },
+    removeNoBreakPeriodDays(state, action) {
+      const { day } = action.payload;
+      const noBreakDays =
+        state.hard_constraints.break_period.no_break_exceptions;
+
+      const dayIndex = noBreakDays.indexOf(day);
+      if (dayIndex !== -1) {
+        noBreakDays.splice(dayIndex, 1);
+      }
+    },
+    addCustomBreakDays(state, action) {
+      const { day } = action.payload;
+      const cBreakDays = state.hard_constraints.break_period.day_exceptions;
+      const eCBDay = cBreakDays.find((cBreakDay) => cBreakDay.day == day);
+      if (eCBDay) {
+        toast.custom(
+          <ToastWarning
+            title={"Existing Day"}
+            description={`${day} as already been added as the custom break day`}
+          />,
+        );
+        return;
+      }
+      cBreakDays.push({
+        day: day,
+        start_time: makeTimeField(),
+        end_time: makeTimeField(),
+      });
+    },
+    removeCustomBreakDays(state, action) {
+      const { day } = action.payload;
+      const customBreakDays =
+        state.hard_constraints.break_period.day_exceptions;
+      const dayIndex = customBreakDays.findIndex((item) => item.day === day);
+      if (dayIndex !== -1) {
+        customBreakDays.splice(dayIndex, 1);
+      }
+    },
+    setCustomBreakPeriod(state, action) {
+      const { day, value, field } = action.payload;
+      const cBreakDays = state.hard_constraints.break_period.day_exceptions;
+      const existingCBreakDays = cBreakDays.find(
+        (cBreakDay) => cBreakDay.day === day,
+      );
+      if (!existingCBreakDays) {
+        return;
+      }
+      if (existingCBreakDays) {
+        if (field === "start_time") {
+          existingCBreakDays.start_time.value = value;
+        }
+        if (field === "end_time") {
+          existingCBreakDays.end_time.value = value;
+        }
+      }
+    },
+    setCustomBreakPeriodValidation(state, action) {
+      const { day, value, field } = action.payload;
+      const cBreakDays = state.hard_constraints.break_period.day_exceptions;
+      const cBreakDay = cBreakDays.find((cBreakDay) => cBreakDay.day === day);
+      if (!cBreakDay) {
+        return;
+      }
+      if (field === "start_time") {
+        cBreakDay.start_time.isValid = value;
+      }
+
+      if (field === "end_time") {
+        cBreakDay.end_time.isValid = value;
+      }
+    },
+
+    //soft constraint reducers
+    addRequestedFreePeriodDays(state, action) {
+      const { day } = action.payload;
+      const rF = state.soft_constraints.requested_free_periods;
+      if (!rF.days.includes(day)) {
+        rF.days.push(day);
+      } else {
+        toast.custom(
+          <ToastWarning
+            title={"Existing Day"}
+            description={`${day} already exists you can only add days that has not been already added`}
+          />,
+        );
+      }
+    },
+    removeRequestedFreePeriodDays(state, action) {
+      const { day } = action.payload;
+      const rF = state.soft_constraints.requested_free_periods;
+
+      const dayIndex = rF.days.indexOf(day);
+      if (dayIndex !== -1) {
+        rF.days.splice(dayIndex, 1);
+      }
+
+      const slotIndex = rF.slots.findIndex((item) => item.day === day);
+      if (slotIndex !== -1) {
+        rF.slots.splice(slotIndex, 1);
+      }
+    },
+    addRequestedFreePeriodSlot(state, action) {
+      const { day } = action.payload;
+      const rFSlots = state.soft_constraints.requested_free_periods.slots;
+      const rF = state.soft_constraints.requested_free_periods;
+      const existingDaySlot = rFSlots.find((item) => item.day === day);
+
+      if (!rF.days.includes(day)) {
+        toast.custom(
+          <ToastWarning
+            title={"Day Not Found"}
+            description={`${day} has not been added as one of the free period days add it before creating slot`}
+          />,
+        );
+      }
+      const newSlotDetail = {
+        id: `slot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        start_time: makeTimeField(),
+        end_time: makeTimeField(),
+      };
+
+      if (existingDaySlot) {
+        existingDaySlot.slots.push(newSlotDetail);
+      } else {
+        rFSlots.push({
+          day: day,
+          slots: [newSlotDetail],
+        });
+      }
+    },
+    removeRequestedFreePeriodSlot(state, action) {
+      const { day, slotId } = action.payload;
+      const rFSlots = state.soft_constraints.requested_free_periods.slots;
+      const existingDaySlot = rFSlots.find((item) => item.day === day);
+
+      if (existingDaySlot) {
+        existingDaySlot.slots = existingDaySlot.slots.filter(
+          (slot) => slot.id !== slotId,
+        );
+
+        if (existingDaySlot.slots.length === 0) {
+          const index = rFSlots.indexOf(existingDaySlot);
+          rFSlots.splice(index, 1);
+        }
+      }
+    },
+    setRequestedFreePeriodSlot(state, action) {
+      const { day, slotId, field, value } = action.payload;
+      const rFSlots = state.soft_constraints.requested_free_periods.slots;
+      const existingDaySlot = rFSlots.find((item) => item.day === day);
+
+      if (existingDaySlot) {
+        const targetSlot = existingDaySlot.slots.find(
+          (slot) => slot.id === slotId,
+        );
+
+        if (targetSlot) {
+          if (field === "start_time") {
+            targetSlot.start_time.value = value;
+          }
+
+          if (field === "end_time") {
+            targetSlot.end_time.value = value;
+          }
+        }
+      }
+    },
+    setRequestedFreePeriodValidation(state, action) {
+      const { day, slotId, field, value } = action.payload;
+      const rFSlots = state.soft_constraints.requested_free_periods.slots;
+      const existingDaySlot = rFSlots.find((item) => item.day === day);
+
+      if (existingDaySlot) {
+        const targetSlot = existingDaySlot.slots.find(
+          (slot) => slot.id === slotId,
+        );
+
+        if (targetSlot) {
+          if (field === "start_time") {
+            targetSlot.start_time.isValid = value;
+          }
+
+          if (field === "end_time") {
+            targetSlot.end_time.isValid = value;
+          }
+        }
+      }
+    },
+    removeAllRequestedFreePeriodSlotsByDay(state, action) {
+      const { day } = action.payload;
+      const rFSlots = state.soft_constraints.requested_free_periods.slots;
+      const existingDaySlot = rFSlots.find((item) => item.day === day);
+      existingDaySlot.slots = [];
+    },
+
+    //requested assignment
+    addRequestedAssignmentDays(state, action) {
+      const { day } = action.payload;
+      const rF = state.soft_constraints.requested_assignments;
+      if (!rF.days.includes(day)) {
+        rF.days.push(day);
+      } else {
+        toast.custom(
+          <ToastWarning
+            title={"Existing Day"}
+            description={`${day} already exists you can only add days that has not been already added`}
+          />,
+        );
+      }
+    },
+    removeRequestedAssignmentDays(state, action) {
+      const { day } = action.payload;
+      const rF = state.soft_constraints.requested_assignments;
+
+      const dayIndex = rF.days.indexOf(day);
+      if (dayIndex !== -1) {
+        rF.days.splice(dayIndex, 1);
+      }
+
+      const slotIndex = rF.slots.findIndex((item) => item.day === day);
+      if (slotIndex !== -1) {
+        rF.slots.splice(slotIndex, 1);
+      }
+    },
+    addRequestedAssigmentSlot(state, action) {
+      const { day } = action.payload;
+      const rASlots = state.soft_constraints.requested_assignments.slots;
+      const rA = state.soft_constraints.requested_assignments;
+      const existingDaySlot = rASlots.find((item) => item.day === day);
+
+      if (!rA.days.includes(day)) {
+        toast.custom(
+          <ToastWarning
+            title={"Day Not Found"}
+            description={`${day} has not been added as one of the free period days add it before creating slot`}
+          />,
+        );
+      }
+      const newSlotDetail = {
+        id: `slot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        start_time: makeTimeField(),
+        end_time: makeTimeField(),
+        course_id: null,
+        hall_id: null,
+        teacher_id: null,
+      };
+
+      if (existingDaySlot) {
+        existingDaySlot.slots.push(newSlotDetail);
+      } else {
+        rASlots.push({
+          day: day,
+          slots: [newSlotDetail],
+        });
+      }
+    },
+    removeRequestedAssignmentSlot(state, action) {
+      const { day, slotId } = action.payload;
+      const rASlots = state.soft_constraints.requested_assignments.slots;
+      const existingDaySlot = rASlots.find((item) => item.day === day);
+
+      if (existingDaySlot) {
+        existingDaySlot.slots = existingDaySlot.slots.filter(
+          (slot) => slot.id !== slotId,
+        );
+
+        if (existingDaySlot.slots.length === 0) {
+          const index = rASlots.indexOf(existingDaySlot);
+          rASlots.splice(index, 1);
+        }
+      }
+    },
+    setRequestedAssignmentSlot(state, action) {
+      const { day, slotId, field, value } = action.payload;
+      const rASlots = state.soft_constraints.requested_assignments.slots;
+      const existingDaySlot = rASlots.find((item) => item.day === day);
+
+      if (existingDaySlot) {
+        const targetSlot = existingDaySlot.slots.find(
+          (slot) => slot.id === slotId,
+        );
+
+        if (targetSlot) {
+          if (field === "start_time") {
+            targetSlot.start_time.value = value;
+          }
+
+          if (field === "end_time") {
+            targetSlot.end_time.value = value;
+          }
+          if (field === "course_id") {
+            targetSlot.course_id = value;
+          }
+          if (field === "hall_id") {
+            targetSlot.hall_id = value;
+          }
+          if (field === "teacher_id") {
+            targetSlot.teacher = value;
+          }
+        }
+      }
+    },
+    setRequestedAssignmentValidation(state, action) {
+      const { day, slotId, field, value } = action.payload;
+      const rASlots = state.soft_constraints.requested_assignments.slots;
+      const existingDaySlot = rASlots.find((item) => item.day === day);
+
+      if (existingDaySlot) {
+        const targetSlot = existingDaySlot.slots.find(
+          (slot) => slot.id === slotId,
+        );
+
+        if (targetSlot) {
+          if (field === "start_time") {
+            targetSlot.start_time.isValid = value;
+          }
+
+          if (field === "end_time") {
+            targetSlot.end_time.isValid = value;
+          }
+        }
+      }
+    },
+    removeAllRequestedAssignmentSlotsByDay(state, action) {
+      const { day } = action.payload;
+      const rASlots = state.soft_constraints.requested_assignments.slots;
+      const existingDaySlot = rASlots.find((item) => item.day === day);
+      existingDaySlot.slots = [];
+    },
   },
 });
 
@@ -191,7 +662,33 @@ export const {
   setPeriodDurationField,
   setPeriodDurationValidation,
   setTimetableVersionStatus,
-  setGenerationStatus
+  setGenerationStatus,
+  addRequestedFreePeriodDays,
+  removeRequestedFreePeriodDays,
+  addRequestedFreePeriodSlot,
+  removeRequestedFreePeriodSlot,
+  setRequestedFreePeriodSlot,
+  setRequestedFreePeriodValidation,
+  removeAllRequestedFreePeriodSlotsByDay,
+  setDefaultBreakPeriodField,
+  setDefaultBreakPeriodFieldValidation,
+  removeNoBreakPeriodDays,
+  addNoBreakPeriodDays,
+  addCustomBreakDays,
+  removeCustomBreakDays,
+  setCustomBreakPeriodValidation,
+  setCustomBreakPeriod,
+  setDefaultPeriodDuration,
+  addCustomPeriodDurationDays,
+  removeCustomPeriodDurationDays,
+  setCustomPeriodDuration,
+  addRequestedAssignmentDays,
+  removeRequestedAssignmentDays,
+  addRequestedAssigmentSlot,
+  removeRequestedAssignmentSlot,
+  setRequestedAssignmentSlot,
+  setRequestedAssignmentValidation,
+  removeAllRequestedAssignmentSlotsByDay,
 } = semesterTimetableSlice.actions;
 
 export default semesterTimetableSlice.reducer;

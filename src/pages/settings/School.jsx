@@ -1,5 +1,6 @@
-import { Icon } from "@iconify/react";
+import { PenLine } from "lucide-react";
 import { useSelector } from "react-redux";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -8,7 +9,7 @@ import UpdateEstablishedDate from "../../ModalContent/School/UpdateEstablishedDa
 import UpdateSchoolMotor from "../../ModalContent/School/UpdateSchoolMotor";
 import UpdateSchoolName from "../../ModalContent/School/UpdateSchoolName";
 import UploadSchoolLogo from "../../ModalContent/School/UploadSchoolLogo";
-import { formatDate } from "../../utils/functions";
+import { cleanAssetPath, formatDate } from "../../utils/functions";
 function School() {
   const userData = useSelector((state) => state.auth.user);
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -16,8 +17,8 @@ function School() {
   return (
     <>
       <div
-        className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-1 gap-2"
-        style={{ maxHeight: "84dvh" }}
+        className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-2 gap-2 font-size-sm"
+        style={{ maxHeight: "84dvh", paddingBottom: "10rem" }}
       >
         {isLoading ? (
           [...Array(6)].map((_, index) => (
@@ -33,23 +34,13 @@ function School() {
           ></NotFoundError>
         ) : (
           <div className="d-flex flex-column justify-content-start gap-2 w-100">
-            <div>
-              <span
-                className="my-1 fw-semibold"
-                style={{ fontSize: "0.87rem" }}
-              >
-                School Details
-              </span>
+            <div className="d-flex flex-column gap-1">
+              <span className="fw-medium">School Details</span>
               <div
-                className={`${
-                  darkMode ? "dark-bg" : "white-bg"
-                } card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1`}
-                style={{ fontSize: "0.87rem" }}
+                className={`card p-3 border-none rounded-4 w-100 d-flex flex-column gap-2 border`}
               >
                 <ModalButton
-                  classname={`${
-                    darkMode ? "gainsboro-color" : null
-                  } d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
+                  classname={`d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
                   action={{ modalContent: UpdateSchoolName }}
                 >
                   <div
@@ -57,91 +48,107 @@ function School() {
                       darkMode ? "gainsboro-color" : null
                     } d-flex flex-column`}
                   >
-                    <span className="fw-semibold text-start">School Name</span>
-                    <span className="fw-light">{schoolDetails.data.name}</span>
+                    <span className="fw-medium text-start">School Name</span>
+                    <span className="fw-normal text-iron-500">
+                      {schoolDetails.data.name}
+                    </span>
                   </div>
                   <div>
-                    <Icon icon="iconamoon:edit-thin" width="24" height="24" />
+                    <PenLine size={16} strokeWidth={1.5} />
                   </div>
                 </ModalButton>
-                <hr />
+                <HorizontalDashedLine
+                  color={"#ccc"}
+                  dashed={false}
+                  thickness={0.2}
+                />
                 <ModalButton
-                  classname={`${
-                    darkMode ? "gainsboro-color" : null
-                  } d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
+                  classname={`d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
                   action={{ modalContent: UpdateEstablishedDate }}
                 >
                   <div className="d-flex flex-column text-start">
                     <span className="fw-semibold">Established Year</span>
-                    <span className="gainsboro-color fw-light">
+                    <span className="fw-normal text-iron-500">
                       {schoolDetails.data.established_year === null
                         ? "Add Established Year"
                         : `${formatDate(schoolDetails.data.established_year)}`}
                     </span>
                   </div>
                   <div>
-                    <Icon icon="iconamoon:edit-thin" width="24" height="24" />
+                    <PenLine size={16} strokeWidth={1.5} />
                   </div>
                 </ModalButton>
-                <hr />
+                <HorizontalDashedLine
+                  color={"#ccc"}
+                  dashed={false}
+                  thickness={0.2}
+                />
                 <div
-                  className={`${
-                    darkMode ? "gainsboro-color" : null
-                  } d-flex flex-row align-items-center justify-content-between pointer-cursor remove-button-style`}
+                  className={`d-flex flex-row align-items-center justify-content-between pointer-cursor remove-button-style`}
                 >
-                  <div
-                    className={`${
-                      darkMode ? "gainsboro-color" : null
-                    } d-flex flex-column`}
-                  >
+                  <div className={`d-flex flex-column`}>
                     <span className="fw-semibold">School Type</span>
-                    <span className="gainsboro-color fw-light">
+                    <span className="fw-normal text-iron-500">
                       {schoolDetails.data.type === null
                         ? "Specify School Type"
                         : schoolDetails.data.type}
                     </span>
                   </div>
                   <div>
-                    <Icon icon="iconamoon:edit-thin" width="24" height="24" />
+                    <PenLine size={16} strokeWidth={1.5} />
                   </div>
                 </div>
-                <hr />
+                <HorizontalDashedLine
+                  color={"#ccc"}
+                  dashed={false}
+                  thickness={0.2}
+                />
                 <ModalButton
-                  classname={`${
-                    darkMode ? "gainsboro-color" : null
-                  } d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
+                  classname={`d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
                   action={{ modalContent: UpdateSchoolMotor }}
                 >
                   <div className="d-flex flex-column text-start">
                     <span className="fw-semibold">Motor</span>
-                    <span className="gainsboro-color fw-light">
+                    <span className="fw-normal text-iron-500">
                       {schoolDetails.data.motor === null
                         ? "Add School Motor"
                         : schoolDetails.data.motor}
                     </span>
                   </div>
                   <div>
-                    <Icon icon="iconamoon:edit-thin" width="24" height="24" />
+                    <PenLine size={16} strokeWidth={1.5} />
                   </div>
                 </ModalButton>
-                <hr />
+                <HorizontalDashedLine
+                  color={"#ccc"}
+                  dashed={false}
+                  thickness={0.2}
+                />
                 <ModalButton
-                  classname={`${
-                    darkMode ? "gainsboro-color" : null
-                  } d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
+                  classname={`d-flex flex-row align-items-center justify-content-between pointer-cursor w-100 remove-button-style`}
                   action={{ modalContent: UploadSchoolLogo }}
+                  rowData={{ 
+                     schoolLogo: schoolDetails?.data?.current_logo?.object_key
+                  }}
+                  size={"xl"}
                 >
                   <div className="d-flex flex-row align-item-center">
                     <div className="d-flex flex-column text-start">
                       <span className="fw-semibold">School Logo</span>
-                      <span className="gainsboro-color fw-light">
+                      <span className="fw-normal text-iron-500">
                         {schoolDetails.data.school_logo === null
                           ? "Add School Logo"
                           : "Update School Logo"}
                       </span>
                     </div>
                   </div>
-                  {schoolDetails.data.school_logo === null ? (
+                  {schoolDetails?.data?.current_logo?.object_key ? (
+                    <img
+                      className="school-logo"
+                      alt="school-logo"
+                      src={`https://cdn.smartschoolsuite.com/${cleanAssetPath(schoolDetails.data.current_logo.object_key)}`}
+                    />
+                  ) : (
                     <div
                       style={{
                         width: "3.5rem",
@@ -152,29 +159,17 @@ function School() {
                     >
                       SL
                     </div>
-                  ) : (
-                    <img
-                      className="school-logo"
-                      alt="school-logo"
-                      src={`http://127.0.0.1:8000/storage/SchoolLogo/${schoolDetails.data.school_logo}`}
-                    />
                   )}
                 </ModalButton>
               </div>
             </div>
-            <div>
-              <span
-                className="my-1 fw-semibold"
-                style={{ fontSize: "0.87rem" }}
-              >
+            <div className="d-flex flex-column gap-2">
+              <span className="fw-medium">
                 School Branches Registered Under this school
               </span>
               {schoolDetails.data.schoolbranches.map((items) => (
                 <div
-                  className={`${
-                    darkMode ? "dark-bg" : "white-bg"
-                  } card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1`}
-                  style={{ fontSize: "0.87rem" }}
+                  className={`card p-3 border-none rounded-4 w-100 d-flex flex-column gap-2 border`}
                   key={items.id}
                 >
                   <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
@@ -189,7 +184,11 @@ function School() {
                       </span>
                     </div>
                   </div>
-                  <hr />
+                  <HorizontalDashedLine
+                  color={"#ccc"}
+                  dashed={false}
+                  thickness={0.2}
+                />
                   <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
                     <div
                       className={`${
@@ -204,7 +203,11 @@ function School() {
                       </span>
                     </div>
                   </div>
-                  <hr />
+                 <HorizontalDashedLine
+                  color={"#ccc"}
+                  dashed={false}
+                  thickness={0.2}
+                />
                   <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
                     <div
                       className={`${
@@ -220,24 +223,16 @@ function School() {
                 </div>
               ))}
             </div>
-            <div>
-              <span
-                className="my-1 text-danger fw-semibold"
-                style={{ fontSize: "0.87rem" }}
-              >
-                Danger Zone
-              </span>
+            <div className="d-flex flex-column gap-1">
+              <span className="my-1 text-danger fw-semibold">Danger Zone</span>
               <div
-                className={`${
-                  darkMode ? "dark-bg" : "white-bg"
-                } card p-2 border-none rounded-4 w-100 d-flex flex-column gap-1`}
-                style={{ fontSize: "0.87rem" }}
+                className={`card p-3 border-none rounded-4 w-100 d-flex flex-column gap-2`}
               >
                 <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
                   <div className="d-flex flex-row align-items-center justify-content-between w-100">
                     <div className="d-flex flex-column text-danger">
                       <span className="fw-semibold">Delete School</span>
-                      <span className="fw-light">
+                      <span className="fw-normal">
                         {schoolDetails.data.name}
                       </span>
                     </div>
@@ -248,7 +243,11 @@ function School() {
                     </div>
                   </div>
                 </div>
-                <hr />
+                <HorizontalDashedLine
+                  color={"#ccc"}
+                  dashed={false}
+                  thickness={0.2}
+                />
                 <div className="d-flex flex-row align-items-center justify-content-between pointer-cursor">
                   <div className="d-flex flex-row align-items-center w-100 justify-content-between">
                     <div
@@ -257,7 +256,7 @@ function School() {
                       } d-flex flex-column`}
                     >
                       <span className="fw-semibold">Suspend School</span>
-                      <span className="gainsboro-color fw-light">
+                      <span className="fw-normal">
                         {schoolDetails.data.name}
                       </span>
                     </div>

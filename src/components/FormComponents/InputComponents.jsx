@@ -10,6 +10,154 @@ import React, {
 } from "react";
 import InputMask from "react-input-mask";
 import { useSelector } from "react-redux";
+
+const normalizeAcademicYear = (val) => (val && /\d/.test(val) ? val : "");
+
+function AcademicYearInputComponent(
+  {
+    value,
+    onChange,
+    onValidationChange,
+    placeholder = "YYYY-YYYY",
+    validationSchema,
+    id,
+    name,
+  },
+  ref,
+) {
+  const [displayValue, setDisplayValue] = useState(value || "");
+  const [inputError, setInputError] = useState("");
+  const [isInputTouched, setIsInputTouched] = useState(false);
+  const darkMode = useSelector((state) => state.theme.darkMode);
+
+  // 🔹 Validate input
+  const validateInput = useCallback(
+    async (currentValue, { force = false } = {}) => {
+      if (!validationSchema) {
+        setInputError("");
+        onValidationChange?.(true);
+        return true;
+      }
+      // While typing, an empty field is not an error; on submit (force) let the schema decide
+      if (!currentValue && !force) {
+        setInputError("");
+        onValidationChange?.(true);
+        return true;
+      }
+      try {
+        await validationSchema.validate(currentValue || null);
+        setInputError("");
+        onValidationChange?.(true);
+        return true;
+      } catch (err) {
+        setInputError(err.message || "Invalid academic year");
+        onValidationChange?.(false);
+        return false;
+      }
+    },
+    [validationSchema, onValidationChange],
+  );
+
+  // 🔹 Sync displayValue with value prop
+  useEffect(() => {
+    if (value !== displayValue) {
+      setDisplayValue(value || "");
+      if (value && !isInputTouched) {
+        setIsInputTouched(true);
+        validateInput(value);
+      }
+    }
+  }, [value, validateInput]); // No displayValue or isInputTouched in dependencies
+
+  // 🔹 Handle input change
+  const handleChange = useCallback(
+    (e) => {
+      const nextValue = normalizeAcademicYear(e.target.value);
+      setDisplayValue(nextValue);
+      onChange?.(nextValue); // Pass value to parent, even if incomplete
+
+      if (isInputTouched) {
+        validateInput(nextValue);
+      }
+    },
+    [onChange, isInputTouched, validateInput],
+  );
+
+  // 🔹 Handle focus
+  const handleFocus = useCallback(() => {
+    setIsInputTouched(true);
+    if (displayValue) {
+      validateInput(displayValue);
+    }
+  }, [displayValue, validateInput]);
+
+  // 🔹 Handle blur
+  const handleBlur = useCallback(() => {
+    validateInput(displayValue);
+  }, [displayValue, validateInput]);
+
+  // 🔹 Expose imperative validation
+  useImperativeHandle(
+    ref,
+    () => ({
+      triggerValidation: async () => {
+        setIsInputTouched(true);
+        return validateInput(displayValue, { force: true });
+      },
+    }),
+    [displayValue, validateInput],
+  );
+
+  // 🔹 Feedback helpers
+  const feedbackContent =
+    isInputTouched && inputError
+      ? inputError
+      : isInputTouched && !inputError && displayValue
+        ? "Looks Good!"
+        : "";
+
+  const feedbackClasses = [
+    "transition-all font-size-sm",
+    isInputTouched && inputError
+      ? "invalid-feedback"
+      : isInputTouched && !inputError && displayValue
+        ? "valid-feedback"
+        : "",
+    isInputTouched && (inputError || (!inputError && displayValue))
+      ? "opacity-100"
+      : "opacity-0",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <div className="input-container">
+      <InputMask
+        mask="9999-9999"
+        maskChar="_"
+        value={displayValue}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        id={id}
+        name={name}
+        placeholder={placeholder}
+        inputMode="numeric"
+        aria-describedby={`${id}-hint`}
+        className={`form-control p-2 font-size-sm ${
+          darkMode ? "dark-mode-input" : ""
+        } ${isInputTouched && inputError ? "is-invalid" : ""} ${
+          isInputTouched && !inputError && displayValue ? "is-valid" : ""
+        }`}
+      />
+      <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
+    </div>
+  );
+}
+
+export const AcademicYearInput = forwardRef(AcademicYearInputComponent);
+
+
 function PhoneNumberInputComponent(
   { onChange, value, onValidationChange, validationSchema, optional = false },
   ref,
