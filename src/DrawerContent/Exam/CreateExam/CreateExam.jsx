@@ -13,8 +13,7 @@ import {
 import { AnimatePresence } from "framer-motion";
 import { NotFoundError } from "../../../components/errors/Error";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { useState, useRef } from "react";
-import toast from "react-hot-toast";
+import { useEffect, useState, useRef } from "react";
 import { useCreateExam } from "../../../hooks/exam/useCreateExam";
 import {
   DateRangeInput,
@@ -24,13 +23,16 @@ import {
   dateRangeValidationSchema,
   numberSchema,
 } from "../../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid } from "../../../utils/functions";
-import ToastWarning from "../../../components/Toast/ToastWarning";
+import { allFieldsValid, parseServerError } from "../../../utils/functions";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import { useGetRelatedCaExam } from "../../../hooks/exam/useGetRelatedCaExam";
 import { format, parseISO } from "date-fns";
 import { getDayWindow } from "../../../utils/time/date";
 import { resetCreateExamState } from "../../../Slices/exam/examSlice";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
+
+const formatDate = (date) =>
+  date ? format(parseISO(date), "MMM d, yyyy") : "N/A";
 function CreateExam({
   handleClose,
   nextStep,
@@ -42,7 +44,31 @@ function CreateExam({
   const moduleState = useSelector((state) => state.exam.createExam);
   const dateRangeRef = useRef();
   const maxScoreRef = useRef();
+  const errorBannerRef = useRef(null);
   const { mutate: createExam, isPending } = useCreateExam(handleClose);
+  const [clientError, setClientError] = useState(null);
+  const [serverError, setServerError] = useState(null);
+
+  const isCaExam = moduleState?.examType?.type == "ca";
+  const relatedCaQuery = useGetRelatedCaExam(
+    moduleState?.academicYear?.id,
+    moduleState?.examType?.id,
+    { enabled: !isCaExam },
+  );
+
+  useEffect(() => {
+    if ((clientError || serverError) && errorBannerRef.current) {
+      errorBannerRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [clientError, serverError]);
+
+  const clearBannerErrors = () => {
+    setClientError(null);
+    setServerError(null);
+  };
   const [formData, setFormData] = useState({
     start_date: "",
     end_date: "",
@@ -64,38 +90,54 @@ function CreateExam({
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearBannerErrors();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
+    clearBannerErrors();
+
+    if (!moduleState?.examType?.id || !moduleState?.academicYear?.id) {
+      setClientError({
+        title: "Missing selection.",
+        messages: [
+          "Please go back and select both an exam type and an academic year.",
+        ],
+      });
+      return;
+    }
+
+    if (!isCaExam && !relatedCaQuery.data?.data) {
+      setClientError({
+        title: "No related Continuous Assessment (CA) found.",
+        messages: [
+          "Create the CA exam for this semester and academic year before creating the semester exam.",
+        ],
+      });
+      return;
+    }
+
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError({
+        title: "Please correct the highlighted fields before creating the exam.",
+        messages: [],
+      });
       return;
     }
-    if (!allFieldsValid(isInvalid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
-      return;
-    }
-    createExam({
-      ...formData,
-      school_year_id: moduleState.academicYear.id,
-      exam_type_id: moduleState.examType.id,
-    });
+
+    createExam(
+      {
+        ...formData,
+        school_year_id: moduleState.academicYear.id,
+        exam_type_id: moduleState.examType.id,
+      },
+      {
+        onError: (error) =>
+          setServerError(parseServerError(error, "Failed To Create Exam")),
+      },
+    );
   };
+
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
@@ -119,6 +161,11 @@ function CreateExam({
         </button>
       </div>
       <div className="drawer-content px-2 font-size-sm pt-2 pb-5">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={clientError || serverError}
+          onDismiss={clearBannerErrors}
+        />
         <div className="d-flex flex-column gap-4">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex flex-row align-items-center gap-2">
@@ -133,11 +180,11 @@ function CreateExam({
 
                 <div className="d-flex flex-row align-items-center gap-1 text-capitalize">
                   <span className="fw-semibold">
-                    {moduleState.examType.exam_name}
+                    {moduleState?.examType?.exam_name}
                   </span>
                   <Dot size={16} />
                   <span className="fw-semibold">
-                    {moduleState.examType.type}
+                    {moduleState?.examType?.type}
                   </span>
                 </div>
               </div>
@@ -146,7 +193,7 @@ function CreateExam({
               {`step ${currentStep} of ${fullStep} completed`}
             </span>
           </div>
-          {moduleState.examType.type == "ca" ? (
+          {isCaExam ? (
             <CreateCAExam
               handleStateChange={handleStateChange}
               formData={formData}
@@ -166,7 +213,7 @@ function CreateExam({
               setIsInvalid={setIsInvalid}
               dateRangeRef={dateRangeRef}
               maxScoreRef={maxScoreRef}
-              moduleState={moduleState}
+              relatedCaQuery={relatedCaQuery}
             />
           )}
         </div>
@@ -176,14 +223,22 @@ function CreateExam({
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
             <button
+              type="button"
               className="border-none bg-none p-2"
               onClick={() => previousStep()}
+              disabled={isPending}
             >
               Back (select School Year)
             </button>
             <button
+              type="button"
               className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
-              onClick={() => handleSubmit()}
+              onClick={handleSubmit}
+              disabled={
+                isPending ||
+                (!isCaExam &&
+                  (relatedCaQuery.isLoading || !!relatedCaQuery.error))
+              }
             >
               {isPending ? <SingleSpinner /> : "Create Exam"}
             </button>
@@ -270,16 +325,9 @@ function CreateSemesterExam({
   formData,
   dateRangeRef,
   maxScoreRef,
-  moduleState,
+  relatedCaQuery,
 }) {
-  const {
-    data: relatedCa,
-    isLoading,
-    error,
-  } = useGetRelatedCaExam(
-    moduleState?.academicYear?.id,
-    moduleState?.examType?.id,
-  );
+  const { data: relatedCa, isLoading, error } = relatedCaQuery;
   return isLoading ? (
     <div className="d-flex flex-column gap-2">
       <RectangleSkeleton height="20dvh" width="100%" />
@@ -355,13 +403,9 @@ function CreateSemesterExam({
             <div>
               <div className="d-flex flex-row align-items-center gap-2 fw-medium">
                 <Calendar size={16} style={{ color: "#ccc" }} />
-                <span>
-                  {format(parseISO(relatedCa?.data?.start_date), "MMM d, yyyy")}
-                </span>
+                <span>{formatDate(relatedCa?.data?.start_date)}</span>
                 <ArrowRight size={16} style={{ color: "#ccc" }} />
-                <span>
-                  {format(parseISO(relatedCa?.data?.end_date), "MMM d, yyyy")}
-                </span>
+                <span>{formatDate(relatedCa?.data?.end_date)}</span>
               </div>
             </div>
           </div>

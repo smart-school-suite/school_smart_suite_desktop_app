@@ -19,8 +19,8 @@ const initialState = {
     mapping: {},
   },
   createExam: {
-    examType: {},
-    academicYear: {},
+    examType: null,
+    academicYear: null,
   },
   gradeScale: {
     selectedGradeScale: {},
