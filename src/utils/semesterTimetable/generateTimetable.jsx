@@ -4,7 +4,8 @@ export function handleGenerateTimetable(
   hardConstraints,
   generateTimetable,
   schoolSemester,
-  timetableVersion
+  timetableVersion,
+  mutationOptions,
 ) {
   const breakPeriod = hardConstraints.break_period;
   const operationalPeriod = hardConstraints.operational_period;
@@ -46,7 +47,10 @@ export function handleGenerateTimetable(
     );
     return;
   }
-  generateTimetable(buildRequestBody(hardConstraints, schoolSemester, timetableVersion));
+  generateTimetable(
+    buildRequestBody(hardConstraints, schoolSemester, timetableVersion),
+    mutationOptions,
+  );
 }
 
 const buildRequestBody = (hardConstraints, schoolSemester, timetableVersion) => ({

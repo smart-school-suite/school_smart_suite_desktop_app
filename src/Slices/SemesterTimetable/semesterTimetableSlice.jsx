@@ -42,9 +42,9 @@ const updatePeriodDurationExceptions = (exceptions, patch) =>
 
 const initialState = {
   schoolSemester: null,
+  // The selected version as last returned by the API. Its scheduler_status
+  // decides what the timetable page shows.
   timetableVersion: null,
-  timetableVersionStatus: null,
-  isGenerating: false,
   hard_constraints: {
     break_period: {
       start_time: makeTimeField(),
@@ -80,21 +80,14 @@ const semesterTimetableSlice = createSlice({
   initialState,
   reducers: {
     setSchoolSemester(state, action) {
+      if (state.schoolSemester?.id !== action.payload?.id) {
+        state.timetableVersion = null;
+      }
       state.schoolSemester = action.payload;
-      state.timetableVersionStatus = null;
-      state.timetableVersion = null;
     },
 
     setTimetableVersion(state, action) {
-      state.timetableVersion = action.payload;
-    },
-
-    setTimetableVersionStatus(state, action) {
-      state.timetableVersionStatus = action.payload;
-    },
-
-    setGenerationStatus(state, action) {
-      state.isGenerating = action.payload;
+      state.timetableVersion = action.payload ?? null;
     },
 
     //hard constraint reducers
@@ -661,8 +654,6 @@ export const {
   setBreakPeriodValidation,
   setPeriodDurationField,
   setPeriodDurationValidation,
-  setTimetableVersionStatus,
-  setGenerationStatus,
   addRequestedFreePeriodDays,
   removeRequestedFreePeriodDays,
   addRequestedFreePeriodSlot,
