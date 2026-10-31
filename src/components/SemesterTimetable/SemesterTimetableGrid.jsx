@@ -12,34 +12,101 @@ import {
 import { Icon } from "@iconify/react";
 import NumberFlow from "@number-flow/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useChannel } from "ably/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
 import { useGenerateSemesterTimetable } from "../../hooks/semesterTimetable/useGenerateSemesterTimetable";
+import { useGetSemesterTimetableVersions } from "../../hooks/semesterTimetable/useGetSemesterTimetableVersion";
 import { useGetTimetableSlots } from "../../hooks/semesterTimetable/useGetTimetableSlots";
 import GenerationFailedError from "../../ModalContent/SemesterTimetable/Errors/GenerationFailedError";
 import {
-  setGenerationStatus,
   setSchoolSemester,
   setTimetableVersion,
-  setTimetableVersionStatus,
 } from "../../Slices/SemesterTimetable/semesterTimetableSlice";
 import {
   checkConfiguration,
   handleGenerateTimetable,
 } from "../../utils/semesterTimetable/generateTimetable";
+import {
+  hasGeneratedTimetable,
+  isGenerationStale,
+  SCHEDULER_STATUS,
+} from "../../utils/semesterTimetable/schedulerStatus";
 import BreakPeriodCard from "../Card/BreakPeriodCard";
 import PeriodCard from "../Card/PeriodCard";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../Spinners/Spinners";
-function TimetableGridWrapper() {
+
+// `progress` is the latest realtime event for the selected version (or null).
+// What is rendered is decided by the version's scheduler_status alone, so a
+// missing or late event can never leave the page in the wrong state.
+function TimetableGridWrapper({ progress = null }) {
   const semesterTimetable = useSelector((state) => state.semesterTimetable);
-  const schedularStatus = semesterTimetable?.timetableVersion?.scheduler_status;
   const schoolSemester = semesterTimetable?.schoolSemester;
+  const timetableVersion = semesterTimetable?.timetableVersion;
+  const schedulerStatus = timetableVersion?.scheduler_status;
   const dispatch = useDispatch();
+  const { isLoading: isVersionsLoading } = useGetSemesterTimetableVersions(
+    schoolSemester?.id,
+  );
+
+  const renderContent = () => {
+    if (!schoolSemester) {
+      return (
+        <StatusMessage
+          image="./sss-maskot/timetable.png"
+          title="Ready To Generate Timetable ?"
+          description="Select a semester from the dropdown above to get started."
+        />
+      );
+    }
+    if (isVersionsLoading && !timetableVersion) {
+      return <GridSkeleton sections={2} />;
+    }
+    if (hasGeneratedTimetable(timetableVersion)) {
+      return <TimetableGrid />;
+    }
+    switch (schedulerStatus) {
+      case SCHEDULER_STATUS.GENERATING:
+        return (
+          <GenerationProgress version={timetableVersion} progress={progress} />
+        );
+      case SCHEDULER_STATUS.FAILED:
+        return (
+          <StatusMessage
+            image="./sss-maskot/error.png"
+            title="Timetable Generation Failed"
+            description="Please click on the button below to view the list of errors"
+          >
+            <div className="d-flex flex-row gap-2">
+              <ModalButton
+                classname="border-none p-2 rounded-3 text-white primary-background font-size-sm outline-none px-3"
+                action={{ modalContent: GenerationFailedError }}
+              >
+                View All Errors
+              </ModalButton>
+              <GenerateButton label="Try Again" variant="outline" />
+            </div>
+          </StatusMessage>
+        );
+      case SCHEDULER_STATUS.ERROR:
+        return (
+          <StatusMessage
+            image="./sss-maskot/error.png"
+            title="Timetable Generation Failed"
+            description="Something went wrong while generating the timetable. Consider the diagnostic report to identify and resolve constraint conflicts, then try again."
+          >
+            <GenerateButton label="Try Again" />
+          </StatusMessage>
+        );
+      default:
+        // "pending", or no version yet: generating creates one.
+        return <TimetableGridPlaceholder />;
+    }
+  };
+
   return (
     <>
       <div
@@ -52,146 +119,163 @@ function TimetableGridWrapper() {
             value={semesterTimetable.schoolSemester}
           />
         </div>
-        {schoolSemester ? (
-          semesterTimetable.timetableVersionStatus == "partial" ||
-          semesterTimetable.timetableVersionStatus == "optimal" ? (
-            <TimetableGrid />
-          ) : schedularStatus == "error" ? (
-            <div className="d-flex flex-grow-1 align-items-center justify-content-center">
-              <div className="d-flex flex-column align-items-center gap-2 text-center">
-                <img
-                  src="./sss-maskot/error.png"
-                  alt="sss-timetable-maskot"
-                  style={{
-                    height: "250px",
-                    width: "250px",
-                    objectFit: "contain",
-                  }}
-                />
-                <span className="fw-semibold font-size-sm">
-                  Timetable Generation Failed
-                </span>
-                <p className="text-muted font-size-sm mb-0">
-                  Consider the diagnostic report to identify and resolve
-                  constraint conflicts
-                </p>
-              </div>
-            </div>
-          ) : schedularStatus == "failed" ? (
-            <>
-              <div className="d-flex flex-grow-1 align-items-center justify-content-center">
-                <div className="d-flex flex-column align-items-center gap-2 text-center">
-                  <img
-                    src="./sss-maskot/error.png"
-                    alt="sss-timetable-maskot"
-                    style={{
-                      height: "250px",
-                      width: "250px",
-                      objectFit: "contain",
-                    }}
-                  />
-                  <span className="fw-semibold font-size-sm">
-                    Timetable Generation Failed
-                  </span>
-                  <p className="text-muted font-size-sm mb-0">
-                    Please click on the button below to view the list of errors
-                  </p>
-                  <ModalButton
-                    classname="border-none p-2 rounded-3 text-white primary-background font-size-sm outline-none px-3"
-                    action={{ modalContent: GenerationFailedError }}
-                  >
-                    View All Errors
-                  </ModalButton>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <TimetableGridPlaceholder />
-            </>
-          )
-        ) : (
-          <div className="d-flex flex-grow-1 align-items-center justify-content-center">
-            <div className="d-flex flex-column align-items-center gap-2 text-center">
-              <img
-                src="./sss-maskot/timetable.png"
-                alt="sss-timetable-maskot"
-                style={{
-                  height: "250px",
-                  width: "250px",
-                  objectFit: "contain",
-                }}
-              />
-              <span className="fw-semibold font-size-sm">
-                Ready To Generate Timetable ?
-              </span>
-              <p className="text-muted font-size-sm mb-0">
-                Select a semester from the dropdown above to get started.
-              </p>
-            </div>
-          </div>
-        )}
+        {renderContent()}
       </div>
     </>
   );
 }
 export default TimetableGridWrapper;
 
-function TimetableGridPlaceholder() {
-  const [message, setMessage] = useState(null);
+function StatusMessage({ image, title, description, children }) {
+  return (
+    <div className="d-flex flex-grow-1 align-items-center justify-content-center">
+      <div className="d-flex flex-column align-items-center gap-2 text-center">
+        <img
+          src={image}
+          alt="sss-timetable-maskot"
+          style={{
+            height: "250px",
+            width: "250px",
+            objectFit: "contain",
+          }}
+        />
+        <span className="fw-semibold font-size-sm">{title}</span>
+        {description && (
+          <p className="text-muted font-size-sm mb-0">{description}</p>
+        )}
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function GridSkeleton({ sections = 1 }) {
+  return [...Array(sections)].map((_items, index) => (
+    <div className="d-flex flex-column w-100 gap-2" key={index}>
+      <RectangleSkeleton height="2dvh" width="25%" />
+      <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
+        {[...Array(4)].map((_items, slotIndex) => (
+          <Fragment key={slotIndex}>
+            <RectangleSkeleton height="18dvh" width="49%" />
+          </Fragment>
+        ))}
+      </div>
+    </div>
+  ));
+}
+
+// Starts generation for the selected version (or a new one) and selects the
+// version the API returns, which is already marked "generating".
+function useStartGeneration() {
   const semesterTimetable = useSelector((state) => state.semesterTimetable);
-  const { mutate: generateTimetable, isPending: isGeneratingTimetable } =
-    useGenerateSemesterTimetable();
-  const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const schoolAdmin = useSelector((state) => state.auth?.user?.authSchoolAdmin);
-  const eventName = "semesterTimetable.generation";
-  const channelName = `private:schoolBranch.${schoolAdmin.school_branch_id}.schoolAdmin.${schoolAdmin.id}.semesterTimetable`;
-  useChannel(channelName, eventName, (message) => {
-    if (message.data.payload.percentage === 90) {
-      queryClient.invalidateQueries({
-        queryKey: ["semester-timetable-versions"],
-      });
-      dispatch(setTimetableVersion(message.data.payload.version));
-      dispatch(
-        setTimetableVersionStatus(
-          message.data.payload.version.scheduler_status,
-        ),
-      );
-      setMessage("");
-      dispatch(setGenerationStatus(false));
-      return;
-    }
-    setMessage(message.data.payload);
-  });
-  return semesterTimetable.isGenerating ? (
+  const { mutate: generateTimetable, isPending } =
+    useGenerateSemesterTimetable();
+
+  const start = () => {
+    if (isPending) return;
+    handleGenerateTimetable(
+      semesterTimetable.hard_constraints,
+      generateTimetable,
+      semesterTimetable.schoolSemester,
+      semesterTimetable.timetableVersion,
+      {
+        onSuccess: (response) => {
+          const version = response?.data?.version;
+          if (version) dispatch(setTimetableVersion(version));
+        },
+      },
+    );
+  };
+
+  return {
+    start,
+    isPending,
+    isConfigured: checkConfiguration(semesterTimetable.hard_constraints),
+  };
+}
+
+function GenerateButton({ label = "Generate Timetable", variant = "primary" }) {
+  const { start, isPending, isConfigured } = useStartGeneration();
+  if (!isConfigured) return null;
+  const className =
+    variant === "outline"
+      ? "border p-2 rounded-3 bg-white font-size-sm outline-none px-3"
+      : "border-none p-2 rounded-3 text-white primary-background font-size-sm outline-none px-3";
+  return (
+    <button className={className} onClick={start} disabled={isPending}>
+      {isPending ? "Starting..." : label}
+    </button>
+  );
+}
+
+function useNow(enabled, intervalMs = 30000) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!enabled) return undefined;
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), intervalMs);
+    return () => clearInterval(id);
+  }, [enabled, intervalMs]);
+  return now;
+}
+
+function GenerationProgress({ version, progress }) {
+  const queryClient = useQueryClient();
+  const now = useNow(true);
+  const isStale = isGenerationStale(version, progress?.receivedAt, now);
+
+  if (isStale) {
+    return (
+      <StatusMessage
+        image="./sss-maskot/error.png"
+        title="This Is Taking Longer Than Expected"
+        description="We haven't received an update for this timetable in a while. The generation may have stopped. You can check again or start a new generation."
+      >
+        <div className="d-flex flex-row gap-2">
+          <button
+            className="border p-2 rounded-3 bg-white font-size-sm outline-none px-3"
+            onClick={() =>
+              queryClient.invalidateQueries({
+                queryKey: ["semester-timetable-versions"],
+              })
+            }
+          >
+            Check Again
+          </button>
+          <GenerateButton label="Generate Again" />
+        </div>
+      </StatusMessage>
+    );
+  }
+
+  const percentage = progress?.percentage ?? 0;
+  const details = progress?.isFinal
+    ? "Finalizing timetable..."
+    : progress?.details || "Generating timetable...";
+
+  return (
     <>
       <div className="d-flex flex-column w-100 gap-2">
-        <RectangleSkeleton height="2dvh" width="25%" />
-        <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
-          {[...Array(4)].map((_items, index) => (
-            <Fragment key={index}>
-              <RectangleSkeleton height="18dvh" width="49%" />
-            </Fragment>
-          ))}
-        </div>
+        <GridSkeleton />
       </div>
       <div className="d-flex flex-row w-100 justify-content-start gap-2 align-items-center">
         <SingleSpinner classColor={"text-iron-700"} />
-        <div className="d-flex flex align-items-center">
-          <span className="font-size-sm fw-bold">
-            {message?.details
-              ? message?.details
-              : "Generating...................................."}
-          </span>
+        <div className="d-flex flex align-items-center gap-1">
+          <span className="font-size-sm fw-bold">{details}</span>
           <span className="font-size-sm fw-semibold">
-            <NumberFlow value={message?.percentage ? message?.percentage : 0} />{" "}
-            %
+            <NumberFlow value={percentage} /> %
           </span>
         </div>
       </div>
     </>
-  ) : (
+  );
+}
+
+function TimetableGridPlaceholder() {
+  const semesterTimetable = useSelector((state) => state.semesterTimetable);
+  const hardConstraints = semesterTimetable.hard_constraints;
+  return (
     <div className="d-flex flex-grow-1 align-items-center justify-content-center">
       <div className="d-flex flex-column align-items-center gap-2">
         <img
@@ -206,52 +290,25 @@ function TimetableGridPlaceholder() {
         <div className="font-size-sm d-flex flex-row align-items-center gap-2">
           <span>
             Configure Operational Period{" "}
-            {semesterTimetable.timetableVersion?.scheduler_status}
-            {
-              semesterTimetable.hard_constraints.operational_period.start_time
-                .value
-            }{" "}
-            -{" "}
-            {
-              semesterTimetable.hard_constraints.operational_period.end_time
-                .value
-            }
+            {hardConstraints.operational_period.start_time.value} -{" "}
+            {hardConstraints.operational_period.end_time.value}
           </span>
         </div>
         <div className="font-size-sm d-flex flex-row align-items-center gap-2">
           <span>
             Configure Period Duration{" "}
-            {
-              semesterTimetable.hard_constraints
-                ?.schedule_period_duration_minutes?.duration_minutes
-            }{" "}
+            {hardConstraints?.schedule_period_duration_minutes?.duration_minutes}{" "}
             minutes
           </span>
         </div>
         <div className="font-size-sm d-flex flex-row align-items-center gap-2">
           <span>
             Configure Break Period{" "}
-            {semesterTimetable.hard_constraints.break_period.start_time.value} -{" "}
-            {semesterTimetable.hard_constraints.break_period.end_time.value}
+            {hardConstraints.break_period.start_time.value} -{" "}
+            {hardConstraints.break_period.end_time.value}
           </span>
         </div>
-        {checkConfiguration(semesterTimetable.hard_constraints) && (
-          <button
-            className="border-none p-2 rounded-3 text-white primary-background font-size-sm outline-none px-3"
-            onClick={() => {
-              handleGenerateTimetable(
-                semesterTimetable.hard_constraints,
-                generateTimetable,
-                semesterTimetable.schoolSemester,
-                semesterTimetable.timetableVersion,
-              );
-              dispatch(setGenerationStatus(true));
-            }}
-            disabled={isGeneratingTimetable || semesterTimetable.isGenerating}
-          >
-            Generate Timetable
-          </button>
-        )}
+        <GenerateButton />
       </div>
     </div>
   );
@@ -261,7 +318,7 @@ function TimetableGrid() {
     (state) => state.semesterTimetable.timetableVersion,
   );
   const { data: timetable, isLoading: isTimetableLoading } =
-    useGetTimetableSlots(timetableVersion.id);
+    useGetTimetableSlots(timetableVersion?.id);
   return (
     <>
       <div className="timetable-grid-container d-flex flex-column gap-4 pb-5">
