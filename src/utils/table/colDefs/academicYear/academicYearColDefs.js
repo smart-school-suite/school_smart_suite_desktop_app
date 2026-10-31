@@ -1,13 +1,10 @@
 import {
-  textColumn,
   actionsColumn,
   dateColumn,
   numberColumn,
+  textColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
 import AcademicYearStatusRenderer from "../../../../components/Renderer/AcademicYear/AcademicYearRenderer";
 
 export function academicYearColDefs({ ActionComponent }) {
@@ -57,12 +54,12 @@ export function academicYearColDefs({ ActionComponent }) {
     }),
     numberColumn({
       field: "year_start",
-      headerName: "Year Start",
+      headerName: "Academic Year Start",
       hide: false,
     }),
      numberColumn({
-      field: "year_start",
-      headerName: "Year Start",
+      field: "year_end",
+      headerName: "Academic Year End",
       hide: false,
     }),
     dateColumn({

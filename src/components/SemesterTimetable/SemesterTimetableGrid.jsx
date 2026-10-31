@@ -39,6 +39,7 @@ function TimetableGridWrapper() {
   const semesterTimetable = useSelector((state) => state.semesterTimetable);
   const schedularStatus = semesterTimetable?.timetableVersion?.scheduler_status;
   const schoolSemester = semesterTimetable?.schoolSemester;
+  console.log(schedularStatus);
   const dispatch = useDispatch();
   return (
     <>
@@ -182,7 +183,7 @@ function TimetableGridPlaceholder() {
           <span className="font-size-sm fw-bold">
             {message?.details
               ? message?.details
-              : "Generating...................................."}
+              : "Generatings...................................."}
           </span>
           <span className="font-size-sm fw-semibold">
             <NumberFlow value={message?.percentage ? message?.percentage : 0} />{" "}
