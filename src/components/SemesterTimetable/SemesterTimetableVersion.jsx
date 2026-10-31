@@ -1,13 +1,10 @@
 import { Icon } from "@iconify/react";
-import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setTimetableVersion,
-  setTimetableVersionStatus,
-} from "../../Slices/SemesterTimetable/semesterTimetableSlice";
+import { setTimetableVersion } from "../../Slices/SemesterTimetable/semesterTimetableSlice";
+import { SCHEDULER_STATUS } from "../../utils/semesterTimetable/schedulerStatus";
 import { constraintMap } from "../../constants/constraintMap";
 import { useCreateSemesterTimetableVersion } from "../../hooks/semesterTimetable/useCreateSemesterTimetableVersion";
 import { useGetSemesterTimetableConstraints } from "../../hooks/semesterTimetable/useGetSemesterTimetableConstraint";
@@ -59,7 +56,6 @@ function ConstraintVersionWrapper() {
 export default ConstraintVersionWrapper;
 
 function VersionDropdown({ semesterTimetable }) {
-  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(true);
 
@@ -73,15 +69,9 @@ function VersionDropdown({ semesterTimetable }) {
     error: versionsError,
   } = useGetSemesterTimetableVersions(semesterTimetable?.schoolSemester?.id);
 
-  useEffect(() => {
-    if (versions?.data?.length > 0 && !isLoading) {
-      const latestVersion = versions.data.find((version) => version.is_latest);
-      if (latestVersion) {
-        dispatch(setTimetableVersion(latestVersion));
-        dispatch(setTimetableVersionStatus(latestVersion.scheduler_status));
-      }
-    }
-  }, [versions?.data, isLoading, dispatch]);
+  // Selecting a default version and keeping it fresh is handled by
+  // useSyncSelectedTimetableVersion on the page, so a refetch (e.g. polling
+  // during generation) never overrides the version the user picked.
 
   return (
     <>
@@ -138,20 +128,19 @@ function VersionDropdown({ semesterTimetable }) {
                     <button
                       type="button"
                       className="border-none transparent-bg w-100 d-flex flex-row align-items-center justify-content-between"
-                      onClick={() => {
-                        dispatch(setTimetableVersion(version));
-                        dispatch(
-                          setTimetableVersionStatus(version.scheduler_status),
-                        );
-                        queryClient.invalidateQueries({
-                          queryKey: [
-                            "parsed-semester-timetable-daignostics",
-                            "timetable-slots",
-                          ],
-                        });
-                      }}
+                      onClick={() => dispatch(setTimetableVersion(version))}
                     >
-                      <span className="text-iron-600">{version?.label}</span>
+                      <span className="text-iron-600 d-flex flex-row align-items-center gap-1">
+                        {version?.label}
+                        {version.scheduler_status === SCHEDULER_STATUS.GENERATING && (
+                          <Icon
+                            icon="line-md:loading-loop"
+                            width="14"
+                            height="14"
+                            aria-label="Generating"
+                          />
+                        )}
+                      </span>
                       {version.is_latest ? (
                         <div className="d-flex flex-row gap-2">
                           <span className="pill-sm-success">latest</span>

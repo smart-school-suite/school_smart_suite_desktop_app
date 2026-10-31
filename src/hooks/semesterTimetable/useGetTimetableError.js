@@ -5,5 +5,6 @@ export const useGetTimetableErrors = (versionId) => {
   return useQuery({
     queryKey: ["timetable-errors", versionId],
     queryFn: () => getTimetableError(versionId),
+    enabled: !!versionId,
   });
 };
