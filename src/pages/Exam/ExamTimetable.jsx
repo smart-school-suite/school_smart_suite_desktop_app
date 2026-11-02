@@ -10,7 +10,7 @@ function ExamTimetable() {
   return (
     <>
       <main className="main-container gap-2">
-        <div style={{ height: "5%" }}>
+        <div className="page-head page-head--bar">
           <div className="d-flex align-items-center gap-2">
             <div
               className={`${
@@ -32,8 +32,8 @@ function ExamTimetable() {
           </div>
         </div>
         <div
-          className="d-flex flex-row align-items-start"
-          style={{ height: "95%" }}
+          className="d-flex flex-row align-items-start flex-grow-1"
+          style={{ minHeight: 0 }}
         >
           <VersionWrapper />
           <GridWrapper />

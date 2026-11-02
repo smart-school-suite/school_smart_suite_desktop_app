@@ -41,7 +41,7 @@ function SetttingLayout() {
   return (
     <>
       <main className="main-container gap-2">
-        <div className="card rounded-3 border border-none d-flex flex-column gap-1 pb-2" style={{ borderRadius:"0.75rem" }}>
+        <div className="page-head">
           <div className="p-2 d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex flex-row align-items-center gap-2">
               <div
@@ -63,8 +63,7 @@ function SetttingLayout() {
               </div>
             </div>
           </div>
-          <hr />
-          <div className="d-flex flex-row align-items-center gap-4 font-size-sm px-2">
+          <div className="page-head__tabs d-flex flex-row align-items-center gap-4 font-size-sm">
             {sideBarData.map((tab) => {
               const isActive = location.pathname === tab.path;
               return (
