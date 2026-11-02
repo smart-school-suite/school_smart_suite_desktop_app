@@ -3,14 +3,12 @@ import { teacherCourseImportColDefs } from "../../utils/table/colDefs/teachers/t
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { TEACHER_COURSE_COLUMNS } from "../../utils/teacher/teacherCourseColumns";
 import {
-  setCustomFilter,
   setImportStatus,
   setImportSelectedFile,
   setImportReset,
   setColumnMapping,
   setStandardGroupValue,
 } from "../../Slices/teacher/teacherCourseSlice";
-import { Icon } from "@iconify/react";
 import { ArrowDown } from "lucide-react";
 function TeacherCourseImportTrigger() {
   return (

@@ -3,11 +3,6 @@ import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { COURSE_COLUMNS } from "../../utils/course/courseColumns";
 import { courseImportColDefs } from "../../utils/table/colDefs/course/courseImportColDefs";
 import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
   setImportStatus,
   setImportSelectedFile,
   setImportReset,
@@ -18,7 +13,6 @@ import {
   setStandardGroupValue,
 } from "../../Slices/administrator/courseSlice";
 import { Icon } from "@iconify/react";
-import { ArrowDown } from "lucide-react";
 import { courseInstanceMap } from "../../utils/maps/course/courseInstanceMap";
 function CourseImportTrigger() {
   return (

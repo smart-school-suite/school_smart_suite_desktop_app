@@ -1,35 +1,22 @@
 import { Icon } from "@iconify/react";
-import { AnimatePresence, motion } from "framer-motion";
 import React, {
-  Fragment,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import CreateJointCourse from "../../DrawerContent/JointCourse/CreateJointCourse";
 import JointCourseDetails from "../../DrawerContent/JointCourse/JointCourseDetails";
 import UpdateJointCourse from "../../DrawerContent/JointCourse/UpdateJointCourse";
-import Export from "../../ModalContent/Export/Export";
 import ActivateJointCourse from "../../ModalContent/JointCourse/ActivateJointCourse";
 import DeactivateJointCourse from "../../ModalContent/JointCourse/DeactivateJointCourse";
 import DeleteJointCourse from "../../ModalContent/JointCourse/DeleteJointCourse";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
-import {
-  addCustomFilter,
-  removeCustomFilter,
-  resetAllCustomFilters,
-  setCustomFilter,
-  toggleGeneralFilter,
-} from "../../Slices/academics/jointCourseSlice";
 import ActionButtonDropdown, {
   DropDownMenuItem,
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -37,7 +24,6 @@ import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import SearchInput from "../../components/input/search";
 import { useGetJointCourses } from "../../hooks/jointCourse/useGetJointCourse";
 import {
   ActivateIcon,
@@ -46,20 +32,17 @@ import {
   SuspendIcon,
   UpdateIcon,
 } from "../../icons/ActionIcons";
-import filterPopOverMap from "../../utils/maps/FilterMap";
 import jointCourseColDefs from "../../utils/table/colDefs/course/jointCourseColDefs";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function JointCourse() {
   const dispatch = useDispatch();
-  const courseState = useSelector((state) => state.jointCourse);
   const { data: courses, isLoading, error } = useGetJointCourses();
   const tableRef = useRef(null);
+  const filters = useTableFilters("academics/joint-course", tableRef);
   const [rowCount, setRowCount] = useState(0);
-  const [columns, setColumns] = useState({
-    selectedColumns: [],
-    availableColumns: [],
-  });
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [searchText, setSearchText] = useState("");
 
   const handleResetSelections = () => {
     if (tableRef.current) {
@@ -82,426 +65,126 @@ function JointCourse() {
   const handleRowCountFromChild = useCallback((count) => {
     setRowCount(count);
   }, []);
-  const handleSearch = (value) => {
-    setSearchText(value);
-    if (tableRef.current && tableRef.current.setGridOption) {
-      tableRef.current.setGridOption("quickFilterText", value);
-    }
-  };
-  const handleReset = () => {
-    if (tableRef.current) {
-      tableRef.current.deselectAll();
-      setRowCount(0);
-      setSelectedCourses([]);
-
-      if (tableRef.current.setGridOption) {
-        tableRef.current.setGridOption("quickFilterText", "");
-      }
-      setSearchText("");
-      const gridApi = tableRef.current.getGridApi
-        ? tableRef.current.getGridApi()
-        : null;
-      if (gridApi) {
-        gridApi.setFilterModel(null);
-      }
-    }
-  };
-  useEffect(() => {
-    if (!isLoading && tableRef.current?.getColumnsState) {
-      const timer = setTimeout(() => {
-        const gridCols = tableRef.current.getColumnsState();
-        if (gridCols && gridCols.length > 0) {
-          const filteredCols = gridCols.filter(
-            (col) =>
-              !col.isSystemColumn &&
-              col.field !== "action" &&
-              col.colId !== "actions" &&
-              col.colId !== "ActionComponent",
-          );
-          setColumns((prevalue) => ({
-            ...prevalue,
-            availableColumns: [...prevalue.availableColumns, ...filteredCols],
-          }));
-          setColumns((prev) => ({
-            ...prev,
-            selectedColumns: prev.availableColumns.slice(0, 4),
-          }));
-        }
-      }, 300);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading, memoizedRowData]);
   return (
     <>
-    <main className="main-container gap-2 h-100">
-  <div className="h-100">
-    {isLoading ? (
-      <div className="flex-grow-1 w-100 h-100">
-        <RectangleSkeleton width="100%" height="100%" speed={0.5} />
-      </div>
-    ) : error ? (
-      <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto h-100">
-        <img
-          src="/sss-maskot/404.png"
-          alt="Error loading joint courses"
-          style={{
-            height: "140px",
-            width: "140px",
-            objectFit: "contain",
-          }}
-          className="mb-3"
-        />
-        <h5 className="fw-semibold font-size-md mb-1">
-          {error?.response?.data?.errors?.title ?? "Unable to Load Joint Courses"}
-        </h5>
-        <p className="text-muted font-size-sm mb-3 max-w-400">
-          {error?.response?.data?.errors?.description ??
-            "Something went wrong while fetching the joint course data. Please try again or create a new joint course."}
-        </p>
-        <div className="d-flex align-items-center gap-2">
-          <DrawerTrigger
-            title="Create Joint Course"
-            placement="right"
-            drawerChildren={CreateJointCourse}
-          >
-            <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
-              <span>Create Joint Course</span>
-            </button>
-          </DrawerTrigger>
-        </div>
-      </div>
-    ) : !courses?.data || courses.data.length === 0 ? (
-      <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto h-100">
-        <img
-          src="/sss-maskot/404.png"
-          alt="No joint courses found"
-          style={{
-            height: "140px",
-            width: "140px",
-            objectFit: "contain",
-          }}
-          className="mb-3"
-        />
-        <h5 className="fw-semibold font-size-md mb-1">
-          No Joint Courses Found
-        </h5>
-        <p className="text-muted font-size-sm mb-3 max-w-400">
-          There are currently no joint course records available. Get started by creating your first joint course.
-        </p>
-        <div className="d-flex align-items-center gap-2">
-          <DrawerTrigger
-            title="Create Joint Course"
-            placement="right"
-            drawerChildren={CreateJointCourse}
-          >
-            <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
-              <span>Create Joint Course</span>
-            </button>
-          </DrawerTrigger>
-        </div>
-      </div>
-    ) : (
-      <>
-        <div className="d-flex flex-column gap-2 h-100">
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <div className="d-flex flex-row align-items-center gap-2">
-              {columns?.selectedColumns?.map((c, index) => {
-                const FilterPopOver = filterPopOverMap.find(
-                  (f) => f.cellDataType === c.cellDataType,
-                ).component;
-                return (
-                  <Fragment key={index}>
-                    <FilterPopOver column={c} tableRef={tableRef} />
-                  </Fragment>
-                );
-              })}
-              <ModalButton
-                action={{ modalContent: FilterColumns }}
-                size={"xl"}
-                rowData={{ setColumns, columns: columns }}
-              >
-                <button
-                  className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg"
-                  style={{ padding: "0.45rem" }}
-                >
-                  <span>
-                    <Icon icon="ic:round-plus" width={14} height={14} />
-                  </span>
-                </button>
-              </ModalButton>
-              <button
-                className="border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
+      <main className="main-container gap-2 h-100">
+        <div className="h-100">
+          {isLoading ? (
+            <div className="flex-grow-1 w-100 h-100">
+              <RectangleSkeleton width="100%" height="100%" speed={0.5} />
+            </div>
+          ) : error ? (
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto h-100">
+              <img
+                src="/sss-maskot/404.png"
+                alt="Error loading joint courses"
                 style={{
-                  fontSize: "0.7rem",
-                  cursor: "pointer",
-                  padding: "0.45rem",
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
                 }}
-                onClick={() => {
-                  dispatch(toggleGeneralFilter());
-                }}
-              >
-                <span>
-                  <Icon icon="mynaui:filter" width={16} height={16} />
-                </span>
-                <span style={{ lineHeight: "16px" }}>Filter</span>
-              </button>
-            </div>
-            <div className="d-flex flex-row align-items-center gap-2">
-              <button
-                className="border-none border rounded-3 font-size-sm   d-flex flex-row align-items-center white-bg"
-                onClick={handleReset}
-                style={{ padding: "0.45rem" }}
-              >
-                <span>
-                  <Icon
-                    icon="grommet-icons:revert"
-                    width={16}
-                    height={16}
-                  />
-                </span>
-              </button>
-              <button
-                className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
-                style={{ padding: "0.45rem" }}
-              >
-                <span>
-                  <Icon icon="mage:copy" width={16} height={16} />
-                </span>
-              </button>
-            </div>
-          </div>
-          <div className="d-flex flex-row justify-content-between align-items-center">
-            <div className="w-50">
-              <SearchInput
-                placeholder={"Search Joint Course......"}
-                value={searchText}
-                onChange={(val) => handleSearch(val)}
-                hotkey="Ctrl+K"
+                className="mb-3"
               />
-            </div>
-            <div className="d-flex flex-row align-items-center gap-2">
-              <ModalButton
-                action={{ modalContent: Export }}
-                size={"xl"}
-                rowData={{ tableRef, columns: columns.availableColumns }}
-              >
-                <button
-                  className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                  style={{ padding: "0.45rem" }}
+              <h5 className="fw-semibold font-size-md mb-1">
+                {error?.response?.data?.errors?.title ??
+                  "Unable to Load Joint Courses"}
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                {error?.response?.data?.errors?.description ??
+                  "Something went wrong while fetching the joint course data. Please try again or create a new joint course."}
+              </p>
+              <div className="d-flex align-items-center gap-2">
+                <DrawerTrigger
+                  title="Create Joint Course"
+                  placement="right"
+                  drawerChildren={CreateJointCourse}
                 >
-                  <span style={{ lineHeight: "16px" }}>Export</span>
-                  <span>
-                    <Icon icon="tabler:arrow-up" width={14} height={14} />
-                  </span>
-                </button>
-              </ModalButton>
-              <ModalButton
-                action={{ modalContent: TableColumnSetting }}
-                size={"xl"}
-                rowData={{ tableRef }}
-              >
-                <button
-                  className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                  style={{ padding: "0.45rem" }}
-                >
-                  <span>
-                    <Icon
-                      icon="lsicon:setting-outline"
-                      width={20}
-                      height={20}
-                    />
-                  </span>
-                </button>
-              </ModalButton>
+                  <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
+                    <span>Create Joint Course</span>
+                  </button>
+                </DrawerTrigger>
+              </div>
             </div>
-          </div>
-          <div className="h-100">
-            <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
-              <motion.div
-                className="h-100"
-                layout
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 30,
-                }}
+          ) : !courses?.data || courses.data.length === 0 ? (
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 w-100 py-5 text-center my-auto h-100">
+              <img
+                src="/sss-maskot/404.png"
+                alt="No joint courses found"
                 style={{
-                  width: courseState.isGeneralFilterOpen ? "60%" : "100%",
+                  height: "140px",
+                  width: "140px",
+                  objectFit: "contain",
                 }}
-              >
-                <Table
-                  colDefs={memoizedColDefs}
-                  rowData={courses.data}
-                  ref={tableRef}
-                  handleRowCountFromChild={handleRowCountFromChild}
-                  handleRowDataFromChild={handleRowDataFromChild}
-                />
-                {rowCount > 0 && (
-                  <BulkActionsToast
-                    rowCount={rowCount}
-                    label={`${
-                      rowCount >= 1
-                        ? "Course Selected"
-                        : rowCount >= 2
-                          ? "Courses Selected"
-                          : null
-                    }`}
-                    resetAll={handleReset}
-                    dropDownItems={
-                      <DropdownItems
-                        selectedCourses={selectedCourses}
-                        resetAll={handleReset}
-                      />
-                    }
-                    actionButton={
-                      <ActionButtons
-                        selectedCourses={selectedCourses}
-                        resetAll={handleReset}
-                      />
-                    }
-                  />
-                )}
-              </motion.div>
-              {courseState.isGeneralFilterOpen && (
-                <AnimatePresence mode="popLayout">
-                  {courseState.isGeneralFilterOpen && (
-                    <motion.div
-                      key="filter-panel"
-                      className="card rounded-3 font-size-sm d-flex flex-column h-100"
-                      initial={{ x: "100%", opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: "100%", opacity: 0 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 350,
-                        damping: 32,
-                      }}
-                      style={{ width: "40%" }}
-                    >
-                      <div
-                        className="p-2 rounded-top-3 d-flex flex-column gap-2 border-bottom"
-                        style={{ background: "#f9f9f9" }}
-                      >
-                        <div className="d-flex flex-row align-items-center justify-content-between">
-                          <span>
-                            Build a custom view of your joint course data.
-                          </span>
-                          <button
-                            className="border-none bg-transparent"
-                            onClick={() =>
-                              dispatch(toggleGeneralFilter())
-                            }
-                          >
-                            <Icon
-                              icon="iconoir:cancel"
-                              width={18}
-                              height={18}
-                            />
-                          </button>
-                        </div>
-                        <div className="d-flex flex-row align-items-center justify-content-between">
-                          <div className="d-flex flex-row align-items-center gap-2">
-                            <span>
-                              <Icon
-                                icon="mynaui:filter"
-                                width={18}
-                                height={18}
-                              />
-                            </span>
-                            <span>Filter Joint Courses</span>
-                          </div>
-                          <span>{memoizedRowData?.length} items</span>
-                        </div>
-                      </div>
-                      <div
-                        className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
-                        style={{ maxHeight: "52dvh" }}
-                      >
-                        {courseState.customFilter.length > 0 ? (
-                          <div>
-                            {courseState?.customFilter?.map(
-                              (cFilters) => (
-                                <Fragment key={cFilters.id}>
-                                  <GeneralFilterWizzard
-                                    cFilters={cFilters}
-                                    columns={columns}
-                                    moduleState={courseState}
-                                    removeCustomFilter={
-                                      removeCustomFilter
-                                    }
-                                    setCustomFilter={setCustomFilter}
-                                  />
-                                </Fragment>
-                              ),
-                            )}
-                          </div>
-                        ) : (
-                          <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1 p-4">
-                            <div className="text-center d-flex flex-column gap-1 mb-3">
-                              <span className="fw-semibold">
-                                Build a custom filter
-                              </span>
-                              <span className="text-muted">
-                                Create one or more conditions to narrow
-                                down your Joint Course list.
-                              </span>
-                            </div>
-                            <button
-                              className="d-flex flex-row align-items-center gap-2 bg-transparent border-none border rounded-3 p-2 font-size-sm"
-                              onClick={() => {
-                                dispatch(addCustomFilter());
-                              }}
-                            >
-                              <span>
-                                <Icon icon="mynaui:plus" />
-                              </span>
-                              <span>Add Condition</span>
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                      <div className="mt-auto">
-                        {courseState.customFilter.length > 0 && (
-                          <div className="d-flex flex-row justify-content-start p-2">
-                            <button
-                              className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
-                              onClick={() => {
-                                dispatch(addCustomFilter());
-                              }}
-                            >
-                              <span>
-                                <Icon icon="ic:round-plus" />
-                              </span>
-                              <span>Add Condition</span>
-                            </button>
-                          </div>
-                        )}
-                        <div className="d-flex flex-row border-top justify-content-between p-2">
-                          <button
-                            className="border-none border bg-transparent px-3 font-size-sm py-2 rounded-3"
-                            onClick={() => {
-                              dispatch(resetAllCustomFilters());
-                            }}
-                          >
-                            Reset All
-                          </button>
-                          <button className="border-none border px-3 font-size-sm py-2 primary-background text-white rounded-3">
-                            Apply
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              )}
+                className="mb-3"
+              />
+              <h5 className="fw-semibold font-size-md mb-1">
+                No Joint Courses Found
+              </h5>
+              <p className="text-muted font-size-sm mb-3 max-w-400">
+                There are currently no joint course records available. Get
+                started by creating your first joint course.
+              </p>
+              <div className="d-flex align-items-center gap-2">
+                <DrawerTrigger
+                  title="Create Joint Course"
+                  placement="right"
+                  drawerChildren={CreateJointCourse}
+                >
+                  <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
+                    <span>Create Joint Course</span>
+                  </button>
+                </DrawerTrigger>
+              </div>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="d-flex flex-column gap-2 h-100">
+                <TableToolbar
+                  filters={filters}
+                  tableRef={tableRef}
+                  searchPlaceholder="Search Joint Course"
+                  onReset={handleResetSelections}
+                />
+                <TableFilterLayout filters={filters}>
+                  <Table
+                    {...filters.gridProps}
+                    colDefs={memoizedColDefs}
+                    rowData={courses.data}
+                    ref={tableRef}
+                    handleRowCountFromChild={handleRowCountFromChild}
+                    handleRowDataFromChild={handleRowDataFromChild}
+                  />
+                  {rowCount > 0 && (
+                    <BulkActionsToast
+                      rowCount={rowCount}
+                      label={`${
+                        rowCount >= 1
+                          ? "Course Selected"
+                          : rowCount >= 2
+                            ? "Courses Selected"
+                            : null
+                      }`}
+                      resetAll={handleResetSelections}
+                      dropDownItems={
+                        <DropdownItems
+                          selectedCourses={selectedCourses}
+                          resetAll={handleResetSelections}
+                        />
+                      }
+                      actionButton={
+                        <ActionButtons
+                          selectedCourses={selectedCourses}
+                          resetAll={handleResetSelections}
+                        />
+                      }
+                    />
+                  )}
+                </TableFilterLayout>
+              </div>
+            </>
+          )}
         </div>
-      </>
-    )}
-  </div>
-</main>
+      </main>
     </>
   );
 }
@@ -548,7 +231,9 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowDrawer(UpdateJointCourse, "Update Joint Course")}
+          onClick={() =>
+            handleShowDrawer(UpdateJointCourse, "Update Joint Course")
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -561,7 +246,9 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-           onClick={() => handleShowDrawer(JointCourseDetails, "Joint Course Details")}
+          onClick={() =>
+            handleShowDrawer(JointCourseDetails, "Joint Course Details")
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">

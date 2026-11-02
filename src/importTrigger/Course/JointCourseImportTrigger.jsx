@@ -4,11 +4,6 @@ import { JOINT_COURSE_COLUMNS } from "../../utils/course/jointCourseColumns";
 import jointCourseImportColDefs from "../../utils/table/colDefs/course/jointCourseImportColDefs";
 import { jointCourseInstanceMap } from "../../utils/maps/course/jointCourseInstanceMap";
 import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
   setImportStatus,
   setImportSelectedFile,
   setImportReset,
@@ -19,7 +14,6 @@ import {
   setStandardGroupValue,
 } from "../../Slices/academics/jointCourseSlice";
 import { Icon } from "@iconify/react";
-import { ArrowDown } from "lucide-react";
 function JointCourseImportTrigger() {
   return (
     <>

@@ -2,14 +2,12 @@ import { ModalButton } from "../../components/DataTableComponents/ActionComponen
 import { teacherSpecialtyImportColDefs } from "../../utils/table/colDefs/teachers/teacherSpecialtyImportColDefs";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import {
-  setCustomFilter,
   setImportStatus,
   setImportSelectedFile,
   setImportReset,
   setColumnMapping,
   setStandardGroupValue,
 } from "../../Slices/teacher/teacherSpecialtySlice";
-import { Icon } from "@iconify/react";
 import { TEACHER_SPECIALTY_COLUMNS } from "../../utils/teacher/teacherSpecialtyColumns";
 import { ArrowDown } from "lucide-react";
 function TeacherSpecialtyImportTrigger() {

@@ -78,6 +78,7 @@ import eventCategoryReducer from "../Slices/schoolEvent/eventCategorySlice";
 import schoolEventReducer from "../Slices/schoolEvent/schoolEventSlice";
 import expenseCategoryReducer from "../Slices/schoolExpense/expenseCategorySlice";
 import semesterTimetableReducer from "../Slices/SemesterTimetable/semesterTimetableSlice";
+import tableFiltersReducer from "../Slices/tableFilters/tableFiltersSlice";
 import parentReducer from "../Slices/student/parentSlice";
 import studentBatchReducer from "../Slices/student/studentBatchSlice";
 import studentReducer from "../Slices/student/studentSlice";
@@ -122,6 +123,8 @@ const teacherPersistConfig = {
 };
 
 const rootReducer = combineReducers({
+  // Search, quick filters and conditions for every data table, keyed by table.
+  tableFilters: persistReducer({ key: "tableFilters", storage }, tableFiltersReducer),
   auth: persistReducer({ key: "auth", storage }, authReducer),
   theme: persistReducer(themePersistConfig, themeReducer),
   pricing: pricingReducer,
