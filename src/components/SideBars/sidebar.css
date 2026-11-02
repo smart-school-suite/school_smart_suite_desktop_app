@@ -1,0 +1,375 @@
+/* ==========================================================================
+   Main app sidebar
+   ========================================================================== */
+
+.snav {
+  --snav-bg: #ffffff;
+  --snav-ink: #18212b;
+  --snav-ink-2: #4b5765;
+  --snav-ink-3: #8a95a1;
+  --snav-line: #eceef1;
+  --snav-hover: #f3f5f7;
+  --snav-active-bg: var(--primary-color-50, #f0f9ff);
+  --snav-active-ink: #0880b5;
+  --snav-accent: var(--primary-color, #0ea7e9);
+  --snav-danger: #c2410c;
+  --snav-danger-bg: #fdf1ea;
+  --snav-width: 13.5rem;
+
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  width: var(--snav-width);
+  height: 100dvh;
+  background: var(--snav-bg);
+  border-right: 1px solid var(--snav-line);
+  color: var(--snav-ink);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.snav--dark {
+  --snav-bg: #111111;
+  --snav-ink: #e7e9ec;
+  --snav-ink-2: #b3b9c1;
+  --snav-ink-3: #7c848e;
+  --snav-line: #1f1f1f;
+  --snav-hover: #1b1b1b;
+  --snav-active-bg: rgba(14, 167, 233, 0.16);
+  --snav-active-ink: #5cc6f2;
+  --snav-danger: #f2875a;
+  --snav-danger-bg: rgba(242, 135, 90, 0.12);
+}
+
+.snav button {
+  font: inherit;
+}
+
+.snav :focus-visible {
+  outline: 2px solid var(--snav-accent);
+  outline-offset: -2px;
+}
+
+/* ---------- Head ---------- */
+
+.snav__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3rem;
+  padding: 0 0.5rem 0 0.875rem;
+  border-bottom: 1px solid var(--snav-line);
+  flex-shrink: 0;
+}
+
+.snav__logo {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  border-radius: 0.3rem;
+}
+
+.snav__icon-btn {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--snav-ink-3);
+}
+
+.snav__icon-btn:hover {
+  background: var(--snav-hover);
+  color: var(--snav-ink);
+}
+
+/* ---------- Body ---------- */
+
+.snav__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem;
+}
+
+.snav__body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.snav__body::-webkit-scrollbar-thumb {
+  background: var(--snav-line);
+  border-radius: 4px;
+}
+
+.snav__list,
+.snav__sub {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.snav__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.snav__row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--snav-ink-2);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.snav__row:hover {
+  background: var(--snav-hover);
+  color: var(--snav-ink);
+}
+
+.snav__row.is-active {
+  color: var(--snav-ink);
+  font-weight: 500;
+}
+
+.snav__row.is-active .snav__icon {
+  color: var(--snav-accent);
+}
+
+/* Groups without children highlight the row itself */
+.snav__row.is-active:not([aria-expanded]) {
+  background: var(--snav-active-bg);
+  color: var(--snav-active-ink);
+}
+
+.snav__icon {
+  flex-shrink: 0;
+  color: var(--snav-ink-3);
+  transition: color 0.12s ease;
+}
+
+.snav__row:hover .snav__icon {
+  color: var(--snav-ink-2);
+}
+
+.snav__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.snav__chev {
+  flex-shrink: 0;
+  color: var(--snav-ink-3);
+  transition: transform 0.18s ease;
+}
+
+.snav__chev.is-open {
+  transform: rotate(180deg);
+}
+
+.snav__sub {
+  overflow: hidden;
+  margin-left: 1rem;
+  padding: 1px 0 4px 0.625rem;
+  border-left: 1px solid var(--snav-line);
+}
+
+.snav__subrow {
+  display: flex;
+  align-items: center;
+  height: 1.75rem;
+  padding: 0 0.5rem;
+  border-radius: 6px;
+  color: var(--snav-ink-2);
+  font-size: 0.78125rem;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.snav__subrow:hover {
+  background: var(--snav-hover);
+  color: var(--snav-ink);
+}
+
+.snav__subrow.is-active {
+  background: var(--snav-active-bg);
+  color: var(--snav-active-ink);
+  font-weight: 500;
+}
+
+/* ---------- Foot ---------- */
+
+.snav__foot {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0.5rem;
+  border-top: 1px solid var(--snav-line);
+  flex-shrink: 0;
+}
+
+.snav__foot .snav__row.is-active {
+  background: var(--snav-active-bg);
+  color: var(--snav-active-ink);
+}
+
+.snav__row--danger:hover {
+  background: var(--snav-danger-bg) !important;
+  color: var(--snav-danger) !important;
+}
+
+.snav__row--danger:hover .snav__icon {
+  color: var(--snav-danger);
+}
+
+/* ==========================================================================
+   Icon rail (small screens, or collapsed on large screens)
+   ========================================================================== */
+
+.snav--rail {
+  --snav-width: 3.25rem;
+  align-items: center;
+}
+
+.snav--rail .snav__head {
+  justify-content: center;
+  width: 100%;
+  padding: 0;
+}
+
+.snav--rail .snav__body,
+.snav--rail .snav__foot {
+  width: 100%;
+  padding: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.snav--rail .snav__list {
+  align-items: center;
+  gap: 2px;
+}
+
+.snav__rail-btn {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--snav-ink-3);
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.snav--rail > .snav__rail-btn {
+  margin-top: 0.5rem;
+}
+
+.snav__rail-btn:hover {
+  background: var(--snav-hover);
+  color: var(--snav-ink);
+}
+
+.snav__rail-btn.is-active,
+.snav__rail-btn[aria-expanded="true"] {
+  background: var(--snav-active-bg);
+  color: var(--snav-active-ink);
+}
+
+/* Rail popover */
+.snav-pop {
+  --snav-ink: #18212b;
+  --snav-ink-2: #4b5765;
+  --snav-ink-3: #8a95a1;
+  --snav-hover: #f3f5f7;
+  --snav-active-bg: var(--primary-color-50, #f0f9ff);
+  --snav-active-ink: #0880b5;
+
+  min-width: 11rem;
+  padding: 0.375rem;
+  border: 1px solid #e4e7eb;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+  font-size: 0.8125rem;
+}
+
+.snav-pop--dark {
+  --snav-ink: #e7e9ec;
+  --snav-ink-2: #b3b9c1;
+  --snav-ink-3: #7c848e;
+  --snav-hover: #1b1b1b;
+  --snav-active-bg: rgba(14, 167, 233, 0.16);
+  --snav-active-ink: #5cc6f2;
+  background: #111;
+  border-color: #222;
+}
+
+.snav-pop__title {
+  display: block;
+  padding: 0.25rem 0.5rem 0.375rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--snav-ink-3);
+}
+
+.snav-pop__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 1.875rem;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--snav-ink-2);
+  font: inherit;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.snav-pop__item svg {
+  color: var(--snav-ink-3);
+}
+
+.snav-pop__item:hover {
+  background: var(--snav-hover);
+  color: var(--snav-ink);
+}
+
+.snav-pop__item.is-active {
+  background: var(--snav-active-bg);
+  color: var(--snav-active-ink);
+  font-weight: 500;
+}
+
+.snav-pop__item.is-active svg {
+  color: currentColor;
+}
