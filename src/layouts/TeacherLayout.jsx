@@ -33,8 +33,7 @@ function TeacherLayout() {
     <>
       <main className="main-container gap-2">
         <div
-          className="card border d-flex flex-column gap-2 p-2"
-          style={{ borderRadius: "0.75rem" }}
+          className="page-head"
         >
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-2">
@@ -82,8 +81,7 @@ function TeacherLayout() {
               )}
             </div>
           </div>
-          <hr />
-          <div className="d-flex flex-row align-items-center gap-4 font-size-sm">
+          <div className="page-head__tabs d-flex flex-row align-items-center gap-4 font-size-sm">
             {sideBarData.map((tab) => {
               const isActive = location.pathname === tab.path;
               return (

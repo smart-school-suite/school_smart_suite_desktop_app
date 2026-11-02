@@ -18,16 +18,14 @@ function Layout() {
       <Toaster position="bottom-right" reverseOrder={false}></Toaster>
       
       <div className={`${darkMode && "dark-bg-light"}`}>
-        <div className="d-flex flex-row w-100 gap-2 ">
+        <div className="d-flex flex-row w-100">
           {/* The sidebar sets its own width (expanded or icon rail). */}
           <div className="flex-shrink-0">
             <Sidebar />
           </div>
           <div className="flex-grow-1" style={{ minWidth: 0 }}>
-            <main className={`${darkMode ? "text-white" : null} pt-1 w-100`}>
-              <div className="pe-2">
-                <Outlet />
-              </div>
+            <main className={`${darkMode ? "text-white" : ""} app-content w-100`}>
+              <Outlet />
             </main>
           </div>
         </div>

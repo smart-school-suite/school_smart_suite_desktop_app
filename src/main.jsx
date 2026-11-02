@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./styles/global.css";
+import "./styles/pageHeader.css";
 import "./styles/responsive.css";
 import "./styles/richText.css";
 import "./styles/utility.css";

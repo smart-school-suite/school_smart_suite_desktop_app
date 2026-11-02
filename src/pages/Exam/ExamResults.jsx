@@ -144,7 +144,7 @@ function ExamResults() {
         ) : (
           <>
             <div className="d-flex flex-column gap-3 h-100">
-              <div className="d-flex flex-row align-items-center justify-content-between bg-white p-2 border rounded-3">
+              <div className="page-head page-head--bar">
                 <div className="d-flex align-items-center gap-2">
                   <div
                     className={`${
