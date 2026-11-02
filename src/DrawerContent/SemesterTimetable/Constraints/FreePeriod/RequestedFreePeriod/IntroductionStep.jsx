@@ -1,198 +1,73 @@
-import { Icon } from "@iconify/react";
-function IntroductionStep({
-  handleClose,
-  nextStep,
-  previousStep,
-  fullStep,
-  currentStep,
-}) {
+import {
+  Outline,
+  Panel,
+  PointList,
+  SampleDay,
+  Section,
+  WizardFooter,
+  WizardStep,
+} from "../../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
+
+const WITHOUT_FREE = [
+  { time: "08:00", label: "Mathematics" },
+  { time: "09:00", label: "English" },
+  { time: "10:00", label: "Chemistry" },
+  { time: "11:00", label: "Biology" },
+];
+
+const WITH_FREE = [
+  { time: "08:00", label: "Mathematics" },
+  { time: "09:00", label: "English" },
+  { time: "10:00", label: "Free period", highlight: true },
+  { time: "11:00", label: "Biology" },
+];
+
+function IntroductionStep({ nextStep }) {
   return (
-    <>
-      <div className="px-2 d-flex flex-column gap-3">
-        <div className="d-flex flex-row align-items-center justify-content-between">
-          <span className="fw-semibold">Requested Free Periods</span>
-          <span
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
+    <WizardStep
+      title="Leave intentional gaps for students"
+      description="Requested free periods are times when students should not have class, even though the institution is open."
+      footer={<WizardFooter onNext={nextStep} nextLabel="Get started" />}
+    >
+      <Section label="How it works">
+        <Panel>
+          <PointList
+            items={[
+              "The generator tries to keep these times empty in student timetables.",
+              "This is a soft constraint: it can be relaxed if no valid timetable exists otherwise.",
+              "Teachers and halls can still be scheduled for other groups at these times.",
+            ]}
+          />
+        </Panel>
+      </Section>
+
+      <Section label="Effect on a school day">
+        <div className="cw-samples">
+          <SampleDay caption="Without free periods" rows={WITHOUT_FREE} />
+          <SampleDay caption="With a 10:00 free period" rows={WITH_FREE} />
         </div>
-        <div className="modal-content-container px-1">
-          <div className="d-flex flex-column gap-3">
-            <div className="font-size-sm d-flex flex-row align-items-center justify-content-between">
-              <p style={{ width: "450px" }}>
-                Create intentional gaps in student timetables to reduce
-                scheduling load.
-              </p>
-              <p className="text-capitalize">
-                step {currentStep} of {fullStep} completed
-              </p>
-            </div>
-            <div className="card p-2 rounded-4 d-flex flex-column gap-2">
-              <div>
-                <span className="font-size-sm fw-semibold">
-                  What Are Requested Free Periods?
-                </span>
-              </div>
-              <div>
-                <div className="d-flex flex-column font-size-sm">
-                  <ul>
-                    <li>
-                      Requested free periods are specific times where students
-                      should not be assigned classes.
-                    </li>
-                    <li>
-                      The institution remains operational, but the timetable
-                      generator leaves the selected periods empty.
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="d-flex flex-row align-items-center gap-2 w-100">
-                <div className="d-flex flex-column gap-1 w-50">
-                  <span className="font-size-sm">Without Requested Free</span>
-                  <div className="card p-2 rounded-4">
-                    <div className="d-flex flex-column font-size-sm align-items-start gap-2 ">
-                      <span>08:00 Mathematics</span>
-                      <span>09:00 English</span>
-                      <span>10:00 Chemistry</span>
-                      <span>11:00 Biology</span>
-                      <span>12:00 Physics</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="d-flex flex-column gap-1 w-50">
-                  <span className="font-size-sm">
-                    With Requested Free Periods
-                  </span>
-                  <div className="card p-2 rounded-4">
-                    <div className="d-flex flex-column font-size-sm align-items-start gap-2 ">
-                      <span>08:00 Mathematics</span>
-                      <span>09:00 English</span>
-                      <span className="text-primary fw-semibold">
-                        10:00 Free Period
-                      </span>
-                      <span>11:00 Biology</span>
-                      <span className="text-primary fw-semibold">
-                        12:00 Free Period
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="card p-2 rounded-4 d-flex flex-column gap-2">
-              <div>
-                <span className="font-size-sm fw-semibold">
-                  Why is this important
-                </span>
-              </div>
-              <div>
-                <div className="d-flex flex-column font-size-sm">
-                  <ul>
-                    <li>
-                      The Timetable generator will only place classes during the
-                      operational periods you defined
-                    </li>
-                    <li>
-                      Anytime outside these hours will be considered unavailable
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div className="card p-2 rounded-4 d-flex flex-column gap-2">
-              <div>
-                <span className="font-size-sm fw-semibold">
-                  How This Affects Scheduling
-                </span>
-              </div>
-              <div>
-                <div className="d-flex flex-column font-size-sm">
-                  <ul>
-                    <li>
-                      Students will not be assigned classes during requested
-                      free periods
-                    </li>
-                    <li>The institution remains operational</li>
-                    <li>Teachers and rooms may still be scheduled elsewhere</li>
-                    <li>
-                      Requested free periods help control timetable density
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div className="card p-2 rounded-4 d-flex flex-column gap-2">
-              <div>
-                <span className="font-size-sm fw-semibold">
-                  Why Configure Free Periods?
-                </span>
-              </div>
-              <div>
-                <div className="d-flex flex-column font-size-sm">
-                  <ul>
-                    <li>Reduce student workload</li>
-                    <li>Avoid back-to-back classes</li>
-                    <li>Improve timetable flexibility</li>
-                    <li>Create breathing room in schedules</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div className="d-flex flex-column gap-2">
-              <span className="font-size-sm fw-medium">
-                What you will configure
-              </span>
-              <ul>
-                <li>
-                  <div className="d-flex flex-column">
-                    <span className="font-size-sm fw-medium">
-                      Operational Hours
-                    </span>
-                    <p className="font-size-sm text-muted">
-                      Select the days that contain free periods
-                    </p>
-                  </div>
-                </li>
-                <li>
-                  <div className="d-flex flex-column">
-                    <span className="font-size-sm fw-medium">
-                      Special Exceptions
-                    </span>
-                    <p className="font-size-sm text-muted">
-                      Define the time ranges that should remain free
-                    </p>
-                  </div>
-                </li>
-                <li>
-                  <div className="d-flex flex-column">
-                    <span className="font-size-sm fw-medium">
-                      Special Exceptions
-                    </span>
-                    <p className="font-size-sm text-muted">
-                      Review your schedule before saving
-                    </p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div className="w-100 d-flex flex-row align-items-center justify-content-end">
-          <div>
-            <button
-              className="font-size-sm p-2 rounded-2 border-none primary-background text-white px-3"
-              onClick={nextStep}
-            >
-              Next Step
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+      </Section>
+
+      <Section label="What you will set up">
+        <Outline
+          items={[
+            {
+              title: "Days",
+              text: "The days that should include free periods.",
+            },
+            {
+              title: "Free periods",
+              text: "The exact time ranges to keep free on each day.",
+            },
+            {
+              title: "Review",
+              text: "Check every free period before saving.",
+            },
+          ]}
+        />
+      </Section>
+    </WizardStep>
   );
 }
+
 export default IntroductionStep;

@@ -8,7 +8,7 @@ import {
   setRequestedFreePeriodSlot,
   setRequestedFreePeriodValidation,
   removeAllRequestedFreePeriodSlotsByDay
-} from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import VerticalDashedLine from "../../../../../../components/DashedLine/VerticalDashedLine";
 import NumberFlow from "@number-flow/react";
 import { TimeRangeInput } from "../../../../../../components/FormComponents/InputComponents";

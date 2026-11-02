@@ -9,36 +9,43 @@ import ReviewScheduleStep from "../../../DrawerContent/SemesterTimetable/Constra
 export const OPERATIONAL_PERIOD_STEP_FLOW = [
   {
     step: "OPERATIONAL_PERIOD_INTRODUCATION",
-    lable: "Operational Period Introduction",
+    title: "Overview",
+    label: "Operational Period Introduction",
     component: IntroductionStep,
   },
   {
     step: "DEFAULT_OPERATIONAL_PERIOD",
-    lable: "Operational Period Default",
+    title: "Operating hours",
+    label: "Operational Period Default",
     component: DefaultHoursStep,
   },
   {
     step: "OPERATIONAL_DAYS",
+    title: "Operating days",
     label: "Operational Days",
     component: OperatingDaysStep,
   },
   {
     step: "OPERATIONAL_PERIOD_REVIEW",
+    title: "Weekly schedule",
     label: "Operational Period Review",
     component: ReviewScheduleStep,
   },
   {
     step: "OPERATIONAL_PERIOD_EXCEPTION",
+    title: "Exception days",
     label: "Operational Period Exception",
     component: ExceptionDaysStep,
   },
   {
     step: "OPERATIONAL_PERIOD_CONFIGURE_EXCEPTION",
+    title: "Exception hours",
     label: "Operational Period Configure Exception",
     component: ConfigureExceptionStep,
   },
   {
     step: "OPERATIONAL_PERIOD_REVIEW_STEP",
+    title: "Review & save",
     label: "Operational Period Review Step",
     component: FinalReviewStep,
   },

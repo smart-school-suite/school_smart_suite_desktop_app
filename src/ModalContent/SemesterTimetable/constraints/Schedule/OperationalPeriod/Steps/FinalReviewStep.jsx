@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import { daysOfWeek } from "../../../../../../data/data";
 import { useDispatch, useSelector } from "react-redux";
 import { parse, format, differenceInMinutes } from "date-fns";
-import { setOperationalPeriodField } from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+import { setOperationalPeriodField } from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import NumberFlow from "@number-flow/react";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../../../../../components/Toast/ToastSuccess";

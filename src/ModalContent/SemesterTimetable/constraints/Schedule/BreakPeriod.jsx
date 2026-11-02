@@ -6,7 +6,7 @@ import {  useRef } from "react";
 import {
   setBreakPeriodField,
   setBreakPeriodValidation,
-} from "../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { timeRangeSchema } from "../../../../ComponentConfig/YupValidationSchema";
 function BreakPeriod({ handleClose }) {

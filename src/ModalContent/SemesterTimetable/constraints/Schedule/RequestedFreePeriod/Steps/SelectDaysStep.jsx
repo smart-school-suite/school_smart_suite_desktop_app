@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addRequestedFreePeriodDays,
   removeRequestedFreePeriodDays,
-} from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 
 function SelectDaysStep({
   handleClose,

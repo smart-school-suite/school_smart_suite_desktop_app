@@ -1,134 +1,94 @@
-import { Icon } from "@iconify/react";
 import { useDispatch, useSelector } from "react-redux";
-import { timeRangeSchema } from "../../../../../../ComponentConfig/YupValidationSchema";
-import { TimeRangeInput } from "../../../../../../components/FormComponents/InputComponents";
+import { timeRangeSchema } from "../../../../../ComponentConfig/YupValidationSchema";
+import { TimeRangeInput } from "../../../../../components/FormComponents/InputComponents";
+import {
+  Note,
+  Section,
+  Stats,
+  TimeField,
+  WizardFooter,
+  WizardStep,
+} from "../../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 import {
   setOperationalPeriodField,
   setOperationalPeriodValidation,
-} from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
-function DefaultHoursStep({ handleClose, nextStep, previousStep, fullStep, currentStep }) {
-  const operationalPeriodState = useSelector(
+} from "../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
+import {
+  formatDuration,
+  formatTime,
+  isValidRange,
+  minutesBetween,
+} from "../../../../../utils/semesterTimetable/timeUtils";
+
+function DefaultHoursStep({ nextStep, previousStep }) {
+  const dispatch = useDispatch();
+  const operationalPeriod = useSelector(
     (state) => state.semesterTimetable.hard_constraints.operational_period,
   );
-  const dispatch = useDispatch();
+  const start = operationalPeriod.start_time.value;
+  const end = operationalPeriod.end_time.value;
+  const canContinue = isValidRange(start, end);
+
   return (
-    <>
-      <div className="px-2 d-flex flex-column gap-3">
-        <div className="d-flex flex-row align-items-center justify-content-between">
-          <span className="fw-semibold">Normal Operating Hours</span>
-          <span
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
-        </div>
-        <div className="modal-content-container">
-          <div className="d-flex flex-column gap-3">
-            <div className="font-size-sm d-flex flex-row align-items-center justify-content-between">
-              <p style={{ width: "500px" }}>
-                Define the hours during which your institution is generally
-                available for scheduling classes
-              </p>
-              <p className="text-capitalize">
-                step {currentStep} of {fullStep} completed
-              </p>
-            </div>
-            <div className="card p-2 rounded-4 d-flex flex-column gap-2">
-              <div>
-                <span className="font-size-sm fw-semibold">
-                  Why is this important
-                </span>
-              </div>
-              <div className="d-flex flex-column font-size-sm">
-                <ul>
-                  <li>
-                    These hours establish the scheduling window used by the
-                    timetable generator.
-                  </li>
-                  <li>Classes cannot be placed outside these hours.</li>
-                </ul>
-              </div>
-            </div>
-            <div>
-              <div>
-                <TimeRangeInput
-                  startValue={operationalPeriodState.start_time.value ?? ""}
-                  endValue={operationalPeriodState.end_time.value ?? ""}
-                  onStartTimeChange={(value) =>
-                    dispatch(
-                      setOperationalPeriodField({ field: "start_time", value }),
-                    )
-                  }
-                  onEndTimeChange={(value) =>
-                    dispatch(
-                      setOperationalPeriodField({ field: "end_time", value }),
-                    )
-                  }
-                  validationSchema={timeRangeSchema({
-                    optional: false,
-                  })}
-                  onStartTimeValidationChange={(value) =>
-                    dispatch(
-                      setOperationalPeriodValidation({
-                        field: "start_time",
-                        value,
-                      }),
-                    )
-                  }
-                  onEndTimeValidationChange={(value) =>
-                    dispatch(
-                      setOperationalPeriodValidation({
-                        field: "end_time",
-                        value,
-                      }),
-                    )
-                  }
-                />
-              </div>
-              <div className="d-flex flex-row align-items-center gap-2">
-                <div className="d-flex flex-row font-size-sm gap-1">
-                  <span>Opens At</span>
-                  <span>{operationalPeriodState.start_time.value}</span>
-                </div>
-                <div>
-                  <span>
-                    <Icon icon="octicon:dash-16" />
-                  </span>
-                </div>
-                <div className="d-flex flex-row font-size-sm gap-1">
-                  <span>Closes At</span>
-                  <span>{operationalPeriodState.end_time.value}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-100 d-flex flex-row align-items-center justify-content-between">
-          <div className="d-flex flex-column gap-1">
-            <button
-              className="font-size-sm d-flex flex-row border-none gap-2 bg-transparent px-0"
-              onClick={previousStep}
-            >
-              <span>
-                {" "}
-                <Icon icon="material-symbols:arrow-back-rounded" />{" "}
-              </span>
-              <span>Back</span>
-            </button>
-          </div>
-          <div>
-            <button
-              className="font-size-sm p-2 rounded-2 border-none primary-background text-white px-3"
-              onClick={nextStep}
-            >
-              Next Step
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+    <WizardStep
+      title="Normal operating hours"
+      description="Set the hours your institution is usually open. These hours apply to every operating day unless you add an exception later."
+      footer={
+        <WizardFooter
+          onBack={previousStep}
+          onNext={nextStep}
+          nextDisabled={!canContinue}
+          hint="Enter an opening and closing time"
+        />
+      }
+    >
+      <Section label="Opening and closing time">
+        <TimeField>
+          <TimeRangeInput
+            startValue={start ?? ""}
+            endValue={end ?? ""}
+            onStartTimeChange={(value) =>
+              dispatch(setOperationalPeriodField({ field: "start_time", value }))
+            }
+            onEndTimeChange={(value) =>
+              dispatch(setOperationalPeriodField({ field: "end_time", value }))
+            }
+            validationSchema={timeRangeSchema({ optional: false })}
+            onStartTimeValidationChange={(value) =>
+              dispatch(
+                setOperationalPeriodValidation({ field: "start_time", value }),
+              )
+            }
+            onEndTimeValidationChange={(value) =>
+              dispatch(
+                setOperationalPeriodValidation({ field: "end_time", value }),
+              )
+            }
+          />
+        </TimeField>
+      </Section>
+
+      <Section label="Daily window">
+        <Stats
+          items={[
+            { label: "Opens", value: formatTime(start) },
+            { label: "Closes", value: formatTime(end) },
+            {
+              label: "Teaching window",
+              value: formatDuration(minutesBetween(start, end)),
+            },
+          ]}
+        />
+      </Section>
+
+      <Section>
+        <Note>
+          Use 24-hour time, for example <strong>08:00</strong> and{" "}
+          <strong>17:00</strong>. Classes cannot be placed outside this window.
+        </Note>
+      </Section>
+    </WizardStep>
   );
 }
+
 export default DefaultHoursStep;

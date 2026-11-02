@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Fragment, useState } from "react";
+import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateSemesterTimetableVersion } from "../../hooks/semesterTimetable/useCreateSemesterTimetableVersion";
@@ -11,56 +11,48 @@ import { semesterTimetableConstraintMap } from "../../utils/maps/semesterTimetab
 import { SCHEDULER_STATUS } from "../../utils/semesterTimetable/schedulerStatus";
 import { Drawer } from "../drawer/Drawer";
 import CustomModal from "../Modals/Modal";
-import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 import ToastWarning from "../Toast/ToastWarning";
+import "./ConstraintWizard/constraintWizard.css";
+
+const CATEGORY_ICONS = {
+  schedule_constraint: "lucide:calendar-clock",
+  teacher_constraint: "lucide:user-round",
+  course_constraint: "lucide:book-open",
+  hall_constraint: "lucide:door-open",
+  assignment_constraint: "lucide:link-2",
+};
+
+const collapse = {
+  initial: { height: 0, opacity: 0 },
+  animate: { height: "auto", opacity: 1 },
+  exit: { height: 0, opacity: 0 },
+  transition: { duration: 0.18, ease: "easeInOut" },
+};
+
 function ConstraintVersionWrapper() {
   const semesterTimetable = useSelector((state) => state.semesterTimetable);
   return (
-    <>
-      <div
-        className="bg-white rounded-2 px-2 py-2 d-flex flex-column gap-3 border"
-        style={{ width: "25%", height: "100%" }}
-      >
-        <div style={{ height: "5%" }} className="w-100">
-          <CreateVersion semesterTimetable={semesterTimetable} />
-        </div>
-        <div className="d-flex flex-column gap-4" style={{ height: "95%" }}>
-          <div
-            className="d-flex flex-column align-items-start w-100 gap-1 scroll-bar-sm"
-            style={{ height: "40%" }}
-          >
-            <span className="font-size-sm text-iron-600 ms-1">Versions</span>
-            <VersionDropdown semesterTimetable={semesterTimetable} />
-          </div>
-          <div
-            className="d-flex flex-column align-items-start w-100 gap-1 scroll-bar-sm"
-            style={{
-              maxheight: "60%",
-              height: "auto",
-              overflowY: "auto",
-              overflowX: "hidden",
-            }}
-          >
-            <span className="font-size-sm text-iron-600 ms-1">Constraints</span>
-            <div className="d-flex flex-column gap-2 constraint-dd-container w-100">
-              <ConstraintDropdown />
-            </div>
-          </div>
-        </div>
+    <aside className="ctl" aria-label="Timetable versions and constraints">
+      <div className="ctl-top">
+        <CreateVersion semesterTimetable={semesterTimetable} />
       </div>
-    </>
+      <VersionList semesterTimetable={semesterTimetable} />
+      <ConstraintNavigator />
+    </aside>
   );
 }
 export default ConstraintVersionWrapper;
 
-function VersionDropdown({ semesterTimetable }) {
+/* -------------------------------------------------------------------------- */
+/* Versions                                                                   */
+/* -------------------------------------------------------------------------- */
+
+function VersionList({ semesterTimetable }) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(true);
-
   const selectedVersion = useSelector(
     (state) => state.semesterTimetable.timetableVersion,
   );
-
   const {
     data: versions,
     isLoading,
@@ -70,109 +62,80 @@ function VersionDropdown({ semesterTimetable }) {
   // Selecting a default version and keeping it fresh is handled by
   // useSyncSelectedTimetableVersion on the page, so a refetch (e.g. polling
   // during generation) never overrides the version the user picked.
+  const list = versions?.data ?? [];
 
   return (
-    <>
-      <div className="d-flex flex-column gap-2 w-100 h-100">
-        <button
-          type="button"
-          className="w-100 d-flex flex-row align-items-center justify-content-between border-none transparent-bg"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-        >
-          <span className="font-size-sm fw-medium">Timetable Versions</span>
-          <span>
-            <motion.span
-              style={{ display: "inline-block" }}
-              animate={{ rotate: open ? 180 : 0 }}
-              transition={{ duration: 0.18, ease: "easeInOut" }}
-            >
-              <Icon icon="mi:chevron-down" width="16" height="16" />
-            </motion.span>
-          </span>
-        </button>
+    <section className="ctl-group ctl-group--versions">
+      <button
+        type="button"
+        className="ctl-group__head"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+      >
+        <span className="ctl-group__title">Versions</span>
+        {list.length > 0 && <span className="ctl-group__count">{list.length}</span>}
+        <Icon
+          icon="lucide:chevron-down"
+          width={14}
+          height={14}
+          className={`ctl-group__chev ${open ? "is-open" : ""}`}
+        />
+      </button>
 
-        <AnimatePresence initial={false}>
-          {open && (
-            <motion.div
-              className="d-flex flex-column gap-2 font-size-sm justify-content-start align-items-start scroll-bar-sm pb-5"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              style={{
-                maxHeight: "100%",
-                height: "auto",
-                overflowY: "auto",
-                overflowX: "hidden",
-              }}
-            >
-              {isLoading ? (
-                [...Array(6)].map((_, index) => (
-                  <RectangleSkeleton
-                    key={index}
-                    width={"100%"}
-                    height={"2rem"}
-                    borderRadius={6}
-                  />
-                ))
-              ) : versionsError ? (
-                <span className="font-size-sm text-danger">
-                  Error loading versions
-                </span>
-              ) : (
-                versions?.data?.map((version) => (
-                  <Fragment key={version.id}>
-                    <button
-                      type="button"
-                      className="border-none transparent-bg w-100 d-flex flex-row align-items-center justify-content-between"
-                      onClick={() => dispatch(setTimetableVersion(version))}
-                    >
-                      <span className="text-iron-600 d-flex flex-row align-items-center gap-1">
-                        {version?.label}
-                        {version.scheduler_status ===
-                          SCHEDULER_STATUS.GENERATING && (
-                          <Icon
-                            icon="line-md:loading-loop"
-                            width="14"
-                            height="14"
-                            aria-label="Generating"
-                          />
-                        )}
-                      </span>
-                      {version.is_latest ? (
-                        <div className="d-flex flex-row gap-2">
-                          <span className="pill-sm-success">latest</span>
-                          {selectedVersion?.id === version.id && (
-                            <span style={{ lineHeight: 0 }}>
-                              <Icon
-                                icon="iconamoon:check-bold"
-                                width="16"
-                                height="16"
-                              />
-                            </span>
-                          )}
-                        </div>
-                      ) : selectedVersion?.id === version.id ? (
-                        <div>
-                          <span style={{ lineHeight: 0 }}>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div className="ctl-scroll" {...collapse}>
+            {isLoading ? (
+              [...Array(4)].map((_, index) => (
+                <div key={index} className="ctl-skeleton" />
+              ))
+            ) : versionsError ? (
+              <p className="ctl-empty ctl-empty--error">
+                Could not load versions.
+              </p>
+            ) : !semesterTimetable?.schoolSemester ? (
+              <p className="ctl-empty">Select a semester to see its versions.</p>
+            ) : list.length === 0 ? (
+              <p className="ctl-empty">No versions yet. Create one above.</p>
+            ) : (
+              <ul className="ctl-list">
+                {list.map((version) => {
+                  const isSelected = selectedVersion?.id === version.id;
+                  const isGenerating =
+                    version.scheduler_status === SCHEDULER_STATUS.GENERATING;
+                  return (
+                    <li key={version.id}>
+                      <button
+                        type="button"
+                        className={`ctl-item ${isSelected ? "is-active" : ""}`}
+                        aria-current={isSelected ? "true" : undefined}
+                        onClick={() => dispatch(setTimetableVersion(version))}
+                      >
+                        <span className="ctl-item__label">{version?.label}</span>
+                        <span className="ctl-item__meta">
+                          {isGenerating && (
                             <Icon
-                              icon="iconamoon:check-bold"
-                              width="16"
-                              height="16"
+                              icon="lucide:loader-circle"
+                              width={14}
+                              height={14}
+                              className="ctl-spin"
+                              aria-label="Generating"
                             />
-                          </span>
-                        </div>
-                      ) : null}
-                    </button>
-                  </Fragment>
-                ))
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </>
+                          )}
+                          {version.is_latest && (
+                            <span className="ctl-tag ctl-tag--latest">Latest</span>
+                          )}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
   );
 }
 
@@ -209,186 +172,290 @@ function CreateVersion({ semesterTimetable }) {
   }
   return (
     <button
-      className="d-flex flex-row align-items-center justify-content-between border-none transparent-bg w-100 border p-2 rounded-2"
+      type="button"
+      className="ctl-new"
       disabled={isPending}
       onClick={handleCreateVersion}
     >
-      <div className="d-flex flex-row align-items-center gap-2">
-        <span style={{ lineHeight: 0 }}>
-          <Icon icon="system-uicons:versions" width="20" height="20" />
-        </span>
-        <span className="font-size-sm fw-medium">New Version</span>
-      </div>
-      <span style={{ lineHeight: 0 }}>
-        <Icon icon="ic:round-plus" width="20" height="20" />
-      </span>
+      <Icon
+        icon={isPending ? "lucide:loader-circle" : "lucide:layers"}
+        width={16}
+        height={16}
+        className={isPending ? "ctl-spin" : undefined}
+      />
+      <span>{isPending ? "Creating version…" : "New version"}</span>
+      <Icon icon="lucide:plus" width={16} height={16} className="ctl-new__plus" />
     </button>
   );
 }
 
-function ConstraintDropdown() {
-  const [openId, setOpenId] = useState(null);
-  const {
-    data: constraints,
-    isLoading,
-    error,
-  } = useGetSemesterTimetableConstraints();
+/* -------------------------------------------------------------------------- */
+/* Constraints                                                                */
+/* -------------------------------------------------------------------------- */
+
+const typeTag = (type) => {
+  const value = String(type ?? "").toLowerCase();
+  if (value.includes("hard")) return "hard";
+  if (value.includes("soft")) return "soft";
+  return null;
+};
+
+const matches = (constraint, category, query) => {
+  if (!query) return true;
+  const haystack = [constraint.name, constraint.description, category]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  return query
+    .split(/\s+/)
+    .filter(Boolean)
+    .every((term) => haystack.includes(term));
+};
+
+function ConstraintNavigator() {
+  const { data: constraints, isLoading, error } =
+    useGetSemesterTimetableConstraints();
   const schoolSemester = useSelector(
     (state) => state.semesterTimetable.schoolSemester,
   );
+  const [query, setQuery] = useState("");
+  const [openIds, setOpenIds] = useState(() => new Set());
+  const [activeKey, setActiveKey] = useState(null);
+
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [modalConfig, setModalConfig] = useState({
     component: null,
+    constraint: null,
     size: "md",
     closeOnOutsideClick: true,
     closeOnEscape: true,
   });
   const [drawerConfig, setDrawerConfig] = useState({
     component: null,
+    constraint: null,
     placement: "right",
     title: "",
     closeOnOutsideClick: true,
     showHeader: true,
   });
 
-  // Modal handlers
+  const categories = constraints?.data ?? [];
+  const normalisedQuery = query.trim().toLowerCase();
+
+  const filtered = useMemo(
+    () =>
+      categories
+        .map((category) => ({
+          ...category,
+          constraints: category.constraints.filter((constraint) =>
+            matches(constraint, category.category, normalisedQuery),
+          ),
+        }))
+        .filter((category) => category.constraints.length > 0),
+    [categories, normalisedQuery],
+  );
+  const totalConstraints = categories.reduce(
+    (sum, category) => sum + category.constraints.length,
+    0,
+  );
+
+  const toggleCategory = (id) =>
+    setOpenIds((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
   const handleCloseModal = () => {
     setShowModal(false);
+    setActiveKey(null);
     setModalConfig((prev) => ({ ...prev, component: null }));
-  };
-
-  const handleShowModal = (Component, options = {}) => {
-    const {
-      size = "md",
-      closeOnOutsideClick = true,
-      closeOnEscape = true,
-    } = options;
-
-    setModalConfig({
-      component: Component,
-      size,
-      closeOnOutsideClick,
-      closeOnEscape,
-    });
-    setShowModal(true);
   };
 
   const handleCloseDrawer = () => {
     setShowDrawer(false);
+    setActiveKey(null);
     setDrawerConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowDrawer = (Component, options = {}) => {
-    const {
-      title = "",
-      placement = "right",
-      closeOnOutsideClick = true,
-      showHeader = true,
-    } = options;
+  const openConstraint = (constraint, category) => {
+    const entry = semesterTimetableConstraintMap[constraint.key];
+    if (!entry || entry.ready === false) return;
+    const details = { ...constraint, category: category.category };
+    setActiveKey(constraint.key);
+
+    if (entry.editor === "modal") {
+      setModalConfig({
+        component: entry.component,
+        constraint: details,
+        size: "md",
+        closeOnOutsideClick: true,
+        closeOnEscape: true,
+      });
+      setShowModal(true);
+      return;
+    }
 
     setDrawerConfig({
-      component: Component,
-      title,
-      placement,
-      closeOnOutsideClick,
-      showHeader,
+      component: entry.component,
+      constraint: details,
+      title: constraint.name,
+      placement: "right",
+      closeOnOutsideClick: false,
+      showHeader: false,
     });
     setShowDrawer(true);
   };
+
+  const disabled = !schoolSemester;
+
   return (
-    <>
-      {isLoading ? (
-        <span className="font-size-sm">Loading...</span>
-      ) : error ? (
-        <span className="font-size-sm text-danger">
-          Error loading constraints
-        </span>
-      ) : (
-        constraints?.data?.map((constraintCategory) => {
-          const isOpen = openId === constraintCategory.id;
+    <section className="ctl-group ctl-group--constraints">
+      <div className="ctl-group__head" role="presentation">
+        <span className="ctl-group__title">Constraints</span>
+        {totalConstraints > 0 && (
+          <span className="ctl-group__count">{totalConstraints}</span>
+        )}
+      </div>
 
-          return (
-            <div
-              className="d-flex flex-column gap-2 w-100"
-              key={constraintCategory.id}
+      {totalConstraints > 0 && (
+        <div className="ctl-search">
+          <Icon
+            icon="lucide:search"
+            width={14}
+            height={14}
+            className="ctl-search__icon"
+          />
+          <input
+            type="search"
+            className="ctl-search__input"
+            placeholder="Find a constraint"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={(event) => event.key === "Escape" && setQuery("")}
+            aria-label="Find a constraint"
+          />
+          {query && (
+            <button
+              type="button"
+              className="ctl-search__clear"
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
             >
-              <button
-                type="button"
-                className="w-100 d-flex flex-row align-items-center justify-content-between border-none transparent-bg"
-                disabled={!schoolSemester}
-                onClick={() =>
-                  setOpenId((prev) =>
-                    prev === constraintCategory.id
-                      ? null
-                      : constraintCategory.id,
-                  )
-                }
-                aria-expanded={isOpen}
-              >
-                <span className="font-size-sm fw-medium">
-                  {constraintCategory.category}
-                </span>
-
-                <motion.span
-                  style={{ display: "inline-block" }}
-                  animate={{ rotate: isOpen ? 180 : 0 }}
-                  transition={{ duration: 0.18, ease: "easeInOut" }}
-                >
-                  <Icon icon="mi:chevron-down" width="16" height="16" />
-                </motion.span>
-              </button>
-
-              <AnimatePresence initial={false}>
-                {isOpen && (
-                  <motion.div
-                    className="d-flex flex-column gap-3 font-size-sm justify-content-start align-items-start px-2"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                    style={{ overflow: "hidden" }}
-                  >
-                    {constraintCategory.constraints.map((constraint) => {
-                      const Component =
-                        semesterTimetableConstraintMap[constraint.key]
-                          .component;
-                      const editor =
-                        semesterTimetableConstraintMap[constraint.key].editor;
-                      return (
-                        <Fragment key={constraint.id}>
-                          <button
-                            className="border-none bg-none p-0 m-0 outline-none text-decoration-none"
-                            onClick={() => {
-                              if (editor === "drawer") {
-                                handleShowDrawer(Component, {
-                                  closeOnOutsideClick: false,
-                                  showHeader: false,
-                                });
-                                if (editor === "modal") {
-                                  handleShowModal(Component, {
-                                    size: "md",
-                                    closeOnOutsideClick: true,
-                                    closeOnEscape: true,
-                                  });
-                                }
-                              }
-                            }}
-                          >
-                            <span className="text-iron-600">
-                              {constraint.name}
-                            </span>
-                          </button>
-                        </Fragment>
-                      );
-                    })}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          );
-        })
+              <Icon icon="lucide:x" width={14} height={14} />
+            </button>
+          )}
+        </div>
       )}
+
+      {disabled && !isLoading && !error && (
+        <div className="ctl-notice">
+          <Icon icon="lucide:info" width={14} height={14} />
+          <span>Select a semester to configure its constraints.</span>
+        </div>
+      )}
+
+      <div className="ctl-scroll">
+        {isLoading ? (
+          [...Array(5)].map((_, index) => (
+            <div key={index} className="ctl-skeleton" />
+          ))
+        ) : error ? (
+          <p className="ctl-empty ctl-empty--error">
+            Could not load constraints.
+          </p>
+        ) : filtered.length === 0 ? (
+          <p className="ctl-empty">
+            {normalisedQuery
+              ? `No constraints match “${query.trim()}”.`
+              : "No constraints available."}
+          </p>
+        ) : (
+          filtered.map((category) => {
+            const isOpen = Boolean(normalisedQuery) || openIds.has(category.id);
+            return (
+              <div className="ctl-cat" key={category.id}>
+                <button
+                  type="button"
+                  className="ctl-cat__head"
+                  disabled={disabled}
+                  onClick={() => toggleCategory(category.id)}
+                  aria-expanded={isOpen}
+                >
+                  <span className="ctl-cat__icon">
+                    <Icon
+                      icon={
+                        CATEGORY_ICONS[category.key] ??
+                        "lucide:sliders-horizontal"
+                      }
+                      width={14}
+                      height={14}
+                    />
+                  </span>
+                  <span className="ctl-cat__name">{category.category}</span>
+                  <span className="ctl-cat__count">
+                    {category.constraints.length}
+                  </span>
+                  <Icon
+                    icon="lucide:chevron-down"
+                    width={14}
+                    height={14}
+                    className={`ctl-group__chev ${isOpen && !disabled ? "is-open" : ""}`}
+                  />
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && !disabled && (
+                    <motion.div className="ctl-cat__body" {...collapse}>
+                      <ul className="ctl-cat__list">
+                        {category.constraints.map((constraint) => {
+                          const entry =
+                            semesterTimetableConstraintMap[constraint.key];
+                          const ready = entry && entry.ready !== false;
+                          const tag = typeTag(constraint.type);
+                          return (
+                            <li key={constraint.id}>
+                              <button
+                                type="button"
+                                className={`ctl-item ${activeKey === constraint.key ? "is-active" : ""}`}
+                                disabled={!ready}
+                                onClick={() => openConstraint(constraint, category)}
+                                title={
+                                  ready
+                                    ? constraint.description || constraint.name
+                                    : "This constraint can't be configured yet"
+                                }
+                              >
+                                <span className="ctl-item__label">
+                                  {constraint.name}
+                                </span>
+                                <span className="ctl-item__meta">
+                                  {!ready ? (
+                                    <span className="ctl-tag ctl-tag--soon">Soon</span>
+                                  ) : (
+                                    tag && (
+                                      <span className={`ctl-tag ctl-tag--${tag}`}>
+                                        {tag}
+                                      </span>
+                                    )
+                                  )}
+                                </span>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })
+        )}
+      </div>
+
       <Drawer
         isOpen={showDrawer}
         onClose={handleCloseDrawer}
@@ -400,6 +467,7 @@ function ConstraintDropdown() {
         {drawerConfig.component && (
           <drawerConfig.component
             handleClose={handleCloseDrawer}
+            constraint={drawerConfig.constraint}
             drawerData={{
               ...schoolSemester,
             }}
@@ -420,10 +488,11 @@ function ConstraintDropdown() {
             rowData={{
               ...schoolSemester,
             }}
+            constraint={modalConfig.constraint}
             handleClose={handleCloseModal}
           />
         )}
       </CustomModal>
-    </>
+    </section>
   );
 }

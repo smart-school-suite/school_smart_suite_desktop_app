@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import { daysOfWeek } from "../../../../../../data/data";
 import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setOperationalPeriodField } from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+import { setOperationalPeriodField } from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 function ExceptionDaysStep({
   handleClose,
   nextStep,

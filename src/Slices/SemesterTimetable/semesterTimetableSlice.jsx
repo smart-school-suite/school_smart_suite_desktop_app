@@ -115,18 +115,20 @@ const semesterTimetableSlice = createSlice({
           existingDayIndex !== -1 ? op.day_exceptions[existingDayIndex] : null;
 
         if (existingDay) {
-          if (!value.start_time && !value.end_time) {
+          // A payload with only `day` toggles the exception off. An empty
+          // string means the user cleared an input, which must not remove it.
+          if (value.start_time === undefined && value.end_time === undefined) {
             op.day_exceptions.splice(existingDayIndex, 1);
             return;
           }
 
-          if (value.start_time) {
+          if (value.start_time !== undefined) {
             existingDay.start_time = {
               value: value.start_time,
               isValid: value.isValid ?? null,
             };
           }
-          if (value.end_time) {
+          if (value.end_time !== undefined) {
             existingDay.end_time = {
               value: value.end_time,
               isValid: value.isValid ?? null,

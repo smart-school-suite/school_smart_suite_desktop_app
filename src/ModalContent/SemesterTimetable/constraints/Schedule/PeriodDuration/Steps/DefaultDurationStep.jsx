@@ -3,7 +3,7 @@ import RectangleSkeleton from "../../../../../../components/SkeletonPageLoader/R
 import { useGetSemesterTimetablePeriods } from "../../../../../../hooks/semesterTimetable/useSemesterTimetablePeriodDuration";
 import { Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setDefaultPeriodDuration } from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+import { setDefaultPeriodDuration } from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import VerticalDashedLine from "../../../../../../components/DashedLine/VerticalDashedLine";
 import { pdSampleLesson } from "../../../../../../data/data";
 function DefaultDurationStep({

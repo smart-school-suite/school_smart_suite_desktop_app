@@ -7,27 +7,32 @@ import RequestedAssignmentReviewStep from "../../../DrawerContent/SemesterTimeta
 export const REQUESTED_ASSIGNMENT_STEP_FLOW = [
   {
     step: "REQUESTED_ASSIGNMENT_INTRODUCTION_STEP",
-    lable: "Requested Assignment Introduction Step",
+    title: "Overview",
+    label: "Requested Assignment Introduction Step",
     component: RequestedAssignmentIntroductionStep,
   },
   {
     step: "REQUESTED_ASSIGNMENT_DAYS",
-    lable: "Requested Assigment Days",
+    title: "Days",
+    label: "Requested Assigment Days",
     component: RequestedAssignmentDayStep,
   },
   {
     step: "REQUESTED_ASSIGNMENT_LIST_STEP",
+    title: "Requests",
     label: "Requested Assignment List Step",
     component: RequestedAssignmentListStep,
   },
   {
-     step:"REQUESTED_ASSIGNMENT_BUILDER_STEP",
-     label:"Requested Assignment Builder Step",
-     component: RequestedAssignmentBuilderStep
+    step: "REQUESTED_ASSIGNMENT_BUILDER_STEP",
+    title: "Time slots",
+    label: "Requested Assignment Builder Step",
+    component: RequestedAssignmentBuilderStep,
   },
   {
-     step:"REQUESTED_ASSIGNMENT_REVIEW_STEP",
-     label:"Requested Assignment Review Step",
-     component: RequestedAssignmentReviewStep
+    step: "REQUESTED_ASSIGNMENT_REVIEW_STEP",
+    title: "Review & save",
+    label: "Requested Assignment Review Step",
+    component: RequestedAssignmentReviewStep,
   }
 ];

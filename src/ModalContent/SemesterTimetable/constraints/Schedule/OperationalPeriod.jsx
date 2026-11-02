@@ -11,7 +11,7 @@ import { Fragment, useRef } from "react";
 import {
   setOperationalPeriodField,
   setOperationalPeriodValidation,
-} from "../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { timeRangeSchema } from "../../../../ComponentConfig/YupValidationSchema";
 function OperationalPeriod({ handleClose }) {
