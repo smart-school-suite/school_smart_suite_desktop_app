@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setOperationalPeriodField,
   setOperationalPeriodValidation,
-} from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import { TimeRangeInput } from "../../../../../../components/FormComponents/InputComponents";
 import VerticalDashedLine from "../../../../../../components/DashedLine/VerticalDashedLine";
 import { parse, differenceInMinutes } from "date-fns";

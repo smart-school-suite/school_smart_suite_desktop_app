@@ -7,26 +7,31 @@ import CourseRequestedSlotReviewStep from "../../../DrawerContent/SemesterTimeta
 export const COURSE_REQUESTED_SLOT_STEP_FLOW = [
   {
     step: "COURSE_REQUESTED_SLOT_INTRODUCTION_STEP",
-    lable: "Course Requested Slot Introduction Step",
+    title: "Overview",
+    label: "Course Requested Slot Introduction Step",
     component: CourseRequestedSlotIntroductionStep,
   },
   {
     step: "COURSE_REQUESTED_SLOT_DAYS",
-    lable: "Requested Assigment Days",
+    title: "Days",
+    label: "Requested Assigment Days",
     component: CourseRequestedSlotDayStep,
   },
   {
     step: "COURSE_REQUESTED_SLOT_LIST_STEP",
+    title: "Requests",
     label: "Course Requested Slot List Step",
     component: CourseRequestedSlotListStep,
   },
   {
     step: "COURSE_REQUESTED_SLOT_BUILDER_STEP",
+    title: "Time slots",
     label: "Course Requested Slot Builder Step",
     component: CourseRequestedSlotBuilderStep,
   },
   {
     step: "COURSE_REQUESTED_SLOT_REVIEW_STEP",
+    title: "Review & save",
     label: "Course Requested Slot Review Step",
     component: CourseRequestedSlotReviewStep,
   },

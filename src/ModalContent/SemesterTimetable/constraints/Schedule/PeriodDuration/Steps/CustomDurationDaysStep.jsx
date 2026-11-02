@@ -9,7 +9,7 @@ import {
   addCustomPeriodDurationDays,
   removeCustomPeriodDurationDays,
   setCustomPeriodDuration,
-} from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 function CustomDurationDaysStep({
   handleClose,
   nextStep,

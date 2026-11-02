@@ -12,7 +12,7 @@ import {
   removeRequestedFreePeriodSlot,
   setRequestedFreePeriodSlot,
   setRequestedFreePeriodValidation,
-} from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 
 function ReviewStep({
   handleClose,

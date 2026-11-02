@@ -7,26 +7,31 @@ import ReviewWeeklyScheduleStep from "../../../DrawerContent/SemesterTimetable/C
 export const PERIOD_DURATION_STEP_FLOW = [
   {
     step: "PERIOD_DURATION_INTRODUCTION",
-    lable: "Period Duration Introduction",
+    title: "Overview",
+    label: "Period Duration Introduction",
     component: IntroductionStep,
   },
   {
     step: "DEFAULT_PERIOD_DURATION",
-    lable: "Period Duration Default",
+    title: "Default duration",
+    label: "Period Duration Default",
     component: DefaultDurationStep,
   },
   {
     step: "REVIEW_WEEKLY_SCHEDULE",
+    title: "Weekly schedule",
     label: "Review Weekly Schedule",
     component: ReviewWeeklyScheduleStep,
   },
   {
     step: "CUSTOM_DURATION_DAYS",
+    title: "Custom duration days",
     label: "Custom Duration Days",
     component: CustomDurationDaysStep,
   },
   {
     step: "REVIEW",
+    title: "Review & save",
     label: "Duration Review",
     component: ReviewStep,
   },

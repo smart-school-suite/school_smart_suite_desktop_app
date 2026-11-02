@@ -9,32 +9,38 @@ import ReviewStep from "../../../DrawerContent/SemesterTimetable/Constraints/Sch
 export const BREAK_PERIOD_STEP_FLOW = [
   {
     step: "BREAK_PERIOD_INTRODUCTION_STEP",
-    lable: "Break Period Introduction Step",
+    title: "Overview",
+    label: "Break Period Introduction Step",
     component: IntroductionStep,
   },
   {
     step: "BREAK_PERIOD_DEFAULT_BREAK",
-    lable: "Break Period Default Break",
+    title: "Default break",
+    label: "Break Period Default Break",
     component: DefaultBreakStep,
   },
   {
     step: "BREAK_PERIOD_REVIEW_DEFAULT",
+    title: "Weekly coverage",
     label: "Review Default Break Period",
     component: ReviewDefaultStep,
   },
   {
     step: "BREAK_PERIOD_DAYS_WITHOUT_BREAK",
+    title: "Days without a break",
     label: "Break Period Days Without Break",
     component: NoBreakDayStep,
   },
   {
     step: "BREAK_PERIOD_CUSTOM_BREAK_DAY",
+    title: "Custom break days",
     label: "Break Period Custom Break Day",
     component: CustomBreakDayStep,
   },
   {
-     step:"BREAK_PERIOD_REVIEW_STEP",
-     label:"Break Period Review Step",
-     component:ReviewStep
-  }
+    step: "BREAK_PERIOD_REVIEW_STEP",
+    title: "Review & save",
+    label: "Break Period Review Step",
+    component: ReviewStep,
+  },
 ];

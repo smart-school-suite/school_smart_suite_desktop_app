@@ -5,7 +5,7 @@ import { Fragment } from "react";
 import {
   removeNoBreakPeriodDays,
   addNoBreakPeriodDays,
-} from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import VerticalDashedLine from "../../../../../../components/DashedLine/VerticalDashedLine";
 import { parse, format, differenceInMinutes } from "date-fns";
 

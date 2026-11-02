@@ -10,7 +10,7 @@ import {
   removeCustomBreakDays,
   setCustomBreakPeriodValidation,
   setCustomBreakPeriod,
-} from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import { TimeRangeInput } from "../../../../../../components/FormComponents/InputComponents";
 function CustomBreakDayStep({
   handleClose,

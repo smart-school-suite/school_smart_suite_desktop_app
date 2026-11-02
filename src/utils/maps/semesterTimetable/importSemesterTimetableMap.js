@@ -7,6 +7,13 @@ import OperationalPeriodWizzard from "../../../DrawerContent/SemesterTimetable/C
 import PeriodDurationWizzard from "../../../DrawerContent/SemesterTimetable/Constraints/Schedule/PeriodDuration/PeriodDurationWizzard";
 import TeacherRequestedSlotWizzard from "../../../DrawerContent/SemesterTimetable/Constraints/Teacher/TeacherRequestedSlot/TeacherRequestedSlotWizzard";
 
+/**
+ * Constraint key (from the API) -> editor used to configure it.
+ *
+ * `editor` is "drawer" or "modal". Set `ready: false` while a wizard's steps
+ * are still being built: the sidebar lists the constraint as "Soon" and does
+ * not open it. Keys missing from this map are listed the same way.
+ */
 export const semesterTimetableConstraintMap = {
   schedule_period_duration_minutes: {
     component: PeriodDurationWizzard,
@@ -25,18 +32,22 @@ export const semesterTimetableConstraintMap = {
     editor: "drawer",
   },
   teacher_requested_time_windows: {
+    ready: false,
     component: TeacherRequestedSlotWizzard,
     editor: "drawer",
   },
   hall_requested_time_windows: {
+    ready: false,
     component: HallRequestedSlotWizzard,
     editor: "drawer",
   },
   required_joint_course_period: {
+    ready: false,
     component: RequiredJointCourse,
     editor: "drawer",
   },
   course_requested_time_slots: {
+    ready: false,
     component: CourseRequestedSlotWizzard,
     editor: "drawer",
   },

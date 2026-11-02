@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addRequestedAssignmentDays,
   removeRequestedAssignmentDays,
-} from "../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 function RequestedAssignmentDays({
   handleClose,
   nextStep,

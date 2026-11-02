@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import {
   setPeriodDurationField,
   setPeriodDurationValidation,
-} from "../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import { numberSchema } from "../../../../ComponentConfig/YupValidationSchema";
 import { Fragment } from "react";
 function PeriodDuration({ handleClose }) {

@@ -13,7 +13,7 @@ import {
   setCustomBreakPeriod,
   addNoBreakPeriodDays,
   removeNoBreakPeriodDays,
-} from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import NumberFlow from "@number-flow/react";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../../../../../components/Toast/ToastSuccess";

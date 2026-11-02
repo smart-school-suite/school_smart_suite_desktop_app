@@ -7,26 +7,31 @@ import HallRequestedSlotReviewStep from "../../../DrawerContent/SemesterTimetabl
 export const HALL_REQUESTED_SLOT_STEP_FLOW = [
   {
     step: "HALL_REQUESTED_SLOT_INTRODUCTION_STEP",
-    lable: "Hall Requested Slot Introduction Step",
+    title: "Overview",
+    label: "Hall Requested Slot Introduction Step",
     component: HallRequestedSlotIntroduction,
   },
   {
     step: "HALL_REQUESTED_SLOT_DAYS",
-    lable: "Requested Assigment Days",
+    title: "Days",
+    label: "Requested Assigment Days",
     component: HallRequestedSlotDayStep,
   },
   {
     step: "HALL_REQUESTED_SLOT_LIST_STEP",
+    title: "Requests",
     label: "Hall Requested Slot List Step",
     component: HallRequestedSlotListStep,
   },
   {
     step: "HALL_REQUESTED_SLOT_BUILDER_STEP",
+    title: "Time slots",
     label: "Hall Requested Slot Builder Step",
     component: HallRequestedSlotBuilderStep,
   },
   {
     step: "HALL_REQUESTED_SLOT_REVIEW_STEP",
+    title: "Review & save",
     label: "Hall Requested Slot Review Step",
     component: HallRequestedSlotReviewStep,
   },

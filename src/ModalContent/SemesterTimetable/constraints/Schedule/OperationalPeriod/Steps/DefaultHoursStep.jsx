@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   setOperationalPeriodField,
   setOperationalPeriodValidation,
-} from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import { timeRangeSchema } from "../../../../../../ComponentConfig/YupValidationSchema";
 function DefaultHoursStep({ handleClose, nextStep, previousStep, fullStep, currentStep }) {
   const operationalPeriodState = useSelector(

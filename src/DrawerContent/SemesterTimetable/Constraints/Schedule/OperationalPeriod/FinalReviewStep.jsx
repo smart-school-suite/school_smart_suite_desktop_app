@@ -1,211 +1,157 @@
-import { Icon } from "@iconify/react";
-import NumberFlow from "@number-flow/react";
-import { differenceInMinutes, format, parse } from "date-fns";
-import { Fragment } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import VerticalDashedLine from "../../../../../../components/DashedLine/VerticalDashedLine";
-import ToastSuccess from "../../../../../../components/Toast/ToastSuccess";
-import { setOperationalPeriodField } from "../../../../../../Slices/Asynslices/semesterTimetableSlice";
+import {
+  Badge,
+  DayList,
+  DayRow,
+  EmptyState,
+  IconButton,
+  Section,
+  Stats,
+  TextButton,
+  TimeSpan,
+  WizardFooter,
+  WizardStep,
+} from "../../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
+import ToastSuccess from "../../../../../components/Toast/ToastSuccess";
+import { setOperationalPeriodField } from "../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
+import {
+  minutesBetween,
+  sortDays,
+  toHours,
+} from "../../../../../utils/semesterTimetable/timeUtils";
 
-function FinalReviewStep({
-  handleClose,
-  nextStep,
-  previousStep,
-  fullStep,
-  currentStep,
-}) {
-  const baseDate = new Date();
+function FinalReviewStep({ handleClose, previousStep, goToStep }) {
+  const dispatch = useDispatch();
   const operationalPeriod = useSelector(
     (state) => state.semesterTimetable.hard_constraints.operational_period,
   );
-  const opDays = operationalPeriod.operational_days;
-  const dispatch = useDispatch();
+  const opDays = sortDays(operationalPeriod.operational_days);
 
   const resolveTime = (day) => {
-    const existingException = operationalPeriod.day_exceptions.find(
-      (exception) => exception.day === day,
+    const exception = operationalPeriod.day_exceptions.find(
+      (item) => item.day === day,
     );
-    if (existingException) {
+    if (exception) {
       return {
-        startTime: existingException.start_time.value,
-        endTime: existingException.end_time.value,
+        startTime: exception.start_time.value,
+        endTime: exception.end_time.value,
+        isException: true,
       };
     }
     return {
       startTime: operationalPeriod.start_time.value,
       endTime: operationalPeriod.end_time.value,
+      isException: false,
     };
   };
 
-  const formatTime = (timeString) => {
-    if (!timeString) return "";
-    const parsedDate = parse(timeString, "HH:mm", baseDate);
-    return format(parsedDate, "h:mm a").toLowerCase();
-  };
-
-  const calculateHoursForDay = (day) => {
+  const totalMinutes = opDays.reduce((total, day) => {
     const { startTime, endTime } = resolveTime(day);
-    if (!startTime || !endTime) return 0;
+    return total + (minutesBetween(startTime, endTime) ?? 0);
+  }, 0);
+  const exceptionCount = opDays.filter((day) => resolveTime(day).isException)
+    .length;
 
-    const startParsed = parse(startTime, "HH:mm", baseDate);
-    const endParsed = parse(endTime, "HH:mm", baseDate);
-
-    const minutesDiff = differenceInMinutes(endParsed, startParsed);
-    return Math.max(0, minutesDiff / 60);
+  const finish = () => {
+    handleClose();
+    toast.custom(
+      <ToastSuccess
+        title={"Configuration Successfully Completed"}
+        description={"Configuration has been successfully completed."}
+      />,
+    );
   };
-
-  const totalHours = opDays.reduce(
-    (acc, day) => acc + calculateHoursForDay(day),
-    0,
-  );
 
   return (
-    <>
-      <div className="px-2 d-flex flex-column gap-4 h-100">
-        <div className="d-flex flex-row align-items-center justify-content-between">
-          <span className="fw-semibold">Review Your Operating Schedule</span>
-          <span
-            className="cursor-pointer"
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
-        </div>
-        <div>
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <div className="font-size-sm">
-              <p style={{ width: "500px" }}>
-                Verify your institution's regular operating schedule before
-                continuing.
-              </p>
-            </div>
-            <div>
-              <p className="font-size-sm text-capitalize">
-                {currentStep} of {fullStep} completed
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="timeslotcard-container scroll-bar-sm px-1 d-flex flex-column gap-2">
-          {opDays.map((items, index) => {
-            const times = resolveTime(items);
-            const durationHours = calculateHoursForDay(items);
+    <WizardStep
+      title="Review your operating schedule"
+      description="This is the schedule the timetable generator will use. Check it before saving."
+      footer={
+        <WizardFooter
+          onBack={previousStep}
+          onNext={finish}
+          nextLabel="Save schedule"
+          nextIcon="lucide:check"
+          nextDisabled={opDays.length === 0}
+          hint="Add at least one operating day"
+        />
+      }
+    >
+      <Section label="Summary">
+        <Stats
+          items={[
+            { label: "Operating days", value: opDays.length },
+            { label: "With custom hours", value: exceptionCount },
+            { label: "Hours per week", value: toHours(totalMinutes), unit: "h" },
+          ]}
+        />
+      </Section>
 
-            return (
-              <Fragment key={index}>
-                <div className="card font-size-sm rounded-4 p-2 d-flex flex-column gap-2 text-capitalize">
-                  <div className="d-flex flex-row align-items-center justify-content-between">
-                    <span className="fw-semibold">{items}</span>
-                    <button
-                      className="d-flex flex-row align-items-center gap-2 px-3 py-2 border-none rounded-3 transparent-bg"
-                      onClick={() => {
+      <Section
+        label="Week at a glance"
+        action={
+          <>
+            <TextButton
+              icon="lucide:clock"
+              tone="muted"
+              onClick={() => goToStep("DEFAULT_OPERATIONAL_PERIOD")}
+            >
+              Normal hours
+            </TextButton>
+            <TextButton
+              icon="lucide:pencil"
+              onClick={() => goToStep("OPERATIONAL_PERIOD_CONFIGURE_EXCEPTION")}
+            >
+              Exceptions
+            </TextButton>
+          </>
+        }
+      >
+        {opDays.length ? (
+          <DayList>
+            {opDays.map((day) => {
+              const { startTime, endTime, isException } = resolveTime(day);
+              return (
+                <DayRow
+                  key={day}
+                  day={day}
+                  badge={
+                    isException ? (
+                      <Badge tone="warn">Custom hours</Badge>
+                    ) : (
+                      <Badge>Normal</Badge>
+                    )
+                  }
+                  actions={
+                    <IconButton
+                      icon="lucide:x"
+                      label="Remove day"
+                      tone="danger"
+                      onClick={() =>
                         dispatch(
                           setOperationalPeriodField({
                             field: "operational_days",
-                            value: items,
+                            value: day,
                           }),
-                        );
-                      }}
-                    >
-                      <span>
-                        <Icon
-                          icon="material-symbols:cancel-outline-rounded"
-                          width={20}
-                          height={20}
-                        />
-                      </span>
-                    </button>
-                  </div>
-                  <div className="d-flex flex-row align-items-end justify-content-between">
-                    <div className="d-flex flex-column gap-2 justify-content-center ">
-                      <span>{formatTime(times.startTime)}</span>
-                      <div
-                        style={{ height: "4rem" }}
-                        className="d-flex flex-row align-items-center gap-2 justify-content-center"
-                      >
-                        <VerticalDashedLine thickness={1} />
-                        <span className="fw-semibold">{durationHours} h</span>
-                      </div>
-                      <span>{formatTime(times.endTime)}</span>
-                    </div>
-                    <div>
-                      <button className="d-flex flex-row align-items-center gap-2 px-3 py-2 border-none rounded-3">
-                        <span>
-                          <Icon
-                            icon="basil:edit-outline"
-                            width={16}
-                            height={16}
-                          />
-                        </span>
-                        <span>Edit</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </Fragment>
-            );
-          })}
-        </div>
-        <div
-          className="card rounded-4 d-flex flex-column gap-2 font-size-sm bg-white"
-          style={{ padding: "0.7rem" }}
-        >
-          <span>Summary</span>
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <div className="d-flex flex-row align-items-center gap-2">
-              <Icon icon="mingcute:time-line" width={16} height={16} />
-              <span className="fw-semibold">Total Hours</span>
-            </div>
-            <span className="fw-semibold">
-              <NumberFlow value={totalHours} /> Hours
-            </span>
-          </div>
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <div className="d-flex flex-row align-items-center gap-2">
-              <Icon icon="lucide:calendar-days" width={16} height={16} />
-              <span className="fw-semibold">Total Operational Days</span>
-            </div>
-            <span className="fw-semibold">
-              <NumberFlow value={opDays.length} /> Days
-            </span>
-          </div>
-        </div>
-        <div className="w-100 d-flex flex-row align-items-center justify-content-between">
-          <div className="d-flex flex-column gap-1">
-            <button
-              className="font-size-sm d-flex flex-row border-none gap-2 bg-transparent px-0"
-              onClick={previousStep}
-            >
-              <span>
-                <Icon icon="material-symbols:arrow-back-rounded" />{" "}
-              </span>
-              <span>Back</span>
-            </button>
-          </div>
-          <div>
-            <button
-              className="font-size-sm p-2 rounded-2 border-none primary-background text-white px-3"
-              onClick={() => {
-                handleClose();
-                toast.custom(
-                  <ToastSuccess
-                    title={"Configuration Successfully Completed"}
-                    description={
-                      "Configuration has been successfully completed."
-                    }
-                  />,
-                );
-              }}
-            >
-              Finish
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+                        )
+                      }
+                    />
+                  }
+                >
+                  <TimeSpan start={startTime} end={endTime} />
+                </DayRow>
+              );
+            })}
+          </DayList>
+        ) : (
+          <EmptyState
+            title="No operating days"
+            text="Without operating days the generator has nowhere to place classes."
+          />
+        )}
+      </Section>
+    </WizardStep>
   );
 }
 

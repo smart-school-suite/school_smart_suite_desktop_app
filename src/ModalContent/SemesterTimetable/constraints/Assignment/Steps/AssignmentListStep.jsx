@@ -10,7 +10,7 @@ import {
   removeRequestedAssignmentSlot,
   setRequestedAssignmentSlot,
   setRequestedAssignmentValidation,
-} from "../../../../../Slices/Asynslices/semesterTimetableSlice";
+} from "../../../../../Slices/SemesterTimetable/semesterTimetableSlice";
 import { useGetCoursesSchoolSemesterId } from "../../../../../hooks/semesterTimetableHelper/useGetCoursesSchoolSemesterId";
 import RectangleSkeleton from "../../../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { TimeRangeInput } from "../../../../../components/FormComponents/InputComponents";
