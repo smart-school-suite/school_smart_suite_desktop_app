@@ -437,7 +437,7 @@ function SemesterDropdown({
 
   return (
     <>
-      <div className="d-flex flex-column gap-2" style={{ width: "70%" }}>
+      <div className="d-flex flex-column gap-2" style={{ width: "50%" }}>
         <button
           ref={refs.setReference}
           type="button"

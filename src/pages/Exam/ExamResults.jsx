@@ -319,36 +319,7 @@ function ExamResults() {
                       colDefs={memoizedColDefs}
                       rowData={memoizedRowData}
                       ref={tableRef}
-                      handleRowCountFromChild={handleRowCountFromChild}
-                      handleRowDataFromChild={handleRowDataFromChild}
                     />
-                    <AnimatePresence>
-                      {rowCount > 0 && (
-                        <BulkActionsToast
-                          key="bulk-actions-toast"
-                          anchorRef={tableWrapperRef}
-                          rowCount={rowCount}
-                          label={
-                            rowCount > 0
-                              ? "Result Selected"
-                              : "Results Selected"
-                          }
-                          resetAll={handleResetSelections}
-                          dropDownItems={
-                            <DropdownItems
-                              selectedResults={selectedResults}
-                              resetAll={handleResetSelections}
-                            />
-                          }
-                          actionButton={
-                            <ActionButtons
-                              selectedResults={selectedResults}
-                              resetAll={handleResetSelections}
-                            />
-                          }
-                        />
-                      )}
-                    </AnimatePresence>
                   </motion.div>
                   {examState.isGeneralFilterOpen && (
                     <AnimatePresence mode="popLayout">

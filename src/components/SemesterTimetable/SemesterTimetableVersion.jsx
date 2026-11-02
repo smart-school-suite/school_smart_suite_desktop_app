@@ -3,16 +3,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Fragment, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { setTimetableVersion } from "../../Slices/SemesterTimetable/semesterTimetableSlice";
-import { SCHEDULER_STATUS } from "../../utils/semesterTimetable/schedulerStatus";
-import { constraintMap } from "../../constants/constraintMap";
 import { useCreateSemesterTimetableVersion } from "../../hooks/semesterTimetable/useCreateSemesterTimetableVersion";
 import { useGetSemesterTimetableConstraints } from "../../hooks/semesterTimetable/useGetSemesterTimetableConstraint";
 import { useGetSemesterTimetableVersions } from "../../hooks/semesterTimetable/useGetSemesterTimetableVersion";
-import { ModalButton } from "../DataTableComponents/ActionComponent";
+import { setTimetableVersion } from "../../Slices/SemesterTimetable/semesterTimetableSlice";
+import { semesterTimetableConstraintMap } from "../../utils/maps/semesterTimetable/importSemesterTimetableMap";
+import { SCHEDULER_STATUS } from "../../utils/semesterTimetable/schedulerStatus";
+import { Drawer } from "../drawer/Drawer";
+import CustomModal from "../Modals/Modal";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 import ToastWarning from "../Toast/ToastWarning";
-
 function ConstraintVersionWrapper() {
   const semesterTimetable = useSelector((state) => state.semesterTimetable);
   return (
@@ -41,9 +41,7 @@ function ConstraintVersionWrapper() {
               overflowX: "hidden",
             }}
           >
-            <span className="font-size-sm text-iron-600 ms-1">
-              Constraints
-            </span>
+            <span className="font-size-sm text-iron-600 ms-1">Constraints</span>
             <div className="d-flex flex-column gap-2 constraint-dd-container w-100">
               <ConstraintDropdown />
             </div>
@@ -132,7 +130,8 @@ function VersionDropdown({ semesterTimetable }) {
                     >
                       <span className="text-iron-600 d-flex flex-row align-items-center gap-1">
                         {version?.label}
-                        {version.scheduler_status === SCHEDULER_STATUS.GENERATING && (
+                        {version.scheduler_status ===
+                          SCHEDULER_STATUS.GENERATING && (
                           <Icon
                             icon="line-md:loading-loop"
                             width="14"
@@ -182,14 +181,16 @@ function CreateVersion({ semesterTimetable }) {
     useCreateSemesterTimetableVersion();
   const schoolSemester = semesterTimetable?.schoolSemester;
   function handleCreateVersion() {
-    if(!schoolSemester){
-       toast.custom(
-         <ToastWarning 
-           title={"Semester Required"}
-           description={"You Must Select A semester before you can create timetable versions"}
-         />
-       )
-       return;
+    if (!schoolSemester) {
+      toast.custom(
+        <ToastWarning
+          title={"Semester Required"}
+          description={
+            "You Must Select A semester before you can create timetable versions"
+          }
+        />,
+      );
+      return;
     }
     if (isPending) {
       toast.custom(
@@ -232,9 +233,69 @@ function ConstraintDropdown() {
     isLoading,
     error,
   } = useGetSemesterTimetableConstraints();
-  const schoolSemester = useSelector((state) =>
-      state.semesterTimetable.schoolSemester);
+  const schoolSemester = useSelector(
+    (state) => state.semesterTimetable.schoolSemester,
+  );
+  const [showModal, setShowModal] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+  });
 
+  // Modal handlers
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
+    setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
+  };
   return (
     <>
       {isLoading ? (
@@ -288,21 +349,39 @@ function ConstraintDropdown() {
                     transition={{ duration: 0.2, ease: "easeInOut" }}
                     style={{ overflow: "hidden" }}
                   >
-                    {constraintCategory.constraints.map((constraint) => (
-                      <Fragment key={constraint.id}>
-                        <ModalButton
-                          className="border-none transparent-bg"
-                          action={{
-                            modalContent: constraintMap.find(
-                              (c) => c.key === constraint.key,
-                            )?.modal,
-                          }}
-                          size={"lg"}
-                        >
-                          <span className="text-iron-600">{constraint.name}</span>
-                        </ModalButton>
-                      </Fragment>
-                    ))}
+                    {constraintCategory.constraints.map((constraint) => {
+                      const Component =
+                        semesterTimetableConstraintMap[constraint.key]
+                          .component;
+                      const editor =
+                        semesterTimetableConstraintMap[constraint.key].editor;
+                      return (
+                        <Fragment key={constraint.id}>
+                          <button
+                            className="border-none bg-none p-0 m-0 outline-none text-decoration-none"
+                            onClick={() => {
+                              if (editor === "drawer") {
+                                handleShowDrawer(Component, {
+                                  closeOnOutsideClick: false,
+                                  showHeader: false,
+                                });
+                                if (editor === "modal") {
+                                  handleShowModal(Component, {
+                                    size: "md",
+                                    closeOnOutsideClick: true,
+                                    closeOnEscape: true,
+                                  });
+                                }
+                              }
+                            }}
+                          >
+                            <span className="text-iron-600">
+                              {constraint.name}
+                            </span>
+                          </button>
+                        </Fragment>
+                      );
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -310,6 +389,41 @@ function ConstraintDropdown() {
           );
         })
       )}
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={{
+              ...schoolSemester,
+            }}
+          />
+        )}
+      </Drawer>
+
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
+        centered
+      >
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={{
+              ...schoolSemester,
+            }}
+            handleClose={handleCloseModal}
+          />
+        )}
+      </CustomModal>
     </>
   );
 }

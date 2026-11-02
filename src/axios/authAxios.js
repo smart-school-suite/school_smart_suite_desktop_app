@@ -15,6 +15,7 @@ axiosInstance.interceptors.request.use(
     const token = await secureTokenStorage.get(TOKEN_KEY.AUTH_TOKEN);
     const apiKey = state.auth?.apiKey;
 
+
     if (!config.headers) {
       config.headers = {};
     }
