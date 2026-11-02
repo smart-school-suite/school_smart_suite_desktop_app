@@ -19,10 +19,11 @@ function Layout() {
       
       <div className={`${darkMode && "dark-bg-light"}`}>
         <div className="d-flex flex-row w-100 gap-2 ">
-          <div style={{ width: is.md || is.sm ? "4%" : "15%" }}>
+          {/* The sidebar sets its own width (expanded or icon rail). */}
+          <div className="flex-shrink-0">
             <Sidebar />
           </div>
-          <div style={{ width: is.md || is.sm ? "96%" : "85%" }}>
+          <div className="flex-grow-1" style={{ minWidth: 0 }}>
             <main className={`${darkMode ? "text-white" : null} pt-1 w-100`}>
               <div className="pe-2">
                 <Outlet />
