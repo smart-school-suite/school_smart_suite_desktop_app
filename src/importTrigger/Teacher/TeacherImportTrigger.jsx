@@ -3,11 +3,6 @@ import { teacherImportColDefs } from "../../utils/table/colDefs/teachers/teacher
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import { TEACHER_COLUMNS } from "../../utils/teacher/teacherColumns";
 import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
   setImportStatus,
   setImportSelectedFile,
   setImportReset,
@@ -19,7 +14,6 @@ import {
 } from "../../Slices/teacher/teacherSlice";
 import { teacherInstanceMap } from "../../utils/maps/teacher/teacherInstanceMap";
 import { Icon } from "@iconify/react";
-import { ArrowDown } from "lucide-react";
 function TeacherImportTrigger() {
   return (
     <>

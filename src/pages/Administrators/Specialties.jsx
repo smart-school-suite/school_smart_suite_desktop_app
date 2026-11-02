@@ -1,8 +1,6 @@
 import { Icon } from "@iconify/react";
-import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ChevronDown } from "lucide-react";
 import React, {
-  Fragment,
   useCallback,
   useEffect,
   useMemo,
@@ -13,7 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 import CreateSpecialty from "../../DrawerContent/Specialty/CreateSpecialty";
 import SpecialtyDetails from "../../DrawerContent/Specialty/SpecialtyDetails";
 import UpdateSpecialty from "../../DrawerContent/Specialty/UpdateSpecialty";
-import Export from "../../ModalContent/Export/Export";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import ActivateSpecialty from "../../ModalContent/Specialty/ActivateSpecialty";
 import BulkActivateSpecialty from "../../ModalContent/Specialty/BulkActivateSpecialty";
@@ -21,25 +18,17 @@ import BulkDeactivateSpecialty from "../../ModalContent/Specialty/BulkDeactivate
 import BulkDeleteSpecialty from "../../ModalContent/Specialty/BulkDeleteSpecialty";
 import DeactivateSpecialty from "../../ModalContent/Specialty/DeactivateSpecialty";
 import DeleteSpecialty from "../../ModalContent/Specialty/DeleteSpecialty";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  addCustomFilter,
-  removeCustomFilter,
-  resetAllCustomFilters,
   setColumnMapping,
-  setCustomFilter,
   setImportReset,
   setImportSelectedFile,
   setImportStatus,
   setStandardGroupValue,
-  toggleGeneralFilter,
 } from "../../Slices/administrator/specialtySlice";
 import ActionButtonDropdown, {
   DropDownMenuItem,
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
 import CustomModal from "../../components/Modals/Modal";
 import JobPopOver from "../../components/Popover/JobPopover";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -48,7 +37,6 @@ import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import SearchInput from "../../components/input/search";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import {
   ActivateIcon,
@@ -58,22 +46,19 @@ import {
   UpdateIcon,
 } from "../../icons/ActionIcons";
 import { SpecialtyIcon } from "../../icons/Icons";
-import filterPopOverMap from "../../utils/maps/FilterMap";
 import { SPECIALTY_COLUMNS } from "../../utils/specialty/specialtyColumns";
 import { specialtyColDefs } from "../../utils/table/colDefs/specialty/specialtyColDefs";
 import { specialtyImportColDefs } from "../../utils/table/colDefs/specialty/specialtyImportColDefs";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function Specialties() {
   const { data: specialty, isLoading, error } = useGetSpecialties();
   const tableRef = useRef();
+  const filters = useTableFilters("administrators/specialties", tableRef);
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const specialtyState = useSelector((state) => state.specialty);
-  const [searchText, setSearchText] = useState("");
   const [rowCount, setRowCount] = useState(0);
-  const [columns, setColumns] = useState({
-    selectedColumns: [],
-    availableColumns: [],
-  });
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const handleResetSelections = () => {
     if (tableRef.current) {
@@ -97,59 +82,6 @@ function Specialties() {
   const memoizedRowData = useMemo(() => {
     return specialty?.data ?? [];
   }, [specialty]);
-
-  const handleSearch = (value) => {
-    setSearchText(value);
-    if (tableRef.current && tableRef.current.setGridOption) {
-      tableRef.current.setGridOption("quickFilterText", value);
-    }
-  };
-
-  const handleReset = () => {
-    if (tableRef.current) {
-      tableRef.current.deselectAll();
-      setRowCount(0);
-      setSelectedSpecialties([]);
-
-      if (tableRef.current.setGridOption) {
-        tableRef.current.setGridOption("quickFilterText", "");
-      }
-      setSearchText("");
-      const gridApi = tableRef.current.getGridApi
-        ? tableRef.current.getGridApi()
-        : null;
-      if (gridApi) {
-        gridApi.setFilterModel(null);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (!isLoading && tableRef.current?.getColumnsState) {
-      const timer = setTimeout(() => {
-        const gridCols = tableRef.current.getColumnsState();
-        if (gridCols && gridCols.length > 0) {
-          const filteredCols = gridCols.filter(
-            (col) =>
-              !col.isSystemColumn &&
-              col.field !== "action" &&
-              col.colId !== "actions" &&
-              col.colId !== "ActionComponent",
-          );
-          setColumns((prevalue) => ({
-            ...prevalue,
-            availableColumns: [...prevalue.availableColumns, ...filteredCols],
-          }));
-          setColumns((prev) => ({
-            ...prev,
-            selectedColumns: prev.availableColumns.slice(0, 4),
-          }));
-        }
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading, memoizedRowData]);
   return (
     <>
       <main className="main-container gap-2">
@@ -256,298 +188,46 @@ function Specialties() {
             </div>
           ) : (
             <>
-              <div className="d-flex flex-column gap-2">
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    {columns?.selectedColumns?.map((c, index) => {
-                      const FilterPopOver = filterPopOverMap.find(
-                        (f) => f.cellDataType === c.cellDataType,
-                      ).component;
-                      return (
-                        <Fragment key={index}>
-                          <FilterPopOver column={c} tableRef={tableRef} />
-                        </Fragment>
-                      );
-                    })}
-                    <ModalButton
-                      action={{ modalContent: FilterColumns }}
-                      size={"xl"}
-                      rowData={{ setColumns, columns: columns }}
-                    >
-                      <button
-                        className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg"
-                        style={{ padding: "0.45rem" }}
-                      >
-                        <span>
-                          <Icon icon="ic:round-plus" width={14} height={14} />
-                        </span>
-                      </button>
-                    </ModalButton>
-                    <button
-                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
-                      style={{
-                        fontSize: "0.7rem",
-                        cursor: "pointer",
-                        padding: "0.45rem",
-                      }}
-                      onClick={() => {
-                        dispatch(toggleGeneralFilter());
-                      }}
-                    >
-                      <span>
-                        <Icon icon="mynaui:filter" width={16} height={16} />
-                      </span>
-                      <span style={{ lineHeight: "16px" }}>Filter</span>
-                    </button>
-                  </div>
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <button
-                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
-                      onClick={handleReset}
-                      style={{ padding: "0.45rem" }}
-                    >
-                      <span>
-                        <Icon
-                          icon="grommet-icons:revert"
-                          width={16}
-                          height={16}
-                        />
-                      </span>
-                    </button>
-                    <button
-                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
-                      style={{ padding: "0.45rem" }}
-                    >
-                      <span>
-                        <Icon icon="mage:copy" width={16} height={16} />
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div className="d-flex flex-row justify-content-between align-items-center">
-                  <div className="w-50">
-                    <SearchInput
-                      placeholder={"Search Specialty......"}
-                      value={searchText}
-                      onChange={(val) => handleSearch(val)}
-                      hotkey="Ctrl+K"
-                    />
-                  </div>
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <ModalButton
-                      action={{ modalContent: Export }}
-                      size={"xl"}
-                      rowData={{ tableRef, columns: columns.availableColumns }}
-                    >
-                      <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
-                      >
-                        <span style={{ lineHeight: "16px" }}>Export</span>
-                        <span>
-                          <Icon icon="tabler:arrow-up" width={14} height={14} />
-                        </span>
-                      </button>
-                    </ModalButton>
-                    <ModalButton
-                      action={{ modalContent: TableColumnSetting }}
-                      size={"xl"}
-                      rowData={{ tableRef }}
-                    >
-                      <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
-                      >
-                        <span>
-                          <Icon
-                            icon="lsicon:setting-outline"
-                            width={20}
-                            height={20}
-                          />
-                        </span>
-                      </button>
-                    </ModalButton>
-                  </div>
-                </div>
-              </div>
+              <TableToolbar
+                filters={filters}
+                tableRef={tableRef}
+                searchPlaceholder="Search Specialty"
+                onReset={handleResetSelections}
+              />
 
-              <div className="h-100">
-                <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
-                  <motion.div
-                    className="h-100"
-                    layout
-                    transition={{
-                      type: "spring",
-                      stiffness: 300,
-                      damping: 30,
-                    }}
-                    style={{
-                      width: specialtyState.isGeneralFilterOpen
-                        ? "60%"
-                        : "100%",
-                    }}
-                  >
-                    <Table
-                      colDefs={memoizedColDefs}
-                      rowData={memoizedRowData}
-                      ref={tableRef}
-                      handleRowCountFromChild={handleRowCountFromChild}
-                      handleRowDataFromChild={handleRowDataFromChild}
-                    />
-                    {rowCount > 0 && (
-                      <BulkActionsToast
-                        rowCount={rowCount}
-                        label={`${
-                          rowCount > 0
-                            ? "Specialty Selected"
-                            : "Specialties Selected"
-                        }`}
+              <TableFilterLayout filters={filters}>
+                <Table
+                  {...filters.gridProps}
+                  colDefs={memoizedColDefs}
+                  rowData={memoizedRowData}
+                  ref={tableRef}
+                  handleRowCountFromChild={handleRowCountFromChild}
+                  handleRowDataFromChild={handleRowDataFromChild}
+                />
+                {rowCount > 0 && (
+                  <BulkActionsToast
+                    rowCount={rowCount}
+                    label={`${
+                      rowCount > 0
+                        ? "Specialty Selected"
+                        : "Specialties Selected"
+                    }`}
+                    resetAll={handleResetSelections}
+                    dropDownItems={
+                      <DropdownItems
+                        selectedSpecialties={selectedSpecialties}
                         resetAll={handleResetSelections}
-                        dropDownItems={
-                          <DropdownItems
-                            selectedSpecialties={selectedSpecialties}
-                            resetAll={handleResetSelections}
-                          />
-                        }
-                        actionButton={
-                          <ActionButtons
-                            selectedSpecialties={selectedSpecialties}
-                            resetAll={handleResetSelections}
-                          />
-                        }
                       />
-                    )}
-                  </motion.div>
-                  {specialtyState.isGeneralFilterOpen && (
-                    <AnimatePresence mode="popLayout">
-                      {specialtyState.isGeneralFilterOpen && (
-                        <motion.div
-                          key="filter-panel"
-                          className="card rounded-3 font-size-sm d-flex flex-column h-100"
-                          initial={{ x: "100%", opacity: 0 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          exit={{ x: "100%", opacity: 0 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 350,
-                            damping: 32,
-                          }}
-                          style={{ width: "40%" }}
-                        >
-                          <div
-                            className="p-2 rounded-top-3 d-flex flex-column gap-2 border-bottom"
-                            style={{ background: "#f9f9f9" }}
-                          >
-                            <div className="d-flex flex-row align-items-center justify-content-between">
-                              <span>
-                                Build a custom view of your specialty data.
-                              </span>
-                              <button
-                                className="border-none bg-transparent"
-                                onClick={() => dispatch(toggleGeneralFilter())}
-                              >
-                                <Icon
-                                  icon="iconoir:cancel"
-                                  width={18}
-                                  height={18}
-                                />
-                              </button>
-                            </div>
-                            <div className="d-flex flex-row align-items-center justify-content-between">
-                              <div className="d-flex flex-row align-items-center gap-2">
-                                <span>
-                                  <Icon
-                                    icon="mynaui:filter"
-                                    width={18}
-                                    height={18}
-                                  />
-                                </span>
-                                <span>Filter Specialty</span>
-                              </div>
-                              <span>{specialty?.data?.length ?? 0} items</span>
-                            </div>
-                          </div>
-                          <div
-                            className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
-                            style={{ maxHeight: "52dvh" }}
-                          >
-                            {specialtyState.customFilter.length > 0 ? (
-                              <div>
-                                {specialtyState?.customFilter?.map(
-                                  (cFilters) => (
-                                    <Fragment key={cFilters.id}>
-                                      <GeneralFilterWizzard
-                                        cFilters={cFilters}
-                                        columns={columns}
-                                        moduleState={specialtyState}
-                                        removeCustomFilter={removeCustomFilter}
-                                        setCustomFilter={setCustomFilter}
-                                      />
-                                    </Fragment>
-                                  ),
-                                )}
-                              </div>
-                            ) : (
-                              <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1 p-4">
-                                <div className="text-center d-flex flex-column gap-1 mb-3">
-                                  <span className="fw-semibold">
-                                    Build a custom filter
-                                  </span>
-                                  <span className="text-muted">
-                                    Create one or more conditions to narrow down
-                                    your specialty list.
-                                  </span>
-                                </div>
-                                <button
-                                  className="d-flex flex-row align-items-center gap-2 bg-transparent border-none border rounded-3 p-2 font-size-sm"
-                                  onClick={() => {
-                                    dispatch(addCustomFilter());
-                                  }}
-                                >
-                                  <span>
-                                    <Icon icon="mynaui:plus" />
-                                  </span>
-                                  <span>Add Condition</span>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                          <div className="mt-auto">
-                            {specialtyState.customFilter.length > 0 && (
-                              <div className="d-flex flex-row justify-content-start p-2">
-                                <button
-                                  className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
-                                  onClick={() => {
-                                    dispatch(addCustomFilter());
-                                  }}
-                                >
-                                  <span>
-                                    <Icon icon="ic:round-plus" />
-                                  </span>
-                                  <span>Add Condition</span>
-                                </button>
-                              </div>
-                            )}
-                            <div className="d-flex flex-row border-top justify-content-between p-2">
-                              <button
-                                className="border-none border bg-transparent px-3 font-size-sm py-2 rounded-3"
-                                onClick={() => {
-                                  dispatch(resetAllCustomFilters());
-                                }}
-                              >
-                                Reset All
-                              </button>
-                              <button className="border-none border px-3 font-size-sm py-2 primary-background text-white rounded-3">
-                                Apply
-                              </button>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  )}
-                </div>
-              </div>
+                    }
+                    actionButton={
+                      <ActionButtons
+                        selectedSpecialties={selectedSpecialties}
+                        resetAll={handleResetSelections}
+                      />
+                    }
+                  />
+                )}
+              </TableFilterLayout>
             </>
           )}
         </div>

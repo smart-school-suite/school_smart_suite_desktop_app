@@ -6,7 +6,6 @@ import {
 } from "../../utils/gradeScale/gradeScaleHelpers";
 const initialState = {
   gradeScales: null,
-  isGeneralFilterOpen: false,
   tableRef: null,
   selectedGradeScales: [],
   rowCount: 0,
@@ -15,7 +14,6 @@ const initialState = {
     selectedColumns: [],
     availableColumns: [],
   },
-  customFilter: [],
   import: {
     status: "IDLE",
     selectedFile: null,
@@ -117,40 +115,9 @@ const gradeScaleSlice = createSlice({
     setColumnMapping: (state, action) => {
       state.import.mapping = action.payload;
     },
-    addCustomFilter: (state, action) => {
-      const id = uuidv4();
-      state.customFilter.push({
-        id: id,
-        column: null,
-        match: null,
-        value: null,
-      });
-    },
-    resetAllCustomFilters: (state) => {
-      state.customFilter = [];
-    },
-    removeCustomFilter: (state, action) => {
-      const { id } = action.payload;
-      const customFilterIndex = state.customFilter.findIndex(
-        (cf) => cf.id === id,
-      );
-      state.customFilter.splice(customFilterIndex, 1);
-    },
-    setCustomFilter: (state, action) => {
-      const { id, field, value } = action.payload;
-      const customFilter = state.customFilter.find((cf) => cf.id === id);
-      if (!customFilter) return;
-
-      if (field === "column") customFilter.column = value;
-      if (field === "match") customFilter.match = value;
-      if (field === "value") customFilter.value = value;
-    },
     setTableRef: (state, action) => {
       const { tableRef } = action.payload;
       state.tableRef = tableRef;
-    },
-    toggleGeneralFilter: (state) => {
-      state.isGeneralFilterOpen = !state.isGeneralFilterOpen;
     },
     setSelectedGradeScales: (state, action) => {
       state.selectedGradeScales = action.payload;
@@ -267,9 +234,6 @@ const gradeScaleSlice = createSlice({
 });
 
 export const {
-  addCustomFilter,
-  removeCustomFilter,
-  setCustomFilter,
   setTeachers,
   setSelectedGradeScales,
   setRowCount,
@@ -280,8 +244,6 @@ export const {
   updateAvailableColumns,
   updateSelectedColumns,
   setTableRef,
-  toggleGeneralFilter,
-  resetAllCustomFilters,
   setImportStatus,
   setImportSelectedFile,
   setImportReset,

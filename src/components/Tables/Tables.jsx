@@ -1,8 +1,9 @@
 import React, {
   forwardRef,
+  useCallback,
+  useEffect,
   useImperativeHandle,
   useMemo,
-  useCallback,
   useRef,
 } from "react";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
@@ -27,7 +28,7 @@ const Table = forwardRef((props, ref) => {
     browserColorScheme: "light",
     headerFontSize: "0.75rem",
     fontFamily: { googleFont: "Poppins, sans-serif" },
-     foregroundColor: "#333",
+    foregroundColor: "#333",
   });
 
   const darkTheme = themeQuartz.withParams({
@@ -58,9 +59,33 @@ const Table = forwardRef((props, ref) => {
     [props],
   );
 
-  const gridReady = useCallback((params) => {
-    gridRef.current = params.api;
-  }, []);
+  // Row predicate from useTableFilters. The grid callbacks below are stable
+  // and read the latest predicate from this ref, then the grid is told to
+  // re-filter whenever the predicate changes.
+  const externalFilterRef = useRef(props.externalFilter ?? null);
+  useEffect(() => {
+    externalFilterRef.current = props.externalFilter ?? null;
+    gridRef.current?.onFilterChanged();
+  }, [props.externalFilter]);
+
+  const isExternalFilterPresent = useCallback(
+    () => Boolean(externalFilterRef.current),
+    [],
+  );
+  const doesExternalFilterPass = useCallback(
+    (node) =>
+      externalFilterRef.current ? externalFilterRef.current(node) : true,
+    [],
+  );
+
+  const { onGridReady: onGridReadyProp } = props;
+  const gridReady = useCallback(
+    (params) => {
+      gridRef.current = params.api;
+      onGridReadyProp?.(params);
+    },
+    [onGridReadyProp],
+  );
 
   // Expose the full grid API to parent component
   useImperativeHandle(
@@ -167,8 +192,13 @@ const Table = forwardRef((props, ref) => {
         rowSelection={rowSelection}
         onSelectionChanged={onSelectionChanged}
         onGridReady={gridReady}
+        onRowDataUpdated={props.onRowDataUpdated}
+        onFilterChanged={props.onFilterChanged}
+        quickFilterText={props.quickFilterText}
+        isExternalFilterPresent={isExternalFilterPresent}
+        doesExternalFilterPass={doesExternalFilterPass}
         theme={appliedTheme}
-        loadThemeGoogleFonts={true} 
+        loadThemeGoogleFonts={true}
       />
     </div>
   );

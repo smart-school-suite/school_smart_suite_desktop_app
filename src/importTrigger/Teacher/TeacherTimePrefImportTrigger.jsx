@@ -1,14 +1,12 @@
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import {
-  setCustomFilter,
   setImportStatus,
   setImportSelectedFile,
   setImportReset,
   setColumnMapping,
   setStandardGroupValue,
 } from "../../Slices/teacher/teacherTimePrefSlice";
-import { Icon } from "@iconify/react";
 import { TEACHER_PREF_TIME_SLOT_COLUMNS } from "../../utils/teacher/teacherPrefTimeSlotColumns";
 import { ArrowDown } from "lucide-react";
 function TeacherTimePrefImportTrigger() {

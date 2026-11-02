@@ -1,17 +1,11 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import HallSideBar from "../components/SideBars/HallSideBar";
 import { HallIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
 import JobPopOver from "../components/Popover/JobPopover";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  resetAllCustomFilters,
-  addCustomFilter,
-  toggleGeneralFilter,
-  removeCustomFilter,
-  setCustomFilter,
   setImportStatus,
   setImportSelectedFile,
   setImportReset,

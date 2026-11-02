@@ -1,8 +1,6 @@
 import { Icon } from "@iconify/react";
-import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ChevronDown } from "lucide-react";
 import React, {
-  Fragment,
   useCallback,
   useEffect,
   useMemo,
@@ -16,8 +14,6 @@ import ActionButtonDropdown, {
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import GeneralFilterWizzard from "../../components/GeneralFilter/Table/GeneralFilterWizzard";
-import SearchInput from "../../components/input/search";
 import CustomModal from "../../components/Modals/Modal";
 import JobPopOver from "../../components/Popover/JobPopover";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -42,39 +38,28 @@ import BulkDeactivateDepartment from "../../ModalContent/Department/BulkDeactiva
 import BulkDeleteDepartment from "../../ModalContent/Department/BulkDeleteDepartment";
 import DeactivateDepartment from "../../ModalContent/Department/DeactivateDepartment";
 import DeleteDepartment from "../../ModalContent/Department/DeleteDepartment";
-import Export from "../../ModalContent/Export/Export";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
-import TableColumnSetting from "../../ModalContent/Table/TableSetting";
-import FilterColumns from "../../ModalContent/Teacher/FilterColumns";
 import {
-  addCustomFilter,
-  removeCustomFilter,
-  resetAllCustomFilters,
   setColumnMapping,
-  setCustomFilter,
   setImportReset,
   setImportSelectedFile,
   setImportStatus,
   setStandardGroupValue,
-  toggleGeneralFilter,
 } from "../../Slices/administrator/departmentSlice";
 import { DEPARTMENT_COLUMNS } from "../../utils/department/departmentColumns";
-import filterPopOverMap from "../../utils/maps/FilterMap";
 import { departmentColDefs } from "../../utils/table/colDefs/department/departmentColDefs";
 import { departmentImportColDefs } from "../../utils/table/colDefs/department/departmentImportColDefs";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function Departments() {
   const tableRef = useRef();
+  const filters = useTableFilters("administrators/departments", tableRef);
   const dispatch = useDispatch();
   const { data: departments, isLoading, error } = useGetDepartments();
-  const departmentState = useSelector((state) => state.department);
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const [searchText, setSearchText] = useState("");
   const [rowCount, setRowCount] = useState(0);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
-  const [columns, setColumns] = useState({
-    selectedColumns: [],
-    availableColumns: [],
-  });
   const handleResetSelections = () => {
     if (tableRef.current) {
       tableRef.current.deselectAll();
@@ -97,59 +82,6 @@ function Departments() {
   const memoizedRowData = useMemo(() => {
     return departments?.data ?? [];
   }, [departments]);
-
-  const handleSearch = (value) => {
-    setSearchText(value);
-    if (tableRef.current && tableRef.current.setGridOption) {
-      tableRef.current.setGridOption("quickFilterText", value);
-    }
-  };
-
-  const handleReset = () => {
-    if (tableRef.current) {
-      tableRef.current.deselectAll();
-      setRowCount(0);
-      setSelectedDepartments([]);
-
-      if (tableRef.current.setGridOption) {
-        tableRef.current.setGridOption("quickFilterText", "");
-      }
-      setSearchText("");
-      const gridApi = tableRef.current.getGridApi
-        ? tableRef.current.getGridApi()
-        : null;
-      if (gridApi) {
-        gridApi.setFilterModel(null);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (!isLoading && tableRef.current?.getColumnsState) {
-      const timer = setTimeout(() => {
-        const gridCols = tableRef.current.getColumnsState();
-        if (gridCols && gridCols.length > 0) {
-          const filteredCols = gridCols.filter(
-            (col) =>
-              !col.isSystemColumn &&
-              col.field !== "action" &&
-              col.colId !== "actions" &&
-              col.colId !== "ActionComponent",
-          );
-          setColumns((prevalue) => ({
-            ...prevalue,
-            availableColumns: [...prevalue.availableColumns, ...filteredCols],
-          }));
-          setColumns((prev) => ({
-            ...prev,
-            selectedColumns: prev.availableColumns.slice(0, 4),
-          }));
-        }
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading, memoizedRowData]);
   return (
     <>
       <main className="main-container gap-2">
@@ -253,300 +185,46 @@ function Departments() {
             </div>
           ) : (
             <>
-              <div className="d-flex flex-column gap-2">
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    {columns?.selectedColumns?.map((c, index) => {
-                      const FilterPopOver = filterPopOverMap.find(
-                        (f) => f.cellDataType === c.cellDataType,
-                      ).component;
-                      return (
-                        <Fragment key={index}>
-                          <FilterPopOver column={c} tableRef={tableRef} />
-                        </Fragment>
-                      );
-                    })}
-                    <ModalButton
-                      action={{ modalContent: FilterColumns }}
-                      size={"xl"}
-                      rowData={{ setColumns, columns: columns }}
-                    >
-                      <button
-                        className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg"
-                        style={{ padding: "0.45rem" }}
-                      >
-                        <span>
-                          <Icon icon="ic:round-plus" width={14} height={14} />
-                        </span>
-                      </button>
-                    </ModalButton>
-                    <button
-                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
-                      style={{
-                        fontSize: "0.7rem",
-                        cursor: "pointer",
-                        padding: "0.45rem",
-                      }}
-                      onClick={() => {
-                        dispatch(toggleGeneralFilter());
-                      }}
-                    >
-                      <span>
-                        <Icon icon="mynaui:filter" width={16} height={16} />
-                      </span>
-                      <span style={{ lineHeight: "16px" }}>Filter</span>
-                    </button>
-                  </div>
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <button
-                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
-                      onClick={handleReset}
-                      style={{ padding: "0.45rem" }}
-                    >
-                      <span>
-                        <Icon
-                          icon="grommet-icons:revert"
-                          width={16}
-                          height={16}
-                        />
-                      </span>
-                    </button>
-                    <button
-                      className="border-none border rounded-3 font-size-sm d-flex flex-row align-items-center white-bg"
-                      style={{ padding: "0.45rem" }}
-                    >
-                      <span>
-                        <Icon icon="mage:copy" width={16} height={16} />
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div className="d-flex flex-row justify-content-between align-items-center">
-                  <div className="w-50">
-                    <SearchInput
-                      placeholder={"Search Department......"}
-                      value={searchText}
-                      onChange={(val) => handleSearch(val)}
-                      hotkey="Ctrl+K"
-                    />
-                  </div>
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <ModalButton
-                      action={{ modalContent: Export }}
-                      size={"xl"}
-                      rowData={{ tableRef, columns: columns.availableColumns }}
-                    >
-                      <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
-                      >
-                        <span style={{ lineHeight: "16px" }}>Export</span>
-                        <span>
-                          <Icon icon="tabler:arrow-up" width={14} height={14} />
-                        </span>
-                      </button>
-                    </ModalButton>
-                    <ModalButton
-                      action={{ modalContent: TableColumnSetting }}
-                      size={"xl"}
-                      rowData={{ tableRef }}
-                    >
-                      <button
-                        className="border-none border rounded-3 font-size-sm px-2 d-flex flex-row align-items-center gap-1 white-bg"
-                        style={{ padding: "0.45rem" }}
-                      >
-                        <span>
-                          <Icon
-                            icon="lsicon:setting-outline"
-                            width={20}
-                            height={20}
-                          />
-                        </span>
-                      </button>
-                    </ModalButton>
-                  </div>
-                </div>
-              </div>
+              <TableToolbar
+                filters={filters}
+                tableRef={tableRef}
+                searchPlaceholder="Search Department"
+                onReset={handleResetSelections}
+              />
 
-              <div className="h-100">
-                <div className="d-flex flex-row align-items-start w-100 h-100 gap-1">
-                  <motion.div
-                    className="h-100"
-                    layout
-                    transition={{
-                      type: "spring",
-                      stiffness: 300,
-                      damping: 30,
-                    }}
-                    style={{
-                      width: departmentState.isGeneralFilterOpen
-                        ? "60%"
-                        : "100%",
-                    }}
-                  >
-                    <Table
-                      colDefs={memoizedColDefs}
-                      rowData={memoizedRowData}
-                      ref={tableRef}
-                      handleRowCountFromChild={handleRowCountFromChild}
-                      handleRowDataFromChild={handleRowDataFromChild}
-                    />
-                    {rowCount > 0 && (
-                      <BulkActionsToast
-                        rowCount={rowCount}
-                        label={`${
-                          rowCount > 0
-                            ? "Department Selected"
-                            : "Departments Selected"
-                        }`}
+              <TableFilterLayout filters={filters}>
+                <Table
+                  {...filters.gridProps}
+                  colDefs={memoizedColDefs}
+                  rowData={memoizedRowData}
+                  ref={tableRef}
+                  handleRowCountFromChild={handleRowCountFromChild}
+                  handleRowDataFromChild={handleRowDataFromChild}
+                />
+                {rowCount > 0 && (
+                  <BulkActionsToast
+                    rowCount={rowCount}
+                    label={`${
+                      rowCount > 0
+                        ? "Department Selected"
+                        : "Departments Selected"
+                    }`}
+                    resetAll={handleResetSelections}
+                    dropDownItems={
+                      <DropdownItems
+                        selectedSpecialties={selectedSpecialties}
                         resetAll={handleResetSelections}
-                        dropDownItems={
-                          <DropdownItems
-                            selectedSpecialties={selectedSpecialties}
-                            resetAll={handleResetSelections}
-                          />
-                        }
-                        actionButton={
-                          <ActionButtons
-                            selectedSpecialties={selectedSpecialties}
-                            resetAll={handleResetSelections}
-                          />
-                        }
                       />
-                    )}
-                  </motion.div>
-                  {departmentState.isGeneralFilterOpen && (
-                    <AnimatePresence mode="popLayout">
-                      {departmentState.isGeneralFilterOpen && (
-                        <motion.div
-                          key="filter-panel"
-                          className="card rounded-3 font-size-sm d-flex flex-column h-100"
-                          initial={{ x: "100%", opacity: 0 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          exit={{ x: "100%", opacity: 0 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 350,
-                            damping: 32,
-                          }}
-                          style={{ width: "40%" }}
-                        >
-                          <div
-                            className="p-2 rounded-top-3 d-flex flex-column gap-2 border-bottom"
-                            style={{ background: "#f9f9f9" }}
-                          >
-                            <div className="d-flex flex-row align-items-center justify-content-between">
-                              <span>
-                                Build a custom view of your department data.
-                              </span>
-                              <button
-                                className="border-none bg-transparent"
-                                onClick={() => dispatch(toggleGeneralFilter())}
-                              >
-                                <Icon
-                                  icon="iconoir:cancel"
-                                  width={18}
-                                  height={18}
-                                />
-                              </button>
-                            </div>
-                            <div className="d-flex flex-row align-items-center justify-content-between">
-                              <div className="d-flex flex-row align-items-center gap-2">
-                                <span>
-                                  <Icon
-                                    icon="mynaui:filter"
-                                    width={18}
-                                    height={18}
-                                  />
-                                </span>
-                                <span>Filter Department</span>
-                              </div>
-                              <span>
-                                {departments?.data?.length ?? 0} items
-                              </span>
-                            </div>
-                          </div>
-                          <div
-                            className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column me-1 gap-2"
-                            style={{ maxHeight: "52dvh" }}
-                          >
-                            {departmentState.customFilter.length > 0 ? (
-                              <div>
-                                {departmentState?.customFilter?.map(
-                                  (cFilters) => (
-                                    <Fragment key={cFilters.id}>
-                                      <GeneralFilterWizzard
-                                        cFilters={cFilters}
-                                        columns={columns}
-                                        moduleState={departmentState}
-                                        removeCustomFilter={removeCustomFilter}
-                                        setCustomFilter={setCustomFilter}
-                                      />
-                                    </Fragment>
-                                  ),
-                                )}
-                              </div>
-                            ) : (
-                              <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1 p-4">
-                                <div className="text-center d-flex flex-column gap-1 mb-3">
-                                  <span className="fw-semibold">
-                                    Build a custom filter
-                                  </span>
-                                  <span className="text-muted">
-                                    Create one or more conditions to narrow down
-                                    your Department list.
-                                  </span>
-                                </div>
-                                <button
-                                  className="d-flex flex-row align-items-center gap-2 bg-transparent border-none border rounded-3 p-2 font-size-sm"
-                                  onClick={() => {
-                                    dispatch(addCustomFilter());
-                                  }}
-                                >
-                                  <span>
-                                    <Icon icon="mynaui:plus" />
-                                  </span>
-                                  <span>Add Condition</span>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                          <div className="mt-auto">
-                            {departmentState.customFilter.length > 0 && (
-                              <div className="d-flex flex-row justify-content-start p-2">
-                                <button
-                                  className="font-size-sm bg-transparent font-size-sm rounded-3 p-2 d-flex flex-row align-items-center gap-2 border-none border"
-                                  onClick={() => {
-                                    dispatch(addCustomFilter());
-                                  }}
-                                >
-                                  <span>
-                                    <Icon icon="ic:round-plus" />
-                                  </span>
-                                  <span>Add Condition</span>
-                                </button>
-                              </div>
-                            )}
-                            <div className="d-flex flex-row border-top justify-content-between p-2">
-                              <button
-                                className="border-none border bg-transparent px-3 font-size-sm py-2 rounded-3"
-                                onClick={() => {
-                                  dispatch(resetAllCustomFilters());
-                                }}
-                              >
-                                Reset All
-                              </button>
-                              <button className="border-none border px-3 font-size-sm py-2 primary-background text-white rounded-3">
-                                Apply
-                              </button>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  )}
-                </div>
-              </div>
+                    }
+                    actionButton={
+                      <ActionButtons
+                        selectedSpecialties={selectedSpecialties}
+                        resetAll={handleResetSelections}
+                      />
+                    }
+                  />
+                )}
+              </TableFilterLayout>
             </>
           )}
         </div>

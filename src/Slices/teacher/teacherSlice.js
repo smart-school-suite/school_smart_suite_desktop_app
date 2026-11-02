@@ -8,7 +8,6 @@ import { teacherInstanceMap } from "../../utils/maps/teacher/teacherInstanceMap"
 
 const initialState = {
   teachers: null,
-  isGeneralFilterOpen: false,
   tableRef: null,
   selectedTeachers: [],
   rowCount: 0,
@@ -17,7 +16,6 @@ const initialState = {
     selectedColumns: [],
     availableColumns: [],
   },
-  customFilter: [],
   import: {
     status: "IDLE",
     selectedFile: null,
@@ -89,35 +87,8 @@ const teacherSlice = createSlice({
     setColumnMapping: (state, action) => {
       state.import.mapping = action.payload;
     },
-    addCustomFilter: (state) => {
-      state.customFilter.push({
-        id: uuidv4(),
-        column: null,
-        match: null,
-        value: null,
-      });
-    },
-    resetAllCustomFilters: (state) => {
-      state.customFilter = [];
-    },
-    removeCustomFilter: (state, action) => {
-      const { id } = action.payload;
-      state.customFilter = state.customFilter.filter((cf) => cf.id !== id);
-    },
-    setCustomFilter: (state, action) => {
-      const { id, field, value } = action.payload;
-      const customFilter = state.customFilter.find((cf) => cf.id === id);
-      if (!customFilter) return;
-
-      if (field === "column") customFilter.column = value;
-      if (field === "match") customFilter.match = value;
-      if (field === "value") customFilter.value = value;
-    },
     setTableRef: (state, action) => {
       state.tableRef = action.payload.tableRef;
-    },
-    toggleGeneralFilter: (state) => {
-      state.isGeneralFilterOpen = !state.isGeneralFilterOpen;
     },
     setSelectedTeachers: (state, action) => {
       state.selectedTeachers = action.payload;
@@ -205,9 +176,6 @@ const teacherSlice = createSlice({
 });
 
 export const {
-  addCustomFilter,
-  removeCustomFilter,
-  setCustomFilter,
   setSelectedTeachers,
   setRowCount,
   setSearchText,
@@ -217,8 +185,6 @@ export const {
   updateAvailableColumns,
   updateSelectedColumns,
   setTableRef,
-  toggleGeneralFilter,
-  resetAllCustomFilters,
   setImportStatus,
   setImportSelectedFile,
   setImportReset,

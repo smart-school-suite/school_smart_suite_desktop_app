@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
   teacherTimePrefs: null,
-  isGeneralFilterOpen: false,
   selectedTeacherTimePrefs: [],
   rowCount: 0,
   searchText: "",
@@ -11,7 +10,6 @@ const initialState = {
     selectedColumns: [],
     availableColumns: [],
   },
-  customFilter: [],
   import: {
     status: "IDLE",
     selectedFile: null,
@@ -74,40 +72,9 @@ const teacherTimePrefSlice = createSlice({
     setColumnMapping: (state, action) => {
       state.import.mapping = action.payload;
     },
-    addCustomFilter: (state, action) => {
-      const myId = uuidv4();
-      state.customFilter.push({
-        id: myId,
-        column: null,
-        match: null,
-        value: null,
-      });
-    },
-    resetAllCustomFilters: (state) => {
-      state.customFilter = [];
-    },
-    removeCustomFilter: (state, action) => {
-      const { id } = action.payload;
-      const customFilterIndex = state.customFilter.findIndex(
-        (cf) => cf.id === id,
-      );
-      state.customFilter.splice(customFilterIndex, 1);
-    },
-    setCustomFilter: (state, action) => {
-      const { id, field, value } = action.payload;
-      const customFilter = state.customFilter.find((cf) => cf.id === id);
-      if (!customFilter) return;
-
-      if (field === "column") customFilter.column = value;
-      if (field === "match") customFilter.match = value;
-      if (field === "value") customFilter.value = value;
-    },
     setTableRef: (state, action) => {
       const { tableRef } = action.payload;
       state.tableRef = tableRef;
-    },
-    toggleGeneralFilter: (state) => {
-      state.isGeneralFilterOpen = !state.isGeneralFilterOpen;
     },
     setSelectedTeacherTimePrefs: (state, action) => {
       state.selectedTeacherTimePrefs = action.payload;
@@ -158,9 +125,6 @@ const teacherTimePrefSlice = createSlice({
 });
 
 export const {
-  addCustomFilter,
-  removeCustomFilter,
-  setCustomFilter,
   setTeachers,
   setSelectedTeacherTimePrefs,
   setRowCount,
@@ -171,8 +135,6 @@ export const {
   updateAvailableColumns,
   updateSelectedColumns,
   setTableRef,
-  toggleGeneralFilter,
-  resetAllCustomFilters,
   setImportStatus,
   setImportSelectedFile,
   setImportReset,
