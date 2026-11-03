@@ -1,19 +1,18 @@
 import { useRef, useState } from "react";
-import { Icon } from "@iconify/react";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useCreateDepartment } from "../../hooks/department/useCreateDepartment";
-import {
-  TextAreaInput,
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
 import {
   nameSchema,
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid, hasNonEmptyValue } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import {
+  TextAreaInput,
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useCreateDepartment } from "../../hooks/department/useCreateDepartment";
 import { useFormError } from "../../hooks/form/useFormError";
+import { allFieldsValid } from "../../utils/functions";
 function CreateDepartment({ handleClose }) {
   const departmentNameRef = useRef();
   const descriptionRef = useRef();
@@ -56,7 +55,7 @@ function CreateDepartment({ handleClose }) {
   };
   return (
     <>
-      <div className="drawer-content px-2 pt-2">
+      <div className="drawer-content ps-2 pt-2 font-size-sm">
         <FormErrorBanner
           ref={errorBannerRef}
           error={formError}
