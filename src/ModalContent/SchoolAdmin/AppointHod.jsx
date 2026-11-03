@@ -4,8 +4,9 @@ import { useAssignHodMutation } from "../../Slices/Asynslices/postSlice";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AppointHod({ handleClose, row_id: schoolAdminId }) {
   const { data: department, isLoading, error } = useFetchDepartmentsQuery();
   const [formData, setFormData] = useState({
@@ -13,8 +14,11 @@ function AppointHod({ handleClose, row_id: schoolAdminId }) {
     hodable_id: schoolAdminId
   });
   const [assignHod] = useAssignHodMutation();
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError("Failed To Appoint HOD");
 
   const handleAppointHod = async () => {
+    clearFormError();
     try {
       await assignHod(formData).unwrap();
       handleClose();
@@ -23,10 +27,7 @@ function AppointHod({ handleClose, row_id: schoolAdminId }) {
         description={"The Head of Department has been appointed successfully 🎉"}
       />);
     } catch (e) {
-      toast.custom(<ToastDanger 
-         title={"HOD Appointment Failed ❌"}
-         description={"❌ Something went wrong! The Head of Department appointment failed due to an error. Please try again later."}
-      />);
+      setClientError("HOD Appointment Failed ❌", "❌ Something went wrong! The Head of Department appointment failed due to an error. Please try again later.");
     }
   };
 
@@ -123,6 +124,12 @@ function AppointHod({ handleClose, row_id: schoolAdminId }) {
             );
           })}
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-3">
           <button
             className="border-none rounded-3 p-2 font-size-sm w-100 primary-background text-white"

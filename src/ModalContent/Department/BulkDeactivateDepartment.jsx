@@ -1,12 +1,17 @@
 import { useBulkDeactivateDepartment } from "../../hooks/department/useBulkDeactivateDepartment";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeactivateDepartment({ handleClose, bulkData, resetAll }){
     const { mutate:deactivateDepartment, isPending } = useBulkDeactivateDepartment(handleClose, resetAll);
+    const { formError, errorBannerRef, handleServerError, clearFormError } =
+      useFormError("Failed To Bulk Deactivate Department");
     const formattedData = bulkData.map((items) => ({
         department_id:items.id
     }))
     const handleBulkDeactivate = () => {
-         deactivateDepartment({ departmentIds:formattedData })
+         clearFormError();
+         deactivateDepartment({ departmentIds:formattedData }, { onError: handleServerError })
     }
     return(
         <>
@@ -16,6 +21,12 @@ function BulkDeactivateDepartment({ handleClose, bulkData, resetAll }){
                   This action cannot be undone. This will Permanently delete This
                   account and remove this account data from our servers
                 </p>
+                <FormErrorBanner
+                  ref={errorBannerRef}
+                  error={formError}
+                  onDismiss={clearFormError}
+                  className="mb-2"
+                />
                 <div className="mt-4">
                   <div className="d-flex flex-row align-items-center gap-2 w-100">
                     <button

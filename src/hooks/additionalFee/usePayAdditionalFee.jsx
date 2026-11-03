@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { payAdditionalFee } from "../../services/additionalFee";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const usePayAdditionalFee =  (handleClose, additionalFeeId) => {
      const queryClient = useQueryClient();
@@ -23,13 +22,5 @@ export const usePayAdditionalFee =  (handleClose, additionalFeeId) => {
                 />
              )
          },
-         onError:() => {
-             toast.custom(
-                <ToastDanger 
-                  title={"Transaction Failed"}
-                  description={"Payment Failed Due to an Error Please Try Again"}
-                />
-             )
-         }
      });
 }

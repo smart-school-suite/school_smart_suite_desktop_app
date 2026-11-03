@@ -8,6 +8,8 @@ import { useAssignSpecialtyHall } from "../../hooks/specialtyHall/useAssignSpeci
 import { useGetAssignableHalls } from "../../hooks/specialtyHall/useGetAssignableHalls";
 import { useGetAssignedHalls } from "../../hooks/specialtyHall/useGetAssignedHalls";
 import { useRemoveAssignedSpecialtyHall } from "../../hooks/specialtyHall/useRemoveAssignedSpecialtyHall";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ManageSpecialtyHall({ handleClose, rowData }) {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [toggle, setToggle] = useState({
@@ -80,6 +82,8 @@ function AssignableHall({ specialtyId }) {
   } = useGetAssignableHalls(specialtyId);
   const { mutate: assignSpecialtyHall, isPending } =
     useAssignSpecialtyHall(specialtyId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const [selectedHallIds, setSelectedHallIds] = useState(new Set());
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -277,6 +281,12 @@ function AssignableHall({ specialtyId }) {
               )}
             </div>
           </div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <button
             className="border-none rounded-3 p-2 font-size-sm w-100 mt-4 primary-background text-white"
             onClick={() => {
@@ -286,10 +296,11 @@ function AssignableHall({ specialtyId }) {
                 })
               );
 
+              clearFormError();
               assignSpecialtyHall({
                 hallIds: formattedData,
                 specialty_id: specialtyId,
-              });
+              }, { onError: handleServerError });
             }}
             disabled={isPending || selectedHallIds.size === 0}
           >
@@ -310,6 +321,8 @@ function RemovableAssignedHall({ specialtyId }) {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const { mutate: removeAssignedHall, isPending } =
     useRemoveAssignedSpecialtyHall(specialtyId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const [selectedHallIds, setSelectedHallIds] = useState(new Set());
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -507,6 +520,12 @@ function RemovableAssignedHall({ specialtyId }) {
               )}
             </div>
           </div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <button
             className="border-none rounded-3 p-2 font-size-sm w-100 mt-4 primary-background text-white"
             onClick={() => {
@@ -515,10 +534,11 @@ function RemovableAssignedHall({ specialtyId }) {
                   hall_id: hallId,
                 })
               );
+              clearFormError();
               removeAssignedHall({
                 hallIds: formattedData,
                 specialty_id: specialtyId,
-              });
+              }, { onError: handleServerError });
             }}
             disabled={isPending || selectedHallIds.size === 0}
           >

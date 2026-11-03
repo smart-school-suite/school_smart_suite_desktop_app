@@ -13,15 +13,17 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetStudentBatchDetails } from "../../hooks/studentBatch/useGetBatchDetails";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateBatch({ handleClose, drawerData }) {
   const { id: batchId } = drawerData;
   const { mutate: updateBatch, isPending } = useUpdateBatch(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Batch");
   const {
     data: studentBatchDetails,
     isLoading,
@@ -48,34 +50,30 @@ function UpdateBatch({ handleClose, drawerData }) {
   }, [setFormData, isLoading]);
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleUpdateStudentBatch = async () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
-    updateBatch({ batchId: batchId, updateData: formData });
+    clearFormError();
+    updateBatch({ batchId: batchId, updateData: formData }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         {isLoading ? (
           <div className="d-flex flex-column w-100 gap-3">
             {[...Array(6)].map((_, index) => (

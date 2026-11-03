@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import {
   nameSchema,
@@ -14,11 +13,12 @@ import {
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 import { useGetLevels } from "../../hooks/level/useGetLevels";
 import { useCreateSpecialty } from "../../hooks/specialty/useCreateSpecialty";
 import { allFieldsValid } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function CreateSpecialty({ handleClose }) {
   const currency = useSelector(
@@ -50,6 +50,8 @@ function CreateSpecialty({ handleClose }) {
   });
   const { mutate: createSpecialtyMutation, isPending } =
     useCreateSpecialty(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Specialty");
   const { data: educationLevels, isLoading: educationIsLoading } =
     useGetLevels();
 
@@ -57,6 +59,7 @@ function CreateSpecialty({ handleClose }) {
     useGetDepartments();
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handlePrevalidation = async () => {
@@ -79,25 +82,11 @@ function CreateSpecialty({ handleClose }) {
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isFieldValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     const payload = {
@@ -108,11 +97,18 @@ function CreateSpecialty({ handleClose }) {
       level_id: formData.level_id.id,
       description: formData.description,
     };
-    createSpecialtyMutation(payload);
+    clearFormError();
+    createSpecialtyMutation(payload, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content font-size-sm px-2 pt-2">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div>
             <label htmlFor="specialtyName" className="font-size-sm">

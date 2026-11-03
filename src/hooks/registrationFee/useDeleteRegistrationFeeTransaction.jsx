@@ -2,7 +2,6 @@ import { deleteRegistrationFeeTransaction } from "../../services/registrationFee
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import ToastDanger from "../../components/Toast/ToastDanger";
 export const useDeleteRegistrationFeeTransaction = (
   handleClose,
   transactionId
@@ -25,14 +24,6 @@ export const useDeleteRegistrationFeeTransaction = (
         <ToastSuccess
           title={"Delete Successful"}
           description={"Registration Fee Transaction Deleted Successfully"}
-        />
-      );
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
         />
       );
     },

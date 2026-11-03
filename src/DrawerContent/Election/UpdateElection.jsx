@@ -1,5 +1,4 @@
 import { Fragment, useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import { dateTimeRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
@@ -7,7 +6,6 @@ import { NotFoundError } from "../../components/errors/Error";
 import { DateTimeRangeInput } from "../../components/FormComponents/InputComponents";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetAllSystemAcademicYear } from "../../hooks/academicYear/useGetAllSystemAcademicYear";
 import { useGetElectionDetails } from "../../hooks/election/useGetElectionDetail";
 import { useUpdateElection } from "../../hooks/election/useUpdateElection";
@@ -16,6 +14,8 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateElection({ drawerData, handleClose }) {
   const { id: electionId } = drawerData;
   const {
@@ -60,35 +60,35 @@ function UpdateElection({ drawerData, handleClose }) {
   }, [isLoading, setFormData]);
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
   const { mutate: updateElection, isPending } = useUpdateElection(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Election");
   const handleElectionUpdate = () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please ensure all fields are valid before updating."}
-        />,
-      );
+      setClientError("Invalid Fields", "Please ensure all fields are valid before updating.");
       return;
     }
 
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing to Update"}
-          description={"Please ensure all fields are filled before updating."}
-        />,
-      );
+      setClientError("Nothing to Update", "Please ensure all fields are filled before updating.");
       return;
     }
-    updateElection({ electionId: electionId, electionData: formData });
+    clearFormError();
+    updateElection({ electionId: electionId, electionData: formData }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content ps-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="">
           {isLoading ? (
             <div className="d-flex flex-column gap-3">

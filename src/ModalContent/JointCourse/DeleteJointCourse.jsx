@@ -2,11 +2,16 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useDeleteCourse } from "../../hooks/course/useDeleteCourse";
 import { CircleX } from "lucide-react";
 import { useDeleteJointCourse } from "../../hooks/jointCourse/useDeleteJointCourse";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeleteJointCourse({ handleClose }) {
   const courseId = rowData.id;
   const { mutate: deleteCourse, isPending } = useDeleteJointCourse(courseId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Delete Joint Course");
   const handleDeleteCourse = async () => {
-    deleteCourse(courseId);
+    clearFormError();
+    deleteCourse(courseId, { onError: handleServerError });
   };
   return (
     <>
@@ -36,6 +41,12 @@ function DeleteJointCourse({ handleClose }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

@@ -1,11 +1,11 @@
 import { PhoneNumberInput } from "../../components/FormComponents/InputComponents";
 import { useRef, useState } from "react";
 import { phoneValidationSchema } from "../../ComponentConfig/YupValidationSchema";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { allFieldsValid, formatNumber } from "../../utils/functions";
 import { usePurchaseActivationCode } from "../../hooks/activationCode/usePurchaseActivationCode";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function MtnPaymentMethod({
   selectedMethod,
   paymentMethod,
@@ -17,6 +17,8 @@ function MtnPaymentMethod({
   const phoneNumberRef = useRef();
   const { mutate: purchaseActivationCode, isPending } =
     usePurchaseActivationCode();
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError();
   const [formData, setFormData] = useState({
     phone_number: "",
   });
@@ -32,38 +34,26 @@ function MtnPaymentMethod({
   };
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     handleValidation();
+    clearFormError();
     purchaseActivationCode({
       payment_method_id: findMethodByKey(paymentMethod, selectedMethod).id,
       phone_number: formData.phone_number,
       ...purchaseCredentials,
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -86,6 +76,12 @@ function MtnPaymentMethod({
         />
       </div>
       <div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <button
           className="border-none w-100 font-size-sm p-2 rounded-3 primary-background text-white"
           onClick={() => handleSubmit()}

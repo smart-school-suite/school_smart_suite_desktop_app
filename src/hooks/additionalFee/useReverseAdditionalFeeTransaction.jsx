@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { reverseAdditionalFeeTransaction } from "../../services/additionalFee";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useReverseAdditionalFeeTransaction = (handleClose, transactionId) => {
      const queryClient = useQueryClient();
@@ -23,13 +22,5 @@ export const useReverseAdditionalFeeTransaction = (handleClose, transactionId) =
                 />
              )
          },
-         onError:() => {
-             toast.custom(
-                <ToastDanger 
-                  title={"Transaction Failed"}
-                  description={"Failed to reverse additional fee transaction"}
-                />
-             )
-         }
      })
 }

@@ -1,13 +1,18 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useBulkDeleteExam } from "../../hooks/exam/useBulkDeleteExam";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeleteExam({ handleClose, bulkData, resetAll }) {
   const { mutate: bulkDeleteExam, isPending } = useBulkDeleteExam(
     handleClose,
     resetAll
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Delete Exam");
   const fomattedData = bulkData.map((items) => ({ exam_id: items.id }));
   const handleBulkDeleteExam = () => {
-    bulkDeleteExam({ examIds: fomattedData });
+    clearFormError();
+    bulkDeleteExam({ examIds: fomattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -17,6 +22,12 @@ function BulkDeleteExam({ handleClose, bulkData, resetAll }) {
           This action cannot be undone. This will Permanently delete This
           account and remove this account data from our servers
         </p>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button

@@ -1,12 +1,17 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useBulkReverserResitTransactions } from "../../hooks/studentResit/useBulkReverseTransactions";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkReverseResitFeeTransaction({ handleClose, resetAll, bulkData }) {
   const formattedData = bulkData?.selectedTransactions?.map((items) => ({ transaction_id: items.id }));
   const { mutate: reverseTransaction, isPending } =
     useBulkReverserResitTransactions(handleClose, resetAll);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Reverse Resit Fee Transaction");
   const handleReverseTransaction = () => {
-    reverseTransaction({ transactionIds: formattedData });
+    clearFormError();
+    reverseTransaction({ transactionIds: formattedData }, { onError: handleServerError });
   };
 
   return (
@@ -37,6 +42,12 @@ function BulkReverseResitFeeTransaction({ handleClose, resetAll, bulkData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

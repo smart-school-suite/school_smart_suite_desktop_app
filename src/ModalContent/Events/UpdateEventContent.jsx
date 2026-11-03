@@ -27,10 +27,10 @@ import CustomDropdown, {
 } from "../../components/Dropdowns/Dropdowns";
 import TextDisplay from "../../components/TextComponents/TextDisplay";
 import { useUpdateSchoolEventContent } from "../../hooks/schoolEvent/useUpdateSchoolEventContent";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useSelector } from "react-redux";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateEventContent({ rowData, handleClose }) {
   const { id: schoolEventId } = rowData;
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -96,25 +96,15 @@ function UpdateEventContent({ rowData, handleClose }) {
     handleClose,
     schoolEventId
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Event Content");
   const handleUpdateContent = async () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
     const payload = {
@@ -128,7 +118,8 @@ function UpdateEventContent({ rowData, handleClose }) {
       start_date: formData.start_date,
       end_date: formData.end_date,
     };
-    updateEventContent({ schoolEventId, updateData: payload });
+    clearFormError();
+    updateEventContent({ schoolEventId, updateData: payload }, { onError: handleServerError });
   };
   return (
     <>
@@ -254,14 +245,7 @@ function UpdateEventContent({ rowData, handleClose }) {
                       value={formData.tags}
                       onSelect={(value) => {
                         if (value.length > 5) {
-                          toast.custom(
-                            <ToastWarning
-                              title={"Max Amount Reached"}
-                              description={
-                                "You can only select from 1 - 5 tags maximum"
-                              }
-                            />
-                          );
+                          setClientError("Max Amount Reached", "You can only select from 1 - 5 tags maximum");
                           return;
                         }
                         handleStateChange("tags", value, setFormData);
@@ -452,6 +436,12 @@ function UpdateEventContent({ rowData, handleClose }) {
                 </div>
               </div>
             </div>
+            <FormErrorBanner
+              ref={errorBannerRef}
+              error={formError}
+              onDismiss={clearFormError}
+              className="mb-2"
+            />
             <div
               className="d-flex flex-row w-100 justify-content-end"
               style={{ height: "5%" }}

@@ -4,6 +4,8 @@ import CustomDropdown from "../../../components/Dropdowns/Dropdowns";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { useUpdateSetting } from "../../../hooks/schoolBranchSetting/useUpdateSetting";
 import { useGetSemesterTimetablePeriods } from "../../../hooks/semesterTimetable/useSemesterTimetablePeriodDuration";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 
 function PeriodDurationSetting({ handleClose = () => {}, rowData }) {
   const {
@@ -12,6 +14,8 @@ function PeriodDurationSetting({ handleClose = () => {}, rowData }) {
     error: periodsError,
   } = useGetSemesterTimetablePeriods();
   const { mutate: updateSetting, isPending } = useUpdateSetting(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
 
   const initialValue = rowData?.value ?? null;
 
@@ -54,12 +58,13 @@ function PeriodDurationSetting({ handleClose = () => {}, rowData }) {
       return;
     }
 
+    clearFormError();
     updateSetting({
       payload: {
         setting_id: rowData?.id,
         value: duration?.id,
       },
-    });
+    }, { onError: handleServerError });
   };
 
   return (
@@ -90,6 +95,12 @@ function PeriodDurationSetting({ handleClose = () => {}, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
 
         <div className="p-2 font-size-sm flex-grow-1">
           {error && (

@@ -1,11 +1,16 @@
 import { useDeleteResitExam } from "../../hooks/resitExam/useDeleteResitExam";
 import { CircleX } from "lucide-react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeleteResitExam({ handleClose, rowData }) {
   const examId = rowData.id;
   const { mutate: deleteExam, isPending } = useDeleteResitExam();
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Delete Resit Exam");
   const handleDeleteExam = async () => {
-    deleteExam(examId);
+    clearFormError();
+    deleteExam(examId, { onError: handleServerError });
   };
   return (
     <>
@@ -33,6 +38,12 @@ function DeleteResitExam({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

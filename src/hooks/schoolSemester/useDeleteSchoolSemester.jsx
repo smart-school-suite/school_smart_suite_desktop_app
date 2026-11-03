@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteSchoolSemester } from "../../services/schoolSemester";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 export const useDeleteSchoolSemester = (handleClose) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -19,14 +18,6 @@ export const useDeleteSchoolSemester = (handleClose) => {
         <ToastSuccess
           title={"Delete Successfull"}
           description={"School Semester Deleted Successfully"}
-        />
-      );
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
         />
       );
     },

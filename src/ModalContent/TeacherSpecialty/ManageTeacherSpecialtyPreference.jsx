@@ -8,6 +8,8 @@ import { useRemoveSpecialtyPreference } from "../../hooks/teacher/useRemoveSpeci
 import { useSelector } from "react-redux";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function ManageTeacherSpecialtyPreference({ rowData, handleClose }) {
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -82,6 +84,8 @@ function AddablePreferences({ teacherId }) {
   } = useGetAvialableSpecialtyPreference(teacherId);
   const { mutate: addPreference, isPending } =
     useAddTeacherSpecialtyPreference(teacherId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const [selectedSpecialtyIds, setSelectedSpecialtyIds] = useState(new Set());
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -238,6 +242,12 @@ function AddablePreferences({ teacherId }) {
               )}
             </div>
           </div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <button
             className="border-none rounded-3 p-2 font-size-sm w-100 mt-4 primary-background text-white"
             onClick={() => {
@@ -248,7 +258,8 @@ function AddablePreferences({ teacherId }) {
                 })
               );
 
-              addPreference(formattedData);
+              clearFormError();
+              addPreference(formattedData, { onError: handleServerError });
             }}
             disabled={isPending || selectedSpecialtyIds.size === 0}
           >
@@ -269,6 +280,8 @@ function RemovablePreferences({ teacherId }) {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const { mutate: removePreference, isPending } =
     useRemoveSpecialtyPreference(teacherId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const [selectedSpecialtyIds, setSelectedSpecialtyIds] = useState(new Set());
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -425,6 +438,12 @@ function RemovablePreferences({ teacherId }) {
               )}
             </div>
           </div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <button
             className="border-none rounded-3 p-2 font-size-sm w-100 mt-4 primary-background text-white"
             onClick={() => {
@@ -435,7 +454,8 @@ function RemovablePreferences({ teacherId }) {
                 })
               );
 
-              removePreference(formattedData);
+              clearFormError();
+              removePreference(formattedData, { onError: handleServerError });
             }}
             disabled={isPending || selectedSpecialtyIds.size === 0}
           >

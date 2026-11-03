@@ -23,6 +23,8 @@ import {
   Info,
   CircleCheck,
 } from "lucide-react";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 
 function TeacherImportReview({
   handleClose,
@@ -38,6 +40,8 @@ function TeacherImportReview({
     isError,
     error,
   } = useImportTeacher(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const [filter, setFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const tableRef = useRef();
@@ -104,10 +108,11 @@ function TeacherImportReview({
 
   const handleTeacherImport = () => {
     const formattedMapping = formatImportMapping(mapping);
+    clearFormError();
     importTeachers({
       file: file,
       mapping: formattedMapping,
-    });
+    }, { onError: handleServerError });
   };
 
   return (
@@ -136,6 +141,12 @@ function TeacherImportReview({
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-2 d-flex flex-column gap-3">
           <div className="d-flex flex-row justify-content-end fw-semibold">
             <span>

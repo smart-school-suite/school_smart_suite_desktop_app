@@ -11,8 +11,6 @@ import {
   timeRangeSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid, convertToMySQLTimeHHMM } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useAutoGenResitExamTimetable } from "../../hooks/resitExamTimetable/useAutoGenResitExamTimetable";
 import { useCreateResitTimetable } from "../../hooks/resitExamTimetable/useCreateResitTimetable";
 import { motion } from "framer-motion";
@@ -20,6 +18,8 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useSelector } from "react-redux";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AutoGenResitExamTimetable({ handleClose, rowData }) {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [isActive, setIsActive] = useState("timetableConfig");
@@ -84,6 +84,8 @@ function TimetableConfig({
   formData,
   handleSetFormData,
 }) {
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError();
   const timeRangeRef = useRef();
   const minDailyCourseRef = useRef();
   const maxDailyCourseRef = useRef();
@@ -221,19 +223,19 @@ function TimetableConfig({
         />
       </div>
       <div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <button
           className="p-2 font-size-sm border-none rounded-2 primary-background w-100"
           onClick={async () => {
             const prevalidation = await handlePrevalidation();
             if (!allFieldsValid(prevalidation)) {
-              toast.custom(
-                <ToastWarning
-                  title={"Invalid Fields"}
-                  description={
-                    "Please ensure all fields are valid before Generating Timetable"
-                  }
-                />
-              );
+              setClientError("Invalid Fields", "Please ensure all fields are valid before Generating Timetable");
+              return;
             }
             handleToggleActive("timetablePreview");
           }}
@@ -261,6 +263,8 @@ function TimetablePreview({
   } = useAutoGenResitExamTimetable();
   const { mutate: createTimetable, isPending: isCreating } =
     useCreateResitTimetable(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const [genTimetable, setGenTimetable] = useState([]);
   const handleGenerateTimetable = async () => {
     const genTimetable = await autoGenTimetable({
@@ -270,7 +274,7 @@ function TimetablePreview({
       min_course_per_day: formData.min_course_per_day.value,
       max_course_per_day: formData.max_course_per_day.value,
       course_duration: formData.course_duration.value,
-    });
+    }, { onError: handleServerError });
     setGenTimetable(genTimetable?.data);
   };
   useEffect(() => {
@@ -301,6 +305,12 @@ function TimetablePreview({
         ></NotFoundError>
       ) : (
         <div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <div className="d-flex flex-row align-items-center justify-content-end my-2 gap-2">
             <button
               className="border-none rounded-3 px-3 py-2 font-size-sm d-flex gap-2 align-items-center"
@@ -328,10 +338,11 @@ function TimetablePreview({
                   school_year: rowData.school_year,
                   specialty_id: rowData.specialty_id,
                 }));
+                clearFormError();
                 createTimetable({
                   resitExamId: rowData.id,
                   createData: { entries: payload },
-                });
+                }, { onError: handleServerError });
               }}
             >
               {isCreating ? <SingleSpinner /> : <span>Create Timetable</span>}

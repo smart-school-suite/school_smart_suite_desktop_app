@@ -1,14 +1,19 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
 import { useActivateJointCourse } from "../../hooks/jointCourse/useActivateJointCourse";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ActivateJointCourse({ handleClose, rowData }) {
   const courseId = rowData.id;
   const { mutate: activateCourse, isPending } = useActivateJointCourse(
     handleClose,
     courseId,
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Activate Joint Course");
   const handleActivateCourse = () => {
-    activateCourse(courseId);
+    clearFormError();
+    activateCourse(courseId, { onError: handleServerError });
   };
   return (
     <>
@@ -36,6 +41,12 @@ function ActivateJointCourse({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

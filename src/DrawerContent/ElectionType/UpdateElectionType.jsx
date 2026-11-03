@@ -1,6 +1,5 @@
 import { Icon } from "@iconify/react";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import {
     nameSchema,
     textareaSchema,
@@ -11,12 +10,13 @@ import {
     TextInput,
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useUpdateElectionType } from "../../hooks/electionType/useUpdateElectionType";
 import {
     hasNonEmptyValue,
     optionalValidateObject,
 } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateElectionType({ drawerData, handleClose }) {
   const {
     id: electionTypeId,
@@ -25,6 +25,8 @@ function UpdateElectionType({ drawerData, handleClose }) {
   } = drawerData;
   const { mutate: updateElectionType, isPending } =
     useUpdateElectionType(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Election Type");
   const [formData, setFormData] = useState({
     election_title: electionName || "",
     description: description || "",
@@ -34,34 +36,30 @@ function UpdateElectionType({ drawerData, handleClose }) {
     description: "",
   });
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleUpdate = () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
-    updateElectionType({ electionTypeId, updateData: formData });
+    clearFormError();
+    updateElectionType({ electionTypeId, updateData: formData }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content ps-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div className="d-flex flex-row align-items-center justify-content-between mb-3">
             <span>Create Election Type</span>

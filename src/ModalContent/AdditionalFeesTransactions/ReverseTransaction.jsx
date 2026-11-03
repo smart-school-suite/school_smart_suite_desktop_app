@@ -1,11 +1,16 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useReverseAdditionalFeeTransaction } from "../../hooks/additionalFee/useReverseAdditionalFeeTransaction";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ReverseTransaction({ rowData, handleClose }) {
   const transactionId = rowData.id;
   const { mutate:reverseTransaction, isPending } = useReverseAdditionalFeeTransaction(handleClose, transactionId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Reverse Transaction");
 
   const handleReverseTransaction = async () => {
-    reverseTransaction(transactionId);
+    clearFormError();
+    reverseTransaction(transactionId, { onError: handleServerError });
   };
   return (
     <>
@@ -15,6 +20,12 @@ function ReverseTransaction({ rowData, handleClose }) {
               This action cannot be undone. This will Permanently delete This
               account and remove this account data from our servers
             </p>
+            <FormErrorBanner
+              ref={errorBannerRef}
+              error={formError}
+              onDismiss={clearFormError}
+              className="mb-2"
+            />
             <div className="mt-4">
               <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
                 <button

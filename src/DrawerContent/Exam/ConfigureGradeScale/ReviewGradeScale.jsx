@@ -9,6 +9,8 @@ import RectangleSkeleton from "../../../components/SkeletonPageLoader/Rectangula
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { resetGradeScaleState } from "../../../Slices/exam/examSlice";
 import { useAddExamGradeScale } from "../../../hooks/exam/useAddExamGradeScale";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function ReviewGradeScale({
   handleClose,
   previousStep,
@@ -20,16 +22,19 @@ function ReviewGradeScale({
   const moduleState = useSelector((state) => state.exam.gradeScale);
   const { mutate: addGradeScale, isPending } =
     useAddExamGradeScale(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const {
     data: gradeScales,
     isLoading,
     error,
   } = useGetGradeScaleCategoryId(moduleState?.selectedGradeScale?.id);
   const handleConfigureScale = () => {
+    clearFormError();
     addGradeScale({
       examId: drawerData.id,
       gradeScaleCategoryId: moduleState?.selectedGradeScale?.id,
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -119,6 +124,12 @@ function ReviewGradeScale({
         </div>
       </div>
       <div className="drawer-footer font-size-sm">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column w-100">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">

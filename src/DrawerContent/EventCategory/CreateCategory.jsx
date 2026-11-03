@@ -2,8 +2,6 @@ import { useCreateEventCategory } from "../../hooks/eventCategory/useCreateEvent
 import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useRef } from "react";
-import ToastWarning from "../../components/Toast/ToastWarning";
-import toast from "react-hot-toast";
 import {
   TextAreaInput,
   TextInput,
@@ -14,9 +12,13 @@ import {
 } from "../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateCategory({ handleClose }) {
   const { mutate: createCategory, isPending } =
     useCreateEventCategory(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Category");
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -37,38 +39,32 @@ function CreateCategory({ handleClose }) {
   };
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
-    createCategory(formData);
+    clearFormError();
+    createCategory(formData, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-2">
           <div>
             <label htmlFor="categoryName" className="font-size-sm">

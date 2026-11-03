@@ -1,13 +1,18 @@
 import { useBulkDeleteResitTransactions } from "../../hooks/studentResit/useBulkDeleteTransactions";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeleteResitFeeTransaction({ handleClose, resetAll, bulkData }) {
   console.log(bulkData);
   const formattedData = bulkData?.selectedTransactions?.map((items) => ({ transaction_id: items.id }));
   const { mutate: bulkDeleteTransaction, isPending } =
     useBulkDeleteResitTransactions(handleClose, resetAll);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Delete Resit Fee Transaction");
   const handleBulkDeleteTransaction = () => {
-    bulkDeleteTransaction({ transactionIds: formattedData });
+    clearFormError();
+    bulkDeleteTransaction({ transactionIds: formattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -37,6 +42,12 @@ function BulkDeleteResitFeeTransaction({ handleClose, resetAll, bulkData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
 import { generateSemesterTimetable } from "../../services/semesterTimetable";
@@ -26,18 +25,6 @@ export const useGenerateSemesterTimetable = () => {
       queryClient.invalidateQueries({
         queryKey: ["semester-timetable-versions"],
       });
-      toast.custom(
-        <ToastDanger
-          title={
-            error?.response?.data?.errors?.title ??
-            "Could Not Start Timetable Generation"
-          }
-          description={
-            error?.response?.data?.errors?.description ??
-            "We couldn't reach the server. Please check your connection and try again."
-          }
-        />,
-      );
     },
   });
 };

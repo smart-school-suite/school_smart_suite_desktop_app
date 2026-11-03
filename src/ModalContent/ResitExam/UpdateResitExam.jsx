@@ -15,8 +15,8 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateResitExam({ handleClose, rowData }) {
   const { id: examId } = rowData;
   const [isValid, setIsValid] = useState({
@@ -34,31 +34,23 @@ function UpdateResitExam({ handleClose, rowData }) {
     school_year: "",
   });
   const { mutate: updateExam, isPending } = useUpdateResitExam(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Resit Exam");
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleExamUpdate = async () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
-    updateExam({ resitExamId: examId, updateData: formData });
+    clearFormError();
+    updateExam({ resitExamId: examId, updateData: formData }, { onError: handleServerError });
   };
   return (
     <>
@@ -132,6 +124,12 @@ function UpdateResitExam({ handleClose, rowData }) {
           error={errors.school_year}
         />
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mb-2"
+      />
       <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100 mt-2">
         <button
           disabled={isPending}

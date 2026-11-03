@@ -3,12 +3,16 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useSelector, useDispatch } from "react-redux";
 import { resetCreateAnnouncement } from "../../Slices/announcement/announcementSlice";
 import { useCreateAnnouncement } from "../../hooks/announcement/useCreateAnnouncement";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AnnouncementDiscardWarning({ handleClose, rowData }) {
   const { handleCloseDrawer } = rowData;
   const { mutate: createAnnouncement, isPending } = useCreateAnnouncement(
     handleClose,
     handleCloseDrawer,
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const dispatch = useDispatch();
   const moduleState = useSelector(
     (state) => state.announcement.createAnnouncement,
@@ -61,7 +65,8 @@ function AnnouncementDiscardWarning({ handleClose, rowData }) {
       ],
     };
 
-    createAnnouncement(payload);
+    clearFormError();
+    createAnnouncement(payload, { onError: handleServerError });
   };
   return (
     <>
@@ -92,6 +97,12 @@ function AnnouncementDiscardWarning({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

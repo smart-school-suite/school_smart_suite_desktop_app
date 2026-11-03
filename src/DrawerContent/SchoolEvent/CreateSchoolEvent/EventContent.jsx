@@ -20,15 +20,17 @@ import {
 } from "../../../Slices/schoolEvent/schoolEventSlice";
 import { useRef } from "react";
 import { ShieldAlert, Info, TriangleAlert, CircleCheck, X } from "lucide-react";
-import toast from "react-hot-toast";
-import ToastWarning from "../../../components/Toast/ToastWarning";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { motion, AnimatePresence } from "framer-motion";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
 import { allFieldsValid } from "../../../utils/functions";
 import { useState } from "react";
 import { useGetTags } from "../../../hooks/tag/useGetTags";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function EventContent({ handleClose, currentStep, nextStep, fullStep }) {
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError();
   const dispatch = useDispatch();
   const titleRef = useRef();
   const contentRef = useRef();
@@ -152,6 +154,12 @@ function EventContent({ handleClose, currentStep, nextStep, fullStep }) {
         className="drawer-content px-2 pt-3 font-size-sm"
         style={{ paddingBottom: "10rem" }}
       >
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-1">
           <span className="text-iron-400">Event Details</span>
           <div className="d-flex flex-column gap-2">
@@ -265,14 +273,7 @@ function EventContent({ handleClose, currentStep, nextStep, fullStep }) {
                 errorMessage={"School Event Tags Required"}
                 onSelect={(selectedIds) => {
                   if (selectedIds.length > 5) {
-                    toast.custom(
-                      <ToastWarning
-                        title={"Max Amount Reached"}
-                        description={
-                          "You can only select from 1 - 5 tags maximum"
-                        }
-                      />,
-                    );
+                    setClientError("Max Amount Reached", "You can only select from 1 - 5 tags maximum");
                     return;
                   }
                   dispatch(

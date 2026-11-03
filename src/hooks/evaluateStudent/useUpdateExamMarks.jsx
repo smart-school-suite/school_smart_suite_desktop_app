@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateExamMark } from "../../services/evaluateStudent";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
 import { resetUpdateState } from "../../Slices/examEvaluation/examEvaluationSlice";
@@ -30,14 +29,6 @@ export const useUpdateExamMarks = (handleClose, candidateId) => {
       if (resetUpdateState) {
         dispatch(resetUpdateState());
       }
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
-        />,
-      );
     },
   });
 };

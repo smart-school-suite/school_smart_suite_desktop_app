@@ -1,6 +1,8 @@
 import { useBulkDeleteRegistrationFee } from "../../hooks/registrationFee/useBulkDeleteRegistrationFee";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeleteRegistrationFee({ handleClose, bulkData, resetAll }) {
   const formattedData = bulkData?.selectedRegistrationFee?.map((items) => ({
     registration_fee_id: items.id,
@@ -9,8 +11,11 @@ function BulkDeleteRegistrationFee({ handleClose, bulkData, resetAll }) {
     handleClose,
     resetAll,
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Delete Registration Fee");
   const handleBulkDelete = () => {
-    bulkDelete({ registrationFeeIds: formattedData });
+    clearFormError();
+    bulkDelete({ registrationFeeIds: formattedData }, { onError: handleServerError });
   };
 
   return (
@@ -41,6 +46,12 @@ function BulkDeleteRegistrationFee({ handleClose, bulkData, resetAll }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

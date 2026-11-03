@@ -1,11 +1,16 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useDeleteAdditionalFee } from "../../hooks/additionalFee/useDeleteAdditionalFee";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeleteAdditionalFees({ handleClose, rowData }) {
   const { id:additionalFeeId } = rowData;
   const { mutate:deleteAdditionalFee, isPending } = useDeleteAdditionalFee(handleClose, additionalFeeId)
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Delete Additional Fees");
   const handleDelete =  () => {
-    deleteAdditionalFee(additionalFeeId)
+    clearFormError();
+    deleteAdditionalFee(additionalFeeId, { onError: handleServerError })
   };
   return (
     <>
@@ -33,6 +38,12 @@ function DeleteAdditionalFees({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

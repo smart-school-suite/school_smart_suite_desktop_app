@@ -8,10 +8,10 @@ import { formatNumber } from "../../utils/functions";
 import { useSelector } from "react-redux";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { allFieldsValid } from "../../utils/functions";
 import { activationCodePaymentMethodComp } from "../../constants/activationCodePaymentMethod";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function PurchaseActivationCode({ handleClose }) {
   const {
     data: activationCodeType,
@@ -36,25 +36,26 @@ function PurchaseActivationCode({ handleClose }) {
     student_code_count: "",
     teacher_code_count: "",
   });
+    const { formError, errorBannerRef, setClientError, clearFormError } =
+      useFormError("Failed To Purchase Activation Code");
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleValidation = async () => {
     if (formData.student_code_count == 0 && formData.teacher_code_count == 0) {
-      toast.custom(
-        <ToastWarning
-          title="No Recipients Selected"
-          description="Please add at least one student or teacher code to proceed."
-        />
+      setClientError(
+        "No Recipients Selected",
+        "Please add at least one student or teacher code to proceed.",
       );
       return;
     }
     if (validateParticipants(formData, isFieldValid)) {
-      <ToastWarning
-        title={"Invalid Fields"}
-        description="Please check the highlighted fields and try again."
-      />;
+      setClientError(
+        "Invalid Fields",
+        "Please check the highlighted fields and try again.",
+      );
     }
   };
   return (
@@ -375,6 +376,12 @@ function PurchaseActivationCode({ handleClose }) {
                     </span>
                   </div>
                 </div>
+                <FormErrorBanner
+                  ref={errorBannerRef}
+                  error={formError}
+                  onDismiss={clearFormError}
+                  className="mb-2"
+                />
                 <div>
                   <PaymentForm
                     selectedMethod={selectedMethod}

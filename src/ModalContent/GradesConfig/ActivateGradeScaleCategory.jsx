@@ -1,11 +1,16 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
 import { useActivateGradeScaleCategory } from "../../hooks/gradeScale/useActivateGradeScaleCategory";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ActivateGradeScaleCategory({ handleClose, rowData }) {
   const { mutate: activateGradeScale, isPending } =
     useActivateGradeScaleCategory(handleClose, rowData.id);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Activate Grade Scale Category");
   const handleActivate = () => {
-    activateGradeScale(rowData.id);
+    clearFormError();
+    activateGradeScale(rowData.id, { onError: handleServerError });
   };
   return (
     <>
@@ -35,6 +40,12 @@ function ActivateGradeScaleCategory({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

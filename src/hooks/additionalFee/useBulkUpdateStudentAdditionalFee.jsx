@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bulkUpdateAdditionalFee } from "../../services/additionalFee";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 export const useBulkUpdateAdditionalFees = (handleClose, resetAll) => {
      const queryClient = useQueryClient();
      return useMutation({
@@ -25,13 +24,5 @@ export const useBulkUpdateAdditionalFees = (handleClose, resetAll) => {
                 />
              )
          },
-         onError:() => {
-             toast.custom(
-                <ToastDanger 
-                  title={"Update Failed"}
-                  description={"Update Failed Due to an error Please try again later"}
-                />
-             )
-         }
      })
 }

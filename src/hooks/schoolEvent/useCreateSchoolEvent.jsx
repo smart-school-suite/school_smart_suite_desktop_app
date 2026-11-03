@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createSchoolEvent } from "../../services/schoolEvent";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 export const useCreateSchoolEvent = (handleClose) =>  {
     const queryClient = useQueryClient();
     return useMutation({
@@ -22,13 +21,5 @@ export const useCreateSchoolEvent = (handleClose) =>  {
                  />
             )
         },
-        onError:(error) => {
-              toast.custom(
-                 <ToastDanger 
-                  title={error.response.data.errors.title}
-                  description={error.response.data.errors.description}
-                 />
-             )
-        }
     })
 }

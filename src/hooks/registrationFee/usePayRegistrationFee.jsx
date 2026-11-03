@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { payRegistrationFees } from "../../services/registrationFee";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const usePayRegistrationFee = (handleClose) => {
   const queryClient = useQueryClient();
@@ -21,14 +20,6 @@ export const usePayRegistrationFee = (handleClose) => {
         <ToastSuccess
           title={"Payment Successfull"}
           description={"Payment Successfully Completed"}
-        />
-      );
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
         />
       );
     },

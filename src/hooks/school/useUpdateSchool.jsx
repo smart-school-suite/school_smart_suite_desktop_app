@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateSchool } from "../../services/school";
-import ToastDanger from "../../components/Toast/ToastDanger"
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
 export const useUpdateSchool = (handleClose, attribute) => {
@@ -20,13 +19,5 @@ export const useUpdateSchool = (handleClose, attribute) => {
                 />
              )
          },
-         onError:() => {
-             toast.custom(
-                <ToastDanger 
-                  title={"Updated Failed"}
-                  description={`Failed to update ${attribute} due to an error please try again !!`}
-                />
-             )
-         }
     })
 }

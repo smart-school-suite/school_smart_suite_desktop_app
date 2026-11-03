@@ -1,17 +1,19 @@
 import { Icon } from "@iconify/react";
 import { Fragment, useState } from "react";
-import toast from "react-hot-toast";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpecialty";
 import { useAssignTeacherCourse } from "../../hooks/teacherCourse/useAssignTeacherCourse";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AssignCourse({ handleClose, drawerData }) {
   const { mutate: assignTeacherCourse, isPending } = useAssignTeacherCourse(
     drawerData.specialtyId,
     handleClose,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Assign Course");
   const {
     data: teachers,
     isLoading: isTeacherLoading,
@@ -20,14 +22,10 @@ function AssignCourse({ handleClose, drawerData }) {
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const handleSubmit = () => {
     if (!selectedTeacher) {
-      toast.custom(
-        <ToastWarning
-          title={"Teacher Required"}
-          description={`You must select a teacher for ${drawerData.course_title} before submitting`}
-        />,
-      );
+      setClientError("Teacher Required", `You must select a teacher for ${drawerData.course_title} before submitting`);
       return;
     }
+    clearFormError();
     assignTeacherCourse({
       teacher_id: selectedTeacher,
       courseIds: [
@@ -35,11 +33,17 @@ function AssignCourse({ handleClose, drawerData }) {
           course_id: drawerData?.course_id,
         },
       ],
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div className="card p-2 rounded-4  shadow-sm d-flex flex-column gap-3 font-size-sm">
             <div className="d-flex flex-column gap-1">

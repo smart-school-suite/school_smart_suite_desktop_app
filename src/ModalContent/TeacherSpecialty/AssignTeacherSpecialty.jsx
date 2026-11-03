@@ -4,8 +4,6 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { useGetAssignableTeachers } from "../../hooks/teacherSpecialty/useGetAssignableTeacherSpecialtyId";
 import { Fragment, useState } from "react";
 import { useAssignTeachers } from "../../hooks/teacherSpecialty/useAssignTeachers";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { NotFoundError } from "../../components/errors/Error";
 import {
@@ -19,6 +17,8 @@ import {
   Info,
   CircleCheck,
 } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AssignTeacherSpecialty({ handleClose, rowData }) {
   const {
     data: specialty,
@@ -33,23 +33,19 @@ function AssignTeacherSpecialty({ handleClose, rowData }) {
   const { mutate: assignTeacher, isPending: isAssigning } = useAssignTeachers(
     rowData?.specialtyId,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Assign Teacher Specialty");
   const [selectedTeachers, setSelectedTeachers] = useState([]);
   const handleAssignTeachers = () => {
     if (selectedTeachers.length < 1) {
-      toast.custom(
-        <ToastWarning
-          title={"Teachers Required"}
-          description={
-            "You must select atleast a one teacher before assigning to this specialty"
-          }
-        />,
-      );
+      setClientError("Teachers Required", "You must select atleast a one teacher before assigning to this specialty");
       return;
     }
+    clearFormError();
     assignTeacher({
       specialty_id: rowData?.specialtyId,
       teacher_ids: selectedTeachers.map((teacher) => teacher.id),
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -80,6 +76,12 @@ function AssignTeacherSpecialty({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-2">
           <div
             className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-2"

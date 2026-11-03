@@ -11,11 +11,11 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetSchoolAdminDetails } from "../../hooks/schoolAdmin/useGetSchoolAdminDetails";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 const UpdateSchoolAdmin = ({ rowData, handleClose }) => {
   const { id: schoolAdminId } = rowData;
   const {
@@ -24,6 +24,8 @@ const UpdateSchoolAdmin = ({ rowData, handleClose }) => {
     error,
   } = useGetSchoolAdminDetails(schoolAdminId);
   const { mutate: update, isPending } = useUpdateSchoolAdmin(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update School Admin");
   const [formData, setFormData] = useState({
     name: "",
     first_name: "",
@@ -49,28 +51,20 @@ const UpdateSchoolAdmin = ({ rowData, handleClose }) => {
   }, [isLoading, setFormData])
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleAdminUpdate = () => {
     if (optionalValidateObject(isFieldValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please ensure all fields are valid before updating."}
-        />
-      );
+      setClientError("Invalid Fields", "Please ensure all fields are valid before updating.");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing to Update"}
-          description={"Please ensure all fields are filled before updating."}
-        />
-      );
+      setClientError("Nothing to Update", "Please ensure all fields are filled before updating.");
       return;
     }
-    update({ schoolAdminId, updateData: formData });
+    clearFormError();
+    update({ schoolAdminId, updateData: formData }, { onError: handleServerError });
   };
   return (
     <>
@@ -191,6 +185,12 @@ const UpdateSchoolAdmin = ({ rowData, handleClose }) => {
                 value={formData.email}
               />
             </div>
+            <FormErrorBanner
+              ref={errorBannerRef}
+              error={formError}
+              onDismiss={clearFormError}
+              className="mb-2"
+            />
             <div className="my-1 w-100 mt-3">
               <button
                 className="border-none rounded-3 p-2 w-100 primary-background text-white font-size-sm"
