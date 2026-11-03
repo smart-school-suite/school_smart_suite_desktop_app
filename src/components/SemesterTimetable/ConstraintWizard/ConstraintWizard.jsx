@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useState } from "react";
-import "./constraintWizard.css";
+import "../../../styles/constraintWizard.css";
 
 /**
  * Shared frame for every semester-timetable constraint drawer.

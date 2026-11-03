@@ -167,7 +167,7 @@ function ColumnFilterChip({ filters, column }) {
       trigger={
         <button
           type="button"
-          className={`tf-chip bg-white rounded-3 border d-flex flex-row gap-3 font-size-sm fw-normal${active ? "is-active" : ""}`}
+          className={`tf-chip bg-white rounded-3 border d-flex flex-row gap-3 font-size-sm fw-normal ${active ? "is-active" : ""}`}
           style={{ height:32}}
         >
           <span className="tf-chip__name">{column.headerName}</span>

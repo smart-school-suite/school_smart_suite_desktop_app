@@ -3,6 +3,21 @@ import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
 
 const makeTimeField = () => ({ value: null, isValid: null });
+const makeRequestConstraint = () => ({ days: [], slots: [] });
+
+/**
+ * Request-based soft constraints (teacher, hall, course windows and
+ * requested assignments). State: { days: [day], slots: [{ day, slots: [req] }] }
+ * where req = { id, start_time, end_time, teacher_id, hall_id, course_id }.
+ * Persisted state from older versions may lack a key, so always go through
+ * this helper.
+ */
+const requestEntry = (state, constraint) => {
+  if (!state.soft_constraints[constraint]) {
+    state.soft_constraints[constraint] = makeRequestConstraint();
+  }
+  return state.soft_constraints[constraint];
+};
 const makeDurationField = () => ({ value: null, isValid: null });
 const makeDayException = (day) => ({
   day,
@@ -68,10 +83,12 @@ const initialState = {
       days: [],
       slots: [],
     },
-    requested_assignments: {
-      days: [],
-      slots: [],
-    },
+    // Request-based constraints share one shape and one set of reducers
+    // (see "requested time slots" below): days picked, then per-day requests.
+    requested_assignments: makeRequestConstraint(),
+    teacher_requested_time_windows: makeRequestConstraint(),
+    hall_requested_time_windows: makeRequestConstraint(),
+    course_requested_time_slots: makeRequestConstraint(),
   },
 };
 
@@ -205,7 +222,7 @@ const semesterTimetableSlice = createSlice({
         bp[field].isValid = value;
       }
     },
-    
+
     //period duration
     setDefaultPeriodDuration(state, action) {
       const { duration } = action.payload;
@@ -644,10 +661,69 @@ const semesterTimetableSlice = createSlice({
       const existingDaySlot = rASlots.find((item) => item.day === day);
       existingDaySlot.slots = [];
     },
+
+    //requested time slots (teacher, hall, course, assignment)
+    addRequestDay(state, action) {
+      const { constraint, day } = action.payload;
+      const entry = requestEntry(state, constraint);
+      if (!entry.days.includes(day)) entry.days.push(day);
+    },
+    removeRequestDay(state, action) {
+      const { constraint, day } = action.payload;
+      const entry = requestEntry(state, constraint);
+      entry.days = entry.days.filter((item) => item !== day);
+      entry.slots = entry.slots.filter((item) => item.day !== day);
+    },
+    addRequestSlot(state, action) {
+      const { constraint, day, preset = {} } = action.payload;
+      const entry = requestEntry(state, constraint);
+      if (!entry.days.includes(day)) entry.days.push(day);
+      const request = {
+        id: `req_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+        start_time: null,
+        end_time: null,
+        teacher_id: null,
+        hall_id: null,
+        course_id: null,
+        ...preset,
+      };
+      const dayEntry = entry.slots.find((item) => item.day === day);
+      if (dayEntry) dayEntry.slots.push(request);
+      else entry.slots.push({ day, slots: [request] });
+    },
+    updateRequestSlot(state, action) {
+      const { constraint, day, slotId, changes } = action.payload;
+      const dayEntry = requestEntry(state, constraint).slots.find(
+        (item) => item.day === day,
+      );
+      const request = dayEntry?.slots.find((item) => item.id === slotId);
+      if (request) Object.assign(request, changes);
+    },
+    removeRequestSlot(state, action) {
+      const { constraint, day, slotId } = action.payload;
+      const entry = requestEntry(state, constraint);
+      const dayEntry = entry.slots.find((item) => item.day === day);
+      if (!dayEntry) return;
+      dayEntry.slots = dayEntry.slots.filter((item) => item.id !== slotId);
+      if (dayEntry.slots.length === 0) {
+        entry.slots = entry.slots.filter((item) => item.day !== day);
+      }
+    },
+    clearRequestDay(state, action) {
+      const { constraint, day } = action.payload;
+      const entry = requestEntry(state, constraint);
+      entry.slots = entry.slots.filter((item) => item.day !== day);
+    },
   },
 });
 
 export const {
+  addRequestDay,
+  removeRequestDay,
+  addRequestSlot,
+  updateRequestSlot,
+  removeRequestSlot,
+  clearRequestDay,
   setSchoolSemester,
   setTimetableVersion,
   setOperationalPeriodField,

@@ -5,6 +5,7 @@ import HallRequestedSlotWizzard from "../../../DrawerContent/SemesterTimetable/C
 import BreakPeriodWizzard from "../../../DrawerContent/SemesterTimetable/Constraints/Schedule/BreakPeriod/BreakPeriodWizzard";
 import OperationalPeriodWizzard from "../../../DrawerContent/SemesterTimetable/Constraints/Schedule/OperationalPeriod/OperationalPeriodWizzard";
 import PeriodDurationWizzard from "../../../DrawerContent/SemesterTimetable/Constraints/Schedule/PeriodDuration/PeriodDurationWizzard";
+import RequestedAssignmentWizzard from "../../../DrawerContent/SemesterTimetable/Constraints/RequestedAssignment/RequestedAssignmentWizzard";
 import TeacherRequestedSlotWizzard from "../../../DrawerContent/SemesterTimetable/Constraints/Teacher/TeacherRequestedSlot/TeacherRequestedSlotWizzard";
 
 /**
@@ -32,23 +33,24 @@ export const semesterTimetableConstraintMap = {
     editor: "drawer",
   },
   teacher_requested_time_windows: {
-    ready: false,
     component: TeacherRequestedSlotWizzard,
     editor: "drawer",
   },
   hall_requested_time_windows: {
-    ready: false,
     component: HallRequestedSlotWizzard,
     editor: "drawer",
   },
-  required_joint_course_period: {
+  required_joint_course_periods: {
     ready: false,
     component: RequiredJointCourse,
     editor: "drawer",
   },
   course_requested_time_slots: {
-    ready: false,
     component: CourseRequestedSlotWizzard,
+    editor: "drawer",
+  },
+  requested_assignments: {
+    component: RequestedAssignmentWizzard,
     editor: "drawer",
   },
 };

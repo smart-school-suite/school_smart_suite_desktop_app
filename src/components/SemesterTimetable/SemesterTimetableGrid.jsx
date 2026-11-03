@@ -185,6 +185,7 @@ function useStartGeneration() {
           if (version) dispatch(setTimetableVersion(version));
         },
       },
+      semesterTimetable.soft_constraints,
     );
   };
 

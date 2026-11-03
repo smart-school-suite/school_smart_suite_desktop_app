@@ -1,7 +1,6 @@
 import RequestedAssignmentBuilderStep from "../../../DrawerContent/SemesterTimetable/Constraints/RequestedAssignment/RequestedAssignmentBuilderStep";
 import RequestedAssignmentDayStep from "../../../DrawerContent/SemesterTimetable/Constraints/RequestedAssignment/RequestedAssignmentDayStep";
 import RequestedAssignmentIntroductionStep from "../../../DrawerContent/SemesterTimetable/Constraints/RequestedAssignment/RequestedAssignmentIntroductionStep";
-import RequestedAssignmentListStep from "../../../DrawerContent/SemesterTimetable/Constraints/RequestedAssignment/RequestedAssignmentListStep";
 import RequestedAssignmentReviewStep from "../../../DrawerContent/SemesterTimetable/Constraints/RequestedAssignment/RequestedAssignmentReviewStep";
 
 export const REQUESTED_ASSIGNMENT_STEP_FLOW = [
@@ -18,14 +17,8 @@ export const REQUESTED_ASSIGNMENT_STEP_FLOW = [
     component: RequestedAssignmentDayStep,
   },
   {
-    step: "REQUESTED_ASSIGNMENT_LIST_STEP",
-    title: "Requests",
-    label: "Requested Assignment List Step",
-    component: RequestedAssignmentListStep,
-  },
-  {
     step: "REQUESTED_ASSIGNMENT_BUILDER_STEP",
-    title: "Time slots",
+    title: "Requests",
     label: "Requested Assignment Builder Step",
     component: RequestedAssignmentBuilderStep,
   },
@@ -34,5 +27,5 @@ export const REQUESTED_ASSIGNMENT_STEP_FLOW = [
     title: "Review & save",
     label: "Requested Assignment Review Step",
     component: RequestedAssignmentReviewStep,
-  }
+  },
 ];

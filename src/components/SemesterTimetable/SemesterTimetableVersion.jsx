@@ -12,7 +12,7 @@ import { SCHEDULER_STATUS } from "../../utils/semesterTimetable/schedulerStatus"
 import { Drawer } from "../drawer/Drawer";
 import CustomModal from "../Modals/Modal";
 import ToastWarning from "../Toast/ToastWarning";
-import "./ConstraintWizard/constraintWizard.css";
+import "../../styles/constraintWizard.css";
 
 const CATEGORY_ICONS = {
   schedule_constraint: "lucide:calendar-clock",

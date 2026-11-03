@@ -1,7 +1,6 @@
 import TeacherRequestedSlotBuilderStep from "../../../DrawerContent/SemesterTimetable/Constraints/Teacher/TeacherRequestedSlot/TeacherRequestedSlotBuilderStep";
 import TeacherRequestedSlotDayStep from "../../../DrawerContent/SemesterTimetable/Constraints/Teacher/TeacherRequestedSlot/TeacherRequestedSlotDayStep";
 import TeacherRequestedSlotIntroductionStep from "../../../DrawerContent/SemesterTimetable/Constraints/Teacher/TeacherRequestedSlot/TeacherRequestedSlotIntroductionStep";
-import TeacherRequestedSlotListStep from "../../../DrawerContent/SemesterTimetable/Constraints/Teacher/TeacherRequestedSlot/TeacherRequestedSlotListStep";
 import TeacherRequestedSlotReviewStep from "../../../DrawerContent/SemesterTimetable/Constraints/Teacher/TeacherRequestedSlot/TeacherRequestedSlotReviewStep";
 export const TEACHER_REQUESTED_SLOT_STEP_FLOW = [
   {
@@ -17,14 +16,8 @@ export const TEACHER_REQUESTED_SLOT_STEP_FLOW = [
     component: TeacherRequestedSlotDayStep,
   },
   {
-    step: "TEACHER_REQUESTED_SLOT_LIST_STEP",
-    title: "Requests",
-    label: "Teacher Requested Slot List Step",
-    component: TeacherRequestedSlotListStep,
-  },
-  {
     step: "TEACHER_REQUESTED_SLOT_BUILDER_STEP",
-    title: "Time slots",
+    title: "Requests",
     label: "Teacher Requested Slot Builder Step",
     component: TeacherRequestedSlotBuilderStep,
   },
