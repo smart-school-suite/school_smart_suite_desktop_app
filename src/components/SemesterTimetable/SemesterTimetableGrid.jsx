@@ -98,7 +98,10 @@ function TimetableGridWrapper({ progress = null }) {
             title="Timetable Generation Failed"
             description="Something went wrong while generating the timetable. Consider the diagnostic report to identify and resolve constraint conflicts, then try again."
           >
-            <GenerateButton label="Try Again" />
+            <div className="d-flex flex-row align-items-center gap-2">
+              <button className="p-2 border-none border bg-none rounded-3">Try Again</button>
+              <button className="p-2 border-none border bg-primary-500 rounded-3 text-white border">View and Fix Errors</button>
+            </div>
           </StatusMessage>
         );
       default:
@@ -134,8 +137,8 @@ function StatusMessage({ image, title, description, children }) {
           src={image}
           alt="sss-timetable-maskot"
           style={{
-            height: "250px",
-            width: "250px",
+            height: "150px",
+            width: "150px",
             objectFit: "contain",
           }}
         />

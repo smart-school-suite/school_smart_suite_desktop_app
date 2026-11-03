@@ -6,14 +6,12 @@ export const getSemesterTimetableConstraints = async () => {
   );
   return response.data;
 };
-
 export const getSemesterTimetableVersions = async (schoolSemesterId) => {
   const response = await axiosInstance.get(
     `semester-timetable/version/school-semester/${schoolSemesterId}`,
   );
   return response.data;
 };
-
 export const createSemesterTimetableVersion = async (data) => {
   const response = await axiosInstance.post(
     "semester-timetable/version/create",
@@ -21,14 +19,12 @@ export const createSemesterTimetableVersion = async (data) => {
   );
   return response.data;
 };
-
 export const deleteSemesterTimetableVersion = async ($versionId) => {
   const response = await axiosInstance.delete(
     `semester-timetable/version/delete/${$versionId}`,
   );
   return response.data;
 };
-
 export const generateSemesterTimetable = async (data) => {
   const response = await axiosInstance.post(
     "semester-timetable/generate",
