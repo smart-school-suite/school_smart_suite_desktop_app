@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   resetTableFilters,
   selectTableFilters,
+  setColumnLayout,
   setSearchText,
   togglePanel,
 } from "../../Slices/tableFilters/tableFiltersSlice";
@@ -26,7 +27,9 @@ const readPath = (row, field) =>
  * State lives in the persisted `tableFilters` slice under `tableKey`, so each
  * table keeps its own search, chips and conditions across navigation and
  * restarts. Column metadata (names, detected types, distinct values) is read
- * from the grid whenever its rows change.
+ * from the grid whenever its rows change. The column layout chosen in the
+ * table settings (order and visibility) is kept in the same entry and handed
+ * to <Table> as `columnState`, which re-applies it whenever columns load.
  */
 export function useTableFilters(tableKey, tableRef) {
   const dispatch = useDispatch();
@@ -136,7 +139,13 @@ export function useTableFilters(tableKey, tableRef) {
     setSearch: (value) => dispatch(setSearchText({ tableKey, value })),
     togglePanel: (open) => dispatch(togglePanel({ tableKey, open })),
     reset: () => dispatch(resetTableFilters({ tableKey })),
+    columnLayout: state.columnLayout ?? null,
+    saveColumnLayout: (layout) =>
+      dispatch(setColumnLayout({ tableKey, layout })),
+    resetColumnLayout: () =>
+      dispatch(setColumnLayout({ tableKey, layout: null })),
     gridProps: {
+      columnState: state.columnLayout ?? null,
       quickFilterText: state.searchText,
       externalFilter,
       onGridReady,

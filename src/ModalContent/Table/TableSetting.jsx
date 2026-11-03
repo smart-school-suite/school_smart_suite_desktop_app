@@ -72,7 +72,8 @@ function SortableItem({ id, label }) {
  *     handleClose={close}
  *     tableRef={gridRef}
  *     title="Customise Table Columns"
- *     onSaveSuccess={(cols) => ...}
+ *     onSaveSuccess={(layout) => ...}   // [{ colId, hide }] for every column
+ *     onResetSuccess={() => ...}
  *   />
  *
  * ...or via a modal manager that passes everything through `rowData`
@@ -100,6 +101,7 @@ export default function TableColumnSetting(props) {
   const excludeFields =
     propsExcludeFields ?? rowData.excludeFields ?? DEFAULT_EXCLUDED_FIELDS;
   const onSaveSuccess = propsOnSaveSuccess ?? rowData.onSaveSuccess;
+  const onResetSuccess = props.onResetSuccess ?? rowData.onResetSuccess;
 
   const [columns, setColumns] = useState([]);
   const [leftSearch, setLeftSearch] = useState("");
@@ -169,29 +171,39 @@ export default function TableColumnSetting(props) {
     });
   }, []);
 
+  // Full grid layout: the user's order and visibility for the columns shown
+  // here, with system columns (selection, actions) kept in their positions.
+  const buildLayout = useCallback(() => {
+    const gridCols = tableRef?.current?.getColumnsState?.() ?? [];
+    const managed = new Set(columns.map((col) => col.colId));
+    const ordered = [...columns];
+    return gridCols.map((col) => {
+      const next = managed.has(col.colId) ? ordered.shift() : col;
+      return { colId: next.colId, hide: Boolean(next.hide) };
+    });
+  }, [tableRef, columns]);
+
   const handleSaveChanges = useCallback(() => {
-    if (tableRef?.current?.setColumnState) {
-      const cleanState = columns.map(({ colId, hide }) => ({ colId, hide }));
-      tableRef.current.setColumnState(cleanState);
-    }
-    onSaveSuccess?.(columns);
+    const layout = buildLayout();
+    tableRef?.current?.setColumnState?.(layout);
+    onSaveSuccess?.(layout);
     handleClose?.();
-  }, [tableRef, columns, onSaveSuccess, handleClose]);
+  }, [tableRef, buildLayout, onSaveSuccess, handleClose]);
 
   const handleResetToDefault = useCallback(() => {
-    const resetState = columns.map((col) => ({
-      colId: col.colId,
-      hide: false,
-    }));
-
-    if (tableRef?.current?.setColumnState) {
-      tableRef.current.setColumnState(resetState);
+    if (tableRef?.current?.resetColumnState) {
+      tableRef.current.resetColumnState();
+    } else if (tableRef?.current?.setColumnState) {
+      tableRef.current.setColumnState(
+        columns.map((col) => ({ colId: col.colId, hide: false })),
+      );
     }
-
     setColumns((prev) => prev.map((col) => ({ ...col, hide: false })));
-    onSaveSuccess?.(resetState);
+    // Forget the saved layout so the defaults also apply next time.
+    if (onResetSuccess) onResetSuccess();
+    else onSaveSuccess?.(null);
     handleClose?.();
-  }, [tableRef, columns, onSaveSuccess, handleClose]);
+  }, [tableRef, columns, onSaveSuccess, onResetSuccess, handleClose]);
 
   return (
     <div className="d-flex flex-column gap-4">

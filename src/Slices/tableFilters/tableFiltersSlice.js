@@ -15,6 +15,8 @@ import { v4 as uuidv4 } from "uuid";
  *   applied         conditions currently applied to the grid
  *   logic           "and" | "or" for combining conditions
  *   panelOpen       whether the filter panel is open
+ *   columnLayout    saved column order and visibility from the table
+ *                   settings, as [{ colId, hide }], or null for the default
  */
 export const createTableFilterEntry = () => ({
   searchText: "",
@@ -25,6 +27,7 @@ export const createTableFilterEntry = () => ({
   logic: "and",
   appliedLogic: "and",
   panelOpen: false,
+  columnLayout: null,
 });
 
 const newCondition = () => ({
@@ -98,10 +101,17 @@ const tableFiltersSlice = createSlice({
       entry.logic = "and";
       entry.appliedLogic = "and";
     },
+    setColumnLayout(state, { payload: { tableKey, layout } }) {
+      entryFor(state, tableKey).columnLayout = layout?.length
+        ? layout.map(({ colId, hide }) => ({ colId, hide: Boolean(hide) }))
+        : null;
+    },
     resetTableFilters(state, { payload: { tableKey } }) {
       const entry = entryFor(state, tableKey);
       state.byTable[tableKey] = {
         ...createTableFilterEntry(),
+        // Clearing filters must not throw away the user's column layout.
+        columnLayout: entry.columnLayout ?? null,
         chipFields: entry.chipFields,
         panelOpen: entry.panelOpen,
         conditions: entry.panelOpen ? [newCondition()] : [],
@@ -122,6 +132,7 @@ export const {
   applyConditions,
   clearConditions,
   resetTableFilters,
+  setColumnLayout,
 } = tableFiltersSlice.actions;
 
 const EMPTY = createTableFilterEntry();

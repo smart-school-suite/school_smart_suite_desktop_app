@@ -109,7 +109,11 @@ function TableToolbar({
           <ModalButton
             action={{ modalContent: TableColumnSetting }}
             size="xl"
-            rowData={{ tableRef }}
+            rowData={{
+              tableRef,
+              onSaveSuccess: filters.saveColumnLayout,
+              onResetSuccess: filters.resetColumnLayout,
+            }}
             classname="tf-btn tf-btn--icon"
           >
             <Settings2
