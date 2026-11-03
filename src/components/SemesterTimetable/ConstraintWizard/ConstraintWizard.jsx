@@ -59,11 +59,11 @@ function ConstraintWizard({
 
   return (
     <div className="cw" role="document">
-      <header className="cw-header">
+      <header className="cw-header font-size-sm p-2">
         <div className="cw-header__top">
           <div className="cw-header__titles">
             {(eyebrow || typeLabel) && (
-              <div className="cw-eyebrow">
+              <div className="cw-eyebrow font-size-xs">
                 {eyebrow && <span>{eyebrow}</span>}
                 {eyebrow && typeLabel && (
                   <span className="cw-eyebrow__sep" aria-hidden="true" />
@@ -77,7 +77,7 @@ function ConstraintWizard({
                 )}
               </div>
             )}
-            <h2 className="cw-title">{heading}</h2>
+            <h2 className="cw-title font-size-sm fw-medium">{heading}</h2>
           </div>
           <button
             type="button"

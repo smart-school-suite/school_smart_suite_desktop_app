@@ -10,10 +10,10 @@ import { dayLabel, dayShortLabel, formatDuration, formatTime, minutesBetween } f
 export function WizardStep({ title, description, children, footer }) {
   return (
     <div className="cw-step">
-      <div className="cw-body scroll-bar-sm">
+      <div className="cw-body scroll-bar-sm px-2 pt-2" style={{ paddingBottom:"20rem"}}>
         {(title || description) && (
           <div className="cw-intro">
-            {title && <h3 className="cw-intro__title">{title}</h3>}
+            {title && <span className="font-size-sm fw-semibold">{title}</span>}
             {description && <p className="cw-intro__text">{description}</p>}
           </div>
         )}
@@ -38,7 +38,7 @@ export function WizardFooter({
 }) {
   return (
     <>
-      <div className="cw-footer__start">
+      <div className="cw-footer__start p-2">
         {onBack && (
           <button type="button" className="cw-btn cw-btn--ghost" onClick={onBack}>
             <Icon icon="lucide:arrow-left" width={16} height={16} />
@@ -46,7 +46,7 @@ export function WizardFooter({
           </button>
         )}
       </div>
-      <div className="cw-footer__end">
+      <div className="cw-footer__end p-2">
         {hint && nextDisabled && <span className="cw-footer__hint">{hint}</span>}
         {onNext && (
           <button
@@ -69,9 +69,9 @@ export function Section({ label, hint, action, children, className = "" }) {
     <section className={`cw-section ${className}`}>
       {(label || action) && (
         <div className="cw-section__head">
-          <div>
-            {label && <h4 className="cw-section__label">{label}</h4>}
-            {hint && <p className="cw-section__hint">{hint}</p>}
+          <div className="d-flex flex-column">
+            {label && <span className="fw-medium">{label}</span>}
+            {hint && <span className="cw-section__hint">{hint}</span>}
           </div>
           {action && <div className="cw-section__action">{action}</div>}
         </div>

@@ -1,7 +1,7 @@
 import { CalendarRange } from "lucide-react";
+import { useSelector } from "react-redux";
 import TimetableGridWrapper from "../../components/SemesterTimetable/SemesterTimetableGrid";
 import ConstraintVersionWrapper from "../../components/SemesterTimetable/SemesterTimetableVersion";
-import { useSelector } from "react-redux";
 import { useSyncSelectedTimetableVersion } from "../../hooks/semesterTimetable/useSyncSelectedTimetableVersion";
 import { useTimetableGenerationEvents } from "../../hooks/semesterTimetable/useTimetableGenerationEvents";
 function SemesterTimetable() {

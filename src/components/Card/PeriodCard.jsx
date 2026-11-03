@@ -3,20 +3,19 @@ function PeriodCard({ slot }) {
   return (
     <>
       <div
-        className="card font-size-sm p-2 d-flex flex-column gap-3 border-none shadow-sm"
+        className="card font-size-sm p-2 d-flex flex-column gap-3 border-none shadow-sm border"
         style={{ width: "49%", borderRadius: "0.85rem" }}
       >
         <div className="d-flex flex-column gap-1">
           <div className="d-flex flex-row align-items-center gap-2">
-            <Icon icon="famicons:book-outline" width="16" height="16" />
             <span className="fw-semibold">{slot?.course_name}</span>
           </div>
-          <div className="d-flex flex-row align-items-center gap-1">
+          <div className="d-flex flex-row align-items-center gap-1 text-iron-500">
             <div className="d-flex flex-row align-items-center gap-2">
               <span style={{ lineHeight: 0 }}>
                 <Icon icon="streamline-flex:city-hall" width="16" height="16" />
               </span>
-              <span className="fw-medium">{slot?.hall_name}</span>
+              <span className="fw-normal text-iron-500">{slot?.hall_name}</span>
             </div>
             <span style={{ lineHeight: 0 }}>
               <Icon icon="bi:dot" width="16" height="16" />
@@ -25,7 +24,7 @@ function PeriodCard({ slot }) {
               <span style={{ lineHeight: 0 }}>
                 <Icon icon="iconamoon:location-light" width="16" height="16" />
               </span>
-              <span className="fw-medium">{slot?.hall_location}</span>
+              <span className="fw-normal ">{slot?.hall_location}</span>
             </div>
           </div>
         </div>

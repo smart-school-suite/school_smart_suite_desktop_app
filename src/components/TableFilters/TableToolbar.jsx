@@ -167,7 +167,8 @@ function ColumnFilterChip({ filters, column }) {
       trigger={
         <button
           type="button"
-          className={`tf-chip ${active ? "is-active" : ""}`}
+          className={`tf-chip bg-white rounded-3 border d-flex flex-row gap-3 font-size-sm fw-normal${active ? "is-active" : ""}`}
+          style={{ height:32}}
         >
           <span className="tf-chip__name">{column.headerName}</span>
           {label && <span className="tf-chip__value">{label}</span>}
@@ -332,8 +333,9 @@ function ChipPicker({ filters }) {
       trigger={
         <button
           type="button"
-          className="tf-chip tf-chip--add"
+          className="tf-chip tf-chip--add bg-white rounded-2 border"
           aria-label="Choose quick filters"
+          style={{ width:32, height:32}}
         >
           <Plus size={13} strokeWidth={2} />
           {selected.length === 0 && (
