@@ -20,10 +20,54 @@ import { useSelector } from "react-redux";
 import HorizontalDashedLine from "../DashedLine/HorizonetalDashedLine";
 import { SingleSpinner } from "../Spinners/Spinners";
 
+// Stable fallback so a missing `data` prop doesn't create a new array each
+// render (which would re-trigger the `[data]` effects endlessly).
+const EMPTY_DATA = [];
+
+/**
+ * Default search used by the dropdowns when no `filterFn` is supplied.
+ * Matches the search term against the primary display key.
+ */
+const defaultFilter = (item, searchTerm, displayKey) =>
+  String(item?.[displayKey?.[0]] ?? "")
+    .toLowerCase()
+    .includes(searchTerm.toLowerCase());
+
+/**
+ * Custom render callbacks (all optional — the dropdowns fall back to their
+ * built-in markup when a callback is not provided):
+ *
+ * Shared by CustomDropdown and MultiSelectDropdown
+ * - renderOption(item, state)  → content of a single option row.
+ *     state: { index, isSelected, isHighlighted, searchTerm, darkMode }
+ *     (MultiSelectDropdown also passes `toggle()`; the row wrapper still
+ *     handles click / hover / highlighting, so the renderer only returns
+ *     the inner content.)
+ * - renderEmpty({ searchTerm, clearSearch, darkMode }) → empty / no-match state.
+ * - renderLoading({ darkMode }) → loading state.
+ * - renderHeader({ searchTerm, filteredData, close, darkMode })
+ *     → content rendered above the options list (below the search input).
+ * - renderFooter({ searchTerm, filteredData, close, darkMode })
+ *     → content rendered below the options list (e.g. an "Add new" button).
+ * - filterFn(item, searchTerm) → boolean, custom search logic. Useful when a
+ *     custom renderer shows fields other than `displayKey[0]`.
+ *
+ * CustomDropdown only
+ * - renderSelected(item, { placeholder, darkMode })
+ *     → content of the trigger box when an item is selected.
+ *
+ * MultiSelectDropdown only
+ * - renderTag(item, { remove, darkMode }) → a single selected chip in the
+ *     trigger box. `remove(event)` deselects the item without opening the menu.
+ * - renderSelected(selectedItems, { placeholder, isAllSelected, removeItem,
+ *     clear, darkMode }) → the whole trigger box content (overrides the
+ *     default placeholder / chips / "N selected" logic and `renderTag`).
+ */
+
 const CustomDropdown = forwardRef(
   (
     {
-      data = [],
+      data = EMPTY_DATA,
       displayKey,
       valueKey,
       onSelect,
@@ -37,6 +81,13 @@ const CustomDropdown = forwardRef(
       dropdownWidth = "30vw",
       value = null,
       defaultValue = null,
+      renderOption,
+      renderSelected,
+      renderEmpty,
+      renderLoading,
+      renderHeader,
+      renderFooter,
+      filterFn,
     },
     ref,
   ) => {
@@ -80,9 +131,9 @@ const CustomDropdown = forwardRef(
       const timer = setTimeout(() => {
         if (searchTerm && Array.isArray(data)) {
           const filtered = data.filter((item) =>
-            item[displayKey[0]]
-              ?.toLowerCase()
-              .includes(searchTerm.toLowerCase()),
+            filterFn
+              ? filterFn(item, searchTerm)
+              : defaultFilter(item, searchTerm, displayKey),
           );
           setFilteredData(filtered);
         } else {
@@ -90,7 +141,7 @@ const CustomDropdown = forwardRef(
         }
       }, 300);
       return () => clearTimeout(timer);
-    }, [searchTerm, data, displayKey]);
+    }, [searchTerm, data, displayKey, filterFn]);
 
     useEffect(() => {
       setFilteredData(data);
@@ -153,6 +204,9 @@ const CustomDropdown = forwardRef(
       update();
     }, [update]);
 
+    const closeDropdown = useCallback(() => setIsToggled(false), []);
+    const clearSearch = useCallback(() => setSearchTerm(""), []);
+
     const handleSelect = useCallback(
       (item) => {
         setSelectedItem(item);
@@ -196,9 +250,15 @@ const CustomDropdown = forwardRef(
               }`}
               style={{ height: 36 }}
             >
-              <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm text-capitalize">
-                {selectedItem ? selectedItem[displayKey[0]] : placeholder}
-              </span>
+              {selectedItem && renderSelected ? (
+                <div className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm flex-grow-1">
+                  {renderSelected(selectedItem, { placeholder, darkMode })}
+                </div>
+              ) : (
+                <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm text-capitalize">
+                  {selectedItem ? selectedItem[displayKey[0]] : placeholder}
+                </span>
+              )}
               <span>
                 <Icon
                   icon="heroicons:chevron-down-20-solid"
@@ -249,50 +309,74 @@ const CustomDropdown = forwardRef(
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
 
+              {renderHeader?.({
+                searchTerm,
+                filteredData,
+                close: closeDropdown,
+                darkMode,
+              })}
+
               <div className="scrollable-dropdown d-flex flex-column">
                 {isLoading ? (
-                  <div className="py-3 d-flex justify-content-center align-items-center">
-                    <SingleSpinner />
-                  </div>
+                  renderLoading ? (
+                    renderLoading({ darkMode })
+                  ) : (
+                    <div className="py-3 d-flex justify-content-center align-items-center">
+                      <SingleSpinner />
+                    </div>
+                  )
                 ) : filteredData && filteredData.length > 0 ? (
                   filteredData.map((item, index) => {
                     const isSelected = selectedItem
                       ? valueKey.every((key) => item[key] === selectedItem[key])
                       : false;
+                    const isHighlighted = highlightedIndex === index;
                     return (
                       <Fragment key={index}>
                         <div
                           className={`my-2 ms-1 me-2 dropdown-listitems p-2 font-size-md pointer-cursor rounded-2 ${
                             isSelected
                               ? "primary-background-50 color-primary"
-                              : highlightedIndex === index
+                              : isHighlighted
                                 ? "color-primary"
                                 : ""
                           }`}
                           onClick={() => handleSelect(item)}
                           onMouseEnter={() => setHighlightedIndex(index)}
                         >
-                          <div className="d-flex flex-column">
-                            <span className="my-0 font-size-sm">
-                              {item[displayKey[0]]}
-                            </span>
-                            {displayKey[1] && (
-                              <span className="my-0 font-size-sm gainsboro-color fw-light">
-                                {item[displayKey[1]]}
+                          {renderOption ? (
+                            renderOption(item, {
+                              index,
+                              isSelected,
+                              isHighlighted,
+                              searchTerm,
+                              darkMode,
+                            })
+                          ) : (
+                            <div className="d-flex flex-column">
+                              <span className="my-0 font-size-sm">
+                                {item[displayKey[0]]}
                               </span>
-                            )}
-                          </div>
+                              {displayKey[1] && (
+                                <span className="my-0 font-size-sm gainsboro-color fw-light">
+                                  {item[displayKey[1]]}
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </div>
-                       <div className="px-2">
-                         <HorizontalDashedLine
-                          thickness={0.2}
-                          color="#ccc"
-                          dashed={false}
-                        />
-                       </div>
+                        <div className="px-2">
+                          <HorizontalDashedLine
+                            thickness={0.2}
+                            color="#ccc"
+                            dashed={false}
+                          />
+                        </div>
                       </Fragment>
                     );
                   })
+                ) : renderEmpty ? (
+                  renderEmpty({ searchTerm, clearSearch, darkMode })
                 ) : (
                   <div className="py-3">
                     {searchTerm ? (
@@ -317,7 +401,7 @@ const CustomDropdown = forwardRef(
                         <button
                           type="button"
                           className="btn btn-link btn-sm text-decoration-none p-0 font-size-sm"
-                          onClick={() => setSearchTerm("")}
+                          onClick={clearSearch}
                         >
                           Clear Search
                         </button>
@@ -345,6 +429,13 @@ const CustomDropdown = forwardRef(
                   </div>
                 )}
               </div>
+
+              {renderFooter?.({
+                searchTerm,
+                filteredData,
+                close: closeDropdown,
+                darkMode,
+              })}
             </motion.div>
           )}
         </AnimatePresence>
@@ -358,7 +449,7 @@ export default CustomDropdown;
 export const MultiSelectDropdown = forwardRef(
   (
     {
-      data,
+      data = EMPTY_DATA,
       displayKey,
       valueKey,
       onSelect,
@@ -372,6 +463,14 @@ export const MultiSelectDropdown = forwardRef(
       dropdownWidth = "30vw",
       value = null, // New prop for controlled value
       defaultValue = null, // New prop for uncontrolled default value
+      renderOption,
+      renderTag,
+      renderSelected,
+      renderEmpty,
+      renderLoading,
+      renderHeader,
+      renderFooter,
+      filterFn,
     },
     ref,
   ) => {
@@ -439,11 +538,11 @@ export const MultiSelectDropdown = forwardRef(
 
     useEffect(() => {
       const timer = setTimeout(() => {
-        if (searchTerm) {
+        if (searchTerm && Array.isArray(data)) {
           const filtered = data.filter((item) =>
-            item[displayKey[0]]
-              ?.toLowerCase()
-              .includes(searchTerm.toLowerCase()),
+            filterFn
+              ? filterFn(item, searchTerm)
+              : defaultFilter(item, searchTerm, displayKey),
           );
           setFilteredData(filtered);
         } else {
@@ -451,7 +550,7 @@ export const MultiSelectDropdown = forwardRef(
         }
       }, 300);
       return () => clearTimeout(timer);
-    }, [searchTerm, data, displayKey]);
+    }, [searchTerm, data, displayKey, filterFn]);
 
     /** ========== Click Outside Close ========== **/
     useEffect(() => {
@@ -539,6 +638,27 @@ export const MultiSelectDropdown = forwardRef(
       }
     }, [data, onSelect, selectedItems, valueKey, onError]);
 
+    const closeDropdown = useCallback(() => setIsToggled(false), []);
+    const clearSearch = useCallback(() => setSearchTerm(""), []);
+
+    const clearSelection = useCallback(
+      (event) => {
+        event?.stopPropagation?.();
+        setSelectedItems([]);
+        onSelect?.([]);
+      },
+      [onSelect],
+    );
+
+    // Deselect from the trigger box without toggling the menu open/closed.
+    const removeItem = useCallback(
+      (item, event) => {
+        event?.stopPropagation?.();
+        handleSelect(item);
+      },
+      [handleSelect],
+    );
+
     /** ========== Highlight Selected Items When Dropdown Opens ========== **/
     useEffect(() => {
       if (isToggled && filteredData.length > 0) {
@@ -548,7 +668,24 @@ export const MultiSelectDropdown = forwardRef(
     }, [isToggled, filteredData]);
 
     /** ========== Render Selected Items ========== **/
+    const isSelectAllChecked =
+      data.length > 0 && selectedItems.length === data.length;
+
     const renderSelectedItems = () => {
+      if (renderSelected) {
+        return (
+          <div className="flex-grow-1 overflow-hidden">
+            {renderSelected(selectedItems, {
+              placeholder,
+              isAllSelected: isSelectAllChecked,
+              removeItem,
+              clear: clearSelection,
+              darkMode,
+            })}
+          </div>
+        );
+      }
+
       if (selectedItems.length === 0) {
         return (
           <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm">
@@ -557,7 +694,7 @@ export const MultiSelectDropdown = forwardRef(
         );
       }
 
-      if (selectedItems.length === data.length) {
+      if (isSelectAllChecked) {
         return (
           <span className="text-overflow-elipse overflow-hidden my-0 text-start font-size-sm">
             All selected
@@ -568,15 +705,24 @@ export const MultiSelectDropdown = forwardRef(
       if (selectedItems.length <= 7) {
         return (
           <div className="d-flex flex-wrap gap-1">
-            {selectedItems.map((item) => (
-              <span
-                key={item[valueKey[0]]}
-                className={`${darkMode ? "dark-bg color-primary" : "primary-background-50 color-primary "} font-size-xs my-0 px-2 py-1 rounded-2`}
-                style={{ height: "50%" }}
-              >
-                {item[displayKey[0]]}
-              </span>
-            ))}
+            {selectedItems.map((item) =>
+              renderTag ? (
+                <Fragment key={item[valueKey[0]]}>
+                  {renderTag(item, {
+                    remove: (event) => removeItem(item, event),
+                    darkMode,
+                  })}
+                </Fragment>
+              ) : (
+                <span
+                  key={item[valueKey[0]]}
+                  className={`${darkMode ? "dark-bg color-primary" : "primary-background-50 color-primary "} font-size-xs my-0 px-2 py-1 rounded-2`}
+                  style={{ height: "50%" }}
+                >
+                  {item[displayKey[0]]}
+                </span>
+              ),
+            )}
           </div>
         );
       }
@@ -587,8 +733,6 @@ export const MultiSelectDropdown = forwardRef(
         </span>
       );
     };
-
-    const isSelectAllChecked = selectedItems.length === data.length;
 
     return (
       <div className="input-container">
@@ -665,9 +809,21 @@ export const MultiSelectDropdown = forwardRef(
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ padding: "0.5rem" }}
               />
+
+              {renderHeader?.({
+                searchTerm,
+                filteredData,
+                close: closeDropdown,
+                darkMode,
+              })}
+
               <div className="scrollable-dropdown d-flex flex-column">
                 {isLoading ? (
-                  <SingleSpinner />
+                  renderLoading ? (
+                    renderLoading({ darkMode })
+                  ) : (
+                    <SingleSpinner />
+                  )
                 ) : (
                   <>
                     <div className="px-2">
@@ -693,29 +849,43 @@ export const MultiSelectDropdown = forwardRef(
                           (selected) =>
                             selected[valueKey[0]] === item[valueKey[0]],
                         );
+                        const isHighlighted = highlightedIndex === index;
                         return (
                           <div
                             key={item[valueKey[0]]}
                             className={`my-2 ms-1 dropdown-listitems p-2 font-size-md pointer-cursor d-flex align-items-center gap-2 justify-content-between ${
                               isSelected
                                 ? "primary-background-50 color-primary"
-                                : highlightedIndex === index
+                                : isHighlighted
                                   ? "color-primary"
                                   : ""
                             }`}
                             onClick={() => handleSelect(item)}
                             onMouseEnter={() => setHighlightedIndex(index)}
                           >
-                            <div className="d-flex flex-column text-capitalize">
-                              <span className="my-0 font-size-sm">
-                                {item[displayKey[0]]}
-                              </span>
-                              {displayKey[1] && (
-                                <span className="my-0 font-size-sm gainsboro-color fw-light">
-                                  {item[displayKey[1]]}
+                            {renderOption ? (
+                              <div className="flex-grow-1 overflow-hidden">
+                                {renderOption(item, {
+                                  index,
+                                  isSelected,
+                                  isHighlighted,
+                                  searchTerm,
+                                  darkMode,
+                                  toggle: () => handleSelect(item),
+                                })}
+                              </div>
+                            ) : (
+                              <div className="d-flex flex-column text-capitalize">
+                                <span className="my-0 font-size-sm">
+                                  {item[displayKey[0]]}
                                 </span>
-                              )}
-                            </div>
+                                {displayKey[1] && (
+                                  <span className="my-0 font-size-sm gainsboro-color fw-light">
+                                    {item[displayKey[1]]}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                             <input
                               type="checkbox"
                               checked={isSelected}
@@ -727,6 +897,8 @@ export const MultiSelectDropdown = forwardRef(
                           </div>
                         );
                       })
+                    ) : renderEmpty ? (
+                      renderEmpty({ searchTerm, clearSearch, darkMode })
                     ) : (
                       <div className="no-results text-center">
                         No results found
@@ -735,6 +907,13 @@ export const MultiSelectDropdown = forwardRef(
                   </>
                 )}
               </div>
+
+              {renderFooter?.({
+                searchTerm,
+                filteredData,
+                close: closeDropdown,
+                darkMode,
+              })}
             </motion.div>
           )}
         </AnimatePresence>
