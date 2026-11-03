@@ -78,13 +78,33 @@ const Table = forwardRef((props, ref) => {
     [],
   );
 
+  // Saved column layout ([{ colId, hide }]) from the table settings. It is
+  // applied when the grid is ready, whenever new column definitions load
+  // (pages often rebuild colDefs after data arrives) and when it changes.
+  const columnStateRef = useRef(props.columnState ?? null);
+  const applySavedColumnState = useCallback((api) => {
+    const saved = columnStateRef.current;
+    if (!api || !saved?.length) return;
+    api.applyColumnState({ state: saved, applyOrder: true });
+  }, []);
+  useEffect(() => {
+    columnStateRef.current = props.columnState ?? null;
+    applySavedColumnState(gridRef.current);
+  }, [props.columnState, applySavedColumnState]);
+
+  const onNewColumnsLoaded = useCallback(
+    (params) => applySavedColumnState(params.api),
+    [applySavedColumnState],
+  );
+
   const { onGridReady: onGridReadyProp } = props;
   const gridReady = useCallback(
     (params) => {
       gridRef.current = params.api;
+      applySavedColumnState(params.api);
       onGridReadyProp?.(params);
     },
-    [onGridReadyProp],
+    [onGridReadyProp, applySavedColumnState],
   );
 
   // Expose the full grid API to parent component
@@ -169,6 +189,11 @@ const Table = forwardRef((props, ref) => {
           gridRef.current.applyColumnState({ state: state, applyOrder: true });
         }
       },
+
+      // Back to the order and visibility defined by the page's colDefs.
+      resetColumnState: () => {
+        if (gridRef.current) gridRef.current.resetColumnState();
+      },
     }),
     [],
   );
@@ -192,6 +217,7 @@ const Table = forwardRef((props, ref) => {
         rowSelection={rowSelection}
         onSelectionChanged={onSelectionChanged}
         onGridReady={gridReady}
+        onNewColumnsLoaded={onNewColumnsLoaded}
         onRowDataUpdated={props.onRowDataUpdated}
         onFilterChanged={props.onFilterChanged}
         quickFilterText={props.quickFilterText}
