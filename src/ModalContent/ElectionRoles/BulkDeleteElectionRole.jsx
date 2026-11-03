@@ -1,14 +1,19 @@
 import { CircleX } from "lucide-react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useBulkDeleteElectionRole } from "../../hooks/electionRole/useBulkDeleteElectionRole";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeleteElectionRole({ handleClose, bulkData, resetAll }) {
   const { mutate: bulkDeleteElectionRole, isPending } =
     useBulkDeleteElectionRole(handleClose, resetAll);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Delete Election Role");
   const handleBulkDeleteElectionRole = () => {
     const formattedData = bulkData.map((items) => ({
       election_role_id: items.id,
     }));
-    bulkDeleteElectionRole({ electionRoleIds: formattedData });
+    clearFormError();
+    bulkDeleteElectionRole({ electionRoleIds: formattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -38,6 +43,12 @@ function BulkDeleteElectionRole({ handleClose, bulkData, resetAll }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

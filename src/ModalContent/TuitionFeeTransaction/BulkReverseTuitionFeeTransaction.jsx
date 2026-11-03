@@ -1,12 +1,17 @@
 import { useBulkReverseTuitionFeeTransactions } from "../../hooks/FeePayment/useBulkReverseTuitionFeeTransactions";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkReverseTuitionFeeTransaction({ bulkData, handleClose, resetAll }) {
   const formattedData = bulkData?.selectedTransactions?.map((items) => ({ transaction_id: items.id }));
   const { mutate: bulkReverseTransaction, isPending } =
     useBulkReverseTuitionFeeTransactions(handleClose, resetAll);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Reverse Tuition Fee Transaction");
   const handleBulkReverseTransaction = () => {
-    bulkReverseTransaction({ transactionIds: formattedData });
+    clearFormError();
+    bulkReverseTransaction({ transactionIds: formattedData }, { onError: handleServerError });
   };
 
   return (
@@ -37,6 +42,12 @@ function BulkReverseTuitionFeeTransaction({ bulkData, handleClose, resetAll }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-2 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

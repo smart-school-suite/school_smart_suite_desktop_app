@@ -14,10 +14,10 @@ import {
   dateValidationSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useSelector } from "react-redux";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BillStudentAdditionalFees({ handleClose, drawerData }) {
   const { id: studentId } = drawerData;
   const amountRef = useRef();
@@ -29,6 +29,8 @@ function BillStudentAdditionalFees({ handleClose, drawerData }) {
     currencyState?.schoolDetails?.school?.country?.currency || "";
   const { mutate: createAdditionalFee, isPending } =
     useCreateStudentAdditionalFee(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Bill Student Additional Fees");
   const { data: category, isFetching } = useGetAdditionalFeeCategory();
   const [formData, setFormData] = useState({
     amount: "",
@@ -58,40 +60,38 @@ function BillStudentAdditionalFees({ handleClose, drawerData }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = () => {
     const prevalidation = handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
 
       return;
     }
     console.log(isValid);
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
 
       return;
     }
+    clearFormError();
     createAdditionalFee({
       ...formData,
       additionalfee_category_id: formData.additionalfee_category_id.id,
       due_date: formData.date,
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div>
             <label htmlFor="date" className="font-size-sm">

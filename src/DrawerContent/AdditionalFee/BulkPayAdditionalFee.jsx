@@ -6,10 +6,10 @@ import { useSelector } from "react-redux";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { paymentMethods } from "../../data/data";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useBulkPayAdditionalFee } from "../../hooks/additionalFee/useBulkPayAdditionalFee";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkPayAdditionalFee({ drawerData, handleClose }) {
   const { selectedAdditionalFee, resetAll } = drawerData;
   const amountRef = useRef();
@@ -31,6 +31,8 @@ function BulkPayAdditionalFee({ drawerData, handleClose }) {
     handleClose,
     resetAll,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Pay Additional Fee");
   const handlePrevalidation = async () => {
     const amount = await amountRef.current.triggerValidation();
     const paymentMethod = await methodRef.current.triggerValidation();
@@ -40,26 +42,17 @@ function BulkPayAdditionalFee({ drawerData, handleClose }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     const formattedData = selectedAdditionalFee?.map((items) => ({
@@ -67,11 +60,18 @@ function BulkPayAdditionalFee({ drawerData, handleClose }) {
       amount: formData.amount,
       payment_method: formData.payment_method,
     }));
-    payAdditionalFee({ additional_fee: formattedData });
+    clearFormError();
+    payAdditionalFee({ additional_fee: formattedData }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-2">
           <div>
             <label htmlFor="amount" className="font-size-sm">

@@ -13,8 +13,9 @@ import PdfGenerator from "../../services/export/generators/pdf";
 import toast from "react-hot-toast";
 import ExportGenerationService from "../../services/export/ExportGenerationService";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import {  EXPORT_FORMAT, EXPORT_LABEL } from "@/constants";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function SortableColumnItem({ column }) {
   const {
@@ -71,6 +72,8 @@ function ExportTeacher({ handleClose, rowData }) {
   ];
 
   const [selectedColumns, setSelectedColumns] = useState(columns);
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError("Failed To Generate Export");
   const [scope, setScope] = useState("all");
   const [format, setFormat] = useState(EXPORT_FORMAT.PDF);
 
@@ -120,12 +123,7 @@ function ExportTeacher({ handleClose, rowData }) {
         />,
       );
     } else if (!result.cancelled) {
-      toast.custom(
-        <ToastWarning
-          title={"Generation Failed"}
-          description={"An error occurred while generating the export."}
-        />,
-      );
+      setClientError("Generation Failed", "An error occurred while generating the export.");
     }
   };
   return (
@@ -460,6 +458,12 @@ function ExportTeacher({ handleClose, rowData }) {
             )}
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mt-3 mb-0"
+        />
         <div className="d-flex flex-row align-items-center gap-2 mt-3">
           <button
             onClick={() => handleClose()}

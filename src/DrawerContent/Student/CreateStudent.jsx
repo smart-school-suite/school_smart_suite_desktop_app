@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 import {
   emailValidationSchema,
   nameSchema,
@@ -8,7 +7,6 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetActiveGender } from "../../hooks/gender/useGetActiveGender";
 import { useGetAllParents } from "../../hooks/parent/useGetParents";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
@@ -17,6 +15,8 @@ import { useGetStudentParentRelationship } from "../../hooks/student/useGetStude
 import { useGetStudentSource } from "../../hooks/student/useGetStudentSource";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
 import { allFieldsValid } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateStudent({ handleClose }) {
   const nameRef = useRef();
   const firstNameRef = useRef();
@@ -55,6 +55,8 @@ function CreateStudent({ handleClose }) {
     student_source: "",
   });
   const { mutate: createStudent, isPending } = useCreateStudent(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Student");
   const handlePrevalidation = async () => {
     const email = await emailRef.current.triggerValidation();
     const firstName = await firstNameRef.current.triggerValidation();
@@ -80,6 +82,7 @@ function CreateStudent({ handleClose }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const { data: specialties, isFetching: isSpecialtiesLoading } =
@@ -95,27 +98,14 @@ function CreateStudent({ handleClose }) {
   const handleCreateStudent = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
+    clearFormError();
     createStudent({
       ...formData,
       specialty_id: formData.specialty_id.id,
@@ -124,11 +114,17 @@ function CreateStudent({ handleClose }) {
       relationship_id: formData.relationship.id,
       guardian_id: formData.guardian_id.id,
       student_source_id: formData.student_source.id,
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-4">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div className="d-flex flex-row align-items-center gap-2">
             <div className="w-50">

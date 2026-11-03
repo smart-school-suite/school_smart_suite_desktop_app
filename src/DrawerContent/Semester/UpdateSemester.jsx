@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { DateRangeInput } from "../../components/FormComponents/InputComponents";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetSchoolAcademicYears } from "../../hooks/academicYear/useGetSchoolAcademicYears";
 import { useGetSchoolSemesterDetails } from "../../hooks/schoolSemester/useGetSchoolSemesterDetails";
@@ -16,6 +14,8 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateSemester({ handleClose, drawerData }) {
   const { id: semesterId } = drawerData;
   const {
@@ -33,6 +33,8 @@ function UpdateSemester({ handleClose, drawerData }) {
     handleClose,
     semesterId,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Semester");
   const [formData, setFormData] = useState({
     start_date: "",
     end_date: "",
@@ -59,29 +61,19 @@ function UpdateSemester({ handleClose, drawerData }) {
     }
   }, [isSchoolSemeterDetailsLoading, setFormData]);
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleUpdateSchoolSemester = () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
+    clearFormError();
     updateSchoolSemester({
       schoolSemesterId: semesterId,
       updateData: {
@@ -89,7 +81,7 @@ function UpdateSemester({ handleClose, drawerData }) {
         semester_id: formData.semester_id.id,
         school_year_id: formData.school_year_id.id,
       },
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -120,6 +112,12 @@ function UpdateSemester({ handleClose, drawerData }) {
         ) : (
           <>
             <div className="drawer-content ps-2 font-size-sm">
+              <FormErrorBanner
+                ref={errorBannerRef}
+                error={formError}
+                onDismiss={clearFormError}
+                className="mb-2"
+              />
               <div className="d-flex flex-column gap-3">
                 <DateRangeInput
                   onEndDateChange={(value) =>

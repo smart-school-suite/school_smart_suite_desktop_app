@@ -5,8 +5,9 @@ import { useState } from "react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AppointHos({ handleClose, row_id: schoolAdminId }) {
   const { data: specialty, isLoading, error } = useFetchSpecialtiesQuery();
   const [formData, setFormData] = useState({
@@ -14,7 +15,10 @@ function AppointHos({ handleClose, row_id: schoolAdminId }) {
     hosable_id: schoolAdminId,
   });
   const [assignHos] = useAssignHosMutation();
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError("Failed To Appoint HOS");
   const handleAppointHos = async () => {
+    clearFormError();
     try {
       await assignHos(formData).unwrap();
       toast.custom(<ToastSuccess 
@@ -23,10 +27,7 @@ function AppointHos({ handleClose, row_id: schoolAdminId }) {
       />);
       handleClose();
     } catch (e) {
-      toast.custom(<ToastDanger 
-        title={"HOS Appointment Failed ❌"}
-        description={"❌ Something went wrong! The Head of Specialty appointment failed due to an error. Please try again later."}
-      />);
+      setClientError("HOS Appointment Failed ❌", "❌ Something went wrong! The Head of Specialty appointment failed due to an error. Please try again later.");
     }
   };
 
@@ -121,6 +122,12 @@ function AppointHos({ handleClose, row_id: schoolAdminId }) {
             );
           })}
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-3">
           <button
             className="border-none rounded-3 p-2 font-size-sm w-100 primary-background text-white"

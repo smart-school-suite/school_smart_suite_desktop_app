@@ -1,7 +1,5 @@
 import { useBulkPayStudentResit } from "../../hooks/studentResit/useBulkPayResit";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
@@ -10,6 +8,8 @@ import { numberSchema } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { paymentMethods } from "../../data/data";
 import { allFieldsValid } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkPayResitFee({ handleClose, bulkData, resetAll }) {
   const amountRef = useRef();
   const methodRef = useRef();
@@ -35,8 +35,11 @@ function BulkPayResitFee({ handleClose, bulkData, resetAll }) {
     handleClose,
     resetAll
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Pay Resit Fee");
   const handleBulkPayResitFee = () => {
-    bulkPayResitFee({ paymentData: formattedData });
+    clearFormError();
+    bulkPayResitFee({ paymentData: formattedData }, { onError: handleServerError });
   };
 
   const handlePrevalidation = async () => {
@@ -48,29 +51,20 @@ function BulkPayResitFee({ handleClose, bulkData, resetAll }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
-    payResitFee(formData);
+    handleBulkPayResitFee();
   };
   return (
     <>
@@ -127,6 +121,12 @@ function BulkPayResitFee({ handleClose, bulkData, resetAll }) {
               ref={methodRef}
             />
           </div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mt-3 mb-0"
+          />
           <div className="mt-3 d-flex gap-2">
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm w-100 primary-background text-white"

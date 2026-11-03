@@ -11,6 +11,8 @@ import RectangleSkeleton from "../../../components/SkeletonPageLoader/Rectangula
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import React from "react";
 import { resetCopyScaleState } from "../../../Slices/academics/gradeScaleSlice";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function ReviewScale({
   handleClose,
   previousStep,
@@ -31,6 +33,8 @@ function ReviewScale({
   const { mutate: copyGradeScale, isPending } = useCopyGradeScale(handleClose);
   const { mutate: bulkCopyGradeScale, isPending: isbulkCopyPending } =
     useBulkCopyGradeScale(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const {
     data: gradeScales,
     isLoading,
@@ -38,16 +42,18 @@ function ReviewScale({
   } = useGetGradeScaleCategoryId(moduleState?.sourceScale?.id);
   const handleCopyScale = () => {
     if (actionType === "bulkCopy" && targetGradeScales.length > 0) {
+      clearFormError();
       bulkCopyGradeScale({
         source_category_id: moduleState?.sourceScale?.id,
         target_category_ids: targetGradeScales.map((scale) => scale.id),
-      });
+      }, { onError: handleServerError });
       return;
     }
+    clearFormError();
     copyGradeScale({
       sourceCategoryId: moduleState?.sourceScale?.id,
       targetCategoryId: drawerData?.id,
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -176,6 +182,12 @@ function ReviewScale({
         </div>
       </div>
       <div className="drawer-footer font-size-sm">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column w-100">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">

@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFeeScheduleSlots } from "../../services/feeSchedule";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useCreateFeeScheduleSlots = (handleClose) => {
     const queryClient = useQueryClient();
@@ -21,13 +20,5 @@ export const useCreateFeeScheduleSlots = (handleClose) => {
                 />
             )
          },
-         onError: () => {
-            toast.custom(
-                <ToastDanger  
-                  title={"Creation Failed"}
-                  description={"Failed to create Fee Schedule Please try again"}
-                />
-            )
-         }
     })
 }

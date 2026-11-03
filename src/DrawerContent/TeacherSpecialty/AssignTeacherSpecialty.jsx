@@ -4,8 +4,6 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { useGetAssignableTeachers } from "../../hooks/teacherSpecialty/useGetAssignableTeacherSpecialtyId";
 import { Fragment, useState } from "react";
 import { useAssignTeachers } from "../../hooks/teacherSpecialty/useAssignTeachers";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { NotFoundError } from "../../components/errors/Error";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
@@ -20,6 +18,8 @@ import {
   Info,
   CircleCheck,
 } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 export default function AssignTeacherSpecialty({ handleClose, drawerData }) {
   const {
     data: specialty,
@@ -34,27 +34,29 @@ export default function AssignTeacherSpecialty({ handleClose, drawerData }) {
   const { mutate: assignTeacher, isPending: isAssigning } = useAssignTeachers(
     drawerData?.specialtyId,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Assign Teacher Specialty");
   const [selectedTeachers, setSelectedTeachers] = useState([]);
   const handleAssignTeachers = () => {
     if (selectedTeachers.length < 1) {
-      toast.custom(
-        <ToastWarning
-          title={"Teachers Required"}
-          description={
-            "You must select atleast a one teacher before assigning to this specialty"
-          }
-        />,
-      );
+      setClientError("Teachers Required", "You must select atleast a one teacher before assigning to this specialty");
       return;
     }
+    clearFormError();
     assignTeacher({
       specialty_id: drawerData?.specialtyId,
       teacher_ids: selectedTeachers.map((teacher) => teacher.id),
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-2">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3 pb-4">
           {isSpecialtyLoading ? (
             <RectangleSkeleton />

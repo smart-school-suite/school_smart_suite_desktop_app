@@ -4,8 +4,11 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useBulkUpdateSchoolAdminMutation } from "../../Slices/Asynslices/updateSlice";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkUpdate({ handleClose, data }) {
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError("Failed To Bulk Update");
   const [isUpdating, setIsUpdating] = useState(false);
   const [bulkUpdateSchoolAdmin] = useBulkUpdateSchoolAdminMutation();
   const [formData, setFormData] = useState({
@@ -42,12 +45,7 @@ function BulkUpdate({ handleClose, data }) {
      }
      catch(e){
         setIsUpdating(false);
-        toast.custom(
-            <ToastDanger 
-              title={"Update Failed"}
-              description={"An error occurred while trying to update Admin"}
-            />
-        )
+        setClientError("Update Failed", "An error occurred while trying to update Admin")
      }
   }
   return (
@@ -112,6 +110,12 @@ function BulkUpdate({ handleClose, data }) {
             onChange={(e) => handleInputChange("name", e.target.value)}
           />
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-2">
           <button
             className="rounded-3 p-2 text-white border-none primary-background font-size-sm w-100"

@@ -2,6 +2,8 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useUpdateAnnouncementTag } from "../../hooks/announcement/useUpdateAnnouncementTag";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateAnnouncementTag({ handleClose, rowData }) {
   const { id:tagId } = rowData
   const [formData, setFormData] = useState({
@@ -11,8 +13,11 @@ function UpdateAnnouncementTag({ handleClose, rowData }) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const { mutate: updateTag, isPending } = useUpdateAnnouncementTag();
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Update Announcement Tag");
   const handleSubmit = async () => {
-    updateTag({ tagId, updateData:formData });
+    clearFormError();
+    updateTag({ tagId, updateData:formData }, { onError: handleServerError });
   };
   return (
     <>
@@ -46,6 +51,12 @@ function UpdateAnnouncementTag({ handleClose, rowData }) {
             onChange={(e) => handleInputChange("name", e.target.value)}
           />
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-2">
           <button
             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"

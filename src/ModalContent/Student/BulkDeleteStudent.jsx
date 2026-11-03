@@ -1,14 +1,19 @@
 import { useBulkDeleteStudent } from "../../hooks/student/useBulkDeleteStudent";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeleteStudent({ handleClose, resetAll, bulkData }) {
   const formattedData = bulkData.map((items) => ({ student_id: items.id }));
   const { mutate: bulkDeleteStudent, isPending } = useBulkDeleteStudent(
     handleClose,
     resetAll,
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Delete Student");
   const handleBulkDeleteStudent = () => {
-    bulkDeleteStudent({ studentIds: formattedData });
+    clearFormError();
+    bulkDeleteStudent({ studentIds: formattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -36,6 +41,12 @@ function BulkDeleteStudent({ handleClose, resetAll, bulkData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

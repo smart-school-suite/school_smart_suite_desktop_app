@@ -1,9 +1,12 @@
 import { useDeleteResitTimetableMutation } from "../../Slices/Asynslices/deleteSlice";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { SingleSpinner } from "../../components/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeleteTimetable({ handleClose, row_id: examId }) {
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError("Failed To Delete Timetable");
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteResitTimetable] = useDeleteResitTimetableMutation();
   const handleDeleteTimetable = async () => {
@@ -19,14 +22,7 @@ function DeleteTimetable({ handleClose, row_id: examId }) {
       );
     } catch (e) {
       setIsDeleting(false);
-      toast.custom(
-        <ToastDanger
-          title={"Delete Failed ❌"}
-          description={
-            "❌ Something went wrong! The Exam time table delete failed due to an error. Please try again later."
-          }
-        />
-      );
+      setClientError("Delete Failed ❌", "❌ Something went wrong! The Exam time table delete failed due to an error. Please try again later.");
     }
   };
   return (
@@ -37,6 +33,12 @@ function DeleteTimetable({ handleClose, row_id: examId }) {
           This action cannot be undone. This will permanently delete this
           account and remove this account data from our servers.
         </p>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-4 d-flex justify-content-end gap-2">
           <button
             className="border-none px-3 py-2 text-primary rounded-3 font-size-sm"

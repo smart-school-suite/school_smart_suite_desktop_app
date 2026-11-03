@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useUpdateAnnouncementCategory } from "../../hooks/announcement/useUpdateAnnouncementCategory";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateAnnouncementCategory({ handleClose, rowData }) {
   const { id:categoryId } = rowData;
   const [formData, setFormData] = useState({
@@ -12,8 +14,11 @@ function UpdateAnnouncementCategory({ handleClose, rowData }) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const {mutate:updateCategory, isPending} = useUpdateAnnouncementCategory();
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Update Announcement Category");
   const handleUpdate = async () => {
-     updateCategory({ categoryId, updateData:formData })
+     clearFormError();
+     updateCategory({ categoryId, updateData:formData }, { onError: handleServerError })
   };
   return (
     <>
@@ -56,6 +61,12 @@ function UpdateAnnouncementCategory({ handleClose, rowData }) {
             onChange={(e) => handleInputChange("description", e.target.value)}
           ></textarea>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-2">
           <button
             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"

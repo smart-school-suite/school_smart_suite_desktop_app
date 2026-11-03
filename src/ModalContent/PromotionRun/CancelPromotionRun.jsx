@@ -1,12 +1,17 @@
 import { CircleX } from "lucide-react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCancelPromotionRun } from "../../hooks/promotionRun/useCancelPromotionRun";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CancelPromotionRun({ handleClose, rowData }) {
   const { id: promotionId } = rowData;
   const { mutate: cancelPromotionRun, isPending } =
     useCancelPromotionRun(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Cancel Promotion Run");
   const handleCancelPromotion = () => {
-    cancelPromotionRun(promotionId);
+    clearFormError();
+    cancelPromotionRun(promotionId, { onError: handleServerError });
   };
   return (
     <>
@@ -36,6 +41,12 @@ function CancelPromotionRun({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-2 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

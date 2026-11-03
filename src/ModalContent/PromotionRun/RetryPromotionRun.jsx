@@ -1,12 +1,17 @@
 import { CircleX } from "lucide-react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useRetryPromotionRun } from "../../hooks/promotionRun/useRetryPromotionRun";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function RetryPromotionRun({ handleClose, rowData }) {
   const { id: promotionId } = rowData;
   const { mutate: retryPromotionRun, isPending } =
     useRetryPromotionRun(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Retry Promotion Run");
   const handleRetryPromotionRun = () => {
-    retryPromotionRun(promotionId);
+    clearFormError();
+    retryPromotionRun(promotionId, { onError: handleServerError });
   };
   return (
     <>
@@ -36,6 +41,12 @@ function RetryPromotionRun({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-2 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

@@ -6,12 +6,14 @@ import { Icon } from "@iconify/react";
 import { useAddResitExamGrading } from "../../hooks/resitExam/useAddResitExamGrading";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
-import ToastWarning from "../../components/Toast/ToastWarning";
-import toast from "react-hot-toast";
 import { allFieldsValid } from "../../utils/functions";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ResitExamGrading({ handleClose, rowData }) {
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError();
   const { id: examId } = rowData;
   const gradeConfigRef = useRef();
   const [errors, setErrors] = useState({
@@ -34,17 +36,11 @@ function ResitExamGrading({ handleClose, rowData }) {
   const handleSaveChanges = () => {
     const prevalidationError = handlePrevalidation();
     if (!allFieldsValid(prevalidationError)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
-    addExamGrading({ resitExamId: examId, gradesConfigId: gradeConfig.id });
+    clearFormError();
+    addExamGrading({ resitExamId: examId, gradesConfigId: gradeConfig.id }, { onError: handleServerError });
   };
   return (
     <>
@@ -94,6 +90,12 @@ function ResitExamGrading({ handleClose, rowData }) {
           </div>
         </div>
       )}
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mb-2"
+      />
       <button
         className=" w-100 p-2 font-size-sm px-3 primary-background border-none rounded-3 text-white"
         onClick={handleSaveChanges}

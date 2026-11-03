@@ -15,14 +15,16 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateDepartment({ handleClose, drawerData }) {
   const { mutate: updateDepartment, isPending } =
     useUpdateDepartment(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Department");
   const { id: departmentId, department_name, description } = drawerData;
   const {
     data: departmentDetails,
@@ -50,29 +52,21 @@ function UpdateDepartment({ handleClose, drawerData }) {
     description: "",
   });
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleDepartmentUpdate = () => {
     if (optionalValidateObject(isFieldValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please ensure all fields are valid before updating."}
-        />,
-      );
+      setClientError("Invalid Fields", "Please ensure all fields are valid before updating.");
       return;
     }
 
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing to Update"}
-          description={"Please ensure all fields are filled before updating."}
-        />,
-      );
+      setClientError("Nothing to Update", "Please ensure all fields are filled before updating.");
       return;
     }
-    updateDepartment({ departmentId, updateData: formData });
+    clearFormError();
+    updateDepartment({ departmentId, updateData: formData }, { onError: handleServerError });
   };
   return (
     <>
@@ -101,6 +95,12 @@ function UpdateDepartment({ handleClose, drawerData }) {
         ) : (
           <>
             <div className="drawer-content px-2">
+              <FormErrorBanner
+                ref={errorBannerRef}
+                error={formError}
+                onDismiss={clearFormError}
+                className="mb-2"
+              />
               <div>
                 <label htmlFor="departmentName" className="font-size-sm">
                   Department Name

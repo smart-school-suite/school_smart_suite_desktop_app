@@ -17,6 +17,8 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useUpdateCaMarks } from "../../hooks/evaluateStudent/useUpdateCaMarks";
 import { useGetCaUpdateHelperData } from "../../hooks/evaluationHelper/useGetCaUpdateHelperData";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateCaScores({ handleClose, rowData }) {
   const moduleState = useSelector((state) => state.caEvaluation.update);
   const { id: candidateId } = rowData;
@@ -29,6 +31,8 @@ function UpdateCaScores({ handleClose, rowData }) {
   } = useGetCaUpdateHelperData(candidateId);
 
   const { mutate: updateCaScores, isPending } = useUpdateCaMarks(handleClose, candidateId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Update Ca Scores");
   useEffect(() => {
     const data = helperData?.data;
 
@@ -63,7 +67,8 @@ function UpdateCaScores({ handleClose, rowData }) {
       })),
       candidate_id: candidateId
     };
-    updateCaScores(payload);
+    clearFormError();
+    updateCaScores(payload, { onError: handleServerError });
   };
   return (
     <>
@@ -97,6 +102,12 @@ function UpdateCaScores({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
 
         <div
           className="d-flex flex-row align-items-stretch w-100 overflow-hidden"

@@ -1,13 +1,18 @@
 import { useBulkDeactivateCourse } from "../../hooks/course/useBulkDeactivateCourse";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeactivateCourse({ handleClose, bulkData, resetAll }) {
   const { mutate: bulkDeactivateCourse, isPending } = useBulkDeactivateCourse(
     handleClose,
     resetAll
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Deactivate Course");
   const formattedData = bulkData.map((items) => ({ course_id: items.id }));
   const handleBulkDeactivateCourse = () => {
-    bulkDeactivateCourse({ courseIds: formattedData });
+    clearFormError();
+    bulkDeactivateCourse({ courseIds: formattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -17,6 +22,12 @@ function BulkDeactivateCourse({ handleClose, bulkData, resetAll }) {
           This action cannot be undone. This will Permanently delete This
           account and remove this account data from our servers
         </p>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center gap-2 w-100">
             <button

@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from "react";
-import toast from "react-hot-toast";
 import {
   nameSchema,
   numberSchema,
@@ -11,12 +10,15 @@ import {
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useCreateHall } from "../../hooks/hall/useCreateHall";
 import { useGetHallTypes } from "../../hooks/hall/useGetHallTypes";
 import { allFieldsValid } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateHall({ handleClose }) {
   const { mutate: createHall, isPending } = useCreateHall(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Hall");
   const { data: hallTypes, isLoading: isHallTypeLoading } = useGetHallTypes();
   const nameRef = useRef();
   const locationRef = useRef();
@@ -58,25 +60,11 @@ function CreateHall({ handleClose }) {
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isFieldValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
 
@@ -89,11 +77,18 @@ function CreateHall({ handleClose }) {
       })),
     };
 
-    createHall(payload);
+    clearFormError();
+    createHall(payload, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content ps-2 pt-2">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div>
             <label htmlFor="courseTitle" className="font-size-sm">

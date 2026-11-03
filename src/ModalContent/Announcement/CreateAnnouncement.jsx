@@ -27,9 +27,10 @@ import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
 import { useGetSchoolAdmins } from "../../hooks/schoolAdmin/useGetSchoolAdmins";
 import { announcementStatus } from "../../data/data";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useCreateAnnouncement } from "../../hooks/announcement/useCreateAnnouncement";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateAnnouncement({ handleClose }) {
   const [toggle, setToggle] = useState("createContent");
   const { data: tags, isLoading: isTagLoading } = useGetAnnouncementTags();
@@ -124,6 +125,8 @@ function AnnouncementCreate({
     useGetSchoolAdmins();
   const { mutate: createAnnouncement, isPending } =
     useCreateAnnouncement(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const publishedAtRef = useRef();
   const handlePrevalidation = async () => {
@@ -132,14 +135,7 @@ function AnnouncementCreate({
       formData.school_admin_ids.length === 0 &&
       formData.teacher_ids === 0
     ) {
-      toast.custom(
-        <ToastWarning
-          title={"You Must Have At Least One Recipient"}
-          description={
-            "You must select at least one recipient from either the students, school admins, or teachers."
-          }
-        />
-      );
+      setClientError("You Must Have At Least One Recipient", "You must select at least one recipient from either the students, school admins, or teachers.");
       return;
     }
     const result = {};
@@ -153,27 +149,13 @@ function AnnouncementCreate({
     if (formData.status == "scheduled") {
       const prevalidation = await handlePrevalidation();
       if (!allFieldsValid(prevalidation)) {
-        toast.custom(
-          <ToastWarning
-            title={"1Invalid Fields"}
-            description={
-              "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-            }
-          />
-        );
+        setClientError("1Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
         return;
       }
       if (
         !allFieldsValid({...isValid.published_at})
       ) {
-        toast.custom(
-          <ToastWarning
-            title={"2Invalid Fields"}
-            description={
-              "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-            }
-          />
-        );
+        setClientError("2Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
         return;
       }
     }
@@ -198,7 +180,8 @@ function AnnouncementCreate({
       })),
     };
 
-    createAnnouncement(payload);
+    clearFormError();
+    createAnnouncement(payload, { onError: handleServerError });
   };
   return (
     <>
@@ -441,6 +424,12 @@ function AnnouncementCreate({
           </div>
         </div>
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mb-2"
+      />
       <div className="d-flex flex-row justify-content-between w-100 mt-2">
         <div
           className="d-flex flex-row align-items-center gap-2 color-primary font-size-sm pointer-cursor"
@@ -485,6 +474,8 @@ function AnnouncementContent({
   isLabelLoading,
   isTagLoading,
 }) {
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError();
   const titleRef = useRef();
   const contentRef = useRef();
   const tagRef = useRef();
@@ -510,25 +501,11 @@ function AnnouncementContent({
   const handleNext = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid({ title: isValid.title, content: isValid.content })) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     setToggle("createAnnouncement");
@@ -760,6 +737,12 @@ function AnnouncementContent({
           </div>
         </div>
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mb-2"
+      />
       <div className="d-flex flex-row justify-content-end w-100">
         <button
           className="border-none rounded-3 px-4 py-2 primary-background text-white font-size-sm"

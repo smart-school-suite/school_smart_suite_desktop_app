@@ -4,11 +4,11 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useGetSchoolGradeCategories } from "../../hooks/schoolGradeCategory/useGetSchoolGradeCategory";
-import ToastWarning from "../../components/Toast/ToastWarning";
-import toast from "react-hot-toast";
 import { allFieldsValid } from "../../utils/functions";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkAddExamGrading({ handleClose, resetAll, bulkData }) {
   const gradeConfigRef = useRef();
   const [errors, setErrors] = useState({
@@ -24,6 +24,8 @@ function BulkAddExamGrading({ handleClose, resetAll, bulkData }) {
     handleClose,
     resetAll
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Add Exam Grading");
   const handlePrevalidation = async () => {
     const gradeConfig = await gradeConfigRef.current.triggerValidation();
     return {
@@ -33,21 +35,15 @@ function BulkAddExamGrading({ handleClose, resetAll, bulkData }) {
   const handleSaveChanges = () => {
     const prevalidationError = handlePrevalidation();
     if (!allFieldsValid(prevalidationError)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     const formattedData = bulkData.map((items) => ({
       exam_id: items.id,
       grades_config_Id: gradeConfig.id,
     }));
-    addExamGrading({ exam_grading: formattedData });
+    clearFormError();
+    addExamGrading({ exam_grading: formattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -98,6 +94,12 @@ function BulkAddExamGrading({ handleClose, resetAll, bulkData }) {
               />
             </div>
           </div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <button
             className=" w-100 p-2 font-size-sm px-3 primary-background border-none rounded-3 text-white"
             onClick={handleSaveChanges}

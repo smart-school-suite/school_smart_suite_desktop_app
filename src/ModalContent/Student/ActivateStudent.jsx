@@ -1,11 +1,16 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useActivateStudent } from "../../hooks/student/useActivateStudent.jsx";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ActivateStudent({ handleClose, rowData }){
   const studentId = rowData.id;
   const {mutate:activateStudent, isPending} = useActivateStudent(studentId, handleClose)
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Activate Student");
   const handleActivateStudent = () => {
-      activateStudent(studentId);
+      clearFormError();
+      activateStudent(studentId, { onError: handleServerError });
   }
    return(
     <>
@@ -35,6 +40,12 @@ function ActivateStudent({ handleClose, rowData }){
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

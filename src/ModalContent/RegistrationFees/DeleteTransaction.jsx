@@ -1,12 +1,17 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useDeleteRegistrationFeeTransaction } from "../../hooks/registrationFee/useDeleteRegistrationFeeTransaction";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeleteTransaction({ handleClose, rowData }) {
   const { id: transactionId } = rowData;
   const { mutate: deleteTransaction, isPending } =
     useDeleteRegistrationFeeTransaction(handleClose, transactionId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Delete Transaction");
   const handleDelete = () => {
-    deleteTransaction(transactionId);
+    clearFormError();
+    deleteTransaction(transactionId, { onError: handleServerError });
   };
   return (
     <>
@@ -36,6 +41,12 @@ function DeleteTransaction({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bulkActivateSchoolAdmin } from "../../services/schoolAdmin";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useBulkActivateSchoolAdmins = (handleClose, resetAll) => {
     const queryClient = useQueryClient();
@@ -26,13 +25,5 @@ export const useBulkActivateSchoolAdmins = (handleClose, resetAll) => {
 
             
          },
-         onError:() => {
-             toast.custom(
-                <ToastDanger 
-                  title={"Activation Failed"}
-                  description={"Failed to activate account please try again"}
-                />
-             )
-         }
     })
 }

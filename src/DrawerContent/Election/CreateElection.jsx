@@ -1,15 +1,15 @@
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 import { dateTimeRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { DateTimeRangeInput } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetAllSystemAcademicYear } from "../../hooks/academicYear/useGetAllSystemAcademicYear";
 import { useCreateElection } from "../../hooks/election/useCreateElection";
 import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionTypes";
 import { allFieldsValid } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateElection({ handleClose }) {
   const applicationDateRangeRef = useRef();
   const votingDateRangeRef = useRef();
@@ -24,6 +24,8 @@ function CreateElection({ handleClose }) {
     isLoading: isElectionTypeLoading,
   } = useGetElectionTypes();
   const { mutate: createElection, isPending } = useCreateElection(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Election");
   const [formData, setFormData] = useState({
     application_start: "",
     application_end: "",
@@ -61,31 +63,18 @@ function CreateElection({ handleClose }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     const payload = {
@@ -96,11 +85,18 @@ function CreateElection({ handleClose }) {
       school_year_id: formData.school_year_id.id,
       election_type_id: formData.election_type_id.id,
     };
-    createElection(payload);
+    clearFormError();
+    createElection(payload, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div className=" w-100">
             <DateTimeRangeInput

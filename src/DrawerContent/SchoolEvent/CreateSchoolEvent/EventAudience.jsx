@@ -18,8 +18,6 @@ import {
 } from "../../../Slices/schoolEvent/schoolEventSlice";
 import { useRef } from "react";
 import { ShieldAlert, Info, TriangleAlert, CircleCheck, X } from "lucide-react";
-import toast from "react-hot-toast";
-import ToastWarning from "../../../components/Toast/ToastWarning";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { motion, AnimatePresence } from "framer-motion";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";

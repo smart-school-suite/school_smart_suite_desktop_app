@@ -1,10 +1,15 @@
 import { useDeleteExamCandidate } from "../../hooks/examCandidate/useDeleteExamCandidate";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeleteExamCandidate({ handleClose, rowData }) {
   const candidateId = rowData.id;
   const {mutate:deleteCandidate, isPending } = useDeleteExamCandidate();
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Delete Exam Candidate");
   const handleDeleteCandidate = () => {
-      deleteCandidate(candidateId);
+      clearFormError();
+      deleteCandidate(candidateId, { onError: handleServerError });
   }
   return (
     <>
@@ -14,6 +19,12 @@ function DeleteExamCandidate({ handleClose, rowData }) {
           This action cannot be undone. This will Permanently delete This
           account and remove this account data from our servers
         </p>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button

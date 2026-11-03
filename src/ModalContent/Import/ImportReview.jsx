@@ -21,6 +21,8 @@ import {
   CircleCheck,
 } from "lucide-react";
 import { useImportModule } from "../../hooks/import/useImportModule";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ImportReview({
   moduleState: moduleStateType,
   setImportReset,
@@ -41,6 +43,8 @@ function ImportReview({
     isError,
     error,
   } = useImportModule(moduleStateType, handleClose, setImportReset);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Import Review");
   const [filter, setFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const tableRef = useRef();
@@ -105,10 +109,11 @@ function ImportReview({
   ];
   const handleImport = async () => {
     const formattedMapping = formatImportMapping(mapping);
+    clearFormError();
     importModule({
       file: file,
       mapping: formattedMapping,
-    });
+    }, { onError: handleServerError });
   };
 
   return (
@@ -137,6 +142,12 @@ function ImportReview({
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-2 d-flex flex-column gap-3">
           <div className="d-flex flex-row justify-content-end fw-semibold">
             <span>

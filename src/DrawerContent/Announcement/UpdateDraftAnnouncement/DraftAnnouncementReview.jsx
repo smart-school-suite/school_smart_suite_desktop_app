@@ -14,6 +14,8 @@ import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { Megaphone } from "lucide-react";
 import UpdateDraftDiscardWarning from "../../../ModalContent/Announcement/UpdateDraftDiscardWarning";
 import { useUpdateAnnouncementDraft } from "../../../hooks/announcement/useUpdateAnnouncementDraft";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function DraftAnnouncementReview({
   handleClose,
   currentStep,
@@ -23,6 +25,8 @@ function DraftAnnouncementReview({
   drawerData,
 }) {
   const { mutate: update, isPending } = useUpdateAnnouncementDraft(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const dispatch = useDispatch();
   const moduleState = useSelector(
     (state) => state.draftAnnouncement.updateDraftAnnouncement.draft,
@@ -73,7 +77,8 @@ function DraftAnnouncementReview({
       ],
     };
 
-    update({ updateData: payload });
+    clearFormError();
+    update({ updateData: payload }, { onError: handleServerError });
   };
   return (
     <>
@@ -147,6 +152,12 @@ function DraftAnnouncementReview({
         className="drawer-content"
         style={{ background: "#f9f9f9", paddingBottom: "10rem" }}
       >
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3 pt-2 px-2 font-size-sm">
           <div className="d-flex flex-column gap-1">
             <span>Announcement Preview</span>

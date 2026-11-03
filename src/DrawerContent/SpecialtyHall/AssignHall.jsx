@@ -9,6 +9,8 @@ import SearchInput from "../../components/input/search";
 import { useAssignSpecialtyHall } from "../../hooks/specialtyHall/useAssignSpecialtyHall";
 import { useGetAssignableHalls } from "../../hooks/specialtyHall/useGetAssignableHalls";
 import { SpecialtyIcon } from "../../icons/Icons";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function AssignHall({ handleClose = () => {}, drawerData }) {
   const specialtyId = drawerData?.id;
@@ -21,6 +23,8 @@ function AssignHall({ handleClose = () => {}, drawerData }) {
 
   const { mutate: assignSpecialtyHall, isPending } =
     useAssignSpecialtyHall(specialtyId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Assign Hall");
 
   const [selectedHallIds, setSelectedHallIds] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState("");
@@ -99,10 +103,11 @@ function AssignHall({ handleClose = () => {}, drawerData }) {
       hall_id: hallId,
     }));
 
+    clearFormError();
     assignSpecialtyHall({
       hallIds: formattedData,
       specialty_id: specialtyId,
-    });
+    }, { onError: handleServerError });
   };
 
   return (
@@ -143,6 +148,12 @@ function AssignHall({ handleClose = () => {}, drawerData }) {
         className="drawer-content pt-3 p-2"
         style={{ paddingBottom: "10rem" }}
       >
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3 font-size-sm">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <span className="text-iron-400 fw-light">Assignable Halls</span>

@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteAnnouncement } from "../../services/announcement";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastWarning from "../../components/Toast/ToastWarning";
 export const useDeleteAnnouncement = (
   handleClose,
   status = "active",
@@ -24,14 +23,6 @@ export const useDeleteAnnouncement = (
         <ToastSuccess
           title={"Delete Successfull"}
           description={"Announcement Deleted Successfully"}
-        />
-      );
-    },
-    onError: () => {
-      toast.custom(
-        <ToastWarning
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
         />
       );
     },

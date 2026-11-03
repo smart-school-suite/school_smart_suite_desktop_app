@@ -4,6 +4,8 @@ import { useAssignHodMutation } from "../../Slices/Asynslices/postSlice";
 import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function AppointHod({ handleClose, row_id: teacherId }) {
   const { data: department, isLoading, error } = useFetchDepartmentsQuery();
@@ -12,14 +14,17 @@ function AppointHod({ handleClose, row_id: teacherId }) {
     hodable_id: teacherId
   });
   const [assignHod] = useAssignHodMutation();
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError("Failed To Appoint HOD");
 
   const handleAppointHod = async () => {
+    clearFormError();
     try {
       await assignHod(formData).unwrap();
       toast.success("HOD Assigned Successfully");
       handleClose();
     } catch (e) {
-      toast.error("Something went wrong trying to appoint HOD");
+      setClientError("HOD Appointment Failed", "Something went wrong trying to appoint HOD. Please try again.");
     }
   };
 
@@ -116,6 +121,12 @@ function AppointHod({ handleClose, row_id: teacherId }) {
             );
           })}
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-3">
           <button
             className="border-none rounded-3 p-2 font-size-sm w-100 primary-background text-white"

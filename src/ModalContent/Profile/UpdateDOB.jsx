@@ -2,6 +2,8 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useUpdateSchoolAdminProfile } from "../../hooks/schoolAdmin/useUpdateSchoolAdminProfile";
 import { useState } from "react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateDOB({ handleClose }) {
   const [formData, setFormData] = useState({
     date_of_birth: "",
@@ -13,8 +15,11 @@ function UpdateDOB({ handleClose }) {
     handleClose,
     "Date Of Birth"
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Update DOB");
   const handleUpdate = () => {
-    update({ updateData: formData });
+    clearFormError();
+    update({ updateData: formData }, { onError: handleServerError });
   };
   return (
     <>
@@ -45,6 +50,12 @@ function UpdateDOB({ handleClose }) {
             onChange={(e) => handleInputChange("date_of_birth", e.target.value)}
           />
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <button
           className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"
           onClick={() => {

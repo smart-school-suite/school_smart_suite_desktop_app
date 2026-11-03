@@ -1,12 +1,17 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useBulkActivateSchoolAdmins } from "../../hooks/schoolAdmin/useBulkActivateSchoolAdmin";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkActivateSchoolAdmin({ handleClose, bulkData,  resetAll }) {
      const {mutate:activate, isPending} = useBulkActivateSchoolAdmins(handleClose, resetAll);
+     const { formError, errorBannerRef, handleServerError, clearFormError } =
+       useFormError("Failed To Bulk Activate School Admin");
      const handleActivate = async () => {
        const formattedData = bulkData.map((items) => ({
           school_admin_id:items.id
        }));
-       activate({ schoolAdminIds:formattedData })
+       clearFormError();
+       activate({ schoolAdminIds:formattedData }, { onError: handleServerError })
      };
      return(
         <>
@@ -18,6 +23,12 @@ function BulkActivateSchoolAdmin({ handleClose, bulkData,  resetAll }) {
                   This action cannot be undone. This will permanently delete this
                   account and remove this account data from our servers.
                 </p>
+                <FormErrorBanner
+                  ref={errorBannerRef}
+                  error={formError}
+                  onDismiss={clearFormError}
+                  className="mb-2"
+                />
                 <div className="mt-4 d-flex justify-content-end gap-2">
                   <button
                     className="border-none px-3 py-2 text-primary rounded-3 font-size-sm w-50"

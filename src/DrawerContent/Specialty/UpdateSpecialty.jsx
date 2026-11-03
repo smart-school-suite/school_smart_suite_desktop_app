@@ -20,12 +20,12 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetSpecialtyDetails } from "../../hooks/specialty/useGetSpecialtyDetail";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateSpecialty({ handleClose, drawerData }) {
   const { id: specialtyId } = drawerData;
   const {
@@ -48,6 +48,8 @@ function UpdateSpecialty({ handleClose, drawerData }) {
     currencyState?.schoolDetails?.school?.country?.currency || "";
   const { mutate: updateSpecialty, isPending } =
     useUpdateSpecialty(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Specialty");
   const [formData, setFormData] = useState({
     specialty_name: "",
     registration_fee: "",
@@ -78,27 +80,16 @@ function UpdateSpecialty({ handleClose, drawerData }) {
   }, [isSpecialtyDetailsLoading, setFormData]);
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSpecialtyUpdate = async () => {
     if (optionalValidateObject(isFieldValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
     const payload = {
@@ -109,7 +100,8 @@ function UpdateSpecialty({ handleClose, drawerData }) {
       level_id: formData.level_id.id,
       description: formData.description,
     };
-    updateSpecialty({ specialtyId, updateData: payload });
+    clearFormError();
+    updateSpecialty({ specialtyId, updateData: payload }, { onError: handleServerError });
   };
   return (
     <>
@@ -142,6 +134,12 @@ function UpdateSpecialty({ handleClose, drawerData }) {
         ) : (
           <>
             <div className="drawer-content px-2">
+              <FormErrorBanner
+                ref={errorBannerRef}
+                error={formError}
+                onDismiss={clearFormError}
+                className="mb-2"
+              />
               <div>
                 <label htmlFor="specialtyName" className="font-size-sm">
                   Specialty Name

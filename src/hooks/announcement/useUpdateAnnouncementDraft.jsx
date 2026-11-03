@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateDraftAnnouncement } from "../../services/announcement";
 import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useUpdateAnnouncementDraft = (
   announcementId,
@@ -33,14 +32,6 @@ export const useUpdateAnnouncementDraft = (
         <ToastSuccess
           title={"Update Successfull"}
           description={"Announcement Updated  Successfully"}
-        />,
-      );
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastWarning
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
         />,
       );
     },

@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 import {
   courseCodeSchema,
   nameSchema,
@@ -14,12 +13,13 @@ import {
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useCreateCourse } from "../../hooks/course/useCreateCourse";
 import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { allFieldsValid } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateCourse({ handleClose }) {
   const courseCodeRef = useRef();
   const courseTitleRef = useRef();
@@ -55,6 +55,8 @@ function CreateCourse({ handleClose }) {
     formData.specialty_Id,
     formData.semester_Id,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Course");
   const { data: specialty, isFetching: isSpecailtyLoading } =
     useGetSpecialties();
   const { data: semesters, isLoading: isSemesterLoading } = useGetSemester();
@@ -78,33 +80,21 @@ function CreateCourse({ handleClose }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isFieldValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
+    clearFormError();
     createCourseMutation({
       ...formData,
       specialty_id: formData.specialty_id.id,
@@ -112,12 +102,18 @@ function CreateCourse({ handleClose }) {
       typeIds: formData.type.map((items) => ({
         type_id: items.id,
       })),
-    });
+    }, { onError: handleServerError });
   };
 
   return (
     <>
       <div className="drawer-content ps-2 pt-2">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div>
             <label htmlFor="courseTitle" className="font-size-sm">

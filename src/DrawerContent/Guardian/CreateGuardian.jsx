@@ -15,9 +15,9 @@ import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { contactMethod, languages } from "../../data/data";
 import { useRef } from "react";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateGuardian({ handleClose }) {
   const nameRef = useRef();
   const phoneRef = useRef();
@@ -25,6 +25,8 @@ function CreateGuardian({ handleClose }) {
   const preferredContactRef = useRef();
   const preferredLanguageRef = useRef();
   const { mutate: createParent, isPending } = useCreateParent(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Guardian");
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -58,41 +60,35 @@ function CreateGuardian({ handleClose }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Please ensure all fields are valid before creating a Guardian."
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Please ensure all fields are valid before creating a Guardian.");
       return;
     }
     if (!allFieldsValid(isInvalid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Please ensure all fields are valid before creating a Guardian."
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Please ensure all fields are valid before creating a Guardian.");
       return;
     }
+    clearFormError();
     createParent({
       ...formData,
       preferred_contact_method: formData.preferred_contact_method.name,
       preferred_language: formData.preferred_language.name,
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-4">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-2">
           <div>
             <label htmlFor="guardianName" className="font-size-sm">

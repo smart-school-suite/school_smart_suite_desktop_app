@@ -4,6 +4,8 @@ import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useBulkAddTeacherSpecialtyPreference } from "../../hooks/teacher/useBulkAddTeacherSpecialtyPreference";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -29,6 +31,8 @@ function BulkAddTeacherSpecialtyPreference({
   const { data: specialtiesData, isLoading, error } = useGetSpecialties();
   const { mutate: bulkAddTeacherSpecialtyPreference, isPending } =
     useBulkAddTeacherSpecialtyPreference(handleClose, resetAll);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Add Teacher Specialty Preference");
   const darkMode = useSelector((state) => state.theme.darkMode);
 
   const [selectedSpecialtyIds, setSelectedSpecialtyIds] = useState(new Set());
@@ -185,6 +189,12 @@ function BulkAddTeacherSpecialtyPreference({
       </div>
 
       {/* Action Button */}
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mb-2"
+      />
       <button
         className="border-none rounded-3 p-2 font-size-sm w-100 mt-4 primary-background text-white"
         onClick={() => {
@@ -194,7 +204,8 @@ function BulkAddTeacherSpecialtyPreference({
           const teacherIds = bulkData.map((t) => ({
             teacher_id: t.id,
           }));
-          bulkAddTeacherSpecialtyPreference({ teacherIds, specialtyIds });
+          clearFormError();
+          bulkAddTeacherSpecialtyPreference({ teacherIds, specialtyIds }, { onError: handleServerError });
         }}
         disabled={isPending}
       >

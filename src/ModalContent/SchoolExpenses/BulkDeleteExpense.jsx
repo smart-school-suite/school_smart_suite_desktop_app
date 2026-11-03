@@ -1,13 +1,18 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useBulkDeleteSchoolExpenses } from "../../hooks/schoolExpenses/useBulkDeleteSchoolExpenses";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeleteExpense({ handleClose, resetAll, bulkData }) {
   const { mutate: deleteAll, isPending } = useBulkDeleteSchoolExpenses(
     resetAll,
     handleClose,
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Delete Expense");
   const formattedData = bulkData.map((items) => ({ expense_id: items.id }));
   const handleDeleteExpenses = () => {
-    deleteAll({ expenseIds: formattedData });
+    clearFormError();
+    deleteAll({ expenseIds: formattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -35,6 +40,12 @@ function BulkDeleteExpense({ handleClose, resetAll, bulkData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

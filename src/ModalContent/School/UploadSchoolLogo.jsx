@@ -6,11 +6,11 @@ import toast from "react-hot-toast";
 import axios from "../../axios/axios";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { secureTokenStorage } from "../../services/secureStore/secureTokenStorage";
 import { cleanAssetPath } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 const CDN_BASE_URL = "https://cdn.smartschoolsuite.com";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -86,6 +86,8 @@ function LogoPreview({
 }
 
 function UploadSchoolLogo({ handleClose, rowData }) {
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Upload School Logo");
   const currentLogoUrl = rowData?.schoolLogo
     ? `${CDN_BASE_URL}/${cleanAssetPath(rowData.schoolLogo)}`
     : null;
@@ -209,24 +211,11 @@ function UploadSchoolLogo({ handleClose, rowData }) {
     } catch (err) {
       if (err?.code === "ERR_CANCELED" || err?.name === "CanceledError") {
         setUploadProgress(0);
-        toast.custom(
-          <ToastWarning
-            title="Upload Cancelled"
-            description="The logo upload was cancelled."
-          />,
-        );
+        setClientError("Upload Cancelled", "The logo upload was cancelled.");
         return;
       }
 
-      toast.custom(
-        <ToastDanger
-          title="Update Failed"
-          description={
-            err?.response?.data?.message ||
-            "Failed to upload School Logo due to an error, please try again."
-          }
-        />,
-      );
+      handleServerError(err);
       console.error(err);
     } finally {
       abortRef.current = null;
@@ -264,6 +253,12 @@ function UploadSchoolLogo({ handleClose, rowData }) {
           <CircleX size={16} />
         </button>
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mx-2 mt-2 mb-0"
+      />
 
       <div className="p-3">
         {error && (

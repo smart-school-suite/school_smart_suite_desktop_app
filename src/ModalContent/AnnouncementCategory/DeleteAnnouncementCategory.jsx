@@ -1,11 +1,16 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useDeleteAnnouncementCategory } from "../../hooks/announcement/useDeleteAnnouncementCategory";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeleteAnnouncementCategory({ handleClose, rowData }) {
   const { id:categoryId } = rowData
   const { mutate:deleteCategory, isPending } = useDeleteAnnouncementCategory();
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Delete Announcement Category");
   const handleDelete = async () => {
-     deleteCategory(categoryId);
+     clearFormError();
+     deleteCategory(categoryId, { onError: handleServerError });
   };
   return (
     <>
@@ -33,6 +38,12 @@ function DeleteAnnouncementCategory({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

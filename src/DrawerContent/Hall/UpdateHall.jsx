@@ -1,5 +1,4 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import {
   nameSchema,
   numberSchema,
@@ -12,7 +11,6 @@ import {
 } from "../../components/FormComponents/InputComponents";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetHallDetail } from "../../hooks/hall/useGetHallDetail";
 import { useGetHallTypes } from "../../hooks/hall/useGetHallTypes";
@@ -21,6 +19,8 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateHall({ handleClose, drawerData }) {
   const { id: hallId } = drawerData;
   const {
@@ -64,26 +64,16 @@ function UpdateHall({ handleClose, drawerData }) {
   }, []);
 
   const { mutate: updateHall, isPending } = useUpdateHall(handleClose, hallId);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Hall");
 
   const handleUpdateHall = async () => {
     if (optionalValidateObject(isFieldValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
     const payload = {
@@ -94,7 +84,8 @@ function UpdateHall({ handleClose, drawerData }) {
         type_id: items.id,
       })),
     };
-    updateHall({ hallId, updateData: payload });
+    clearFormError();
+    updateHall({ hallId, updateData: payload }, { onError: handleServerError });
   };
   return (
     <>
@@ -119,6 +110,12 @@ function UpdateHall({ handleClose, drawerData }) {
         ) : (
           <>
             <div className="drawer-content ps-2">
+              <FormErrorBanner
+                ref={errorBannerRef}
+                error={formError}
+                onDismiss={clearFormError}
+                className="mb-2"
+              />
               <div className="d-flex flex-column gap-3">
                 <div>
                   <label htmlFor="courseTitle" className="font-size-sm">

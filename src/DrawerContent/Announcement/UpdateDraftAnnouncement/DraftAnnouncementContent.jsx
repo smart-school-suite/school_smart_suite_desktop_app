@@ -15,8 +15,6 @@ import { useGetAnnouncementLabels } from "../../../hooks/announcement/useGetAnno
 import { useGetAnnouncementTags } from "../../../hooks/announcement/useGetAnnouncementTags";
 import { useSelector, useDispatch } from "react-redux";
 import { ShieldAlert, Info, TriangleAlert, CircleCheck, X } from "lucide-react";
-import toast from "react-hot-toast";
-import ToastWarning from "../../../components/Toast/ToastWarning";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { motion, AnimatePresence } from "framer-motion";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
@@ -30,6 +28,8 @@ import {
 } from "../../../Slices/announcement/draftAnnouncementSlice";
 import { useEffect, Fragment, useRef } from "react";
 import UpdateDraftDiscardWarning from "../../../ModalContent/Announcement/UpdateDraftDiscardWarning";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function DraftAnnouncementContent({
   handleClose,
   currentStep,
@@ -37,6 +37,8 @@ function DraftAnnouncementContent({
   fullStep,
   drawerData,
 }) {
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError();
   const { id: announcementId } = drawerData;
   const {
     data: announcementDetails,
@@ -126,6 +128,12 @@ function DraftAnnouncementContent({
     <>
       {isAnnouncementLoading ? (
         <div className="drawer-content px-2 pt-2">
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <div className="d-flex flex-column gap-2">
             {[...Array(8)].map((_, index) => (
               <Fragment key={index}>
@@ -458,14 +466,7 @@ function DraftAnnouncementContent({
                   errorMessage={"Announcement Tags Required"}
                   onSelect={(selectedIds) => {
                     if (selectedIds.length > 5) {
-                      toast.custom(
-                        <ToastWarning
-                          title={"Max Amount Reached"}
-                          description={
-                            "You can only select from 1 - 5 tags maximum"
-                          }
-                        />,
-                      );
+                      setClientError("Max Amount Reached", "You can only select from 1 - 5 tags maximum");
                       return;
                     }
                     dispatch(

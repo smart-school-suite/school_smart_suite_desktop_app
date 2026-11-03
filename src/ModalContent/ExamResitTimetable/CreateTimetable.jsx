@@ -7,11 +7,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
 import TimeInput from "../../components/FormComponents/TimeInput";
 import { formatDate } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateTimetable({ handleClose, rowData }) {
   const { id:resitExamId, start_date, end_date, exam_name, } = rowData;
   const dispatch = useDispatch();
   const { mutate, isPending } =
     useCreateResitTimetable(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Create Timetable");
   const formData = useSelector((state) => state.resitExamTimetable.formData);
   const { data: helperData, isFetching } = useGetResitExamCourse(resitExamId);
   useEffect(() => {
@@ -64,7 +68,8 @@ const timeTableData = formData
       entries: timeTableData,
     };
 
-    mutate({ resitExamId:resitExamId, createData:formattedData });
+    clearFormError();
+    mutate({ resitExamId:resitExamId, createData:formattedData }, { onError: handleServerError });
   }
   if (isFetching) {
     return <SingleSpinner />;
@@ -82,6 +87,12 @@ const timeTableData = formData
               <Icon icon="charm:cross" width="22" height="22" />
             </span>
           </div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 mb-2">
             <button 
               className="p-2 font-size-sm px-3 text-white border-none rounded-3 p-2 primary-background"

@@ -4,6 +4,8 @@ import Pageloaderspinner from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AppointHos({ handleClose, row_id: teacherId }) {
   const { data: specialty, isLoading, error } = useFetchSpecialtiesQuery();
   const [formData, setFormData] = useState({
@@ -11,13 +13,16 @@ function AppointHos({ handleClose, row_id: teacherId }) {
     hosable_id: teacherId,
   });
   const [assignHos] = useAssignHosMutation();
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError("Failed To Appoint HOS");
   const handleAppointHos = async () => {
+    clearFormError();
     try {
       await assignHos(formData).unwrap();
       toast.success("HOS Assigned Successfully");
       handleClose();
     } catch (e) {
-      toast.error("Something went wrong trying to appoint HOS");
+      setClientError("HOS Appointment Failed", "Something went wrong trying to appoint HOS. Please try again.");
     }
   };
 
@@ -112,6 +117,12 @@ function AppointHos({ handleClose, row_id: teacherId }) {
             );
           })}
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-3">
           <button
             className="border-none rounded-3 p-2 font-size-sm w-100 primary-background text-white"

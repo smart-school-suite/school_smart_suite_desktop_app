@@ -16,8 +16,6 @@ import { useGetAnnouncementTags } from "../../hooks/announcement/useGetAnnouncem
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useRef } from "react";
 import { ShieldAlert, Info, TriangleAlert, CircleCheck, X } from "lucide-react";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { motion, AnimatePresence } from "framer-motion";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
@@ -34,6 +32,8 @@ import UpdateContentDiscardWarning from "../../ModalContent/Announcement/UpdateC
 import { NotFoundError } from "../../components/errors/Error";
 import { useUpdateAnnouncementContent } from "../../hooks/announcement/useUpdateAnnouncementContent";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateAnnouncementContent({ drawerData, handleClose }) {
   const { id: announcementId } = drawerData;
   const dispatch = useDispatch();
@@ -46,6 +46,8 @@ function UpdateAnnouncementContent({ drawerData, handleClose }) {
     handleClose,
     announcementId,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Announcement Content");
   const moduleState = useSelector(
     (state) => state.announcement.updateContent.draft,
   );
@@ -118,13 +120,20 @@ function UpdateAnnouncementContent({ drawerData, handleClose }) {
       tag_ids: moduleState?.tags?.value?.map((t) => ({ tag_id: t.id })),
     };
 
-    updateContent({ announcementId: announcementId, updateData: payload });
+    clearFormError();
+    updateContent({ announcementId: announcementId, updateData: payload }, { onError: handleServerError });
   };
 
   return (
     <>
       {isAnnouncementLoading ? (
         <div className="drawer-content px-2 pt-2">
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <div className="d-flex flex-column gap-2 px-2">
             {[...Array(8)].map((_, index) => (
               <Fragment key={index}>
@@ -447,14 +456,7 @@ function UpdateAnnouncementContent({ drawerData, handleClose }) {
                   errorMessage={"Announcement Tags Required"}
                   onSelect={(selectedIds) => {
                     if (selectedIds.length > 5) {
-                      toast.custom(
-                        <ToastWarning
-                          title={"Max Amount Reached"}
-                          description={
-                            "You can only select from 1 - 5 tags maximum"
-                          }
-                        />,
-                      );
+                      setClientError("Max Amount Reached", "You can only select from 1 - 5 tags maximum");
                       return;
                     }
                     dispatch(

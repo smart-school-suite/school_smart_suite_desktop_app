@@ -13,11 +13,11 @@ import {
   dateValidationSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useSelector } from "react-redux";
 import { useBulkBillStudentAdditionalFee } from "../../hooks/additionalFee/useBulkBillStudentAdditionalFee";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkBillStudentAdditionalFee({ handleClose, drawerData }) {
   const { selectedStudents, resetAll } = drawerData;
   const amountRef = useRef();
@@ -29,6 +29,8 @@ function BulkBillStudentAdditionalFee({ handleClose, drawerData }) {
     currencyState?.schoolDetails?.school?.country?.currency || "";
   const { mutate: createAdditionalFee, isPending } =
     useBulkBillStudentAdditionalFee(handleClose, resetAll);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Bill Student Additional Fee");
   const { data: category, isFetching } = useGetAdditionalFeeCategory();
   const [formData, setFormData] = useState({
     amount: "",
@@ -57,27 +59,18 @@ function BulkBillStudentAdditionalFee({ handleClose, drawerData }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = () => {
     const prevalidation = handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
 
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
 
       return;
     }
@@ -88,11 +81,18 @@ function BulkBillStudentAdditionalFee({ handleClose, drawerData }) {
       additionalfee_category_id: formData.additionalfee_category_id?.id,
       amount: formData.amount,
     }));
-    createAdditionalFee({ fee_details: formattedData });
+    clearFormError();
+    createAdditionalFee({ fee_details: formattedData }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div>
             <label htmlFor="date" className="font-size-sm">

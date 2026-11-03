@@ -1,8 +1,6 @@
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
-import toast from "react-hot-toast";
-import ToastWarning from "../../../components/Toast/ToastWarning";
 import { numberSchema } from "../../../ComponentConfig/YupValidationSchema";
 import { useUpdateResitSetting } from "../../../hooks/schoolBranchSetting/useUpdateResitSetting";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
@@ -11,7 +9,11 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../../utils/functions";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function UpdateGeneralResitFee({ handleClose, rowData }) {
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update General Resit Fee");
   const { mutate: updateSetting, isPending } = useUpdateResitSetting(
     handleClose,
     rowData.id
@@ -24,6 +26,7 @@ function UpdateGeneralResitFee({ handleClose, rowData }) {
     value: null,
   });
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const currency = useSelector(
@@ -31,26 +34,15 @@ function UpdateGeneralResitFee({ handleClose, rowData }) {
   );
   const handleUpdate = () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
-    updateSetting(formData);
+    clearFormError();
+    updateSetting(formData, { onError: handleServerError });
   };
   return (
     <>
@@ -89,6 +81,12 @@ function UpdateGeneralResitFee({ handleClose, rowData }) {
           value={formData.value}
         />
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mb-2"
+      />
       <button
         className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"
         onClick={() => {

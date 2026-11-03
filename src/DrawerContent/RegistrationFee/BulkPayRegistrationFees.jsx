@@ -6,10 +6,10 @@ import { numberSchema } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { paymentMethods } from "../../data/data";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useBulkPayRegistrationFees } from "../../hooks/registrationFee/useBulkPayRegistrationFee";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkPayRegistrationFees({ handleClose, resetAll, bulkData }) {
   const amountRef = useRef();
   const methodRef = useRef();
@@ -18,6 +18,8 @@ function BulkPayRegistrationFees({ handleClose, resetAll, bulkData }) {
     handleClose,
     resetAll,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Pay Registration Fees");
   const userCurrencySymbol =
     currencyState?.schoolDetails?.school?.country?.currency || "";
   const [formData, setFormData] = useState({
@@ -39,26 +41,17 @@ function BulkPayRegistrationFees({ handleClose, resetAll, bulkData }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     const formattedData = bulkData.map((items) => ({
@@ -66,11 +59,18 @@ function BulkPayRegistrationFees({ handleClose, resetAll, bulkData }) {
       amount: formData.amount,
       payment_method: formData.payment_method,
     }));
-    payRegistrationFee({ registration_fee: formattedData });
+    clearFormError();
+    payRegistrationFee({ registration_fee: formattedData }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-2">
           <div>
             <label htmlFor="amount" className="font-size-sm">

@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import { copyGradeScale } from "../../services/gradeScale";
 
 export const useCopyGradeScale = (handleClose) => {
@@ -26,14 +25,6 @@ export const useCopyGradeScale = (handleClose) => {
           queryKey: ["grade-scale-category", categoryId],
         });
       }
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
-        />,
-      );
     },
   });
 };
