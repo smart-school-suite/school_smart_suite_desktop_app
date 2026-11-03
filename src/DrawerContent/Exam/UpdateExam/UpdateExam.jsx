@@ -14,7 +14,6 @@ import { AnimatePresence } from "framer-motion";
 import { NotFoundError } from "../../../components/errors/Error";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { useState, useRef } from "react";
-import toast from "react-hot-toast";
 import {
   DateRangeInput,
   NumberInput,
@@ -24,13 +23,14 @@ import {
   numberSchema,
 } from "../../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid } from "../../../utils/functions";
-import ToastWarning from "../../../components/Toast/ToastWarning";
 import { useGetRelatedCaExam } from "../../../hooks/exam/useGetRelatedCaExam";
 import { format, parseISO } from "date-fns";
 import { getDayWindow } from "../../../utils/time/date";
 import { resetCreateExamState } from "../../../Slices/exam/examSlice";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { useUpdateExam } from "../../../hooks/exam/useUpdateExam";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function UpdateExam({
   handleClose,
   nextStep,
@@ -45,6 +45,8 @@ function UpdateExam({
     handleClose,
     drawerData.id,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Exam");
   const [formData, setFormData] = useState({
     start_date: drawerData?.start_date || "",
     end_date: drawerData?.end_date || "",
@@ -56,18 +58,12 @@ function UpdateExam({
     max_score: "",
   });
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
     if (!allFieldsValid(isInvalid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     const payload = {
@@ -75,10 +71,11 @@ function UpdateExam({
       school_year_id: moduleState.academicYear.id,
       exam_type_id: moduleState.examType.id,
     };
+    clearFormError();
     updateExam({
       examId: drawerData?.id,
       updateData: payload,
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -103,6 +100,12 @@ function UpdateExam({
         </button>
       </div>
       <div className="drawer-content px-2 font-size-sm pt-2 pb-5">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-4">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex flex-row align-items-center gap-2">

@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bulkReinstateDropoutStudent } from "../../services/student";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 
 export const useBulkReinstateDropoutStudent = (handleClose, resetAll) => {
   const queryClient = useQueryClient();
@@ -23,14 +22,6 @@ export const useBulkReinstateDropoutStudent = (handleClose, resetAll) => {
         <ToastSuccess
           title={"Student Marked As Dropdout"}
           description={"Student Marked As Dropout Successfully"}
-        />
-      );
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
         />
       );
     },

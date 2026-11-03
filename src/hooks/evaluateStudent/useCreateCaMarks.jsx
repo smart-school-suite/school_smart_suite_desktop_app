@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCaMark } from "../../services/evaluateStudent";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
@@ -22,14 +21,6 @@ export const useCreateCaMark = (handleClose) => {
         />
       );
       dispatch(resetCaScoreState());
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
-        />
-      );
     },
   });
 };

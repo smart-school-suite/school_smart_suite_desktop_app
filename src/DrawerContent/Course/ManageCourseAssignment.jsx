@@ -3,11 +3,11 @@ import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpe
 import { Fragment, useState } from "react";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useAssignTeacherCourse } from "../../hooks/teacherCourse/useAssignTeacherCourse";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useRemoveAssignedTeacherCourse } from "../../hooks/teacherCourse/useRemoveTeacherAssignedCourse";
 import { useChangeTeacherCourse } from "../../hooks/teacherCourse/useChangeTeacherCourse";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ManageCourseAssignment({ handleClose, drawerData }) {
   const [selectedAction, setSelectedAction] = useState(null);
   return (
@@ -217,12 +217,15 @@ function ChangeTeacher({ drawerData, handleClose }) {
   } = useGetTeacherBySpecialty(drawerData.specialtyId);
   const { mutate: changeTeacher, isPending: isChanging } =
     useChangeTeacherCourse(drawerData.specialtyId, handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Change Teacher");
   const handleChangeTeacher = () => {
+    clearFormError();
     changeTeacher({
       course_id: drawerData?.course_id,
       new_teacher_id: selectedTeacher,
       old_teacher_id: teacherId,
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -397,6 +400,12 @@ function ChangeTeacher({ drawerData, handleClose }) {
             )}
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         {teacherId != selectedTeacher && (
           <button
             className="border-none rounded-pill p-2 primary-background text-white font-size-sm w-100"
@@ -414,7 +423,10 @@ function ChangeTeacher({ drawerData, handleClose }) {
 function RemoveAssignment({ drawerData, setSelectedAction, handleClose }) {
   const { mutate: removeAssigedCourse, isPending: isRemoving } =
     useRemoveAssignedTeacherCourse(drawerData.specialtyId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Remove Assignment");
   const handleRemove = () => {
+    clearFormError();
     removeAssigedCourse({
       teacher_id: drawerData?.teachers[0]?.id,
       courseIds: [
@@ -422,7 +434,7 @@ function RemoveAssignment({ drawerData, setSelectedAction, handleClose }) {
           course_id: drawerData?.course_id,
         },
       ],
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -548,6 +560,12 @@ function RemoveAssignment({ drawerData, setSelectedAction, handleClose }) {
             <li>No Teacher Assigned</li>
           </ul>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-row align-items-center gap-2">
           <button
             className="border-none rounded-pill p-2 transparent-bg border font-size-sm w-50"

@@ -2,11 +2,16 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
 import { useDeactivateSpecialty } from "../../hooks/specialty/useDeactivateSpecialty";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeactivateSpecialty({ handleClose, rowData }) {
   const specialtyId = rowData.id;
   const { mutate: deactivateSpecialty, isPending } = useDeactivateSpecialty();
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Deactivate Specialty");
   const handleDeactivateSpecialty = () => {
-    deactivateSpecialty(specialtyId);
+    clearFormError();
+    deactivateSpecialty(specialtyId, { onError: handleServerError });
   };
   return (
     <>
@@ -34,6 +39,12 @@ function DeactivateSpecialty({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

@@ -18,6 +18,8 @@ import VerticalDashedLine from "../../components/DashedLine/VerticalDashedLine";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import SearchInput from "../../components/input/search";
 import { useUpdateExamMarks } from "../../hooks/evaluateStudent/useUpdateExamMarks";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateExamScores({ handleClose, rowData }) {
   const { id: candidateId } = rowData;
   const {
@@ -30,6 +32,8 @@ function UpdateExamScores({ handleClose, rowData }) {
   const darkMode = useSelector((state) => state?.theme?.darkMode);
   const { mutate: updateExamScores, isPending } =
     useUpdateExamMarks(handleClose, candidateId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Update Exam Scores");
 
   useEffect(() => {
     const data = helperData?.data;
@@ -73,7 +77,8 @@ function UpdateExamScores({ handleClose, rowData }) {
         score: score.score,
       })),
     };
-    updateExamScores(payload);
+    clearFormError();
+    updateExamScores(payload, { onError: handleServerError });
   };
 
   const maxGpaVal = parseFloat(moduleState?.maxGpa);
@@ -514,6 +519,12 @@ function UpdateExamScores({ handleClose, rowData }) {
           </div>
         </div>
 
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-auto border-top p-2" style={{ height: "6dvh" }}>
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100 h-100">
             <div className="d-flex flex-row align-items-center gap-2">

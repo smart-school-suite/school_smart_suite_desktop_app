@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import { assignInvigilators } from "../../services/invigilator";
 import { resetAssignInvigilatorState } from "../../Slices/exam/examInvigilatorSlice";
 import { useDispatch } from "react-redux";
@@ -22,14 +21,6 @@ export const useAssignInvigilators = (examId) => {
       );
 
       dispatch(resetAssignInvigilatorState())
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
-        />,
-      );
     },
   });
 };

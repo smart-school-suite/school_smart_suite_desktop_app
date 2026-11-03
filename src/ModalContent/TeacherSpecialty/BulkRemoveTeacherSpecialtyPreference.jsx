@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkRemoveTeacherSpecialtyPreference({
   handleClose,
   bulkData,
@@ -12,6 +14,8 @@ function BulkRemoveTeacherSpecialtyPreference({
   const { data: specialtiesData, isLoading, error } = useGetSpecialties();
   const { mutate: bulkRemoveTeacherSpecialtyPreference, isPending } =
     useBulkRemoveTeacherSpecialtyPreference(handleClose, resetAll);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Remove Teacher Specialty Preference");
   const darkMode = useSelector((state) => state.theme.darkMode);
 
   const [selectedSpecialtyIds, setSelectedSpecialtyIds] = useState(new Set());
@@ -161,6 +165,12 @@ function BulkRemoveTeacherSpecialtyPreference({
       </div>
 
       {/* Action Button */}
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mb-2"
+      />
       <button
         className="border-none rounded-3 p-2 font-size-sm w-100 mt-4 primary-background text-white"
         onClick={() => {
@@ -170,7 +180,8 @@ function BulkRemoveTeacherSpecialtyPreference({
           const teacherIds = bulkData.map((teacher) => ({
             teacher_id: teacher.id,
           }));
-          bulkRemoveTeacherSpecialtyPreference({ teacherIds, specialtyIds });
+          clearFormError();
+          bulkRemoveTeacherSpecialtyPreference({ teacherIds, specialtyIds }, { onError: handleServerError });
         }}
         disabled={isPending}
       >

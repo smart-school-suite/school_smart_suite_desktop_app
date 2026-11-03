@@ -16,10 +16,14 @@ import { DateTimeInput } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useTriggerPromotionRun } from "../../hooks/promotionRun/useTriggerPromotionRun";
 import { allFieldsValid } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function TriggerPromotionRun({ drawerData = {}, handleClose = () => {} }) {
   const { mutate: triggerPromotionRun, isPending = false } =
     useTriggerPromotionRun(handleClose) || {};
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Trigger Promotion Run");
 
   const publishedAtRef = useRef(null);
   const [error, setError] = useState(null);
@@ -42,6 +46,7 @@ function TriggerPromotionRun({ drawerData = {}, handleClose = () => {} }) {
   };
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     if (typeof stateFn === "function") {
       stateFn((prev) => ({ ...prev, [field]: value }));
     }
@@ -76,11 +81,12 @@ function TriggerPromotionRun({ drawerData = {}, handleClose = () => {} }) {
       }
 
       if (typeof triggerPromotionRun === "function") {
+        clearFormError();
         triggerPromotionRun({
           status: formData.status,
           initiated_at: formData.published_at || null,
           promotion_run_id: drawerData?.id
-        });
+        }, { onError: handleServerError });
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");
@@ -142,6 +148,12 @@ function TriggerPromotionRun({ drawerData = {}, handleClose = () => {} }) {
       </div>
 
       <div className="drawer-content ps-2 font-size-sm">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-4">
           <div className="d-flex flex-column gap-2">
             <div className="d-flex flex-column">

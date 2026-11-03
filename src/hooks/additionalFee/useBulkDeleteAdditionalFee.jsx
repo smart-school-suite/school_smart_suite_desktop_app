@@ -2,7 +2,6 @@ import toast from "react-hot-toast";
 import { bulkDeleteAdditionalFee } from "../../services/additionalFee";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 
 export const useBulkDeleteAdditionalFee = (handleClose, resetAll) => {
      const queryClient = useQueryClient();
@@ -27,13 +26,5 @@ export const useBulkDeleteAdditionalFee = (handleClose, resetAll) => {
                  />
             )
           },
-          onError:() => {
-              toast.custom(
-                 <ToastDanger 
-                   title={"Delete Failed"}
-                   description={"Failed to delete additional fee due to an internal error please check internet connection and try again"}
-                 />
-              )
-          }
      })
 }

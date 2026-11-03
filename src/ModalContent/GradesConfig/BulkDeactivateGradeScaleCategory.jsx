@@ -1,17 +1,22 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useBulkDeactivateGradeScaleCategory } from "../../hooks/gradeScale/useBulkDeactivateGradeScaleCategory";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeactivateGradeScaleCategory({ rowData, handleClose }) {
   const { selectedGradeScales } = rowData;
   const { mutate: bulkActivate, isPending } =
     useBulkDeactivateGradeScaleCategory(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Deactivate Grade Scale Category");
   const handleBulkActivate = () => {
     const payload = {
       grade_scale_category_ids: selectedGradeScales.map((cat) => ({
         category_id: cat.id,
       })),
     };
-    bulkActivate(payload);
+    clearFormError();
+    bulkActivate(payload, { onError: handleServerError });
   };
   return (
     <div className="w-100">
@@ -40,6 +45,12 @@ function BulkDeactivateGradeScaleCategory({ rowData, handleClose }) {
           </button>
         </div>
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mx-2 mt-2 mb-0"
+      />
       <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
         <span className="fw-semibold">Are you Absolutely sure ?</span>
         <p>

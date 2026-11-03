@@ -4,6 +4,8 @@ import CustomDropdown from "../../../components/Dropdowns/Dropdowns";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { useGetLevelTypes } from "../../../hooks/levelType/useGetLevelType";
 import { useUpdateSetting } from "../../../hooks/schoolBranchSetting/useUpdateSetting";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function LevelStartSetting({ handleClose = () => {}, rowData }){
   const {
     data: levelTypes,
@@ -11,6 +13,8 @@ function LevelStartSetting({ handleClose = () => {}, rowData }){
     error: levelTypesError,
   } = useGetLevelTypes();
   const { mutate: updateSetting, isPending } = useUpdateSetting(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
 
   const initialValue = rowData?.value ?? null;
   console.log(initialValue);
@@ -54,12 +58,13 @@ function LevelStartSetting({ handleClose = () => {}, rowData }){
       return;
     }
 
+    clearFormError();
     updateSetting({
       payload: {
         setting_id: rowData?.id,
         value: levelStart?.id,
       },
-    });
+    }, { onError: handleServerError });
   };
 
   return (
@@ -90,6 +95,12 @@ function LevelStartSetting({ handleClose = () => {}, rowData }){
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
 
         <div className="p-2 font-size-sm flex-grow-1">
           {error && (

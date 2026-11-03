@@ -2,6 +2,8 @@ import { useCreateAnnouncementTag } from "../../hooks/announcement/useCreateAnno
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateAnnouncementTag({ handleClose, rowData }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -10,8 +12,11 @@ function CreateAnnouncementTag({ handleClose, rowData }) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const { mutate: createTag, isPending } = useCreateAnnouncementTag(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Create Announcement Tag");
   const handleSubmit = async () => {
-    createTag(formData);
+    clearFormError();
+    createTag(formData, { onError: handleServerError });
   };
   return (
     <>
@@ -45,6 +50,12 @@ function CreateAnnouncementTag({ handleClose, rowData }) {
             onChange={(e) => handleInputChange("name", e.target.value)}
           />
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-2">
           <button
             className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"

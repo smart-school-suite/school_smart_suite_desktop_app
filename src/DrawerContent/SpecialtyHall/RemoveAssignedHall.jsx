@@ -9,6 +9,8 @@ import SearchInput from "../../components/input/search";
 import { useGetAssignedHalls } from "../../hooks/specialtyHall/useGetAssignedHalls";
 import { useRemoveAssignedSpecialtyHall } from "../../hooks/specialtyHall/useRemoveAssignedSpecialtyHall";
 import { SpecialtyIcon } from "../../icons/Icons";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function RemoveAssignedHall({ drawerData, handleClose = () => {} }) {
   const specialtyId = drawerData?.id;
@@ -21,6 +23,8 @@ function RemoveAssignedHall({ drawerData, handleClose = () => {} }) {
 
   const { mutate: removeAssignedHall, isPending } =
     useRemoveAssignedSpecialtyHall(specialtyId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Remove Assigned Hall");
 
   const [selectedHallIds, setSelectedHallIds] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState("");
@@ -100,10 +104,11 @@ function RemoveAssignedHall({ drawerData, handleClose = () => {} }) {
       hall_id: hallId,
     }));
 
+    clearFormError();
     removeAssignedHall({
       hallIds: formattedData,
       specialty_id: specialtyId,
-    });
+    }, { onError: handleServerError });
   };
 
   return (
@@ -145,6 +150,12 @@ function RemoveAssignedHall({ drawerData, handleClose = () => {} }) {
         className="drawer-content pt-3 p-2"
         style={{ paddingBottom: "10rem" }}
       >
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3 font-size-sm">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <span className="text-iron-400 fw-light">Assigned Halls</span>

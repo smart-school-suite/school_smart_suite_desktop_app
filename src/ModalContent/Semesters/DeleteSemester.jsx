@@ -1,11 +1,16 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useDeleteSchoolSemester } from "../../hooks/schoolSemester/useDeleteSchoolSemester";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeleteSemester({ handleClose, rowData }) {
   const { id: semesterId } = rowData;
   const { mutate: deleteSemester, isPending } = useDeleteSchoolSemester();
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Delete Semester");
   const handleDeleteSchoolSemester = async () => {
-    deleteSemester(semesterId);
+    clearFormError();
+    deleteSemester(semesterId, { onError: handleServerError });
   };
   return (
     <>
@@ -33,6 +38,12 @@ function DeleteSemester({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

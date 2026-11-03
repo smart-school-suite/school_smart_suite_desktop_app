@@ -5,10 +5,14 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import { TextAreaInput } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useUnblockGraduation } from "../../hooks/graduationRecord/useApproveUnblockGraduation";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function ApproveUnblock({ drawerData = {}, handleClose = () => {} }) {
   const { mutate: unblockGraduation, isPending = false } =
     useUnblockGraduation(handleClose) || {};
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Approve Unblock");
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     admin_notes: "",
@@ -18,6 +22,7 @@ function ApproveUnblock({ drawerData = {}, handleClose = () => {} }) {
   });
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     if (typeof stateFn === "function") {
       stateFn((prev) => ({ ...prev, [field]: value }));
     }
@@ -43,7 +48,8 @@ function ApproveUnblock({ drawerData = {}, handleClose = () => {} }) {
           admin_notes: formData?.admin_notes?.trim() || "",
           record_id: drawerData.id,
         };
-        unblockGraduation({payload});
+        clearFormError();
+        unblockGraduation({payload}, { onError: handleServerError });
       }
     } catch {
       setError("An unexpected error occurred while processing the unblock approval. Please try again.");
@@ -53,6 +59,12 @@ function ApproveUnblock({ drawerData = {}, handleClose = () => {} }) {
   return (
     <>
       <div className="drawer-content pt-3 ps-2 font-size-sm">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           {error && (
             <div className="bg-red-100 p-3 rounded-3 text-red-700 mb-2 d-flex align-items-center gap-2 border border-red-200">

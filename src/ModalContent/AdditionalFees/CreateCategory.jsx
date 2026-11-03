@@ -5,8 +5,8 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import {  nameSchema } from "../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateCategory({ handleClose }) {
   const titleRef = useRef();
   const [formData, setFormData] = useState({
@@ -16,6 +16,7 @@ function CreateCategory({ handleClose }) {
     title: "",
   });
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handlePrevalidation = async () => {
@@ -26,27 +27,20 @@ function CreateCategory({ handleClose }) {
   }
   const { mutate: createCategory, isPending } =
     useCreateAdditionalFeeCategory(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Category");
   const handleCreateCategory = () => {
     const prevalidation = handlePrevalidation();
      if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
-    createCategory(formData);
+    clearFormError();
+    createCategory(formData, { onError: handleServerError });
   };
   return (
     <>
@@ -64,6 +58,12 @@ function CreateCategory({ handleClose }) {
             </span>
           </div>
         </div>
+       <FormErrorBanner
+         ref={errorBannerRef}
+         error={formError}
+         onDismiss={clearFormError}
+         className="mb-2"
+       />
        <div>
          <div>
           <label htmlFor="categoryTitle" className="font-size-sm">Category Name</label>

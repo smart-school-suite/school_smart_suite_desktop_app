@@ -14,11 +14,15 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AssignInvigilator({ handleClose, drawerData }) {
   const { selectedExam } = drawerData;
   const { mutate: assignInvigilator, isPending } = useAssignInvigilators(
     selectedExam?.id,
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Assign Invigilator");
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.examInvigilator);
   const {
@@ -36,7 +40,8 @@ function AssignInvigilator({ handleClose, drawerData }) {
         }),
       ),
     };
-    assignInvigilator(payload);
+    clearFormError();
+    assignInvigilator(payload, { onError: handleServerError });
   };
   return (
     <>
@@ -244,6 +249,12 @@ function AssignInvigilator({ handleClose, drawerData }) {
         )}
       </div>
       <div className="drawer-footer font-size-sm">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column w-100">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">

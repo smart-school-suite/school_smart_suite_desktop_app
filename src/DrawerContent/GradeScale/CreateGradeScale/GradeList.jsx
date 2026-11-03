@@ -41,6 +41,8 @@ import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
 import DiscardWarning from "../../../ModalContent/GradesConfig/DiscardWarning";
 import { GRADE_SCALE_ERROR_MAP } from "../../../utils/maps/gradeScale/gradeScaleErrorMap";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function GradeList({
   handleClose,
   nextStep,
@@ -66,6 +68,8 @@ function GradeList({
   );
   const { mutate: createGradeScale, isPending } =
     useCreateGradeScale(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   useEffect(() => {
     const hasExistingDraftData =
       gradeScaleList && Object.keys(gradeScaleList).length > 0;
@@ -143,11 +147,12 @@ function GradeList({
           grade.grade_points !== "",
       );
 
+    clearFormError();
     createGradeScale({
       grade_scales: formattedPayload,
       grade_max_score: moduleState.draft.maximumScore,
       grades_category_id: moduleState.configContext.category.drawerData.id,
-    });
+    }, { onError: handleServerError });
     dispatch(resetScaleState());
   };
  
@@ -323,6 +328,12 @@ function GradeList({
         </div>
       </div>
       <div className="drawer-footer font-size-sm">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column w-100">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">

@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import VerticalDashedLine from "../../../../../../components/DashedLine/VerticalDashedLine";
 import { daysOfWeek } from "../../../../../../data/data";
 import toast from "react-hot-toast";
-import ToastWarning from "../../../../../../components/Toast/ToastWarning";
 function ReviewWeeklyScheduleStep({
   handleClose,
   nextStep,

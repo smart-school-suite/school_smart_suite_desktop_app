@@ -9,6 +9,8 @@ import SearchInput from "../../../components/input/search";
 import { useGetLetterGrades } from "../../../hooks/letterGrade/useGetLetterGrades";
 import { useUpdateSetting } from "../../../hooks/schoolBranchSetting/useUpdateSetting";
 import { isLastElement } from "../../../utils/functions";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 
 function AllowedLetterGradeSetting({ handleClose = () => {}, drawerData }) {
   const {
@@ -18,6 +20,8 @@ function AllowedLetterGradeSetting({ handleClose = () => {}, drawerData }) {
   } = useGetLetterGrades();
 
   const { mutate: updateSetting, isPending } = useUpdateSetting(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
 
   const initialSelectedIds = useMemo(() => {
     const raw = drawerData?.value;
@@ -137,12 +141,13 @@ function AllowedLetterGradeSetting({ handleClose = () => {}, drawerData }) {
     }
 
     const formattedGrades = Array.from(selectedGradeIds);
+    clearFormError();
     updateSetting({
       payload: {
         setting_id: drawerData.id,
         value: formattedGrades,
       },
-    });
+    }, { onError: handleServerError });
   };
 
   return (
@@ -177,6 +182,12 @@ function AllowedLetterGradeSetting({ handleClose = () => {}, drawerData }) {
       </div>
 
       <div className="drawer-content pt-3" style={{ paddingBottom: "10rem" }}>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3 font-size-sm px-2">
           {error && (
             <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-2">

@@ -4,7 +4,6 @@ import {
 } from "@tanstack/react-query";
 import { deleteExam } from "../../services/exam";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import toast from "react-hot-toast";
 export const useDeleteExam = (handleClose) => {
   const queryClient = useQueryClient();
@@ -21,14 +20,6 @@ export const useDeleteExam = (handleClose) => {
         <ToastSuccess
           title={"Exam Deleted"}
           description={"Exam Deleted Successfully"}
-        />
-      );
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
         />
       );
     },

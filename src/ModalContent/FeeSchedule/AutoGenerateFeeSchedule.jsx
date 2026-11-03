@@ -11,8 +11,6 @@ import {
   numberSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useSelector } from "react-redux";
 import { useCreateFeeScheduleSlots } from "../../hooks/feeSchedule/useCreateFeeScheduleSlot";
 import {
@@ -21,6 +19,8 @@ import {
 } from "../../utils/functions";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AutoGenerateFeeSchedule({ handleClose, rowData }) {
   const { id: feeScheduleId } = rowData;
   const [toggle, setToggle] = useState("schedule");
@@ -74,6 +74,8 @@ function Schedule({
   setIsInvalid,
   isInvalid,
 }) {
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError();
   const installmentRef = useRef();
   const percentageRef = useRef();
 
@@ -88,12 +90,7 @@ function Schedule({
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation) || !allFieldsValid(isInvalid)) {
-      toast.custom(
-        <ToastWarning
-          title="Invalid Fields"
-          description="Some fields seem to be invalid. Please review the form and try again."
-        />
-      );
+      setClientError("Invalid Fields", "Some fields seem to be invalid. Please review the form and try again.");
       return;
     }
     setToggle("preview");
@@ -169,6 +166,12 @@ function Schedule({
           }
         />
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mb-2"
+      />
       <button
         className="border-none p-2 font-size-sm rounded-2 primary-background text-white w-100 mt-3"
         onClick={handleSubmit}
@@ -190,9 +193,11 @@ function SchedulePreview({ handleClose, formData, feeScheduleId, setToggle }) {
     const darkMode = useSelector((state) => state.theme.darkMode);
   const { mutate: createFeeSchedule, isPending } =
     useCreateFeeScheduleSlots(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError();
   useEffect(() => {
     const generateSchedule = async () => {
-      const response = await autoGenerateFeeSchedule({ ...formData });
+      const response = await autoGenerateFeeSchedule({ ...formData }, { onError: handleServerError });
       setSchedule(response.data);
       setIsValid(
         response.data.map(() => ({ percentage: null, due_date: null }))
@@ -209,31 +214,16 @@ function SchedulePreview({ handleClose, formData, feeScheduleId, setToggle }) {
     });
   };
   const handleSubmit = () => {
-    isValid.forEach((invalid) => {
-      if (optionalValidateObject(invalid) == false) {
-        toast.custom(
-          <ToastWarning
-            title={"Invalid Fields"}
-            description={"Please Ensure All Fields Are Valid Before Submitting"}
-          />
-        );
-        return;
-      }
-    });
-    schedule.forEach((schedule) => {
-      if (hasNonEmptyValue(schedule) == false) {
-        toast.custom(
-          <ToastWarning
-            title={"Nothing To Update"}
-            description={
-              "Please Ensure Atleast One Field Is Updated Before Submitting"
-            }
-          />
-        );
-        return;
-      }
-    });
-   createFeeSchedule({ scheduleData: { slots: schedule }, feeScheduleId });
+    if (isValid.some((invalid) => optionalValidateObject(invalid) == false)) {
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
+      return;
+    }
+    if (schedule.some((slot) => hasNonEmptyValue(slot) == false)) {
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
+      return;
+    }
+   clearFormError();
+   createFeeSchedule({ scheduleData: { slots: schedule }, feeScheduleId }, { onError: handleServerError });
   };
   return (
     <div className="d-flex flex-column gap-3">
@@ -248,6 +238,12 @@ function SchedulePreview({ handleClose, formData, feeScheduleId, setToggle }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mb-2"
+      />
       <div className="d-flex flex-row align-items-center w-100 justify-content-end">
         <button
           className="border-none p-2 rounded-2 primary-background text-white font-size-sm"

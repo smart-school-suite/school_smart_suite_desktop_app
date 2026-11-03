@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteAdditionalFeeTransaction } from "../../services/additionalFee";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useDeleteAdditionalFeeTransaction = (
@@ -29,13 +28,5 @@ export const useDeleteAdditionalFeeTransaction = (
           />
         )
     },
-    onError:() => {
-       toast.custom(
-        <ToastDanger 
-           title={"Delete Failed"}
-           description={"Failed to delete Additional Fees Due to an error please try again"}
-        />
-       )
-    }
   });
 };

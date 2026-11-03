@@ -20,14 +20,14 @@ import {
   optionalValidateObject,
   hasNonEmptyValue,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetCourseDetails } from "../../hooks/course/useGetCourseDetails";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
 import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateCourse({ handleClose, drawerData }) {
   const { id: courseId } = drawerData;
   const {
@@ -71,6 +71,8 @@ function UpdateCourse({ handleClose, drawerData }) {
     handleClose,
     courseId,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Course");
 
   useEffect(() => {
     if (courseDetails?.data) {
@@ -90,29 +92,19 @@ function UpdateCourse({ handleClose, drawerData }) {
   }, [setFormData, isCourseDetailsLoading]);
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
+    clearFormError();
     updateCourse({
       courseId,
       updateData: {
@@ -121,7 +113,7 @@ function UpdateCourse({ handleClose, drawerData }) {
           type_id: items.id,
         })),
       },
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -154,6 +146,12 @@ function UpdateCourse({ handleClose, drawerData }) {
         ) : (
           <>
             <div className="drawer-content px-2">
+              <FormErrorBanner
+                ref={errorBannerRef}
+                error={formError}
+                onDismiss={clearFormError}
+                className="mb-2"
+              />
               <div>
                 <label htmlFor="courseTitle" className="font-size-sm">
                   Course Title

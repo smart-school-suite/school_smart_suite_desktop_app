@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bulkDeactivateSchoolAdmin } from "../../services/schoolAdmin";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useBulkDeactivateSchoolAdmin = (handleClose, resetAll) => { 
     const queryClient = useQueryClient();
@@ -24,13 +23,5 @@ export const useBulkDeactivateSchoolAdmin = (handleClose, resetAll) => {
                  />
             )
          },
-         onError:() => {
-             toast.custom(
-                <ToastDanger 
-                  title={"Deactivation Failed"}
-                  description={"Failed to deactivate Account Due to an error please try again"}
-                />
-             )
-         }
     })
 }

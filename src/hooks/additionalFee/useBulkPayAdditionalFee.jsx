@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bulkPayAdditionalFee } from "../../services/additionalFee";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 export const useBulkPayAdditionalFee = (handleClose, resetAll) => {
      const queryClient = useQueryClient();
@@ -26,13 +25,5 @@ export const useBulkPayAdditionalFee = (handleClose, resetAll) => {
                  />
             )
          },
-         onError:() => {
-             toast.custom(
-                 <ToastDanger 
-                   title={"Transaction Failed"}
-                   description={"Failed to pay additional Fees Due to an error please check internet connection and try again"}
-                 />
-             )
-         }
      })
 }

@@ -9,6 +9,8 @@ import RectangleSkeleton from "../../../components/SkeletonPageLoader/Rectangula
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { useGetLevels } from "../../../hooks/level/useGetLevels";
 import { useUpdateSetting } from "../../../hooks/schoolBranchSetting/useUpdateSetting";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 
 function TuitionFeeLevelSetting({ handleClose = () => {}, drawerData }) {
   const {
@@ -18,6 +20,8 @@ function TuitionFeeLevelSetting({ handleClose = () => {}, drawerData }) {
   } = useGetLevels();
 
   const { mutate: updateSetting, isPending } = useUpdateSetting(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
 
   const currency = useSelector(
     (state) => state.auth.user?.schoolDetails?.school?.country?.currency ?? ""
@@ -123,12 +127,13 @@ function TuitionFeeLevelSetting({ handleClose = () => {}, drawerData }) {
       fee: Number(formData[l.id]),
     }));
 
+    clearFormError();
     updateSetting({
       payload: {
         setting_id: drawerData?.id,
         value: payload,
       },
-    });
+    }, { onError: handleServerError });
   };
 
   return (
@@ -153,6 +158,12 @@ function TuitionFeeLevelSetting({ handleClose = () => {}, drawerData }) {
       </div>
 
       <div className="drawer-content pt-3 font-size-sm px-2">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         {error && (
           <div className="bg-red-100 p-2 rounded-3 text-red-700 mb-3">
             <p className="m-0">{error}</p>

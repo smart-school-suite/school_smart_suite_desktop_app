@@ -3,15 +3,17 @@ import { TextInput } from "../../components/FormComponents/InputComponents";
 import { useActivateStudentAccount } from "../../hooks/activationCode/useActivateStudentAccount";
 import { useRef, useState } from "react";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { activationCodeSchema } from "../../ComponentConfig/YupValidationSchema";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ActivateStudentAccount({ rowData, handleClose }) {
   const codeRef = useRef();
   const { mutate: activateAccount, isPending } =
     useActivateStudentAccount(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Activate Student Account");
   const [formData, setFormData] = useState({
     activation_code: "",
     student_id: rowData?.id || "",
@@ -27,35 +29,23 @@ function ActivateStudentAccount({ rowData, handleClose }) {
   };
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleActivateAccount = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Code"}
-          description={
-            "Your Code Seems to be Invalid, please check and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Code", "Your Code Seems to be Invalid, please check and try again");
       return;
     }
 
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Code"}
-          description={
-            "Your Code Seems to be Invalid, please check and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Code", "Your Code Seems to be Invalid, please check and try again");
       return;
     }
-    activateAccount(formData);
+    clearFormError();
+    activateAccount(formData, { onError: handleServerError });
   };
   return (
     <>
@@ -84,6 +74,12 @@ function ActivateStudentAccount({ rowData, handleClose }) {
           </button>
         </div>
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mx-2 mt-2 mb-0"
+      />
       <div className="d-flex flex-column gap-2 px-2 pt-4">
         <div>
           <span className="font-size-sm fw-medium">Activation Code</span>

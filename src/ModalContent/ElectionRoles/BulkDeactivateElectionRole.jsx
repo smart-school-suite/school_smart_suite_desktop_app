@@ -1,13 +1,18 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useBulkDeactivateElectionRole } from "../../hooks/electionRole/useBulkDeactivateElectionRoles";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeactivateElectionRole({ handleClose, bulkData, resetAll }) {
   const { mutate: bulkDeactivateElectionRole, isPending } =
     useBulkDeactivateElectionRole(handleClose, resetAll);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Deactivate Election Role");
   const handleBulkDeactivateElectionRole = () => {
     const formattedData = bulkData.map((items) => ({
       election_role_id: items.id,
     }));
-    bulkDeactivateElectionRole({ electionRoleIds: formattedData });
+    clearFormError();
+    bulkDeactivateElectionRole({ electionRoleIds: formattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -37,6 +42,12 @@ function BulkDeactivateElectionRole({ handleClose, bulkData, resetAll }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

@@ -12,14 +12,16 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useUpdateEventCategory } from "../../hooks/eventCategory/useUpdateEventCategory";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateCategory({ drawerData, handleClose }) {
   const { id: categoryId, name, description } = drawerData;
   const { mutate: updateEventCategory, isPending } =
     useUpdateEventCategory(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Category");
   const [formData, setFormData] = useState({
     name: name  || "",
     description: description || "",
@@ -29,34 +31,30 @@ function UpdateCategory({ drawerData, handleClose }) {
     description: null,
   });
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
-    updateEventCategory({ categoryId, updateData: formData });
+    clearFormError();
+    updateEventCategory({ categoryId, updateData: formData }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-2">
           <div>
             <label htmlFor="categoryName" className="font-size-sm">

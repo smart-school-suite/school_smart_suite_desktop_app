@@ -19,13 +19,5 @@ export const useCreateElection = (handleClose) => {
                  />
              )
          },
-         onError:(error) => {
-              toast.custom(
-                 <ToastDanger 
-                  title={error.response.data.errors.title}
-                  description={error.response.data.errors.description}
-                 />
-             )
-         }
     })
 }

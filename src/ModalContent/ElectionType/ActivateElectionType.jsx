@@ -1,12 +1,17 @@
 import { CircleX } from "lucide-react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useActivateElectionType } from "../../hooks/electionType/useActivateElectionType";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ActivateElectionType({ handleClose, rowData }) {
   const { id: electionId } = rowData;
   const { mutate: activateElectionType, isPending } =
     useActivateElectionType(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Activate Election Type");
   const handleActivateElectionType = () => {
-    activateElectionType(electionId);
+    clearFormError();
+    activateElectionType(electionId, { onError: handleServerError });
   };
 
   return (
@@ -37,6 +42,12 @@ function ActivateElectionType({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

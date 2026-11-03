@@ -1,13 +1,13 @@
 import { useState, useRef } from "react";
 import { CircleX } from "lucide-react";
 import { useSelector } from "react-redux";
-import toast from "react-hot-toast";
 import { phoneValidationSchema } from "../../ComponentConfig/YupValidationSchema";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { allFieldsValid, formatNumber } from "../../utils/functions";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { PhoneNumberInput } from "../../components/FormComponents/InputComponents";
 import { usePurchaseActivationCode } from "../../hooks/activationCode/usePurchaseActivationCode";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function OrangeMobileMoneyPayment({ handleClose, rowData }) {
   const { method = {}, handleCloseDrawer } = rowData || {};
   const moduleState = useSelector(
@@ -18,6 +18,8 @@ function OrangeMobileMoneyPayment({ handleClose, rowData }) {
     handleClose,
     handleCloseDrawer,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError();
 
   const phoneNumberRef = useRef(null);
 
@@ -52,22 +54,12 @@ function OrangeMobileMoneyPayment({ handleClose, rowData }) {
     const prevalidation = await handlePrevalidation();
 
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title="Invalid Fields"
-          description="Some fields seem to be invalid. Please go through the form and try again."
-        />,
-      );
+      setClientError("Invalid Fields", "Some fields seem to be invalid. Please go through the form and try again.");
       return;
     }
 
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title="Invalid Fields"
-          description="Please ensure all fields are valid before submitting."
-        />,
-      );
+      setClientError("Invalid Fields", "Please ensure all fields are valid before submitting.");
       return;
     }
 
@@ -82,15 +74,17 @@ function OrangeMobileMoneyPayment({ handleClose, rowData }) {
       ? (moduleState?.quantities?.[studentTypeId] ?? 0)
       : 0;
 
+    clearFormError();
     purchaseCode({
       payment_method_id: method?.id,
       teacher_code_count: teacherCount,
       student_code_count: studentCount,
       phone_number: formData.phone_number,
-    });
+    }, { onError: handleServerError });
   };
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     if (typeof stateFn === "function") {
       stateFn((prev) => ({ ...prev, [field]: value }));
     }
@@ -123,6 +117,12 @@ function OrangeMobileMoneyPayment({ handleClose, rowData }) {
           </button>
         </div>
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mx-2 mt-2 mb-0"
+      />
 
       <div className="px-2 font-size-sm d-flex flex-column gap-2 p-2">
         <div className="d-flex flex-column">

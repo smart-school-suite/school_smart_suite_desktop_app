@@ -18,6 +18,8 @@ import { ProgressBar } from "react-bootstrap";
 import VerticalDashedLine from "../../components/DashedLine/VerticalDashedLine";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import SearchInput from "../../components/input/search";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function AddExamScores({ handleClose, rowData }) {
   const dispatch = useDispatch();
@@ -33,6 +35,8 @@ function AddExamScores({ handleClose, rowData }) {
 
   const { mutate: createExamScore, isPending } =
     useCreateExamMarks(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Add Exam Scores");
 
   useEffect(() => {
     const data = helperData?.data;
@@ -76,7 +80,8 @@ function AddExamScores({ handleClose, rowData }) {
         score: score?.score,
       })),
     };
-    createExamScore(payload);
+    clearFormError();
+    createExamScore(payload, { onError: handleServerError });
   };
 
   const maxGpaVal = parseFloat(moduleState?.maxGpa);
@@ -504,6 +509,12 @@ function AddExamScores({ handleClose, rowData }) {
           </div>
         </div>
 
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-auto border-top p-2" style={{ height: "6dvh" }}>
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100 h-100">
             <div className="d-flex flex-row align-items-center gap-2">

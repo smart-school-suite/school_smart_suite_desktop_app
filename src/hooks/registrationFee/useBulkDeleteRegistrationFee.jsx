@@ -2,7 +2,6 @@ import toast from "react-hot-toast";
 import { bulkDeleteRegistrationFee } from "../../services/registrationFee";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 
 export const useBulkDeleteRegistrationFee = (handleClose, resetAll) => {
   const queryClient = useQueryClient();
@@ -22,14 +21,6 @@ export const useBulkDeleteRegistrationFee = (handleClose, resetAll) => {
         <ToastSuccess
           title={"Delete Successful"}
           description={"Registration Fee Deleted Successfully"}
-        />
-      );
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
         />
       );
     },

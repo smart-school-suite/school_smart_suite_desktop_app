@@ -1,12 +1,17 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
 import { useDeleteGradeScale } from "../../hooks/gradeScale/useDeleteGradeScale";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeleteGradeScale({ handleClose, rowData }) {
   const { id: categoryId } = rowData;
   const { mutate: deleteGradeScale, isPending } =
     useDeleteGradeScale(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Delete Grade Scale");
   const handleDeleteExamGrades = async () => {
-    deleteGradeScale(categoryId);
+    clearFormError();
+    deleteGradeScale(categoryId, { onError: handleServerError });
   };
   return (
     <>
@@ -36,6 +41,12 @@ function DeleteGradeScale({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

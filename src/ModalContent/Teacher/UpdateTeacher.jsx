@@ -16,6 +16,8 @@ import { useGetTeacherDetails } from "../../hooks/teacher/useGetTeacherDetails";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import { gender } from "../../data/data";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateTeacher({ handleClose, rowData }) {
   const { id: teacherId } = rowData;
   const {
@@ -24,6 +26,8 @@ function UpdateTeacher({ handleClose, rowData }) {
     error,
   } = useGetTeacherDetails(teacherId);
   const { mutate: updateTeacher, isPending } = useUpdateTeacher(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Update Teacher");
   const [formData, setFormData] = useState({
     email: "",
     name: "",
@@ -53,10 +57,12 @@ function UpdateTeacher({ handleClose, rowData }) {
     }
   }, [isLoading, setFormData]);
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleTeacherUpdate = async () => {
-    updateTeacher({ teacherId, updateData: formData });
+    clearFormError();
+    updateTeacher({ teacherId, updateData: formData }, { onError: handleServerError });
   };
   return (
     <>
@@ -211,6 +217,12 @@ function UpdateTeacher({ handleClose, rowData }) {
                 value={formData.gender}
               />
             </div>
+            <FormErrorBanner
+              ref={errorBannerRef}
+              error={formError}
+              onDismiss={clearFormError}
+              className="mb-2"
+            />
             <div className="mt-2">
               <button
                 className="border-none p-2 font-size-sm primary-background rounded-3 w-100 text-white"

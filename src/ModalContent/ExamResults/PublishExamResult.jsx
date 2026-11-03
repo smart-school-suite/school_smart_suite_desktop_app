@@ -1,11 +1,16 @@
 import { CircleX } from "lucide-react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { usePublishExamResult } from "../../hooks/examResult/usePublishExamResult";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function PublishExamResult({ handleClose, rowData }) {
   const { id: examId } = rowData;
   const { mutate: publish, isPending } = usePublishExamResult(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Publish Exam Result");
   const handlePublishExam = () => {
-    publish(examId);
+    clearFormError();
+    publish(examId, { onError: handleServerError });
   };
   return (
     <>
@@ -35,6 +40,12 @@ function PublishExamResult({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

@@ -24,7 +24,6 @@ import CustomDropdown, {
   MultiSelectDropdown,
 } from "../../components/Dropdowns/Dropdowns";
 import React, { useState, useCallback, useRef } from "react";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import TextDisplay from "../../components/TextComponents/TextDisplay";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
@@ -33,6 +32,8 @@ import { announcementStatus } from "../../data/data";
 import { useCreateSchoolEvent } from "../../hooks/schoolEvent/useCreateSchoolEvent";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useSelector } from "react-redux";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateEvent({ handleClose }) {
   const [tab, setTab] = useState("createContent");
   const { data: eventTags, isLoading: isEventTagLoading } = useGetEventTags();
@@ -131,6 +132,8 @@ function CreateContent({
   isEventTagLoading,
   handleClose,
 }) {
+  const { formError, errorBannerRef, setClientError, clearFormError } =
+    useFormError("Failed To Create Content");
   const darkMode = useSelector((state) => state.theme.darkMode);
   const titleRef = useRef();
   const descriptionRef = useRef();
@@ -165,14 +168,7 @@ function CreateContent({
   const handleNext = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (
@@ -185,14 +181,7 @@ function CreateContent({
         end_date: isValid.end_date,
       })
     ) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     setTab("createEvent");
@@ -476,6 +465,12 @@ function CreateContent({
             </div>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div
           className="d-flex flex-row w-100 justify-content-end"
           style={{ height: "5%" }}
@@ -512,6 +507,8 @@ function CreateSchoolEvent({
   const { data: schoolAdmins, isLoading: isSchoolAdminLoading } =
     useGetSchoolAdmins();
   const { mutate: createEvent, isPending } = useCreateSchoolEvent(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create School Event");
   const publishedAtRef = useRef();
   const handlePrevalidation = async () => {
     if (
@@ -519,14 +516,7 @@ function CreateSchoolEvent({
       formData.school_admin_ids.length === 0 &&
       formData.teacher_ids === 0
     ) {
-      toast.custom(
-        <ToastWarning
-          title={"You Must Have At Least One Recipient"}
-          description={
-            "You must select at least one recipient from either the students, school admins, or teachers."
-          }
-        />
-      );
+      setClientError("You Must Have At Least One Recipient", "You must select at least one recipient from either the students, school admins, or teachers.");
       return;
     }
     const result = {};
@@ -539,14 +529,7 @@ function CreateSchoolEvent({
     if (formData.status == "scheduled") {
       const prevalidation = await handlePrevalidation();
       if (!allFieldsValid(prevalidation)) {
-        toast.custom(
-          <ToastWarning
-            title={"Invalid Fields"}
-            description={
-              "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-            }
-          />
-        );
+        setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
         return;
       }
       if (
@@ -554,14 +537,7 @@ function CreateSchoolEvent({
           published_at: isValid.published_at,
         })
       ) {
-        toast.custom(
-          <ToastWarning
-            title={"Invalid Fields"}
-            description={
-              "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-            }
-          />
-        );
+        setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
         return;
       }
     }
@@ -589,7 +565,8 @@ function CreateSchoolEvent({
         student_audience_id: student.id,
       })),
     };
-    createEvent(payload);
+    clearFormError();
+    createEvent(payload, { onError: handleServerError });
   };
   return (
     <>
@@ -805,6 +782,12 @@ function CreateSchoolEvent({
             </div>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div
           className="d-flex flex-row align-items-center justify-content-between w-100"
           style={{

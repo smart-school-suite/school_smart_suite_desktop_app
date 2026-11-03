@@ -14,9 +14,9 @@ import {
 import { gender } from "../../data/data";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetActiveGender } from "../../hooks/gender/useGetActiveGender";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateTeacher({ handleClose }) {
   const {
     data: gender,
@@ -49,7 +49,10 @@ function CreateTeacher({ handleClose }) {
   });
   const { mutate: createTeacherMutation, isPending } =
     useCreateTeacher(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Teacher");
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handlePrevalidation = async () => {
@@ -71,28 +74,15 @@ function CreateTeacher({ handleClose }) {
   const handleCreateTeacher = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Please ensure all fields are valid before creating a teacher."
-          }
-        />
-      );
+      setClientError("Invalid Fields", "Please ensure all fields are valid before creating a teacher.");
       return;
     }
     if (!allFieldsValid(isFieldValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Please ensure all fields are valid before creating a teacher."
-          }
-        />
-      );
+      setClientError("Invalid Fields", "Please ensure all fields are valid before creating a teacher.");
       return;
     }
-    createTeacherMutation({ ...formData, gender_id: formData?.gender_id?.id });
+    clearFormError();
+    createTeacherMutation({ ...formData, gender_id: formData?.gender_id?.id }, { onError: handleServerError });
   };
   return (
     <>
@@ -245,6 +235,12 @@ function CreateTeacher({ handleClose }) {
             ref={phoneNumberRef}
           />
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-2">
           <button
             className="rounded-3 p-2 text-white border-none primary-background font-size-sm w-100"

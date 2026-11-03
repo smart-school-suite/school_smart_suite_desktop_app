@@ -18,15 +18,17 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetExamDetails } from "../../hooks/exam/useGetExamDetails";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateExam({ handleClose, rowData }) {
   const { id: examId } = rowData;
   const { data: examDetails, isLoading, error } = useGetExamDetails(examId);
   const { mutate: updateExam, isPending } = useUpdateExam(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Exam");
   const [formData, setFormData] = useState({
     start_date: "",
     end_date: "",
@@ -70,29 +72,19 @@ function UpdateExam({ handleClose, rowData }) {
   const { data: specialty, isLoading: isSpecailtyLoading } =
     useGetSpecialties();
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = () => {
     if (optionalValidateObject(isInvalid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
+    clearFormError();
     updateExam({
       examId: examId,
       updateData: {
@@ -101,7 +93,7 @@ function UpdateExam({ handleClose, rowData }) {
         specialty_id: formData.specialty_id.id,
         exam_type_id: formData.exam_type_id.id,
       },
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -252,6 +244,12 @@ function UpdateExam({ handleClose, rowData }) {
               />
             </div>
           </div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100 mt-3">
             <button
               disabled={isPending}

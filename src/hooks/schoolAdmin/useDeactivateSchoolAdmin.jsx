@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deactivateSchoolAdminAccount } from "../../services/schoolAdmin";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 export const useDeactivateSchoolAdmin =  (handleClose) => {
      const queryClient = useQueryClient();
      return useMutation({ 
@@ -22,13 +21,5 @@ export const useDeactivateSchoolAdmin =  (handleClose) => {
                 />
             )
         },
-        onError:() => {
-             toast.custom(
-                <ToastDanger 
-                  title={"Account Deactivation Failed"}
-                  description={"Failed to deactivate Account Please try again later"}
-                />
-             )
-        }
      })
 }

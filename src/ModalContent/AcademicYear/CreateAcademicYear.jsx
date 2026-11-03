@@ -9,10 +9,10 @@ import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useCreateSchoolAcademicYear } from "../../hooks/academicYear/useCreateSchoolAcademicYear";
 import { allFieldsValid } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateAcademicYear({ handleClose }) {
   const dateRangeRef = useRef();
   const specialtyRef = useRef();
@@ -33,7 +33,10 @@ function CreateAcademicYear({ handleClose }) {
   });
   const { mutate: createYear, isPending } =
     useCreateSchoolAcademicYear(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Academic Year");
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handlePrevalidation = async () => {
@@ -62,32 +65,19 @@ function CreateAcademicYear({ handleClose }) {
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isInvalid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
+    clearFormError();
     createYear({
       ...formData,
       system_academic_year_id: formData.system_academic_year_id.id,
       specialty_id: formData.specialty_id.id,
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -174,6 +164,12 @@ function CreateAcademicYear({ handleClose }) {
             />
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div>
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button

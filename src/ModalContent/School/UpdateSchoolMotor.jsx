@@ -4,12 +4,12 @@ import { useUpdateSchool } from "../../hooks/school/useUpdateSchool";
 import { useState } from "react";
 import { TextAreaInput } from "../../components/FormComponents/InputComponents";
 import { textareaSchema } from "../../ComponentConfig/YupValidationSchema";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateSchoolMotor({ handleClose }) {
   const [formData, setFormData] = useState({
     motor: "",
@@ -18,34 +18,26 @@ function UpdateSchoolMotor({ handleClose }) {
      motor:""
   })
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const { mutate: updateMotor, isPending } = useUpdateSchool(
     handleClose,
     "motor"
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update School Motor");
   const handleUpdateMotor = () => {
        if (optionalValidateObject(isValid) == false) {
-          toast.custom(
-            <ToastWarning
-              title={"Invalid Fields"}
-              description={"Please Ensure All Fields Are Valid Before Submitting"}
-            />
-          );
+          setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
           return;
         }
         if (hasNonEmptyValue(formData) == false) {
-          toast.custom(
-            <ToastWarning
-              title={"Nothing To Update"}
-              description={
-                "Please Ensure Atleast One Field Is Updated Before Submitting"
-              }
-            />
-          );
+          setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
           return;
         }
-    updateMotor({ updateData:formData });
+    clearFormError();
+    updateMotor({ updateData:formData }, { onError: handleServerError });
   };
   return (
     <>
@@ -82,6 +74,12 @@ function UpdateSchoolMotor({ handleClose }) {
             placeholder={"Enter School Motor"}
           />
           </div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <button
             className="border-none px-3 mt-4 py-2 rounded-3 font-size-sm primary-background text-white w-100"
             onClick={() => {

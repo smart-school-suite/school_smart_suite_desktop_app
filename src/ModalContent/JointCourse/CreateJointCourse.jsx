@@ -18,10 +18,10 @@ import {
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
 import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateJointCourse({ handleClose }) {
   const courseCodeRef = useRef();
   const courseTitleRef = useRef();
@@ -54,6 +54,8 @@ function CreateJointCourse({ handleClose }) {
   });
   const { mutate: createCourseMutation, isPending } =
     useCreateJointCourse(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Joint Course");
   const { data: specialty, isFetching: isSpecailtyLoading } =
     useGetSpecialties();
   const { data: semesters, isLoading: isSemesterLoading } = useGetSemester();
@@ -77,33 +79,21 @@ function CreateJointCourse({ handleClose }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isFieldValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
+    clearFormError();
     createCourseMutation({
       ...formData,
       semester_id: formData.semester_id.id,
@@ -111,7 +101,7 @@ function CreateJointCourse({ handleClose }) {
         type_id: items.id,
       })),
       specialtyIds: formData.specialties.map((specialty) => specialty.id)
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -307,6 +297,12 @@ function CreateJointCourse({ handleClose }) {
             />
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button

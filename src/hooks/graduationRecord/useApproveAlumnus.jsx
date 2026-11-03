@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { approveAlumnus } from "../../services/graduationRecord";
 export const useApproveAlumnus = (handleClose) => {
@@ -19,14 +18,6 @@ export const useApproveAlumnus = (handleClose) => {
       }
       queryClient.invalidateQueries({ queryKey: ["graduation-records"] });
       queryClient.invalidateQueries({ queryKey: ["alumni"] });
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
-        />,
-      );
     },
   });
 };

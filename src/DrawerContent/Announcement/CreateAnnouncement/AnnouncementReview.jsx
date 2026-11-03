@@ -13,6 +13,8 @@ import {
   setPublicationType,
   setPublicationValue,
 } from "../../../Slices/announcement/announcementSlice";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function AnnouncementReview({
   handleClose,
   currentStep,
@@ -22,6 +24,8 @@ function AnnouncementReview({
 }) {
   const { mutate: createAnnouncement, isPending } =
     useCreateAnnouncement(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const dispatch = useDispatch();
   const moduleState = useSelector(
     (state) => state.announcement.createAnnouncement,
@@ -84,7 +88,8 @@ function AnnouncementReview({
       ],
     };
 
-    createAnnouncement(payload);
+    clearFormError();
+    createAnnouncement(payload, { onError: handleServerError });
   };
   return (
     <>
@@ -155,6 +160,12 @@ function AnnouncementReview({
         className="drawer-content"
         style={{ background: "#f9f9f9", paddingBottom: "10rem" }}
       >
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3 pt-2 px-2 font-size-sm">
           <div className="d-flex flex-column gap-1">
             <span>Announcement Preview</span>

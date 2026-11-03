@@ -1,10 +1,11 @@
 import axios from "../../axios/axios";
 import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import toast from "react-hot-toast";
 import { Icon } from "@iconify/react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function ChangeProfilePicture({ handleClose }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -12,9 +13,12 @@ function ChangeProfilePicture({ handleClose }) {
   const authToken = useSelector((state) => state.auth.token);
   const apiKey = useSelector((state) => state.auth.apiKey);
   const fileInputRef = useRef(null);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Profile Picture");
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      clearFormError();
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
@@ -22,15 +26,11 @@ function ChangeProfilePicture({ handleClose }) {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      toast.custom(
-        <ToastWarning
-          title={"Please Select A File"}
-          description={"Please Select A File To Update Profile Picture"}
-        />
-      ); 
+      setClientError("Please Select A File", "Please Select A File To Update Profile Picture");
       return;
     }
 
+    clearFormError();
     const formData = new FormData();
     formData.append("profile_picture", selectedFile);
 
@@ -60,14 +60,7 @@ function ChangeProfilePicture({ handleClose }) {
         />
       );
     } catch (error) {
-      toast.custom(
-        <ToastDanger
-          title={"Update Failed"}
-          description={
-            "Failed to upload profile picture due to an error please try again"
-          }
-        />
-      );
+      handleServerError(error);
     }
   };
   return (
@@ -149,6 +142,12 @@ function ChangeProfilePicture({ handleClose }) {
             </>
           )}
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button

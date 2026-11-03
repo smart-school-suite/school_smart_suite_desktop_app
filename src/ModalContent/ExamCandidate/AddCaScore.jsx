@@ -17,6 +17,8 @@ import {
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useCreateCaMark } from "../../hooks/evaluateStudent/useCreateCaMarks";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AddCaScore({ handleClose, rowData }) {
   const moduleState = useSelector((state) => state.caEvaluation);
   const { id: candidateId } = rowData;
@@ -29,6 +31,8 @@ function AddCaScore({ handleClose, rowData }) {
   } = useGetCaEvaluationHelperData(candidateId);
 
   const { mutate: createCaScore, isPending } = useCreateCaMark(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Add Ca Score");
   useEffect(() => {
     const data = helperData?.data;
 
@@ -60,7 +64,8 @@ function AddCaScore({ handleClose, rowData }) {
              score: score.score
          }))
      }
-     createCaScore(payload);
+     clearFormError();
+     createCaScore(payload, { onError: handleServerError });
   }
   return (
     <>
@@ -94,6 +99,12 @@ function AddCaScore({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
 
         <div
           className="d-flex flex-row align-items-stretch w-100 overflow-hidden"

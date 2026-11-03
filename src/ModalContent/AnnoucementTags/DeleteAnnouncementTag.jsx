@@ -1,10 +1,15 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useDeleteAnnouncementTag } from "../../hooks/announcement/useDeleteAnnouncementTag";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeleteAnnouncementTag({ handleClose, rowData }) {
   const { id: tagId } = rowData;
   const { mutate: deleteTag, isPending } = useDeleteAnnouncementTag();
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Delete Announcement Tag");
   const handleDeleteTag = () => {
-    deleteTag(tagId);
+    clearFormError();
+    deleteTag(tagId, { onError: handleServerError });
   };
   return (
     <>
@@ -14,6 +19,12 @@ function DeleteAnnouncementTag({ handleClose, rowData }) {
           This action cannot be undone. This will Permanently delete This
           account and remove this account data from our servers
         </p>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button

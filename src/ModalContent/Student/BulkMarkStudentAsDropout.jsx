@@ -1,12 +1,17 @@
 import { useBulkMarkStudentAsDropout } from "../../hooks/student/useBulkMarkStudentAsDropout";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkMarkStudentAsDropout({ resetAll, handleClose, bulkData }) {
   const formattedData = bulkData.map((items) => ({ student_id: items.id }));
   const { mutate: bulkMarkStudentAsDropout, isPending } =
     useBulkMarkStudentAsDropout(resetAll, handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Mark Student As Dropout");
   const handleBulkMarkStudentAsDropdout = () => {
-    bulkMarkStudentAsDropout({ dropout_list: formattedData });
+    clearFormError();
+    bulkMarkStudentAsDropout({ dropout_list: formattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -34,6 +39,12 @@ function BulkMarkStudentAsDropout({ resetAll, handleClose, bulkData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

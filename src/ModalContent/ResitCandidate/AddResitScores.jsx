@@ -17,6 +17,8 @@ import { ProgressBar } from "react-bootstrap";
 import VerticalDashedLine from "../../components/DashedLine/VerticalDashedLine";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import SearchInput from "../../components/input/search";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function AddResitScores({ handleClose, rowData }) {
   const moduleState = useSelector((state) => state.resitEvaluation);
   const { id: candidateId } = rowData;
@@ -30,6 +32,8 @@ function AddResitScores({ handleClose, rowData }) {
 
   const { mutate: createResitScore, isPending } =
     useCreateResitScore(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Add Resit Scores");
   useEffect(() => {
     const data = helperData?.data;
 
@@ -61,7 +65,8 @@ function AddResitScores({ handleClose, rowData }) {
         score: score.score,
       })),
     };
-    createResitScore(payload);
+    clearFormError();
+    createResitScore(payload, { onError: handleServerError });
   };
   return (
     <>
@@ -95,6 +100,12 @@ function AddResitScores({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
 
         <div
           className="d-flex flex-row align-items-stretch w-100 overflow-hidden"

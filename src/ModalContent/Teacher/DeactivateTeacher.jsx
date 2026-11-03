@@ -1,11 +1,16 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useDeactivateTeacher } from "../../hooks/teacher/useDeactivateTeacher";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeactivateTeacher({ rowData, handleClose }) {
   const teacherId = rowData.id;
   const { mutate: deactivateTeacher, isPending } = useDeactivateTeacher();
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Deactivate Teacher");
   const handleDeactivateTeacher = () => {
-    deactivateTeacher(teacherId);
+    clearFormError();
+    deactivateTeacher(teacherId, { onError: handleServerError });
   };
   return (
     <>
@@ -35,6 +40,12 @@ function DeactivateTeacher({ rowData, handleClose }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

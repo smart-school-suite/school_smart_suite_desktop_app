@@ -5,11 +5,13 @@ import { useGetSchoolBranchSettingDetails } from "../../../hooks/schoolBranchSet
 import { useGetLetterGrades } from "../../../hooks/letterGrade/useGetLetterGrades";
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import ToastWarning from "../../../components/Toast/ToastWarning";
-import toast from "react-hot-toast";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { NotFoundError } from "../../../components/errors/Error";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function UpdateAllowedGrades({ handleClose, rowData }) {
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Allowed Grades");
   const { id: schoolBranchSettingId } = rowData;
   const [formData, setFormData] = useState({
     school_branch_setting_id: rowData.id,
@@ -43,24 +45,21 @@ function UpdateAllowedGrades({ handleClose, rowData }) {
     }
   }, [setFormData, isSettingDetailsLoading])
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleUpdate = async () => {
      if(formData.value.length <= 0) {
-         toast.custom(
-         <ToastWarning 
-            title={"No Grades Selected"} 
-            description={"You Must Select Alteast 1 Letter Grade"}        
-         />
-     )
+         setClientError("No Grades Selected", "You Must Select Alteast 1 Letter Grade")
      return 
      }
      const payload = {
          value:JSON.stringify(formData.value.map((items) => ({letter_grade_id:items.id}))),
          school_branch_setting_id:formData.school_branch_setting_id
      }
-     updateGradeSetting(payload);
+     clearFormError();
+     updateGradeSetting(payload, { onError: handleServerError });
   }
   return (
     <>
@@ -123,6 +122,12 @@ function UpdateAllowedGrades({ handleClose, rowData }) {
               value={formData.value}
             />
           </div>
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
           <button
             className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"
             onClick={() => {

@@ -1,5 +1,7 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useBulkDeleteAdditionalFeeTransaction } from "../../hooks/additionalFee/useBulkDeleteAdditionalFeeTransaction";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkDeleteAdditionalFeeTransaction({
   handleClose,
   resetAll,
@@ -8,8 +10,11 @@ function BulkDeleteAdditionalFeeTransaction({
   const formattedData = bulkData.map((items) => ({ transaction_id: items.id }));
   const { mutate: deleteTransaction, isPending } =
     useBulkDeleteAdditionalFeeTransaction(handleClose, resetAll);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Delete Additional Fee Transaction");
   const handleDeleteTransaction = () => {
-    deleteTransaction({ transactionIds: formattedData });
+    clearFormError();
+    deleteTransaction({ transactionIds: formattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -19,6 +24,12 @@ function BulkDeleteAdditionalFeeTransaction({
           This action cannot be undone. This will Permanently delete This
           account and remove this account data from our servers
         </p>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button

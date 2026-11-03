@@ -1,11 +1,16 @@
 import { useDeactivateDepartment } from "../../hooks/department/useDeactivateDepartment";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function DeactivateDepartment({ handleClose, rowData }) {
   const { mutate: deactivateDepartment, isPending } =
     useDeactivateDepartment(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Deactivate Department");
   const handleDeactivateDeparment = () => {
-    deactivateDepartment(rowData.id);
+    clearFormError();
+    deactivateDepartment(rowData.id, { onError: handleServerError });
   };
   return (
     <>
@@ -35,6 +40,12 @@ function DeactivateDepartment({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

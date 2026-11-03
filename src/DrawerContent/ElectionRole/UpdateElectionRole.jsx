@@ -1,5 +1,4 @@
 import { Fragment, useState } from "react";
-import toast from "react-hot-toast";
 import {
   nameSchema,
   textareaSchema,
@@ -13,7 +12,6 @@ import {
 } from "../../components/FormComponents/InputComponents";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetElectionRoleDetails } from "../../hooks/electionRole/useGetElectionRoleDetails";
 import { useUpdateElectionRole } from "../../hooks/electionRole/useUpdateElectionRole";
 import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionTypes";
@@ -21,10 +19,14 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateElectionRole({ drawerData, handleClose }) {
   const { id: electionRoleId, role_title: title, description } = drawerData;
   const { mutate: updateElectionRole, isPending } =
     useUpdateElectionRole(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Election Role");
   const {
     data: electionDetails,
     isLoading: isElectionDetailsLoading,
@@ -48,34 +50,30 @@ function UpdateElectionRole({ drawerData, handleClose }) {
     election_type_id: "",
   });
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleUpdate = () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
-    updateElectionRole({ electionRoleId, updateData: formData });
+    clearFormError();
+    updateElectionRole({ electionRoleId, updateData: formData }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content ps-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         {isElectionDetailsLoading ? (
           <div className="d-flex flex-column gap-3">
             {[...Array(4)].map((index) => (

@@ -6,10 +6,14 @@ import { NotFoundError } from "../../components/errors/Error";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateFeeScheduleSlots({ handleClose, rowData }) {
   const { id: feeScheduleId, tuition_fee } = rowData;
   const [formData, setFormData] = useState([]);
   const { mutate: createFeeSchedule, isPending } = useCreateFeeScheduleSlots(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Create Fee Schedule Slots");
   const { data: installments, isLoading, error } = useGetFeeInstallment();
   const currencyState = useSelector((state) => state.auth.user);
   const userCurrencySymbol = currencyState?.schoolDetails?.school?.country?.currency || "";
@@ -43,7 +47,8 @@ function CreateFeeScheduleSlots({ handleClose, rowData }) {
 
   const handleSubmit = () => {
      const formatData = formData.filter((items) => items.due_date != "" || items.fee_percentage != "");
-     createFeeSchedule({scheduleData:{ slots:formatData }, feeScheduleId});
+     clearFormError();
+     createFeeSchedule({scheduleData:{ slots:formatData }, feeScheduleId}, { onError: handleServerError });
   };
 
   return (
@@ -58,6 +63,12 @@ function CreateFeeScheduleSlots({ handleClose, rowData }) {
             <Icon icon="charm:cross" width="22" height="22" />
           </span>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-row align-items-center w-100 justify-content-end">
           <button
             className="border-none p-2 rounded-2 primary-background text-white font-size-sm"

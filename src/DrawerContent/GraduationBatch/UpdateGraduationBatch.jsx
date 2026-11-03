@@ -17,6 +17,8 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetGraduationBatchDetails } from "../../hooks/graduationBatch/useGetGraduationBatchDetails";
 import { useUpdateGraduationBatch } from "../../hooks/graduationBatch/useUpdateGraduationBatch";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 
 function UpdateGraduationBatch({ drawerData = {}, handleClose = () => {} }) {
   const batchId = drawerData?.id;
@@ -44,6 +46,8 @@ function UpdateGraduationBatch({ drawerData = {}, handleClose = () => {} }) {
 
   const { mutate: updateBatch, isPending = false } =
     useUpdateGraduationBatch(handleClose) || {};
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Update Graduation Batch");
 
   const handleStateChange = useCallback((field, value, stateFn) => {
     if (typeof stateFn === "function") {
@@ -90,7 +94,8 @@ function UpdateGraduationBatch({ drawerData = {}, handleClose = () => {} }) {
           location: formData?.location?.trim() || "",
           description: formData?.description?.trim() || "",
         };
-        updateBatch({payload, batchId});
+        clearFormError();
+        updateBatch({payload, batchId}, { onError: handleServerError });
       }
     } catch {
       setSubmitError("An unexpected error occurred while updating the graduation batch. Please try again.");
@@ -100,6 +105,12 @@ function UpdateGraduationBatch({ drawerData = {}, handleClose = () => {} }) {
   return (
     <>
       <div className="drawer-content px-2 pt-3 font-size-sm">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         {submitError && (
           <div className="bg-red-100 p-3 rounded-3 text-red-700 mb-3 d-flex align-items-center gap-2 border border-red-200">
             <AlertCircle size={18} className="flex-shrink-0" />

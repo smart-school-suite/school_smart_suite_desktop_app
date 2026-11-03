@@ -5,8 +5,12 @@ import { numberSchema } from "../../../ComponentConfig/YupValidationSchema";
 import { NumberInput } from "../../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { useUpdateSetting } from "../../../hooks/schoolBranchSetting/useUpdateSetting";
+import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { useFormError } from "../../../hooks/form/useFormError";
 function MaxTuitionFeeDebtSetting({ handleClose, rowData }) {
   const { mutate: updateSetting, isPending } = useUpdateSetting(handleClose);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError();
   const currency = useSelector(
       (state) => state.auth.user?.schoolDetails?.school?.country?.currency ?? "",
     );
@@ -28,12 +32,13 @@ function MaxTuitionFeeDebtSetting({ handleClose, rowData }) {
       return;
     }
 
+    clearFormError();
     updateSetting({
       payload: {
         setting_id: rowData.id,
         value: maxDebt,
       },
-    });
+    }, { onError: handleServerError });
   };
 
   return (
@@ -63,6 +68,12 @@ function MaxTuitionFeeDebtSetting({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
 
         <div className="p-2 font-size-sm">
           {error && (

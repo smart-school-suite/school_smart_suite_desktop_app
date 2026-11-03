@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 import {
   nameSchema,
   textareaSchema,
@@ -11,13 +10,16 @@ import {
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useCreateElectionRole } from "../../hooks/electionRole/useCreateElectionRole";
 import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionTypes";
 import { allFieldsValid } from "../../utils/functions";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateElectionRole({ handleClose }) {
   const { mutate: createElectionRole, isPending } =
     useCreateElectionRole(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create Election Role");
   const { data: electionTypes, isLoading } = useGetElectionTypes();
   const [formData, setFormData] = useState({
     name: "",
@@ -45,37 +47,31 @@ function CreateElectionRole({ handleClose }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleCreateElectionRole = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={
-            "Some Fields Seem To Be Invalid Please Go Through the form and try again"
-          }
-        />,
-      );
+      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
-    createElectionRole(formData);
+    clearFormError();
+    createElectionRole(formData, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content ps-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div>
             <label htmlFor="electionRoleTile" className="font-size-sm">

@@ -2,14 +2,14 @@ import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import { useUpdateSchool } from "../../hooks/school/useUpdateSchool";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import { nameSchema } from "../../ComponentConfig/YupValidationSchema";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateSchoolName({ handleClose }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -18,34 +18,26 @@ function UpdateSchoolName({ handleClose }) {
     name: "",
   });
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const { mutate: updateSchoolName, isPending } = useUpdateSchool(
     handleClose,
     "school name"
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update School Name");
   const handleUpdateSchool = () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
-    updateSchoolName({ updateData: formData });
+    clearFormError();
+    updateSchoolName({ updateData: formData }, { onError: handleServerError });
   };
   return (
     <>
@@ -84,6 +76,12 @@ function UpdateSchoolName({ handleClose }) {
             placeholder="Enter School Branch Name"
           />
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <button
           className="border-none px-3 mt-2 py-2 rounded-3 font-size-sm primary-background text-white w-100"
           onClick={() => {

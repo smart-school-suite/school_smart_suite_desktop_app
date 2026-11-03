@@ -14,8 +14,6 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetStudentDetails } from "../../hooks/student/useGetStudentDetails";
@@ -23,6 +21,8 @@ import { useGetActiveGender } from "../../hooks/gender/useGetActiveGender";
 import { useGetStudentParentRelationship } from "../../hooks/student/useGetStudentParentRelationship";
 import { useGetStudentSource } from "../../hooks/student/useGetStudentSource";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateStudent({ drawerData, handleClose }) {
   const { id: studentId } = drawerData;
   const {
@@ -81,7 +81,10 @@ function UpdateStudent({ drawerData, handleClose }) {
     handleClose,
     studentId,
   );
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Student");
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -105,25 +108,14 @@ function UpdateStudent({ drawerData, handleClose }) {
 
   const handleUpdateStudent = () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
+    clearFormError();
     updateStudent({
       studentId,
       updateData: {
@@ -135,7 +127,7 @@ function UpdateStudent({ drawerData, handleClose }) {
         guardian_id: formData.guardian_id.id,
         student_source_id: formData.student_source.id,
       },
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
@@ -159,6 +151,12 @@ function UpdateStudent({ drawerData, handleClose }) {
           style={{ flex: 1, minHeight: 0 }}
         >
           <div className="drawer-content px-2 pt-3">
+            <FormErrorBanner
+              ref={errorBannerRef}
+              error={formError}
+              onDismiss={clearFormError}
+              className="mb-2"
+            />
             <div className="d-flex flex-column gap-4">
               <div className="d-flex flex-row align-items-center gap-2">
                 <div className="w-50">

@@ -7,9 +7,9 @@ import { numberSchema } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { paymentMethods } from "../../data/data";
 import { allFieldsValid } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function PayRegistrationFees({ handleClose, drawerData }) {
   const amountRef = useRef();
   const methodRef = useRef();
@@ -30,6 +30,8 @@ function PayRegistrationFees({ handleClose, drawerData }) {
   });
   const { mutate: handlePayment, isPending } =
     usePayRegistrationFee(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Pay Registration Fees");
   const handlePrevalidation = async () => {
     const amount = await amountRef.current.triggerValidation();
     const paymentMethod = await methodRef.current.triggerValidation();
@@ -39,36 +41,34 @@ function PayRegistrationFees({ handleClose, drawerData }) {
     };
   };
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
+    clearFormError();
     handlePayment({
       ...formData,
       payment_method: formData.payment_method.value,
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-3">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="d-flex flex-column gap-3">
           <div className="d-flex flex-column gap-1">
             <div className="d-flex flex-row align-items-center gap-3">

@@ -13,9 +13,9 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateResitExam({ drawerData, handleClose }) {
   const { id: examId } = drawerData;
   const [isValid, setIsValid] = useState({
@@ -29,28 +29,19 @@ function UpdateResitExam({ drawerData, handleClose }) {
     max_score: drawerData?.max_score ?? "",
   });
   const { mutate: updateExam, isPending } = useUpdateResitExam(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update Resit Exam");
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleExamUpdate = async () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
     const cleanedFormData = Object.fromEntries(
@@ -59,11 +50,18 @@ function UpdateResitExam({ drawerData, handleClose }) {
       ),
     );
 
-    updateExam({ resitExamId: examId, updateData: cleanedFormData });
+    clearFormError();
+    updateExam({ resitExamId: examId, updateData: cleanedFormData }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-2">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <DateRangeInput
           validationSchema={dateRangeValidationSchema({
             futureOnly: true,

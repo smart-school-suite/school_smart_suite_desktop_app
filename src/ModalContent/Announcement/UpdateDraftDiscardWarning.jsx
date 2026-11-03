@@ -3,6 +3,8 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useSelector, useDispatch } from "react-redux";
 import { resetUpdateDraftState } from "../../Slices/announcement/draftAnnouncementSlice";
 import { useUpdateAnnouncementDraft } from "../../hooks/announcement/useUpdateAnnouncementDraft";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateDraftDiscardWarning({ handleClose, rowData }) {
   const { handleCloseDrawer, announcement } = rowData;
   const { mutate: updateDraft, isPending } = useUpdateAnnouncementDraft(
@@ -10,6 +12,8 @@ function UpdateDraftDiscardWarning({ handleClose, rowData }) {
     handleClose,
     handleCloseDrawer,
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Update Draft Discard Warning");
   const dispatch = useDispatch();
   const moduleState = useSelector(
     (state) => state.draftAnnouncement.updateDraftAnnouncement.draft,
@@ -63,7 +67,8 @@ function UpdateDraftDiscardWarning({ handleClose, rowData }) {
       ],
     };
 
-    updateDraft({ updateData: payload });
+    clearFormError();
+    updateDraft({ updateData: payload }, { onError: handleServerError });
   };
   return (
     <>
@@ -94,6 +99,12 @@ function UpdateDraftDiscardWarning({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>

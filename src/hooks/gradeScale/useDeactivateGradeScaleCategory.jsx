@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import { deactivateGradeScaleCategory } from "../../services/gradeScale";
 
 export const useDeactivateGradeScaleCategory = (handleClose, categoryId) => {
@@ -23,14 +22,6 @@ export const useDeactivateGradeScaleCategory = (handleClose, categoryId) => {
       queryClient.invalidateQueries({
         queryKey: ["grade-scale-category-details", categoryId],
       });
-    },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
-        />,
-      );
     },
   });
 };

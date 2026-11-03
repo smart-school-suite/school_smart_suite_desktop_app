@@ -10,13 +10,15 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useState } from "react";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkUpdateSemester({ handleClose, resetAll, bulkData }) {
       const { data: semesters, isLoading: isFetchingSemesters } =
         useGetSemester();
       const { mutate:updateSchoolSemester, isPending } = useBulkUpdateSchoolSemester(handleClose, resetAll);
+      const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+        useFormError("Failed To Bulk Update Semester");
       const [formData, setFormData] = useState({
         start_date: "",
         end_date: "",
@@ -32,25 +34,16 @@ function BulkUpdateSemester({ handleClose, resetAll, bulkData }) {
         school_year: "",
       });
         const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
         stateFn((prev) => ({ ...prev, [field]: value }));
       };
       const handleUpdateSchoolSemester = () => {
         if(optionalValidateObject(isValid) == false){
-              toast.custom(
-                <ToastWarning 
-                   title={"Invalid Fields"}
-                   description={"Please Ensure All Fields Are Valid Before Submitting"}
-                />
-              )
+              setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting")
               return;
             }
             if(hasNonEmptyValue(formData) == false){
-              toast.custom(
-                 <ToastWarning 
-                   title={"Nothing To Update"}
-                  description={"Please Ensure Atleast One Field Is Updated Before Submitting"}
-                 />
-              )
+              setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting")
               return;
             }
           const formattedData = bulkData.map((items) => ({ 
@@ -60,7 +53,8 @@ function BulkUpdateSemester({ handleClose, resetAll, bulkData }) {
               school_year:formData.school_year,
               semester_id:formData.semester_id,
           }))
-          updateSchoolSemester({ school_semester:formattedData })
+          clearFormError();
+          updateSchoolSemester({ school_semester:formattedData }, { onError: handleServerError })
       };
   return (
     <>
@@ -131,6 +125,12 @@ function BulkUpdateSemester({ handleClose, resetAll, bulkData }) {
           />
         </div>
       </div>
+      <FormErrorBanner
+        ref={errorBannerRef}
+        error={formError}
+        onDismiss={clearFormError}
+        className="mb-2"
+      />
       <div className="d-flex mt-3 flex-row align-items-center justify-content-end gap-2 w-100">
         <button
           className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-100"

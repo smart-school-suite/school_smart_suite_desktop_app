@@ -1,5 +1,7 @@
 import { useBulkReverseAdditionalFeeTransactions } from "../../hooks/additionalFee/useBulkReverseAdditionalFeeTransaction";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function BulkReverseAdditionalFeeTransaction({
   handleClose,
   bulkData,
@@ -7,11 +9,14 @@ function BulkReverseAdditionalFeeTransaction({
 }) {
   const { mutate: reverseTransaction, isPending } =
     useBulkReverseAdditionalFeeTransactions(handleClose, resetAll);
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Bulk Reverse Additional Fee Transaction");
   const formattedData = bulkData.map((items) => ({
     transaction_id: items.id,
   }));
   const handleReverseTransaction = () => {
-    reverseTransaction({ transactionIds: formattedData });
+    clearFormError();
+    reverseTransaction({ transactionIds: formattedData }, { onError: handleServerError });
   };
   return (
     <>
@@ -21,6 +26,12 @@ function BulkReverseAdditionalFeeTransaction({
           This action cannot be undone. This will Permanently delete This
           account and remove this account data from our servers
         </p>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-4">
           <div className="d-flex flex-row align-items-center justify-content-end gap-2 w-100">
             <button

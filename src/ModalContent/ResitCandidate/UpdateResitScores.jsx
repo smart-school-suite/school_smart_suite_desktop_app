@@ -17,6 +17,8 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import SearchInput from "../../components/input/search";
 import { useGetResitUpdateEvaluationHelper } from "../../hooks/resitEvaluation/useGetResitEvaluationUpdateHelper";
 import { useUpdateResitScores } from "../../hooks/resitEvaluation/useUpdateResitScore";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateResitScore({ handleClose, rowData }) {
   const moduleState = useSelector((state) => state.resitEvaluation.update);
   const { id: candidateId } = rowData;
@@ -32,6 +34,8 @@ function UpdateResitScore({ handleClose, rowData }) {
     handleClose,
     candidateId,
   );
+  const { formError, errorBannerRef, handleServerError, clearFormError } =
+    useFormError("Failed To Update Resit Score");
   useEffect(() => {
     const data = helperData?.data;
 
@@ -66,7 +70,8 @@ function UpdateResitScore({ handleClose, rowData }) {
       })),
       candidate_id: candidateId,
     };
-    updateResitScores(payload);
+    clearFormError();
+    updateResitScores(payload, { onError: handleServerError });
   };
   return (
     <>
@@ -100,6 +105,12 @@ function UpdateResitScore({ handleClose, rowData }) {
             </button>
           </div>
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mx-2 mt-2 mb-0"
+        />
 
         <div
           className="d-flex flex-row align-items-stretch w-100 overflow-hidden"

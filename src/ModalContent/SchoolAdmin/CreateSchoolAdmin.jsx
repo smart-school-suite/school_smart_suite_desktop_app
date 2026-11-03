@@ -5,11 +5,13 @@ import { useCreateSchoolAdmin } from "../../hooks/schoolAdmin/useCreateSchoolAdm
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import { emailValidationSchema, nameSchema } from "../../ComponentConfig/YupValidationSchema";
 import { allFieldsValid, objectHasEmpty } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function CreateSchoolAdmin({ handleClose }) {
   const { mutate: createAdmin, isPending } =
     useCreateSchoolAdmin(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Create School Admin");
   const emailRef = useRef();
   const firstNameRef = useRef();
   const lastNameRef = useRef();
@@ -27,6 +29,7 @@ function CreateSchoolAdmin({ handleClose }) {
     first_name: "",
   });
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handlePrevalidation = async () => {
@@ -44,24 +47,15 @@ function CreateSchoolAdmin({ handleClose }) {
   const handleCreateSchoolAdmin = async () => {
     const prevalidation = await handlePrevalidation();
     if(!allFieldsValid(prevalidation)){
-        toast.custom(
-          <ToastWarning 
-            title={"Invalid Fields"}
-            description={"Please ensure all fields are valid before creating a school admin."}
-          />
-        )
+        setClientError("Invalid Fields", "Please ensure all fields are valid before creating a school admin.")
         return;
     }
     if(!allFieldsValid(isFieldValid)){
-       toast.custom(
-          <ToastWarning 
-            title={"Invalid Fields"}
-            description={"Please ensure all fields are valid before creating a school admin."}
-          />
-        )
+       setClientError("Invalid Fields", "Please ensure all fields are valid before creating a school admin.")
         return;
     }
-    createAdmin(formData);
+    clearFormError();
+    createAdmin(formData, { onError: handleServerError });
   };
   return (
     <>
@@ -163,6 +157,12 @@ function CreateSchoolAdmin({ handleClose }) {
             ref={emailRef}
           />
         </div>
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         <div className="mt-2">
           <button
             className="rounded-3 p-2 text-white border-none primary-background font-size-sm w-100"

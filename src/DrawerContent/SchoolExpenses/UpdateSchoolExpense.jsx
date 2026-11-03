@@ -18,12 +18,12 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import toast from "react-hot-toast";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetExpenseDetails } from "../../hooks/schoolExpenses/useGetSchoolExpenseDetails";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 function UpdateSchoolExpense({ handleClose, drawerData }) {
   const { id: expenseId } = drawerData;
   const currencyState = useSelector((state) => state.auth.user);
@@ -35,6 +35,8 @@ function UpdateSchoolExpense({ handleClose, drawerData }) {
     error,
   } = useGetExpenseDetails(expenseId);
   const { mutate: updateExpense, isPending } = useUpdateExpense(handleClose);
+  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
+    useFormError("Failed To Update School Expense");
   const { data: expenseCategory, isFetching } = useGetExpensesCategories();
   const [formData, setFormData] = useState({
     date: "",
@@ -64,40 +66,36 @@ function UpdateSchoolExpense({ handleClose, drawerData }) {
   }, [setFormData, isLoading]);
 
   const handleStateChange = (field, value, stateFn) => {
+    if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = () => {
     if (optionalValidateObject(isValid) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Invalid Fields"}
-          description={"Please Ensure All Fields Are Valid Before Submitting"}
-        />,
-      );
+      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      toast.custom(
-        <ToastWarning
-          title={"Nothing To Update"}
-          description={
-            "Please Ensure Atleast One Field Is Updated Before Submitting"
-          }
-        />,
-      );
+      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
       return;
     }
+    clearFormError();
     updateExpense({
       expenseId: expenseId,
       updateData: {
         ...formData,
         expenses_category_id: formData.expenses_category_id,
       },
-    });
+    }, { onError: handleServerError });
   };
   return (
     <>
       <div className="drawer-content px-2 pt-4">
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+          className="mb-2"
+        />
         {isLoading ? (
           <div className="d-flex flex-column w-100 gap-3">
             {[...Array(6)].map((_, index) => (
