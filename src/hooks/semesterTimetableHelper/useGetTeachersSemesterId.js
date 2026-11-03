@@ -5,5 +5,6 @@ export const useGetTeachersSemesterId = (schoolSemesterId) => {
   return useQuery({
     queryKey: ["teachers-schoolsemester", schoolSemesterId],
     queryFn: () => getTeachers(schoolSemesterId),
+    enabled: Boolean(schoolSemesterId),
   });
 };

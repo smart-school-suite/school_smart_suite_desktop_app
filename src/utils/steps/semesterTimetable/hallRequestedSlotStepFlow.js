@@ -1,7 +1,6 @@
 import HallRequestedSlotBuilderStep from "../../../DrawerContent/SemesterTimetable/Constraints/Hall/HallRequestedSlot/HallRequestedSlotBuilderStep";
 import HallRequestedSlotDayStep from "../../../DrawerContent/SemesterTimetable/Constraints/Hall/HallRequestedSlot/HallRequestedSlotDayStep";
 import HallRequestedSlotIntroduction from "../../../DrawerContent/SemesterTimetable/Constraints/Hall/HallRequestedSlot/HallRequestedSlotIntroductionStep";
-import HallRequestedSlotListStep from "../../../DrawerContent/SemesterTimetable/Constraints/Hall/HallRequestedSlot/HallRequestedSlotListStep";
 import HallRequestedSlotReviewStep from "../../../DrawerContent/SemesterTimetable/Constraints/Hall/HallRequestedSlot/HallRequestedSlotReviewStep";
 
 export const HALL_REQUESTED_SLOT_STEP_FLOW = [
@@ -18,14 +17,8 @@ export const HALL_REQUESTED_SLOT_STEP_FLOW = [
     component: HallRequestedSlotDayStep,
   },
   {
-    step: "HALL_REQUESTED_SLOT_LIST_STEP",
-    title: "Requests",
-    label: "Hall Requested Slot List Step",
-    component: HallRequestedSlotListStep,
-  },
-  {
     step: "HALL_REQUESTED_SLOT_BUILDER_STEP",
-    title: "Time slots",
+    title: "Requests",
     label: "Hall Requested Slot Builder Step",
     component: HallRequestedSlotBuilderStep,
   },

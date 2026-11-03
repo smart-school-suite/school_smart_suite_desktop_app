@@ -1,7 +1,6 @@
 import CourseRequestedSlotBuilderStep from "../../../DrawerContent/SemesterTimetable/Constraints/Course/CourseRequestedSlot/CourseRequestedSlotBuilderStep";
 import CourseRequestedSlotDayStep from "../../../DrawerContent/SemesterTimetable/Constraints/Course/CourseRequestedSlot/CourseRequestedSlotDayStep";
 import CourseRequestedSlotIntroductionStep from "../../../DrawerContent/SemesterTimetable/Constraints/Course/CourseRequestedSlot/CourseRequestedSlotIntroductionStep";
-import CourseRequestedSlotListStep from "../../../DrawerContent/SemesterTimetable/Constraints/Course/CourseRequestedSlot/CourseRequestedSlotListStep";
 import CourseRequestedSlotReviewStep from "../../../DrawerContent/SemesterTimetable/Constraints/Course/CourseRequestedSlot/CourseRequestedSlotReviewStep";
 
 export const COURSE_REQUESTED_SLOT_STEP_FLOW = [
@@ -18,14 +17,8 @@ export const COURSE_REQUESTED_SLOT_STEP_FLOW = [
     component: CourseRequestedSlotDayStep,
   },
   {
-    step: "COURSE_REQUESTED_SLOT_LIST_STEP",
-    title: "Requests",
-    label: "Course Requested Slot List Step",
-    component: CourseRequestedSlotListStep,
-  },
-  {
     step: "COURSE_REQUESTED_SLOT_BUILDER_STEP",
-    title: "Time slots",
+    title: "Requests",
     label: "Course Requested Slot Builder Step",
     component: CourseRequestedSlotBuilderStep,
   },

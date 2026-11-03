@@ -1,11 +1,13 @@
 import toast from "react-hot-toast";
 import ToastWarning from "../../components/Toast/ToastWarning";
+import { buildRequestPayload, REQUEST_CONSTRAINTS } from "./requestedSlots";
 export function handleGenerateTimetable(
   hardConstraints,
   generateTimetable,
   schoolSemester,
   timetableVersion,
   mutationOptions,
+  softConstraints = {},
 ) {
   const breakPeriod = hardConstraints.break_period;
   const operationalPeriod = hardConstraints.operational_period;
@@ -48,12 +50,49 @@ export function handleGenerateTimetable(
     return;
   }
   generateTimetable(
-    buildRequestBody(hardConstraints, schoolSemester, timetableVersion),
+    buildRequestBody(
+      hardConstraints,
+      schoolSemester,
+      timetableVersion,
+      softConstraints,
+    ),
     mutationOptions,
   );
 }
 
-const buildRequestBody = (hardConstraints, schoolSemester, timetableVersion) => ({
+const timeValue = (field) =>
+  field && typeof field === "object" ? field.value : field;
+
+/** Requested free periods flattened to [{ day, start_time, end_time }]. */
+const buildFreePeriods = (softConstraints) =>
+  (softConstraints?.requested_free_periods?.slots ?? []).flatMap((dayEntry) =>
+    (dayEntry.slots ?? [])
+      .map((slot) => ({
+        day: dayEntry.day,
+        start_time: timeValue(slot.start_time),
+        end_time: timeValue(slot.end_time),
+      }))
+      .filter((slot) => slot.start_time && slot.end_time),
+  );
+
+/** Soft constraints, each included only when it has at least one entry. */
+const buildSoftConstraints = (softConstraints) => {
+  const body = {};
+  const freePeriods = buildFreePeriods(softConstraints);
+  if (freePeriods.length) body.requested_free_periods = freePeriods;
+  Object.values(REQUEST_CONSTRAINTS).forEach((config) => {
+    const requests = buildRequestPayload(softConstraints, config);
+    if (requests.length) body[config.key] = requests;
+  });
+  return body;
+};
+
+const buildRequestBody = (
+  hardConstraints,
+  schoolSemester,
+  timetableVersion,
+  softConstraints,
+) => ({
   school_semester_id: schoolSemester.id,
   version_id: timetableVersion?.id || null,
   break_period: {
@@ -71,13 +110,8 @@ const buildRequestBody = (hardConstraints, schoolSemester, timetableVersion) => 
       ),
     }),
     ...(hardConstraints.break_period.no_break_exceptions.length > 0 && {
-      no_break_exceptions: hardConstraints.break_period.no_break_exceptions.map(
-        (exception) => ({
-          day: exception.day,
-          start_time: exception.start_time.value,
-          end_time: exception.end_time.value,
-        }),
-      ),
+      // Stored as day names, which is what the API validates.
+      no_break_exceptions: hardConstraints.break_period.no_break_exceptions,
     }),
   },
   operational_period: {
@@ -101,18 +135,20 @@ const buildRequestBody = (hardConstraints, schoolSemester, timetableVersion) => 
   schedule_period_duration_minutes: {
     duration_minutes:
       hardConstraints.schedule_period_duration_minutes.duration_minutes,
+    // Custom durations are stored as plain minutes.
     ...(hardConstraints.schedule_period_duration_minutes.day_exceptions.filter(
-      (exception) => exception.duration_minutes.value,
+      (exception) => timeValue(exception.duration_minutes),
     ).length > 0 && {
       day_exceptions:
-        hardConstraints.schedule_period_duration_minutes.day_exceptions.map(
-          (exception) => ({
+        hardConstraints.schedule_period_duration_minutes.day_exceptions
+          .filter((exception) => timeValue(exception.duration_minutes))
+          .map((exception) => ({
             day: exception.day,
-            duration_minutes: exception.duration_minutes.value,
-          }),
-        ),
+            duration_minutes: timeValue(exception.duration_minutes),
+          })),
     }),
   },
+  ...buildSoftConstraints(softConstraints),
 });
 
 export function checkConfiguration(hardConstraints) {
