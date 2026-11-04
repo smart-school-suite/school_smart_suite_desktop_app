@@ -22,10 +22,10 @@ function CourseLayout() {
       title: "Joint Course",
       path: "/joint-course",
     },
-    // {
-    //   title: "Joint Course Timetable",
-    //   path: "/joint-course-timetable",
-    // },
+    {
+      title: "Joint Course Timetable",
+      path: "/joint-course-timetable",
+    },
   ];
   const ImportTrigger = useMemo(() => {
     const path = location.pathname;
