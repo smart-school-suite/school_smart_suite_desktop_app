@@ -13,6 +13,7 @@ import { Icon } from "@iconify/react";
 import NumberFlow from "@number-flow/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, GraduationCap } from "lucide-react";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SemesterTimetableError from "../../DrawerContent/SemesterTimetable/Error/SemesterTimetableError";
@@ -436,6 +437,7 @@ function SemesterDropdown({
   const handleSelect = (semester) => {
     if (value === undefined) setInternalValue(semester);
     onChange?.(semester);
+    setQuery("");
     setOpen(false);
   };
 
@@ -448,35 +450,87 @@ function SemesterDropdown({
     }
   }, [schoolSemesters]);
 
-  const renderButtonLabel = () => {
-    if (buttonLabel) return buttonLabel(selected);
-    if (!selected) return "Select Semester";
-    return `${selected?.semester_name ?? ""} ${selected?.school_year ?? ""}, ${selected?.specialty_name ?? ""} ${selected?.level_name ?? ""}`.trim();
-  };
+  const [hovered, setHovered] = useState(false);
+  const semesterTitle = (semester) =>
+    [semester?.semester_name, semester?.school_year].filter(Boolean).join(" ");
+  const semesterMeta = (semester) =>
+    [semester?.specialty_name, semester?.level_name].filter(Boolean).join(" · ");
+
+  const borderColor = open
+    ? "var(--primary-color-400)"
+    : hovered
+      ? "var(--iron-300)"
+      : "var(--iron-200)";
 
   return (
     <>
       <div className="d-flex flex-column gap-2" style={{ width: "50%" }}>
-        <button
+        <motion.button
           ref={refs.setReference}
           type="button"
-          className="border-none outline-none w-100 px-2 py-2 bg-white font-size-sm d-flex flex-row gap-2 border rounded-2 justify-content-between"
-          onClick={() => setOpen((v) => !v)}
-          {...getReferenceProps()}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          className="outline-none w-100 px-2 py-1 bg-white font-size-sm d-flex flex-row align-items-center gap-2 rounded-3 text-start transition-all duration-200"
+          style={{
+            border: `1px solid ${borderColor}`,
+            boxShadow: open
+              ? "0 0 0 3px var(--primary-color-100)"
+              : hovered
+                ? "0 1px 3px rgba(16, 24, 40, 0.08)"
+                : "0 1px 2px rgba(16, 24, 40, 0.04)",
+          }}
+          whileTap={{ scale: 0.995 }}
+          {...getReferenceProps({
+            onMouseEnter: () => setHovered(true),
+            onMouseLeave: () => setHovered(false),
+            onClick: () => setOpen((v) => !v),
+            onKeyDown: (event) => {
+              if (!open && ["ArrowDown", "Enter", " "].includes(event.key)) {
+                event.preventDefault();
+                setOpen(true);
+              }
+            },
+          })}
         >
-          <span className="text-capitalize text-iron-700">
-            {renderButtonLabel()}
+          <span
+            className={`d-inline-flex align-items-center justify-content-center rounded-2 flex-shrink-0 transition-all duration-200 ${
+              open || selected ? "bg-primary-50 color-primary" : "bg-iron-100 text-iron-500"
+            }`}
+            style={{ width: "2rem", height: "2rem" }}
+          >
+            <GraduationCap size={16} />
           </span>
-          <Icon
-            icon="mi:chevron-down"
-            width="16"
-            height="16"
-            style={{
-              transform: open ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "transform 0.2s ease",
-            }}
-          />
-        </button>
+          <span className="d-flex flex-column flex-grow-1" style={{ minWidth: 0 }}>
+            {isSchoolSemesterLoading && !selected ? (
+              <span className="text-iron-500">Loading semesters…</span>
+            ) : buttonLabel ? (
+              <span className="text-truncate">{buttonLabel(selected)}</span>
+            ) : selected ? (
+              <>
+                <span className="fw-medium text-capitalize text-truncate">
+                  {semesterTitle(selected)}
+                </span>
+                <span className="font-size-xs text-iron-500 text-capitalize text-truncate">
+                  {semesterMeta(selected)}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="fw-medium text-iron-700">Select a semester</span>
+                <span className="font-size-xs text-iron-500">
+                  Choose which semester's timetable to work on
+                </span>
+              </>
+            )}
+          </span>
+          <motion.span
+            className={`d-inline-flex flex-shrink-0 ${open ? "color-primary" : "text-iron-500"}`}
+            animate={{ rotate: open ? 180 : 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <ChevronDown size={16} />
+          </motion.span>
+        </motion.button>
         <FloatingPortal>
           <AnimatePresence>
             {open && (
@@ -490,7 +544,7 @@ function SemesterDropdown({
                   minWidth: "unset",
                   width: refs.reference.current?.offsetWidth ?? "auto",
                 }}
-                className="bg-white p-2 rounded-4 border d-flex flex-column gap-4"
+                className="bg-white p-2 rounded-4 border shadow-sm d-flex flex-column gap-2"
                 {...getFloatingProps()}
                 initial={{ opacity: 0, y: -6, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -509,7 +563,7 @@ function SemesterDropdown({
                 </div>
 
                 <div
-                  className="semester-dd-container d-flex flex-column gap-2"
+                  className="semester-dd-container d-flex flex-column gap-1"
                   style={{ maxHeight: "280px", overflowY: "auto" }}
                 >
                   {isSchoolSemesterLoading ? (
@@ -529,7 +583,9 @@ function SemesterDropdown({
                         <Fragment key={semester?.id ?? index}>
                           <button
                             type="button"
-                            className="border-none transparent-bg font-size-sm w-100"
+                            className={`border-none font-size-sm w-100 rounded-3 px-2 py-1 transition-all duration-200 ${
+                              isSelected ? "bg-primary-50" : "transparent-bg hover-bg-iron-50"
+                            }`}
                             onClick={() => handleSelect(semester)}
                             role="option"
                             aria-selected={isSelected}
@@ -562,7 +618,7 @@ function SemesterDropdown({
 
                               <div>
                                 {isSelected && (
-                                  <span>
+                                  <span className="color-primary">
                                     <Icon
                                       icon="iconamoon:check-bold"
                                       width="16"
@@ -574,7 +630,7 @@ function SemesterDropdown({
                             </div>
                           </button>
 
-                          {!lastItem && <hr className="my-1" />}
+                          {!lastItem && <hr className="my-0 opacity-50" />}
                         </Fragment>
                       );
                     })
