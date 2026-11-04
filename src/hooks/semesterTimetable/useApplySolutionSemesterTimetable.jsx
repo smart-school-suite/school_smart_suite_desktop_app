@@ -1,32 +1,29 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { applySolution } from "../../services/semesterTimetable";
+import { SEMESTER_TIMETABLE_SOLUTIONS_KEY } from "./useGetSemesterTimetableSolutions";
+
+// POST semester-timetable/version/{versionId}/solutions/apply
+// body: { solution_ids: string[] } — one option id per problem.
+// The API creates and generates a new version; the source version is untouched.
+// Errors are shown inline by the caller (drawer), so no toast here.
 export const useApplySemesterTimetableSolutions = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: applySolution,
-    onSuccess: () => {
+    mutationFn: ({ versionId, solutionIds }) =>
+      applySolution(versionId, { solution_ids: solutionIds }),
+    onSuccess: (_response, { versionId }) => {
       queryClient.invalidateQueries({
         queryKey: ["semester-timetable-versions"],
       });
-      toast.custom(
-        <ToastSuccess
-          title={"Solution Applied"}
-          description={
-            "Solutions Have Been Applied a new timetable version will now be created with your corrections"
-          }
-        />,
-      );
+      queryClient.invalidateQueries({
+        queryKey: [SEMESTER_TIMETABLE_SOLUTIONS_KEY, versionId],
+      });
     },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
-        />,
-      );
+    onError: (_error, { versionId }) => {
+      // A 404 means the stored solutions changed; refresh them.
+      queryClient.invalidateQueries({
+        queryKey: [SEMESTER_TIMETABLE_SOLUTIONS_KEY, versionId],
+      });
     },
   });
 };
