@@ -81,11 +81,9 @@ function TimetableGridWrapper({ progress = null }) {
             description="Please click on the button below to view the list of errors"
           >
             <div className="d-flex flex-row align-items-center gap-2">
-              <button className="p-2 border-none border bg-none rounded-3">
-                Try Again
-              </button>
+              <GenerateButton label="Try Again" variant="outline" />
               <DrawerTrigger
-                title={"Semester Timetable Errors & Diagnostics"}
+                title={"Problems & solutions"}
                 drawerChildren={SemesterTimetableError}
               >
                 <button className="p-2 border-none border bg-primary-500 rounded-3 text-white border">
@@ -103,11 +101,9 @@ function TimetableGridWrapper({ progress = null }) {
             description="Something went wrong while generating the timetable. Consider the diagnostic report to identify and resolve constraint conflicts, then try again."
           >
             <div className="d-flex flex-row align-items-center gap-2">
-              <button className="p-2 border-none border bg-none rounded-3">
-                Try Again
-              </button>
+              <GenerateButton label="Try Again" variant="outline" />
               <DrawerTrigger
-                title={"Semester Timetable Errors & Diagnostics"}
+                title={"Problems & solutions"}
                 drawerChildren={SemesterTimetableError}
               >
                 <button className="p-2 border-none border bg-primary-500 rounded-3 text-white border">
@@ -342,6 +338,24 @@ function TimetableGrid() {
   return (
     <>
       <div className="timetable-grid-container d-flex flex-column gap-4 pb-5">
+        {timetableVersion?.scheduler_status === SCHEDULER_STATUS.PARTIAL && (
+          <div className="d-flex flex-row align-items-center justify-content-between gap-3 p-3 rounded-3 border font-size-sm bg-white">
+            <div className="d-flex flex-column">
+              <span className="fw-semibold">Some requests could not be honoured</span>
+              <span className="text-muted">
+                The timetable is usable. Review the unmet requests and apply a solution to honour them.
+              </span>
+            </div>
+            <DrawerTrigger
+              title={"Problems & solutions"}
+              drawerChildren={SemesterTimetableError}
+            >
+              <button className="p-2 px-3 border-none rounded-3 text-white primary-background font-size-sm text-nowrap">
+                Review requests
+              </button>
+            </DrawerTrigger>
+          </div>
+        )}
         {isTimetableLoading
           ? [...Array(2)].map((_items, index) => (
               <Fragment key={index}>
