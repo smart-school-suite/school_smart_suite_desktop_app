@@ -88,3 +88,9 @@ export const activateVersion = async (versionId) => {
   );
   return response.data;
 };
+export const getActiveTimetable = async (schoolSemesterId) => {
+  const response = await axiosInstance.get(
+    `semester-timetable/school-semester/${schoolSemesterId}/active-timetable`,
+  );
+  return response.data;
+};
