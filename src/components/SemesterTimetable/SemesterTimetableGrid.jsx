@@ -16,6 +16,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SemesterTimetableError from "../../DrawerContent/SemesterTimetable/Error/SemesterTimetableError";
+import TimetableStatusBar from "./TimetableStatusBar";
 import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
 import { useGenerateSemesterTimetable } from "../../hooks/semesterTimetable/useGenerateSemesterTimetable";
 import { useGetSemesterTimetableVersions } from "../../hooks/semesterTimetable/useGetSemesterTimetableVersion";
@@ -335,66 +336,50 @@ function TimetableGrid() {
   );
   const { data: timetable, isLoading: isTimetableLoading } =
     useGetTimetableSlots(timetableVersion?.id);
+  const lessonCount = useMemo(
+    () =>
+      (timetable?.data ?? []).reduce(
+        (sum, day) =>
+          sum + (day.slots ?? []).filter((slot) => slot.slot_type !== "break").length,
+        0,
+      ),
+    [timetable],
+  );
   return (
-    <>
-      <div className="timetable-grid-container d-flex flex-column gap-4 pb-5">
-        {timetableVersion?.scheduler_status === SCHEDULER_STATUS.PARTIAL && (
-          <div className="d-flex flex-row align-items-center justify-content-between gap-3 p-3 rounded-3 border font-size-sm bg-white">
-            <div className="d-flex flex-column">
-              <span className="fw-semibold">Some requests could not be honoured</span>
-              <span className="text-muted">
-                The timetable is usable. Review the unmet requests and apply a solution to honour them.
-              </span>
-            </div>
-            <DrawerTrigger
-              title={"Problems & solutions"}
-              drawerChildren={SemesterTimetableError}
-            >
-              <button className="p-2 px-3 border-none rounded-3 text-white primary-background font-size-sm text-nowrap">
-                Review requests
-              </button>
-            </DrawerTrigger>
-          </div>
-        )}
-        {isTimetableLoading
-          ? [...Array(2)].map((_items, index) => (
-              <Fragment key={index}>
-                <div className="d-flex flex-column w-100 gap-2">
-                  <RectangleSkeleton height="2dvh" width="25%" />
-                  <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
-                    {[...Array(4)].map((_items, index) => (
-                      <Fragment key={index}>
-                        <RectangleSkeleton height="18dvh" width="49%" />
+    <div className="d-flex flex-column w-100 gap-2 flex-grow-1 pb-2" style={{ minHeight: 0 }}>
+      <div
+        className="timetable-grid-container d-flex flex-column gap-4 flex-grow-1"
+        style={{ minHeight: 0, maxHeight: "none" }}
+      >
+        {isTimetableLoading ? (
+          <GridSkeleton sections={2} />
+        ) : (
+          timetable?.data?.map((slots, index) => (
+            <Fragment key={index}>
+              <div className="d-flex flex-column gap-2">
+                <span className="font-size-lg fw-bold text-capitalize">
+                  {slots.day}
+                </span>
+                <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
+                  {slots.slots.map((slot) =>
+                    slot.slot_type === "break" ? (
+                      <Fragment key={slot.id}>
+                        <BreakPeriodCard slot={slot} />
                       </Fragment>
-                    ))}
-                  </div>
+                    ) : (
+                      <Fragment key={slot.id}>
+                        <PeriodCard slot={slot} />
+                      </Fragment>
+                    ),
+                  )}
                 </div>
-              </Fragment>
-            ))
-          : timetable?.data?.map((slots, index) => (
-              <Fragment key={index}>
-                <div className="d-flex flex-column gap-2">
-                  <span className="font-size-lg fw-bold text-capitalize">
-                    {slots.day}
-                  </span>
-                  <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
-                    {slots.slots.map((slot) =>
-                      slot.slot_type === "break" ? (
-                        <Fragment key={slot.id}>
-                          <BreakPeriodCard slot={slot} />
-                        </Fragment>
-                      ) : (
-                        <Fragment key={slot.id}>
-                          <PeriodCard slot={slot} />
-                        </Fragment>
-                      ),
-                    )}
-                  </div>
-                </div>
-              </Fragment>
-            ))}
+              </div>
+            </Fragment>
+          ))
+        )}
       </div>
-    </>
+      <TimetableStatusBar slotCount={lessonCount} />
+    </div>
   );
 }
 function SemesterDropdown({

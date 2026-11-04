@@ -1,33 +1,32 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { activateVersion } from "../../services/semesterTimetable";
+import { ACTIVATION_CHECK_KEY } from "./useGetActivationCheck";
+import { ACTIVE_TIMETABLE_KEY } from "./useGetActiveTimetable";
 
+// POST semester-timetable/version/{id}/activate
+// Errors are shown inline by the caller (a 422 conflict carries errors.conflicts).
 export const useActivateSemesterTimetable = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ versionId }) => activateVersion(versionId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["semester-timetable-versions"],
-      });
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: [ACTIVE_TIMETABLE_KEY] });
+      queryClient.invalidateQueries({ queryKey: [ACTIVATION_CHECK_KEY] });
+      queryClient.invalidateQueries({ queryKey: ["semester-timetable-versions"] });
       toast.custom(
         <ToastSuccess
-          title={"Version Activated"}
+          title={"Timetable Activated"}
           description={
-            "The selected timetable Version has been successfully activated."
+            response?.data?.message ??
+            "The selected timetable version is now the active timetable."
           }
         />,
       );
     },
-    onError: (error) => {
-      toast.custom(
-        <ToastDanger
-          title={error.response.data.errors.title}
-          description={error.response.data.errors.description}
-        />,
-      );
+    onError: (_error, { versionId }) => {
+      queryClient.invalidateQueries({ queryKey: [ACTIVATION_CHECK_KEY, versionId] });
     },
   });
 };
