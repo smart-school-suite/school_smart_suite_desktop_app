@@ -1,22 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import ToastDanger from "../../components/Toast/ToastDanger";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-import toast from "react-hot-toast";
-import { activateTimetable } from "../../services/semesterTimetable";
+import { activateVersion } from "../../services/semesterTimetable";
 
 export const useActivateSemesterTimetable = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: activateTimetable,
+    mutationFn: ({ versionId }) => activateVersion(versionId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["semester-timetable-versions"],
       });
       toast.custom(
         <ToastSuccess
-          title={"Timetable Activated"}
+          title={"Version Activated"}
           description={
-            "The selected timetable has been successfully activated."
+            "The selected timetable Version has been successfully activated."
           }
         />,
       );

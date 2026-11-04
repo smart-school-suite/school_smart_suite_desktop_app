@@ -32,21 +32,12 @@ export const generateSemesterTimetable = async (data) => {
   );
   return response.data;
 };
-
 export const getSemesterTimetableSlots = async (versionId) => {
   const response = await axiosInstance.get(
     `semester-timetable/version/${versionId}/timetable-slots`,
   );
   return response.data;
 };
-
-export const getTimetableDiagnostics = async (timetableVersionId) => {
-  const response = await axiosInstance.get(
-    `semester-timetable/diagnostics/${timetableVersionId}`,
-  );
-  return response.data;
-};
-
 export const activateTimetable = async (data) => {
   const response = await axiosInstance.post(
     "semester-timetable/create/active",
@@ -54,52 +45,46 @@ export const activateTimetable = async (data) => {
   );
   return response.data;
 };
-
 export const getTimetableStatus = async (versionId) => {
   const response = await axiosInstance.get(
     `semester-timetable/version/${versionId}/status`,
   );
   return response.data;
 };
-
-export const getRawDiagnostics = async (versionId) => {
-  const response = await axiosInstance.get(
-    `semester-timetable/version/${versionId}/raw-diagnostics`,
-  );
-  return response.data;
-};
-
 export const getTimetableSlots = async (versionId) => {
   const response = await axiosInstance.get(
     `semester-timetable/version/${versionId}/slots`,
   );
   return response.data;
 };
-
-export const getParsedDiagnostics = async (versionId) => {
-  const response = await axiosInstance.get(
-    `semester-timetable/version/${versionId}/parsed-diagnostics`,
-  );
-  return response.data;
-};
-
-export const getTimetablePayload = async (versionId) => {
-  const response = await axiosInstance.get(
-    `semester-timetable/version/${versionId}/payload`,
-  );
-  return response.data;
-};
-
-export const getTimetableError = async (versionId) => {
-  const response = await axiosInstance.get(
-    `semester-timetable/version/${versionId}/errors`,
-  );
-  return response.data;
-};
-
 export const getPeriodDuration = async (versionId) => {
    const response = await axiosInstance.get(
       "period-duration/semester-timetable"
    );
    return response.data;
 }
+export const getSolutions = async (versionId) => {
+  const response = await axiosInstance.get(
+    `semester-timetable/version/${versionId}/solutions`,
+  );
+  return response.data;
+};
+export const applySolution = async (versionId, payload) => {
+  const response = await axiosInstance.post(
+    `semester-timetable/version/${versionId}/solutions/apply`,
+    payload,
+  );
+  return response.data;
+};
+export const activationCheck = async (versionId) => {
+  const response = await axiosInstance.get(
+    `semester-timetable/version/${versionId}/activation-check`,
+  );
+  return response.data;
+};
+export const activateVersion = async (versionId) => {
+  const response = await axiosInstance.post(
+    `semester-timetable/version/${versionId}/activate`,
+  );
+  return response.data;
+};

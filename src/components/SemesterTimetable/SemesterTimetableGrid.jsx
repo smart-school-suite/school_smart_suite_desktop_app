@@ -15,11 +15,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import SemesterTimetableError from "../../DrawerContent/SemesterTimetable/Error/SemesterTimetableError";
 import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
 import { useGenerateSemesterTimetable } from "../../hooks/semesterTimetable/useGenerateSemesterTimetable";
 import { useGetSemesterTimetableVersions } from "../../hooks/semesterTimetable/useGetSemesterTimetableVersion";
 import { useGetTimetableSlots } from "../../hooks/semesterTimetable/useGetTimetableSlots";
-import GenerationFailedError from "../../ModalContent/SemesterTimetable/Errors/GenerationFailedError";
 import {
   setSchoolSemester,
   setTimetableVersion,
@@ -35,7 +35,7 @@ import {
 } from "../../utils/semesterTimetable/schedulerStatus";
 import BreakPeriodCard from "../Card/BreakPeriodCard";
 import PeriodCard from "../Card/PeriodCard";
-import { ModalButton } from "../DataTableComponents/ActionComponent";
+import DrawerTrigger from "../drawer/DrawerTrigger";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../Spinners/Spinners";
 
@@ -80,14 +80,18 @@ function TimetableGridWrapper({ progress = null }) {
             title="Timetable Generation Failed"
             description="Please click on the button below to view the list of errors"
           >
-            <div className="d-flex flex-row gap-2">
-              <ModalButton
-                classname="border-none p-2 rounded-3 text-white primary-background font-size-sm outline-none px-3"
-                action={{ modalContent: GenerationFailedError }}
+            <div className="d-flex flex-row align-items-center gap-2">
+              <button className="p-2 border-none border bg-none rounded-3">
+                Try Again
+              </button>
+              <DrawerTrigger
+                title={"Semester Timetable Errors & Diagnostics"}
+                drawerChildren={SemesterTimetableError}
               >
-                View All Errors
-              </ModalButton>
-              <GenerateButton label="Try Again" variant="outline" />
+                <button className="p-2 border-none border bg-primary-500 rounded-3 text-white border">
+                  View and Fix Errors
+                </button>
+              </DrawerTrigger>
             </div>
           </StatusMessage>
         );
@@ -99,8 +103,17 @@ function TimetableGridWrapper({ progress = null }) {
             description="Something went wrong while generating the timetable. Consider the diagnostic report to identify and resolve constraint conflicts, then try again."
           >
             <div className="d-flex flex-row align-items-center gap-2">
-              <button className="p-2 border-none border bg-none rounded-3">Try Again</button>
-              <button className="p-2 border-none border bg-primary-500 rounded-3 text-white border">View and Fix Errors</button>
+              <button className="p-2 border-none border bg-none rounded-3">
+                Try Again
+              </button>
+              <DrawerTrigger
+                title={"Semester Timetable Errors & Diagnostics"}
+                drawerChildren={SemesterTimetableError}
+              >
+                <button className="p-2 border-none border bg-primary-500 rounded-3 text-white border">
+                  View and Fix Errors
+                </button>
+              </DrawerTrigger>
             </div>
           </StatusMessage>
         );
@@ -301,7 +314,10 @@ function TimetableGridPlaceholder() {
         <div className="font-size-sm d-flex flex-row align-items-center gap-2">
           <span>
             Configure Period Duration{" "}
-            {hardConstraints?.schedule_period_duration_minutes?.duration_minutes}{" "}
+            {
+              hardConstraints?.schedule_period_duration_minutes
+                ?.duration_minutes
+            }{" "}
             minutes
           </span>
         </div>
@@ -449,7 +465,9 @@ function SemesterDropdown({
           onClick={() => setOpen((v) => !v)}
           {...getReferenceProps()}
         >
-          <span className="text-capitalize text-iron-700">{renderButtonLabel()}</span>
+          <span className="text-capitalize text-iron-700">
+            {renderButtonLabel()}
+          </span>
           <Icon
             icon="mi:chevron-down"
             width="16"

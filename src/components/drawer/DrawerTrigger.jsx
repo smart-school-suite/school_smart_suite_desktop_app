@@ -49,7 +49,7 @@ export default function DrawerTrigger({
         showHeader={showHeader}
         closeOnOutsideClick={closeOnOutsideClick}
         closeOnEscape={closeOnEscape}
-        title={title ?? action.title}
+        title={title}
       >
         {drawerContent}
       </Drawer>
