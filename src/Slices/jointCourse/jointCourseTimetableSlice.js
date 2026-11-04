@@ -1,23 +1,27 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  // TODO: define initial state
+  term: null,
+  selectedCourseId: null,
 };
 
 const jointCourseTimetableSlice = createSlice({
-  name: 'jointCourseTimetable',
+  name: "jointCourseTimetable",
   initialState,
   reducers: {
-    // TODO: add reducers
-    // example:
-    // setLoading: (state, action) => {
-    //   state.loading = action.payload;
-    // },
+    setJointCourseTerm: (state, action) => {
+      if (state.term?.id !== action.payload?.id) {
+        state.selectedCourseId = null;
+      }
+      state.term = action.payload;
+    },
+    setSelectedJointCourse: (state, action) => {
+      state.selectedCourseId = action.payload;
+    },
   },
 });
 
-export const {
-  // TODO: export actions
-} = jointCourseTimetableSlice.actions;
+export const { setJointCourseTerm, setSelectedJointCourse } =
+  jointCourseTimetableSlice.actions;
 
 export default jointCourseTimetableSlice.reducer;
