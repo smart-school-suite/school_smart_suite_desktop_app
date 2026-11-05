@@ -1,16 +1,15 @@
 import { Icon } from "@iconify/react";
-import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import { Fragment, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
+import SpecialtyNavigator from "../../components/SideBars/SpecialtyNavigator";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import AssignCourse from "../../DrawerContent/Course/AssignCourse";
 import ManageCourseAssignment from "../../DrawerContent/Course/ManageCourseAssignment";
 import { useGetCourseSpecialtyId } from "../../hooks/course/useGetCourseSpecialtyId";
-import { useGetLevelSpecialties } from "../../hooks/specialty/useGetLevelSpecialties";
 function TeacherCourse() {
   const [specialty, setSpecialty] = useState(null);
   const navigate = useNavigate();
@@ -22,27 +21,12 @@ function TeacherCourse() {
   return (
     <>
       <main className="d-flex flex-row align-items-start gap-2 h-100 w-100">
-        <div
-          className="card border rounded-4 h-100 font-size-sm p-2 d-flex flex-column gap-3"
-          style={{ width: "25%" }}
-        >
-          <div className="d-flex flex-column gap-2">
-            <span className="font-size-sm fw-medium">Specialty</span>
-            <div>
-              <SearchInput
-                placeholder="Search for Specialty"
-                shortcut={"Ctrl+S"}
-                size="sm"
-              />
-            </div>
-          </div>
-          <div className="d-flex flex-column gap-3">
-            <LevelSpecialtyDropdown
-              setSpecialty={setSpecialty}
-              specialty={specialty}
-            />
-          </div>
-        </div>
+        <SpecialtyNavigator
+          title="Teacher courses"
+          description="Select a specialty to assign teachers to its courses."
+          specialty={specialty}
+          setSpecialty={setSpecialty}
+        />
         <div className="d-flex flex-column gap-2" style={{ width: "75%" }}>
           <div className="d-flex flex-row align-items-end justify-content-between">
             <div className="w-50">
@@ -324,109 +308,6 @@ function Course({ course, specialtyId }) {
           </DrawerTrigger>
         )}
       </div>
-    </>
-  );
-}
-
-function LevelSpecialtyDropdown({ setSpecialty, specialty }) {
-  const { data: levelSpecialties, isLoading, error } = useGetLevelSpecialties();
-  const [openLevelId, setOpenLevelId] = useState(null);
-  const toggleDropdown = (levelId) => {
-    setOpenLevelId(openLevelId === levelId ? null : levelId);
-  };
-  return (
-    <>
-      {isLoading ? (
-        [...Array(6)].map((_, index) => (
-          <RectangleSkeleton
-            key={index}
-            width={"100%"}
-            height={"1.5rem"}
-            borderRadius={6}
-          />
-        ))
-      ) : error ? (
-        <NotFoundError
-          title={error?.response?.data?.errors?.title || "Error"}
-          description={
-            error?.response?.data?.errors?.description || "Something went wrong"
-          }
-        />
-      ) : (
-        levelSpecialties?.data?.map((lSpecialty) => {
-          const isOpen = openLevelId === lSpecialty.level_id;
-
-          return (
-            <Fragment key={lSpecialty.level_id}>
-              <div className="d-flex flex-column gap-2 w-100 mb-2">
-                <button
-                  type="button"
-                  onClick={() => toggleDropdown(lSpecialty.level_id)}
-                  className="w-100 d-flex flex-row hover-text-primary-400 align-items-center justify-content-between border-none transparent-bg pe-2"
-                >
-                  <span className=" fw-medium">
-                    {`${lSpecialty.level_name} (${lSpecialty.specialties.length})`}
-                  </span>
-                  <motion.span
-                    style={{ display: "inline-block" }}
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                  >
-                    <Icon icon="mi:chevron-down" width="16" height="16" />
-                  </motion.span>
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                      style={{ overflow: "hidden" }}
-                      className="d-flex flex-column gap-3 pe-3"
-                    >
-                      <div
-                        className="scroll-bar-sm over-flow-x-hidden d-flex flex-column gap-2 over-flow-y-auto pe-1"
-                        style={{
-                          overflowY: "auto",
-                          maxHeight: "34dvh",
-                          height: "auto",
-                        }}
-                      >
-                        {lSpecialty.specialties.map((spec) => (
-                          <Fragment key={spec.id}>
-                            <button
-                              className={`d-flex flex-row align-items-center justify-content-between border-none rounded-3 
-                              p-2 w-100 text-start transition-all  ${
-                                spec.id == specialty
-                                  ? "primary-background-100 color-primary"
-                                  : "bg-transparent hover-bg-primary-50 hover-text-primary-400 text-iron-500 "
-                              }`}
-                              onClick={() => setSpecialty(spec.id)}
-                            >
-                              <span>{spec.specialty_name}</span>
-                              {spec.id === specialty && (
-                                <span>
-                                  <Icon
-                                    icon="material-symbols:check-rounded"
-                                    width="16"
-                                    height="16"
-                                  />
-                                </span>
-                              )}
-                            </button>
-                          </Fragment>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </Fragment>
-          );
-        })
-      )}
     </>
   );
 }
