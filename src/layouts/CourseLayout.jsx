@@ -137,7 +137,7 @@ function CourseLayout() {
             })}
           </div>
         </div>
-        <div className="h-100">
+        <div className="h-100" style={{ minHeight: 0 }}>
           <Outlet />
         </div>
       </main>
