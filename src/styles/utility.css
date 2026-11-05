@@ -83,8 +83,8 @@
   --font-size-base: 1rem; /* 16px */
   --scale-ratio: 1.25;
   --font-size-xs: calc(
-    var(--font-size-base) / var(--scale-ratio) * 0.75
-  ); /* ~12px */
+    var(--font-size-base) / var(--scale-ratio) * 0.86
+  );
   --font-size-sm: calc(var(--font-size-base) / var(--scale-ratio)); /* ~16px */
   --font-size-md: var(--font-size-base); /* ~20px */
   --font-size-lg: calc(var(--font-size-base) * var(--scale-ratio)); /* ~25px */

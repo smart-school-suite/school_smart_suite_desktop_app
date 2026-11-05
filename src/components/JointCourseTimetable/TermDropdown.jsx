@@ -20,7 +20,6 @@ const termMeta = (term) =>
     ? "No joint courses"
     : `${term.configured_count} of ${term.joint_course_count} joint courses set`;
 
-// One dropdown for academic year + semester. Each option is a term from GET joint-course-timetable/terms.
 function TermDropdown({ value, onChange }) {
   const { data, isLoading, error } = useGetJointCourseTerms();
   const [open, setOpen] = useState(false);
@@ -103,7 +102,7 @@ function TermDropdown({ value, onChange }) {
             <span className="text-iron-500">Loading academic years…</span>
           ) : value ? (
             <>
-              <span className="fw-medium text-truncate">{value.label}</span>
+              <span className="fw-medium text-truncate text-capitalize">{value.label}</span>
               <span className="font-size-xs text-iron-500 text-truncate">{termMeta(value)}</span>
             </>
           ) : (
