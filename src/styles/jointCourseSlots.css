@@ -1,0 +1,656 @@
+/*
+ * Joint course slot configuration. Builds on constraintWizard.css: inside the
+ * drawer every colour comes from the --cw-* tokens; the workspace panel sits
+ * outside .cw, so it gets the same values here.
+ */
+
+.jcs-overview {
+  --cw-ink: #083049;
+  --cw-ink-3: #808b97;
+  --cw-line: #e7eaee;
+  --cw-subtle: #f9f9f9;
+  --cw-accent: var(--primary-color, #0ea7e9);
+  --cw-warn-ink: #a4520a;
+  --cw-warn-weak: #fff6eb;
+  --cw-danger: #c2410c;
+  --cw-radius: 10px;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+/* Shared bits ---------------------------------------------------------------- */
+
+.jcs-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--cw-ink-2);
+}
+
+.jcs-field-hint {
+  font-size: 0.75rem;
+  color: var(--cw-ink-3);
+}
+
+.jcs-field-hint--danger {
+  color: var(--cw-danger);
+}
+
+.jcs-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.jcs-link {
+  padding: 0;
+  color: var(--cw-accent-ink, #0880b5) !important;
+  font-weight: 500;
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.jcs-link:hover {
+  text-decoration: underline;
+}
+
+.jcs-btn-sm {
+  height: 2rem;
+  padding: 0 0.75rem;
+  font-size: 0.75rem;
+}
+
+.cw-badge--success {
+  background: #e7f6ec;
+  color: var(--cw-success);
+}
+
+.cw-badge--danger {
+  background: #fdecea;
+  color: #b42318;
+}
+
+.cw-text-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.jcs-alert {
+  display: flex;
+  gap: 0.625rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--cw-radius);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.jcs-alert__icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.jcs-alert--warn {
+  background: var(--cw-warn-weak);
+  color: var(--cw-warn-ink);
+}
+
+.jcs-alert--danger {
+  background: #fdecea;
+  color: #912018;
+}
+
+.jcs-messages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.jcs-message {
+  display: flex;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.jcs-message svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.jcs-message--danger {
+  color: #b42318;
+}
+
+.jcs-message--warn {
+  color: var(--cw-warn-ink);
+}
+
+/* Header --------------------------------------------------------------------- */
+
+.cw-header__meta {
+  margin-top: 0.25rem;
+}
+
+.jcs-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.875rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--cw-ink-3);
+}
+
+.jcs-meta__warn {
+  color: var(--cw-warn-ink);
+  font-weight: 500;
+}
+
+/* Step 1: teaching days ------------------------------------------------------ */
+
+.jcs-days {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.jcs-day {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.125rem;
+  height: auto;
+  padding: 0.75rem 0.875rem;
+  text-align: left;
+}
+
+.jcs-day__name {
+  font-weight: 600;
+}
+
+.jcs-day__meta {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--cw-ink-3);
+}
+
+.jcs-day.is-selected .jcs-day__meta {
+  color: inherit;
+  opacity: 0.8;
+}
+
+/* Step 2: daily counts ------------------------------------------------------- */
+
+.jcs-counts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.jcs-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--cw-line);
+}
+
+.jcs-count:last-child {
+  border-bottom: 0;
+}
+
+.jcs-count.is-unset .jcs-field-hint {
+  color: var(--cw-warn-ink);
+}
+
+.jcs-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--cw-line-strong);
+  border-radius: var(--cw-radius-sm);
+  overflow: hidden;
+}
+
+.jcs-stepper__btn {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  background: var(--cw-surface);
+  color: var(--cw-ink-2);
+  transition: background-color 0.15s ease;
+}
+
+.jcs-stepper__btn:hover:not(:disabled) {
+  background: var(--cw-hover);
+}
+
+.jcs-stepper__btn:disabled {
+  color: var(--cw-line-strong);
+  cursor: not-allowed;
+}
+
+.jcs-stepper__value {
+  width: 3rem;
+  height: 2.25rem;
+  border: 0;
+  border-left: 1px solid var(--cw-line);
+  border-right: 1px solid var(--cw-line);
+  text-align: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--cw-ink);
+  -moz-appearance: textfield;
+}
+
+.jcs-stepper__value::-webkit-outer-spin-button,
+.jcs-stepper__value::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.jcs-stepper__value:focus {
+  outline: none;
+  background: var(--cw-accent-weak);
+}
+
+/* Step 3: context and bulk actions ------------------------------------------- */
+
+.jcs-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.jcs-context__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.625rem;
+  border-radius: 999px;
+  background: var(--cw-subtle);
+  color: var(--cw-ink-2);
+  font-size: 0.75rem;
+}
+
+.jcs-context__item--warn {
+  background: var(--cw-warn-weak);
+  color: var(--cw-warn-ink);
+}
+
+.jcs-context__source {
+  padding-left: 0.375rem;
+  border-left: 1px solid var(--cw-line-strong);
+  color: var(--cw-ink-3);
+}
+
+.jcs-bulk {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0.875rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--cw-radius);
+  background: var(--cw-accent-weak);
+}
+
+/* Step 3: week preview ------------------------------------------------------- */
+
+.jcs-preview {
+  display: flex;
+  gap: 0.5rem;
+  height: 13rem;
+  padding-top: 1.25rem;
+}
+
+.jcs-preview__axis {
+  position: relative;
+  width: 2.25rem;
+  flex-shrink: 0;
+  font-size: 0.625rem;
+  color: var(--cw-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.jcs-preview__axis span {
+  position: absolute;
+  right: 0;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.jcs-preview__days {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--jcs-days), minmax(0, 1fr));
+  gap: 0.375rem;
+}
+
+.jcs-preview__day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.jcs-preview__dayname {
+  position: absolute;
+  top: -1.25rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--cw-ink-2);
+}
+
+.jcs-preview__lane {
+  position: relative;
+  flex: 1;
+  border-radius: var(--cw-radius-sm);
+  background: var(--cw-subtle);
+}
+
+.jcs-preview__line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed var(--cw-line);
+}
+
+.jcs-preview__block {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  min-height: 1rem;
+  padding: 1px 4px;
+  border: 0;
+  border-radius: 4px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: transform 0.12s ease;
+}
+
+.jcs-preview__block:hover {
+  transform: scale(1.03);
+}
+
+.jcs-preview__block.is-ready {
+  background: var(--cw-accent);
+  color: #fff;
+}
+
+.jcs-preview__block.is-pending {
+  background: var(--cw-accent-line);
+  color: var(--cw-accent-ink);
+}
+
+.jcs-preview__block.is-conflict {
+  background: #fdecea;
+  color: #b42318;
+  box-shadow: inset 0 0 0 1px #f4b4ad;
+}
+
+/* Step 3: slot editor -------------------------------------------------------- */
+
+.jcs-daysection + .jcs-daysection {
+  margin-top: 0.5rem;
+}
+
+.jcs-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--cw-line);
+  border-radius: var(--cw-radius);
+  background: var(--cw-surface);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.jcs-slot:focus-within {
+  border-color: var(--cw-accent-line);
+  box-shadow: 0 1px 6px rgba(8, 48, 73, 0.06);
+}
+
+.jcs-slot.is-conflict,
+.jcs-slot.is-invalid {
+  border-color: #f4b4ad;
+}
+
+.jcs-slot__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.jcs-slot__index {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 6px;
+  background: var(--cw-subtle);
+  color: var(--cw-ink-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.jcs-slot__fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.jcs-slot__fields .cw-timefield > div > div {
+  min-height: 0;
+}
+
+@media (max-width: 1100px) {
+  .jcs-slot__fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* The shared dropdown, styled like the wizard's time fields */
+.jcs-hall .selected-box > div {
+  height: 2.375rem !important;
+  border-color: var(--cw-line-strong) !important;
+  border-radius: var(--cw-radius-sm) !important;
+  color: var(--cw-ink) !important;
+}
+
+.jcs-hall .selected-box > div:hover {
+  border-color: var(--cw-accent) !important;
+}
+
+.jcs-hall .text-success {
+  display: none;
+}
+
+/* Suggestions ---------------------------------------------------------------- */
+
+.jcs-rec {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--cw-radius-sm);
+  font-size: 0.8125rem;
+}
+
+.jcs-rec--muted {
+  background: var(--cw-subtle);
+  color: var(--cw-ink-2);
+}
+
+.jcs-rec--danger {
+  background: #fdecea;
+  color: #912018;
+}
+
+.jcs-rec--ready {
+  gap: 0.625rem;
+  background: var(--cw-accent-weak);
+  box-shadow: inset 0 0 0 1px var(--cw-accent-line);
+}
+
+.jcs-rec__icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--cw-accent);
+}
+
+.jcs-rec__eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cw-accent-ink);
+}
+
+.jcs-rec__why {
+  font-size: 0.75rem;
+  color: var(--cw-ink-2);
+  line-height: 1.45;
+}
+
+.jcs-rec__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+}
+
+.jcs-alts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.375rem;
+}
+
+.jcs-alt {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.625rem;
+  border: 1px solid var(--cw-line);
+  border-radius: var(--cw-radius-sm);
+  background: var(--cw-surface);
+  font-size: 0.75rem;
+  text-align: left;
+  transition: border-color 0.15s ease;
+}
+
+.jcs-alt:hover {
+  border-color: var(--cw-accent-line);
+}
+
+/* Step 4: review ------------------------------------------------------------- */
+
+.jcs-summaries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.jcs-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--cw-line);
+}
+
+.jcs-summary:last-child {
+  border-bottom: 0;
+}
+
+.jcs-summary__row {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(9rem, 1.3fr) minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.jcs-summary__hall {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jcs-summary__hall.is-missing {
+  color: #b42318;
+}
+
+/* Workspace overview --------------------------------------------------------- */
+
+.jcs-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 48rem;
+  margin-top: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--cw-line);
+  border-radius: var(--cw-radius);
+  background: #fff;
+  color: var(--cw-ink);
+}
+
+.jcs-overview__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.jcs-overview__eyebrow {
+  font-size: 0.75rem;
+  color: var(--cw-ink-3);
+}
+
+.jcs-chip {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--cw-subtle);
+  font-size: 0.75rem;
+  color: var(--cw-ink);
+}
+
+.jcs-overview__slots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.jcs-overview__slots li {
+  display: grid;
+  grid-template-columns: 7rem 10rem 4rem minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--cw-line);
+}
+
+.jcs-overview__slots li:last-child {
+  border-bottom: 0;
+}
