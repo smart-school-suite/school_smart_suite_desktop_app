@@ -1,20 +1,11 @@
 import SchedulingRequirement from "../../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/SchedulingRequirement";
-import ReviewJointCourseSlot from "../../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/ReviewJointCourseSlot";
+import SelectJointCourseHall from "../../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/SelectJointCourseHall";
 import ConfigureJointCourseSlot from "../../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/ConfigureJointCourseSlot";
+import ReviewJointCourseSlot from "../../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/ReviewJointCourseSlot";
+
 export const CREATE_JOINT_COURSE_STEP_FLOW = [
-  {
-    step: "SCHEDULING_REQUIREMENT",
-    lable: "Scheduling Requirement",
-    component: SchedulingRequirement,
-  },
-  {
-    step: "CONFIGURE_JOINT_COURSE_SLOT",
-    lable: "Configure Joint Course Slot",
-    component: ConfigureJointCourseSlot,
-  },
-  {
-    step: "REVIEW_JOINT_COURSE_SLOT",
-    lable: "Review Joint Course Slot",
-    component: ReviewJointCourseSlot,
-  },
+  { step: "SCHEDULING_REQUIREMENT", label: "Scheduling requirement", component: SchedulingRequirement },
+  { step: "SELECT_HALL", label: "Choose a hall", component: SelectJointCourseHall },
+  { step: "CONFIGURE_JOINT_COURSE_SLOT", label: "Pick the times", component: ConfigureJointCourseSlot },
+  { step: "REVIEW_JOINT_COURSE_SLOT", label: "Review and save", component: ReviewJointCourseSlot },
 ];
