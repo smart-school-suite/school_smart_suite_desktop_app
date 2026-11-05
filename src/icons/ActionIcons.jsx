@@ -18,6 +18,12 @@ const DetailsIcon = ({ iconStyle, iconClass }) => {
     )
 }
 
+const AssignmentIcon = ({ iconStyle, iconClass }) => {
+    return (
+        <Icon icon="lucide:user-round-cog" style={{...iconStyle, fontSize:"1rem"}}  className={`${iconClass}`}/>
+    )
+}
+
 const CreateIcon = ({ iconStyle, iconClass }) => {
     return (
         <Icon icon="ic:round-plus"  style={{...iconStyle, fontSize:"1rem"}}  className={`${iconClass}`}/>
@@ -96,4 +102,4 @@ const AnnouncementIcon = ({ iconStyle }) => {
      )
 }
 
-export {AnnouncementIcon, ReinstateIcon, GenerateIcon, RepeatIcon, ReverseIcon, ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }
+export {AssignmentIcon, AnnouncementIcon, ReinstateIcon, GenerateIcon, RepeatIcon, ReverseIcon, ReuseIcon, UpdateIcon, DeleteIcon, DetailsIcon, CreateIcon, PermissionIcon, RoleIcon, SuspendIcon,  CancelIcon, ChoiceIcon, ActivateIcon }

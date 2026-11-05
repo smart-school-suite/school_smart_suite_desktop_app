@@ -25,6 +25,14 @@ export const getJointCourses = async () => {
   return response.data;
 };
 
+// Course summary, current teachers and every teacher with their eligibility.
+export const getJointCourseAssignment = async (jointCourseId) => {
+  const response = await axiosInstance.get(
+    `joint-course/${jointCourseId}/assignment`,
+  );
+  return response.data;
+};
+
 export const getJointCourseDetails = async (jointCourseId) => {
   const response = await axiosInstance.get(
     `joint-course/details/${jointCourseId}`,

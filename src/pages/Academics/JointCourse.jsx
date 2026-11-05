@@ -9,6 +9,7 @@ import React, {
 import { useDispatch } from "react-redux";
 import CreateJointCourse from "../../DrawerContent/JointCourse/CreateJointCourse";
 import JointCourseDetails from "../../DrawerContent/JointCourse/JointCourseDetails";
+import ManageJointCourseAssignment from "../../DrawerContent/JointCourse/ManageAssignment/ManageJointCourseAssignment";
 import UpdateJointCourse from "../../DrawerContent/JointCourse/UpdateJointCourse";
 import ActivateJointCourse from "../../ModalContent/JointCourse/ActivateJointCourse";
 import DeactivateJointCourse from "../../ModalContent/JointCourse/DeactivateJointCourse";
@@ -27,6 +28,7 @@ import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { useGetJointCourses } from "../../hooks/jointCourse/useGetJointCourse";
 import {
   ActivateIcon,
+  AssignmentIcon,
   DeleteIcon,
   DetailsIcon,
   SuspendIcon,
@@ -200,6 +202,7 @@ export function ActionComponent(props) {
   const [drawerDetail, setDrawerDetail] = useState({
     placement: "right",
     title: "",
+    showHeader: true,
   });
   const handleCloseModal = () => {
     setShowModal(false);
@@ -210,8 +213,8 @@ export function ActionComponent(props) {
     setModalSize(size);
     setShowModal(true);
   };
-  const handleShowDrawer = (Component, title = "") => {
-    setDrawerDetail((prev) => ({ ...prev, title }));
+  const handleShowDrawer = (Component, title = "", showHeader = true) => {
+    setDrawerDetail((prev) => ({ ...prev, title, showHeader }));
     setDrawerComponent(() => Component);
     setShowDrawer(true);
   };
@@ -254,6 +257,22 @@ export function ActionComponent(props) {
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Details</span>
               <DetailsIcon />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            // The assignment drawer has its own header with a subtitle.
+            handleShowDrawer(ManageJointCourseAssignment, "Manage Course Assignment", false)
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Manage Assignment</span>
+              <AssignmentIcon />
             </div>
           </div>
         </DropDownMenuItem>
@@ -305,6 +324,7 @@ export function ActionComponent(props) {
         onClose={handleCloseDrawer}
         placement={drawerDetail?.placement}
         title={drawerDetail?.title}
+        showHeader={drawerDetail?.showHeader}
       >
         {DrawerComponent && (
           <DrawerComponent
