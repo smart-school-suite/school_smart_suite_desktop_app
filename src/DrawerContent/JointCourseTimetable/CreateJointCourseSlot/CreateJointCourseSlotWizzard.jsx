@@ -1,28 +1,31 @@
+import { useMemo, useState } from "react";
+import ConstraintWizard from "../../../components/SemesterTimetable/ConstraintWizard/ConstraintWizard";
 import { CREATE_JOINT_COURSE_STEP_FLOW } from "../../../utils/steps/jointCourse/jointCourseStepFlow";
-import { useState } from "react";
+import { initialDraft, JointCourseSlotDraftContext } from "./jointCourseSlotDraft";
+
+// drawerData is a course from GET joint-course-timetable/term/{year}/{semester}.
 function CreateJointCourseSlotWizzard({ handleClose, drawerData }) {
-  const [stepIndex, setStepIndex] = useState(0);
-  const currentStep = CREATE_JOINT_COURSE_STEP_FLOW[stepIndex];
+  const [draft, setDraft] = useState(() => initialDraft(drawerData));
+  const value = useMemo(
+    () => ({
+      course: drawerData,
+      draft,
+      update: (patch) => setDraft((current) => ({ ...current, ...patch })),
+    }),
+    [drawerData, draft],
+  );
 
-  const CurrentComponent = currentStep.component;
-  const nextStep = () => {
-    setStepIndex((prev) => prev + 1);
-  };
-
-  const previousStep = () => {
-    setStepIndex((prev) => prev - 1);
-  };
   return (
-    <>
-      <CurrentComponent
+    <JointCourseSlotDraftContext.Provider value={value}>
+      <ConstraintWizard
+        flow={CREATE_JOINT_COURSE_STEP_FLOW}
+        title={`Schedule ${drawerData?.course?.title ?? "joint course"}`}
+        category="Joint course"
         handleClose={handleClose}
-        currentStep={stepIndex + 1}
-        nextStep={nextStep}
-        previousStep={previousStep}
-        fullStep={CREATE_JOINT_COURSE_STEP_FLOW.length}
         drawerData={drawerData}
       />
-    </>
+    </JointCourseSlotDraftContext.Provider>
   );
 }
+
 export default CreateJointCourseSlotWizzard;

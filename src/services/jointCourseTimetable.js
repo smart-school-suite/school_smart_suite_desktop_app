@@ -32,3 +32,21 @@ export const getJointCourseRecommendedSlots = async (
   );
   return response.data;
 };
+
+// payload: { duration_minutes, days?, teacher_id?, start_time?, end_time? }
+export const getJointCourseHallAvailability = async (semesterJointCourseId, payload) => {
+  const response = await axiosInstance.post(
+    `joint-course-timetable/${semesterJointCourseId}/hall-availability`,
+    payload,
+  );
+  return response.data;
+};
+
+// payload: { hall_id, duration_minutes, days?, teacher_id?, start_time?, end_time? }
+export const getJointCourseRecommendedWeek = async (semesterJointCourseId, payload) => {
+  const response = await axiosInstance.post(
+    `joint-course-timetable/${semesterJointCourseId}/recommended-week`,
+    payload,
+  );
+  return response.data;
+};

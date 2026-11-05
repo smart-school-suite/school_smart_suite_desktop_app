@@ -9,6 +9,8 @@ import {
   setJointCourseTerm,
   setSelectedJointCourse,
 } from "../../Slices/jointCourse/jointCourseTimetableSlice";
+import CreateJointCourseSlotWizzard from "../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/CreateJointCourseSlotWizzard";
+import { Drawer } from "../drawer/Drawer";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 import TermDropdown from "./TermDropdown";
 
@@ -51,6 +53,7 @@ function JointCourseWorkspace() {
   const courses = data?.data?.courses ?? [];
   const course = courses.find((item) => item.id === selectedCourseId) ?? null;
   const [tab, setTab] = useState("times");
+  const [wizardOpen, setWizardOpen] = useState(false);
 
   useEffect(() => {
     if (selectedCourseId && data && !course) dispatch(setSelectedJointCourse(null));
@@ -88,7 +91,7 @@ function JointCourseWorkspace() {
     }
     return (
       <div className="d-flex flex-column w-100 gap-2 flex-grow-1" style={{ minHeight: 0 }}>
-        <CourseHeader course={course} />
+        <CourseHeader course={course} onSchedule={() => setWizardOpen(true)} />
         <div className="d-flex flex-row gap-1 border-bottom">
           {[
             ["times", "Times", "lucide:clock"],
@@ -125,6 +128,17 @@ function JointCourseWorkspace() {
         <TermDropdown value={term} onChange={(value) => dispatch(setJointCourseTerm(value))} />
       </div>
       {renderContent()}
+      <Drawer
+        isOpen={wizardOpen && Boolean(course)}
+        onClose={() => setWizardOpen(false)}
+        placement="right"
+        closeOnOutsideClick={false}
+        showHeader={false}
+      >
+        {wizardOpen && course && (
+          <CreateJointCourseSlotWizzard handleClose={() => setWizardOpen(false)} drawerData={course} />
+        )}
+      </Drawer>
     </div>
   );
 }
@@ -167,7 +181,7 @@ function SummaryBar({ summary }) {
   );
 }
 
-function CourseHeader({ course }) {
+function CourseHeader({ course, onSchedule }) {
   const stale = course.affected_timetables.filter((item) => item.needs_regeneration);
   return (
     <div className="d-flex flex-column gap-2 w-100">
@@ -180,9 +194,21 @@ function CourseHeader({ course }) {
               .join(" · ")}
           </span>
         </div>
-        <span className={`font-size-xs fw-semibold rounded-2 px-2 py-1 ${course.status === "configured" ? "bg-fern-50 text-fern-700" : "bg-iron-100 text-iron-600"}`}>
-          {course.status_label}
-        </span>
+        <div className="d-flex flex-row align-items-center gap-2 flex-shrink-0">
+          <span className={`font-size-xs fw-semibold rounded-2 px-2 py-1 ${course.status === "configured" ? "bg-fern-50 text-fern-700" : "bg-iron-100 text-iron-600"}`}>
+            {course.status_label}
+          </span>
+          <button
+            type="button"
+            className="border-none p-2 px-3 rounded-3 text-white primary-background font-size-sm d-flex align-items-center gap-1"
+            onClick={onSchedule}
+            disabled={course.teachers.length === 0}
+            title={course.teachers.length === 0 ? "Assign a teacher to this course first" : "Find a free hall and times step by step"}
+          >
+            <Icon icon="lucide:wand-sparkles" width={14} height={14} />
+            {course.status === "configured" ? "Reschedule" : "Schedule times"}
+          </button>
+        </div>
       </div>
       <div className="d-flex flex-row flex-wrap align-items-center gap-1 font-size-xs">
         <span className="text-iron-500 me-1">Taken by</span>
@@ -285,7 +311,7 @@ function SlotEditor({ course }) {
 
         {draft.length === 0 ? (
           <div className="border rounded-3 p-3 text-center text-iron-500">
-            No times yet. Add one, or use <strong>Find free times</strong> below.
+            No times yet. Use <strong>Schedule times</strong> above for a step-by-step setup, add one by hand, or use <strong>Find free times</strong> below.
           </div>
         ) : (
           <div className="d-flex flex-column gap-2">
