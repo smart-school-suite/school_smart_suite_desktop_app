@@ -127,7 +127,9 @@ function TeacherLayout() {
             })}
           </div>
         </div>
-        <div className="h-100">
+        {/* min-height: 0 lets the page shrink to the space left under the header,
+            so long lists scroll inside the page instead of overflowing it */}
+        <div className="flex-grow-1" style={{ minHeight: 0 }}>
           <Outlet />
         </div>
       </main>

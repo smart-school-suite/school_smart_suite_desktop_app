@@ -11,6 +11,10 @@ const collapse = {
   transition: { duration: 0.18, ease: "easeInOut" },
 };
 
+// Levels can hold dozens of specialties; show a short list until asked for more
+// so one large level doesn't push every other level out of view.
+const PREVIEW_LIMIT = 8;
+
 const matches = (specialty, levelName, query) => {
   if (!query) return true;
   const haystack = [specialty.specialty_name, levelName]
@@ -28,6 +32,7 @@ function SpecialtyNavigator({ specialty, setSpecialty, title, description }) {
   const { data: levelSpecialties, isLoading, error } = useGetLevelSpecialties();
   const [query, setQuery] = useState("");
   const [openIds, setOpenIds] = useState(() => new Set());
+  const [expandedIds, setExpandedIds] = useState(() => new Set());
 
   const levels = levelSpecialties?.data ?? [];
   const normalisedQuery = query.trim().toLowerCase();
@@ -57,13 +62,15 @@ function SpecialtyNavigator({ specialty, setSpecialty, title, description }) {
     return null;
   }, [levels, specialty]);
 
-  const toggleLevel = (id) =>
-    setOpenIds((current) => {
+  const toggleIn = (setter) => (id) =>
+    setter((current) => {
       const next = new Set(current);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
     });
+  const toggleLevel = toggleIn(setOpenIds);
+  const toggleExpanded = toggleIn(setExpandedIds);
 
   return (
     <aside className="ctl" aria-label="Specialties">
@@ -134,11 +141,28 @@ function SpecialtyNavigator({ specialty, setSpecialty, title, description }) {
             filtered.map((level) => {
               const isOpen =
                 Boolean(normalisedQuery) || openIds.has(level.level_id);
+              const isExpanded =
+                Boolean(normalisedQuery) || expandedIds.has(level.level_id);
+              const hiddenCount = isExpanded
+                ? 0
+                : Math.max(level.specialties.length - PREVIEW_LIMIT, 0);
+              // Never hide the selected specialty behind "Show more"
+              const visible =
+                hiddenCount === 0
+                  ? level.specialties
+                  : level.specialties.filter(
+                      (spec, index) =>
+                        index < PREVIEW_LIMIT || spec.id === specialty,
+                    );
+              const canCollapse =
+                !normalisedQuery &&
+                isExpanded &&
+                level.specialties.length > PREVIEW_LIMIT;
               return (
                 <div className="ctl-cat" key={level.level_id}>
                   <button
                     type="button"
-                    className="ctl-cat__head"
+                    className="ctl-cat__head ctl-cat__head--sticky"
                     onClick={() => toggleLevel(level.level_id)}
                     aria-expanded={isOpen}
                   >
@@ -161,7 +185,7 @@ function SpecialtyNavigator({ specialty, setSpecialty, title, description }) {
                     {isOpen && (
                       <motion.div className="ctl-cat__body" {...collapse}>
                         <ul className="ctl-cat__list">
-                          {level.specialties.map((spec) => {
+                          {visible.map((spec) => {
                             const isSelected = spec.id === specialty;
                             return (
                               <li key={spec.id}>
@@ -190,6 +214,27 @@ function SpecialtyNavigator({ specialty, setSpecialty, title, description }) {
                               </li>
                             );
                           })}
+                          {(hiddenCount > 0 || canCollapse) && (
+                            <li>
+                              <button
+                                type="button"
+                                className="ctl-item ctl-item--more"
+                                onClick={() => toggleExpanded(level.level_id)}
+                              >
+                                <span className="ctl-item__label">
+                                  {canCollapse
+                                    ? "Show less"
+                                    : `Show ${hiddenCount} more`}
+                                </span>
+                                <Icon
+                                  icon="lucide:chevron-down"
+                                  width={14}
+                                  height={14}
+                                  className={`ctl-group__chev ${canCollapse ? "is-open" : ""}`}
+                                />
+                              </button>
+                            </li>
+                          )}
                         </ul>
                       </motion.div>
                     )}
