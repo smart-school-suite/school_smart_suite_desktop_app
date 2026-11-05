@@ -150,7 +150,7 @@
   color: var(--snav-accent);
 }
 
-/* Groups without children highlight the row itself */
+
 .snav__row.is-active:not([aria-expanded]) {
   background: var(--snav-active-bg);
   color: var(--snav-active-ink);
@@ -366,7 +366,7 @@
 
 .snav-pop__item.is-active {
   background: var(--snav-active-bg);
-  color: var(--snav-active-ink);
+  color: var(--snav-active-ink) !important;
   font-weight: 500;
 }
 

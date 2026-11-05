@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import CreateJointCourseSlotWizzard from "../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/CreateJointCourseSlotWizzard";
 import { useGetActiveHalls } from "../../hooks/hall/useGetActiveHall";
 import { useGetJointCourseTerm } from "../../hooks/jointCourseTimetable/useGetJointCourseTerm";
 import { useRecommendJointCourseSlots } from "../../hooks/jointCourseTimetable/useRecommendJointCourseSlots";
@@ -9,7 +10,6 @@ import {
   setJointCourseTerm,
   setSelectedJointCourse,
 } from "../../Slices/jointCourse/jointCourseTimetableSlice";
-import CreateJointCourseSlotWizzard from "../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/CreateJointCourseSlotWizzard";
 import { Drawer } from "../drawer/Drawer";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 import TermDropdown from "./TermDropdown";

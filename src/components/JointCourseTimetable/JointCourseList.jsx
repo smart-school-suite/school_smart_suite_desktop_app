@@ -42,13 +42,6 @@ function JointCourseList() {
     <aside className="ctl" aria-label="Joint courses">
       <div className="ctl-top d-flex flex-column gap-1">
         <span className="fw-semibold">Joint courses</span>
-        <span className="font-size-xs text-iron-500">
-          {!term
-            ? "Select an academic year and semester to see its joint courses."
-            : summary
-              ? `${summary.configured_count} of ${summary.course_count} have their times set`
-              : "Loading…"}
-        </span>
       </div>
 
       <section className="ctl-group ctl-group--constraints">

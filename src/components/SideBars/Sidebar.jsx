@@ -27,11 +27,8 @@ import { settingRoutes } from "../../utils/paths";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import "./sidebar.css";
 import { isRouteActive, sideBarData } from "./sidebarNav";
-
 export { sideBarData } from "./sidebarNav";
-
 const COLLAPSE_KEY = "sss.sidebar.collapsed";
-
 const readCollapsed = () => {
   try {
     return localStorage.getItem(COLLAPSE_KEY) === "1";
@@ -39,20 +36,12 @@ const readCollapsed = () => {
     return false;
   }
 };
-
 const writeCollapsed = (value) => {
   try {
     localStorage.setItem(COLLAPSE_KEY, value ? "1" : "0");
   } catch {
-    /* storage unavailable: the choice just won't persist */
   }
 };
-
-/**
- * Main app sidebar. Small and medium screens always get the icon rail; on
- * large screens the user can collapse to it and the choice is remembered.
- * The sidebar sets its own width, so the layout only needs to let it size.
- */
 function Sidebar() {
   const { is } = useScreenSize();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -73,18 +62,11 @@ function Sidebar() {
 }
 export default Sidebar;
 
-/* -------------------------------------------------------------------------- */
-/* Expanded sidebar                                                           */
-/* -------------------------------------------------------------------------- */
-
 function SideBarLg({ darkMode, onCollapse }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const activeKey =
     sideBarData.find((group) => isRouteActive(group, pathname))?.key ?? null;
-
-  // The group holding the current page is open by default; the user can
-  // still fold it. Overrides reset whenever the page moves to another group.
   const [overrides, setOverrides] = useState({});
   useEffect(() => {
     setOverrides({});
@@ -131,13 +113,15 @@ function SideBarLg({ darkMode, onCollapse }) {
                       }));
                     }
                   }}
+                  
                 >
                   <GroupIcon
                     size={16}
                     strokeWidth={1.6}
                     className="snav__icon"
                   />
-                  <span className="snav__label">{group.title}</span>
+                  <span 
+                  className="snav__label">{group.title}</span>
                   {hasMenu && (
                     <ChevronDown
                       size={14}
@@ -197,10 +181,6 @@ function SideBarLg({ darkMode, onCollapse }) {
     </aside>
   );
 }
-
-/* -------------------------------------------------------------------------- */
-/* Icon rail                                                                  */
-/* -------------------------------------------------------------------------- */
 
 function SideBarSm({ darkMode, onExpand }) {
   const navigate = useNavigate();
@@ -264,7 +244,6 @@ function SideBarSmTab({ items, darkMode }) {
     open: isOpen,
     onOpenChange: setIsOpen,
     placement: "right-start",
-    // Position with top/left: framer-motion owns `transform` for the slide-in.
     transform: false,
     middleware: [offset(10), flip(), shift({ padding: 8 })],
     whileElementsMounted: autoUpdate,
