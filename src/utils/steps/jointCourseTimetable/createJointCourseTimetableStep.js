@@ -1,27 +1,28 @@
-import ConfigureDailySlot from "../../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/ConfigureDailySlot";
-import ConfigureTimetableSlot from "../../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/ConfigureTimetableSlot";
-import ReviewTimetableSlot from "../../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/ReviewTimetableSlot";
-import SelectTeachingDays from "../../../DrawerContent/JointCourseTimetable/CreateJointCourseSlot/SelectTeachingDays";
+import ConfigureDailySlots from "../../../DrawerContent/JointCourseTimetable/ConfigureSlots/steps/ConfigureDailySlots";
+import ConfigureTimetableSlots from "../../../DrawerContent/JointCourseTimetable/ConfigureSlots/steps/ConfigureTimetableSlots";
+import ReviewTimetableSlots from "../../../DrawerContent/JointCourseTimetable/ConfigureSlots/steps/ReviewTimetableSlots";
+import SelectTeachingDays from "../../../DrawerContent/JointCourseTimetable/ConfigureSlots/steps/SelectTeachingDays";
+import { JOINT_COURSE_SLOT_STEPS } from "./jointCourseSlotSteps";
 
-export const CREATE_JOINT_COURSE_TIMETABLE_STEP_FLOW = [
+export const JOINT_COURSE_SLOT_STEP_FLOW = [
   {
-    step: "SELECT_TEACHING_DAYS",
-    label: "Select Teaching Days",
+    step: JOINT_COURSE_SLOT_STEPS.SELECT_TEACHING_DAYS,
+    label: "Teaching days",
     component: SelectTeachingDays,
   },
   {
-    step: "CONFIGURE_DAILY_SLOT",
-    label: "Configure Daily Slot",
-    component: ConfigureDailySlot,
+    step: JOINT_COURSE_SLOT_STEPS.CONFIGURE_DAILY_SLOTS,
+    label: "Slots per day",
+    component: ConfigureDailySlots,
   },
   {
-    step: "CONFIGURE_TIMETABLE_SLOT",
-    lable: "Configure Timetable Slot",
-    component: ConfigureTimetableSlot,
+    step: JOINT_COURSE_SLOT_STEPS.CONFIGURE_TIMETABLE_SLOTS,
+    label: "Times and halls",
+    component: ConfigureTimetableSlots,
   },
   {
-    step: "REVIEW_TIMETABLE_SLOT",
-    label: "Review Timetable slot",
-    component: ReviewTimetableSlot,
+    step: JOINT_COURSE_SLOT_STEPS.REVIEW_TIMETABLE_SLOTS,
+    label: "Review and save",
+    component: ReviewTimetableSlots,
   },
 ];

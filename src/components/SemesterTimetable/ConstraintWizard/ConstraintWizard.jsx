@@ -11,6 +11,8 @@ import "../../../styles/constraintWizard.css";
  * keeps receiving the same props the steps used before:
  * handleClose, currentStep, fullStep, nextStep, previousStep, handleNavigate,
  * drawerData.
+ *
+ * `meta` is optional content shown under the title (e.g. course details).
  */
 function ConstraintWizard({
   flow,
@@ -20,6 +22,7 @@ function ConstraintWizard({
   handleClose,
   drawerData,
   constraint,
+  meta,
 }) {
   const [stepIndex, setStepIndex] = useState(0);
   const [furthestIndex, setFurthestIndex] = useState(0);
@@ -78,6 +81,7 @@ function ConstraintWizard({
               </div>
             )}
             <h2 className="cw-title font-size-sm fw-medium">{heading}</h2>
+            {meta && <div className="cw-header__meta">{meta}</div>}
           </div>
           <button
             type="button"
