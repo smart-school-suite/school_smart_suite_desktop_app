@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
+import SearchInput from "../../../components/input/search";
 import { matchesTeacher } from "../../../utils/jointCourse/teacherAssignment";
 import TeacherOption from "./TeacherOption";
 
@@ -11,17 +12,15 @@ const reveal = {
   transition: { duration: 0.18, ease: "easeInOut" },
 };
 
-/**
- * Single-choice teacher list. Eligible teachers come first (the server
- * already ranks them by fit and workload); the rest sit in a collapsed group.
- */
 function TeacherPicker({ teachers, selectedId, onSelect, replacing }) {
   const [query, setQuery] = useState("");
   const [showIneligible, setShowIneligible] = useState(false);
   const trimmed = query.trim();
 
   const { eligible, ineligible } = useMemo(() => {
-    const matching = teachers.filter((teacher) => matchesTeacher(teacher, trimmed));
+    const matching = teachers.filter((teacher) =>
+      matchesTeacher(teacher, trimmed),
+    );
     return {
       eligible: matching.filter((teacher) => teacher.eligible),
       ineligible: matching.filter((teacher) => !teacher.eligible),
@@ -31,34 +30,34 @@ function TeacherPicker({ teachers, selectedId, onSelect, replacing }) {
   return (
     <section className="d-flex flex-column gap-3" aria-label="Choose a teacher">
       <div className="d-flex flex-column gap-1">
-        <span className="fw-semibold">{replacing ? "Choose the new teacher" : "Choose a teacher"}</span>
-        <span className="jca-muted">
-          Teachers who teach one of this course's specialties can be assigned. Heavier
-          workloads are flagged but never blocked.
+        <span className="fw-semibold">
+          {replacing ? "Choose the new teacher" : "Choose a teacher"}
+        </span>
+        <span className="text-iron-500">
+          Teachers who teach one of this course's specialties can be assigned.
+          Heavier workloads are flagged but never blocked.
         </span>
       </div>
 
-      <div className="jca-search">
-        <Icon icon="lucide:search" width={15} height={15} className="jca-search__icon" />
-        <input
-          type="search"
-          className="jca-search__input"
-          placeholder="Search by name or username"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          onKeyDown={(event) => event.key === "Escape" && setQuery("")}
-          aria-label="Search teachers"
-          autoFocus
-        />
-      </div>
+      <SearchInput
+        value={query}
+        onChange={(value) => setQuery(value)}
+        placeholder={"Search by name or username"}
+      />
 
       {eligible.length === 0 && ineligible.length === 0 ? (
         <div className="jca-empty jca-empty--compact">
           <span className="fw-medium">
-            {trimmed ? `No teacher matches “${trimmed}”` : "No teachers in this school yet"}
+            {trimmed
+              ? `No teacher matches “${trimmed}”`
+              : "No teachers in this school yet"}
           </span>
           {trimmed && (
-            <button type="button" className="jca-link" onClick={() => setQuery("")}>
+            <button
+              type="button"
+              className="jca-link"
+              onClick={() => setQuery("")}
+            >
               Clear search
             </button>
           )}
@@ -76,7 +75,11 @@ function TeacherPicker({ teachers, selectedId, onSelect, replacing }) {
                   : "No teacher has a teaching preference for this course's specialties yet. Add one from Teacher Specialty, then come back."}
               </p>
             ) : (
-              <ul className="jca-options" role="radiogroup" aria-label="Eligible teachers">
+              <ul
+                className="jca-options"
+                role="radiogroup"
+                aria-label="Eligible teachers"
+              >
                 {eligible.map((teacher) => (
                   <TeacherOption
                     key={teacher.id}
@@ -98,7 +101,8 @@ function TeacherPicker({ teachers, selectedId, onSelect, replacing }) {
                 aria-expanded={showIneligible}
               >
                 <span className="jca-group-label">
-                  Not eligible <span className="jca-muted">{ineligible.length}</span>
+                  Not eligible{" "}
+                  <span className="jca-muted">{ineligible.length}</span>
                 </span>
                 <Icon
                   icon="lucide:chevron-down"
@@ -109,9 +113,18 @@ function TeacherPicker({ teachers, selectedId, onSelect, replacing }) {
               </button>
               <AnimatePresence initial={false}>
                 {showIneligible && (
-                  <motion.ul className="jca-options" style={{ overflow: "hidden" }} {...reveal}>
+                  <motion.ul
+                    className="jca-options"
+                    style={{ overflow: "hidden" }}
+                    {...reveal}
+                  >
                     {ineligible.map((teacher) => (
-                      <TeacherOption key={teacher.id} teacher={teacher} selected={false} onSelect={onSelect} />
+                      <TeacherOption
+                        key={teacher.id}
+                        teacher={teacher}
+                        selected={false}
+                        onSelect={onSelect}
+                      />
                     ))}
                   </motion.ul>
                 )}

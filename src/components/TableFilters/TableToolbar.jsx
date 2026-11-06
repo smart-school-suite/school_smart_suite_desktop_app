@@ -29,13 +29,6 @@ import {
 import Popover from "./Popover";
 import "./tableFilters.css";
 
-/**
- * Search, quick-filter chips, the filter-panel toggle and table tools,
- * shared by every data table page.
- *
- *   <TableToolbar filters={filters} tableRef={tableRef}
- *                 searchPlaceholder="Search students" onReset={clearSelection} />
- */
 function TableToolbar({
   filters,
   tableRef,
@@ -45,15 +38,12 @@ function TableToolbar({
   const { state, columns, chipFields, activeCount } = filters;
   const conditionCount = state.applied.length;
 
-  // The search box updates the store on every keystroke; keep it local and
-  // push it after a short pause so typing stays smooth on large tables.
   const [search, setSearch] = useState(state.searchText);
   useEffect(() => setSearch(state.searchText), [state.searchText]);
   useEffect(() => {
     if (search === state.searchText) return undefined;
     const timer = setTimeout(() => filters.setSearch(search), 180);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   const handleReset = () => {
@@ -142,10 +132,6 @@ function TableToolbar({
 }
 
 export default TableToolbar;
-
-/* -------------------------------------------------------------------------- */
-/* Quick-filter chip                                                          */
-/* -------------------------------------------------------------------------- */
 
 function ColumnFilterChip({ filters, column }) {
   const dispatch = useDispatch();
@@ -311,10 +297,6 @@ function ChipEditor({ filters, column, initial, close }) {
     </form>
   );
 }
-
-/* -------------------------------------------------------------------------- */
-/* Chip picker                                                                */
-/* -------------------------------------------------------------------------- */
 
 function ChipPicker({ filters }) {
   const dispatch = useDispatch();

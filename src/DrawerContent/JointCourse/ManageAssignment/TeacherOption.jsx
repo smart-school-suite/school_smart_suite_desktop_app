@@ -1,65 +1,184 @@
-import { Icon } from "@iconify/react";
-import {
-  isHighWorkload,
-  qualificationLabel,
-  workloadLabel,
-} from "../../../utils/jointCourse/teacherAssignment";
-import TeacherAvatar from "./TeacherAvatar";
 
-/**
- * One selectable teacher. Current and ineligible teachers are shown but can't
- * be picked; the reason is spelled out on the row.
- */
+import {
+  AlertCircle,
+  BookOpen,
+  ChevronDown,
+  ChevronUp,
+  Circle,
+  CircleCheck,
+  GraduationCap
+} from "lucide-react";
+import { useState } from "react";
+import { isHighWorkload } from "../../../utils/jointCourse/teacherAssignment";
+import TeacherAvatar from "./TeacherAvatar";
 function TeacherOption({ teacher, selected, onSelect }) {
+  const [showAllQualifications, setShowAllQualifications] = useState(false);
+
+  const qualifications = Array.isArray(teacher.qualification)
+    ? teacher.qualification
+    : [];
+
   const disabled = !teacher.eligible || teacher.is_current;
   const heavy = isHighWorkload(teacher.course_count);
+
+  const visibleQualifications = showAllQualifications
+    ? qualifications
+    : qualifications.slice(0, 2);
+
   const status = teacher.is_current
-    ? { tone: "accent", label: "Current teacher" }
+    ? { label: "Current teacher", className: "text-primary bg-primary-subtle" }
     : !teacher.eligible
-      ? { tone: "muted", label: teacher.status === "active" ? "Not eligible" : "Deactivated" }
-      : { tone: "success", label: "Available" };
+      ? {
+          label: teacher.status === "active" ? "Not eligible" : "Deactivated",
+          className: "text-secondary bg-light",
+        }
+      : {
+          label: "Eligible",
+          className: "text-fern-600 bg-fern-100",
+        };
+
+  const courseLabel = `${teacher.course_count} ${
+    teacher.course_count === 1 ? "course" : "courses"
+  } assigned`;
+
+  const handleSelect = () => {
+    if (!disabled) onSelect(teacher);
+  };
 
   return (
-    <li>
-      <button
-        type="button"
-        role="radio"
-        aria-checked={selected}
-        disabled={disabled}
-        className={`jca-option ${selected ? "is-selected" : ""} ${teacher.is_current ? "is-current" : ""}`}
-        onClick={() => onSelect(teacher.id)}
-      >
-        <span className="jca-option__radio" aria-hidden="true" />
+    <button
+      type="button"
+      className={`teacher-option w-100 text-start border rounded-4 p-3 ${
+        selected ? "teacher-option-selected" : ""
+      } ${disabled ? "teacher-option-disabled" : ""}`}
+      onClick={handleSelect}
+      disabled={disabled}
+      aria-pressed={selected}
+    >
+      {/* Teacher identity */}
+      <div className="d-flex align-items-center gap-2">
         <TeacherAvatar teacher={teacher} />
-        <span className="jca-option__who">
-          <span className="jca-option__name">{teacher.name}</span>
-          <span className="jca-muted text-truncate">
-            @{teacher.username}
-            {teacher.department?.name ? ` · ${teacher.department.name}` : ""}
+
+        <div className="flex-grow-1 min-width-0">
+          <div className="d-flex align-items-center justify-content-between gap-2">
+            <span className="fw-semibold text-iron-900 text-truncate">
+              {teacher.name}
+            </span>
+
+            {selected ? (
+              <CircleCheck size={21} className="text-primary flex-shrink-0" />
+            ) : (
+              <Circle
+                size={21}
+                strokeWidth={1.5}
+                className="text-iron-400 flex-shrink-0"
+              />
+            )}
+          </div>
+
+          <div className="d-flex align-items-center gap-1 text-iron-500 font-size-xs">
+            <span className="text-truncate">@{teacher?.username}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-2">
+        <div className="d-flex align-items-center gap-2 mb-2">
+          <GraduationCap size={15} className="text-iron-500" />
+          <span className="font-size-xs fw-medium text-iron-600">
+            Academic qualifications
           </span>
-        </span>
-        <span className="jca-option__qual" title={qualificationLabel(teacher.qualification)}>
-          <span className="jca-option__abbr">{teacher.qualification?.abbreviation ?? "—"}</span>
-          <span className="jca-muted text-truncate">
-            {teacher.qualification?.name ?? "No qualification on record"}
+        </div>
+
+        {qualifications.length > 0 ? (
+          <>
+            <div className="d-flex flex-wrap align-items-center gap-2">
+              {visibleQualifications.map((qualification) => (
+                <span
+                  key={qualification.id}
+                  className="teacher-qualification-chip"
+                  title={qualification.name}
+                >
+                  {qualification.abbreviation || qualification.name}
+                </span>
+              ))}
+
+              {!showAllQualifications && qualifications.length > 2 && (
+                <span className="teacher-qualification-more">
+                  +{qualifications.length - 2} more
+                </span>
+              )}
+            </div>
+
+            {showAllQualifications && (
+              <div className="mt-2 d-flex flex-column gap-2">
+                {qualifications.map((qualification) => (
+                  <div key={qualification.id} className="d-flex flex-column">
+                    <span className="font-size-xs fw-medium text-iron-700">
+                      {qualification.name}
+                    </span>
+
+                    {qualification.pivot?.field_of_study && (
+                      <span className="font-size-xs text-iron-500">
+                        {qualification.pivot.field_of_study}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {qualifications.length > 2 && (
+              <button
+                type="button"
+                className="btn btn-link p-0 mt-2 font-size-xs text-primary text-decoration-none d-flex align-items-center gap-1"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setShowAllQualifications((previous) => !previous);
+                }}
+                disabled={disabled}
+              >
+                {showAllQualifications ? (
+                  <>
+                    Show less <ChevronUp size={14} />
+                  </>
+                ) : (
+                  <>
+                    View all qualifications <ChevronDown size={14} />
+                  </>
+                )}
+              </button>
+            )}
+          </>
+        ) : (
+          <span className="font-size-xs text-iron-400">
+            No qualifications recorded
           </span>
+        )}
+      </div>
+      <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3 pt-3 border-top">
+        <span
+          className={`d-flex align-items-center gap-2 font-size-xs text-iron-500`}
+        >
+          <BookOpen size={14} />
+          {courseLabel}
         </span>
-        <span className={`jca-option__load ${heavy ? "jca-warn-text" : ""}`}>
-          {heavy && <Icon icon="lucide:triangle-alert" width={13} height={13} />}
-          {workloadLabel(teacher.course_count)}
+
+        <span
+          className={`px-2 py-1 rounded-pill font-size-xs fw-medium ${status.className}`}
+        >
+          {status.label}
         </span>
-        <span className={`jca-tag jca-tag--${status.tone}`}>{status.label}</span>
-      </button>
+      </div>
+
+      {/* Ineligibility explanation */}
       {!teacher.eligible && teacher.ineligible_reason && (
-        <span className="jca-option__reason">{teacher.ineligible_reason}</span>
+        <div className="d-flex align-items-start gap-2 mt-3 p-2 rounded-3 bg-light text-iron-600">
+          <AlertCircle size={15} className="flex-shrink-0 mt-1" />
+          <span className="font-size-xs">{teacher.ineligible_reason}</span>
+        </div>
       )}
-      {teacher.eligible && heavy && selected && (
-        <span className="jca-option__reason jca-warn-text">
-          {teacher.name} already teaches {workloadLabel(teacher.course_count)}. You can still
-          assign them.
-        </span>
-      )}
-    </li>
+    </button>
   );
 }
 

@@ -151,9 +151,9 @@ export default function SearchInput({
   placeholder,
   resultCount,
   resultLabel = "results",
-  hotkey = "Mod+K", // e.g. "Mod+K", "Ctrl+U", "Ctrl+V" — must be unique per instance
+  hotkey = "Mod+K", 
   enableShortcut = true,
-  size = "md", // "sm" | "md" | "lg"
+  size = "md", 
   autoFocus = false,
   disabled = false,
   className = "",

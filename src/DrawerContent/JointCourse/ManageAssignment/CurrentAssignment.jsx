@@ -1,26 +1,41 @@
 import { Icon } from "@iconify/react";
-import {
-  isHighWorkload,
-  qualificationLabel,
-  workloadLabel,
-} from "../../../utils/jointCourse/teacherAssignment";
+import "../../../styles/jointCourseAssignment.css";
 import TeacherAvatar from "./TeacherAvatar";
-
-/** The teacher(s) currently assigned, or an empty state that invites an assignment. */
 function CurrentAssignment({ teachers, onChange, onAssign, justUpdatedId }) {
   if (teachers.length === 0) {
     return (
-      <div className="jca-empty">
-        <span className="jca-empty__icon">
-          <Icon icon="lucide:user-round-plus" width={22} height={22} />
-        </span>
-        <span className="fw-semibold">No teacher assigned yet</span>
-        <p className="jca-muted mb-0">
-          Assign the teacher responsible for this joint course. Its weekly times can only be
-          set once it has one.
-        </p>
-        <button type="button" className="jca-btn jca-btn--primary" onClick={onAssign}>
-          <Icon icon="lucide:user-round-plus" width={16} height={16} />
+      <div
+        className="d-flex flex-column align-items-center justify-content-center text-center gap-2 p-3 rounded-4"
+        style={{ border: "1px dashed #cbd5e1" }}
+      >
+        <div
+          style={{ width: "2.25rem", height: "2.25rem" }}
+          className="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center text-primary-500 border border-iron-200"
+        >
+          <Icon icon="lucide:user-round-plus" width={18} height={18} />
+        </div>
+
+        <div className="d-flex flex-column gap-1">
+          <span className="fw-semibold text-iron-800 font-size-sm">
+            No teacher assigned yet
+          </span>
+          <p
+            className="text-iron-500 font-size-xs mb-0 px-2"
+            style={{ lineHeight: "1.4" }}
+          >
+            Assign the teacher responsible for this joint course. Its weekly
+            times can only be set once it has one.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          className="d-flex align-items-center 
+          justify-content-center gap-2 rounded-3
+           bg-primary-500 text-white border-none
+            px-3 py-2 font-size-sm  fw-medium shadow-sm mt-1"
+          onClick={onAssign}
+        >
           <span>Assign Teacher</span>
         </button>
       </div>
@@ -31,56 +46,35 @@ function CurrentAssignment({ teachers, onChange, onAssign, justUpdatedId }) {
     <div className="d-flex flex-column gap-2">
       {teachers.length > 1 && (
         <p className="jca-muted mb-0">
-          This course has {teachers.length} teachers. Choose which one to replace.
+          This course has {teachers.length} teachers. Choose which one to
+          replace.
         </p>
       )}
       {teachers.map((teacher) => (
-        <article
-          key={teacher.id}
-          className={`jca-current ${justUpdatedId === teacher.id ? "is-new" : ""}`}
-        >
-          <TeacherAvatar teacher={teacher} size="lg" />
-          <div className="d-flex flex-column gap-1 flex-grow-1 min-w-0">
-            <div className="d-flex flex-row align-items-center gap-2">
-              <span className="jca-current__name text-truncate">{teacher.name}</span>
-              {justUpdatedId === teacher.id && (
-                <span className="jca-tag jca-tag--success">
-                  <Icon icon="lucide:check" width={12} height={12} />
-                  Just assigned
+        <div className="card border-none border rounded-4 p-2">
+          <div className="d-flex flex-column gap-3">
+            <div className="d-flex flex-row align-items-center">
+              <TeacherAvatar teacher={teacher} size="lg" />
+              <div className="d-flex flex-column font-size-sm">
+                <span className="text-truncate fw-medium">{teacher.name}</span>
+                <span className="text-truncate text-iron-500 fw-light">
+                  @{teacher.username}
                 </span>
-              )}
+              </div>
             </div>
-            <dl className="jca-current__facts">
-              <div>
-                <dt>Username</dt>
-                <dd>@{teacher.username}</dd>
-              </div>
-              <div>
-                <dt>Qualification</dt>
-                <dd>{qualificationLabel(teacher.qualification)}</dd>
-              </div>
-              <div>
-                <dt>Department</dt>
-                <dd>{teacher.department?.name ?? "—"}</dd>
-              </div>
-              <div>
-                <dt>Workload</dt>
-                <dd className={isHighWorkload(teacher.course_count) ? "jca-warn-text" : ""}>
-                  {workloadLabel(teacher.course_count)}
-                  {isHighWorkload(teacher.course_count) ? " · heavy" : ""}
-                </dd>
-              </div>
-            </dl>
+            <button
+              type="button"
+              className="w-100 border-none border 
+              rounded-pill p-2  bg-none 
+              d-flex flex-row align-items-center gap-2
+                justify-content-center"
+              onClick={() => onChange(teacher.id)}
+            >
+              <Icon icon="lucide:repeat-2" width={16} height={16} />
+              <span>Change Teacher</span>
+            </button>
           </div>
-          <button
-            type="button"
-            className="jca-btn jca-btn--outline flex-shrink-0"
-            onClick={() => onChange(teacher.id)}
-          >
-            <Icon icon="lucide:repeat-2" width={16} height={16} />
-            <span>Change Teacher</span>
-          </button>
-        </article>
+        </div>
       ))}
     </div>
   );

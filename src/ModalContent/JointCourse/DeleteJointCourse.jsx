@@ -1,10 +1,9 @@
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useDeleteCourse } from "../../hooks/course/useDeleteCourse";
 import { CircleX } from "lucide-react";
-import { useDeleteJointCourse } from "../../hooks/jointCourse/useDeleteJointCourse";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useFormError } from "../../hooks/form/useFormError";
-function DeleteJointCourse({ handleClose }) {
+import { useDeleteJointCourse } from "../../hooks/jointCourse/useDeleteJointCourse";
+function DeleteJointCourse({ handleClose, rowData }) {
   const courseId = rowData.id;
   const { mutate: deleteCourse, isPending } = useDeleteJointCourse(courseId);
   const { formError, errorBannerRef, handleServerError, clearFormError } =
@@ -47,7 +46,7 @@ function DeleteJointCourse({ handleClose }) {
           onDismiss={clearFormError}
           className="mx-2 mt-2 mb-0"
         />
-        <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
+        <div className="px-2 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>
             This action cannot be undone. This will Permanently delete This
@@ -65,7 +64,7 @@ function DeleteJointCourse({ handleClose }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleActivateCourse();
+                handleDeleteCourse();
               }}
             >
               {isPending ? <SingleSpinner /> : <>Yes, Delete</>}

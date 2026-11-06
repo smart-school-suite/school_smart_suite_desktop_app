@@ -6,7 +6,10 @@ import {
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import CustomDropdown, { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
+import CustomDropdown, {
+  MultiSelectDropdown,
+} from "../../components/Dropdowns/Dropdowns";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import {
   NumberInput,
   TextAreaInput,
@@ -14,12 +17,11 @@ import {
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
+import { useFormError } from "../../hooks/form/useFormError";
 import { useCreateJointCourse } from "../../hooks/jointCourse/useCreateJointCourse";
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { allFieldsValid } from "../../utils/functions";
-import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
 function CreateJointCourse({ handleClose }) {
   const courseCodeRef = useRef();
   const courseTitleRef = useRef();
@@ -52,8 +54,13 @@ function CreateJointCourse({ handleClose }) {
   });
   const { mutate: createCourseMutation, isPending } =
     useCreateJointCourse(handleClose);
-  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
-    useFormError("Failed To Create Joint Course");
+  const {
+    formError,
+    errorBannerRef,
+    setClientError,
+    handleServerError,
+    clearFormError,
+  } = useFormError("Failed To Create Joint Course");
   const { data: specialty, isFetching: isSpecailtyLoading } =
     useGetSpecialties();
   const { data: semesters, isLoading: isSemesterLoading } = useGetSemester();
@@ -84,207 +91,222 @@ function CreateJointCourse({ handleClose }) {
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
+      setClientError(
+        "Invalid Fields",
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
+      );
       return;
     }
     if (!allFieldsValid(isFieldValid)) {
-      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
+      setClientError(
+        "Invalid Fields",
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
+      );
       return;
     }
     clearFormError();
-    createCourseMutation({
-      ...formData,
-      semester_id: formData.semester_id.id,
-      typeIds: formData.type.map((items) => ({
-        type_id: items.id,
-      })),
-      specialtyIds: formData.specialties.map((specialty) => specialty.id),
-    }, { onError: handleServerError });
+    createCourseMutation(
+      {
+        ...formData,
+        semester_id: formData.semester_id.id,
+        typeIds: formData.type.map((items) => ({
+          type_id: items.id,
+        })),
+        specialtyIds: formData.specialties.map((specialty) => specialty.id),
+      },
+      { onError: handleServerError },
+    );
   };
   return (
     <>
-      <div className="drawer-content px-2">
+      <div className="drawer-content ps-2 pt-2">
         <FormErrorBanner
           ref={errorBannerRef}
           error={formError}
           onDismiss={clearFormError}
           className="mb-2"
         />
-        <div>
-          <label htmlFor="courseTitle" className="font-size-sm">
-            Course Title
-          </label>
-          <TextInput
-            placeholder={"e.g Engineering Mathematics"}
-            onChange={(value) =>
-              handleStateChange("course_title", value, setFormData)
-            }
-            onValidationChange={(value) =>
-              handleStateChange("course_title", value, setFieldValid)
-            }
-            validationSchema={nameSchema({
-              min: 3,
-              max: 150,
-              required: true,
-              messages: {
-                required: "Course Title Required",
-                min: "Course Title Must Be Atleast 3 Characters Long",
-                max: "Course Title Must Not Exceed 150 Characters",
-              },
-            })}
-            ref={courseTitleRef}
-            value={formData.course_title}
-          />
-        </div>
-        <div className="d-flex flex-row align-items-center gap-2 w-100">
-          <div className="w-50">
-            <label htmlFor="courseCode" className="font-size-sm">
-              Course Code
+        <div className="d-flex flex-column gap-3">
+          <div>
+            <label htmlFor="courseTitle" className="font-size-sm">
+              Course Title
             </label>
             <TextInput
-              placeholder={"e.g SWE005"}
+              placeholder={"e.g Engineering Mathematics"}
               onChange={(value) =>
-                handleStateChange("course_code", value, setFormData)
+                handleStateChange("course_title", value, setFormData)
               }
               onValidationChange={(value) =>
-                handleStateChange("course_code", value, setFieldValid)
+                handleStateChange("course_title", value, setFieldValid)
               }
-              validationSchema={courseCodeSchema({
+              validationSchema={nameSchema({
                 min: 3,
-                max: 10,
+                max: 150,
                 required: true,
                 messages: {
-                  required: "Course Code Required",
-                  min: "Course Code Must Be Atleast 3 Characters Long",
-                  max: "Course Code Must Not Exceed 10 Characters",
+                  required: "Course Title Required",
+                  min: "Course Title Must Be Atleast 3 Characters Long",
+                  max: "Course Title Must Not Exceed 150 Characters",
                 },
               })}
-              ref={courseCodeRef}
-              value={formData.course_code}
+              ref={courseTitleRef}
+              value={formData.course_title}
             />
           </div>
-          <div className="w-50">
-            <label htmlFor="courseCredit" className="font-size-sm">
-              Course Credit
+          <div className="d-flex flex-row align-items-center gap-2 w-100">
+            <div className="w-50">
+              <label htmlFor="courseCode" className="font-size-sm">
+                Course Code
+              </label>
+              <TextInput
+                placeholder={"e.g SWE005"}
+                onChange={(value) =>
+                  handleStateChange("course_code", value, setFormData)
+                }
+                onValidationChange={(value) =>
+                  handleStateChange("course_code", value, setFieldValid)
+                }
+                validationSchema={courseCodeSchema({
+                  min: 3,
+                  max: 10,
+                  required: true,
+                  messages: {
+                    required: "Course Code Required",
+                    min: "Course Code Must Be Atleast 3 Characters Long",
+                    max: "Course Code Must Not Exceed 10 Characters",
+                  },
+                })}
+                ref={courseCodeRef}
+                value={formData.course_code}
+              />
+            </div>
+            <div className="w-50">
+              <label htmlFor="courseCredit" className="font-size-sm">
+                Course Credit
+              </label>
+              <NumberInput
+                placeholder={"e.g 2 Credit"}
+                onChange={(value) =>
+                  handleStateChange("credit", value, setFormData)
+                }
+                onValidationChange={(value) =>
+                  handleStateChange("credit", value, setFieldValid)
+                }
+                validationSchema={numberSchema({
+                  min: 1,
+                  max: 100,
+                  required: true,
+                  integerOnly: true,
+                  messages: {
+                    required: "Course Credit Required",
+                    min: "Course Credit Must Be Atleast 1",
+                    max: "Course Credit Must Not Exceed 100",
+                  },
+                })}
+                ref={courseCreditRef}
+                value={formData.credit}
+              />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="hallType" className="font-size-sm">
+              Course Type
             </label>
-            <NumberInput
-              placeholder={"e.g 2 Credit"}
-              onChange={(value) =>
-                handleStateChange("credit", value, setFormData)
+            <MultiSelectDropdown
+              data={courseTypes?.data || []}
+              value={formData.type}
+              displayKey={["name", "description"]}
+              valueKey={["id"]}
+              direction="up"
+              isLoading={isCourseTypeLoading}
+              placeholder={"Select Course Type"}
+              errorMessage={"Course Type Required"}
+              onSelect={(value) =>
+                handleStateChange("type", value, setFormData)
               }
-              onValidationChange={(value) =>
-                handleStateChange("credit", value, setFieldValid)
-              }
-              validationSchema={numberSchema({
-                min: 1,
-                max: 100,
-                required: true,
-                integerOnly: true,
-                messages: {
-                  required: "Course Credit Required",
-                  min: "Course Credit Must Be Atleast 1",
-                  max: "Course Credit Must Not Exceed 100",
-                },
-              })}
-              ref={courseCreditRef}
-              value={formData.credit}
+              onError={(error) => handleStateChange("type", error, setErrors)}
+              error={errors.type}
+              optional={false}
+              ref={typeRef}
             />
           </div>
-        </div>
-        <div>
-          <label htmlFor="hallType" className="font-size-sm">
-            Course Type
-          </label>
-          <MultiSelectDropdown
-            data={courseTypes?.data || []}
-            value={formData.type}
-            displayKey={["name", "description"]}
-            valueKey={["id"]}
-            direction="up"
-            isLoading={isCourseTypeLoading}
-            placeholder={"Select Course Type"}
-            errorMessage={"Course Type Required"}
-            onSelect={(value) => handleStateChange("type", value, setFormData)}
-            onError={(error) => handleStateChange("type", error, setErrors)}
-            error={errors.type}
-            optional={false}
-            ref={typeRef}
-          />
-        </div>
-        <div>
-          <label htmlFor="semester" className="font-size-sm">
-            Semester
-          </label>
-          <CustomDropdown
-            data={semesters?.data || []}
-            displayKey={["name"]}
-            valueKey={["id"]}
-            direction="up"
-            onSelect={(value) =>
-              handleStateChange("semester_id", value, setFormData)
-            }
-            isLoading={isSemesterLoading}
-            error={errors.semester_id}
-            errorMessage="Semester Required"
-            onError={(msg) => handleStateChange("semester_id", msg, setErrors)}
-            placeholder="Select Semester"
-            optional={false}
-            ref={semesterRef}
-            value={formData.semester_id}
-          />
-        </div>
-        <div>
-          <label htmlFor="specialty" className="font-size-sm">
-            Specialty
-          </label>
-          <MultiSelectDropdown
-            data={specialty?.data || []}
-            value={formData.specialties}
-            displayKey={["specialty_name", "level_name"]}
-            valueKey={["id"]}
-            direction="up"
-            isLoading={isSpecailtyLoading}
-            placeholder={"Select Specialties"}
-            errorMessage={"Specialty Required"}
-            onSelect={(value) =>
-              handleStateChange("specialties", value, setFormData)
-            }
-            onError={(error) =>
-              handleStateChange("specialties", error, setErrors)
-            }
-            error={errors.specialties}
-            optional={false}
-            ref={specialtyRef}
-          />
-        </div>
-        <div>
-          <label htmlFor="courseDescription" className="font-size-sm">
-            Course Description
-          </label>
-          <TextAreaInput
-            onChange={(value) =>
-              handleStateChange("description", value, setFormData)
-            }
-            validationSchema={textareaSchema({
-              min: 10,
-              max: 1000,
-              messages: {
-                required: "Course Description Required",
-                min: "Course Description Must Be Atleast 10 Characters Long",
-                max: "Course Description Must Not Exceed 1000 Characters",
-              },
-            })}
-            onValidationChange={(value) =>
-              handleStateChange("description", value, setFieldValid)
-            }
-            placeholder={
-              formData.course_title
-                ? `Enter A Short Description For ${formData.course_title}`
-                : "Enter A Short Description Of The Course"
-            }
-            ref={descriptionRef}
-            value={formData.description}
-          />
+          <div>
+            <label htmlFor="semester" className="font-size-sm">
+              Semester
+            </label>
+            <CustomDropdown
+              data={semesters?.data || []}
+              displayKey={["name"]}
+              valueKey={["id"]}
+              direction="up"
+              onSelect={(value) =>
+                handleStateChange("semester_id", value, setFormData)
+              }
+              isLoading={isSemesterLoading}
+              error={errors.semester_id}
+              errorMessage="Semester Required"
+              onError={(msg) =>
+                handleStateChange("semester_id", msg, setErrors)
+              }
+              placeholder="Select Semester"
+              optional={false}
+              ref={semesterRef}
+              value={formData.semester_id}
+            />
+          </div>
+          <div>
+            <label htmlFor="specialty" className="font-size-sm">
+              Specialty
+            </label>
+            <MultiSelectDropdown
+              data={specialty?.data || []}
+              value={formData.specialties}
+              displayKey={["specialty_name", "level_name"]}
+              valueKey={["id"]}
+              direction="up"
+              isLoading={isSpecailtyLoading}
+              placeholder={"Select Specialties"}
+              errorMessage={"Specialty Required"}
+              onSelect={(value) =>
+                handleStateChange("specialties", value, setFormData)
+              }
+              onError={(error) =>
+                handleStateChange("specialties", error, setErrors)
+              }
+              error={errors.specialties}
+              optional={false}
+              ref={specialtyRef}
+            />
+          </div>
+          <div>
+            <label htmlFor="courseDescription" className="font-size-sm">
+              Course Description
+            </label>
+            <TextAreaInput
+              onChange={(value) =>
+                handleStateChange("description", value, setFormData)
+              }
+              validationSchema={textareaSchema({
+                min: 10,
+                max: 1000,
+                messages: {
+                  required: "Course Description Required",
+                  min: "Course Description Must Be Atleast 10 Characters Long",
+                  max: "Course Description Must Not Exceed 1000 Characters",
+                },
+              })}
+              onValidationChange={(value) =>
+                handleStateChange("description", value, setFieldValid)
+              }
+              placeholder={
+                formData.course_title
+                  ? `Enter A Short Description For ${formData.course_title}`
+                  : "Enter A Short Description Of The Course"
+              }
+              ref={descriptionRef}
+              value={formData.description}
+            />
+          </div>
         </div>
       </div>
       <div className="drawer-footer font-size-sm">

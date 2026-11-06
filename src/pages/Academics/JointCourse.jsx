@@ -20,6 +20,9 @@ import ActionButtonDropdown, {
 } from "../../components/DataTableComponents/ActionComponent";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
@@ -35,9 +38,6 @@ import {
   UpdateIcon,
 } from "../../icons/ActionIcons";
 import jointCourseColDefs from "../../utils/table/colDefs/course/jointCourseColDefs";
-import TableToolbar from "../../components/TableFilters/TableToolbar";
-import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
-import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function JointCourse() {
   const dispatch = useDispatch();
   const { data: courses, isLoading, error } = useGetJointCourses();
@@ -195,32 +195,64 @@ export default JointCourse;
 export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
-  const [ModalComponent, setModalComponent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [DrawerComponent, setDrawerComponent] = useState(null);
-  const [drawerDetail, setDrawerDetail] = useState({
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
     placement: "right",
     title: "",
+    closeOnOutsideClick: true,
     showHeader: true,
   });
+
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalComponent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
-  const handleShowModal = (Component, size = "md") => {
-    setModalComponent(() => Component);
-    setModalSize(size);
+
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
   };
-  const handleShowDrawer = (Component, title = "", showHeader = true) => {
-    setDrawerDetail((prev) => ({ ...prev, title, showHeader }));
-    setDrawerComponent(() => Component);
-    setShowDrawer(true);
-  };
+
   const handleCloseDrawer = () => {
     setShowDrawer(false);
-    setDrawerComponent(null);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
@@ -235,7 +267,11 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowDrawer(UpdateJointCourse, "Update Joint Course")
+            handleShowDrawer(UpdateJointCourse, {
+              title: "Update Joint Course",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
           }
         >
           <div>
@@ -250,7 +286,11 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowDrawer(JointCourseDetails, "Joint Course Details")
+            handleShowDrawer(JointCourseDetails, {
+              title: "Joint Course Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
           }
         >
           <div>
@@ -265,8 +305,11 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            // The assignment drawer has its own header with a subtitle.
-            handleShowDrawer(ManageJointCourseAssignment, "Manage Course Assignment", false)
+            handleShowDrawer(ManageJointCourseAssignment, {
+              title: "Manage Joint Course Assignment",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
           }
         >
           <div>
@@ -280,7 +323,13 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteJointCourse, "md")}
+          onClick={() =>
+            handleShowModal(DeleteJointCourse, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -294,7 +343,13 @@ export function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() => handleShowModal(DeactivateJointCourse, "md")}
+            onClick={() =>
+              handleShowModal(DeactivateJointCourse, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -308,7 +363,13 @@ export function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() => handleShowModal(ActivateJointCourse, "md")}
+            onClick={() =>
+              handleShowModal(ActivateJointCourse, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
@@ -322,12 +383,13 @@ export function ActionComponent(props) {
       <Drawer
         isOpen={showDrawer}
         onClose={handleCloseDrawer}
-        placement={drawerDetail?.placement}
-        title={drawerDetail?.title}
-        showHeader={drawerDetail?.showHeader}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
       >
-        {DrawerComponent && (
-          <DrawerComponent
+        {drawerConfig.component && (
+          <drawerConfig.component
             handleClose={handleCloseDrawer}
             drawerData={rowData}
           />
@@ -337,11 +399,16 @@ export function ActionComponent(props) {
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {ModalComponent && (
-          <ModalComponent rowData={rowData} handleClose={handleCloseModal} />
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
         )}
       </CustomModal>
     </>
