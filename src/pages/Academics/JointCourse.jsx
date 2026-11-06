@@ -14,6 +14,10 @@ import UpdateJointCourse from "../../DrawerContent/JointCourse/UpdateJointCourse
 import ActivateJointCourse from "../../ModalContent/JointCourse/ActivateJointCourse";
 import DeactivateJointCourse from "../../ModalContent/JointCourse/DeactivateJointCourse";
 import DeleteJointCourse from "../../ModalContent/JointCourse/DeleteJointCourse";
+// Joint courses are course records, so the course bulk actions apply as-is.
+import BulkActivateCourse from "../../ModalContent/Course/BulkActivateCourse";
+import BulkDeactivateCourse from "../../ModalContent/Course/BulkDeactivateCourse";
+import BulkDeleteCourse from "../../ModalContent/Course/BulkDeleteCourse";
 import ActionButtonDropdown, {
   DropDownMenuItem,
   ModalButton,
@@ -419,7 +423,7 @@ function ActionButtons({ selectedCourses, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        //action={{ modalContent: BulkDeleteTeacher }}
+        action={{ modalContent: BulkDeleteCourse }}
         bulkData={selectedCourses}
         resetAll={resetAll}
       >
@@ -461,7 +465,7 @@ function DropdownItems({ selectedCourses, resetAll, onModalStateChange }) {
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        //onClick={() => handleShowModal(BulkDeleteCourse, "md")}
+        onClick={() => handleShowModal(BulkDeleteCourse, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Delete All</span>
@@ -470,7 +474,7 @@ function DropdownItems({ selectedCourses, resetAll, onModalStateChange }) {
       </DropDownMenuItem>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        //onClick={() => handleShowModal(BulkDeactivateCourse, "md")}
+        onClick={() => handleShowModal(BulkDeactivateCourse, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Deactivate All</span>
@@ -479,7 +483,7 @@ function DropdownItems({ selectedCourses, resetAll, onModalStateChange }) {
       </DropDownMenuItem>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        //onClick={() => handleShowModal(BulkActivateCourse, "md")}
+        onClick={() => handleShowModal(BulkActivateCourse, "md")}
       >
         <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
           <span className="font-size-sm">Activate All</span>

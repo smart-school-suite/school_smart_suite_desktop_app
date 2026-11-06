@@ -42,7 +42,7 @@ function TeacherOption({ teacher, selected, onSelect }) {
   } assigned`;
 
   const handleSelect = () => {
-    if (!disabled) onSelect(teacher);
+    if (!disabled) onSelect(teacher.id);
   };
 
   return (
