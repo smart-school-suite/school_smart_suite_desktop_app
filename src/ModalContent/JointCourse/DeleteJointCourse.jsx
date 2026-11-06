@@ -5,7 +5,7 @@ import { useFormError } from "../../hooks/form/useFormError";
 import { useDeleteJointCourse } from "../../hooks/jointCourse/useDeleteJointCourse";
 function DeleteJointCourse({ handleClose, rowData }) {
   const courseId = rowData.id;
-  const { mutate: deleteCourse, isPending } = useDeleteJointCourse(handleClose);
+  const { mutate: deleteCourse, isPending } = useDeleteJointCourse(courseId);
   const { formError, errorBannerRef, handleServerError, clearFormError } =
     useFormError("Failed To Delete Joint Course");
   const handleDeleteCourse = async () => {

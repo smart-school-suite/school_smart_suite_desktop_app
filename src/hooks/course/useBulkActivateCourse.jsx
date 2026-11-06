@@ -8,7 +8,6 @@ export const useBulkActivateCourse = (handleClose, resetAll) => {
     mutationFn: bulkActivateCourse,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
-      queryClient.invalidateQueries({ queryKey: ["joint-courses"] });
       queryClient.invalidateQueries({ queryKey: ["activeCourses"] });
       if (handleClose) {
         handleClose();

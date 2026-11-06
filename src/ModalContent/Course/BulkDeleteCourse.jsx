@@ -38,10 +38,10 @@ function BulkDeleteCourse({ handleClose, bulkData, resetAll }){
                     <button
                       className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
                       onClick={() => {
-                        handleBulkDeleteCourse();
+                        handleBulkActivateCourses();
                       }}
                     >
-                      {isPending ? <SingleSpinner /> : <>Yes, Delete All</>}
+                      {isPending ? <SingleSpinner /> : <>Yes, Activate All</>}
                     </button>
                   </div>
                 </div>
