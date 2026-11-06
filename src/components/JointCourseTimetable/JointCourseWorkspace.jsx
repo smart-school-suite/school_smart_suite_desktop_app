@@ -1,23 +1,18 @@
 import { Icon } from "@iconify/react";
 import { useDispatch, useSelector } from "react-redux";
-import JointCourseTimetableDrawer from "../../DrawerContent/JointCourseTimetable/ConfigureSlots/JointCourseTimetableDrawer";
+import GenerateSlotsDrawer from "../../DrawerContent/JointCourseTimetable/GenerateSlots/GenerateSlotsDrawer";
 import { useGetJointCourseTerm } from "../../hooks/jointCourseTimetable/useGetJointCourseTerm";
 import { setJointCourseTerm } from "../../Slices/jointCourse/jointCourseTimetableSlice";
-import { draftMatchesCourse } from "../../utils/jointCourseTimetable/slotDraft";
-import { dayLabel, formatDuration, formatTime } from "../../utils/semesterTimetable/timeUtils";
+import { dayLabel, formatDuration, formatTime, sortDays } from "../../utils/semesterTimetable/timeUtils";
 import DrawerTrigger from "../drawer/DrawerTrigger";
 import TermDropdown from "./TermDropdown";
 import "../../styles/jointCourseSlots.css";
 
 function JointCourseWorkspace() {
   const dispatch = useDispatch();
-  const { term, selectedCourseId, drafts } = useSelector(
-    (state) => state.jointCourseTimetable,
-  );
+  const { term, selectedCourseId } = useSelector((state) => state.jointCourseTimetable);
   const { data } = useGetJointCourseTerm(term);
   const course = (data?.data?.courses ?? []).find((item) => item.id === selectedCourseId);
-  const draft = course ? drafts?.[course.id] : null;
-  const hasUnsaved = Boolean(draft && !draftMatchesCourse(draft, course));
 
   return (
     <div
@@ -30,22 +25,47 @@ function JointCourseWorkspace() {
           onChange={(value) => dispatch(setJointCourseTerm(value))}
         />
       </div>
-      {course ? (
-        <CourseOverview course={course} hasUnsaved={hasUnsaved} />
-      ) : (
+      {!course ? (
         <Placeholder
           text={
             term
-              ? "Select a joint course from the list to see and set its weekly times."
+              ? "Select a joint course from the list to see and set its weekly slots."
               : "Choose an academic year and semester to see its joint courses."
           }
         />
+      ) : (course.slots ?? []).length > 0 ? (
+        <SavedSlots course={course} />
+      ) : (
+        <Placeholder text="This joint course has no slots yet. Generate them to find free times for its lecturer and halls.">
+          <GenerateButton course={course} label="Generate" />
+        </Placeholder>
       )}
     </div>
   );
 }
 
-function Placeholder({ text }) {
+function GenerateButton({ course, label, outline = false }) {
+  return (
+    <DrawerTrigger
+      drawerChildren={GenerateSlotsDrawer}
+      drawerData={{ course }}
+      showHeader={false}
+      closeOnOutsideClick={false}
+    >
+      <button
+        type="button"
+        className={`rounded-3 font-size-sm px-3 py-2 d-flex flex-row align-items-center gap-2 ${
+          outline ? "bg-white border" : "border-none primary-background text-white"
+        }`}
+      >
+        <Icon icon="lucide:sparkles" width={16} height={16} />
+        <span>{label}</span>
+      </button>
+    </DrawerTrigger>
+  );
+}
+
+function Placeholder({ text, children }) {
   return (
     <div className="d-flex flex-grow-1 align-items-center justify-content-center">
       <div className="d-flex flex-column align-items-center gap-2 text-center">
@@ -54,91 +74,50 @@ function Placeholder({ text }) {
           alt="sss-timetable-maskot"
           style={{ height: "150px", width: "150px", objectFit: "contain" }}
         />
-        <p className="mb-0 text-iron-500">{text}</p>
+        <p className="mb-0 text-iron-500" style={{ maxWidth: "26rem" }}>{text}</p>
+        {children}
       </div>
     </div>
   );
 }
 
-function CourseOverview({ course, hasUnsaved }) {
-  const configured = course.status === "configured";
-  const teachers = course.teachers ?? [];
-  const toRegenerate = (course.affected_timetables ?? []).filter(
-    (timetable) => timetable.needs_regeneration,
-  );
+/** The course's saved weekly slots, grouped by day. */
+function SavedSlots({ course }) {
+  const days = sortDays([...new Set(course.slots.map((slot) => slot.day))]);
+  const weeklyMinutes = course.weekly_minutes ?? course.slots.reduce((sum, slot) => sum + (slot.duration_minutes ?? 0), 0);
 
   return (
-    <section className="jcs-overview w-100">
-      <header className="jcs-overview__head">
-        <div className="d-flex flex-column gap-1 min-w-0">
-          <span className="jcs-overview__eyebrow">
-            {[course.course?.code, course.course?.credit && `${course.course.credit} credits`]
-              .filter(Boolean)
-              .join(" · ")}
-          </span>
-          <span className="fw-semibold font-size-md text-truncate">{course.course?.title}</span>
-          <span className="text-iron-500">
-            {teachers.length ? `Lecturer: ${teachers.map((teacher) => teacher.name).join(", ")}` : "No lecturer assigned yet"}
+    <section className="w-100 d-flex flex-column gap-3 pt-2" style={{ maxWidth: "48rem" }}>
+      <div className="d-flex flex-row align-items-center justify-content-between gap-2">
+        <div className="d-flex flex-column">
+          <span className="fw-semibold">Weekly slots</span>
+          <span className="text-iron-500 font-size-xs">
+            {course.slots.length} slot{course.slots.length === 1 ? "" : "s"} · {formatDuration(weeklyMinutes)} a week
           </span>
         </div>
-        <div className="d-flex flex-row align-items-center gap-2 flex-shrink-0">
-          {hasUnsaved && <span className="ctl-tag ctl-tag--soft">Unsaved changes</span>}
-          <DrawerTrigger
-            drawerChildren={JointCourseTimetableDrawer}
-            drawerData={{ course }}
-            showHeader={false}
-            closeOnOutsideClick={false}
-          >
-            <button type="button" className="border-none rounded-3 font-size-sm px-3 py-2 primary-background text-white d-flex flex-row align-items-center gap-2">
-              <Icon icon={configured ? "lucide:pencil" : "lucide:calendar-plus"} width={16} height={16} />
-              <span>{hasUnsaved ? "Continue setting times" : configured ? "Edit times" : "Set times"}</span>
-            </button>
-          </DrawerTrigger>
-        </div>
-      </header>
-
-      {course.specialties?.length > 0 && (
-        <div className="d-flex flex-row flex-wrap gap-1">
-          {course.specialties.map((specialty) => (
-            <span key={specialty.school_semester_id} className="jcs-chip">
-              {specialty.label}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="d-flex flex-column gap-2">
-        <span className="fw-medium">Weekly times</span>
-        {configured ? (
-          <ul className="jcs-overview__slots">
-            {course.slots.map((slot) => (
-              <li key={slot.id}>
-                <span className="fw-medium">{dayLabel(slot.day)}</span>
-                <span>
-                  {formatTime(slot.start_time)} – {formatTime(slot.end_time)}
-                </span>
-                <span className="text-iron-500">{formatDuration(slot.duration_minutes)}</span>
-                <span className="text-iron-500 text-truncate">{slot.hall?.name}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-iron-500 mb-0">
-            No times set yet. The timetables of the specialties sharing this course can't be
-            generated until it has them.
-          </p>
-        )}
+        <GenerateButton course={course} label="Generate again" outline />
       </div>
-
-      {toRegenerate.length > 0 && (
-        <div className="jcs-alert jcs-alert--warn">
-          <Icon icon="lucide:refresh-cw" width={16} height={16} className="jcs-alert__icon" />
-          <span>
-            Generate these timetables again so they use the latest times:{" "}
-            {toRegenerate.map((timetable) => timetable.label).join(", ")}.
-          </span>
-        </div>
-      )}
+      {days.map((day) => {
+        const daySlots = course.slots.filter((slot) => slot.day === day);
+        return (
+          <div key={day} className="bg-white border rounded-3 px-3 py-2">
+            <span className="fw-medium">{dayLabel(day)}</span>
+            <ul className="list-unstyled mb-0">
+              {daySlots.map((slot) => (
+                <li key={slot.id} className="d-flex flex-row align-items-center gap-3 py-2 border-top font-size-sm">
+                  <span style={{ minWidth: "10rem" }}>
+                    {formatTime(slot.start_time)} – {formatTime(slot.end_time)}
+                  </span>
+                  <span className="text-iron-500" style={{ minWidth: "3rem" }}>
+                    {formatDuration(slot.duration_minutes)}
+                  </span>
+                  <span className="text-truncate">{slot.hall?.name}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
     </section>
   );
 }

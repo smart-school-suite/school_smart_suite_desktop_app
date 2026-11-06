@@ -50,3 +50,22 @@ export const getJointCourseRecommendedWeek = async (semesterJointCourseId, paylo
   );
   return response.data;
 };
+
+// payload: { period_duration_id, days: [{ day, period_duration_id? }], start_time?, end_time? }
+// Returns every free option (time + hall) on those days, kept on the server as a proposal.
+export const generateJointCourseSlots = async (semesterJointCourseId, payload) => {
+  const response = await axiosInstance.post(
+    `joint-course-timetable/${semesterJointCourseId}/generate`,
+    payload,
+  );
+  return response.data;
+};
+
+// Saves the picked options exactly as generated. A 422 carries errors.conflicts.
+export const confirmJointCourseSlots = async (semesterJointCourseId, proposalId, optionIds) => {
+  const response = await axiosInstance.post(
+    `joint-course-timetable/${semesterJointCourseId}/proposals/${proposalId}/confirm`,
+    { option_ids: optionIds },
+  );
+  return response.data;
+};
