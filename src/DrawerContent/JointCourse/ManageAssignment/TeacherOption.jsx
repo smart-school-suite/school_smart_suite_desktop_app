@@ -1,7 +1,8 @@
 import { Icon } from "@iconify/react";
 import {
+  NO_QUALIFICATION,
   isHighWorkload,
-  qualificationLabel,
+  qualificationsTitle,
   workloadLabel,
 } from "../../../utils/jointCourse/teacherAssignment";
 import TeacherAvatar from "./TeacherAvatar";
@@ -13,6 +14,7 @@ import TeacherAvatar from "./TeacherAvatar";
 function TeacherOption({ teacher, selected, onSelect }) {
   const disabled = !teacher.eligible || teacher.is_current;
   const heavy = isHighWorkload(teacher.course_count);
+  const qualifications = teacher.qualifications ?? [];
   const status = teacher.is_current
     ? { tone: "accent", label: "Current teacher" }
     : !teacher.eligible
@@ -38,10 +40,16 @@ function TeacherOption({ teacher, selected, onSelect }) {
             {teacher.department?.name ? ` · ${teacher.department.name}` : ""}
           </span>
         </span>
-        <span className="jca-option__qual" title={qualificationLabel(teacher.qualification)}>
-          <span className="jca-option__abbr">{teacher.qualification?.abbreviation ?? "—"}</span>
+        <span className="jca-option__qual" title={qualificationsTitle(qualifications)}>
+          <span className="jca-option__abbr text-truncate">
+            {qualifications.length
+              ? qualifications.map((qualification) => qualification.abbreviation).join(" · ")
+              : "—"}
+          </span>
           <span className="jca-muted text-truncate">
-            {teacher.qualification?.name ?? "No qualification on record"}
+            {qualifications.length
+              ? qualifications.map((qualification) => qualification.field_of_study || qualification.name).join(", ")
+              : NO_QUALIFICATION}
           </span>
         </span>
         <span className={`jca-option__load ${heavy ? "jca-warn-text" : ""}`}>

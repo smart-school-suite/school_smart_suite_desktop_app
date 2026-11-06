@@ -14,10 +14,23 @@ export const initials = (teacher) =>
   teacher?.name?.slice(0, 2).toUpperCase() ||
   "?";
 
+export const NO_QUALIFICATION = "No qualification on record";
+
+/** "Doctor of Philosophy · Computer Science" */
 export const qualificationLabel = (qualification) =>
-  qualification
-    ? [qualification.name, qualification.field_of_study].filter(Boolean).join(" · ")
-    : "No qualification on record";
+  [qualification.name, qualification.field_of_study].filter(Boolean).join(" · ");
+
+/** One line per qualification, for tooltips. */
+export const qualificationsTitle = (qualifications = []) =>
+  qualifications.length
+    ? qualifications
+        .map((qualification) =>
+          [qualificationLabel(qualification), qualification.institution, qualification.year]
+            .filter(Boolean)
+            .join(", "),
+        )
+        .join("\n")
+    : NO_QUALIFICATION;
 
 export const workloadLabel = (count) => `${count} course${count === 1 ? "" : "s"}`;
 

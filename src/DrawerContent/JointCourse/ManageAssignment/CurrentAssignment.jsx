@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import {
+  NO_QUALIFICATION,
   isHighWorkload,
   qualificationLabel,
   workloadLabel,
@@ -56,10 +57,6 @@ function CurrentAssignment({ teachers, onChange, onAssign, justUpdatedId }) {
                 <dd>@{teacher.username}</dd>
               </div>
               <div>
-                <dt>Qualification</dt>
-                <dd>{qualificationLabel(teacher.qualification)}</dd>
-              </div>
-              <div>
                 <dt>Department</dt>
                 <dd>{teacher.department?.name ?? "—"}</dd>
               </div>
@@ -68,6 +65,28 @@ function CurrentAssignment({ teachers, onChange, onAssign, justUpdatedId }) {
                 <dd className={isHighWorkload(teacher.course_count) ? "jca-warn-text" : ""}>
                   {workloadLabel(teacher.course_count)}
                   {isHighWorkload(teacher.course_count) ? " · heavy" : ""}
+                </dd>
+              </div>
+              <div className="jca-current__wide">
+                <dt>Qualifications</dt>
+                <dd>
+                  {teacher.qualifications?.length ? (
+                    <ul className="jca-quals">
+                      {teacher.qualifications.map((qualification) => (
+                        <li key={qualification.id}>
+                          <span className="fw-semibold">{qualification.abbreviation}</span>
+                          <span>{qualificationLabel(qualification)}</span>
+                          {(qualification.institution || qualification.year) && (
+                            <span className="jca-muted">
+                              {[qualification.institution, qualification.year].filter(Boolean).join(", ")}
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    NO_QUALIFICATION
+                  )}
                 </dd>
               </div>
             </dl>

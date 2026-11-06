@@ -330,6 +330,26 @@
   margin: 0.5rem 0 0;
 }
 
+.jca-current__wide {
+  grid-column: 1 / -1;
+}
+
+.jca-quals {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.jca-quals li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.5rem;
+}
+
 .jca-empty {
   display: flex;
   flex-direction: column;
