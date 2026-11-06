@@ -1,8 +1,8 @@
 import { Icon } from "@iconify/react";
 import "../../../styles/jointCourseAssignment.css";
 import TeacherAvatar from "./TeacherAvatar";
-function CurrentAssignment({ teachers, onChange, onAssign, justUpdatedId }) {
-  if (teachers.length === 0) {
+function CurrentAssignment({ teacher, onChange, onAssign, justUpdatedId }) {
+  if (!teacher) {
     return (
       <div
         className="d-flex flex-column align-items-center justify-content-center text-center gap-2 p-3 rounded-4"
@@ -44,13 +44,6 @@ function CurrentAssignment({ teachers, onChange, onAssign, justUpdatedId }) {
 
   return (
     <div className="d-flex flex-column gap-2">
-      {teachers.length > 1 && (
-        <p className="jca-muted mb-0">
-          This course has {teachers.length} teachers. Choose which one to
-          replace.
-        </p>
-      )}
-      {teachers.map((teacher) => (
         <div className="card border-none border rounded-4 p-2">
           <div className="d-flex flex-column gap-3">
             <div className="d-flex flex-row align-items-center">
@@ -68,14 +61,13 @@ function CurrentAssignment({ teachers, onChange, onAssign, justUpdatedId }) {
               rounded-pill p-2  bg-none 
               d-flex flex-row align-items-center gap-2
                 justify-content-center"
-              onClick={() => onChange(teacher.id)}
+              onClick={onChange}
             >
               <Icon icon="lucide:repeat-2" width={16} height={16} />
               <span>Change Teacher</span>
             </button>
           </div>
         </div>
-      ))}
     </div>
   );
 }

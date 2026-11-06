@@ -31,23 +31,21 @@ function ManageJointCourseAssignment({ handleClose, drawerData }) {
     useFormError("Couldn't update the assignment");
 
   const [view, setView] = useState(VIEW.OVERVIEW);
-  const [replacingId, setReplacingId] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [justUpdatedId, setJustUpdatedId] = useState(null);
 
   const assignment = data?.data;
   const teachers = assignment?.teachers ?? [];
-  const current = assignment?.current_teachers ?? [];
-  const replacing =
-    current.find((teacher) => teacher.id === replacingId) ?? null;
+  // A course has one teacher; choosing another replaces them.
+  const current = assignment?.current_teacher ?? null;
+  const replacing = current;
   const selected =
     teachers.find((teacher) => teacher.id === selectedId) ?? null;
   const canConfirm =
     Boolean(selected?.eligible && !selected.is_current) && !save.isPending;
 
-  const openPicker = (teacherId = null) => {
+  const openPicker = () => {
     clearFormError();
-    setReplacingId(teacherId);
     setSelectedId(null);
     setView(VIEW.SELECT);
   };
@@ -128,10 +126,10 @@ function ManageJointCourseAssignment({ handleClose, drawerData }) {
                   >
                     <span>Assigned teacher</span>
                     <CurrentAssignment
-                      teachers={current}
+                      teacher={current}
                       justUpdatedId={justUpdatedId}
-                      onAssign={() => openPicker(null)}
-                      onChange={(teacherId) => openPicker(teacherId)}
+                      onAssign={openPicker}
+                      onChange={openPicker}
                     />
                   </motion.section>
                 ) : (
@@ -143,7 +141,7 @@ function ManageJointCourseAssignment({ handleClose, drawerData }) {
                     >
                       <Icon icon="lucide:arrow-left" width={14} height={14} />
                       <span>
-                        {current.length ? "Back to current assignment" : "Back"}
+                        {current ? "Back to current assignment" : "Back"}
                       </span>
                     </button>
                     <TeacherPicker
