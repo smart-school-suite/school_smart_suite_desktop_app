@@ -1,4 +1,4 @@
-
+import { motion } from "framer-motion";
 import {
   AlertCircle,
   BookOpen,
@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 import { isHighWorkload } from "../../../utils/jointCourse/teacherAssignment";
 import TeacherAvatar from "./TeacherAvatar";
+
 function TeacherOption({ teacher, selected, onSelect }) {
   const [showAllQualifications, setShowAllQualifications] = useState(false);
 
@@ -46,10 +47,14 @@ function TeacherOption({ teacher, selected, onSelect }) {
   };
 
   return (
-    <button
+    <motion.button
       type="button"
-      className={`teacher-option w-100 text-start border rounded-4 p-3 ${
-        selected ? "teacher-option-selected" : ""
+      layout
+      whileHover={!disabled ? { scale: 1.0008 } : undefined}
+      whileTap={!disabled ? { scale: 0.99 } : undefined}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
+      className={`card  w-100 text-start rounded-4 p-3 ${
+        selected ? "bg-primary-50 text-primary-500 border-solid border-1 border-primary-500" : "border-1 bg-white"
       } ${disabled ? "teacher-option-disabled" : ""}`}
       onClick={handleSelect}
       disabled={disabled}
@@ -61,12 +66,12 @@ function TeacherOption({ teacher, selected, onSelect }) {
 
         <div className="flex-grow-1 min-width-0">
           <div className="d-flex align-items-center justify-content-between gap-2">
-            <span className="fw-semibold text-iron-900 text-truncate">
+            <span className={`fw-semibold ${selected ? "text-primary-500" : "text-iron-900"} text-truncate`}>
               {teacher.name}
             </span>
 
             {selected ? (
-              <CircleCheck size={21} className="text-primary flex-shrink-0" />
+              <CircleCheck size={21} className="text-primary-500 flex-shrink-0" />
             ) : (
               <Circle
                 size={21}
@@ -76,7 +81,7 @@ function TeacherOption({ teacher, selected, onSelect }) {
             )}
           </div>
 
-          <div className="d-flex align-items-center gap-1 text-iron-500 font-size-xs">
+          <div className={`d-flex align-items-center gap-1 font-size-xs ${selected ? "text-primary-500" : "text-iron-500"}`}>
             <span className="text-truncate">@{teacher?.username}</span>
           </div>
         </div>
@@ -84,8 +89,8 @@ function TeacherOption({ teacher, selected, onSelect }) {
 
       <div className="mt-2">
         <div className="d-flex align-items-center gap-2 mb-2">
-          <GraduationCap size={15} className="text-iron-500" />
-          <span className="font-size-xs fw-medium text-iron-600">
+          <GraduationCap size={15} className={selected ? "text-primary-500" : "text-iron-500"} />
+          <span className={`font-size-xs fw-medium ${selected ? "text-primary-500" : "text-iron-600"}`}>
             Academic qualifications
           </span>
         </div>
@@ -96,7 +101,7 @@ function TeacherOption({ teacher, selected, onSelect }) {
               {visibleQualifications.map((qualification) => (
                 <span
                   key={qualification.id}
-                  className="teacher-qualification-chip"
+                  className={`teacher-qualification-chip ${selected ? "text-primary-500 border-primary-300 bg-primary-100" : ""}`}
                   title={qualification.name}
                 >
                   {qualification.abbreviation || qualification.name}
@@ -104,7 +109,7 @@ function TeacherOption({ teacher, selected, onSelect }) {
               ))}
 
               {!showAllQualifications && qualifications.length > 2 && (
-                <span className="teacher-qualification-more">
+                <span className={`teacher-qualification-more ${selected ? "text-primary-500" : ""}`}>
                   +{qualifications.length - 2} more
                 </span>
               )}
@@ -114,12 +119,12 @@ function TeacherOption({ teacher, selected, onSelect }) {
               <div className="mt-2 d-flex flex-column gap-2">
                 {qualifications.map((qualification) => (
                   <div key={qualification.id} className="d-flex flex-column">
-                    <span className="font-size-xs fw-medium text-iron-700">
+                    <span className={`font-size-xs fw-medium ${selected ? "text-primary-500" : "text-iron-700"}`}>
                       {qualification.name}
                     </span>
 
                     {qualification.pivot?.field_of_study && (
-                      <span className="font-size-xs text-iron-500">
+                      <span className={`font-size-xs ${selected ? "text-primary-500" : "text-iron-500"}`}>
                         {qualification.pivot.field_of_study}
                       </span>
                     )}
@@ -131,7 +136,9 @@ function TeacherOption({ teacher, selected, onSelect }) {
             {qualifications.length > 2 && (
               <button
                 type="button"
-                className="btn btn-link p-0 mt-2 font-size-xs text-primary text-decoration-none d-flex align-items-center gap-1"
+                className={`btn btn-link p-0 mt-2 font-size-xs text-decoration-none d-flex align-items-center gap-1 ${
+                  selected ? "text-primary-500" : "text-primary"
+                }`}
                 onClick={(event) => {
                   event.stopPropagation();
                   setShowAllQualifications((previous) => !previous);
@@ -151,14 +158,15 @@ function TeacherOption({ teacher, selected, onSelect }) {
             )}
           </>
         ) : (
-          <span className="font-size-xs text-iron-400">
+          <span className={`font-size-xs ${selected ? "text-primary-500" : "text-iron-400"}`}>
             No qualifications recorded
           </span>
         )}
       </div>
-      <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3 pt-3 border-top">
+
+      <div className={`d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3 pt-3 border-top ${selected ? "border-primary-200" : ""}`}>
         <span
-          className={`d-flex align-items-center gap-2 font-size-xs text-iron-500`}
+          className={`d-flex align-items-center gap-2 font-size-xs ${selected ? "text-primary-500" : "text-iron-500"}`}
         >
           <BookOpen size={14} />
           {courseLabel}
@@ -178,7 +186,7 @@ function TeacherOption({ teacher, selected, onSelect }) {
           <span className="font-size-xs">{teacher.ineligible_reason}</span>
         </div>
       )}
-    </button>
+    </motion.button>
   );
 }
 
