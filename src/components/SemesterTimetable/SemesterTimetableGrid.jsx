@@ -13,11 +13,15 @@ import { Icon } from "@iconify/react";
 import NumberFlow from "@number-flow/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, GraduationCap } from "lucide-react";
+import { ChevronDown, GraduationCap, Users } from "lucide-react";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SemesterTimetableError from "../../DrawerContent/SemesterTimetable/Error/SemesterTimetableError";
 import TimetableStatusBar from "./TimetableStatusBar";
+import {
+  isJointSlot,
+  mergeJointSessions,
+} from "../../utils/semesterTimetable/timetableSlots";
 import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
 import { useGenerateSemesterTimetable } from "../../hooks/semesterTimetable/useGenerateSemesterTimetable";
 import { useGetSemesterTimetableVersions } from "../../hooks/semesterTimetable/useGetSemesterTimetableVersion";
@@ -341,7 +345,10 @@ function TimetableGrid() {
     () =>
       (timetable?.data ?? []).reduce(
         (sum, day) =>
-          sum + (day.slots ?? []).filter((slot) => slot.slot_type !== "break").length,
+          sum +
+          mergeJointSessions(day.slots ?? []).filter(
+            (slot) => slot.slot_type !== "break",
+          ).length,
         0,
       ),
     [timetable],
@@ -355,28 +362,40 @@ function TimetableGrid() {
         {isTimetableLoading ? (
           <GridSkeleton sections={2} />
         ) : (
-          timetable?.data?.map((slots, index) => (
-            <Fragment key={index}>
-              <div className="d-flex flex-column gap-2">
-                <span className="font-size-lg fw-bold text-capitalize">
-                  {slots.day}
-                </span>
-                <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
-                  {slots.slots.map((slot) =>
-                    slot.slot_type === "break" ? (
-                      <Fragment key={slot.id}>
-                        <BreakPeriodCard slot={slot} />
-                      </Fragment>
-                    ) : (
-                      <Fragment key={slot.id}>
-                        <PeriodCard slot={slot} />
-                      </Fragment>
-                    ),
-                  )}
+          timetable?.data?.map((day, index) => {
+            const daySlots = mergeJointSessions(day.slots ?? []);
+            const jointCount = daySlots.filter(isJointSlot).length;
+            return (
+              <Fragment key={day.day ?? index}>
+                <div className="d-flex flex-column gap-2">
+                  <div className="d-flex flex-row align-items-baseline gap-2">
+                    <span className="font-size-lg fw-bold text-capitalize">
+                      {day.day}
+                    </span>
+                    {jointCount > 0 && (
+                      <span className="d-inline-flex align-items-center gap-1 font-size-xs text-primary-700">
+                        <Users size={12} />
+                        {jointCount} joint {jointCount === 1 ? "course" : "courses"}
+                      </span>
+                    )}
+                  </div>
+                  <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
+                    {daySlots.map((slot) =>
+                      slot.slot_type === "break" ? (
+                        <Fragment key={`${slot.start_time}-${slot.end_time}`}>
+                          <BreakPeriodCard slot={slot} />
+                        </Fragment>
+                      ) : (
+                        <Fragment key={`${slot.start_time}-${slot.end_time}`}>
+                          <PeriodCard slot={slot} />
+                        </Fragment>
+                      ),
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Fragment>
-          ))
+              </Fragment>
+            );
+          })
         )}
       </div>
       <TimetableStatusBar slotCount={lessonCount} />
