@@ -157,82 +157,52 @@ function ManageJointCourseAssignment({ handleClose, drawerData }) {
           )}
         </div>
 
-        <AnimatePresence initial={false}>
-          {view === VIEW.SELECT && assignment && (
-            <motion.footer
-              className="jca-footer"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 12 }}
-              transition={{ duration: 0.16 }}
-            >
-              <div className="jca-footer__summary">
-                {selected ? (
-                  <>
-                    {replacing && (
-                      <>
-                        <TeacherAvatar teacher={replacing} size="sm" />
-                        <span className="text-truncate">{replacing.name}</span>
-                        <Icon
-                          icon="lucide:arrow-right"
-                          width={14}
-                          height={14}
-                          className=" flex-shrink-0"
-                        />
-                      </>
-                    )}
-                    <TeacherAvatar teacher={selected} size="sm" />
-                    <span className="fw-medium text-truncate">
-                      {selected.name}
-                    </span>
-                  </>
-                ) : (
-                  <span>
-                    {replacing
-                      ? `Select a teacher to replace ${replacing.name}`
-                      : "Select a teacher"}
-                  </span>
-                )}
-              </div>
-              <div className="d-flex flex-row align-items-center gap-2 flex-shrink-0">
-                <button
-                  type="button"
-                  className="jca-btn jca-btn--ghost"
-                  onClick={backToOverview}
-                  disabled={save.isPending}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="jca-btn jca-btn--primary"
-                  onClick={confirm}
-                  disabled={!canConfirm}
-                >
-                  {save.isPending ? (
-                    <SingleSpinner />
-                  ) : replacing ? (
-                    "Save Changes"
-                  ) : (
-                    "Assign Teacher"
-                  )}
-                </button>
-              </div>
-            </motion.footer>
-          )}
-        </AnimatePresence>
       </div>
+      {/* The submit action lives in the fixed footer so it stays visible however long the teacher list is. */}
       <div className="drawer-footer font-size-sm">
         <div className="d-flex flex-column w-100">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
-          <div className="d-flex flex-row align-items-center justify-content-between p-2">
+          <div className="d-flex flex-row align-items-center justify-content-between gap-2 p-2">
             <button
               type="button"
               className="border-none bg-none p-2"
-              onClick={() => handleClose()}
+              onClick={() => (view === VIEW.SELECT ? backToOverview() : handleClose())}
+              disabled={save.isPending}
             >
               Cancel
             </button>
+            {view === VIEW.SELECT && assignment && (
+              <div className="d-flex flex-row align-items-center gap-2 min-w-0">
+                <div className="d-flex flex-row align-items-center gap-2 min-w-0">
+                  {selected ? (
+                    <>
+                      {replacing && (
+                        <>
+                          <TeacherAvatar teacher={replacing} size="sm" />
+                          <span className="text-truncate">{replacing.name}</span>
+                          <Icon icon="lucide:arrow-right" width={14} height={14} className="flex-shrink-0" />
+                        </>
+                      )}
+                      <TeacherAvatar teacher={selected} size="sm" />
+                      <span className="fw-medium text-truncate">{selected.name}</span>
+                    </>
+                  ) : (
+                    <span className="text-iron-500 text-truncate">
+                      {replacing ? `Select a teacher to replace ${replacing.name}` : "Select a teacher"}
+                    </span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2 flex-shrink-0"
+                  onClick={confirm}
+                  disabled={!canConfirm}
+                  style={{ opacity: canConfirm ? 1 : 0.6 }}
+                >
+                  {save.isPending ? <SingleSpinner /> : replacing ? "Save Changes" : "Assign Teacher"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
