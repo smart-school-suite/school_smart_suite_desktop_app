@@ -2263,3 +2263,22 @@ textarea::-webkit-scrollbar-thumb:hover {
   opacity: 0.6;
 }
 
+.teacher-option-disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.teacher-qualification-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: #f0f6fa;
+  color: #31576b;
+  font-size: 11px;
+  font-weight: 600;
+}
+.teacher-qualification-more {
+  color: #0EA7E9;
+  font-size: 11px;
+  font-weight: 600;
+}
