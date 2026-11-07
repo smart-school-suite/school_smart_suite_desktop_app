@@ -1,21 +1,27 @@
 import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { CalendarClock, CalendarRange, Check, Dot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   DayPicker,
-  OptionTile,
   Section,
   WizardFooter,
   WizardStep,
 } from "../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
-import { useGetSemesterTimetablePeriods } from "../../../../hooks/semesterTimetable/useSemesterTimetablePeriodDuration";
+import RectangleSkeleton from "../../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useSchoolDayHours } from "../../../../hooks/jointCourseTimetable/useSchoolDayHours";
+import { useGetSemesterTimetablePeriods } from "../../../../hooks/semesterTimetable/useSemesterTimetablePeriodDuration";
 import { describeError } from "../../../../utils/jointCourseTimetable/recommendSlot";
-import { dayLabel, formatTime, sortDays } from "../../../../utils/semesterTimetable/timeUtils";
-
+import {
+  dayLabel,
+  formatTime,
+  sortDays,
+} from "../../../../utils/semesterTimetable/timeUtils";
 const COURSE_ASSIGNMENT_PATH = "/joint-course";
 
 function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
-  const { course, form, updateForm, proposal, generate, runGenerate } = drawerData;
+  const { course, form, updateForm, proposal, generate, runGenerate } =
+    drawerData;
   const periods = useGetSemesterTimetablePeriods();
   const schoolDay = useSchoolDayHours();
   const durations = periods.data?.data ?? [];
@@ -23,7 +29,9 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
   const days = sortDays(form.days);
 
   const toggleDay = (day, isSelected) => {
-    const nextDays = isSelected ? form.days.filter((item) => item !== day) : [...form.days, day];
+    const nextDays = isSelected
+      ? form.days.filter((item) => item !== day)
+      : [...form.days, day];
     const overrides = { ...form.overrides };
     if (isSelected) delete overrides[day];
     updateForm({ days: nextDays, overrides });
@@ -36,7 +44,6 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
     updateForm({ overrides });
   };
 
-  // Moving back and forth keeps the proposal; only a changed request regenerates.
   const handleNext = () => (proposal ? nextStep() : runGenerate(nextStep));
 
   return (
@@ -46,8 +53,15 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
       footer={
         <WizardFooter
           onNext={handleNext}
-          nextLabel={generate.isPending ? "Finding free slots…" : "Find free slots"}
-          nextDisabled={!hasLecturer || days.length === 0 || !form.durationId || generate.isPending}
+          nextLabel={
+            generate.isPending ? "Finding free slots…" : "Find free slots"
+          }
+          nextDisabled={
+            !hasLecturer ||
+            days.length === 0 ||
+            !form.durationId ||
+            generate.isPending
+          }
           hint={
             !hasLecturer
               ? "Assign a lecturer first"
@@ -58,82 +72,266 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
         />
       }
     >
-      {!hasLecturer && <LecturerRequired title={course.course?.title} onAssign={handleClose} />}
+      <div className="d-flex flex-column gap-4">
+        {!hasLecturer && (
+          <LecturerRequired
+            title={course.course?.title}
+            onAssign={handleClose}
+          />
+        )}
 
-      {generate.error && (
-        <div className="jcs-alert jcs-alert--danger mb-3" role="alert">
-          <Icon icon="lucide:circle-x" width={18} height={18} className="jcs-alert__icon" />
-          <div className="d-flex flex-column gap-1">
-            <span className="fw-semibold">
-              {generate.error?.response?.data?.errors?.title ?? "Couldn't find free slots"}
-            </span>
-            <span>{describeError(generate.error, "Something went wrong. Try again.")}</span>
-          </div>
-        </div>
-      )}
-
-      {schoolDay.start && schoolDay.end && (
-        <div className="jcs-context">
-          <span className="jcs-context__item" title="Source: App Configuration · Timetable Settings">
-            <Icon icon="lucide:clock" width={14} height={14} />
-            School day {formatTime(schoolDay.start)} – {formatTime(schoolDay.end)}
-            <span className="jcs-context__source">App Configuration</span>
-          </span>
-        </div>
-      )}
-
-      <Section label="Teaching days" hint={days.length ? days.map(dayLabel).join(", ") : "No day selected yet"}>
-        <DayPicker selected={form.days} onToggle={toggleDay} />
-      </Section>
-
-      <Section label="Period duration" hint="One slot lasts one period">
-        {periods.isLoading ? (
-          <p className="jcs-field-hint mb-0">Loading durations…</p>
-        ) : periods.error ? (
-          <p className="jcs-field-hint jcs-field-hint--danger mb-0">
-            {describeError(periods.error, "Couldn't load the period durations.")}
-          </p>
-        ) : (
-          <div className="cw-options">
-            {durations.map((duration) => (
-              <OptionTile
-                key={duration.id}
-                selected={form.durationId === duration.id}
-                onClick={() => updateForm({ durationId: duration.id })}
-                title={duration.name}
-                meta={`${duration.minutes} min`}
-              />
-            ))}
+        {generate.error && (
+          <div className="jcs-alert jcs-alert--danger mb-3" role="alert">
+            <Icon
+              icon="lucide:circle-x"
+              width={18}
+              height={18}
+              className="jcs-alert__icon"
+            />
+            <div className="d-flex flex-column gap-1">
+              <span className="fw-semibold">
+                {generate.error?.response?.data?.errors?.title ??
+                  "Couldn't find free slots"}
+              </span>
+              <span>
+                {describeError(
+                  generate.error,
+                  "Something went wrong. Try again.",
+                )}
+              </span>
+            </div>
           </div>
         )}
-      </Section>
 
-      {form.durationId && days.length > 0 && (
-        <Section label="Different duration on some days" hint="Optional">
-          <ul className="jcs-counts">
-            {days.map((day) => (
-              <li key={day} className="jcs-count">
-                <span className="fw-medium">{dayLabel(day)}</span>
-                <select
-                  className="form-select form-select-sm font-size-sm w-auto"
-                  value={form.overrides[day] ?? ""}
-                  onChange={(event) => setOverride(day, event.target.value || null)}
-                  aria-label={`Period duration on ${dayLabel(day)}`}
-                >
-                  <option value="">Same as above</option>
-                  {durations
-                    .filter((duration) => duration.id !== form.durationId)
-                    .map((duration) => (
-                      <option key={duration.id} value={duration.id}>
-                        {duration.name} ({duration.minutes} min)
-                      </option>
-                    ))}
-                </select>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
+        {schoolDay.start && schoolDay.end && (
+          <div className="jcs-context">
+            <span
+              className="jcs-context__item"
+              title="Source: App Configuration · Timetable Settings"
+            >
+              <Icon icon="lucide:clock" width={14} height={14} />
+              School day {formatTime(schoolDay.start)} –{" "}
+              {formatTime(schoolDay.end)}
+              <span className="jcs-context__source">App Configuration</span>
+            </span>
+          </div>
+        )}
+
+        <div className="d-flex flex-column gap-2">
+          <div>
+            <div className="d-flex flex-row align-items-center gap-1 fw-semibold">
+              <span>01</span>
+              <Dot size={12} />
+              <span>Teaching Days</span>
+            </div>
+            <span className="font-size-sm text-iron-500">
+              How Long Should Each Teaching Session Last ?
+            </span>
+          </div>
+          <DayPicker selected={form.days} onToggle={toggleDay} />
+        </div>
+
+        <div className="d-flex flex-column gap-2">
+          <div>
+            <div className="d-flex flex-row align-items-center gap-1 fw-semibold">
+              <span>02</span>
+              <Dot size={12} />
+              <span>Period Duration</span>
+            </div>
+            <span className="font-size-sm text-iron-500">
+              How Long Should Each Teaching Session Last ?
+            </span>
+          </div>
+          <div
+            className="d-grid gap-2"
+            style={{
+              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            }}
+          >
+            {periods.isLoading ? (
+              <RectangleSkeleton />
+            ) : (
+              durations.map((d) => {
+                const isSelected = form.durationId === d.id;
+                return (
+                  <motion.div
+                    key={d.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    layout
+                    className={`card p-2 rounded-3 text-capitalize d-flex flex-column gap-3 cursor-pointer ${
+                      isSelected
+                        ? "border-1 border-solid border-primary-500 text-primary-500 bg-primary-50"
+                        : "border-1 border-solid border-iron-200 bg-white"
+                    }`}
+                    onClick={() => updateForm({ durationId: d.id })}
+                  >
+                    <div className="d-flex align-items-center justify-content-between">
+                      <span className="font-size-xs text-iron-500">
+                        {d.name}
+                      </span>
+
+                      <AnimatePresence>
+                        {isSelected && (
+                          <motion.div
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
+                            className="bg-primary-500 text-white rounded-circle p-1 d-flex align-items-center justify-content-center"
+                            style={{ width: "18px", height: "18px" }}
+                          >
+                            <Check size={11} />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                    <span className="font-size-md fw-medium">{`${d.minutes} min`}</span>
+                  </motion.div>
+                );
+              })
+            )}
+          </div>
+        </div>
+        <div>
+          <div className="d-flex flex-column gap-2">
+            <div className="d-flex flex-column">
+              <span className="fw-medium">
+                How should durations be scheduled?
+              </span>
+              <span className="font-size-sm text-iron-500">
+                Choose how teaching durations should apply across your selected
+                days.
+              </span>
+            </div>
+            <div
+              className="d-grid gap-3"
+              style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}
+            >
+              <motion.div
+                onClick={() => updateForm({ schedulingMode: "same" })}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                layout
+                className={`card p-2 cursor-pointer d-flex flex-column gap-3 position-relative ${
+                  form.schedulingMode === "same"
+                    ? "border-1 border-solid border-primary-500 text-primary-500 bg-primary-50"
+                    : "border-1 border-solid border-iron-200 bg-white"
+                }`}
+                style={{ borderRadius: "0.75rem" }}
+              >
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <div
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      display: "grid",
+                      placeItems: "center",
+                    }}
+                    className="border bg-iron-100 rounded-3 text-iron-700"
+                  >
+                    <CalendarClock strokeWidth={1.5} size={16} />
+                  </div>
+                  <AnimatePresence>
+                    {form.schedulingMode === "same" && (
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="bg-primary-500 text-white rounded-circle p-1 d-flex align-items-center justify-content-center"
+                        style={{ width: "18px", height: "18px" }}
+                      >
+                        <Check size={11} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+                <div className="d-flex flex-column">
+                  <span className="fw-semibold">Same duration</span>
+                  <span className="font-size-sm text-iron-500">
+                    All teaching days use one duration.
+                  </span>
+                </div>
+              </motion.div>
+              <motion.div
+                onClick={() => updateForm({ schedulingMode: "different" })}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                layout
+                className={`card p-2 cursor-pointer d-flex flex-column position-relative gap-4 ${
+                  form.schedulingMode === "different"
+                    ? "border-1 border-solid border-primary-500 text-primary-500 bg-primary-50"
+                    : "border-1 border-solid border-iron-200 bg-white"
+                }`}
+                style={{ borderRadius: "0.75rem" }}
+              >
+                <div className="d-flex flex-row align-items-center justify-content-between">
+                  <div
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      display: "grid",
+                      placeItems: "center",
+                    }}
+                    className="border bg-iron-100 rounded-3 text-iron-700"
+                  >
+                    <CalendarRange strokeWidth={1.5} size={16} />
+                  </div>
+                  <AnimatePresence>
+                    {form.schedulingMode === "different" && (
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="bg-primary-500 text-white rounded-circle p-1 d-flex align-items-center justify-content-center"
+                        style={{ width: "18px", height: "18px" }}
+                      >
+                        <Check size={11} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+                <div className="d-flex flex-column">
+                  <span className="fw-semibold">Different durations</span>
+                  <span className="font-size-sm text-iron-500">
+                    Customize duration for individual days.
+                  </span>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+        {form.durationId && days.length > 0 &&  form.schedulingMode === "different" && (
+          <Section label="Different duration on some days" hint="Optional">
+            <ul className="jcs-counts">
+              {days.map((day) => (
+                <li key={day} className="jcs-count">
+                  <span className="fw-medium">{dayLabel(day)}</span>
+                  <select
+                    className="form-select form-select-sm font-size-sm w-auto"
+                    value={form.overrides[day] ?? ""}
+                    onChange={(event) =>
+                      setOverride(day, event.target.value || null)
+                    }
+                    aria-label={`Period duration on ${dayLabel(day)}`}
+                  >
+                    <option value="">Same as above</option>
+                    {durations
+                      .filter((duration) => duration.id !== form.durationId)
+                      .map((duration) => (
+                        <option key={duration.id} value={duration.id}>
+                          {duration.name} ({duration.minutes} min)
+                        </option>
+                      ))}
+                  </select>
+                </li>
+              ))}
+            </ul>
+          </Section>
+        )}
+      </div>
     </WizardStep>
   );
 }
@@ -142,12 +340,18 @@ function LecturerRequired({ title, onAssign }) {
   const navigate = useNavigate();
   return (
     <div className="jcs-alert jcs-alert--warn mb-3" role="alert">
-      <Icon icon="lucide:user-round-x" width={18} height={18} className="jcs-alert__icon" />
+      <Icon
+        icon="lucide:user-round-x"
+        width={18}
+        height={18}
+        className="jcs-alert__icon"
+      />
       <div className="d-flex flex-column gap-1">
         <span className="fw-semibold">A lecturer must be assigned first</span>
         <span>
-          {title ?? "This course"} has no lecturer yet. Slots are found around the lecturer's other
-          classes, so assign one from the joint course's Manage Assignment, then come back.
+          {title ?? "This course"} has no lecturer yet. Slots are found around
+          the lecturer's other classes, so assign one from the joint course's
+          Manage Assignment, then come back.
         </span>
         <button
           type="button"

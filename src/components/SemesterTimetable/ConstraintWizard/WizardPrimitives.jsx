@@ -1,12 +1,7 @@
 import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { daysOfWeek } from "../../../data/data";
 import { dayLabel, dayShortLabel, formatDuration, formatTime, minutesBetween } from "../../../utils/semesterTimetable/timeUtils";
-
-/* -------------------------------------------------------------------------- */
-/* Layout                                                                     */
-/* -------------------------------------------------------------------------- */
-
-/** One wizard step: scrollable body with an intro, plus a pinned footer. */
 export function WizardStep({ title, description, children, footer }) {
   return (
     <div className="cw-step">
@@ -24,10 +19,6 @@ export function WizardStep({ title, description, children, footer }) {
   );
 }
 
-/**
- * Standard footer. Pass `onBack` to show Back, and `onNext` to show the
- * primary action. `hint` explains why the primary action is disabled.
- */
 export function WizardFooter({
   onBack,
   onNext,
@@ -98,11 +89,6 @@ export function Note({ icon = "lucide:info", children }) {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Introduction building blocks                                               */
-/* -------------------------------------------------------------------------- */
-
-/** Short explanatory bullets with a neutral marker. */
 export function PointList({ items }) {
   return (
     <ul className="cw-points">
@@ -122,7 +108,6 @@ export function PointList({ items }) {
   );
 }
 
-/** Numbered outline of what the wizard will ask for. */
 export function Outline({ items }) {
   return (
     <ol className="cw-outline">
@@ -235,14 +220,6 @@ export function EmptyState({ icon = "lucide:calendar-x-2", title, text, action }
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Inputs                                                                     */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Week toggle grid. Every day of the week is shown in calendar order so the
- * layout never shifts; days outside `available` are disabled.
- */
 export function DayPicker({
   selected = [],
   onToggle,
@@ -253,29 +230,48 @@ export function DayPicker({
   const allowed = available
     ? available.map((day) => String(day).toLowerCase())
     : null;
+
   return (
     <div className="cw-days" role="group">
       {daysOfWeek.map((day) => {
         const isSelected = selected.includes(day.value);
         const lockReason = lockedDays[day.value];
         const isAvailable = (!allowed || allowed.includes(day.value)) && !lockReason;
+        const isDisabled = !isAvailable && !isSelected;
+
         return (
-          <button
+          <motion.button
             key={day.value}
             type="button"
             className={`cw-day ${isSelected ? "is-selected" : ""}`}
             aria-pressed={isSelected}
-            disabled={!isAvailable && !isSelected}
+            disabled={isDisabled}
             title={
-              lockReason ?? (!isAvailable && !isSelected ? disabledReason : day.label)
+              lockReason ?? (isDisabled ? disabledReason : day.label)
             }
             onClick={() => onToggle(day.value, isSelected)}
+            // Framer Motion interactions (disabled buttons won't trigger hover/tap animations)
+            whileHover={!isDisabled ? { scale: 1.03 } : undefined}
+            whileTap={!isDisabled ? { scale: 0.97 } : undefined}
+            layout
           >
             <span className="cw-day__short">{dayShortLabel(day.value)}</span>
-            <span className="cw-day__check" aria-hidden="true">
-              <Icon icon="lucide:check" width={12} height={12} />
-            </span>
-          </button>
+            
+            <AnimatePresence>
+              {isSelected && (
+                <motion.span
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="cw-day__check"
+                  aria-hidden="true"
+                >
+                  <Icon icon="lucide:check" width={12} height={12} />
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
         );
       })}
     </div>

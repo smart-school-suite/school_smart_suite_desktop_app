@@ -1,17 +1,11 @@
 import { useState } from "react";
 import ConstraintWizard from "../../../components/SemesterTimetable/ConstraintWizard/ConstraintWizard";
 import { useGenerateJointCourseSlots } from "../../../hooks/jointCourseTimetable/useGenerateJointCourseSlots";
-import { GENERATE_SLOTS_STEP_FLOW } from "../../../utils/steps/jointCourseTimetable/generateSlotsStepFlow";
 import "../../../styles/jointCourseSlots.css";
+import { GENERATE_SLOTS_STEP_FLOW } from "../../../utils/steps/jointCourseTimetable/generateSlotsStepFlow";
 
-const EMPTY_FORM = { days: [], durationId: null, overrides: {} };
+const EMPTY_FORM = { days: [], durationId: null, overrides: {}, schedulingMode: "same" };
 
-/**
- * Generate and save a joint course's weekly slots: choose days and a period
- * duration, pick from the free slots the server finds, then save the picks.
- * The form, the proposal and the picks live here so they survive moving
- * between steps.
- */
 function GenerateSlotsDrawer({ handleClose, drawerData }) {
   const course = drawerData?.course;
   const [form, setForm] = useState(EMPTY_FORM);
@@ -19,7 +13,6 @@ function GenerateSlotsDrawer({ handleClose, drawerData }) {
   const [picks, setPicks] = useState([]);
   const generate = useGenerateJointCourseSlots();
 
-  // Any change to the request makes the current proposal stale.
   const updateForm = (changes) => {
     setForm((current) => ({ ...current, ...changes }));
     setProposal(null);

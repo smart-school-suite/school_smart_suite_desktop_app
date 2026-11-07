@@ -3362,6 +3362,46 @@ body {
   border-left-color: var(--iron-950);
 }
 
+.border-solid {
+    border-style: solid;
+}
+
+.border-dashed {
+    border-style: dashed;
+}
+
+.border-dotted {
+    border-style: dotted;
+}
+
+.border-double {
+    border-style: double;
+}
+
+.border-groove {
+    border-style: groove;
+}
+
+.border-ridge {
+    border-style: ridge;
+}
+
+.border-inset {
+    border-style: inset;
+}
+
+.border-outset {
+    border-style: outset;
+}
+
+.border-none {
+    border-style: none;
+}
+
+.border-hidden {
+    border-style: hidden;
+}
+
 /* Border Width */
 .border-0 {
   border-width: 0;
