@@ -1,15 +1,7 @@
 import { Icon } from "@iconify/react";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowDown,
-  ChevronDown,
-  Dot,
-  Mail,
-  Phone,
-  UserCheck,
-} from "lucide-react";
+import { ArrowDown, ChevronDown, Mail, Phone, UserCheck } from "lucide-react";
 import { Fragment } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
@@ -17,16 +9,11 @@ import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
 import JobPopOver from "../../components/Popover/JobPopover";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import ExamNavigator from "../../components/SideBars/ExamNavigator";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import AssignInvigilator from "../../DrawerContent/Invigilator/AssignInvigilator";
-import { useGetExams } from "../../hooks/exam/useGetExams";
 import { useGetAssignedInvigilators } from "../../hooks/invigilator/useGetAssignedInvigilators";
 import { useRemoveInvigilator } from "../../hooks/invigilator/useRemoveInvigilator";
-import {
-  setSelectedAcademicYear,
-  setSelectedExam,
-} from "../../Slices/exam/examInvigilatorSlice";
-import { isLastElement } from "../../utils/functions";
 function ExamInvigilator() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const moduleState = useSelector((state) => state.examInvigilator);
@@ -46,8 +33,8 @@ function ExamInvigilator() {
   };
   return (
     <>
-      <main>
-        <div className="d-flex flex-column gap-2 h-100">
+      <main className="main-container font-size-sm">
+        <div className="d-flex flex-column gap-1 h-100">
           <div className="page-head page-head--bar">
             <div className="d-flex align-items-center gap-2">
               <div
@@ -78,32 +65,20 @@ function ExamInvigilator() {
               </ModalButton>
             </div>
           </div>
-          <div className="d-flex flex-row align-items-start gap-1 h-100 w-100">
+          <div
+            className="d-flex flex-row align-items-stretch gap-2 flex-grow-1"
+            style={{ minHeight: 0 }}
+          >
+            <ExamNavigator />
             <div
-              className="card border-none border bg-white p-2 font-size-sm d-flex flex-column gap-3"
-              style={{
-                width: "25%",
-                height: "91.4dvh",
-                borderRadius: "0.8rem",
-              }}
+              className="d-flex flex-column gap-2 flex-grow-1"
+              style={{ minWidth: 0, minHeight: 0 }}
             >
-              <div className="d-flex flex-column gap-1">
-                <span className="font-size-sm fw-medium">Examinations</span>
-                <div>
-                  <SearchInput
-                    placeholder="Search for Exam"
-                    hotkey={"Ctrl+E"}
-                    size="md"
-                  />
-                </div>
-              </div>
-              <div className="d-flex flex-column gap-3">
-                <ExaminationDropDown moduleState={moduleState} />
-              </div>
-            </div>
-            <div className="d-flex flex-column gap-2" style={{ width: "75%" }}>
               {moduleState?.selectedExam ? (
-                <div className="d-flex flex-column gap-4">
+                <div
+                  className="d-flex flex-column gap-4 h-100"
+                  style={{ minHeight: 0 }}
+                >
                   <div className="d-flex flex-row align-items-center justify-content-between w-100">
                     <div className="w-50">
                       <SearchInput
@@ -139,7 +114,11 @@ function ExamInvigilator() {
                   </div>
                   <div
                     className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pe-1"
-                    style={{ maxHeight: "84dvh", paddingBottom: "10rem" }}
+                    style={{
+                      flex: "1 1 auto",
+                      minHeight: 0,
+                      paddingBottom: "2rem",
+                    }}
                   >
                     {isLoading ? (
                       [...Array(2)].map((_, index) => (
@@ -174,8 +153,8 @@ function ExamInvigilator() {
                           "Something went wrong"
                         }
                       />
-                    ) : Object.keys(invigilators?.data).length > 0 ? (
-                      Object.keys(invigilators?.data).map((obj, index) => (
+                    ) : Object.keys(invigilators?.data ?? {}).length > 0 ? (
+                      Object.keys(invigilators?.data ?? {}).map((obj, index) => (
                         <Fragment key={index}>
                           <div className="d-flex flex-column gap-1">
                             <span className="font-size-sm fw-semibold text-capitalize">
@@ -188,7 +167,7 @@ function ExamInvigilator() {
                               }}
                               className="gap-2"
                             >
-                              {invigilators?.data[obj].map((invig) => (
+                              {invigilators.data[obj].map((invig) => (
                                 <Fragment key={invig.id}>
                                   <div className="card rounded-4 border-none border shadow-sm p-2 font-size-sm d-flex flex-column gap-4">
                                     <div className="d-flex flex-row justify-content-end">
@@ -311,7 +290,7 @@ function ExamInvigilator() {
                   </div>
                 </div>
               ) : (
-                <div className="d-flex flex-column align-items-center gap-2 text-center">
+                <div className="d-flex flex-column align-items-center justify-content-center gap-2 text-center h-100">
                   <img
                     src="./sss-maskot/happy.png"
                     alt="sss-timetable-maskot"
@@ -325,7 +304,7 @@ function ExamInvigilator() {
                     Ready To Manage Invigilator Assignment ?
                   </span>
                   <p className="text-muted font-size-sm mb-0">
-                    Select a Exam To Get Started
+                    Select an exam from the sidebar to get started
                   </p>
                 </div>
               )}
@@ -337,196 +316,3 @@ function ExamInvigilator() {
   );
 }
 export default ExamInvigilator;
-
-function ExaminationDropDown({ moduleState }) {
-  const dispatch = useDispatch();
-  const { data: exams, isLoading, error } = useGetExams();
-  return isLoading ? (
-    [...Array(6)].map((_, index) => (
-      <RectangleSkeleton
-        key={index}
-        width={"100%"}
-        height={"1.5rem"}
-        borderRadius={6}
-      />
-    ))
-  ) : error ? (
-    <NotFoundError
-      title={error?.response?.data?.errors?.title || "Error"}
-      description={
-        error?.response?.data?.errors?.description || "Something went wrong"
-      }
-    />
-  ) : (
-    groupBySchoolYearAndSemester(exams?.data).map((data, dataIndex) => {
-      const isOpen = moduleState?.selectedAcademicYear === data?.school_year;
-      return (
-        <Fragment key={dataIndex}>
-          <div className="d-flex flex-column gap-2">
-            <button
-              className="border-none bg-none px-1 d-flex flex-row align-items-center justify-content-between w-100 fw-semibold text-color"
-              onClick={() =>
-                dispatch(
-                  setSelectedAcademicYear({
-                    academicYear: data?.school_year,
-                  }),
-                )
-              }
-            >
-              <span>{data?.school_year} Academic Year</span>
-              <motion.span
-                style={{ display: "inline-block" }}
-                animate={{ rotate: isOpen ? 180 : 0 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-              >
-                <ChevronDown size={16} />
-              </motion.span>
-            </button>
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <motion.div
-                  className="pe-2"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  style={{ overflow: "hidden" }}
-                >
-                  <div
-                    className="scroll-bar-sm over-flow-x-hidden d-flex flex-column gap-2 over-flow-y-auto pe-1 "
-                    style={{
-                      overflowY: "auto",
-                      maxHeight: "34dvh",
-                      height: "auto",
-                    }}
-                  >
-                    <div className="d-flex flex-column gap-3">
-                      {data?.exams.map((examSemester, examSemesterIndex) => (
-                        <Fragment key={examSemesterIndex}>
-                          <div className="d-flex flex-column gap-1">
-                            <small className="text-muted text-capitalize ps-1">
-                              {examSemester?.semester}
-                            </small>
-                            <div className="d-flex flex-column gap-1">
-                              {examSemester?.exams?.map((exam, examIndex) => (
-                                <Fragment key={exam?.id}>
-                                  <div
-                                    className={`d-flex flex-column pointer-cursor 
-                                    p-1 rounded-3 transition-all
-                                   ${
-                                     moduleState?.selectedExam?.id === exam?.id
-                                       ? "primary-background-100 color-primary"
-                                       : "bg-none hover-bg-primary-50 hover-text-primary-400"
-                                   }
-                                   `}
-                                    onClick={() =>
-                                      dispatch(
-                                        setSelectedExam({
-                                          exam: exam,
-                                        }),
-                                      )
-                                    }
-                                  >
-                                    <span className="fw-medium">
-                                      {exam?.specialty_name}
-                                    </span>
-                                    <div
-                                      className={`d-flex flex-row
-                                         align-items-center gap-1
-                                         ${moduleState?.selectedExam?.id === exam?.id && "text-muted"} 
-                                         text-capitalize`}
-                                    >
-                                      <span>{exam?.max_score} pts</span>
-                                      <Dot size={12} />
-                                      <span>{exam?.level_name}</span>
-                                      <Dot size={12} />
-                                      <span>{exam?.exam_type}</span>
-                                      <Dot size={12} />
-                                      {exam?.status == "active" ? (
-                                        <small
-                                          style={{
-                                            height: "1rem",
-                                            display: "grid",
-                                            alignItems: "center",
-                                            fontSize: "0.65rem",
-                                          }}
-                                          className="rounded-pill px-1 bg-fern-100 text-fern-400"
-                                        >
-                                          {exam?.status}
-                                        </small>
-                                      ) : exam?.status == "upcoming" ? (
-                                        <small
-                                          style={{
-                                            height: "1rem",
-                                            display: "grid",
-                                            alignItems: "center",
-                                            fontSize: "0.65rem",
-                                          }}
-                                          className="rounded-pill px-1 primary-background-100 color-primary"
-                                        >
-                                          {exam?.status}
-                                        </small>
-                                      ) : (
-                                        <small
-                                          style={{
-                                            height: "1rem",
-                                            display: "grid",
-                                            alignItems: "center",
-                                            background: "#fafafa",
-                                            color: "#a3a3a3",
-                                            fontSize: "0.65rem",
-                                          }}
-                                          className="rounded-pill px-1"
-                                        >
-                                          {exam?.status}
-                                        </small>
-                                      )}
-                                    </div>
-                                  </div>
-                                  {!isLastElement(
-                                    examIndex,
-                                    examSemester?.exams?.length,
-                                  ) && <hr />}
-                                </Fragment>
-                              ))}
-                            </div>
-                          </div>
-                        </Fragment>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </Fragment>
-      );
-    })
-  );
-}
-
-function groupBySchoolYearAndSemester(data) {
-  const grouped = data.reduce((acc, item) => {
-    const year = item.school_year || "";
-    const semester = item.semester_name || "";
-
-    if (!acc[year]) {
-      acc[year] = {};
-    }
-
-    if (!acc[year][semester]) {
-      acc[year][semester] = [];
-    }
-
-    acc[year][semester].push(item);
-    return acc;
-  }, {});
-
-  return Object.entries(grouped).map(([school_year, semesters]) => ({
-    school_year,
-    exams: Object.entries(semesters).map(([semester, exams]) => ({
-      semester,
-      exams,
-    })),
-  }));
-}
