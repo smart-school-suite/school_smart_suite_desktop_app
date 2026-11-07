@@ -49,13 +49,9 @@ function BreakPeriodCard({ slot }) {
           <span style={{ lineHeight: 0 }}>
             <Icon icon="formkit:time" width="16" height="16" />
           </span>
-          <div className="d-flex flex-row align-items-center fw-semibold">
-            <span>{slot?.start_time}</span>
-            <span>
-              <Icon icon="radix-icons:dash" width="16" height="16" />
-            </span>
-            <span>{slot?.end_time}</span>
-          </div>
+          <span className="fw-semibold tabular-nums">
+            {slot?.start_time} – {slot?.end_time}
+          </span>
         </div>
       </div>
     </>

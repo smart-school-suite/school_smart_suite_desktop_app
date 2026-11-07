@@ -37,6 +37,9 @@ const CustomDropdown = forwardRef(
       dropdownWidth = "30vw",
       value = null,
       defaultValue = null,
+      // false: no green "selected" border or "Looks Good" line (for compact
+      // optional pickers); errors still show.
+      showFeedback = true,
     },
     ref,
   ) => {
@@ -190,7 +193,7 @@ const CustomDropdown = forwardRef(
               ${
                 error
                   ? "border-danger text-danger"
-                  : selectedItem
+                  : selectedItem && showFeedback
                     ? "border-success text-success"
                     : ""
               }`}
@@ -209,7 +212,7 @@ const CustomDropdown = forwardRef(
               </span>
             </div>
             {error && <span className="font-size-sm text-danger">{error}</span>}
-            {!error && selectedItem && (
+            {!error && selectedItem && showFeedback && (
               <span className="font-size-sm text-success">Looks Good</span>
             )}
           </div>

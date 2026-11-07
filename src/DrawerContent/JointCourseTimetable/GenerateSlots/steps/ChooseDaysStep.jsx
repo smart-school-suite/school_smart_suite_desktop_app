@@ -8,6 +8,7 @@ import {
   WizardFooter,
   WizardStep
 } from "../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
+import CustomDropdown from "../../../../components/Dropdowns/Dropdowns";
 import RectangleSkeleton from "../../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useSchoolDayHours } from "../../../../hooks/jointCourseTimetable/useSchoolDayHours";
 import { useGetSemesterTimetablePeriods } from "../../../../hooks/semesterTimetable/useSemesterTimetablePeriodDuration";
@@ -18,6 +19,9 @@ import {
   sortDays,
 } from "../../../../utils/semesterTimetable/timeUtils";
 const COURSE_ASSIGNMENT_PATH = "/joint-course";
+// Dropdown option meaning "use the default duration chosen above".
+const SAME_DURATION = "same";
+const OVERRIDE_WIDTH = "240px";
 
 function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
   const { course, form, updateForm, proposal, generate, runGenerate } =
@@ -27,6 +31,21 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
   const durations = periods.data?.data ?? [];
   const hasLecturer = (course.teachers ?? []).length > 0;
   const days = sortDays(form.days);
+  const defaultDuration = durations.find((d) => d.id === form.durationId);
+  const overrideOptions = [
+    {
+      id: SAME_DURATION,
+      label: defaultDuration
+        ? `Same as above (${defaultDuration.minutes} min)`
+        : "Same as above",
+    },
+    ...durations
+      .filter((duration) => duration.id !== form.durationId)
+      .map((duration) => ({
+        id: duration.id,
+        label: `${duration.name} (${duration.minutes} min)`,
+      })),
+  ];
 
   const toggleDay = (day, isSelected) => {
     const nextDays = isSelected
@@ -42,6 +61,14 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
     if (durationId) overrides[day] = durationId;
     else delete overrides[day];
     updateForm({ overrides });
+  };
+
+  // A day can't override with the default itself, so drop such overrides.
+  const selectDuration = (durationId) => {
+    const overrides = Object.fromEntries(
+      Object.entries(form.overrides).filter(([, id]) => id !== durationId),
+    );
+    updateForm({ durationId, overrides });
   };
 
   const handleNext = () => (proposal ? nextStep() : runGenerate(nextStep));
@@ -168,7 +195,7 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
                         ? "border-1 border-solid border-primary-500 text-primary-500 bg-primary-50"
                         : "border-1 border-solid border-iron-200 bg-white"
                     }`}
-                    onClick={() => updateForm({ durationId: d.id })}
+                    onClick={() => selectDuration(d.id)}
                   >
                     <div className="d-flex align-items-center justify-content-between">
                       <span className="font-size-xs text-iron-500">
@@ -312,23 +339,24 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
             {days.map((day) => (
                 <li key={day} className="jcs-count">
                   <span className="fw-medium">{dayLabel(day)}</span>
-                  <select
-                    className="form-select form-select-sm font-size-sm w-auto"
-                    value={form.overrides[day] ?? ""}
-                    onChange={(event) =>
-                      setOverride(day, event.target.value || null)
-                    }
-                    aria-label={`Period duration on ${dayLabel(day)}`}
-                  >
-                    <option value="">Same as above</option>
-                    {durations
-                      .filter((duration) => duration.id !== form.durationId)
-                      .map((duration) => (
-                        <option key={duration.id} value={duration.id}>
-                          {duration.name} ({duration.minutes} min)
-                        </option>
-                      ))}
-                  </select>
+                  {/* CustomDropdown reserves space for an error line; this
+                      optional picker never shows one, so size it to the trigger. */}
+                  <div style={{ width: OVERRIDE_WIDTH, height: 36 }}>
+                    <CustomDropdown
+                      data={overrideOptions}
+                      displayKey={["label"]}
+                      valueKey={["id"]}
+                      value={form.overrides[day] ?? SAME_DURATION}
+                      onSelect={({ id }) =>
+                        setOverride(day, id === SAME_DURATION ? null : id)
+                      }
+                      isLoading={periods.isLoading}
+                      placeholder="Same as above"
+                      dropdownWidth={OVERRIDE_WIDTH}
+                      optional
+                      showFeedback={false}
+                    />
+                  </div>
                 </li>
               ))}
           </div>
