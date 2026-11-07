@@ -1,12 +1,12 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CalendarClock, CalendarRange, Check, Dot } from "lucide-react";
+import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   DayPicker,
-  Section,
   WizardFooter,
-  WizardStep,
+  WizardStep
 } from "../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 import RectangleSkeleton from "../../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useSchoolDayHours } from "../../../../hooks/jointCourseTimetable/useSchoolDayHours";
@@ -149,7 +149,11 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
             }}
           >
             {periods.isLoading ? (
-              <RectangleSkeleton />
+              [...Array(4)].map((_, index) => (
+                 <Fragment key={index}>
+                  <RectangleSkeleton />
+                 </Fragment>
+              ))
             ) : (
               durations.map((d) => {
                 const isSelected = form.durationId === d.id;
@@ -304,9 +308,8 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
           </div>
         </div>
         {form.durationId && days.length > 0 &&  form.schedulingMode === "different" && (
-          <Section label="Different duration on some days" hint="Optional">
-            <ul className="jcs-counts">
-              {days.map((day) => (
+          <div>
+            {days.map((day) => (
                 <li key={day} className="jcs-count">
                   <span className="fw-medium">{dayLabel(day)}</span>
                   <select
@@ -328,8 +331,7 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
                   </select>
                 </li>
               ))}
-            </ul>
-          </Section>
+          </div>
         )}
       </div>
     </WizardStep>
