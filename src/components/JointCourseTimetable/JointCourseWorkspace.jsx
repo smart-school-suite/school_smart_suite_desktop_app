@@ -81,13 +81,13 @@ function Placeholder({ text, children }) {
   );
 }
 
-/** The course's saved weekly slots, grouped by day. */
+/** The course's saved weekly slots as cards grouped by day, like the semester timetable. */
 function SavedSlots({ course }) {
   const days = sortDays([...new Set(course.slots.map((slot) => slot.day))]);
   const weeklyMinutes = course.weekly_minutes ?? course.slots.reduce((sum, slot) => sum + (slot.duration_minutes ?? 0), 0);
 
   return (
-    <section className="w-100 d-flex flex-column gap-3 pt-2" style={{ maxWidth: "48rem" }}>
+    <section className="w-100 d-flex flex-column gap-3 pt-2 flex-grow-1" style={{ minHeight: 0 }}>
       <div className="d-flex flex-row align-items-center justify-content-between gap-2">
         <div className="d-flex flex-column">
           <span className="fw-semibold">Weekly slots</span>
@@ -97,28 +97,75 @@ function SavedSlots({ course }) {
         </div>
         <GenerateButton course={course} label="Generate again" outline />
       </div>
-      {days.map((day) => {
-        const daySlots = course.slots.filter((slot) => slot.day === day);
-        return (
-          <div key={day} className="bg-white border rounded-3 px-3 py-2">
-            <span className="fw-medium">{dayLabel(day)}</span>
-            <ul className="list-unstyled mb-0">
-              {daySlots.map((slot) => (
-                <li key={slot.id} className="d-flex flex-row align-items-center gap-3 py-2 border-top font-size-sm">
-                  <span style={{ minWidth: "10rem" }}>
-                    {formatTime(slot.start_time)} – {formatTime(slot.end_time)}
-                  </span>
-                  <span className="text-iron-500" style={{ minWidth: "3rem" }}>
-                    {formatDuration(slot.duration_minutes)}
-                  </span>
-                  <span className="text-truncate">{slot.hall?.name}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
+      <div className="timetable-grid-container d-flex flex-column gap-4 flex-grow-1" style={{ minHeight: 0, maxHeight: "none" }}>
+        {days.map((day) => {
+          // Saved slots come back in time order within each day.
+          const daySlots = course.slots.filter((slot) => slot.day === day);
+          return (
+            <div key={day} className="d-flex flex-column gap-2">
+              <span className="font-size-lg fw-bold text-capitalize">{dayLabel(day)}</span>
+              <div className="d-flex flex-row align-items-stretch gap-2 flex-wrap">
+                {daySlots.map((slot, index) => (
+                  <SlotCard key={slot.id} course={course} slot={slot} number={index + 1} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </section>
+  );
+}
+
+/** One saved slot, in the semester timetable's period card style. Slot 1 is the day's first. */
+function SlotCard({ course, slot, number }) {
+  const first = number === 1;
+  return (
+    <div
+      className="card font-size-sm p-2 d-flex flex-column gap-3 border-none shadow-sm border"
+      style={{ width: "49%", borderRadius: "0.85rem" }}
+    >
+      <div className="d-flex flex-column gap-1">
+        <div className="d-flex flex-row align-items-center justify-content-between gap-2">
+          <span className="fw-semibold text-truncate">{course.course?.title}</span>
+          <span
+            className={`rounded-pill px-2 py-1 font-size-xs fw-medium flex-shrink-0 ${
+              first ? "bg-primary-50 text-primary-500" : "bg-iron-100 text-iron-500"
+            }`}
+            title={first ? "First slot of the day" : undefined}
+          >
+            Slot {number}
+          </span>
+        </div>
+        <div className="d-flex flex-row align-items-center gap-1 text-iron-500">
+          <span>{course.course?.code}</span>
+          <span style={{ lineHeight: 0 }}>
+            <Icon icon="bi:dot" width="16" height="16" />
+          </span>
+          <div className="d-flex flex-row align-items-center gap-2">
+            <span style={{ lineHeight: 0 }}>
+              <Icon icon="streamline-flex:city-hall" width="16" height="16" />
+            </span>
+            <span className="fw-normal text-truncate">{slot.hall?.name}</span>
+          </div>
+        </div>
+      </div>
+      <div className="d-flex flex-row align-items-center gap-1">
+        <img src="./images/user.png" alt="" style={{ width: "1.75rem", height: "1.75rem" }} />
+        <span>{slot.teacher?.name ?? course.teachers?.[0]?.name}</span>
+      </div>
+      <div className="d-flex flex-row align-items-center justify-content-between gap-1">
+        <div className="d-flex flex-row align-items-center gap-1">
+          <span style={{ lineHeight: 0 }}>
+            <Icon icon="formkit:time" width="16" height="16" />
+          </span>
+          <span className="fw-semibold">
+            {formatTime(slot.start_time)} – {formatTime(slot.end_time)}
+          </span>
+        </div>
+        <span className="text-iron-500">{formatDuration(slot.duration_minutes)}</span>
+      </div>
+    </div>
   );
 }
 
