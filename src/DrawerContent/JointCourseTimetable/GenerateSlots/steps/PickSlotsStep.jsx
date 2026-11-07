@@ -1,20 +1,22 @@
 import { Icon } from "@iconify/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   EmptyState,
   Section,
   TextButton,
-  TimeSpan,
   WizardFooter,
   WizardStep,
 } from "../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 import {
   MAX_PICKS,
   blockedReason,
-  optionsById,
-  togglePick,
+  chooseHall,
+  picksWithoutHall,
+  timeKey,
+  toggleTime,
 } from "../../../../utils/jointCourseTimetable/slotPicks";
 import { formatTime } from "../../../../utils/semesterTimetable/timeUtils";
+import SlotCard from "../components/SlotCard";
 
 /** Minutes until the proposal expires, refreshed every 15 seconds. */
 const useMinutesLeft = (expiresAt) => {
@@ -27,10 +29,9 @@ const useMinutesLeft = (expiresAt) => {
 };
 
 function PickSlotsStep({ nextStep, previousStep, drawerData }) {
-  const { proposal, picks, setPicks, generate, runGenerate } = drawerData;
+  const { course, proposal, picks, setPicks, generate, runGenerate } = drawerData;
   const days = proposal?.days ?? [];
   const [activeDay, setActiveDay] = useState(days.find((day) => day.times.length)?.day ?? days[0]?.day);
-  const options = useMemo(() => optionsById(proposal), [proposal]);
   const minutesLeft = useMinutesLeft(proposal?.expires_at);
   const expired = minutesLeft === 0;
   const day = days.find((item) => item.day === activeDay) ?? days[0];
@@ -44,18 +45,26 @@ function PickSlotsStep({ nextStep, previousStep, drawerData }) {
   }
 
   const picksOn = (dayKey) => picks.filter((pick) => pick.day === dayKey).length;
+  const missingHall = picksWithoutHall(picks).length;
+  const studentCount = proposal.students?.total ?? null;
 
   return (
     <WizardStep
       title="Pick the slots you want"
-      description="Every time below is free for the lecturer, with the halls free at that time. Pick a hall at each time you want to teach; picks on the same day can't overlap."
+      description="Every slot below is a time the lecturer is free. Select the slots you want, then choose a hall for each; slots on the same day can't overlap."
       footer={
         <WizardFooter
           onBack={previousStep}
           onNext={nextStep}
           nextLabel={picks.length ? `Review ${picks.length} slot${picks.length === 1 ? "" : "s"}` : "Review"}
-          nextDisabled={picks.length === 0 || expired}
-          hint={expired ? "These slots expired" : "Pick at least one slot"}
+          nextDisabled={picks.length === 0 || missingHall > 0 || expired}
+          hint={
+            expired
+              ? "These slots expired"
+              : missingHall
+                ? `Choose a hall for ${missingHall} slot${missingHall === 1 ? "" : "s"}`
+                : "Select at least one slot"
+          }
         />
       }
     >
@@ -74,8 +83,14 @@ function PickSlotsStep({ nextStep, previousStep, drawerData }) {
         </span>
         <span className="jcs-context__item">
           <Icon icon="lucide:circle-check" width={14} height={14} />
-          {picks.length} of {proposal.max_selections ?? MAX_PICKS} picked
+          {picks.length} of {proposal.max_selections ?? MAX_PICKS} selected
         </span>
+        {studentCount !== null && (
+          <span className="jcs-context__item" title={(proposal.students?.by_specialty ?? []).map((item) => `${item.label}: ${item.student_count}`).join("\n")}>
+            <Icon icon="lucide:users" width={14} height={14} />
+            {studentCount} student{studentCount === 1 ? "" : "s"}
+          </span>
+        )}
         {minutesLeft !== null && (
           <span className={`jcs-context__item ${minutesLeft <= 5 ? "jcs-context__item--warn" : ""}`}>
             <Icon icon="lucide:timer" width={14} height={14} />
@@ -129,42 +144,26 @@ function PickSlotsStep({ nextStep, previousStep, drawerData }) {
           {day.times.length === 0 ? (
             <EmptyState icon="lucide:calendar-x-2" title={`No free time on ${day.day_label}`} text={day.message} />
           ) : (
-            <ul className="jcs-summaries">
+            <div className="row g-2">
               {day.times.map((time) => {
-                const blocked = blockedReason(picks, day.day, time);
+                const key = timeKey(day.day, time.start_time);
                 return (
-                  <li key={time.start_time} className="jcs-summary">
-                    <div
-                      className={`d-flex flex-row flex-wrap align-items-center gap-2 ${blocked ? "opacity-50" : ""}`}
-                      title={blocked ?? undefined}
-                    >
-                      <span style={{ minWidth: "10rem" }}>
-                        <TimeSpan start={time.start_time} end={time.end_time} />
-                      </span>
-                      {time.halls.map((hall) => {
-                        const picked = picks.some((pick) => pick.option_id === hall.option_id);
-                        return (
-                          <button
-                            key={hall.option_id}
-                            type="button"
-                            disabled={Boolean(blocked) || expired}
-                            aria-pressed={picked}
-                            onClick={() => setPicks(togglePick(picks, options[hall.option_id]))}
-                            className={`rounded-pill px-3 py-1 font-size-sm d-flex flex-row align-items-center gap-1 ${
-                              picked ? "primary-background text-white border border-0" : "bg-white border"
-                            }`}
-                            title={hall.capacity ? `${hall.name} · ${hall.capacity} seats` : hall.name}
-                          >
-                            {picked && <Icon icon="lucide:check" width={13} height={13} />}
-                            <span>{hall.name}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </li>
+                  <div key={key} className="col-12 col-xl-6">
+                    <SlotCard
+                      course={course}
+                      teacher={proposal.teacher}
+                      time={time}
+                      pick={picks.find((pick) => pick.key === key)}
+                      blocked={blockedReason(picks, day.day, time)}
+                      disabled={expired}
+                      studentCount={studentCount}
+                      onToggle={() => setPicks(toggleTime(picks, day, time))}
+                      onChooseHall={(hall) => setPicks(chooseHall(picks, key, hall))}
+                    />
+                  </div>
                 );
               })}
-            </ul>
+            </div>
           )}
         </Section>
       )}
