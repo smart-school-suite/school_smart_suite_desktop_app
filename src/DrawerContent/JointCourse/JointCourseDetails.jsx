@@ -139,7 +139,7 @@ function JointCourseDetails({ handleClose, drawerData }) {
                     Specialties (Specialties Who offer this joint course)
                   </span>
                   <div>
-                    {courseDetails?.data?.course_specialty?.map(
+                    {courseDetails?.data?.course_specialties?.map(
                       (cSpecialty, index) => (
                         <Fragment key={cSpecialty.id}>
                           <div className="d-flex flex-column gap-1">
@@ -160,7 +160,7 @@ function JointCourseDetails({ handleClose, drawerData }) {
                             </div>
                             {!isLastElement(
                               index,
-                              courseDetails.data.course_specialty,
+                              courseDetails.data.course_specialties,
                             ) && (
                               <HorizontalDashedLine
                                 dashed={false}

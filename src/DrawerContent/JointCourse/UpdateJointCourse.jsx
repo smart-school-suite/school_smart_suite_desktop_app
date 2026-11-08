@@ -89,7 +89,7 @@ function UpdateJointCourse({ handleClose, drawerData }) {
         type: courseDetails.data.types.map((type) => ({
           id: type.id,
         })),
-        specialties: courseDetails?.data?.course_specialty?.map(
+        specialties: courseDetails?.data?.course_specialties?.map(
           (specialty) => ({
             id: specialty?.specialty?.id,
           }),
