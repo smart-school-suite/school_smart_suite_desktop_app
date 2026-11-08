@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useId } from "react";
 import { daysOfWeek } from "../../../data/data";
 import { dayLabel, dayShortLabel, formatDuration, formatTime, minutesBetween } from "../../../utils/semesterTimetable/timeUtils";
 export function WizardStep({ title, description, children, footer }) {
@@ -366,4 +367,62 @@ export function TextButton({ icon, children, onClick, tone }) {
 /** Frame around the shared TimeRangeInput so it matches the wizard. */
 export function TimeField({ children }) {
   return <div className="cw-timefield">{children}</div>;
+}
+
+/**
+ * Day (or date) tabs for the wizard. The underline slides to the selected
+ * tab and the selected label turns primary.
+ * tabs: [{ key, label, fullLabel?, count?, countTitle? }]
+ */
+export function DayTabs({ tabs, activeKey, onChange }) {
+  const indicatorId = `cw-tab-indicator-${useId()}`;
+  return (
+    <div className="cw-tabs" role="tablist">
+      {tabs.map((tab) => {
+        const active = tab.key === activeKey;
+        return (
+          <button
+            key={tab.key}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            aria-label={tab.fullLabel}
+            title={tab.fullLabel}
+            className={`cw-tab ${active ? "is-active text-primary-500" : ""}`}
+            onClick={() => onChange(tab.key)}
+          >
+            {tab.label}
+            {tab.count !== undefined && (
+              <span className="cw-tab__count" title={tab.countTitle}>{tab.count}</span>
+            )}
+            {active && (
+              <motion.span
+                layoutId={indicatorId}
+                className="cw-tab__indicator"
+                transition={{ type: "spring", stiffness: 500, damping: 40 }}
+              />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Fades and slides a tab's content in when the active tab changes. */
+export function TabPanel({ panelKey, children }) {
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={panelKey}
+        role="tabpanel"
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -4 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  );
 }
