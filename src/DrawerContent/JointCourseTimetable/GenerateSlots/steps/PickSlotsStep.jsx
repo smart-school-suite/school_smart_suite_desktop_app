@@ -16,7 +16,8 @@ import {
   toggleTime,
 } from "../../../../utils/jointCourseTimetable/slotPicks";
 import { formatTime } from "../../../../utils/semesterTimetable/timeUtils";
-import HallPicker from "../components/HallPicker";
+import CustomModal from "../../../../components/Modals/Modal";
+import SelectHall from "../../../../ModalContent/JointCourseTimetable/SelectHall";
 import SlotCard from "../components/SlotCard";
 
 /** Minutes until the proposal expires, refreshed every 15 seconds. */
@@ -57,7 +58,7 @@ function PickSlotsStep({ nextStep, previousStep, drawerData }) {
   const maxPicks = proposal.max_selections ?? MAX_PICKS;
 
   return (
-    <div className="position-relative d-flex flex-column flex-grow-1" style={{ minHeight: 0 }}>
+    <div className="d-flex flex-column flex-grow-1" style={{ minHeight: 0 }}>
       <WizardStep
         title="Pick available slots"
         description="Select the available teaching periods you want to use, then assign a hall to each. Periods on the same day can't overlap."
@@ -198,16 +199,27 @@ function PickSlotsStep({ nextStep, previousStep, drawerData }) {
         )}
       </WizardStep>
 
-      <HallPicker
-        target={hallTarget}
-        course={course}
-        studentCount={studentCount}
-        onClose={closeHallPicker}
-        onConfirm={(hall) => {
-          setPicks(chooseHall(picks, hallTarget.pick.key, hall));
-          setHallTarget(null);
-        }}
-      />
+      {/* Escape is handled inside SelectHall so it doesn't also close the
+          drawer; enforceFocus off so the modal doesn't fight the drawer's
+          focus trap. */}
+      <CustomModal
+        show={Boolean(hallTarget)}
+        handleClose={closeHallPicker}
+        closeOnEscape={false}
+        enforceFocus={false}
+        centered
+      >
+        {hallTarget && (
+          <SelectHall
+            rowData={{ ...hallTarget, course, studentCount }}
+            handleClose={closeHallPicker}
+            onConfirm={(hall) => {
+              setPicks(chooseHall(picks, hallTarget.pick.key, hall));
+              setHallTarget(null);
+            }}
+          />
+        )}
+      </CustomModal>
     </div>
   );
 }
