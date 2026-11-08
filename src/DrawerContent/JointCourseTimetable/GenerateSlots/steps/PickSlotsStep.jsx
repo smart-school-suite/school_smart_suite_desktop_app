@@ -60,8 +60,6 @@ function PickSlotsStep({ nextStep, previousStep, drawerData }) {
   return (
     <div className="d-flex flex-column flex-grow-1" style={{ minHeight: 0 }}>
       <WizardStep
-        title="Pick available slots"
-        description="Select the available teaching periods you want to use, then assign a hall to each. Periods on the same day can't overlap."
         footer={
           <div className="d-flex flex-row align-items-center justify-content-between gap-3 w-100 px-2 py-2 font-size-sm">
             <div className="d-flex flex-row align-items-center gap-3" style={{ minWidth: 0 }}>

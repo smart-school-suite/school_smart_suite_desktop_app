@@ -3,12 +3,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CalendarClock, CalendarRange, Check, Dot } from "lucide-react";
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
+import CustomDropdown from "../../../../components/Dropdowns/Dropdowns";
 import {
   DayPicker,
   WizardFooter,
   WizardStep
 } from "../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
-import CustomDropdown from "../../../../components/Dropdowns/Dropdowns";
 import RectangleSkeleton from "../../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useSchoolDayHours } from "../../../../hooks/jointCourseTimetable/useSchoolDayHours";
 import { useGetSemesterTimetablePeriods } from "../../../../hooks/semesterTimetable/useSemesterTimetablePeriodDuration";
@@ -75,8 +75,6 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
 
   return (
     <WizardStep
-      title="When is this course taught?"
-      description="Choose the teaching days and how long one period lasts. We'll list every free slot on those days, and you pick the ones you want."
       footer={
         <WizardFooter
           onNext={handleNext}
@@ -178,7 +176,7 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
             {periods.isLoading ? (
               [...Array(4)].map((_, index) => (
                  <Fragment key={index}>
-                  <RectangleSkeleton />
+                  <RectangleSkeleton height="10dvh"/>
                  </Fragment>
               ))
             ) : (
