@@ -50,8 +50,6 @@ function PickSlotsStep({ nextStep, previousStep, drawerData }) {
 
   return (
     <WizardStep
-      title="Pick the slots you want"
-      description="Every slot below is a time the lecturer is free. Select the slots you want, then choose a hall for each; slots on the same day can't overlap."
       footer={
         <WizardFooter
           onBack={previousStep}
