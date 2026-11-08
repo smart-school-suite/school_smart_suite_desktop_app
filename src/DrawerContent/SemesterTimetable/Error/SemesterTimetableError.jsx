@@ -55,7 +55,7 @@ const collapse = {
 const viewStyle = { display: "flex", flexDirection: "column", flex: 1, minHeight: 0 };
 const iconBox = (size) => ({ width: size, height: size, flexShrink: 0 });
 
-const AFFECTED_ICONS = { course: BookOpen, teacher: User, hall: Building2 };
+const AFFECTED_ICONS = { course: BookOpen, teacher: User, invigilator: User, hall: Building2 };
 // Bootstrap's .border sets the colour with !important, so toned borders are
 // drawn inline from the palette variables instead.
 const TONE = {
@@ -81,11 +81,33 @@ const EFFORT_TONE = { small: "text-fern-600", medium: "text-old-lace-600", large
  * version (POST .../solutions/apply { solution_ids }); this version stays.
  */
 function SemesterTimetableError({ handleClose }) {
+  const dispatch = useDispatch();
   const version = useSelector((state) => state.semesterTimetable.timetableVersion);
+  const query = useGetSemesterTimetableSolutions(version?.id);
+  const apply = useApplySemesterTimetableSolutions();
+  return (
+    <TimetableResolution
+      version={version}
+      query={query}
+      apply={apply}
+      onOpenVersion={(newVersion) => dispatch(setTimetableVersion(newVersion))}
+      handleClose={handleClose}
+    />
+  );
+}
+
+export default SemesterTimetableError;
+
+/**
+ * The drawer itself, shared by the semester and exam timetables. `query` is
+ * the solutions query of the version, `apply` the apply-solutions mutation,
+ * and `normalize` turns another timetable's response into the semester shape
+ * ({ summary, days[{ day, day_label, problems[] }], setup_problems[] }).
+ */
+export function TimetableResolution({ version, query, apply, onOpenVersion, handleClose, normalize }) {
   const versionId = version?.id;
-  const { data, isLoading, isFetching, error, refetch } =
-    useGetSemesterTimetableSolutions(versionId);
-  const insight = data?.data;
+  const { data, isLoading, isFetching, error, refetch } = query;
+  const insight = useMemo(() => (normalize ? normalize(data?.data) : data?.data), [data, normalize]);
   const days = useMemo(() => insight?.days ?? [], [insight]);
   const problems = useMemo(() => allProblems(days), [days]);
   const setupProblems = insight?.setup_problems ?? [];
@@ -94,7 +116,6 @@ function SemesterTimetableError({ handleClose }) {
   const [dayFilter, setDayFilter] = useState("all");
   const [view, setView] = useState("review"); // review | confirm | result
   const [expanded, setExpanded] = useState({});
-  const apply = useApplySemesterTimetableSolutions();
 
   // Keep selections valid when solutions are refetched.
   useEffect(() => {
@@ -243,14 +264,12 @@ function SemesterTimetableError({ handleClose }) {
 
       {view === "result" && apply.data && (
         <motion.div key="result" style={viewStyle} {...fade}>
-          <ResultView result={apply.data.data} onClose={handleClose} />
+          <ResultView result={apply.data.data} onClose={handleClose} onOpenVersion={onOpenVersion} />
         </motion.div>
       )}
     </AnimatePresence>
   );
 }
-
-export default SemesterTimetableError;
 
 /* ------------------------------------------------------------------ */
 /* Shared bits                                                         */
@@ -869,13 +888,12 @@ function ConfirmView({ version, problems, selection, apply, onBack, onApply }) {
 /* Result                                                              */
 /* ------------------------------------------------------------------ */
 
-function ResultView({ result, onClose }) {
-  const dispatch = useDispatch();
+function ResultView({ result, onClose, onOpenVersion }) {
   const changes = result?.changes ?? [];
   const failed = changes.filter((change) => !change.applied).length;
 
   const openNewVersion = () => {
-    if (result?.new_version) dispatch(setTimetableVersion(result.new_version));
+    if (result?.new_version) onOpenVersion?.(result.new_version);
     onClose();
   };
 

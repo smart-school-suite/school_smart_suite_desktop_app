@@ -15,13 +15,23 @@ import { CalendarDays, ChevronDown } from "lucide-react";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useGetJointCourseTerms } from "../../hooks/jointCourseTimetable/useGetJointCourseTerms";
 
-const termMeta = (term) =>
+const semesterTermMeta = (term) =>
   term.joint_course_count === 0
     ? "No joint courses"
     : `${term.configured_count} of ${term.joint_course_count} joint courses set`;
 
-function TermDropdown({ value, onChange }) {
-  const { data, isLoading, error } = useGetJointCourseTerms();
+const SEMESTER_TEXT = {
+  title: "Select academic year and semester",
+  hint: "Choose which term's joint courses to schedule",
+  search: "Search academic year or semester",
+};
+
+// The exam joint course page reuses this dropdown with its own terms query
+// (`termsQuery`), wording (`text`) and meta line (`meta`).
+function TermDropdown({ value, onChange, termsQuery, text = SEMESTER_TEXT, meta = semesterTermMeta }) {
+  const semesterTerms = useGetJointCourseTerms({ enabled: !termsQuery });
+  const { data, isLoading, error } = termsQuery ?? semesterTerms;
+  const termMeta = meta;
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [hovered, setHovered] = useState(false);
@@ -107,9 +117,9 @@ function TermDropdown({ value, onChange }) {
             </>
           ) : (
             <>
-              <span className="fw-medium text-iron-700">Select academic year and semester</span>
+              <span className="fw-medium text-iron-700">{text.title}</span>
               <span className="font-size-xs text-iron-500">
-                Choose which term's joint courses to schedule
+                {text.hint}
               </span>
             </>
           )}
@@ -145,7 +155,7 @@ function TermDropdown({ value, onChange }) {
               <input
                 type="search"
                 className="rounded-3 form-control font-size-sm"
-                placeholder="Search academic year or semester"
+                placeholder={text.search}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 autoFocus
