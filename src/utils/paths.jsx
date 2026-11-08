@@ -54,6 +54,7 @@ export const examRoutes = [
   "/exam",
   "/exam-candidate",
   "/exam-timetable",
+  "/exam/joint-course-timetable",
   "/exam-result",
   "/exam-invigilator",
 ];

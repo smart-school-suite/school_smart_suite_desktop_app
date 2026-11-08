@@ -1,20 +1,18 @@
-import { Icon } from "@iconify/react";
-import { useGetCourseDetails } from "../../hooks/course/useGetCourseDetails";
-import TextDisplay from "../../components/TextComponents/TextDisplay";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
+import { Dot } from "lucide-react";
 import { Fragment } from "react";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import TextDisplay from "../../components/TextComponents/TextDisplay";
+import { NotFoundError } from "../../components/errors/Error";
 import { useGetJointCourseDetails } from "../../hooks/jointCourse/useGetJointCourseDetail";
-import { isLastElement } from "../../utils/functions";
-import { Dot } from "lucide-react";
+import { formatDate } from "../../utils/functions";
 function JointCourseDetails({ handleClose, drawerData }) {
   const { id: courseId } = drawerData;
   const {
     data: courseDetails,
     isLoading,
     error,
-  } = useGetCourseDetails(courseId);
+  } = useGetJointCourseDetails(courseId);
   return (
     <>
       <div
@@ -22,12 +20,17 @@ function JointCourseDetails({ handleClose, drawerData }) {
         style={{ flex: 1, minHeight: 0 }}
       >
         {isLoading ? (
-          <div className="d-flex flex-column gap-2 modal-content-container">
+          <div className="d-flex flex-column gap-2 px-2">
             <div className="d-flex flex-column gap-4">
               {[...Array(8)].map((_, index) => (
-                <div className="d-flex gap-1 flex-column" key={index}>
-                  <RectangleSkeleton height="1dvh" width="40%" />
+                <div className="d-flex gap-2 flex-column" key={index}>
                   <RectangleSkeleton height="1dvh" width="15%" />
+                  <RectangleSkeleton height="1dvh" width="100%" />
+                  <HorizontalDashedLine
+                    dashed={false}
+                    color="#ccc"
+                    thickness={0.2}
+                  />
                 </div>
               ))}
             </div>
@@ -39,15 +42,15 @@ function JointCourseDetails({ handleClose, drawerData }) {
           ></NotFoundError>
         ) : (
           <>
-            <div className="drawer-content px-2">
-              <div className="fw-medium">
+            <div className="drawer-content ps-2">
+              <div>
                 <div className="d-flex flex-column gap-3">
-                  <span className="text-muted fw-normal">Overview</span>
                   <div className="d-flex flex-column gap-2">
+                    <span className="text-muted fw-normal">Overview</span>
                     <div className="d-flex align-items-center justify-content-between">
-                      <div className="py-2 d-flex flex-column">
-                        <span>Course Title</span>
-                        <span className="my-0 font-size-sm">
+                      <div className="d-flex flex-column">
+                        <span className="text-iron-500">Course Title</span>
+                        <span className="fw-medium">
                           {courseDetails?.data?.course_title}
                         </span>
                       </div>
@@ -55,12 +58,12 @@ function JointCourseDetails({ handleClose, drawerData }) {
                     <HorizontalDashedLine
                       dashed={false}
                       color="#ccc"
-                      thickness={0.5}
+                      thickness={0.2}
                     />
                     <div className="d-flex align-items-center justify-content-between">
-                      <div className="py-2 d-flex flex-column">
-                        <span>Course Credit</span>
-                        <span className="my-0 font-size-sm">
+                      <div className="d-flex flex-column">
+                        <span className="text-iron-500">Course Credit</span>
+                        <span className="fw-medium">
                           {courseDetails?.data?.credit} Credit
                         </span>
                       </div>
@@ -68,12 +71,12 @@ function JointCourseDetails({ handleClose, drawerData }) {
                     <HorizontalDashedLine
                       dashed={false}
                       color="#ccc"
-                      thickness={0.5}
+                      thickness={0.2}
                     />
                     <div className="d-flex align-items-center justify-content-between">
-                      <div className="py-2 d-flex flex-column">
-                        <span>Course Code</span>
-                        <span className="my-0 font-size-sm">
+                      <div className="d-flex flex-column">
+                        <span className="text-iron-500">Course Code</span>
+                        <span className="fw-medium">
                           {courseDetails?.data?.course_code}
                         </span>
                       </div>
@@ -81,13 +84,12 @@ function JointCourseDetails({ handleClose, drawerData }) {
                     <HorizontalDashedLine
                       dashed={false}
                       color="#ccc"
-                      thickness={0.5}
+                      thickness={0.2}
                     />
-
                     <div className="d-flex align-items-center justify-content-between">
-                      <div className="py-2 d-flex flex-column">
-                        <span>Semester</span>
-                        <span className="my-0 font-size-sm">
+                      <div className="d-flex flex-column">
+                        <span className="text-iron-500">Semester</span>
+                        <span className="fw-medium text-capitalize">
                           {courseDetails?.data?.semester?.name}
                         </span>
                       </div>
@@ -95,10 +97,10 @@ function JointCourseDetails({ handleClose, drawerData }) {
                     <HorizontalDashedLine
                       dashed={false}
                       color="#ccc"
-                      thickness={0.5}
+                      thickness={0.2}
                     />
                     <div className="d-flex flex-column gap-1">
-                      <span>Course Type</span>
+                      <span className="text-iron-500">Course Type</span>
                       <div className="d-flex flex-row align-items-center flex-wrap gap-2">
                         {courseDetails?.data?.types?.map((items) => (
                           <Fragment key={items.id}>
@@ -115,63 +117,66 @@ function JointCourseDetails({ handleClose, drawerData }) {
                         ))}
                       </div>
                     </div>
-                    {courseDetails?.data?.description && (
-                      <>
-                        <HorizontalDashedLine
-                          dashed={false}
-                          color="#ccc"
-                          thickness={0.5}
+                    <HorizontalDashedLine
+                      dashed={false}
+                      color="#ccc"
+                      thickness={0.2}
+                    />
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div className="d-flex flex-column">
+                        <span className="text-iron-500">Description</span>
+                        <TextDisplay
+                          content={courseDetails?.data?.description}
+                          maxLength={200}
+                          textStyle={"my-0 font-size-sm fw-medium"}
                         />
-                        <div className="d-flex align-items-center justify-content-between">
-                          <div className="py-2 d-flex flex-column">
-                            <span>Description</span>
-                            <TextDisplay
-                              content={courseDetails?.data?.description}
-                              maxLength={200}
-                              textStyle={"my-0 font-size-sm"}
-                            />
-                          </div>
-                        </div>
-                      </>
-                    )}
+                      </div>
+                    </div>
                   </div>
                   <span className="text-muted fw-normal">
-                    Specialties (Specialties Who offer this joint course)
+                    Specialties (
+                    {courseDetails?.data?.course_specialties?.length})
                   </span>
-                  <div>
-                    {courseDetails?.data?.course_specialty?.map(
+                  <div className="d-flex flex-column gap-2">
+                    {courseDetails?.data?.course_specialties?.map(
                       (cSpecialty, index) => (
                         <Fragment key={cSpecialty.id}>
-                          <div className="d-flex flex-column gap-1">
-                            <div className="d-flex align-items-center justify-content-between">
-                              <div className="py-2 d-flex flex-column">
-                                <span>Specialty</span>
-                                <div className="d-flex flex-row align-items-center gap-2">
-                                  <span>
-                                    {cSpecialty?.specialty?.specialty_name}
-                                  </span>
-                                  <Dot size={12} />
-                                  <span>
-                                    {cSpecialty?.specialty?.level?.name},{" "}
-                                    {cSpecialty?.specialty?.level?.level}{" "}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            {!isLastElement(
-                              index,
-                              courseDetails.data.course_specialty,
-                            ) && (
-                              <HorizontalDashedLine
-                                dashed={false}
-                                color="#ccc"
-                                thickness={0.5}
-                              />
-                            )}
+                           <div className="d-flex flex-column">
+                             <span>{cSpecialty?.specialty?.department?.department_name}</span>
+                            <div className="d-flex flex-row align-items-center gap-2 fw-medium">
+                            <span>{cSpecialty?.specialty?.specialty_name}</span>
+                            <Dot size={12} />
+                            <span>
+                              {cSpecialty?.specialty?.level?.name},{" "}
+                              {cSpecialty?.specialty?.level?.level}{" "}
+                            </span>
                           </div>
+                           </div>
+                          <HorizontalDashedLine
+                            dashed={false}
+                            color="#ccc"
+                            thickness={0.2}
+                          />
                         </Fragment>
                       ),
                     )}
+                  </div>
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Created At</span>
+                    <span className="fw-medium">
+                      {formatDate(courseDetails?.data?.created_at) || "N/A"}
+                    </span>
+                  </div>
+                  <HorizontalDashedLine
+                    dashed={false}
+                    color="#ccc"
+                    thickness={0.2}
+                  />
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Updated At</span>
+                    <span className="fw-medium">
+                      {formatDate(courseDetails?.data?.updated_at) || "N/A"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -181,7 +186,7 @@ function JointCourseDetails({ handleClose, drawerData }) {
                 <HorizontalDashedLine
                   dashed={false}
                   color="#ccc"
-                  thickness={0.5}
+                  thickness={0.2}
                 />
                 <div className="d-flex flex-row align-items-center justify-content-between py-3 px-2">
                   <button

@@ -1,43 +1,17 @@
-import { Drawer } from "../../components/drawer/Drawer";
-import React, { useState } from "react";
-import VersionWrapper from "../../examTimetable/VersionWrapper";
-import GridWrapper from "../../examTimetable/GridWrapper";
-import DiagnosticWrapper from "../../examTimetable/DiagnosticWrapper";
 import { useSelector } from "react-redux";
-import { Icon } from "@iconify/react";
+import GridWrapper from "../../examTimetable/GridWrapper";
+import VersionWrapper from "../../examTimetable/VersionWrapper";
 function ExamTimetable() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   return (
     <>
-      <main className="main-container gap-2">
-        <div className="page-head page-head--bar">
-          <div className="d-flex align-items-center gap-2">
-            <div
-              className={`${
-                darkMode ? "dark-mode-active" : "light-mode-active"
-              } d-flex justify-content-center align-items-center`}
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderRadius: "0.5rem",
-              }}
-            >
-              <Icon
-                icon="ant-design:schedule-outlined"
-                width="16"
-                height="16"
-              />
-            </div>
-            <span className="my-0 fw-semibold font-size-sm">Manage Exam Timetable</span>
-          </div>
-        </div>
+      <main className="main-container gap-2 h-100">
         <div
           className="d-flex flex-row align-items-start flex-grow-1"
           style={{ minHeight: 0 }}
         >
           <VersionWrapper />
           <GridWrapper />
-          <DiagnosticWrapper />
         </div>
       </main>
     </>

@@ -8,9 +8,6 @@ function SemesterTimetable() {
   const selectedVersionId = useSelector(
     (state) => state.semesterTimetable.timetableVersion?.id ?? null,
   );
-  // The server's scheduler_status drives the page. Realtime events update the
-  // progress bar and trigger an early refetch; polling (while generating) and
-  // a refetch on reconnect cover events that never arrive.
   useSyncSelectedTimetableVersion();
   const generationProgress = useTimetableGenerationEvents(selectedVersionId);
   return (

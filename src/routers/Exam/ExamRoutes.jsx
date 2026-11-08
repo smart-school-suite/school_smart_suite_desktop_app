@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 import { Route } from "react-router-dom";
+import ExamTimetableLayout from "../../layouts/ExamTimetableLayout";
+import ExamJointCourseTimetable from "../../pages/Exam/ExamJointCourseTimetable";
 const Exam = React.lazy(() => import("../../pages/Exam/Exam"));
 const ExamCandidates = React.lazy(
   () => import("../../pages/Exam/ExamCandidate"),
@@ -31,6 +33,27 @@ const ExamRoutes = [
       </Suspense>
     }
   />,
+  <Route key={"examTimetableLayout"} element={<ExamTimetableLayout />}>
+    <Route
+      key="examTimetable"
+      path="/exam-timetable"
+      element={
+        <Suspense>
+          <ExamTimetable />
+        </Suspense>
+      }
+    />
+    ,
+    <Route
+      key="exam-joint-course-timetable"
+      path="/exam/joint-course-timetable"
+      element={
+        <Suspense>
+          <ExamJointCourseTimetable />
+        </Suspense>
+      }
+    />
+  </Route>,
   <Route
     key="examCandidate"
     path="/exam-candidate"
@@ -40,15 +63,7 @@ const ExamRoutes = [
       </Suspense>
     }
   />,
-  <Route
-    key="examTimetable"
-    path="/exam-timetable"
-    element={
-      <Suspense>
-        <ExamTimetable />
-      </Suspense>
-    }
-  />,
+
   <Route
     key="exam-results"
     path="/exam-result"

@@ -116,6 +116,7 @@ export const sideBarData = [
       { title: "Candidates", icon: FileSpreadsheet, path: "/exam-candidate" },
       { title: "Invigilators", icon: Eye, path: "/exam-invigilator" },
       { title: "Results", icon: BarChart2, path: "/exam-result" },
+      { title: "Exam Timetable", icon: CalendarClock, path:"/exam-timetable"}
     ],
   },
   {
