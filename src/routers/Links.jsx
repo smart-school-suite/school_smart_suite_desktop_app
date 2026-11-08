@@ -97,7 +97,11 @@ function Links() {
                       <ChannelProvider
                         channelName={`private:schoolBranch.${schoolBranchId}.schoolAdmin.${adminId}.jobs`}
                       >
-                        <Layout />
+                        <ChannelProvider
+                          channelName={`private:schoolBranch.${schoolBranchId}.schoolAdmin.${adminId}.examTimetable`}
+                        >
+                          <Layout />
+                        </ChannelProvider>
                       </ChannelProvider>
                     </ChannelProvider>
                   </ChannelProvider>
