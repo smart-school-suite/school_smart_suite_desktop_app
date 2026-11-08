@@ -71,8 +71,6 @@ function ReviewSlotsStep({ previousStep, handleNavigate, handleClose, drawerData
 
   return (
     <WizardStep
-      title="Review and save"
-      description="When you save, every slot is checked again against the lecturer's classes, hall bookings and other timetables, and saved together or not at all."
       footer={
         <WizardFooter
           onBack={previousStep}

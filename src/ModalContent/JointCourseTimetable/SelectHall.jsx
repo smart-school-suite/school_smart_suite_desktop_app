@@ -57,8 +57,6 @@ function SelectHall({ handleClose, rowData, onConfirm }) {
       </div>
 
       <div className="d-flex flex-column gap-3 p-2 pt-3">
-        <span className="text-iron-600">Choose a suitable hall for your selected teaching period.</span>
-
         <div className="d-flex flex-column rounded-3 bg-iron-50 px-3 py-2">
           <span className="fw-semibold font-size-md tabular-nums">
             {formatTime(time.start_time)} – {formatTime(time.end_time)}
