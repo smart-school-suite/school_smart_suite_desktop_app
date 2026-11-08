@@ -9,12 +9,15 @@ import { isJointSlot } from "../../utils/semesterTimetable/timetableSlots";
 // `action` sits in the top-right corner, `children` at the bottom.
 function PeriodCard({ slot, action = null, children = null, style }) {
   const joint = isJointSlot(slot);
+  // Bootstrap's .border sets the colour with !important, so leave it off when
+  // the caller draws its own border (e.g. a red conflict outline).
+  const ownBorder = Boolean(style?.border);
   const sharedWith = slot?.joint_course?.shared_with ?? [];
   const sharedLabels = sharedWith.map((specialty) => specialty.label);
 
   return (
     <div
-      className={`card font-size-sm p-2 d-flex flex-column gap-3 shadow-sm ${joint ? "bg-primary-50" : "border-none border"}`}
+      className={`card font-size-sm p-2 d-flex flex-column gap-3 shadow-sm ${joint ? "bg-primary-50" : ownBorder ? "" : "border-none border"}`}
       style={{
         width: "49%",
         borderRadius: "0.85rem",

@@ -17,8 +17,7 @@ import { dayLabel, formatDuration } from "../../../../utils/semesterTimetable/ti
 
 const DAY_ORDER = daysOfWeek.map((day) => day.value);
 
-// A pick in the shape PeriodCard reads, so the preview looks like the
-// semester timetable these slots will appear in.
+// A pick in the shape PeriodCard reads, shown as a plain course card.
 const toPreviewSlot = (pick, course, proposal) => ({
   course_name: course.course?.title,
   hall_name: pick.hall?.name,
@@ -26,8 +25,6 @@ const toPreviewSlot = (pick, course, proposal) => ({
   teacher_name: proposal?.teacher?.name,
   start_time: pick.start_time,
   end_time: pick.end_time,
-  is_joint: true,
-  joint_course: { shared_with: course.specialties ?? [] },
 });
 const PICK_STEP_INDEX = 1;
 
