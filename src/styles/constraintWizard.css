@@ -943,10 +943,10 @@
 
 .cw-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.25rem;
   border-bottom: 1px solid var(--cw-line);
   margin-bottom: 1rem;
-  overflow-x: auto;
 }
 
 .cw-tab {

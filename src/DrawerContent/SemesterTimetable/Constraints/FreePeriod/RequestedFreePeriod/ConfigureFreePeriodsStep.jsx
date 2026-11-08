@@ -28,6 +28,7 @@ import {
   minutesBetween,
   sortDays,
   toMinutes,
+  dayShortLabel,
 } from "../../../../../utils/semesterTimetable/timeUtils";
 
 /** True when two complete slots on the same day overlap. */
@@ -105,8 +106,10 @@ function ConfigureFreePeriodsStep({ nextStep, previousStep }) {
                 aria-selected={tabDay === day}
                 className={`cw-tab ${tabDay === day ? "is-active" : ""}`}
                 onClick={() => setActiveDay(tabDay)}
+                aria-label={dayLabel(tabDay)}
+                title={dayLabel(tabDay)}
               >
-                {dayLabel(tabDay)}
+                {dayShortLabel(tabDay)}
                 <span className="cw-tab__count">{slotsFor(tabDay).length}</span>
               </button>
             ))}

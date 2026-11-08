@@ -15,7 +15,7 @@ import {
   timeKey,
   toggleTime,
 } from "../../../../utils/jointCourseTimetable/slotPicks";
-import { formatTime } from "../../../../utils/semesterTimetable/timeUtils";
+import { formatTime, dayShortLabel } from "../../../../utils/semesterTimetable/timeUtils";
 import CustomModal from "../../../../components/Modals/Modal";
 import SelectHall from "../../../../ModalContent/JointCourseTimetable/SelectHall";
 import SlotCard from "../components/SlotCard";
@@ -141,8 +141,10 @@ function PickSlotsStep({ nextStep, previousStep, drawerData }) {
               aria-selected={tab.day === day?.day}
               className={`cw-tab ${tab.day === day?.day ? "is-active" : ""}`}
               onClick={() => setActiveDay(tab.day)}
+              aria-label={tab.day_label}
+              title={tab.day_label}
             >
-              {tab.day_label}
+              {dayShortLabel(tab.day)}
               <span className="cw-tab__count" title={`${picksOn(tab.day)} picked`}>{picksOn(tab.day)}</span>
             </button>
           ))}

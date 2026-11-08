@@ -37,6 +37,7 @@ import {
 import {
   dayLabel,
   sortDays,
+  dayShortLabel,
 } from "../../../../utils/semesterTimetable/timeUtils";
 import RequestSuggestions from "./RequestSuggestions";
 import { useRequestOptions } from "./useRequestOptions";
@@ -97,8 +98,10 @@ function RequestConfigureStep({ config, nextStep, previousStep }) {
                   aria-selected={tabDay === day}
                   className={`cw-tab ${tabDay === day ? "is-active" : ""}`}
                   onClick={() => setActiveDay(tabDay)}
+                  aria-label={dayLabel(tabDay)}
+                  title={dayLabel(tabDay)}
                 >
-                  {dayLabel(tabDay)}
+                  {dayShortLabel(tabDay)}
                   <span className="cw-tab__count">{count}</span>
                 </button>
               );
