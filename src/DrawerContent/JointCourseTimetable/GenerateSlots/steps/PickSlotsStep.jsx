@@ -6,6 +6,8 @@ import {
   TextButton,
   WizardFooter,
   WizardStep,
+  DayTabs,
+  TabPanel,
 } from "../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 import {
   MAX_PICKS,
@@ -132,70 +134,66 @@ function PickSlotsStep({ nextStep, previousStep, drawerData }) {
           </div>
         )}
 
-        <div className="cw-tabs" role="tablist">
-          {days.map((tab) => (
-            <button
-              key={tab.day}
-              type="button"
-              role="tab"
-              aria-selected={tab.day === day?.day}
-              className={`cw-tab ${tab.day === day?.day ? "is-active" : ""}`}
-              onClick={() => setActiveDay(tab.day)}
-              aria-label={tab.day_label}
-              title={tab.day_label}
-            >
-              {dayShortLabel(tab.day)}
-              <span className="cw-tab__count" title={`${picksOn(tab.day)} picked`}>{picksOn(tab.day)}</span>
-            </button>
-          ))}
-        </div>
+        <DayTabs
+          tabs={days.map((tab) => ({
+            key: tab.day,
+            label: dayShortLabel(tab.day),
+            fullLabel: tab.day_label,
+            count: picksOn(tab.day),
+            countTitle: `${picksOn(tab.day)} picked`,
+          }))}
+          activeKey={day?.day}
+          onChange={setActiveDay}
+        />
 
         {day && (
-          <div className="d-flex flex-column gap-2 mt-3">
-            <div className="d-flex flex-row align-items-baseline justify-content-between gap-2">
-              <div className="d-flex flex-row align-items-baseline gap-2">
-                <span className="fw-semibold font-size-md">{day.day_label}</span>
-                <span className="font-size-xs text-iron-500">
-                  {day.times.length} available period{day.times.length === 1 ? "" : "s"}
-                  {day.period_duration?.name ? ` · ${day.period_duration.name}` : ""}
-                </span>
+          <TabPanel panelKey={day.day}>
+            <div className="d-flex flex-column gap-2 mt-3">
+              <div className="d-flex flex-row align-items-baseline justify-content-between gap-2">
+                <div className="d-flex flex-row align-items-baseline gap-2">
+                  <span className="fw-semibold font-size-md">{day.day_label}</span>
+                  <span className="font-size-xs text-iron-500">
+                    {day.times.length} available period{day.times.length === 1 ? "" : "s"}
+                    {day.period_duration?.name ? ` · ${day.period_duration.name}` : ""}
+                  </span>
+                </div>
+                {!expired && (
+                  <button
+                    type="button"
+                    className="d-inline-flex align-items-center gap-1 border-0 bg-transparent font-size-xs text-iron-600 hover-text-primary"
+                    onClick={() => runGenerate()}
+                  >
+                    <RefreshCw size={12} /> {generate.isPending ? "Finding…" : "Find again"}
+                  </button>
+                )}
               </div>
-              {!expired && (
-                <button
-                  type="button"
-                  className="d-inline-flex align-items-center gap-1 border-0 bg-transparent font-size-xs text-iron-600 hover-text-primary"
-                  onClick={() => runGenerate()}
-                >
-                  <RefreshCw size={12} /> {generate.isPending ? "Finding…" : "Find again"}
-                </button>
+              {day.message && <span className="font-size-xs text-iron-500">{day.message}</span>}
+
+              {day.times.length === 0 ? (
+                <EmptyState icon="lucide:calendar-x-2" title={`No free time on ${day.day_label}`} text={day.message} />
+              ) : (
+                day.times.map((time) => {
+                  const key = timeKey(day.day, time.start_time);
+                  const pick = picks.find((item) => item.key === key);
+                  return (
+                    <SlotCard
+                      key={key}
+                      course={course}
+                      teacher={proposal.teacher}
+                      day={day}
+                      time={time}
+                      pick={pick}
+                      blocked={blockedReason(picks, day.day, time)}
+                      disabled={expired}
+                      studentCount={studentCount}
+                      onToggle={() => setPicks(toggleTime(picks, day, time))}
+                      onSelectHall={() => setHallTarget({ day, time, pick })}
+                    />
+                  );
+                })
               )}
             </div>
-            {day.message && <span className="font-size-xs text-iron-500">{day.message}</span>}
-
-            {day.times.length === 0 ? (
-              <EmptyState icon="lucide:calendar-x-2" title={`No free time on ${day.day_label}`} text={day.message} />
-            ) : (
-              day.times.map((time) => {
-                const key = timeKey(day.day, time.start_time);
-                const pick = picks.find((item) => item.key === key);
-                return (
-                  <SlotCard
-                    key={key}
-                    course={course}
-                    teacher={proposal.teacher}
-                    day={day}
-                    time={time}
-                    pick={pick}
-                    blocked={blockedReason(picks, day.day, time)}
-                    disabled={expired}
-                    studentCount={studentCount}
-                    onToggle={() => setPicks(toggleTime(picks, day, time))}
-                    onSelectHall={() => setHallTarget({ day, time, pick })}
-                  />
-                );
-              })
-            )}
-          </div>
+          </TabPanel>
         )}
       </WizardStep>
 

@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
-import { EmptyState, Section, TextButton, WizardFooter, WizardStep } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
+import { EmptyState, Section, TextButton, WizardFooter, WizardStep, DayTabs, TabPanel } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 
 const useMinutesLeft = (expiresAt) => {
   const [now, setNow] = useState(() => Date.now());
@@ -118,41 +118,38 @@ function PickTimeStep({ nextStep, previousStep, drawerData }) {
         <EmptyState icon="lucide:calendar-x-2" title="No shared exam dates" text={proposal.summary?.message} />
       ) : (
         <>
-          <div className="cw-tabs" role="tablist">
-            {dates.map((tab) => (
-              <button
-                key={tab.date}
-                type="button"
-                role="tab"
-                aria-selected={tab.date === date?.date}
-                className={`cw-tab ${tab.date === date?.date ? "is-active" : ""}`}
-                onClick={() => setActiveDate(tab.date)}
-              >
-                {tab.date_label}
-                <span className="cw-tab__count" title={`${tab.times.length} free time(s)`}>{tab.times.length}</span>
-              </button>
-            ))}
-          </div>
+          <DayTabs
+            tabs={dates.map((tab) => ({
+              key: tab.date,
+              label: tab.date_label,
+              count: tab.times.length,
+              countTitle: `${tab.times.length} free time(s)`,
+            }))}
+            activeKey={date?.date}
+            onChange={setActiveDate}
+          />
           {date && (
-            <Section label={date.date_label} hint={date.message}>
-              {date.times.length === 0 ? (
-                <EmptyState icon="lucide:calendar-x-2" title="No free time" text={date.message} />
-              ) : (
-                <div className="row g-2">
-                  {date.times.map((time) => (
-                    <div key={time.option_id} className="col-12 col-xl-6">
-                      <TimeCard
-                        time={time}
-                        selected={pick?.option_id === time.option_id}
-                        recommended={proposal.recommended_option_id === time.option_id}
-                        disabled={expired}
-                        onSelect={() => setPick(time)}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Section>
+            <TabPanel panelKey={date.date}>
+              <Section label={date.date_label} hint={date.message}>
+                {date.times.length === 0 ? (
+                  <EmptyState icon="lucide:calendar-x-2" title="No free time" text={date.message} />
+                ) : (
+                  <div className="row g-2">
+                    {date.times.map((time) => (
+                      <div key={time.option_id} className="col-12 col-xl-6">
+                        <TimeCard
+                          time={time}
+                          selected={pick?.option_id === time.option_id}
+                          recommended={proposal.recommended_option_id === time.option_id}
+                          disabled={expired}
+                          onSelect={() => setPick(time)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Section>
+            </TabPanel>
           )}
         </>
       )}

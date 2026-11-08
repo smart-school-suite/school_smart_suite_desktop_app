@@ -950,6 +950,7 @@
 }
 
 .cw-tab {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
@@ -962,15 +963,27 @@
   color: var(--cw-ink-3) !important;
   font-weight: 500;
   white-space: nowrap;
+  transition: color 0.2s ease;
 }
 
 .cw-tab:hover {
   color: var(--cw-ink) !important;
 }
 
+/* Same colour as .text-primary-500; .cw-tab sets its colour with !important. */
 .cw-tab.is-active {
-  color: var(--cw-ink) !important;
-  border-bottom-color: var(--cw-accent);
+  color: var(--primary-color-500) !important;
+}
+
+/* Underline of the active tab; slides between tabs (framer-motion layoutId). */
+.cw-tab__indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--primary-color-500);
 }
 
 .cw-tab__count {
@@ -985,9 +998,13 @@
   font-variant-numeric: tabular-nums;
 }
 
+.cw-tab__count {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
 .cw-tab.is-active .cw-tab__count {
   background: var(--cw-accent-weak);
-  color: var(--cw-accent-ink);
+  color: var(--primary-color-500);
 }
 
 /* Shared TimeRangeInput, restyled only inside the wizard */

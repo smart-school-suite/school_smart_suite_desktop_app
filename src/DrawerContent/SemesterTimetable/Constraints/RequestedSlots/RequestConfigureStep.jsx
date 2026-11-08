@@ -12,6 +12,8 @@ import {
   TimeSpan,
   WizardFooter,
   WizardStep,
+  DayTabs,
+  TabPanel,
 } from "../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 import { useGetSemesterTimetablePeriods as usePeriods } from "../../../../hooks/semesterTimetable/useSemesterTimetablePeriodDuration";
 import {
@@ -87,84 +89,76 @@ function RequestConfigureStep({ config, nextStep, previousStep }) {
         />
       ) : (
         <>
-          <div className="cw-tabs" role="tablist">
-            {days.map((tabDay) => {
-              const count = requestsForDay(entry, tabDay).length;
-              return (
-                <button
-                  key={tabDay}
-                  type="button"
-                  role="tab"
-                  aria-selected={tabDay === day}
-                  className={`cw-tab ${tabDay === day ? "is-active" : ""}`}
-                  onClick={() => setActiveDay(tabDay)}
-                  aria-label={dayLabel(tabDay)}
-                  title={dayLabel(tabDay)}
-                >
-                  {dayShortLabel(tabDay)}
-                  <span className="cw-tab__count">{count}</span>
-                </button>
-              );
-            })}
-          </div>
+          <DayTabs
+            tabs={days.map((tabDay) => ({
+              key: tabDay,
+              label: dayShortLabel(tabDay),
+              fullLabel: dayLabel(tabDay),
+              count: requestsForDay(entry, tabDay).length,
+            }))}
+            activeKey={day}
+            onChange={setActiveDay}
+          />
 
-          <Section
-            label={`${dayLabel(day)}`}
-            hint={
-              requests.length
-                ? `${requests.length} ${requests.length === 1 ? config.noun.one : config.noun.many}`
-                : null
-            }
-            action={
-              requests.length > 0 && (
-                <>
-                  <TextButton
-                    icon="lucide:trash-2"
-                    tone="muted"
-                    onClick={() =>
-                      dispatch(clearRequestDay({ constraint: config.key, day }))
-                    }
-                  >
-                    Clear day
-                  </TextButton>
-                  <TextButton icon="lucide:plus" onClick={add}>
-                    Add {config.noun.one}
-                  </TextButton>
-                </>
-              )
-            }
-          >
-            {requests.length === 0 ? (
-              <EmptyState
-                icon="lucide:clock-plus"
-                title={`No ${config.noun.many} on ${dayLabel(day)}`}
-                text={config.configureHint}
-                action={
-                  <button
-                    type="button"
-                    className="cw-btn cw-btn--outline"
-                    onClick={add}
-                  >
-                    Add {config.noun.one}
-                  </button>
-                }
-              />
-            ) : (
-              <div className="d-flex flex-column gap-2">
-                {requests.map((request, index) => (
-                  <RequestCard
-                    key={request.id}
-                    config={config}
-                    day={day}
-                    index={index}
-                    request={request}
-                    options={options}
-                    hard={hard}
-                  />
-                ))}
-              </div>
-            )}
-          </Section>
+          <TabPanel panelKey={day}>
+            <Section
+              label={`${dayLabel(day)}`}
+              hint={
+                requests.length
+                  ? `${requests.length} ${requests.length === 1 ? config.noun.one : config.noun.many}`
+                  : null
+              }
+              action={
+                requests.length > 0 && (
+                  <>
+                    <TextButton
+                      icon="lucide:trash-2"
+                      tone="muted"
+                      onClick={() =>
+                        dispatch(clearRequestDay({ constraint: config.key, day }))
+                      }
+                    >
+                      Clear day
+                    </TextButton>
+                    <TextButton icon="lucide:plus" onClick={add}>
+                      Add {config.noun.one}
+                    </TextButton>
+                  </>
+                )
+              }
+            >
+              {requests.length === 0 ? (
+                <EmptyState
+                  icon="lucide:clock-plus"
+                  title={`No ${config.noun.many} on ${dayLabel(day)}`}
+                  text={config.configureHint}
+                  action={
+                    <button
+                      type="button"
+                      className="cw-btn cw-btn--outline"
+                      onClick={add}
+                    >
+                      Add {config.noun.one}
+                    </button>
+                  }
+                />
+              ) : (
+                <div className="d-flex flex-column gap-2">
+                  {requests.map((request, index) => (
+                    <RequestCard
+                      key={request.id}
+                      config={config}
+                      day={day}
+                      index={index}
+                      request={request}
+                      options={options}
+                      hard={hard}
+                    />
+                  ))}
+                </div>
+              )}
+            </Section>
+          </TabPanel>
 
           <Section label="All days">
             <Stats
