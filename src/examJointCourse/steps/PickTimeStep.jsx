@@ -1,7 +1,20 @@
 import { Icon } from "@iconify/react";
 import { Circle, CircleCheck } from "lucide-react";
 import { useEffect, useState } from "react";
-import { EmptyState, Section, TextButton, WizardFooter, WizardStep, DayTabs, TabPanel } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
+import {
+  Badge,
+  DayTabs,
+  EmptyState,
+  Note,
+  Section,
+  TabPanel,
+  TextButton,
+  TimeSpan,
+  WizardFooter,
+  WizardStep,
+} from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
+import { formatExamDate } from "../../examTimetable/constraints/fields";
+import { formatTime } from "../../utils/semesterTimetable/timeUtils";
 
 /** Minutes until the proposal expires, refreshed every 15 seconds. */
 const useMinutesLeft = (expiresAt) => {
@@ -165,7 +178,7 @@ function PickTimeStep({ nextStep, previousStep, drawerData }) {
           <DayTabs
             tabs={dates.map((tab) => ({
               key: tab.date,
-              label: tab.date_label,
+              label: formatExamDate(tab.date, "EEE d MMM"),
               count: tab.times.length,
               countTitle: `${tab.times.length} free time(s)`,
             }))}
@@ -174,14 +187,25 @@ function PickTimeStep({ nextStep, previousStep, drawerData }) {
           />
           {date && (
             <TabPanel panelKey={date.date}>
-              <Section label={date.date_label} hint={date.message}>
+              <Section
+                label={tab(date)}
+                hint={date.message}
+                action={
+                  !expired && (
+                    <TextButton icon="lucide:refresh-cw" tone="muted" onClick={() => runGenerate()}>
+                      {generate.isPending ? "Finding…" : "Find again"}
+                    </TextButton>
+                  )
+                }
+              >
                 {date.times.length === 0 ? (
-                  <EmptyState icon="lucide:calendar-x-2" title="No free time" text={date.message} />
+                  <EmptyState icon="lucide:calendar-x-2" title={`No free time on ${formatExamDate(date.date)}`} text={date.message} />
                 ) : (
                   <div className="row g-2">
                     {date.times.map((time) => (
                       <div key={time.option_id} className="col-12 col-xl-6">
-                        <TimeCard
+                        <ExamTimeCard
+                          course={course}
                           time={time}
                           selected={pick?.option_id === time.option_id}
                           recommended={proposal.recommended_option_id === time.option_id}
