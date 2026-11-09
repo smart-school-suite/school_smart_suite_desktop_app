@@ -64,6 +64,10 @@ export const useGenerateExamTimetable = () => {
     onError: (error) => {
       // The request may not have reached the server; re-read the real status.
       queryClient.invalidateQueries({ queryKey: [EXAM_TIMETABLE_KEYS.versions] });
+      // Refused for joint courses without a time: refresh them so the page shows which.
+      if (error?.response?.data?.errors?.joint_courses) {
+        queryClient.invalidateQueries({ queryKey: [EXAM_TIMETABLE_KEYS.schedulingData] });
+      }
       errorToast(error, "Could Not Start Generation");
     },
   });

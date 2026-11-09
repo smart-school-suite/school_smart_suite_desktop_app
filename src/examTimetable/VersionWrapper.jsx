@@ -11,6 +11,7 @@ import { setExamTimetableVersion } from "../Slices/ExamTimetable/examTimetableSl
 import { constraintCount } from "../utils/examTimetable/buildRequest";
 import { SCHEDULER_STATUS } from "../utils/semesterTimetable/schedulerStatus";
 import { examTimetableConstraintMap } from "./constraints/constraintMap";
+import { useJointCourseReadiness } from "./constraints/fields";
 import "../styles/constraintWizard.css";
 
 const CATEGORY_ICONS = {
@@ -143,6 +144,7 @@ function ConstraintNavigator() {
   const [query, setQuery] = useState("");
   const [openIds, setOpenIds] = useState(() => new Set(["schedule_constraint"]));
   const [active, setActive] = useState(null);
+  const jointReadiness = useJointCourseReadiness();
 
   const categories = data?.data ?? [];
   const normalised = query.trim().toLowerCase();
@@ -227,8 +229,10 @@ function ConstraintNavigator() {
                       <ul className="ctl-cat__list">
                         {category.constraints.map((constraint) => {
                           const ready = Boolean(examTimetableConstraintMap[constraint.key]);
+                          const readOnly = Boolean(constraint.read_only || examTimetableConstraintMap[constraint.key]?.readOnly);
                           const tag = typeTag(constraint.type);
-                          const count = constraintCount(values, constraint.key);
+                          const count = readOnly ? 0 : constraintCount(values, constraint.key);
+                          const waiting = readOnly ? jointReadiness.unscheduled.length : 0;
                           return (
                             <li key={constraint.id}>
                               <button
@@ -236,13 +240,24 @@ function ConstraintNavigator() {
                                 className={`ctl-item ${active?.key === constraint.key ? "is-active" : ""}`}
                                 disabled={!ready}
                                 onClick={() => setActive({ ...constraint, category: category.category })}
-                                title={ready ? constraint.description || constraint.name : "This constraint can't be configured yet"}
+                                title={
+                                  !ready
+                                    ? "This constraint can't be configured yet"
+                                    : readOnly
+                                      ? `Read only. ${waiting ? `${waiting} joint course(s) have no exam time yet, so generation is blocked.` : `${jointReadiness.scheduled.length} joint course time(s) set.`}`
+                                      : constraint.description || constraint.name
+                                }
                               >
                                 <span className="ctl-item__label">{constraint.name}</span>
                                 <span className="ctl-item__meta">
+                                  {waiting > 0 && <span className="ctl-tag ctl-tag--warn">{waiting} to set</span>}
                                   {count > 0 && <span className="ctl-tag ctl-tag--latest">{count}</span>}
                                   {!ready ? (
                                     <span className="ctl-tag ctl-tag--soon">Soon</span>
+                                  ) : readOnly ? (
+                                    <span className="ctl-tag ctl-tag--readonly" aria-label="Read only">
+                                      <Icon icon="lucide:lock" width={10} height={10} />
+                                    </span>
                                   ) : (
                                     tag && <span className={`ctl-tag ctl-tag--${tag}`}>{tag}</span>
                                   )}

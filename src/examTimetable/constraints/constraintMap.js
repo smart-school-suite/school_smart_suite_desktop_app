@@ -2,9 +2,9 @@ import {
   CourseRequestedSlotEditor,
   HallRequestedSlotEditor,
   InvigilatorRequestedSlotEditor,
-  JointCoursesInfo,
   RequestedAssignmentEditor,
 } from "./RequestEditors";
+import JointCoursesPanel from "./JointCoursesPanel";
 import { DailyLoadEditor, InvigilationEditor, OperationalPeriodEditor, SessionDurationEditor } from "./ScheduleEditors";
 
 /**
@@ -20,5 +20,5 @@ export const examTimetableConstraintMap = {
   requested_assignment: { component: RequestedAssignmentEditor },
   hall_requested_slot: { component: HallRequestedSlotEditor },
   invigilator_requested_slot: { component: InvigilatorRequestedSlotEditor },
-  required_joint_course_periods: { component: JointCoursesInfo },
+  required_joint_course_periods: { component: JointCoursesPanel, readOnly: true },
 };

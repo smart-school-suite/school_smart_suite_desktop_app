@@ -1555,3 +1555,14 @@
   height: auto;
   gap: 0.125rem;
 }
+
+.ctl-tag--readonly {
+  background: transparent;
+  color: var(--ctl-ink-2);
+  border: 1px solid #d5dae0;
+}
+
+.ctl-tag--warn {
+  background: #fdf3e3;
+  color: #9a5b0b;
+}
