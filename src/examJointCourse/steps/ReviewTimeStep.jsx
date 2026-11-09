@@ -110,7 +110,8 @@ function ReviewTimeStep({ previousStep, handleNavigate, handleClose, drawerData 
                 <TimeSpan start={pick.start_time} end={pick.end_time} />
               </span>
               <span className="text-truncate text-iron-500 font-size-sm">
-                {pick.seats_needed} seats · {pick.invigilators_needed} invigilators
+                {pick.seats_needed} seats ·{" "}
+                {proposal.checks?.invigilators === false ? "invigilators assigned later" : `${pick.invigilators_needed} invigilators`}
               </span>
             </div>
             {saveError?.conflicts.map((conflict, index) => (

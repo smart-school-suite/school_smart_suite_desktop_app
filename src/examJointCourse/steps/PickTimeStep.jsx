@@ -34,7 +34,7 @@ const sameDay = (time) =>
       }`;
 
 /** One free time, laid out like the semester joint course slot card. Only one can be chosen. */
-function ExamTimeCard({ course, time, selected, recommended, disabled, onSelect }) {
+function ExamTimeCard({ course, time, selected, recommended, disabled, onSelect, invigilatorsChecked = true }) {
   const choose = () => !disabled && onSelect();
   return (
     <div
@@ -79,7 +79,7 @@ function ExamTimeCard({ course, time, selected, recommended, disabled, onSelect 
         </span>
         <span className="d-flex flex-row align-items-center gap-1">
           <Icon icon="lucide:user-round-check" width={14} height={14} />
-          {time.invigilators_free} of {time.invigilators_needed} invigilators free
+          {invigilatorsChecked ? `${time.invigilators_free} of ${time.invigilators_needed} invigilators free` : "Invigilators assigned later"}
         </span>
       </div>
       <span className="jcs-field-hint">{sameDay(time)}</span>
@@ -109,7 +109,9 @@ function PickTimeStep({ nextStep, previousStep, drawerData }) {
   return (
     <WizardStep
       title="Pick the time of the joint exam"
-      description="A joint exam takes place once, at the same time for every linked specialty. Every time below is free for all their students, with enough hall seats and invigilators."
+      description={`A joint exam takes place once, at the same time for every linked specialty. Every time below is free for all their students, with enough hall seats${
+        proposal.checks?.invigilators === false ? "" : " and invigilators"
+      }.`}
       footer={
         <WizardFooter
           onBack={previousStep}
@@ -147,6 +149,12 @@ function PickTimeStep({ nextStep, previousStep, drawerData }) {
           </span>
         )}
       </div>
+
+      {proposal.checks?.invigilators === false && (
+        <div className="mb-3">
+          <Note icon="lucide:user-round-check">{proposal.checks.invigilators_message}</Note>
+        </div>
+      )}
 
       {missing.length > 0 && (
         <div className="mb-3">
@@ -206,6 +214,7 @@ function PickTimeStep({ nextStep, previousStep, drawerData }) {
                       <div key={time.option_id} className="col-12 col-xl-6">
                         <ExamTimeCard
                           course={course}
+                          invigilatorsChecked={proposal.checks?.invigilators !== false}
                           time={time}
                           selected={pick?.option_id === time.option_id}
                           recommended={proposal.recommended_option_id === time.option_id}
