@@ -1,6 +1,5 @@
 import { Icon } from "@iconify/react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   EmptyState,
   IconButton,
@@ -238,65 +237,3 @@ export const InvigilatorRequestedSlotEditor = makeRequestEditor({
   ],
 });
 
-/** Joint exams are set on their own page; this shows the exam's joint courses and their times. */
-export function JointCoursesInfo({ handleClose }) {
-  const navigate = useNavigate();
-  return (
-    <JointCoursesPanel
-      onOpen={() => {
-        handleClose();
-        navigate("/exam/joint-course-timetable");
-      }}
-      onClose={handleClose}
-    />
-  );
-}
-
-function JointCoursesPanel({ onOpen, onClose }) {
-  const setup = useExamSetup();
-  const joint = setup.courses.filter((course) => course.is_joint);
-
-  return (
-    <div className="cw" role="document">
-      <header className="cw-header font-size-sm p-2">
-        <div className="cw-header__top">
-          <div className="cw-header__titles">
-            <div className="cw-eyebrow font-size-xs"><span>Courses</span></div>
-            <h2 className="cw-title font-size-sm fw-medium">Joint course exams</h2>
-          </div>
-          <button type="button" className="cw-icon-btn" onClick={onClose} aria-label="Close">
-            <Icon icon="lucide:x" width={18} height={18} />
-          </button>
-        </div>
-      </header>
-      <div className="cw-body px-2 pt-2 font-size-sm d-flex flex-column gap-2">
-        <p className="text-iron-500 mb-0">
-          A course several specialties take is examined once, at the same time for all of them. Its time is chosen on the Joint Course Timetable page, and this exam timetable places it there.
-        </p>
-        <SetupNotice {...setup} />
-        {joint.length === 0 && !setup.isLoading ? (
-          <EmptyState icon="lucide:users" title="No joint courses" text="This exam has no course shared with other specialties." />
-        ) : (
-          <ul className="cw-daylist">
-            {joint.map((course) => (
-              <li key={course.course_id} className="cw-dayrow">
-                <span className="cw-dayrow__day">{course.course_title}</span>
-                <span className="cw-dayrow__value">
-                  {course.joint?.slot
-                    ? `${formatExamDate(course.joint.slot.date)} · ${course.joint.slot.start_time} – ${course.joint.slot.end_time}`
-                    : "No time set yet"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <div>
-          <button type="button" className="cw-btn cw-btn--primary" onClick={onOpen}>
-            <span>Open the Joint Course Timetable</span>
-            <Icon icon="lucide:arrow-right" width={16} height={16} />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}

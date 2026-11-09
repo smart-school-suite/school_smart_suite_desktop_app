@@ -45,6 +45,22 @@ export function useExamSetup() {
   };
 }
 
+/**
+ * The exam's joint courses, split by whether their joint exam time is set.
+ * Generation waits until `unscheduled` is empty.
+ */
+export function useJointCourseReadiness() {
+  const setup = useExamSetup();
+  const joint = setup.courses.filter((course) => course.is_joint);
+  const byTime = (a, b) => `${a.joint.slot.date} ${a.joint.slot.start_time}`.localeCompare(`${b.joint.slot.date} ${b.joint.slot.start_time}`);
+  return {
+    ...setup,
+    joint,
+    scheduled: joint.filter((course) => course.joint?.slot).sort(byTime),
+    unscheduled: joint.filter((course) => !course.joint?.slot),
+  };
+}
+
 // CustomDropdown reserves room for a feedback line; these pickers never show
 // one, so the wrapper is sized to the trigger, as in the joint course drawer.
 const PICKER_HEIGHT = 36;

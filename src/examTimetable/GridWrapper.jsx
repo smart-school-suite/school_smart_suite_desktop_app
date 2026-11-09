@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import {
   autoUpdate,
   flip,
@@ -16,6 +17,7 @@ import { Check, ChevronDown, ClipboardList, Users } from "lucide-react";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import RectangleSkeleton from "../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../components/Spinners/Spinners";
@@ -26,7 +28,7 @@ import { EXAM_TIMETABLE_KEYS, useGetExamTimetableSlots, useGetExamTimetableVersi
 import { setExamTimetableVersion, setTimetableExam } from "../Slices/ExamTimetable/examTimetableSlice";
 import { buildGenerateRequest, configurationProblems } from "../utils/examTimetable/buildRequest";
 import { hasGeneratedTimetable, isGenerationStale, SCHEDULER_STATUS } from "../utils/semesterTimetable/schedulerStatus";
-import { formatExamDate } from "./constraints/fields";
+import { formatExamDate, useJointCourseReadiness } from "./constraints/fields";
 import DiagnosticWrapper from "./DiagnosticWrapper";
 import ExamSessionCard from "./ExamSessionCard";
 import ExamTimetableStatusBar from "./ExamTimetableStatusBar";
@@ -137,9 +139,18 @@ function useStartGeneration() {
   const { exam, timetableVersion, constraints } = useSelector((state) => state.examTimetable);
   const { mutate, isPending } = useGenerateExamTimetable();
   const problems = configurationProblems(constraints);
+  // Joint courses are placed at their joint exam time, so every one needs a time first.
+  const { unscheduled, isLoading: isSetupLoading } = useJointCourseReadiness();
+  const blockedReason = unscheduled.length
+    ? `Set the exam time of ${unscheduled.map((course) => course.course_title).join(", ")} on the Joint Course Timetable page first.`
+    : null;
 
   const start = () => {
-    if (isPending || !exam) return;
+    if (isPending || !exam || isSetupLoading) return;
+    if (blockedReason) {
+      toast.custom(<ToastWarning title="Joint Courses Need A Time" description={blockedReason} />);
+      return;
+    }
     if (problems.length) {
       toast.custom(<ToastWarning title="Check The Constraints" description={problems[0].text} />);
       return;
@@ -152,17 +163,22 @@ function useStartGeneration() {
     });
   };
 
-  return { start, isPending, problems };
+  return { start, isPending, problems, unscheduled, blockedReason, isSetupLoading };
 }
 
 function GenerateButton({ label = "Generate Exam Timetable", variant = "primary" }) {
-  const { start, isPending } = useStartGeneration();
+  const { start, isPending, blockedReason, isSetupLoading } = useStartGeneration();
   const className =
     variant === "outline"
       ? "border p-2 rounded-3 bg-white font-size-sm outline-none px-3"
       : "border-none p-2 rounded-3 text-white primary-background font-size-sm outline-none px-3";
   return (
-    <button className={className} onClick={start} disabled={isPending}>
+    <button
+      className={`${className} ${blockedReason ? "opacity-50" : ""}`}
+      onClick={start}
+      disabled={isPending || isSetupLoading || Boolean(blockedReason)}
+      title={blockedReason ?? undefined}
+    >
       {isPending ? "Starting..." : label}
     </button>
   );
@@ -224,7 +240,9 @@ function GenerationProgress({ version, progress }) {
 /** Before the first generation: what will be sent, and the button to generate. */
 function ConfigurationSummary() {
   const { exam, constraints } = useSelector((state) => state.examTimetable);
-  const { problems } = useStartGeneration();
+  const navigate = useNavigate();
+  const { problems, unscheduled } = useStartGeneration();
+  const { joint, scheduled } = useJointCourseReadiness();
   const op = constraints.operational_period;
   const requests =
     constraints.course_requested_slot.length +
@@ -239,6 +257,7 @@ function ConfigurationSummary() {
     ["Exams per day", constraints.student_daily_load_range.enabled ? `${constraints.student_daily_load_range.min_sessions} to ${constraints.student_daily_load_range.max_sessions}` : "No limit, spread over the period"],
     ["Invigilators", Number(constraints.candidates_per_invigilator) > 0 ? `One per ${constraints.candidates_per_invigilator} candidates` : "One per hall"],
     ["Requests", requests ? `${requests} request(s)` : "None"],
+    ["Joint courses", joint.length ? `${scheduled.length} of ${joint.length} time(s) set` : "None"],
   ];
 
   return (
@@ -253,6 +272,22 @@ function ConfigurationSummary() {
             </div>
           ))}
         </div>
+        {unscheduled.length > 0 && (
+          <div className="jcs-alert w-100 mb-0" role="alert" style={{ background: "#fdf3e3", color: "#9a5b0b" }}>
+            <Icon icon="lucide:clock-alert" width={18} height={18} className="jcs-alert__icon" />
+            <div className="d-flex flex-column gap-1">
+              <span className="fw-semibold">Joint courses need a time before generating</span>
+              <span>
+                {unscheduled.map((course) => course.course_title).join(", ")} {unscheduled.length === 1 ? "is" : "are"} shared with
+                other specialties and {unscheduled.length === 1 ? "has" : "have"} no exam time yet.
+              </span>
+              <button type="button" className="cw-text-btn jcs-link" onClick={() => navigate("/exam/joint-course-timetable")}>
+                <span>Configure joint course timetable</span>
+                <Icon icon="lucide:arrow-up-right" width={15} height={15} />
+              </button>
+            </div>
+          </div>
+        )}
         {problems.length > 0 && (
           <span className="font-size-xs text-old-lace-700 text-center">{problems[0].text}</span>
         )}
