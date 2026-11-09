@@ -1549,3 +1549,9 @@
     transform: rotate(360deg);
   }
 }
+
+/* App inputs reserve 7dvh for a feedback line; inside wizard rows they are sized to their content. */
+.cw-compact-field .input-container {
+  height: auto;
+  gap: 0.125rem;
+}
