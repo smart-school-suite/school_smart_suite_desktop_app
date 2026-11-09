@@ -1,14 +1,16 @@
 import { Icon } from "@iconify/react";
 import { ArrowLeft, ArrowRight, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import CustomModal from "../../../../components/Modals/Modal";
 import {
+  DayTabs,
   EmptyState,
+  TabPanel,
   TextButton,
   WizardFooter,
   WizardStep,
-  DayTabs,
-  TabPanel,
 } from "../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
+import SelectHall from "../../../../ModalContent/JointCourseTimetable/SelectHall";
 import {
   MAX_PICKS,
   blockedReason,
@@ -17,9 +19,7 @@ import {
   timeKey,
   toggleTime,
 } from "../../../../utils/jointCourseTimetable/slotPicks";
-import { formatTime, dayShortLabel } from "../../../../utils/semesterTimetable/timeUtils";
-import CustomModal from "../../../../components/Modals/Modal";
-import SelectHall from "../../../../ModalContent/JointCourseTimetable/SelectHall";
+import { dayShortLabel, formatTime } from "../../../../utils/semesterTimetable/timeUtils";
 import SlotCard from "../components/SlotCard";
 
 /** Minutes until the proposal expires, refreshed every 15 seconds. */
@@ -197,9 +197,6 @@ function PickSlotsStep({ nextStep, previousStep, drawerData }) {
         )}
       </WizardStep>
 
-      {/* Escape is handled inside SelectHall so it doesn't also close the
-          drawer; enforceFocus off so the modal doesn't fight the drawer's
-          focus trap. */}
       <CustomModal
         show={Boolean(hallTarget)}
         handleClose={closeHallPicker}

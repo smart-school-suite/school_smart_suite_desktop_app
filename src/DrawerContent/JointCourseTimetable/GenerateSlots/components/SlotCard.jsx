@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Check, MapPin, TriangleAlert } from "lucide-react";
+import { ArrowRight, Check, Dot, MapPin, TriangleAlert } from "lucide-react";
 import { formatTime } from "../../../../utils/semesterTimetable/timeUtils";
 import { durationLabel, hallSummary } from "./slotLabels";
 
@@ -55,10 +55,11 @@ function SlotCard({ course, teacher, day, time, pick, blocked, disabled, student
           toggle();
         }
       }}
-      className={`rounded-3 bg-white p-3 d-flex flex-column gap-2 font-size-sm transition-all duration-200 ${
+      className={`bg-white p-2 d-flex flex-column gap-2 font-size-sm transition-all duration-200 text-iron-700 ${
         inactive ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
       } ${state === "available" ? "hover-bg-iron-50" : ""}`}
       style={{
+        borderRadius:"0.75rem",
         border: `1px solid ${borderColor}`,
         boxShadow:
           state === "selected"
@@ -67,6 +68,7 @@ function SlotCard({ course, teacher, day, time, pick, blocked, disabled, student
               ? "0 0 0 3px var(--fern-50)"
               : "0 1px 2px rgba(16, 24, 40, 0.04)",
       }}
+  
     >
       <div className="d-flex flex-row align-items-start justify-content-between gap-2">
         <span className="fw-semibold font-size-md tabular-nums">
@@ -91,10 +93,12 @@ function SlotCard({ course, teacher, day, time, pick, blocked, disabled, student
       </span>
 
       <div className="d-flex flex-column">
-        <span className="fw-semibold">{course.course?.title}</span>
-        <span className="font-size-xs text-iron-500">
-          {[course.course?.code, teacher?.name].filter(Boolean).join(" · ")}
-        </span>
+        <span className="fw-medium font-size-sm">{course.course?.title}</span>
+        <div className="d-flex flex-row align-items-center gap-2 text-iron-500">
+          <span>{course.course?.code}</span>
+          <Dot size={12}/>
+          <span>{course.course?.credit} Credit</span>
+        </div>
       </div>
 
       {state === "blocked" && blocked && (
@@ -129,7 +133,7 @@ function SlotCard({ course, teacher, day, time, pick, blocked, disabled, student
               </button>
             </div>
           ) : (
-            <div className="d-flex flex-column gap-2 rounded-3 bg-primary-50 p-2">
+            <div className="d-flex flex-column gap-2 rounded-3 bg-primary-50 p-2 border-primary-500 border-1">
               <span className="d-inline-flex align-items-center gap-2 fw-semibold">
                 <MapPin size={15} className="color-primary flex-shrink-0" /> Hall assignment required
               </span>
@@ -138,7 +142,7 @@ function SlotCard({ course, teacher, day, time, pick, blocked, disabled, student
               </span>
               <button
                 type="button"
-                className="w-100 d-inline-flex align-items-center justify-content-center gap-1 rounded-pill border-0 primary-background text-white font-size-sm py-1"
+                className="w-100 d-inline-flex align-items-center justify-content-center gap-1 rounded-pill border-0 primary-background text-white font-size-sm p-2"
                 disabled={disabled}
                 onClick={onSelectHall}
               >

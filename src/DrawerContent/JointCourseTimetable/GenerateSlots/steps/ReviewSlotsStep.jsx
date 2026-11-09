@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { CircleAlert, TriangleAlert, X } from "lucide-react";
-import PeriodCard from "../../../../components/Card/PeriodCard";
 import { useState } from "react";
+import PeriodCard from "../../../../components/Card/PeriodCard";
 import {
   EmptyState,
   Section,
@@ -50,7 +50,6 @@ function ReviewSlotsStep({ previousStep, handleNavigate, handleClose, drawerData
         onSuccess: () => handleClose(),
         onError: (error) => {
           const status = error?.response?.status;
-          // Conflicts come back in the order the picks were sent.
           const conflicts = (error?.response?.data?.errors?.conflicts ?? []).map((conflict) => ({
             optionId: ordered[conflict.slot_index]?.option_id,
             message: conflict.message,

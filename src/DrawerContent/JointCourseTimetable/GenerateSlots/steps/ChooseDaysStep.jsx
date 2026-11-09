@@ -174,7 +174,7 @@ function ChooseDaysStep({ nextStep, handleClose, drawerData }) {
             }}
           >
             {periods.isLoading ? (
-              [...Array(4)].map((_, index) => (
+              [...Array(6)].map((_, index) => (
                  <Fragment key={index}>
                   <RectangleSkeleton height="10dvh"/>
                  </Fragment>
