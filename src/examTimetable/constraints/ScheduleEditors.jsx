@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import Switch from "../../components/input/Switch";
 import {
   IconButton,
   Note,
@@ -10,7 +11,7 @@ import {
 import { patchExamConstraint, setExamConstraint } from "../../Slices/ExamTimetable/examTimetableSlice";
 import { isRange, toMinutes } from "../../utils/examTimetable/buildRequest";
 import { makeExamConstraintEditor } from "./ExamConstraintWizard";
-import { EntitySelect, ExamDateSelect, formatExamDate, SetupNotice, TimeInput } from "./fields";
+import { EntitySelect, ExamDateSelect, formatExamDate, MinutesInput, SetupNotice, TimeRange } from "./fields";
 
 const useConstraint = (key) => useSelector((state) => state.examTimetable.constraints?.[key]);
 
@@ -29,11 +30,12 @@ function OperationalPeriodConfigure({ setup }) {
   return (
     <>
       <Section label="Daily exam hours" hint="No exam starts before or ends after these times.">
-        <div className="d-flex flex-row align-items-center gap-2">
-          <TimeInput label="Start" value={op.start_time} onChange={(value) => patch({ start_time: value })} />
-          <span className="text-iron-500">to</span>
-          <TimeInput label="End" value={op.end_time} onChange={(value) => patch({ end_time: value })} />
-        </div>
+        <TimeRange
+          start={op.start_time}
+          end={op.end_time}
+          onStart={(value) => patch({ start_time: value })}
+          onEnd={(value) => patch({ end_time: value })}
+        />
         {hours !== null && <Stats items={[{ label: "Exam hours a day", value: (hours / 60).toFixed(hours % 60 ? 1 : 0), unit: "h" }]} />}
       </Section>
 
@@ -83,20 +85,26 @@ function OperationalPeriodConfigure({ setup }) {
             const update = (changes) =>
               patch({ date_exceptions: exceptions.map((item, i) => (i === index ? { ...item, ...changes } : item)) });
             return (
-              <div key={index} className="d-flex flex-row align-items-center gap-2 mb-2">
-                <ExamDateSelect
-                  value={exception.date}
-                  dates={setup.dates.filter((date) => !exclusions.includes(date))}
-                  exclude={exceptions.map((item) => item.date)}
-                  onChange={(date) => update({ date })}
-                />
-                <TimeInput label="Start" value={exception.start_time} onChange={(value) => update({ start_time: value })} />
-                <TimeInput label="End" value={exception.end_time} onChange={(value) => update({ end_time: value })} />
-                <IconButton
-                  icon="lucide:trash-2"
-                  label="Remove"
-                  tone="danger"
-                  onClick={() => patch({ date_exceptions: exceptions.filter((_, i) => i !== index) })}
+              <div key={index} className="cw-panel d-flex flex-column gap-2 mb-2">
+                <div className="d-flex flex-row align-items-center gap-2">
+                  <ExamDateSelect
+                    value={exception.date}
+                    dates={setup.dates.filter((date) => !exclusions.includes(date))}
+                    exclude={exceptions.map((item) => item.date)}
+                    onChange={(date) => update({ date })}
+                  />
+                  <IconButton
+                    icon="lucide:trash-2"
+                    label="Remove"
+                    tone="danger"
+                    onClick={() => patch({ date_exceptions: exceptions.filter((_, i) => i !== index) })}
+                  />
+                </div>
+                <TimeRange
+                  start={exception.start_time}
+                  end={exception.end_time}
+                  onStart={(value) => update({ start_time: value })}
+                  onEnd={(value) => update({ end_time: value })}
                 />
               </div>
             );
@@ -161,19 +169,9 @@ function SessionDurationConfigure({ setup }) {
             </div>
           ))}
         </div>
-        <div className="d-flex flex-row align-items-center gap-2 mt-2">
-          <span className="text-iron-500">Or</span>
-          <input
-            type="number"
-            min={15}
-            max={720}
-            step={15}
-            className="form-control form-control-sm font-size-sm"
-            style={{ width: "7rem" }}
-            value={duration.duration ?? ""}
-            onChange={(event) => patch({ duration: event.target.value ? Number(event.target.value) : null })}
-          />
-          <span className="text-iron-500">minutes</span>
+        <div className="d-flex flex-column gap-1 mt-2" style={{ width: "12rem" }}>
+          <span className="text-iron-500 font-size-xs">Or another length, in minutes</span>
+          <MinutesInput value={duration.duration} onChange={(value) => patch({ duration: value })} />
         </div>
       </Section>
 
@@ -205,18 +203,9 @@ function SessionDurationConfigure({ setup }) {
                   disabled: exceptions.some((item, i) => i !== index && item.course_id === course.course_id),
                 }))}
               />
-              <input
-                type="number"
-                min={15}
-                max={720}
-                step={15}
-                aria-label={`Length of ${courseName(exception.course_id)} in minutes`}
-                className="form-control form-control-sm font-size-sm"
-                style={{ width: "6rem" }}
-                value={exception.duration ?? ""}
-                onChange={(event) => update({ duration: event.target.value ? Number(event.target.value) : null })}
-              />
-              <span className="text-iron-500">min</span>
+              <div style={{ width: "8rem", flexShrink: 0 }} title={`Length of ${courseName(exception.course_id)} in minutes`}>
+                <MinutesInput value={exception.duration} onChange={(value) => update({ duration: value })} />
+              </div>
               <IconButton
                 icon="lucide:trash-2"
                 label="Remove"
@@ -274,18 +263,10 @@ function DailyLoadConfigure({ setup }) {
   return (
     <>
       <Section label="Limit exams per day">
-        <div className="form-check form-switch">
-          <input
-            id="daily-load-enabled"
-            className="form-check-input"
-            type="checkbox"
-            checked={!!load.enabled}
-            onChange={(event) => patch({ enabled: event.target.checked })}
-          />
-          <label htmlFor="daily-load-enabled" className="form-check-label">
-            {load.enabled ? "Students sit a limited number of exams a day" : "No limit"}
-          </label>
-        </div>
+        <label className="d-flex flex-row align-items-center gap-2 mb-0">
+          <Switch checked={!!load.enabled} onChange={(checked) => patch({ enabled: checked })} aria-label="Limit exams per day" />
+          <span>{load.enabled ? "Students sit a limited number of exams a day" : "No limit"}</span>
+        </label>
       </Section>
 
       {load.enabled && (
