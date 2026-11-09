@@ -11,7 +11,7 @@ import {
 import { addExamRequest, removeExamRequest, updateExamRequest } from "../../Slices/ExamTimetable/examTimetableSlice";
 import { fromMinutes, toMinutes } from "../../utils/examTimetable/buildRequest";
 import { makeExamConstraintEditor } from "./ExamConstraintWizard";
-import { EntitySelect, ExamDateSelect, formatExamDate, SetupNotice, TimeInput, useExamSetup } from "./fields";
+import { EntitySelect, ExamDateSelect, formatExamDate, MultiPicker, SetupNotice, TimeInput, TimeRange, useExamSetup } from "./fields";
 
 /** Exam length of a course from the session duration constraint. */
 const courseDuration = (constraints, courseId) => {
@@ -21,30 +21,6 @@ const courseDuration = (constraints, courseId) => {
 };
 
 const endFor = (start, minutes) => (toMinutes(start) === null ? null : fromMinutes(toMinutes(start) + minutes));
-
-function CheckList({ items, selected, onToggle }) {
-  return (
-    <div className="d-flex flex-row flex-wrap gap-1">
-      {items.map((item) => {
-        const isSelected = selected.includes(item.value);
-        return (
-          <button
-            key={item.value}
-            type="button"
-            disabled={item.disabled && !isSelected}
-            title={item.title}
-            className={`rounded-pill px-2 py-1 font-size-xs ${isSelected ? "bg-primary-50 text-primary-700 border-none" : "bg-white border"}`}
-            style={isSelected ? { border: "1px solid var(--primary-color-200)" } : undefined}
-            onClick={() => onToggle(item.value)}
-          >
-            {isSelected && <Icon icon="lucide:check" width={11} height={11} className="me-1" />}
-            {item.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 /**
  * One editor for every request list. `config` says which resource a row is
@@ -118,50 +94,61 @@ function makeRequestEditor(config) {
                     />
                     <IconButton icon="lucide:trash-2" label="Remove request" tone="danger" onClick={() => dispatch(removeExamRequest({ key: config.key, id: row.id }))} />
                   </div>
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <ExamDateSelect value={row.date} dates={setup.dates} onChange={(date) => update(row.id, { date })} />
-                    <TimeInput
-                      label="Start"
-                      value={row.start_time}
-                      onChange={(value) => update(row.id, { start_time: value, ...(minutes && { end_time: endFor(value, minutes) }) })}
+                  <ExamDateSelect value={row.date} dates={setup.dates} onChange={(date) => update(row.id, { date })} />
+                  {isCourse ? (
+                    <div className="d-flex flex-row align-items-start gap-3">
+                      <div style={{ width: "10rem" }}>
+                        <span className="font-size-xs text-iron-500">Starts at</span>
+                        <TimeInput
+                          value={row.start_time}
+                          onChange={(value) =>
+                            update(row.id, { start_time: value, end_time: endFor(value, minutes ?? (Number(constraints.session_duration.duration) || 120)) })
+                          }
+                        />
+                      </div>
+                      <div className="d-flex flex-column">
+                        <span className="font-size-xs text-iron-500">Ends at</span>
+                        <span className="fw-semibold tabular-nums" style={{ lineHeight: "2.4rem" }}>{row.end_time ?? "—"}</span>
+                      </div>
+                      {minutes && <span className="font-size-xs text-iron-500 mt-4">This exam lasts {minutes} minutes.</span>}
+                    </div>
+                  ) : (
+                    <TimeRange
+                      start={row.start_time}
+                      end={row.end_time}
+                      onStart={(value) => update(row.id, { start_time: value })}
+                      onEnd={(value) => update(row.id, { end_time: value })}
                     />
-                    <TimeInput label="End" value={row.end_time} onChange={(value) => update(row.id, { end_time: value })} />
-                  </div>
-                  {minutes && (
-                    <span className="font-size-xs text-iron-500">This exam lasts {minutes} minutes, so the end time follows the start.</span>
                   )}
                   {config.assignment && (
                     <>
                       <div className="d-flex flex-column gap-1">
                         <span className="font-size-xs fw-medium">Halls (optional)</span>
-                        <CheckList
-                          items={setup.halls.map((hall) => ({ value: hall.hall_id, label: `${hall.hall_name} · ${hall.capacity}` }))}
-                          selected={row.hall_ids ?? []}
-                          onToggle={(id) =>
-                            update(row.id, {
-                              hall_ids: (row.hall_ids ?? []).includes(id) ? row.hall_ids.filter((item) => item !== id) : [...(row.hall_ids ?? []), id],
-                            })
-                          }
+                        <MultiPicker
+                          placeholder="The scheduler chooses"
+                          options={setup.halls.map((hall) => ({ value: hall.hall_id, label: `${hall.hall_name} · ${hall.capacity} seats` }))}
+                          values={row.hall_ids ?? []}
+                          onChange={(hallIds) => update(row.id, { hall_ids: hallIds })}
                         />
                       </div>
                       <div className="d-flex flex-column gap-1">
                         <span className="font-size-xs fw-medium">Invigilators (optional)</span>
-                        <CheckList
-                          items={setup.invigilators.map((person) => ({
-                            value: person.invigilator_id,
-                            label: person.name ?? "Invigilator",
-                            disabled: teachers.has(person.invigilator_id),
-                            title: teachers.has(person.invigilator_id) ? "Teaches this course, so cannot invigilate its exam" : undefined,
-                          }))}
-                          selected={row.invigilator_ids ?? []}
-                          onToggle={(id) =>
-                            update(row.id, {
-                              invigilator_ids: (row.invigilator_ids ?? []).includes(id)
-                                ? row.invigilator_ids.filter((item) => item !== id)
-                                : [...(row.invigilator_ids ?? []), id],
-                            })
-                          }
+                        <MultiPicker
+                          key={`${row.id}-${row.course_id}`}
+                          placeholder="The scheduler chooses"
+                          // A course's own teachers are never offered as its invigilators.
+                          options={setup.invigilators
+                            .filter((person) => !teachers.has(person.invigilator_id))
+                            .map((person) => ({ value: person.invigilator_id, label: person.name ?? "Invigilator" }))}
+                          values={row.invigilator_ids ?? []}
+                          onChange={(invigilatorIds) => update(row.id, { invigilator_ids: invigilatorIds })}
                         />
+                        {teachers.size > 0 && (
+                          <span className="font-size-xs text-iron-500">
+                            Not offered because they teach this course:{" "}
+                            {setup.invigilators.filter((person) => teachers.has(person.invigilator_id)).map((person) => person.name).join(", ")}
+                          </span>
+                        )}
                       </div>
                     </>
                   )}
