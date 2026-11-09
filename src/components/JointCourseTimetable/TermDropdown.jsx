@@ -24,6 +24,7 @@ const SEMESTER_TEXT = {
   title: "Select academic year and semester",
   hint: "Choose which term's joint courses to schedule",
   search: "Search academic year or semester",
+  empty: "No academic years found",
 };
 
 // The exam joint course page reuses this dropdown with its own terms query
@@ -166,7 +167,7 @@ function TermDropdown({ value, onChange, termsQuery, text = SEMESTER_TEXT, meta 
                 ) : error ? (
                   <span className="font-size-sm text-danger">Error loading academic years</span>
                 ) : filtered.length === 0 ? (
-                  <span className="font-size-sm">No academic years found</span>
+                  <span className="font-size-sm">{query ? `Nothing matches "${query}"` : text.empty ?? SEMESTER_TEXT.empty}</span>
                 ) : (
                   filtered.map((term, index) => {
                     const isSelected = value?.id === term.id;

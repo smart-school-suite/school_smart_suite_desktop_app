@@ -13,6 +13,8 @@ import {
   TimeSpan,
   WizardFooter,
   WizardStep,
+  DayTabs,
+  TabPanel,
 } from "../../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 import {
   addRequestedFreePeriodSlot,
@@ -28,6 +30,7 @@ import {
   minutesBetween,
   sortDays,
   toMinutes,
+  dayShortLabel,
 } from "../../../../../utils/semesterTimetable/timeUtils";
 
 /** True when two complete slots on the same day overlap. */
@@ -96,112 +99,109 @@ function ConfigureFreePeriodsStep({ nextStep, previousStep }) {
         />
       ) : (
         <>
-          <div className="cw-tabs" role="tablist">
-            {rFDays.map((tabDay) => (
-              <button
-                key={tabDay}
-                type="button"
-                role="tab"
-                aria-selected={tabDay === day}
-                className={`cw-tab ${tabDay === day ? "is-active" : ""}`}
-                onClick={() => setActiveDay(tabDay)}
-              >
-                {dayLabel(tabDay)}
-                <span className="cw-tab__count">{slotsFor(tabDay).length}</span>
-              </button>
-            ))}
-          </div>
+          <DayTabs
+            tabs={rFDays.map((tabDay) => ({
+              key: tabDay,
+              label: dayShortLabel(tabDay),
+              fullLabel: dayLabel(tabDay),
+              count: slotsFor(tabDay).length,
+            }))}
+            activeKey={day}
+            onChange={setActiveDay}
+          />
 
-          <Section
-            label={`${dayLabel(day)} free periods`}
-            hint={
-              currentSlots.length
-                ? `${currentSlots.length} added · ${formatDuration(totalMinutes(currentSlots))} in total`
-                : null
-            }
-            action={
-              currentSlots.length > 0 && (
-                <>
-                  <TextButton
-                    icon="lucide:trash-2"
-                    tone="muted"
-                    onClick={() =>
-                      dispatch(removeAllRequestedFreePeriodSlotsByDay({ day }))
-                    }
-                  >
-                    Clear day
-                  </TextButton>
-                  <TextButton
-                    icon="lucide:plus"
-                    onClick={() => dispatch(addRequestedFreePeriodSlot({ day }))}
-                  >
-                    Add free period
-                  </TextButton>
-                </>
-              )
-            }
-          >
-            {currentSlots.length === 0 ? (
-              <EmptyState
-                icon="lucide:clock-plus"
-                title={`No free periods on ${dayLabel(day)}`}
-                text="Add a time range that should stay free of classes."
-                action={
-                  <button
-                    type="button"
-                    className="cw-btn cw-btn--outline"
-                    onClick={() => dispatch(addRequestedFreePeriodSlot({ day }))}
-                  >
-                    Add free period
-                  </button>
-                }
-              />
-            ) : (
-              currentSlots.map((slot, index) => (
-                <div className="cw-slot" key={slot.id}>
-                  <div className="cw-slot__head">
-                    <span className="cw-slot__title">
-                      <span className="cw-slot__index">#{index + 1}</span>
-                      <TimeSpan
-                        start={slot.start_time?.value}
-                        end={slot.end_time?.value}
-                        emptyLabel="Time not set"
-                      />
-                    </span>
-                    <IconButton
-                      icon="lucide:x"
-                      label="Remove free period"
-                      tone="danger"
+          <TabPanel panelKey={day}>
+            <Section
+              label={`${dayLabel(day)} free periods`}
+              hint={
+                currentSlots.length
+                  ? `${currentSlots.length} added · ${formatDuration(totalMinutes(currentSlots))} in total`
+                  : null
+              }
+              action={
+                currentSlots.length > 0 && (
+                  <>
+                    <TextButton
+                      icon="lucide:trash-2"
+                      tone="muted"
                       onClick={() =>
-                        dispatch(
-                          removeRequestedFreePeriodSlot({ day, slotId: slot.id }),
-                        )
+                        dispatch(removeAllRequestedFreePeriodSlotsByDay({ day }))
                       }
-                    />
+                    >
+                      Clear day
+                    </TextButton>
+                    <TextButton
+                      icon="lucide:plus"
+                      onClick={() => dispatch(addRequestedFreePeriodSlot({ day }))}
+                    >
+                      Add free period
+                    </TextButton>
+                  </>
+                )
+              }
+            >
+              {currentSlots.length === 0 ? (
+                <EmptyState
+                  icon="lucide:clock-plus"
+                  title={`No free periods on ${dayLabel(day)}`}
+                  text="Add a time range that should stay free of classes."
+                  action={
+                    <button
+                      type="button"
+                      className="cw-btn cw-btn--outline"
+                      onClick={() => dispatch(addRequestedFreePeriodSlot({ day }))}
+                    >
+                      Add free period
+                    </button>
+                  }
+                />
+              ) : (
+                currentSlots.map((slot, index) => (
+                  <div className="cw-slot" key={slot.id}>
+                    <div className="cw-slot__head">
+                      <span className="cw-slot__title">
+                        <span className="cw-slot__index">#{index + 1}</span>
+                        <TimeSpan
+                          start={slot.start_time?.value}
+                          end={slot.end_time?.value}
+                          emptyLabel="Time not set"
+                        />
+                      </span>
+                      <IconButton
+                        icon="lucide:x"
+                        label="Remove free period"
+                        tone="danger"
+                        onClick={() =>
+                          dispatch(
+                            removeRequestedFreePeriodSlot({ day, slotId: slot.id }),
+                          )
+                        }
+                      />
+                    </div>
+                    <TimeField>
+                      <TimeRangeInput
+                        startValue={slot.start_time?.value ?? ""}
+                        endValue={slot.end_time?.value ?? ""}
+                        onStartTimeChange={(value) =>
+                          updateSlot(slot.id, "start_time", value)
+                        }
+                        onEndTimeChange={(value) =>
+                          updateSlot(slot.id, "end_time", value)
+                        }
+                        validationSchema={timeRangeSchema({ optional: false })}
+                        onStartTimeValidationChange={(value) =>
+                          updateValidation(slot.id, "start_time", value)
+                        }
+                        onEndTimeValidationChange={(value) =>
+                          updateValidation(slot.id, "end_time", value)
+                        }
+                      />
+                    </TimeField>
                   </div>
-                  <TimeField>
-                    <TimeRangeInput
-                      startValue={slot.start_time?.value ?? ""}
-                      endValue={slot.end_time?.value ?? ""}
-                      onStartTimeChange={(value) =>
-                        updateSlot(slot.id, "start_time", value)
-                      }
-                      onEndTimeChange={(value) =>
-                        updateSlot(slot.id, "end_time", value)
-                      }
-                      validationSchema={timeRangeSchema({ optional: false })}
-                      onStartTimeValidationChange={(value) =>
-                        updateValidation(slot.id, "start_time", value)
-                      }
-                      onEndTimeValidationChange={(value) =>
-                        updateValidation(slot.id, "end_time", value)
-                      }
-                    />
-                  </TimeField>
-                </div>
-              ))
-            )}
-          </Section>
+                ))
+              )}
+            </Section>
+          </TabPanel>
 
           {overlapping && (
             <Section>

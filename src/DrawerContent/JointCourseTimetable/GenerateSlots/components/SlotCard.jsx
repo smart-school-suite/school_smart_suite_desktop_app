@@ -1,138 +1,154 @@
-import { Icon } from "@iconify/react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Circle, CircleCheck } from "lucide-react";
-import { useState } from "react";
-import {
-  OptionTile,
-  TimeSpan,
-} from "../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
+import { motion } from "framer-motion";
+import { ArrowRight, Check, MapPin, TriangleAlert } from "lucide-react";
+import { formatTime } from "../../../../utils/semesterTimetable/timeUtils";
+import { durationLabel, hallSummary } from "./slotLabels";
 
-const reveal = {
-  initial: { height: 0, opacity: 0 },
-  animate: { height: "auto", opacity: 1 },
-  exit: { height: 0, opacity: 0 },
-  transition: { duration: 0.18, ease: "easeInOut" },
+const PILL = {
+  available: "bg-fern-50 text-fern-700",
+  selected: "bg-primary-50 text-primary-700",
+  assigned: "bg-fern-50 text-fern-700",
+  blocked: "bg-iron-100 text-iron-600",
 };
 
-/** What a hall means for this class: fit, recommendation and seats. */
-const hallMeta = (hall, studentCount) => {
-  const seats = hall.capacity ? `${hall.capacity} seats` : "Seats unknown";
-  if (hall.fits === false && studentCount) return `${seats} · too small for ${studentCount}`;
-  if (hall.recommended) return `${seats} · recommended`;
-  return seats;
-};
+function StatusPill({ tone, children }) {
+  return (
+    <span className={`d-inline-flex align-items-center gap-1 rounded-pill px-2 font-size-xs fw-medium text-nowrap ${PILL[tone]}`}>
+      {children}
+    </span>
+  );
+}
 
 /**
- * One free time shown as a slot of the course. Selecting the card selects the
- * time; only then can a hall be chosen for it.
+ * One free teaching period. Click the card to select it; a selected period
+ * needs a hall (chosen in the hall picker) before it can be reviewed.
  */
-function SlotCard({ course, teacher, time, pick, blocked, disabled, studentCount, onToggle, onChooseHall }) {
-  const [showHalls, setShowHalls] = useState(false);
+function SlotCard({ course, teacher, day, time, pick, blocked, disabled, studentCount, onToggle, onSelectHall }) {
   const selected = Boolean(pick);
+  const hall = pick?.hall ?? null;
   const inactive = disabled || (Boolean(blocked) && !selected);
+  const state = hall ? "assigned" : selected ? "selected" : inactive ? "blocked" : "available";
 
   const toggle = () => {
-    if (inactive) return;
-    if (selected) setShowHalls(false);
-    onToggle();
+    if (!inactive) onToggle();
   };
 
+  const borderColor = {
+    assigned: "var(--fern-400)",
+    selected: "var(--primary-color-400)",
+    blocked: "var(--iron-200)",
+    available: "var(--iron-200)",
+  }[state];
+
   return (
-    <div
+    <motion.div
+      layout="position"
       role="checkbox"
       aria-checked={selected}
       aria-disabled={inactive}
       tabIndex={inactive ? -1 : 0}
-      title={blocked && !selected ? blocked : undefined}
+      title={blocked && !selected ? blocked : selected ? "Click to unselect this period" : undefined}
       onClick={toggle}
       onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           toggle();
         }
       }}
-      // Not .cw-option: its selected rule would also restyle the hall tiles inside.
-      className={`card rounded-3 p-3 w-100 h-100 d-flex flex-column gap-2 ${
-        selected
-          ? "border-1 border-solid border-primary-500 bg-primary-50"
-          : "border-1 border-solid border-iron-200 bg-white"
-      } ${inactive ? "opacity-50" : "pointer-cursor"}`}
+      className={`rounded-3 bg-white p-3 d-flex flex-column gap-2 font-size-sm transition-all duration-200 ${
+        inactive ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+      } ${state === "available" ? "hover-bg-iron-50" : ""}`}
+      style={{
+        border: `1px solid ${borderColor}`,
+        boxShadow:
+          state === "selected"
+            ? "0 0 0 3px var(--primary-color-50)"
+            : state === "assigned"
+              ? "0 0 0 3px var(--fern-50)"
+              : "0 1px 2px rgba(16, 24, 40, 0.04)",
+      }}
     >
       <div className="d-flex flex-row align-items-start justify-content-between gap-2">
-        <span className="cw-option__title">
-          <TimeSpan start={time.start_time} end={time.end_time} />
+        <span className="fw-semibold font-size-md tabular-nums">
+          {formatTime(time.start_time)} – {formatTime(time.end_time)}
         </span>
-        {selected ? (
-          <CircleCheck size={20} className="text-primary-500 flex-shrink-0" aria-hidden="true" />
+        {state === "assigned" ? (
+          <StatusPill tone="assigned">
+            <Check size={11} strokeWidth={3} /> Hall assigned
+          </StatusPill>
+        ) : state === "selected" ? (
+          <StatusPill tone="selected">Selected</StatusPill>
+        ) : state === "blocked" ? (
+          <StatusPill tone="blocked">Unavailable</StatusPill>
         ) : (
-          <Circle size={20} strokeWidth={1.5} className="text-iron-400 flex-shrink-0" aria-hidden="true" />
+          <StatusPill tone="available">Available</StatusPill>
         )}
       </div>
+
+      <span className="font-size-xs text-iron-500">
+        {durationLabel(day.duration_minutes)}
+        {day.period_duration?.name ? ` · ${day.period_duration.name} period` : ""}
+      </span>
 
       <div className="d-flex flex-column">
-        <span className="fw-semibold text-truncate">{course.course?.title}</span>
-        <span className="cw-option__meta">
-          {[course.course?.code, course.course?.credit && `${course.course.credit} credits`, teacher?.name]
-            .filter(Boolean)
-            .join(" · ")}
+        <span className="fw-semibold">{course.course?.title}</span>
+        <span className="font-size-xs text-iron-500">
+          {[course.course?.code, teacher?.name].filter(Boolean).join(" · ")}
         </span>
       </div>
 
-      <div className="d-flex flex-row align-items-center gap-2 w-100 mt-1">
-        {pick?.hall ? (
-          <span className="d-flex flex-row align-items-center gap-1 font-size-sm fw-medium flex-grow-1 text-truncate">
-            <Icon icon="lucide:door-open" width={14} height={14} />
-            {pick.hall.name}
-            {pick.hall.fits === false && (
-              <span className="jcs-field-hint jcs-field-hint--danger ms-1">too small</span>
-            )}
-          </span>
-        ) : (
-          <span className="jcs-field-hint flex-grow-1">
-            {selected ? "Choose a hall for this slot" : `${time.halls.length} hall${time.halls.length === 1 ? "" : "s"} free`}
-          </span>
-        )}
-        <button
-          type="button"
-          className={`rounded-pill px-3 py-1 font-size-sm flex-shrink-0 ${
-            selected ? "primary-background text-white border-0" : "bg-white border"
-          }`}
-          disabled={!selected || disabled}
-          title={selected ? undefined : "Select this slot first"}
-          onClick={(event) => {
-            event.stopPropagation();
-            setShowHalls((open) => !open);
-          }}
-        >
-          {pick?.hall ? "Change hall" : "Select hall"}
-        </button>
-      </div>
+      {state === "blocked" && blocked && (
+        <span className="font-size-xs text-iron-600">{blocked}</span>
+      )}
 
-      <AnimatePresence initial={false}>
-        {selected && showHalls && (
-          <motion.div
-            {...reveal}
-            className="w-100 overflow-hidden"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="cw-options cw-options--compact pt-1">
-              {time.halls.map((hall) => (
-                <OptionTile
-                  key={hall.option_id}
-                  selected={pick?.option_id === hall.option_id}
-                  onClick={() => {
-                    onChooseHall(hall);
-                    setShowHalls(false);
-                  }}
-                  title={hall.name}
-                  meta={hallMeta(hall, studentCount)}
-                />
-              ))}
+      {selected && (
+        <div
+          className="d-flex flex-column gap-2 border-top pt-2 mt-1"
+          onClick={(event) => event.stopPropagation()}
+        >
+          {hall ? (
+            <div className="d-flex flex-column gap-2 rounded-3 bg-iron-50 p-2">
+              <div className="d-flex flex-row align-items-center justify-content-between gap-2">
+                <span className="d-inline-flex align-items-center gap-2 fw-semibold text-truncate">
+                  <MapPin size={15} className="text-fern-600 flex-shrink-0" /> {hall.name}
+                </span>
+                <StatusPill tone="assigned">Assigned</StatusPill>
+              </div>
+              <span className={`font-size-xs ${hall.fits === false ? "text-old-lace-700" : "text-iron-600"}`}>
+                {hall.fits === false && <TriangleAlert size={12} className="me-1" />}
+                {hallSummary(hall, studentCount)}
+              </span>
+              <button
+                type="button"
+                className="w-100 rounded-pill bg-white font-size-sm py-1 hover-bg-iron-100 transition-all duration-200"
+                style={{ border: "1px solid var(--iron-300)" }}
+                disabled={disabled}
+                onClick={onSelectHall}
+              >
+                Change hall
+              </button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          ) : (
+            <div className="d-flex flex-column gap-2 rounded-3 bg-primary-50 p-2">
+              <span className="d-inline-flex align-items-center gap-2 fw-semibold">
+                <MapPin size={15} className="color-primary flex-shrink-0" /> Hall assignment required
+              </span>
+              <span className="font-size-xs text-iron-600">
+                Choose a hall for this teaching period before continuing.
+              </span>
+              <button
+                type="button"
+                className="w-100 d-inline-flex align-items-center justify-content-center gap-1 rounded-pill border-0 primary-background text-white font-size-sm py-1"
+                disabled={disabled}
+                onClick={onSelectHall}
+              >
+                Select a hall <ArrowRight size={14} />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </motion.div>
   );
 }
 

@@ -5,14 +5,19 @@ import { isJointSlot } from "../../utils/semesterTimetable/timetableSlots";
 // One lesson in the generated semester timetable. Joint courses (shared with
 // other specialties and fixed before generation) get a tinted card, a badge
 // and the specialties they are shared with.
-function PeriodCard({ slot }) {
+// Also used to preview joint course slots before they are saved:
+// `action` sits in the top-right corner, `children` at the bottom.
+function PeriodCard({ slot, action = null, children = null, style }) {
   const joint = isJointSlot(slot);
+  // Bootstrap's .border sets the colour with !important, so leave it off when
+  // the caller draws its own border (e.g. a red conflict outline).
+  const ownBorder = Boolean(style?.border);
   const sharedWith = slot?.joint_course?.shared_with ?? [];
   const sharedLabels = sharedWith.map((specialty) => specialty.label);
 
   return (
     <div
-      className={`card font-size-sm p-2 d-flex flex-column gap-3 shadow-sm ${joint ? "bg-primary-50" : "border-none border"}`}
+      className={`card font-size-sm p-2 d-flex flex-column gap-3 shadow-sm ${joint ? "bg-primary-50" : ownBorder ? "" : "border-none border"}`}
       style={{
         width: "49%",
         borderRadius: "0.85rem",
@@ -20,20 +25,24 @@ function PeriodCard({ slot }) {
           border: "1px solid var(--primary-color-200)",
           boxShadow: "inset 3px 0 0 var(--primary-color)",
         }),
+        ...style,
       }}
     >
       <div className="d-flex flex-column gap-1">
         <div className="d-flex flex-row align-items-start justify-content-between gap-2">
           <span className="fw-semibold">{slot?.course_name}</span>
-          {joint && (
-            <span
-              className="d-inline-flex align-items-center gap-1 rounded-pill px-2 font-size-xs text-nowrap bg-white text-primary-700 flex-shrink-0"
-              style={{ border: "1px solid var(--primary-color-200)" }}
-              title="Shared with other specialties. Its time is set on the joint course timetable page."
-            >
-              <Users size={11} /> Joint course
-            </span>
-          )}
+          <div className="d-flex flex-row align-items-center gap-1 flex-shrink-0">
+            {joint && (
+              <span
+                className="d-inline-flex align-items-center gap-1 rounded-pill px-2 font-size-xs text-nowrap bg-white text-primary-700"
+                style={{ border: "1px solid var(--primary-color-200)" }}
+                title="Shared with other specialties. Its time is set on the joint course timetable page."
+              >
+                <Users size={11} /> Joint course
+              </span>
+            )}
+            {action}
+          </div>
         </div>
         <div className="d-flex flex-row align-items-center gap-1 text-iron-500">
           <div className="d-flex flex-row align-items-center gap-2">
@@ -95,6 +104,7 @@ function PeriodCard({ slot }) {
           </span>
         )}
       </div>
+      {children}
     </div>
   );
 }
