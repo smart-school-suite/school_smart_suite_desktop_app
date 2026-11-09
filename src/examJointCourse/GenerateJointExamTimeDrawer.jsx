@@ -30,8 +30,13 @@ export const sharedExamDates = (specialties = []) => {
 function GenerateJointExamTimeDrawer({ handleClose, drawerData }) {
   const course = drawerData?.course;
   const dates = useMemo(() => sharedExamDates(course?.specialties), [course?.specialties]);
+  // Times are only found from today on (as the API does), so past dates can't be chosen.
+  const upcoming = useMemo(() => {
+    const today = format(new Date(), "yyyy-MM-dd");
+    return dates.filter((date) => date >= today);
+  }, [dates]);
   const [form, setForm] = useState(() => ({
-    dates,
+    dates: upcoming,
     duration: course?.slot?.duration_minutes ?? 120,
     start_time: "08:00",
     end_time: "17:00",
@@ -55,7 +60,7 @@ function GenerateJointExamTimeDrawer({ handleClose, drawerData }) {
           start_time: form.start_time,
           end_time: form.end_time,
           // Every shared date is the default, so only narrow when some are left out.
-          ...(form.dates.length && form.dates.length < dates.length ? { dates: [...form.dates].sort() } : {}),
+          ...(form.dates.length && form.dates.length < upcoming.length ? { dates: [...form.dates].sort() } : {}),
         },
       },
       {
@@ -79,7 +84,7 @@ function GenerateJointExamTimeDrawer({ handleClose, drawerData }) {
       category={["Joint exam", course.course?.code].filter(Boolean).join(" · ")}
       meta={<CourseMeta course={course} />}
       handleClose={handleClose}
-      drawerData={{ course, dates, form, updateForm, proposal, pick, setPick, generate, runGenerate }}
+      drawerData={{ course, dates, upcoming, form, updateForm, proposal, pick, setPick, generate, runGenerate }}
     />
   );
 }

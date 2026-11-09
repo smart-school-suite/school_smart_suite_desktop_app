@@ -47,7 +47,8 @@ function CheckBubble({ show }) {
 }
 
 function ChooseDurationStep({ nextStep, drawerData }) {
-  const { course, dates, form, updateForm, proposal, generate, runGenerate } = drawerData;
+  const { course, dates, upcoming, form, updateForm, proposal, generate, runGenerate } = drawerData;
+  const ended = dates.length > 0 && upcoming.length === 0;
   const missing = course.specialties_without_exam ?? [];
   const minutes = Number(form.duration);
   const hoursValid = isRange(form.start_time, form.end_time);
@@ -72,6 +73,8 @@ function ChooseDurationStep({ nextStep, drawerData }) {
           hint={
             dates.length === 0
               ? "The exam periods share no date"
+              : ended
+                ? "The exam period has ended"
               : form.dates.length === 0
                 ? "Choose at least one date"
                 : !hoursValid
@@ -115,7 +118,7 @@ function ChooseDurationStep({ nextStep, drawerData }) {
         )}
 
         <div className="d-flex flex-column gap-2">
-          <Heading number="01" title="Exam Dates" text="The dates inside every linked specialty's exam period." />
+          <Heading number="01" title="Exam Dates" text="The dates inside every linked specialty's exam period, from today on." />
           {dates.length === 0 ? (
             <div className="jcs-alert jcs-alert--warn" role="status">
               <Icon icon="lucide:calendar-x-2" width={18} height={18} className="jcs-alert__icon" />
@@ -123,28 +126,40 @@ function ChooseDurationStep({ nextStep, drawerData }) {
             </div>
           ) : (
             <>
+              {ended && (
+                <div className="jcs-alert jcs-alert--warn" role="status">
+                  <Icon icon="lucide:calendar-x-2" width={18} height={18} className="jcs-alert__icon" />
+                  <span>
+                    The exam period ended on {formatExamDate(dates.at(-1), "EEEE d MMMM yyyy")}. Joint exam times are only found from
+                    today on, so move the exam period forward on the exam to schedule this course.
+                  </span>
+                </div>
+              )}
               <div className="jcs-days" role="group" aria-label="Exam dates">
                 {dates.map((date, index) => {
                   const isSelected = form.dates.includes(date);
+                  const isPast = !upcoming.includes(date);
                   return (
                     <motion.button
                       key={date}
                       type="button"
                       className={`cw-day jcs-day ${isSelected ? "is-selected" : ""}`}
                       aria-pressed={isSelected}
+                      disabled={isPast}
+                      title={isPast ? "This date has passed" : undefined}
                       onClick={() => toggleDate(date)}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
+                      whileHover={isPast ? undefined : { scale: 1.03 }}
+                      whileTap={isPast ? undefined : { scale: 0.97 }}
                       layout
                     >
                       <span className="jcs-day__name">{formatExamDate(date, "EEE d MMM")}</span>
-                      <span className="jcs-day__meta">Day {index + 1} of {dates.length}</span>
+                      <span className="jcs-day__meta">{isPast ? "Passed" : `Day ${index + 1} of ${dates.length}`}</span>
                     </motion.button>
                   );
                 })}
               </div>
-              <div className="d-flex flex-row gap-3">
-                <TextButton icon="lucide:check-check" tone="muted" onClick={() => updateForm({ dates })}>
+              <div className={`flex-row gap-3 ${ended ? "d-none" : "d-flex"}`}>
+                <TextButton icon="lucide:check-check" tone="muted" onClick={() => updateForm({ dates: upcoming })}>
                   All dates
                 </TextButton>
                 <TextButton icon="lucide:eraser" tone="muted" onClick={() => updateForm({ dates: [] })}>
