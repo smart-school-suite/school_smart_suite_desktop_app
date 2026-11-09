@@ -12,6 +12,7 @@ const TERM_TEXT = {
   title: "Select academic year and exam",
   hint: "Choose which exam's joint courses to schedule",
   search: "Search academic year or exam",
+  empty: "No exams found. Create an exam first.",
 };
 const termMeta = (term) =>
   term.joint_course_count === 0 ? "No joint exams" : `${term.configured_count} of ${term.joint_course_count} joint exams set`;
