@@ -48,7 +48,7 @@ export const TEACHER_PREF_TIME_SLOT_COLUMNS = [
     aliases: [ "end_time", "day_end_time"],
   },
    {
-    program_name: "day",
+    program_name: "start_time",
     type: "standard_field",
     label: "Start Time",
     required: false,
