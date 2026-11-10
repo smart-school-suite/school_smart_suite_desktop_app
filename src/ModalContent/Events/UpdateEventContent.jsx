@@ -379,7 +379,6 @@ function UpdateEventContent({ drawerData, handleClose }) {
               }
               images={images}
               onImagesChange={handleImagesChange}
-              onError={setClientError}
             />
           </div>
         </div>

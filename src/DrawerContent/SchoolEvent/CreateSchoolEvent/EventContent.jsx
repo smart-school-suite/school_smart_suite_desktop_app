@@ -2,7 +2,6 @@ import {
   TextAreaInput,
   TextInput,
   DateTimeRangeInput,
-  ImageUploadComponent,
 } from "../../../components/FormComponents/InputComponents";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown, {
@@ -22,8 +21,8 @@ import {
   toggleRemoveImage,
 } from "../../../Slices/schoolEvent/schoolEventSlice";
 import { useEffect, useRef, useState } from "react";
-import { RotateCcw, Trash2, X } from "lucide-react";
 import { allFieldsValid, cleanAssetPath } from "../../../utils/functions";
+import MultiImageUploader from "../../../components/FormComponents/MultiImageUploader";
 import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import { useFormError } from "../../../hooks/form/useFormError";
 import {
@@ -58,37 +57,8 @@ export function FilePreview({ file, style, className }) {
   );
 }
 
-function ImageTile({ children, onAction, actionLabel, muted = false, ActionIcon }) {
-  return (
-    <div
-      className="position-relative rounded-3 overflow-hidden border"
-      style={{ width: "6rem", height: "6rem", opacity: muted ? 0.4 : 1 }}
-    >
-      {children}
-      <button
-        type="button"
-        aria-label={actionLabel}
-        title={actionLabel}
-        className="position-absolute border-none rounded-circle bg-white shadow-sm"
-        style={{
-          top: 4,
-          right: 4,
-          width: "1.6rem",
-          height: "1.6rem",
-          display: "grid",
-          placeItems: "center",
-          cursor: "pointer",
-        }}
-        onClick={onAction}
-      >
-        <ActionIcon size={12} />
-      </button>
-    </div>
-  );
-}
-
 /**
- * Event images: saved images (with remove / undo) and new files, up to 5 in total.
+ * Event images: saved images (remove / undo) and new files, up to 5 in total.
  * Used by the create wizard and the update content drawer.
  */
 export function EventImagesField({
@@ -97,81 +67,22 @@ export function EventImagesField({
   onToggleRemove,
   images,
   onImagesChange,
-  onError,
 }) {
-  const keptCount = existingImages.filter(
-    (image) => !removeImageIds.includes(image.id),
-  ).length;
-  const remaining = MAX_EVENT_IMAGES - keptCount - images.length;
-
-  const handleUpload = (file) => {
-    if (!EVENT_IMAGE_TYPES.includes(file?.type)) {
-      onError?.("Unsupported Image", "Event images must be JPEG, PNG or WebP files.");
-      return;
-    }
-    if (remaining <= 0) {
-      onError?.(
-        "Max Amount Reached",
-        `An event can have at most ${MAX_EVENT_IMAGES} images.`,
-      );
-      return;
-    }
-    onImagesChange([...images, file]);
-  };
-
   return (
-    <div className="d-flex flex-column gap-2">
-      <div className="d-flex flex-row align-items-center justify-content-between">
-        <span className="fw-medium">Event Images</span>
-        <span className="text-iron-400">
-          {keptCount + images.length} of {MAX_EVENT_IMAGES}
-        </span>
-      </div>
-      {(existingImages.length > 0 || images.length > 0) && (
-        <div className="d-flex flex-row flex-wrap gap-2">
-          {existingImages.map((image) => {
-            const isRemoved = removeImageIds.includes(image.id);
-            return (
-              <ImageTile
-                key={image.id}
-                muted={isRemoved}
-                actionLabel={isRemoved ? "Keep image" : "Remove image"}
-                ActionIcon={isRemoved ? RotateCcw : Trash2}
-                onAction={() => onToggleRemove?.(image.id)}
-              >
-                <img
-                  src={eventImageUrl(image.object_key)}
-                  alt="Event"
-                  className="object-fit-cover w-100 h-100"
-                />
-              </ImageTile>
-            );
-          })}
-          {images.map((file, index) => (
-            <ImageTile
-              key={`${file.name}-${file.lastModified}-${index}`}
-              actionLabel="Remove image"
-              ActionIcon={X}
-              onAction={() =>
-                onImagesChange(images.filter((_, i) => i !== index))
-              }
-            >
-              <FilePreview file={file} />
-            </ImageTile>
-          ))}
-        </div>
-      )}
-      {remaining > 0 && (
-        <ImageUploadComponent
-          // a fresh uploader after each pick, so the next image can be added
-          key={images.length}
-          maxFileSize={MAX_EVENT_IMAGE_SIZE}
-          accept="image/jpeg,image/png,image/webp"
-          uploadText={`Click Here To Add An Event Image (JPEG, PNG or WebP, max 2 MB, ${remaining} left)`}
-          onImageUpload={handleUpload}
-        />
-      )}
-    </div>
+    <MultiImageUploader
+      label="Event Images"
+      existingImages={existingImages.map((image) => ({
+        id: image.id,
+        url: eventImageUrl(image.object_key),
+      }))}
+      removeImageIds={removeImageIds}
+      onToggleRemove={onToggleRemove}
+      images={images}
+      onImagesChange={onImagesChange}
+      maxFiles={MAX_EVENT_IMAGES}
+      maxFileSize={MAX_EVENT_IMAGE_SIZE}
+      acceptedTypes={EVENT_IMAGE_TYPES}
+    />
   );
 }
 
@@ -442,7 +353,6 @@ function EventContent({
               setImages(files);
               dispatch(markCreateEventDirty());
             }}
-            onError={setClientError}
           />
         </div>
       </div>
