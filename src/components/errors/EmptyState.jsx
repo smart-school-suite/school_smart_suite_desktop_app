@@ -34,7 +34,7 @@ export default function EmptyState({
   hint,
   actions,
   height = "75dvh",
-  mascotHeight = "17rem",
+  mascotHeight = "11rem",
 }) {
   const reduceMotion = useReducedMotion();
   return (
