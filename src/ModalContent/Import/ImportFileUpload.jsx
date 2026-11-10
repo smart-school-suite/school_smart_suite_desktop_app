@@ -5,7 +5,7 @@ import { countSpreadsheetRows } from "../../utils/file/fileParser";
 import { useDispatch, useSelector } from "react-redux";
 import { prepareFileForRedux } from "../../utils/file/fileReconstruction";
 import { FILE_ENCODING } from "@/constants";
-import { downloadFile } from "../../utils/file/fileDownload";
+import { handleTemplateDownload } from "../../utils/file/fileDownload";
 import { CircleX, ChevronDown, Plus, Dot, ArrowRight } from "lucide-react";
 function FileUpload({
   onFileSelect,
@@ -407,16 +407,26 @@ function ImportFileUpload({
           )}
         </AnimatePresence>
 
-        <div className="d-flex flex-column gap-2">
-          <span className="fw-medium">New to {module.name} imports?</span>
-          <button className="font-size-sm border-none rounded-3 p-2 d-flex flex-row align-items-center gap-2 w-100 justify-content-center bg-light">
-            <span>Download template</span>
-            <Icon icon="mynaui:download" width={20} height={20} />
-          </button>
-          <span className="font-size-sm text-muted">
-            Use our template to make sure your columns are formatted correctly.
-          </span>
-        </div>
+        {module.template && (
+          <div className="d-flex flex-column gap-2">
+            <span className="fw-medium">New to {module.name} imports?</span>
+            <button
+              onClick={() =>
+                handleTemplateDownload(
+                  module.template.path,
+                  module.template.fileName,
+                )
+              }
+              className="font-size-sm border-none rounded-3 p-2 d-flex flex-row align-items-center gap-2 w-100 justify-content-center bg-light"
+            >
+              <span>Download template</span>
+              <Icon icon="mynaui:download" width={20} height={20} />
+            </button>
+            <span className="font-size-sm text-muted">
+              Use our template to make sure your columns are formatted correctly.
+            </span>
+          </div>
+        )}
       </div>
       <div className="mt-auto border-top p-2" style={{ height: "8dvh" }}>
         <div className="d-flex flex-row justify-content-end">
