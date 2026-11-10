@@ -23,6 +23,8 @@ function CreateEventWizzard({ handleClose, drawerData }) {
   const [stepIndex, setStepIndex] = useState(0);
   // New image files stay here: File objects cannot go into the persisted store.
   const [images, setImages] = useState([]);
+  // Display order of saved and new images (item keys); the first is the cover.
+  const [imageOrder, setImageOrder] = useState([]);
   const {
     data: draftEvent,
     isLoading: isDraftLoading,
@@ -94,6 +96,8 @@ function CreateEventWizzard({ handleClose, drawerData }) {
         handleNavigate={handleNavigate}
         images={images}
         setImages={setImages}
+        imageOrder={imageOrder}
+        setImageOrder={setImageOrder}
       />
     </>
   );

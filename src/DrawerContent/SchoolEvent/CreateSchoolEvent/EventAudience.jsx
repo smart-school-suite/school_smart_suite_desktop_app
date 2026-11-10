@@ -112,6 +112,7 @@ function EventAudience({
   previousStep,
   fullStep,
   images,
+  imageOrder,
 }) {
   const dispatch = useDispatch();
   const moduleState = useSelector(
@@ -140,7 +141,11 @@ function EventAudience({
   if (TargetComponent) {
     return (
       <>
-        <EventWizardHeader handleClose={handleClose} images={images} />
+        <EventWizardHeader
+          handleClose={handleClose}
+          images={images}
+          imageOrder={imageOrder}
+        />
         <div className="d-flex flex-column px-2 pt-2 font-size-sm">
           <span className="fw-medium">Invitee Targeting</span>
           <p className="text-iron-400">
@@ -176,7 +181,11 @@ function EventAudience({
 
   return (
     <>
-      <EventWizardHeader handleClose={handleClose} images={images} />
+      <EventWizardHeader
+          handleClose={handleClose}
+          images={images}
+          imageOrder={imageOrder}
+        />
       <div className="d-flex flex-row align-items-center justify-content-between font-size-sm px-2 pt-2">
         <div className="d-flex flex-column">
           <span className="fw-medium">Event Invitees</span>
@@ -259,7 +268,7 @@ function EventAudience({
               className="border-none bg-none cursor-pointer"
               onClick={() => previousStep()}
             >
-              <span>Back To Content</span>
+              <span>Back To Images</span>
             </button>
             <button
               className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2 cursor-pointer"

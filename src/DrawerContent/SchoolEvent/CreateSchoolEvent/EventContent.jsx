@@ -17,8 +17,6 @@ import { useGetEventTags } from "../../../hooks/schoolEvent/useGetSchoolEventTag
 import { useSelector, useDispatch } from "react-redux";
 import {
   setEventContent,
-  markCreateEventDirty,
-  toggleRemoveImage,
 } from "../../../Slices/schoolEvent/schoolEventSlice";
 import { useEffect, useRef, useState } from "react";
 import { allFieldsValid, cleanAssetPath } from "../../../utils/functions";
@@ -67,6 +65,8 @@ export function EventImagesField({
   onToggleRemove,
   images,
   onImagesChange,
+  order,
+  onOrderChange,
 }) {
   return (
     <MultiImageUploader
@@ -79,6 +79,8 @@ export function EventImagesField({
       onToggleRemove={onToggleRemove}
       images={images}
       onImagesChange={onImagesChange}
+      order={order}
+      onOrderChange={onOrderChange}
       maxFiles={MAX_EVENT_IMAGES}
       maxFileSize={MAX_EVENT_IMAGE_SIZE}
       acceptedTypes={EVENT_IMAGE_TYPES}
@@ -92,7 +94,7 @@ function EventContent({
   nextStep,
   fullStep,
   images,
-  setImages,
+  imageOrder,
 }) {
   const { formError, errorBannerRef, setClientError, clearFormError } =
     useFormError();
@@ -154,7 +156,11 @@ function EventContent({
 
   return (
     <>
-      <EventWizardHeader handleClose={handleClose} images={images} />
+      <EventWizardHeader
+        handleClose={handleClose}
+        images={images}
+        imageOrder={imageOrder}
+      />
       <div className="d-flex flex-row align-items-center justify-content-between font-size-sm px-2 pt-2">
         <div className="d-flex flex-column">
           <span className="fw-medium">Event content</span>
@@ -341,26 +347,17 @@ function EventContent({
               ref={organizerRef}
             />
           </div>
-          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
-          <EventImagesField
-            existingImages={moduleState?.existingImages}
-            removeImageIds={moduleState?.removeImageIds}
-            onToggleRemove={(imageId) =>
-              dispatch(toggleRemoveImage({ imageId }))
-            }
-            images={images}
-            onImagesChange={(files) => {
-              setImages(files);
-              dispatch(markCreateEventDirty());
-            }}
-          />
         </div>
       </div>
       <div className="drawer-footer font-size-sm">
         <div className="d-flex flex-column w-100">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
-            <EventWizardCancel handleClose={handleClose} images={images} />
+            <EventWizardCancel
+              handleClose={handleClose}
+              images={images}
+              imageOrder={imageOrder}
+            />
             <button
               className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
               onClick={() => handleNext()}

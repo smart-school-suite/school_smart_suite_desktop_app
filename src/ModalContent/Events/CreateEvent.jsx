@@ -7,6 +7,10 @@ import { useFormError } from "../../hooks/form/useFormError";
 import { useCreateSchoolEvent } from "../../hooks/schoolEvent/useCreateSchoolEvent";
 import { useUpdateDraftSchoolEvent } from "../../hooks/schoolEvent/useUpdateDraftSchoolEvent";
 import { resetCreateEvent } from "../../Slices/schoolEvent/schoolEventSlice";
+import {
+  orderImageItems,
+  toImageOrderPayload,
+} from "../../components/FormComponents/MultiImageUploader";
 
 /**
  * Shared pieces of the create / edit-draft school event drawer
@@ -16,7 +20,10 @@ import { resetCreateEvent } from "../../Slices/schoolEvent/schoolEventSlice";
 const ids = (items) => (items ?? []).map((item) => item?.id ?? item);
 
 // Builds the create / draft-update request body from the wizard state.
-export function buildSchoolEventPayload(moduleState, { status, images = [] }) {
+export function buildSchoolEventPayload(
+  moduleState,
+  { status, images = [], imageOrder = [] },
+) {
   const content = moduleState?.content;
   const targeting = moduleState?.audience?.targeting;
   const isScheduled = status === "scheduled";
@@ -59,6 +66,15 @@ export function buildSchoolEventPayload(moduleState, { status, images = [] }) {
     ],
   };
 
+  const imageItems = orderImageItems({
+    order: imageOrder,
+    existingImages: moduleState?.existingImages,
+    removeImageIds: moduleState?.removeImageIds,
+    images,
+  });
+  // display order of the images; the first one is the cover
+  payload.image_order = toImageOrderPayload(imageItems);
+
   if (moduleState?.draftEventId) {
     payload.school_event_id = moduleState.draftEventId;
     payload.remove_image_ids = moduleState?.removeImageIds ?? [];
@@ -68,7 +84,12 @@ export function buildSchoolEventPayload(moduleState, { status, images = [] }) {
 }
 
 // Drawer header with the close button; asks to save as draft when the form has changes.
-export function EventWizardHeader({ handleClose, images, disabled = false }) {
+export function EventWizardHeader({
+  handleClose,
+  images,
+  imageOrder,
+  disabled = false,
+}) {
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.schoolEvent.createEvent);
   const title = moduleState?.draftEventId
@@ -90,7 +111,7 @@ export function EventWizardHeader({ handleClose, images, disabled = false }) {
             modalContent: EventDiscardWarning,
           }}
           size={"md"}
-          rowData={{ handleCloseDrawer: handleClose, images }}
+          rowData={{ handleCloseDrawer: handleClose, images, imageOrder }}
           closeOnOutsideClick={false}
           closeOnEscape={false}
         >
@@ -121,7 +142,12 @@ export function EventWizardHeader({ handleClose, images, disabled = false }) {
 }
 
 // Cancel button for the drawer footer, with the same save-as-draft prompt.
-export function EventWizardCancel({ handleClose, images, label = "Cancel" }) {
+export function EventWizardCancel({
+  handleClose,
+  images,
+  imageOrder,
+  label = "Cancel",
+}) {
   const dispatch = useDispatch();
   const isDirty = useSelector((state) => state.schoolEvent.createEvent.isDirty);
   return isDirty ? (
@@ -130,7 +156,7 @@ export function EventWizardCancel({ handleClose, images, label = "Cancel" }) {
         modalContent: EventDiscardWarning,
       }}
       size={"md"}
-      rowData={{ handleCloseDrawer: handleClose, images }}
+      rowData={{ handleCloseDrawer: handleClose, images, imageOrder }}
       closeOnOutsideClick={false}
       closeOnEscape={false}
     >
@@ -150,7 +176,7 @@ export function EventWizardCancel({ handleClose, images, label = "Cancel" }) {
 }
 
 function EventDiscardWarning({ handleClose, rowData }) {
-  const { handleCloseDrawer, images = [] } = rowData;
+  const { handleCloseDrawer, images = [], imageOrder = [] } = rowData;
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.schoolEvent.createEvent);
   const isDraftEdit = Boolean(moduleState?.draftEventId);
@@ -172,6 +198,7 @@ function EventDiscardWarning({ handleClose, rowData }) {
     const payload = buildSchoolEventPayload(moduleState, {
       status: "draft",
       images,
+      imageOrder,
     });
     clearFormError();
     if (isDraftEdit) {

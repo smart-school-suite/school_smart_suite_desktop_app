@@ -1,11 +1,17 @@
 import EventAudience from "../../../DrawerContent/SchoolEvent/CreateSchoolEvent/EventAudience";
 import EventContent from "../../../DrawerContent/SchoolEvent/CreateSchoolEvent/EventContent";
+import EventImages from "../../../DrawerContent/SchoolEvent/CreateSchoolEvent/EventImages";
 import EventReview from "../../../DrawerContent/SchoolEvent/CreateSchoolEvent/EventReview";
 export const CREATE_SCHOOL_EVENT_STEP_FLOW = [
   {
     step: "SCHOOL_EVENT_CONTENT",
     label: "School Event Content",
     component: EventContent,
+  },
+  {
+    step: "SCHOOL_EVENT_IMAGES",
+    label: "School Event Images",
+    component: EventImages,
   },
   {
     step: "SCHOOL_EVENT_AUDIENCE",

@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Expand,
+  GripVertical,
   ImagePlus,
   RotateCcw,
   Star,
@@ -18,6 +19,22 @@ import {
   X,
 } from "lucide-react";
 import { useSelector } from "react-redux";
+import {
+  closestCenter,
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const tokens = {
   blue: "#0EA7E9",
@@ -39,6 +56,57 @@ const formatSize = (bytes) => {
 };
 
 const fileSignature = (file) => `${file.name}:${file.size}:${file.lastModified}`;
+
+// Stable key for a picked File, so its position survives re-renders.
+const fileKeys = new WeakMap();
+let fileKeySeed = 0;
+export const getFileKey = (file) => {
+  if (!fileKeys.has(file)) {
+    fileKeySeed += 1;
+    fileKeys.set(file, `new-${fileKeySeed}`);
+  }
+  return fileKeys.get(file);
+};
+export const savedImageKey = (id) => `saved-${id}`;
+
+/**
+ * Saved and new images in display order. `order` is a list of item keys
+ * (savedImageKey(id) / getFileKey(file)); items it does not mention follow in
+ * their natural order (saved images first, then new files as picked).
+ */
+export function orderImageItems({
+  order = [],
+  existingImages = [],
+  removeImageIds = [],
+  images = [],
+}) {
+  const items = [
+    ...existingImages.map((image) => ({
+      key: savedImageKey(image.id),
+      kind: "saved",
+      image,
+      isRemoved: removeImageIds.includes(image.id),
+    })),
+    ...images.map((file, index) => ({
+      key: getFileKey(file),
+      kind: "new",
+      file,
+      index,
+      isRemoved: false,
+    })),
+  ];
+  const byKey = new Map(items.map((item) => [item.key, item]));
+  const ordered = order.map((key) => byKey.get(key)).filter(Boolean);
+  const seen = new Set(ordered.map((item) => item.key));
+  return [...ordered, ...items.filter((item) => !seen.has(item.key))];
+}
+
+// Request value for the API's image_order: saved ids and "new:N" (images[N]); the first is the cover.
+export function toImageOrderPayload(items) {
+  return items
+    .filter((item) => !item.isRemoved)
+    .map((item) => (item.kind === "saved" ? item.image.id : `new:${item.index}`));
+}
 
 // Object URL for a picked file, created and revoked with the component.
 function useFileUrl(file) {
@@ -135,15 +203,23 @@ function ImageTile({
   onRemove,
   onRestore,
   onPreview,
+  onMakeCover,
   reduceMotion,
+  dragHandle,
+  isLifted = false,
+  isPlaceholder = false,
 }) {
   const [hovered, setHovered] = useState(false);
-  const showActions = hovered && !isRemoved;
+  const showActions = (hovered || isLifted) && !isRemoved && !isPlaceholder;
   return (
     <motion.div
-      layout={!reduceMotion}
-      initial={reduceMotion ? false : { opacity: 0, scale: 0.85, y: 8 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
+      initial={reduceMotion || isLifted ? false : { opacity: 0, scale: 0.85, y: 8 }}
+      animate={{
+        opacity: isPlaceholder ? 0.35 : 1,
+        scale: isLifted && !reduceMotion ? 1.04 : 1,
+        rotate: isLifted && !reduceMotion ? -1.5 : 0,
+        y: 0,
+      }}
       exit={
         reduceMotion
           ? { opacity: 0 }
@@ -158,6 +234,8 @@ function ImageTile({
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
+        // keys pressed on the tile's own buttons (e.g. the reorder grip) are theirs
+        if (e.target !== e.currentTarget) return;
         if ((e.key === "Enter" || e.key === " ") && !isRemoved) {
           e.preventDefault();
           onPreview();
@@ -170,10 +248,13 @@ function ImageTile({
       className="position-relative overflow-hidden rounded-4"
       style={{
         aspectRatio: "4 / 3",
-        cursor: isRemoved ? "default" : "zoom-in",
-        boxShadow: hovered
-          ? "0 8px 24px rgba(8,48,73,0.14)"
-          : "0 1px 3px rgba(8,48,73,0.08)",
+        cursor: isLifted ? "grabbing" : isRemoved ? "default" : "zoom-in",
+        boxShadow: isLifted
+          ? "0 18px 40px rgba(8,48,73,0.28)"
+          : hovered
+            ? "0 8px 24px rgba(8,48,73,0.14)"
+            : "0 1px 3px rgba(8,48,73,0.08)",
+        border: isPlaceholder ? `2px dashed ${tokens.blue}` : "none",
         transition: "box-shadow 160ms ease",
         outline: "none",
       }}
@@ -261,6 +342,11 @@ function ImageTile({
             exit={{ opacity: 0, y: -6 }}
             transition={spring}
           >
+            {!isCover && onMakeCover && (
+              <TileButton label="Set as cover" onClick={onMakeCover}>
+                <Star size={13} />
+              </TileButton>
+            )}
             <TileButton label="Preview image" onClick={onPreview}>
               <Expand size={13} />
             </TileButton>
@@ -272,11 +358,44 @@ function ImageTile({
       </AnimatePresence>
 
       <AnimatePresence>
+        {dragHandle && (showActions || dragHandle.isFocused) && (
+          <motion.button
+            key="grip"
+            type="button"
+            ref={dragHandle.ref}
+            {...dragHandle.attributes}
+            onKeyDown={dragHandle.onKeyDown}
+            onClick={(e) => e.stopPropagation()}
+            aria-label="Reorder image: press space, then use the arrow keys"
+            title="Drag to reorder"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={spring}
+            className="position-absolute border-0 rounded-circle d-grid shadow-sm"
+            style={{
+              right: 8,
+              bottom: 8,
+              width: "1.9rem",
+              height: "1.9rem",
+              placeItems: "center",
+              background: "rgba(255,255,255,0.95)",
+              color: tokens.ink,
+              cursor: "grab",
+              touchAction: "none",
+            }}
+          >
+            <GripVertical size={13} />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {showActions && meta && (
           <motion.div
             key="meta"
             className="position-absolute text-white text-truncate"
-            style={{ left: 10, right: 10, bottom: 8, fontSize: "0.7rem" }}
+            style={{ left: 10, right: 44, bottom: 14, fontSize: "0.7rem" }}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
@@ -339,6 +458,42 @@ function NewFileTile({ file, ...props }) {
       meta={`${file.name} · ${formatSize(file.size)}`}
       isNew
     />
+  );
+}
+
+// Grid cell that dnd-kit moves; the whole tile is draggable with the pointer.
+function SortableTile({ id, disabled, children }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id, disabled });
+  const [isFocused, setIsFocused] = useState(false);
+  const { onKeyDown, ...pointerListeners } = listeners ?? {};
+  return (
+    <div
+      ref={setNodeRef}
+      {...(disabled ? {} : pointerListeners)}
+      onFocusCapture={() => setIsFocused(true)}
+      onBlurCapture={() => setIsFocused(false)}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        touchAction: "none",
+        zIndex: isDragging ? 2 : undefined,
+      }}
+    >
+      {children({
+        isPlaceholder: isDragging,
+        dragHandle: disabled
+          ? null
+          : { ref: setActivatorNodeRef, attributes, onKeyDown, isFocused },
+      })}
+    </div>
   );
 }
 
@@ -546,6 +701,8 @@ export default function MultiImageUploader({
   onToggleRemove,
   images = [],
   onImagesChange,
+  order = [],
+  onOrderChange,
   maxFiles = 5,
   maxFileSize = 2 * 1024 * 1024,
   acceptedTypes = ["image/jpeg", "image/png", "image/webp"],
@@ -555,19 +712,18 @@ export default function MultiImageUploader({
   const reduceMotion = useReducedMotion();
   const inputRef = useRef(null);
   const dragDepth = useRef(0);
-  const fileKeys = useRef(new WeakMap());
   const keySeed = useRef(0);
   const [isDragging, setIsDragging] = useState(false);
   const [notices, setNotices] = useState([]);
   const [previewIndex, setPreviewIndex] = useState(null);
 
-  const keyFor = (file) => {
-    if (!fileKeys.current.has(file)) {
-      keySeed.current += 1;
-      fileKeys.current.set(file, `new-${keySeed.current}`);
-    }
-    return fileKeys.current.get(file);
-  };
+  const [activeKey, setActiveKey] = useState(null);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   const keptCount = existingImages.filter(
     (image) => !removeImageIds.includes(image.id),
@@ -654,23 +810,61 @@ export default function MultiImageUploader({
     },
   };
 
-  // Tiles in display order: saved images first, then new ones. The first kept image is the cover.
-  const tiles = [
-    ...existingImages.map((image) => ({
-      key: `saved-${image.id}`,
-      kind: "saved",
-      image,
-      isRemoved: removeImageIds.includes(image.id),
-    })),
-    ...images.map((file, index) => ({
-      key: keyFor(file),
-      kind: "new",
-      file,
-      index,
-      isRemoved: false,
-    })),
-  ];
+  // Tiles in display order. The first kept image is the cover.
+  const tiles = orderImageItems({ order, existingImages, removeImageIds, images });
+  const tileKeys = tiles.map((tile) => tile.key);
   const coverKey = tiles.find((tile) => !tile.isRemoved)?.key;
+  const activeTile = tiles.find((tile) => tile.key === activeKey);
+
+  const moveTile = (fromKey, toIndex) => {
+    const keys = tileKeys.filter((key) => key !== fromKey);
+    keys.splice(toIndex, 0, fromKey);
+    onOrderChange?.(keys);
+  };
+  // The cover goes in front of every kept image.
+  const makeCover = (key) => moveTile(key, 0);
+
+  const handleDragEnd = ({ active, over }) => {
+    setActiveKey(null);
+    if (!over || active.id === over.id) return;
+    moveTile(active.id, tileKeys.indexOf(over.id));
+  };
+
+  const renderTile = (tile, extra = {}) =>
+    tile.kind === "saved" ? (
+      <ImageTile
+        src={tile.image.url}
+        alt="Saved event image"
+        isCover={tile.key === coverKey}
+        isRemoved={tile.isRemoved}
+        onRemove={() => onToggleRemove?.(tile.image.id)}
+        onRestore={() => {
+          if (isFull) {
+            pushNotices([
+              `Remove another image first. Only ${maxFiles} images are allowed.`,
+            ]);
+            return;
+          }
+          onToggleRemove?.(tile.image.id);
+        }}
+        onPreview={() => openPreview(tile.key)}
+        onMakeCover={onOrderChange ? () => makeCover(tile.key) : undefined}
+        reduceMotion={reduceMotion}
+        {...extra}
+      />
+    ) : (
+      <NewFileTile
+        file={tile.file}
+        isCover={tile.key === coverKey}
+        onRemove={() =>
+          onImagesChange(images.filter((_, i) => i !== tile.index))
+        }
+        onPreview={() => openPreview(tile.key)}
+        onMakeCover={onOrderChange ? () => makeCover(tile.key) : undefined}
+        reduceMotion={reduceMotion}
+        {...extra}
+      />
+    );
   const previewItems = tiles
     .filter((tile) => !tile.isRemoved)
     .map((tile) =>
@@ -873,48 +1067,52 @@ export default function MultiImageUploader({
       </AnimatePresence>
 
       {tiles.length > 0 && (
-        <motion.div
-          layout={!reduceMotion}
-          className="d-grid gap-2"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(8.5rem, 1fr))" }}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={({ active }) => setActiveKey(active.id)}
+          onDragEnd={handleDragEnd}
+          onDragCancel={() => setActiveKey(null)}
         >
-          <AnimatePresence mode="popLayout">
-            {tiles.map((tile) =>
-              tile.kind === "saved" ? (
-                <ImageTile
-                  key={tile.key}
-                  src={tile.image.url}
-                  alt="Saved event image"
-                  isCover={tile.key === coverKey}
-                  isRemoved={tile.isRemoved}
-                  onRemove={() => onToggleRemove?.(tile.image.id)}
-                  onRestore={() => {
-                    if (isFull) {
-                      pushNotices([
-                        `Remove another image first. Only ${maxFiles} images are allowed.`,
-                      ]);
-                      return;
+          <SortableContext items={tileKeys} strategy={rectSortingStrategy}>
+            <div
+              className="d-grid gap-2"
+              style={{
+                gridTemplateColumns: "repeat(auto-fill, minmax(8.5rem, 1fr))",
+              }}
+            >
+              <AnimatePresence>
+                {tiles.map((tile) => (
+                  <SortableTile
+                    key={tile.key}
+                    id={tile.key}
+                    disabled={!onOrderChange || tiles.length < 2}
+                  >
+                    {({ isPlaceholder, dragHandle }) =>
+                      renderTile(tile, { isPlaceholder, dragHandle })
                     }
-                    onToggleRemove?.(tile.image.id);
-                  }}
-                  onPreview={() => openPreview(tile.key)}
-                  reduceMotion={reduceMotion}
-                />
-              ) : (
-                <NewFileTile
-                  key={tile.key}
-                  file={tile.file}
-                  isCover={tile.key === coverKey}
-                  onRemove={() =>
-                    onImagesChange(images.filter((_, i) => i !== tile.index))
-                  }
-                  onPreview={() => openPreview(tile.key)}
-                  reduceMotion={reduceMotion}
-                />
-              ),
-            )}
-          </AnimatePresence>
-        </motion.div>
+                  </SortableTile>
+                ))}
+              </AnimatePresence>
+            </div>
+          </SortableContext>
+          {createPortal(
+            <DragOverlay
+              dropAnimation={
+                reduceMotion ? null : { duration: 220, easing: "cubic-bezier(0.2, 0, 0, 1)" }
+              }
+              zIndex={20000}
+            >
+              {activeTile ? renderTile(activeTile, { isLifted: true }) : null}
+            </DragOverlay>,
+            document.body,
+          )}
+        </DndContext>
+      )}
+      {tiles.length > 1 && onOrderChange && (
+        <span className="text-iron-400" style={{ fontSize: "0.72rem" }}>
+          Drag images to reorder them, or use the star to choose the cover.
+        </span>
       )}
 
       <Lightbox

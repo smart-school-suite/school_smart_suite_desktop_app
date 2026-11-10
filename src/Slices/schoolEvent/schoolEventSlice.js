@@ -185,8 +185,8 @@ const schoolEventSlice = createSlice({
 
       if (value !== undefined) state.createEvent.isDirty = true;
     },
-    // New images live in the drawer's component state (File objects are not
-    // serializable); this only flags the form as changed.
+    // New images and their order live in the drawer's component state (File
+    // objects are not serializable); this only flags the form as changed.
     markCreateEventDirty: (state) => {
       state.createEvent.isDirty = true;
     },
@@ -206,8 +206,8 @@ const schoolEventSlice = createSlice({
       }
     },
     setUpdateContentImagesChanged: (state, action) => {
-      const { hasNewImages } = action.payload;
-      state.updateContent.hasNewImages = hasNewImages;
+      const { hasImageChanges } = action.payload;
+      state.updateContent.hasImageChanges = hasImageChanges;
       state.updateContent.isDirty = isUpdateContentDirty(state.updateContent);
     },
     setAudienceType: (state, action) => {
@@ -363,7 +363,7 @@ const schoolEventSlice = createSlice({
       state.updateContent.draft = formattedPayload;
       state.updateContent.existingImages = imagesFromEvent(event);
       state.updateContent.removeImageIds = [];
-      state.updateContent.hasNewImages = false;
+      state.updateContent.hasImageChanges = false;
       state.updateContent.isDirty = false;
     },
     resetUpdateContent: (state) => {
@@ -464,7 +464,7 @@ function isUpdateContentDirty(updateContent) {
   return (
     hasFormChanged(updateContent.initial, updateContent.draft) ||
     (updateContent.removeImageIds ?? []).length > 0 ||
-    Boolean(updateContent.hasNewImages)
+    Boolean(updateContent.hasImageChanges)
   );
 }
 

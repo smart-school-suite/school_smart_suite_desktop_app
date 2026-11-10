@@ -21,6 +21,7 @@ import {
 } from "../../../Slices/schoolEvent/schoolEventSlice";
 import { formatISODate } from "../../../utils/functions";
 import { eventImageUrl, FilePreview } from "./EventContent";
+import { orderImageItems } from "../../../components/FormComponents/MultiImageUploader";
 
 const AUDIENCE_LABELS = {
   school_wide: "Everyone in the school",
@@ -49,6 +50,7 @@ function EventReview({
   fullStep,
   handleNavigate,
   images,
+  imageOrder,
 }) {
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.schoolEvent.createEvent);
@@ -70,9 +72,12 @@ function EventReview({
   const publishedAtRef = useRef();
   const content = moduleState?.content;
   const publication = moduleState?.publication;
-  const keptImages = (moduleState?.existingImages ?? []).filter(
-    (image) => !(moduleState?.removeImageIds ?? []).includes(image.id),
-  );
+  const orderedImages = orderImageItems({
+    order: imageOrder,
+    existingImages: moduleState?.existingImages,
+    removeImageIds: moduleState?.removeImageIds,
+    images,
+  }).filter((item) => !item.isRemoved);
 
   const handleSubmit = async () => {
     clearFormError();
@@ -107,6 +112,7 @@ function EventReview({
     const payload = buildSchoolEventPayload(moduleState, {
       status: publication.type,
       images,
+      imageOrder,
     });
     if (isDraftEdit) {
       updateDraftSchoolEvent(payload, { onError: handleServerError });
@@ -120,6 +126,7 @@ function EventReview({
       <EventWizardHeader
         handleClose={handleClose}
         images={images}
+        imageOrder={imageOrder}
         disabled={isPending}
       />
       <div className="d-flex flex-row justify-content-between px-2 pt-2 ">
@@ -156,24 +163,40 @@ function EventReview({
               className="card border-none border p-2 d-flex flex-column gap-3"
               style={{ borderRadius: "0.85rem" }}
             >
-              {(keptImages.length > 0 || images.length > 0) && (
+              {orderedImages.length > 0 && (
                 <div className="d-flex flex-row gap-2 overflow-auto">
-                  {keptImages.map((image) => (
-                    <img
-                      key={image.id}
-                      src={eventImageUrl(image.object_key)}
-                      alt="Event"
-                      className="object-fit-cover rounded-3"
-                      style={{ width: "8rem", height: "6rem", flexShrink: 0 }}
-                    />
-                  ))}
-                  {images.map((file, index) => (
-                    <FilePreview
-                      key={`${file.name}-${index}`}
-                      file={file}
-                      className="object-fit-cover rounded-3"
-                      style={{ width: "8rem", height: "6rem", flexShrink: 0 }}
-                    />
+                  {orderedImages.map((item, index) => (
+                    <div
+                      key={item.key}
+                      className="position-relative flex-shrink-0 overflow-hidden rounded-3"
+                      style={{
+                        width: index === 0 ? "12rem" : "8rem",
+                        height: "7rem",
+                      }}
+                    >
+                      {item.kind === "saved" ? (
+                        <img
+                          src={eventImageUrl(item.image.object_key)}
+                          alt="Event"
+                          className="w-100 h-100 object-fit-cover"
+                        />
+                      ) : (
+                        <FilePreview file={item.file} />
+                      )}
+                      {index === 0 && (
+                        <span
+                          className="position-absolute rounded-pill px-2 fw-semibold text-white"
+                          style={{
+                            top: 6,
+                            left: 6,
+                            fontSize: "0.65rem",
+                            background: "#0EA7E9",
+                          }}
+                        >
+                          Cover
+                        </span>
+                      )}
+                    </div>
                   ))}
                 </div>
               )}
@@ -251,10 +274,17 @@ function EventReview({
               <div className="d-flex flex-row align-items-center justify-content-end gap-2">
                 <button
                   className="rounded-3 py-2 px-3 bg-none border-none border"
-                  onClick={() => handleNavigate(1)}
+                  onClick={() => handleNavigate(2)}
                   disabled={isPending}
                 >
                   Edit Invitees
+                </button>
+                <button
+                  className="rounded-3 py-2 px-3 bg-none border-none border"
+                  onClick={() => handleNavigate(1)}
+                  disabled={isPending}
+                >
+                  Edit Images
                 </button>
                 <button
                   className="rounded-3 py-2 px-3 bg-none border-none border"

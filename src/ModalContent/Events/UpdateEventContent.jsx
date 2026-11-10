@@ -35,6 +35,10 @@ import {
 import { allFieldsValid } from "../../utils/functions";
 import { EventImagesField } from "../../DrawerContent/SchoolEvent/CreateSchoolEvent/EventContent";
 import UpdateEventDiscardWarning from "./UpdateEvent";
+import {
+  orderImageItems,
+  toImageOrderPayload,
+} from "../../components/FormComponents/MultiImageUploader";
 
 /** Drawer for updating a school event's content and images. */
 function UpdateEventContent({ drawerData, handleClose }) {
@@ -48,6 +52,7 @@ function UpdateEventContent({ drawerData, handleClose }) {
   const organizerRef = useRef();
   const dateRef = useRef();
   const [images, setImages] = useState([]);
+  const [imageOrder, setImageOrder] = useState([]);
   const [isReady, setIsReady] = useState(false);
   const { mutate: updateContent, isPending } =
     useUpdateSchoolEventContent(handleClose);
@@ -87,9 +92,36 @@ function UpdateEventContent({ drawerData, handleClose }) {
       }),
     );
 
+  const orderedItems = (files, order) =>
+    orderImageItems({
+      order,
+      existingImages: updateState.existingImages,
+      removeImageIds: updateState.removeImageIds,
+      images: files,
+    });
+
+  // New files, or saved images in a different order than when the drawer opened.
+  const reportImageChanges = (files, order) => {
+    const savedOrder = orderedItems(files, order)
+      .filter((item) => item.kind === "saved")
+      .map((item) => item.image.id);
+    const initialOrder = updateState.existingImages.map((image) => image.id);
+    dispatch(
+      setUpdateContentImagesChanged({
+        hasImageChanges:
+          files.length > 0 || savedOrder.join() !== initialOrder.join(),
+      }),
+    );
+  };
+
   const handleImagesChange = (files) => {
     setImages(files);
-    dispatch(setUpdateContentImagesChanged({ hasNewImages: files.length > 0 }));
+    reportImageChanges(files, imageOrder);
+  };
+
+  const handleOrderChange = (order) => {
+    setImageOrder(order);
+    reportImageChanges(images, order);
   };
 
   const closeDrawer = () => {
@@ -129,6 +161,8 @@ function UpdateEventContent({ drawerData, handleClose }) {
       tag_ids: (moduleState?.tags?.value ?? []).map((t) => ({ tag_id: t.id })),
       images,
       remove_image_ids: updateState.removeImageIds,
+      // display order of the images; the first one is the cover
+      image_order: toImageOrderPayload(orderedItems(images, imageOrder)),
     };
     updateContent(
       { schoolEventId, updateData: payload },
@@ -379,6 +413,8 @@ function UpdateEventContent({ drawerData, handleClose }) {
               }
               images={images}
               onImagesChange={handleImagesChange}
+              order={imageOrder}
+              onOrderChange={handleOrderChange}
             />
           </div>
         </div>
