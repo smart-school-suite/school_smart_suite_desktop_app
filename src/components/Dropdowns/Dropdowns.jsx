@@ -234,8 +234,10 @@ const CustomDropdown = forwardRef(
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              onAnimationComplete={() => {
-                inputRef.current?.focus();
+              onAnimationComplete={(definition) => {
+                // Only after opening: the close animation must not pull focus
+                // away from the field the user clicked into.
+                if (definition?.opacity === 1) inputRef.current?.focus();
               }}
               className={`${
                 darkMode ? "dark-bg dark-mode-border" : "bg-white border"
@@ -650,8 +652,10 @@ export const MultiSelectDropdown = forwardRef(
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              onAnimationComplete={() => {
-                inputRef.current?.focus();
+              onAnimationComplete={(definition) => {
+                // Only after opening: the close animation must not pull focus
+                // away from the field the user clicked into.
+                if (definition?.opacity === 1) inputRef.current?.focus();
               }}
               className={`${
                 darkMode ? "dark-bg dark-mode-border" : "bg-white border"

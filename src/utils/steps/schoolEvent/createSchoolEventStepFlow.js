@@ -4,17 +4,17 @@ import EventReview from "../../../DrawerContent/SchoolEvent/CreateSchoolEvent/Ev
 export const CREATE_SCHOOL_EVENT_STEP_FLOW = [
   {
     step: "SCHOOL_EVENT_CONTENT",
-    lable: "School Event Content",
+    label: "School Event Content",
     component: EventContent,
   },
   {
     step: "SCHOOL_EVENT_AUDIENCE",
-    lable: "School Event Audience",
+    label: "School Event Invitees",
     component: EventAudience,
   },
   {
     step: "REVIEW_SCHOOL_EVENT",
-    label: "Review Announcement",
+    label: "Review School Event",
     component: EventReview,
   },
 ];

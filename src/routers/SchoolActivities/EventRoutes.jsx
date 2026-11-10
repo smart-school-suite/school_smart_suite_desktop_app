@@ -55,6 +55,15 @@ const EventRoutes = [
       }
     />
     <Route
+      path="/active-event"
+      key="activeEvent"
+      element={
+        <Suspense>
+          <Events status="active" />
+        </Suspense>
+      }
+    />
+    <Route
       path="/expired-event"
       key="expiredEvent"
       element={

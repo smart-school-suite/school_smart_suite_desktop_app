@@ -7,14 +7,20 @@ import { useGetStudentAudienceBySpecialty } from "../../../../hooks/Audience/use
 import { MultiSelectAccordion } from "../../../../components/Accordion/MultiSelectAccordion";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  setTargetIndividuals,
-  setTargetSelection,
+  setTargetIndividuals as setAnnouncementTargetIndividuals,
+  setTargetSelection as setAnnouncementTargetSelection,
 } from "../../../../Slices/announcement/announcementSlice";
-function StudentTarget() {
+// The selector and actions default to the create announcement flow; other
+// flows (e.g. school events) pass their own to reuse this picker.
+function StudentTarget({
+  selectTargeting = (state) =>
+    state.announcement.createAnnouncement.audience.targeting,
+  setTargetIndividuals = setAnnouncementTargetIndividuals,
+  setTargetSelection = setAnnouncementTargetSelection,
+} = {}) {
   const dispatch = useDispatch();
   const moduleState = useSelector(
-    (state) =>
-      state.announcement.createAnnouncement.audience.targeting.students,
+    (state) => selectTargeting(state).students,
   );
   const { data: studentAudience, isLoading: isStudentAudienceLoading } =
     useGetStudentAudience();

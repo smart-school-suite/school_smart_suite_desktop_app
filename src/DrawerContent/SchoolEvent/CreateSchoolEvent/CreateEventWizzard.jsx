@@ -1,8 +1,50 @@
 import { CREATE_SCHOOL_EVENT_STEP_FLOW } from "../../../utils/steps/schoolEvent/createSchoolEventStepFlow";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Fragment } from "react";
+import { useGetSchoolEventDetails } from "../../../hooks/schoolEvent/useGetSchoolEventDetails";
+import {
+  resetCreateEvent,
+  setCreateEventFromDraft,
+} from "../../../Slices/schoolEvent/schoolEventSlice";
+import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../../components/errors/Error";
 
+/**
+ * Create school event drawer. Opened with a draft event as `drawerData`, the same
+ * steps edit that draft and publish it.
+ */
 function CreateEventWizzard({ handleClose, drawerData }) {
+  const dispatch = useDispatch();
+  const draftEventId = drawerData?.id ?? null;
+  const loadedDraftId = useSelector(
+    (state) => state.schoolEvent.createEvent.draftEventId,
+  );
   const [stepIndex, setStepIndex] = useState(0);
+  // New image files stay here: File objects cannot go into the persisted store.
+  const [images, setImages] = useState([]);
+  const {
+    data: draftEvent,
+    isLoading: isDraftLoading,
+    error: draftError,
+  } = useGetSchoolEventDetails(draftEventId);
+
+  // Load the draft once per opening; later refetches must not wipe the user's edits.
+  const hasLoadedDraft = useRef(false);
+  useEffect(() => {
+    if (draftEventId && draftEvent?.data && !hasLoadedDraft.current) {
+      hasLoadedDraft.current = true;
+      dispatch(setCreateEventFromDraft({ event: draftEvent.data }));
+    }
+  }, [draftEventId, draftEvent, dispatch]);
+
+  useEffect(() => {
+    // A create form left from an edited draft must not leak into a new event.
+    if (!draftEventId && loadedDraftId) {
+      dispatch(resetCreateEvent());
+    }
+  }, []);
+
   const currentStep = CREATE_SCHOOL_EVENT_STEP_FLOW[stepIndex];
 
   const CurrentComponent = currentStep.component;
@@ -15,8 +57,31 @@ function CreateEventWizzard({ handleClose, drawerData }) {
   };
 
   const handleNavigate = (step) => {
-     setStepIndex(step);
+    setStepIndex(step);
+  };
+
+  if (draftEventId && (isDraftLoading || draftError || loadedDraftId !== draftEventId)) {
+    return (
+      <div className="drawer-content px-2 pt-3 font-size-sm">
+        {draftError ? (
+          <NotFoundError
+            title={draftError?.response?.data?.errors?.title}
+            description={draftError?.response?.data?.errors?.description}
+          />
+        ) : (
+          <div className="d-flex flex-column gap-2">
+            {[...Array(8)].map((_, index) => (
+              <Fragment key={index}>
+                <RectangleSkeleton height="1dvh" width="25%" />
+                <RectangleSkeleton height="4dvh" width="100%" />
+              </Fragment>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   }
+
   return (
     <>
       <CurrentComponent
@@ -27,6 +92,8 @@ function CreateEventWizzard({ handleClose, drawerData }) {
         fullStep={CREATE_SCHOOL_EVENT_STEP_FLOW.length}
         drawerData={drawerData}
         handleNavigate={handleNavigate}
+        images={images}
+        setImages={setImages}
       />
     </>
   );
