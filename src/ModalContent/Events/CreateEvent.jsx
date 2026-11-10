@@ -1,4 +1,7 @@
-import { CircleX, X } from "lucide-react";
+import { CircleX, Save, X } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { formatDistanceToNow, parseISO } from "date-fns";
+import { EventWizardStepBar } from "../../DrawerContent/SchoolEvent/CreateSchoolEvent/EventWizardSteps";
 import { useDispatch, useSelector } from "react-redux";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
@@ -83,7 +86,74 @@ export function buildSchoolEventPayload(
   return payload;
 }
 
-// Drawer header with the close button; asks to save as draft when the form has changes.
+// True when the form has at least one detail worth saving as a draft.
+export function hasDraftContent(moduleState, images = []) {
+  const content = moduleState?.content ?? {};
+  const filled = [
+    "title",
+    "description",
+    "organizer",
+    "location",
+    "start_date",
+    "end_date",
+  ].some((field) => String(content?.[field]?.value ?? "").trim() !== "");
+  const keptImages = (moduleState?.existingImages ?? []).some(
+    (image) => !(moduleState?.removeImageIds ?? []).includes(image.id),
+  );
+  return (
+    filled ||
+    Boolean(content?.category?.value?.id) ||
+    (content?.tags?.value ?? []).length > 0 ||
+    images.length > 0 ||
+    keptImages ||
+    (moduleState?.audience?.types ?? []).length > 0
+  );
+}
+
+export const EMPTY_DRAFT_ERROR = {
+  title: "Nothing To Save Yet",
+  messages: [
+    "Add at least one detail (for example a title, description, date, image or invitee) before saving a draft.",
+  ],
+};
+
+// Saves the wizard as a draft: creates one, or updates the draft being edited.
+function useSaveEventDraft(handleClose) {
+  const moduleState = useSelector((state) => state.schoolEvent.createEvent);
+  const { mutate: createSchoolEvent, isPending: isCreating } =
+    useCreateSchoolEvent(handleClose);
+  const { mutate: updateDraftSchoolEvent, isPending: isUpdating } =
+    useUpdateDraftSchoolEvent(handleClose);
+
+  const saveDraft = ({ images, imageOrder, onError, onEmpty }) => {
+    if (!hasDraftContent(moduleState, images)) {
+      onEmpty?.();
+      return;
+    }
+    const payload = buildSchoolEventPayload(moduleState, {
+      status: "draft",
+      images,
+      imageOrder,
+    });
+    const save = moduleState?.draftEventId
+      ? updateDraftSchoolEvent
+      : createSchoolEvent;
+    save(payload, { onError });
+  };
+
+  return { saveDraft, isSaving: isCreating || isUpdating };
+}
+
+function lastSavedLabel(updatedAt) {
+  if (!updatedAt) return null;
+  // updated_at is a real moment in time (UTC), so compare it as one
+  const savedAt = parseISO(String(updatedAt).replace(" ", "T"));
+  if (Number.isNaN(savedAt.getTime())) return null;
+  if (savedAt > new Date()) return "just now";
+  return formatDistanceToNow(savedAt, { addSuffix: true });
+}
+
+// Drawer header: title, draft status, save draft and close, then the step bar.
 export function EventWizardHeader({
   handleClose,
   images,
@@ -91,10 +161,16 @@ export function EventWizardHeader({
   disabled = false,
 }) {
   const dispatch = useDispatch();
+  const reduceMotion = useReducedMotion();
   const moduleState = useSelector((state) => state.schoolEvent.createEvent);
-  const title = moduleState?.draftEventId
-    ? "Update Draft School Event"
-    : "Create School Event";
+  const isDraft = Boolean(moduleState?.draftEventId);
+  const isDirty = Boolean(moduleState?.isDirty);
+  const { saveDraft, isSaving } = useSaveEventDraft(handleClose);
+  const { formError, handleServerError, setFormError, clearFormError } =
+    useFormError("Failed To Save Draft");
+  const title = isDraft ? "Update Draft School Event" : "Create School Event";
+  const savedLabel = lastSavedLabel(moduleState?.draftUpdatedAt);
+  const isBusy = disabled || isSaving;
   const closeButtonStyle = {
     width: "2rem",
     height: "2rem",
@@ -102,42 +178,136 @@ export function EventWizardHeader({
     placeItems: "center",
     cursor: "pointer",
   };
+
+  const handleSaveDraft = () => {
+    clearFormError();
+    saveDraft({
+      images,
+      imageOrder,
+      onError: handleServerError,
+      onEmpty: () => setFormError(EMPTY_DRAFT_ERROR),
+    });
+  };
+
   return (
-    <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
-      <span className="fw-medium">{title}</span>
-      {moduleState?.isDirty ? (
-        <ModalButton
-          action={{
-            modalContent: EventDiscardWarning,
-          }}
-          size={"md"}
-          rowData={{ handleCloseDrawer: handleClose, images, imageOrder }}
-          closeOnOutsideClick={false}
-          closeOnEscape={false}
-        >
-          <button
-            className="bg-none border-none border rounded-circle"
-            style={closeButtonStyle}
-            disabled={disabled}
+    <>
+      <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm gap-2">
+        <div className="d-flex flex-row align-items-center gap-2" style={{ minWidth: 0 }}>
+          <span className="fw-medium text-truncate">{title}</span>
+          {isDraft && (
+            <span
+              className="rounded-pill px-2 fw-semibold flex-shrink-0"
+              style={{
+                fontSize: "0.65rem",
+                lineHeight: "1.2rem",
+                background: "#EAF7FD",
+                color: "#0EA7E9",
+              }}
+            >
+              Draft
+            </span>
+          )}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={isDirty ? "dirty" : "clean"}
+              initial={{ opacity: 0, y: 3 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -3 }}
+              transition={{ duration: 0.15 }}
+              className="text-iron-400 text-truncate"
+              style={{ fontSize: "0.72rem" }}
+            >
+              {isDirty
+                ? "Unsaved changes"
+                : isDraft && savedLabel
+                  ? `Saved ${savedLabel}`
+                  : ""}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+        <div className="d-flex flex-row align-items-center gap-2 flex-shrink-0">
+          <AnimatePresence initial={false}>
+            {isDirty && (
+              <motion.button
+                key="save-draft"
+                type="button"
+                onClick={handleSaveDraft}
+                disabled={isBusy}
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 8 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.18 }}
+                className="border-none border rounded-pill bg-none d-flex flex-row align-items-center gap-1 px-3"
+                style={{ height: "2rem", cursor: isBusy ? "default" : "pointer" }}
+              >
+                {isSaving ? (
+                  <SingleSpinner />
+                ) : (
+                  <>
+                    <Save size={14} />
+                    <span>Save draft</span>
+                  </>
+                )}
+              </motion.button>
+            )}
+          </AnimatePresence>
+          {isDirty ? (
+            <ModalButton
+              action={{
+                modalContent: EventDiscardWarning,
+              }}
+              size={"md"}
+              rowData={{ handleCloseDrawer: handleClose, images, imageOrder }}
+              closeOnOutsideClick={false}
+              closeOnEscape={false}
+            >
+              <button
+                className="bg-none border-none border rounded-circle"
+                aria-label="Close drawer"
+                style={closeButtonStyle}
+                disabled={isBusy}
+              >
+                <X size={16} />
+              </button>
+            </ModalButton>
+          ) : (
+            <button
+              className="bg-none border-none border rounded-circle"
+              aria-label="Close drawer"
+              onClick={() => {
+                handleClose();
+                dispatch(resetCreateEvent());
+              }}
+              disabled={isBusy}
+              style={closeButtonStyle}
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
+      </div>
+      <AnimatePresence initial={false}>
+        {formError && (
+          <motion.div
+            key="save-error"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
           >
-            <X size={16} />
-          </button>
-        </ModalButton>
-      ) : (
-        <button
-          className="bg-none border-none border rounded-circle"
-          aria-label="Close drawer"
-          onClick={() => {
-            handleClose();
-            dispatch(resetCreateEvent());
-          }}
-          disabled={disabled}
-          style={closeButtonStyle}
-        >
-          <X size={16} />
-        </button>
-      )}
-    </div>
+            <FormErrorBanner
+              error={formError}
+              onDismiss={clearFormError}
+              className="mx-2 mt-2 mb-0"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <EventWizardStepBar />
+    </>
   );
 }
 
@@ -185,8 +355,13 @@ function EventDiscardWarning({ handleClose, rowData }) {
   const { mutate: updateDraftSchoolEvent, isPending: isUpdating } =
     useUpdateDraftSchoolEvent(handleClose, handleCloseDrawer);
   const isPending = isCreating || isUpdating;
-  const { formError, errorBannerRef, handleServerError, clearFormError } =
-    useFormError("Failed To Save School Event");
+  const {
+    formError,
+    errorBannerRef,
+    setFormError,
+    handleServerError,
+    clearFormError,
+  } = useFormError("Failed To Save School Event");
 
   const handleDiscard = () => {
     handleClose();
@@ -195,6 +370,10 @@ function EventDiscardWarning({ handleClose, rowData }) {
   };
 
   const handleSaveToDraft = () => {
+    if (!hasDraftContent(moduleState, images)) {
+      setFormError(EMPTY_DRAFT_ERROR);
+      return;
+    }
     const payload = buildSchoolEventPayload(moduleState, {
       status: "draft",
       images,

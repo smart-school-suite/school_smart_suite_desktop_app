@@ -55,6 +55,8 @@ export function schoolEventColDefs({ ActionComponent }) {
       field: "title",
       headerName: "Title",
       hide: false,
+      // drafts may not have a title yet
+      valueGetter: (params) => params.data?.title || "Untitled draft",
       cellRenderer: TextComponent,
     }),
     textColumn({

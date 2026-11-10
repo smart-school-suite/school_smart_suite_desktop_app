@@ -80,6 +80,7 @@ const initialState = {
     isDirty: false,
     // id of the draft being edited, null when creating a new event
     draftEventId: null,
+    draftUpdatedAt: null,
     content: emptyContent,
     // images already saved on a draft event ({ id, object_key })
     existingImages: [],
@@ -323,6 +324,7 @@ const schoolEventSlice = createSlice({
       state.createEvent = {
         ...initialState.createEvent,
         draftEventId: event?.id ?? null,
+        draftUpdatedAt: event?.updated_at ?? null,
         content: contentFromEvent(event),
         existingImages: imagesFromEvent(event),
         removeImageIds: [],

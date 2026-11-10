@@ -9,6 +9,8 @@ import {
 } from "../../../Slices/schoolEvent/schoolEventSlice";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../../components/errors/Error";
+import { EventWizardContext } from "./EventWizardSteps";
+import { getMissingForPublish } from "./EventReview";
 
 /**
  * Create school event drawer. Opened with a draft event as `drawerData`, the same
@@ -17,10 +19,11 @@ import { NotFoundError } from "../../../components/errors/Error";
 function CreateEventWizzard({ handleClose, drawerData }) {
   const dispatch = useDispatch();
   const draftEventId = drawerData?.id ?? null;
-  const loadedDraftId = useSelector(
-    (state) => state.schoolEvent.createEvent.draftEventId,
-  );
+  const moduleState = useSelector((state) => state.schoolEvent.createEvent);
+  const loadedDraftId = moduleState.draftEventId;
   const [stepIndex, setStepIndex] = useState(0);
+  // furthest step reached; new events can jump back to any step up to it
+  const [furthestStep, setFurthestStep] = useState(0);
   // New image files stay here: File objects cannot go into the persisted store.
   const [images, setImages] = useState([]);
   // Display order of saved and new images (item keys); the first is the cover.
@@ -50,16 +53,24 @@ function CreateEventWizzard({ handleClose, drawerData }) {
   const currentStep = CREATE_SCHOOL_EVENT_STEP_FLOW[stepIndex];
 
   const CurrentComponent = currentStep.component;
-  const nextStep = () => {
-    setStepIndex((prev) => prev + 1);
-  };
-
-  const previousStep = () => {
-    setStepIndex((prev) => prev - 1);
-  };
-
-  const handleNavigate = (step) => {
+  const goToStep = (step) => {
     setStepIndex(step);
+    setFurthestStep((prev) => Math.max(prev, step));
+  };
+  const nextStep = () => goToStep(stepIndex + 1);
+  const previousStep = () => goToStep(stepIndex - 1);
+  const handleNavigate = (step) => goToStep(step);
+
+  // A draft can be filled in any order; a new event goes forward through Next.
+  const canJumpTo = (step) => Boolean(draftEventId) || step <= furthestStep;
+  const missingSteps = new Set(getMissingForPublish(moduleState).map((m) => m.step));
+  const wizard = {
+    steps: CREATE_SCHOOL_EVENT_STEP_FLOW,
+    stepIndex,
+    canJumpTo,
+    navigate: goToStep,
+    // steps that still have details missing for publishing
+    isIncomplete: (step) => missingSteps.has(step),
   };
 
   if (draftEventId && (isDraftLoading || draftError || loadedDraftId !== draftEventId)) {
@@ -85,7 +96,7 @@ function CreateEventWizzard({ handleClose, drawerData }) {
   }
 
   return (
-    <>
+    <EventWizardContext.Provider value={wizard}>
       <CurrentComponent
         handleClose={handleClose}
         currentStep={stepIndex + 1}
@@ -99,7 +110,7 @@ function CreateEventWizzard({ handleClose, drawerData }) {
         imageOrder={imageOrder}
         setImageOrder={setImageOrder}
       />
-    </>
+    </EventWizardContext.Provider>
   );
 }
 export default CreateEventWizzard;

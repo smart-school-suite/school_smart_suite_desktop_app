@@ -98,7 +98,9 @@ function SchoolEventDetails({ handleClose, drawerData }) {
                   <span className="text-iron-400">
                     {event?.event_category?.name}
                   </span>
-                  <span className="fw-semibold">{event?.title}</span>
+                  <span className="fw-semibold">
+                    {event?.title || "Untitled draft"}
+                  </span>
                 </div>
               </div>
               <AnnouncementStatusRenderer value={event?.status} />
