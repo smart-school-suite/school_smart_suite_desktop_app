@@ -16,8 +16,9 @@ function DeleteEvent({ rowData, handleClose }){
           <div className="w-100">
             <h4 className="fw-semibold">Are you Absolutely sure ?</h4>
             <p className="my-3" style={{ fontSize: "0.85rem" }}>
-              This action cannot be undone. This will Permanently delete This
-              account and remove this account data from our servers
+              This action cannot be undone. This will permanently delete this
+              school event, its images and its likes, and invitees will no
+              longer see it.
             </p>
             <FormErrorBanner
               ref={errorBannerRef}

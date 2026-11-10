@@ -191,6 +191,14 @@ const rootReducer = combineReducers({
     {
       key: "schoolEvent",
       storage,
+      // v1 reshaped the create/update event forms; older saved forms are dropped
+      version: 1,
+      migrate: (persistedState, currentVersion) =>
+        Promise.resolve(
+          persistedState && (persistedState._persist?.version ?? -1) < currentVersion
+            ? undefined
+            : persistedState,
+        ),
     },
     schoolEventReducer,
   ),

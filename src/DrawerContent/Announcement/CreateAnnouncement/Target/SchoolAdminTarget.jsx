@@ -1,12 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { MultiSelectAccordion } from "../../../../components/Accordion/MultiSelectAccordion";
 import { useGetSchoolAdminAudience } from "../../../../hooks/Audience/useGetSchoolAdminAudience";
-import { setTargetIndividuals } from "../../../../Slices/announcement/announcementSlice";
-function SchoolAdminTarget() {
+import { setTargetIndividuals as setAnnouncementTargetIndividuals } from "../../../../Slices/announcement/announcementSlice";
+// The selector and actions default to the create announcement flow; other
+// flows (e.g. school events) pass their own to reuse this picker.
+function SchoolAdminTarget({
+  selectTargeting = (state) =>
+    state.announcement.createAnnouncement.audience.targeting,
+  setTargetIndividuals = setAnnouncementTargetIndividuals,
+} = {}) {
   const dispatch = useDispatch();
   const moduleState = useSelector(
-    (state) =>
-      state.announcement.createAnnouncement.audience.targeting.administrators,
+    (state) => selectTargeting(state).administrators,
   );
   const { data: schoolAdminAudience, isLoading: isSchoolAdminAudienceLoading } =
     useGetSchoolAdminAudience();

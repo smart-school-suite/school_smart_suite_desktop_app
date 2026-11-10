@@ -1,462 +1,454 @@
-import { useGetSchoolEventDetails } from "../../hooks/schoolEvent/useGetSchoolEventDetails";
-import { Icon } from "@iconify/react";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { X } from "lucide-react";
 import {
+  DateTimeRangeInput,
   TextAreaInput,
   TextInput,
-  DateTimeRangeInput,
 } from "../../components/FormComponents/InputComponents";
-import {
-  addressSchema,
-  nameSchema,
-  textareaSchema,
-  dateTimeRangeValidationSchema,
-} from "../../ComponentConfig/YupValidationSchema";
-import { useState, useCallback, useEffect } from "react";
-import { useGetEventTags } from "../../hooks/schoolEvent/useGetSchoolEventTags";
-import { useGetActiveEventCategories } from "../../hooks/eventCategory/useGetActiveEventCategories";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import {
-  formatDate,
-  optionalValidateObject,
-  hasNonEmptyValue,
-  truncateSeconds,
-} from "../../utils/functions";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown, {
   MultiSelectDropdown,
 } from "../../components/Dropdowns/Dropdowns";
-import TextDisplay from "../../components/TextComponents/TextDisplay";
-import { useUpdateSchoolEventContent } from "../../hooks/schoolEvent/useUpdateSchoolEventContent";
+import {
+  dateTimeRangeValidationSchema,
+  nameSchema,
+  textareaSchema,
+} from "../../ComponentConfig/YupValidationSchema";
+import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useSelector } from "react-redux";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
-function UpdateEventContent({ rowData, handleClose }) {
-  const { id: schoolEventId } = rowData;
-  const darkMode = useSelector((state) => state.theme.darkMode);
+import { useGetActiveEventCategories } from "../../hooks/eventCategory/useGetActiveEventCategories";
+import { useGetEventTags } from "../../hooks/schoolEvent/useGetSchoolEventTags";
+import { useGetSchoolEventDetails } from "../../hooks/schoolEvent/useGetSchoolEventDetails";
+import { useUpdateSchoolEventContent } from "../../hooks/schoolEvent/useUpdateSchoolEventContent";
+import {
+  resetUpdateContent,
+  setEventContent,
+  setUpdateContentImagesChanged,
+  setUpdateContentInitial,
+  toggleRemoveImage,
+} from "../../Slices/schoolEvent/schoolEventSlice";
+import { allFieldsValid } from "../../utils/functions";
+import { EventImagesField } from "../../DrawerContent/SchoolEvent/CreateSchoolEvent/EventContent";
+import UpdateEventDiscardWarning from "./UpdateEvent";
+import {
+  orderImageItems,
+  toImageOrderPayload,
+} from "../../components/FormComponents/MultiImageUploader";
+
+/** Drawer for updating a school event's content and images. */
+function UpdateEventContent({ drawerData, handleClose }) {
+  const { id: schoolEventId } = drawerData;
+  const dispatch = useDispatch();
+  const titleRef = useRef();
+  const descriptionRef = useRef();
+  const tagRef = useRef();
+  const categoryRef = useRef();
+  const locationRef = useRef();
+  const organizerRef = useRef();
+  const dateRef = useRef();
+  const [images, setImages] = useState([]);
+  const [imageOrder, setImageOrder] = useState([]);
+  const [isReady, setIsReady] = useState(false);
+  const { mutate: updateContent, isPending } =
+    useUpdateSchoolEventContent(handleClose);
   const {
-    data: schoolEventDetails,
-    isLoading: isSchoolEventDetailsLoading,
-    error: eventDetailsError,
+    formError,
+    errorBannerRef,
+    setClientError,
+    handleServerError,
+    clearFormError,
+  } = useFormError("Failed To Update School Event Content");
+  const updateState = useSelector((state) => state.schoolEvent.updateContent);
+  const moduleState = updateState.draft;
+  const isDirty = updateState.isDirty;
+  const { data: category, isLoading: isCategoryLoading } =
+    useGetActiveEventCategories();
+  const { data: tags, isLoading: isTagLoading } = useGetEventTags();
+  const {
+    data: schoolEvent,
+    isLoading: isEventLoading,
+    error: eventError,
   } = useGetSchoolEventDetails(schoolEventId);
-  const {
-    data: eventCategories,
-    isLoading: isEventCategoryLoading,
-    error: eventCategoryError,
-  } = useGetActiveEventCategories();
-  const {
-    data: eventTags,
-    isLoading: isEventTagLoading,
-    error: eventTagError,
-  } = useGetEventTags();
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    event_category_id: "",
-    organizer: "",
-    location: "",
-    start_date: "",
-    end_date: "",
-    tags: [],
-  });
-  const [isValid, setIsValid] = useState({
-    title: null,
-    description: null,
-    organizer: null,
-    location: null,
-    start_date: null,
-    end_date: null,
-  });
-  const [errors, setErrors] = useState({
-    tags: "",
-  });
 
+  // Load the event once per opening; later refetches must not wipe the user's edits.
   useEffect(() => {
-    if (schoolEventDetails?.data) {
-      setFormData((prev) => ({
-        ...prev,
-        title: schoolEventDetails.data.title || "",
-        description: schoolEventDetails.data.description || "",
-        tags: JSON.parse(schoolEventDetails?.data?.tags).map((items) => ({
-          id: items.id,
-        })),
-        event_category_id: schoolEventDetails.data.event_category_id || "",
-        organizer: schoolEventDetails.data.organizer || "",
-        location: schoolEventDetails.data.location || "",
-        start_date: truncateSeconds(schoolEventDetails.data.start_date) || "",
-        end_date: truncateSeconds(schoolEventDetails.data.end_date) || "",
-      }));
+    if (!isReady && schoolEvent?.data) {
+      dispatch(setUpdateContentInitial({ event: schoolEvent.data }));
+      setIsReady(true);
     }
-  }, [setFormData, isSchoolEventDetailsLoading, rowData]);
-  const handleStateChange = useCallback((field, value, stateFn) => {
-    stateFn((prev) => ({ ...prev, [field]: value }));
-  }, []);
+  }, [schoolEvent, isReady, dispatch]);
 
-  const { mutate: updateEventContent, isPending } = useUpdateSchoolEventContent(
-    handleClose,
-    schoolEventId
-  );
-  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
-    useFormError("Failed To Update Event Content");
+  const setField = (field, payload) =>
+    dispatch(
+      setEventContent({
+        field,
+        actionType: "updateContent",
+        ...payload,
+      }),
+    );
+
+  const orderedItems = (files, order) =>
+    orderImageItems({
+      order,
+      existingImages: updateState.existingImages,
+      removeImageIds: updateState.removeImageIds,
+      images: files,
+    });
+
+  // New files, or saved images in a different order than when the drawer opened.
+  const reportImageChanges = (files, order) => {
+    const savedOrder = orderedItems(files, order)
+      .filter((item) => item.kind === "saved")
+      .map((item) => item.image.id);
+    const initialOrder = updateState.existingImages.map((image) => image.id);
+    dispatch(
+      setUpdateContentImagesChanged({
+        hasImageChanges:
+          files.length > 0 || savedOrder.join() !== initialOrder.join(),
+      }),
+    );
+  };
+
+  const handleImagesChange = (files) => {
+    setImages(files);
+    reportImageChanges(files, imageOrder);
+  };
+
+  const handleOrderChange = (order) => {
+    setImageOrder(order);
+    reportImageChanges(images, order);
+  };
+
+  const closeDrawer = () => {
+    handleClose();
+    dispatch(resetUpdateContent());
+  };
+
+  const handlePrevalidation = async () => ({
+    title: await titleRef.current.triggerValidation(),
+    description: await descriptionRef.current.triggerValidation(),
+    tag: await tagRef.current.triggerValidation(),
+    category: await categoryRef.current.triggerValidation(),
+    startDate: await dateRef.current.preValidateStart(),
+    endDate: await dateRef.current.preValidateEnd(),
+    location: await locationRef.current.triggerValidation(),
+    organizer: await organizerRef.current.triggerValidation(),
+  });
+
   const handleUpdateContent = async () => {
-    if (optionalValidateObject(isValid) == false) {
-      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
-      return;
-    }
-    if (hasNonEmptyValue(formData) == false) {
-      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
+    clearFormError();
+    const prevalidation = await handlePrevalidation();
+    if (!allFieldsValid(prevalidation)) {
+      setClientError(
+        "Invalid Fields",
+        "Some Fields are invalid please ensure that all fields are valid before saving",
+      );
       return;
     }
     const payload = {
-      title: formData.title,
-      description: formData.description,
-      event_category_id: formData.event_category_id,
-      label_id: formData.label_id,
-      tag_ids: formData.tags.map((items) => ({ tag_id: items.id })),
-      organizer: formData.organizer,
-      location: formData.location,
-      start_date: formData.start_date,
-      end_date: formData.end_date,
+      title: moduleState?.title?.value,
+      description: moduleState?.description?.value,
+      organizer: moduleState?.organizer?.value,
+      location: moduleState?.location?.value,
+      start_date: moduleState?.start_date?.value,
+      end_date: moduleState?.end_date?.value,
+      event_category_id: moduleState?.category?.value?.id,
+      tag_ids: (moduleState?.tags?.value ?? []).map((t) => ({ tag_id: t.id })),
+      images,
+      remove_image_ids: updateState.removeImageIds,
+      // display order of the images; the first one is the cover
+      image_order: toImageOrderPayload(orderedItems(images, imageOrder)),
     };
-    clearFormError();
-    updateEventContent({ schoolEventId, updateData: payload }, { onError: handleServerError });
+    updateContent(
+      { schoolEventId, updateData: payload },
+      { onError: handleServerError },
+    );
   };
+
+  const closeButtonStyle = {
+    width: "2rem",
+    height: "2rem",
+    display: "grid",
+    placeItems: "center",
+    cursor: "pointer",
+  };
+
   return (
     <>
-      <div className="h-100 d-flex flex-column align-items-center gap-2">
-        <div
-          className="d-flex flex-row align-items-center justify-content-between w-100"
-          style={{ height: "5%" }}
-        >
-          <span className="m-0">Update Event Content</span>
-          <span
-            className="m-0"
-            onClick={() => {
-              handleClose();
-            }}
+      <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
+        <span className="fw-medium">Update School Event Content</span>
+        {isDirty ? (
+          <ModalButton
+            action={{ modalContent: UpdateEventDiscardWarning }}
+            size={"md"}
+            rowData={{ handleCloseDrawer: handleClose }}
+            closeOnOutsideClick={false}
+            closeOnEscape={false}
           >
-            <Icon icon="charm:cross" width="22" height="22" />
-          </span>
-        </div>
-        {isSchoolEventDetailsLoading ||
-        isEventCategoryLoading ||
-        isEventTagLoading ? (
-          <div className="d-flex flex-row w-100 gap-2">
-            <div style={{ width: "70%" }} className="d-flex flex-column gap-2">
-              {[...Array(7)].map((items, index) => (
-                <RectangleSkeleton
-                  width="100%"
-                  height="8dvh"
-                  speed={1}
-                  key={index}
-                />
-              ))}
-            </div>
-            <div style={{ width: "30%" }}>
-              <RectangleSkeleton width="100%" height="80dvh" speed={1} />
-            </div>
-          </div>
-        ) : eventCategoryError || eventDetailsError || eventTagError ? (
-          <NotFoundError
-            title={
-              eventCategories?.response?.data?.errors?.title ||
-              eventDetailsError?.response?.data?.errors?.title ||
-              eventTagError?.response?.data?.errors?.title
-            }
-            description={
-              eventCategories?.response?.data?.errors?.description ||
-              eventDetailsError?.response?.data?.errors?.description ||
-              eventTagError?.response?.data?.errors?.description
-            }
-          ></NotFoundError>
+            <button
+              className="bg-none border-none border rounded-circle"
+              style={closeButtonStyle}
+              disabled={isPending}
+            >
+              <X size={16} />
+            </button>
+          </ModalButton>
         ) : (
-          <>
-            <div
-              className="d-flex flex-row w-100 gap-2"
-              style={{ height: "90%" }}
-            >
-              <div
-                style={{ width: "70%" }}
-                className="d-flex flex-column jgap-2"
-              >
-                <div>
-                  <label htmlFor="title" className="font-size-sm">
-                    Title
-                  </label>
-                  <TextInput
-                    onChange={(value) =>
-                      handleStateChange("title", value, setFormData)
-                    }
-                    onValidationChange={(value) =>
-                      handleStateChange("title", value, setIsValid)
-                    }
-                    placeholder={formData.title || "Enter Event Title"}
-                    value={formData.title}
-                    validationSchema={nameSchema({
-                      max: 250,
-                      min: 3,
-                      required: false,
-                      messages: {
-                        min: "Event Title Must Be Atleast 3 Characters Long",
-                        max: "Event Title Should Not Exceed 250 Characters",
-                      },
-                    })}
-                  />
-                </div>
-                <div className="d-flex flex-row align-items-center gap-2 w-100">
-                  <div className="w-50">
-                    <label htmlFor="category" className="font-size-sm">
-                      Event Category
-                    </label>
-                    <CustomDropdown
-                      data={eventCategories?.data || []}
-                      displayKey={["name"]}
-                      valueKey={["id"]}
-                      direction="up"
-                      onSelect={(value) =>
-                        handleStateChange(
-                          "event_category_id",
-                          value.id,
-                          setFormData
-                        )
-                      }
-                      placeholder="Select Event Category"
-                      error={errors.event_category_id}
-                      isLoading={isEventCategoryLoading}
-                      errorMessage="Event Category Required"
-                      onError={(msg) =>
-                        handleStateChange("event_category_id", msg, setErrors)
-                      }
-                      value={formData.event_category_id}
-                    />
-                  </div>
-                  <div className="w-50">
-                    <label htmlFor="tags" className="font-size-sm">
-                      Tag (Tip: You can select up to five)
-                    </label>
-                    <MultiSelectDropdown
-                      data={eventTags?.data || []}
-                      displayKey={["name"]}
-                      valueKey={["id"]}
-                      direction="up"
-                      isLoading={isEventTagLoading}
-                      placeholder={"Select Tags"}
-                      errorMessage={"Event Tags Required"}
-                      value={formData.tags}
-                      onSelect={(value) => {
-                        if (value.length > 5) {
-                          setClientError("Max Amount Reached", "You can only select from 1 - 5 tags maximum");
-                          return;
-                        }
-                        handleStateChange("tags", value, setFormData);
-                      }}
-                      onError={(error) =>
-                        handleStateChange("tags", error, setErrors)
-                      }
-                      error={errors.tags}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <DateTimeRangeInput
-                    startValue={formData.start_date}
-                    endValue={formData.end_date}
-                    placeholderStart={formData.start_date}
-                    placeholderEnd={formData.end_date}
-                    onStartDateTimeChange={(value) =>
-                      handleStateChange("start_date", value, setFormData)
-                    }
-                    onEndDateTimeChange={(value) =>
-                      handleStateChange("end_date", value, setFormData)
-                    }
-                    onStartDateTimeValidationChange={(value) =>
-                      handleStateChange("start_date", value, setIsValid)
-                    }
-                    onEndDateTimeValidationChange={(value) =>
-                      handleStateChange("end_date", value, setIsValid)
-                    }
-                    validationSchema={dateTimeRangeValidationSchema({
-                      required: false,
-                      futureOrNow: true,
-                      messages: {
-                        startRequired: "Event start time required",
-                        endRequired: "Event end time required",
-                      },
-                    })}
-                  />
-                </div>
-                <div className="d-flex flex-row align-items-center gap-2 w-100">
-                  <div className="w-50">
-                    <label htmlFor="location" className="font-size-sm">
-                      Location
-                    </label>
-                    <TextInput
-                      type={"address"}
-                      onChange={(value) =>
-                        handleStateChange("location", value, setFormData)
-                      }
-                      onValidationChange={(value) =>
-                        handleStateChange("location", value, setIsValid)
-                      }
-                      value={formData.location}
-                      validationSchema={addressSchema({
-                        min: 3,
-                        max: 150,
-                        required: false,
-                        messages: {
-                          max: "Location Must Not Exceed 150 Characters",
-                          min: "Location Must Be Atleast 3 Characters Long",
-                        },
-                      })}
-                      placeholder={formData.location || "E.g EXHIST"}
-                    />
-                  </div>
-                  <div className="w-50">
-                    <label htmlFor="organizers" className="font-size-sm">
-                      Organizer
-                    </label>
-                    <TextInput
-                      onChange={(value) =>
-                        handleStateChange("organizer", value, setFormData)
-                      }
-                      onValidationChange={(value) =>
-                        handleStateChange("organizer", value, setIsValid)
-                      }
-                      value={formData.organizer}
-                      validationSchema={nameSchema({
-                        required: false,
-                        min: 3,
-                        max: 150,
-                        messages: {
-                          max: "Organizer Name Must Not Exceed 150 Characters",
-                          min: "Organizer Name Must Be Atleast 3 Characters Long",
-                        },
-                      })}
-                      placeholder={formData.organizer || "E.g EXHIST"}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="description" className="font-size-sm">
-                    Description
-                  </label>
-                  <TextAreaInput
-                    onChange={(value) =>
-                      handleStateChange("description", value, setFormData)
-                    }
-                    onValidationChange={(value) =>
-                      handleStateChange("description", value, setIsValid)
-                    }
-                    validationSchema={textareaSchema({
-                      required: false,
-                      min: 10,
-                      max: 1000,
-                      messages: {
-                        min: "Event Description Must Be Atleast 10 Characters Long",
-                        max: "Event Description Must Not Exceed 1000 Characters",
-                      },
-                    })}
-                    value={formData.description}
-                    placeholder={
-                      formData.description || "Enter Event Description"
-                    }
-                  />
-                </div>
-              </div>
-              <div
-                className="d-flex flex-column h-100"
-                style={{ width: "30%" }}
-              >
-                <span className="fs-6 fw-semibold">Event Preview</span>
-                <div
-                  className={`${
-                    darkMode && "dark-bg dark-mode-border dark-mode-text"
-                  } card p-2 rounded-4 d-flex flex-column gap-2 h-100`}
-                >
-                  <div className="w-100" style={{ height: "40%" }}>
-                    <img
-                      src="./images/event-img-one.jpg"
-                      className="object-fit-cover w-100 rounded-3 h-100"
-                    />
-                  </div>
-                  <div
-                    style={{ height: "60%" }}
-                    className="d-flex flex-column gap-1 justify-content-between"
-                  >
-                    <div>
-                      <span className="fw-bold">{formData.title}</span>
-                    </div>
-                    <div>
-                      <TextDisplay
-                        content={formData.description}
-                        maxLength={175}
-                        textStyle={"font-size-sm"}
-                        readMeStyle={"fw-semibold text-dark"}
-                      />
-                    </div>
-                    <div className="d-flex flex-row flex-wrap gap-2">
-                      {formData.tags.map((item) => {
-                        const matchingTag = eventTags?.data.find(
-                          (tag) => tag.id === item.id
-                        );
-                        return (
-                          <div
-                            className={`${
-                              darkMode
-                                ? "dark-bg-light"
-                                : "primary-background-50"
-                            } font-size-sm  px-2 py-1 rounded-pill color-primary`}
-                            key={item.id}
-                            style={{ fontSize: "0.7rem" }}
-                          >
-                            <span>
-                              {matchingTag ? matchingTag.name : "N/A"}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="d-flex flex-column gap-1 font-size-sm">
-                      <div className="d-flex flex-row align-items-center gap-2">
-                        <Icon icon="ion:location-outline" />
-                        <span>{formData.organizer}</span>
-                      </div>
-                      <div className="d-flex flex-row align-items-center gap-2">
-                        <Icon icon="material-symbols:next-plan-outline-rounded" />
-                        <span>{formData.location}</span>
-                      </div>
-                    </div>
-                    <div className="d-flex flex-row gap-1 align-items-center fw-semibold font-size-sm">
-                      <Icon icon="solar:calendar-linear" />
-                      <span>{formatDate(formData.start_date)}</span>
-                      <Icon icon="radix-icons:dash" />
-                      <span>{formatDate(formData.end_date)},</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <FormErrorBanner
-              ref={errorBannerRef}
-              error={formError}
-              onDismiss={clearFormError}
-              className="mb-2"
-            />
-            <div
-              className="d-flex flex-row w-100 justify-content-end"
-              style={{ height: "5%" }}
-            >
-              <button
-                className="border-none primary-background text-white px-4 py-2 font-size-sm rounded-3"
-                onClick={() => {
-                  handleUpdateContent();
-                }}
-              >
-                {isPending ? <SingleSpinner /> : "Update Event"}
-              </button>
-            </div>
-          </>
+          <button
+            className="bg-none border-none border rounded-circle"
+            aria-label="Close drawer"
+            onClick={closeDrawer}
+            disabled={isPending}
+            style={closeButtonStyle}
+          >
+            <X size={16} />
+          </button>
         )}
+      </div>
+      {isEventLoading || (!eventError && !isReady) ? (
+        <div className="drawer-content px-2 pt-3">
+          <div className="d-flex flex-column gap-2">
+            {[...Array(8)].map((_, index) => (
+              <Fragment key={index}>
+                <RectangleSkeleton height="1dvh" width="25%" />
+                <RectangleSkeleton height="4dvh" width="100%" />
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      ) : eventError ? (
+        <div className="drawer-content px-2 pt-3">
+          <NotFoundError
+            title={eventError?.response?.data?.errors?.title}
+            description={eventError?.response?.data?.errors?.description}
+          />
+        </div>
+      ) : (
+        <div
+          className="drawer-content px-2 pt-2 font-size-sm"
+          style={{ paddingBottom: "10rem" }}
+        >
+          <FormErrorBanner
+            ref={errorBannerRef}
+            error={formError}
+            onDismiss={clearFormError}
+            className="mb-2"
+          />
+          <div className="d-flex flex-column gap-3">
+            <div className="d-flex flex-column gap-1">
+              <span className="fw-medium">Category</span>
+              <CustomDropdown
+                data={category?.data || []}
+                displayKey={["name"]}
+                valueKey={["id"]}
+                direction="up"
+                onSelect={(value) =>
+                  setField("category", {
+                    value:
+                      category?.data?.find((g) => g.id === value.id) || {},
+                  })
+                }
+                placeholder="Select Event Category"
+                error={moduleState?.category?.error}
+                isLoading={isCategoryLoading}
+                errorMessage="Event Category Required"
+                onError={(msg) => setField("category", { error: msg })}
+                ref={categoryRef}
+                value={moduleState?.category?.value?.id}
+              />
+            </div>
+            <div className="d-flex flex-column gap-1">
+              <span className="fw-medium">Tags</span>
+              <MultiSelectDropdown
+                data={tags?.data || []}
+                displayKey={["name"]}
+                valueKey={["id"]}
+                direction="up"
+                isLoading={isTagLoading}
+                placeholder={"Select Tags"}
+                errorMessage={"School Event Tags Required"}
+                onSelect={(selectedIds) => {
+                  if (selectedIds.length > 5) {
+                    setClientError(
+                      "Max Amount Reached",
+                      "You can only select from 1 - 5 tags maximum",
+                    );
+                    return;
+                  }
+                  setField("tags", {
+                    value: tags?.data.filter((t) =>
+                      selectedIds.some((id) => id.id == t.id),
+                    ),
+                  });
+                }}
+                onError={(error) => setField("tags", { error })}
+                error={moduleState?.tags?.error}
+                ref={tagRef}
+                value={moduleState?.tags?.value}
+              />
+            </div>
+            <div className="d-flex flex-column gap-1">
+              <span className="fw-medium">Title</span>
+              <TextInput
+                onChange={(value) => setField("title", { value })}
+                onValidationChange={(isValid) => setField("title", { isValid })}
+                validationSchema={nameSchema({
+                  min: 3,
+                  max: 150,
+                  required: true,
+                  messages: {
+                    required: "Event Title Required",
+                    min: "Event Title Must Be Atleast 3 Characters Long",
+                    max: "Event Title Must Not Exceed 150 Characters",
+                  },
+                })}
+                value={moduleState?.title?.value}
+                placeholder={"e.g Annual School Science Fair"}
+                ref={titleRef}
+              />
+            </div>
+            <div className="d-flex flex-column gap-1">
+              <span className="fw-medium">Description</span>
+              <TextAreaInput
+                onChange={(value) => setField("description", { value })}
+                onValidationChange={(isValid) =>
+                  setField("description", { isValid })
+                }
+                value={moduleState?.description?.value}
+                placeholder={"Enter School Event Description"}
+                validationSchema={textareaSchema({
+                  min: 10,
+                  max: 5000,
+                  required: true,
+                  messages: {
+                    required: "School Event Description Required",
+                    min: "School Event Description Must Be Atleast 10 Characters Long",
+                    max: "School Event Description Must Not Exceed 5000 Characters",
+                  },
+                })}
+                ref={descriptionRef}
+              />
+            </div>
+            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+            <span className="text-iron-400">Schedule</span>
+            <DateTimeRangeInput
+              startValue={moduleState?.start_date?.value}
+              endValue={moduleState?.end_date?.value}
+              onStartDateTimeChange={(value) =>
+                setField("start_date", { value })
+              }
+              onEndDateTimeChange={(value) => setField("end_date", { value })}
+              onStartDateTimeValidationChange={(isValid) =>
+                setField("start_date", { isValid })
+              }
+              onEndDateTimeValidationChange={(isValid) =>
+                setField("end_date", { isValid })
+              }
+              validationSchema={dateTimeRangeValidationSchema({
+                required: true,
+              })}
+              startDateLabel="Starts At"
+              endDateLabel="Ends At"
+              ref={dateRef}
+            />
+            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+            <span className="text-iron-400">Location & Organizer</span>
+            <div className="d-flex flex-column gap-1">
+              <span className="fw-medium">Location</span>
+              <TextInput
+                onChange={(value) => setField("location", { value })}
+                onValidationChange={(isValid) =>
+                  setField("location", { isValid })
+                }
+                validationSchema={nameSchema({
+                  min: 3,
+                  max: 150,
+                  required: true,
+                  messages: {
+                    required: "Event Location Required",
+                    min: "Event Location Must Be Atleast 3 Characters Long",
+                    max: "Event Location Must Not Exceed 150 Characters",
+                  },
+                })}
+                value={moduleState?.location?.value}
+                placeholder={"e.g Main School Hall"}
+                ref={locationRef}
+              />
+            </div>
+            <div className="d-flex flex-column gap-1">
+              <span className="fw-medium">Organizer</span>
+              <TextInput
+                onChange={(value) => setField("organizer", { value })}
+                onValidationChange={(isValid) =>
+                  setField("organizer", { isValid })
+                }
+                validationSchema={nameSchema({
+                  min: 3,
+                  max: 200,
+                  required: true,
+                  messages: {
+                    required: "Event Organizer Required",
+                    min: "Event Organizer Must Be Atleast 3 Characters Long",
+                    max: "Event Organizer Must Not Exceed 200 Characters",
+                  },
+                })}
+                value={moduleState?.organizer?.value}
+                placeholder={"e.g Science Department"}
+                ref={organizerRef}
+              />
+            </div>
+            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+            <EventImagesField
+              existingImages={updateState.existingImages}
+              removeImageIds={updateState.removeImageIds}
+              onToggleRemove={(imageId) =>
+                dispatch(
+                  toggleRemoveImage({ imageId, actionType: "updateContent" }),
+                )
+              }
+              images={images}
+              onImagesChange={handleImagesChange}
+              order={imageOrder}
+              onOrderChange={handleOrderChange}
+            />
+          </div>
+        </div>
+      )}
+      <div className="drawer-footer font-size-sm">
+        <div className="d-flex flex-column w-100">
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+          <div className="d-flex flex-row align-items-center justify-content-between p-2">
+            {isDirty ? (
+              <ModalButton
+                action={{ modalContent: UpdateEventDiscardWarning }}
+                size={"md"}
+                rowData={{ handleCloseDrawer: handleClose }}
+                closeOnOutsideClick={false}
+                closeOnEscape={false}
+              >
+                <button className="border-none bg-none">Cancel</button>
+              </ModalButton>
+            ) : (
+              <button className="border-none bg-none" onClick={closeDrawer}>
+                Cancel
+              </button>
+            )}
+            {isDirty && (
+              <button
+                className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+                onClick={() => handleUpdateContent()}
+                disabled={isPending}
+              >
+                {isPending ? <SingleSpinner /> : "Update Content"}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );

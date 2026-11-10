@@ -7,14 +7,20 @@ import { useGetTeacherAudienceByLevel } from "../../../../hooks/Audience/useGetT
 import { useGetTeacherAudienceBySpecialty } from "../../../../hooks/Audience/useGetTeacherAudienceBySpecialty";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setTargetIndividuals,
-  setTargetSelection,
+  setTargetIndividuals as setAnnouncementTargetIndividuals,
+  setTargetSelection as setAnnouncementTargetSelection,
 } from "../../../../Slices/announcement/announcementSlice";
-function TeacherTarget() {
+// The selector and actions default to the create announcement flow; other
+// flows (e.g. school events) pass their own to reuse this picker.
+function TeacherTarget({
+  selectTargeting = (state) =>
+    state.announcement.createAnnouncement.audience.targeting,
+  setTargetIndividuals = setAnnouncementTargetIndividuals,
+  setTargetSelection = setAnnouncementTargetSelection,
+} = {}) {
   const dispatch = useDispatch();
   const moduleState = useSelector(
-    (state) =>
-      state.announcement.createAnnouncement.audience.targeting.teachers,
+    (state) => selectTargeting(state).teachers,
   );
   const { data: teacherAudience, isLoading: isTeacherAudienceLoading } =
     useGetTeacherAudience();

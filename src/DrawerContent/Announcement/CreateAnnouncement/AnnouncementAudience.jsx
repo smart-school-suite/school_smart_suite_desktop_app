@@ -22,7 +22,7 @@ import { NotFoundError } from "../../../components/errors/Error";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
 import AnnouncementDiscardWarning from "../../../ModalContent/Announcement/AnnouncementDiscardWarning";
-const tokens = {
+export const tokens = {
   blue: "#0EA7E9",
   blueTint: "#EAF7FD",
   ink: "#083049",
@@ -56,7 +56,8 @@ function Checkbox({ selected }) {
   );
 }
 
-function AudienceCard({
+// Also used by the school event invitee step, which passes its own onConfigure.
+export function AudienceCard({
   cardKey,
   icon: IconComp,
   title,
@@ -66,6 +67,7 @@ function AudienceCard({
   footer,
   selected,
   onSelect,
+  onConfigure,
 }) {
   const [hovered, setHovered] = useState(false);
   const dispatch = useDispatch();
@@ -75,6 +77,10 @@ function AudienceCard({
     if (e.type === "keydown") e.preventDefault();
     if (!selected) {
       onSelect();
+    }
+    if (onConfigure) {
+      onConfigure(cardKey);
+      return;
     }
     dispatch(
       setTargetingContext({

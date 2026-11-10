@@ -91,6 +91,7 @@ export const eventRoutes = [
   "/schedule-event",
   "/expired-event",
   "/draft-event",
+  "/active-event",
 ];
 
 export const announcementRoutes = [
