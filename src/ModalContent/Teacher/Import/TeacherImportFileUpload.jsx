@@ -10,7 +10,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { prepareFileForRedux } from "../../../utils/file/fileReconstruction";
 import { FILE_ENCODING } from "@/constants";
-import { downloadFile } from "../../../utils/file/fileDownload";
+import { handleTemplateDownload } from "../../../utils/file/fileDownload";
 import { CircleX, ChevronDown, Plus, Dot, ArrowRight } from "lucide-react";
 function FileUpload({ onFileSelect, fileInfo, onClearFile }) {
   const dispatch = useDispatch();
@@ -401,8 +401,8 @@ function TeacherImportFileUpload({
           <span className="fw-medium">New to teacher imports?</span>
           <button
             onClick={() =>
-              downloadFile(
-                "import/examples/teacher_example.csv",
+              handleTemplateDownload(
+                "/import/examples/teacher_example.csv",
                 "teacher_example.csv",
               )
             }
