@@ -17,6 +17,9 @@ export const useGetSchoolEventsByStatus = (status) => {
     queryKey: ["schoolEvents", status],
     queryFn: () => getSchoolEventsByStatus(status),
     enabled: !!status,
+    // a 404 means the tab has no events, so show that right away
+    retry: (failureCount, error) =>
+      error?.response?.status !== 404 && failureCount < 2,
   });
 };
 
