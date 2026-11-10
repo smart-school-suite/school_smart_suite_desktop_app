@@ -8,6 +8,7 @@ import AnnouncementStatusRenderer from "../../components/Badges/AnnouncementStat
 import { useGetSchoolEventDetails } from "../../hooks/schoolEvent/useGetSchoolEventDetails";
 import { EventIcon } from "../../icons/Icons";
 import { eventImageUrl } from "./CreateSchoolEvent/EventContent";
+import ImageCarousel from "../../components/image/ImageCarousel";
 
 // Show the time as it was entered (the API's wall-clock time), not shifted to
 // the viewer's timezone: drop any timezone suffix before parsing.
@@ -71,21 +72,14 @@ function SchoolEventDetails({ handleClose, drawerData }) {
         ) : (
           <div className="d-flex flex-column gap-3">
             {event?.current_images?.length > 0 && (
-              <div className="d-flex flex-row gap-2 overflow-auto">
-                {event.current_images.map((image) => (
-                  <img
-                    key={image.id}
-                    src={eventImageUrl(image.object_key)}
-                    alt={event?.title}
-                    className="object-fit-cover rounded-3"
-                    style={{
-                      width: event.current_images.length === 1 ? "100%" : "12rem",
-                      height: "10rem",
-                      flexShrink: 0,
-                    }}
-                  />
-                ))}
-              </div>
+              <ImageCarousel
+                slides={event.current_images.map((image) => ({
+                  key: image.id,
+                  src: eventImageUrl(image.object_key),
+                  alt: event?.title,
+                }))}
+                height="15rem"
+              />
             )}
             <div className="d-flex flex-row align-items-center justify-content-between">
               <div className="d-flex flex-row align-items-center gap-2">

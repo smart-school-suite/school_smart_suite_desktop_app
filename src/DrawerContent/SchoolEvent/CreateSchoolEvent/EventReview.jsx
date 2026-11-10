@@ -20,7 +20,8 @@ import {
   setPublicationValue,
 } from "../../../Slices/schoolEvent/schoolEventSlice";
 import { formatISODate } from "../../../utils/functions";
-import { eventImageUrl, FilePreview } from "./EventContent";
+import { eventImageUrl } from "./EventContent";
+import ImageCarousel from "../../../components/image/ImageCarousel";
 import { orderImageItems } from "../../../components/FormComponents/MultiImageUploader";
 
 const AUDIENCE_LABELS = {
@@ -164,41 +165,18 @@ function EventReview({
               style={{ borderRadius: "0.85rem" }}
             >
               {orderedImages.length > 0 && (
-                <div className="d-flex flex-row gap-2 overflow-auto">
-                  {orderedImages.map((item, index) => (
-                    <div
-                      key={item.key}
-                      className="position-relative flex-shrink-0 overflow-hidden rounded-3"
-                      style={{
-                        width: index === 0 ? "12rem" : "8rem",
-                        height: "7rem",
-                      }}
-                    >
-                      {item.kind === "saved" ? (
-                        <img
-                          src={eventImageUrl(item.image.object_key)}
-                          alt="Event"
-                          className="w-100 h-100 object-fit-cover"
-                        />
-                      ) : (
-                        <FilePreview file={item.file} />
-                      )}
-                      {index === 0 && (
-                        <span
-                          className="position-absolute rounded-pill px-2 fw-semibold text-white"
-                          style={{
-                            top: 6,
-                            left: 6,
-                            fontSize: "0.65rem",
-                            background: "#0EA7E9",
-                          }}
-                        >
-                          Cover
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                <ImageCarousel
+                  slides={orderedImages.map((item) =>
+                    item.kind === "saved"
+                      ? {
+                          key: item.key,
+                          src: eventImageUrl(item.image.object_key),
+                          alt: "Event image",
+                        }
+                      : { key: item.key, file: item.file, alt: item.file.name },
+                  )}
+                  height="15rem"
+                />
               )}
               <div className="d-flex flex-row align-items-center gap-2">
                 <div

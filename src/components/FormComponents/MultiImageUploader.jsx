@@ -109,7 +109,7 @@ export function toImageOrderPayload(items) {
 }
 
 // Object URL for a picked file, created and revoked with the component.
-function useFileUrl(file) {
+export function useFileUrl(file) {
   const [url, setUrl] = useState(null);
   useEffect(() => {
     if (!file) {
