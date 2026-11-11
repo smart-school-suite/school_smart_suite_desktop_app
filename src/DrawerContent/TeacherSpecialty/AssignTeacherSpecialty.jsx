@@ -1,378 +1,321 @@
 import { Icon } from "@iconify/react";
-import { useGetSpecialtyDetails } from "../../hooks/specialty/useGetSpecialtyDetail";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { useGetAssignableTeachers } from "../../hooks/teacherSpecialty/useGetAssignableTeacherSpecialtyId";
-import { Fragment, useState } from "react";
-import { useAssignTeachers } from "../../hooks/teacherSpecialty/useAssignTeachers";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { NotFoundError } from "../../components/errors/Error";
+import { Dot, Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import TeacherCard from "../../components/Card/TeacherCard";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import {
-  CircleX,
-  ChevronDown,
-  Plus,
-  Dot,
-  ArrowRight,
-  Trash2,
-  TriangleAlert,
-  Info,
-  CircleCheck,
-} from "lucide-react";
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import SearchInput from "../../components/input/search";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useDebounce } from "../../hooks/common/useDebounce";
 import { useFormError } from "../../hooks/form/useFormError";
+import { useGetSpecialtyDetails } from "../../hooks/specialty/useGetSpecialtyDetail";
+import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
+import { useAssignTeachers } from "../../hooks/teacherSpecialty/useAssignTeachers";
+import { useGetAssignableTeachers } from "../../hooks/teacherSpecialty/useGetAssignableTeacherSpecialtyId";
+import { SpecialtyIcon } from "../../icons/Icons";
+import { filterTeachers, isEmptyListError } from "../../utils/teacher/teacherFilters";
+
+const MASCOT_HEIGHT = "6rem";
+const EMPTY_HEIGHT = "100%";
+
+function SpecialtySummary({ specialtyId }) {
+  const { data, isLoading, error } = useGetSpecialtyDetails(specialtyId);
+  const specialty = data?.data;
+
+  if (isLoading) return <RectangleSkeleton height="3.5rem" />;
+  if (error) {
+    return (
+      <div className="d-flex flex-row align-items-center gap-2 font-size-sm text-iron-500">
+        <Icon icon="lucide:circle-alert" width={16} height={16} />
+        <span>Specialty details could not be loaded.</span>
+      </div>
+    );
+  }
+
+  const stats = [
+    { icon: "ion:book-outline", label: "Courses", value: specialty?.total_courses },
+    { icon: "streamline-flex:city-hall", label: "Halls", value: specialty?.total_halls },
+    { icon: "solar:user-linear", label: "Teachers", value: specialty?.total_teachers },
+    { icon: "ph:student-light", label: "Students", value: specialty?.total_students },
+  ];
+
+  return (
+    <div className="d-flex flex-column gap-2 font-size-sm">
+      <div className="d-flex flex-row align-items-center gap-2">
+        <div
+          style={{ width: "2.5rem", height: "2.5rem", display: "grid", placeItems: "center" }}
+          className="bg-primary-50 rounded-2 text-primary-500 flex-shrink-0"
+        >
+          <SpecialtyIcon />
+        </div>
+        <div className="d-flex flex-column flex-grow-1" style={{ minWidth: 0 }}>
+          <div className="d-flex flex-row align-items-center gap-2">
+            <span className="fw-semibold text-truncate">
+              {specialty?.specialty_name ?? "Specialty"}
+            </span>
+            {specialty?.status && (
+              <span className="pill-sm-success text-capitalize">{specialty.status}</span>
+            )}
+          </div>
+          <div className="d-flex flex-row align-items-center text-iron-400 fw-light">
+            <span>{specialty?.level?.name ?? "-"}</span>
+            <Dot size={16} />
+            <span className="text-truncate">
+              {specialty?.department?.department_name ?? "-"}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="d-flex flex-row flex-wrap align-items-center gap-3 font-size-xs text-iron-500">
+        {stats.map((stat) => (
+          <div key={stat.label} className="d-flex flex-row align-items-center gap-1">
+            <Icon icon={stat.icon} width={14} height={14} />
+            <span className="fw-semibold text-iron-700">{stat.value ?? 0}</span>
+            <span>{stat.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function AssignTeacherSpecialty({ handleClose, drawerData }) {
+  const specialtyId = drawerData?.specialtyId;
+  const navigate = useNavigate();
+
   const {
-    data: specialty,
-    isLoading: isSpecialtyLoading,
-    error: specialtyError,
-  } = useGetSpecialtyDetails(drawerData?.specialtyId);
-  const {
-    data: teachers,
+    data: assignable,
     isLoading: isTeachersLoading,
     error: teachersError,
-  } = useGetAssignableTeachers(drawerData?.specialtyId);
-  const { mutate: assignTeacher, isPending: isAssigning } = useAssignTeachers(
-    drawerData?.specialtyId,
+  } = useGetAssignableTeachers(specialtyId);
+  const { mutate: assignTeacher, isPending: isAssigning } = useAssignTeachers(specialtyId);
+  const { formError, errorBannerRef, handleServerError, clearFormError } = useFormError(
+    "Failed To Assign Teacher Specialty",
   );
-  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
-    useFormError("Failed To Assign Teacher Specialty");
-  const [selectedTeachers, setSelectedTeachers] = useState([]);
+
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 250);
+
+  const teachers = useMemo(
+    () => (Array.isArray(assignable?.data) ? assignable.data : []),
+    [assignable],
+  );
+  const visibleTeachers = useMemo(
+    () => filterTeachers(teachers, debouncedSearch),
+    [teachers, debouncedSearch],
+  );
+
+  const noAssignableTeachers =
+    !isTeachersLoading &&
+    (teachersError ? isEmptyListError(teachersError) : teachers.length === 0);
+
+  // Only when nothing is assignable do we need to know whether the school has
+  // any teachers at all, to tell "create teachers first" apart from
+  // "every eligible teacher is already assigned".
+  const { data: allTeachers, isLoading: isAllTeachersLoading } = useGetTeachers({
+    enabled: noAssignableTeachers,
+  });
+  const schoolHasNoTeachers =
+    noAssignableTeachers && !isAllTeachersLoading && (allTeachers?.data?.length ?? 0) === 0;
+
+  const visibleIds = visibleTeachers.map((teacher) => teacher.id);
+  const allVisibleSelected =
+    visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
+
+  const toggleTeacher = (teacher) =>
+    setSelectedIds((current) => {
+      const next = new Set(current);
+      if (next.has(teacher.id)) next.delete(teacher.id);
+      else next.add(teacher.id);
+      return next;
+    });
+
+  const toggleAllVisible = () =>
+    setSelectedIds((current) => {
+      const next = new Set(current);
+      visibleIds.forEach((id) => (allVisibleSelected ? next.delete(id) : next.add(id)));
+      return next;
+    });
+
   const handleAssignTeachers = () => {
-    if (selectedTeachers.length < 1) {
-      setClientError("Teachers Required", "You must select atleast a one teacher before assigning to this specialty");
-      return;
-    }
+    if (selectedIds.size === 0) return;
     clearFormError();
-    assignTeacher({
-      specialty_id: drawerData?.specialtyId,
-      teacher_ids: selectedTeachers.map((teacher) => teacher.id),
-    }, { onError: handleServerError });
+    assignTeacher(
+      { specialty_id: specialtyId, teacher_ids: Array.from(selectedIds) },
+      {
+        onSuccess: () => setSelectedIds(new Set()),
+        onError: handleServerError,
+      },
+    );
   };
+
+  const goToTeachers = () => {
+    handleClose?.();
+    navigate("/teacher");
+  };
+
+  const renderTeachers = () => {
+    if (isTeachersLoading || (noAssignableTeachers && isAllTeachersLoading)) {
+      return (
+        <div className="teacher-card-grid">
+          {[...Array(6)].map((_, index) => (
+            <RectangleSkeleton key={index} height="11rem" />
+          ))}
+        </div>
+      );
+    }
+
+    if (teachersError && !isEmptyListError(teachersError)) {
+      return (
+        <EmptyState
+          mascot="error"
+          height={EMPTY_HEIGHT}
+          mascotHeight={MASCOT_HEIGHT}
+          title={teachersError?.response?.data?.errors?.title || "Unable to load teachers"}
+          description={
+            teachersError?.response?.data?.errors?.description ||
+            "Something went wrong while loading the teachers you can assign."
+          }
+        />
+      );
+    }
+
+    if (schoolHasNoTeachers) {
+      return (
+        <EmptyState
+          mascot="sad"
+          height={EMPTY_HEIGHT}
+          mascotHeight={MASCOT_HEIGHT}
+          title="No teachers created yet"
+          description="Your school has no teachers yet. Create teachers first, then come back to assign them to this specialty."
+          actions={
+            <EmptyStateButton icon={Plus} onClick={goToTeachers}>
+              Go to Teachers
+            </EmptyStateButton>
+          }
+        />
+      );
+    }
+
+    if (noAssignableTeachers) {
+      return (
+        <EmptyState
+          mascot="empty"
+          height={EMPTY_HEIGHT}
+          mascotHeight={MASCOT_HEIGHT}
+          title="No teachers available to assign"
+          description="Every teacher who teaches this specialty's level is already assigned to it."
+          hint="Teachers only appear here when one of their teaching levels matches the specialty's level."
+        />
+      );
+    }
+
+    if (visibleTeachers.length === 0) {
+      return (
+        <EmptyState
+          mascot="notFound"
+          height={EMPTY_HEIGHT}
+          mascotHeight={MASCOT_HEIGHT}
+          title="No matching teachers"
+          description={`No assignable teacher matches "${debouncedSearch}". Try a name, username, qualification or level.`}
+          actions={
+            <EmptyStateButton variant="secondary" onClick={() => setSearch("")}>
+              Clear search
+            </EmptyStateButton>
+          }
+        />
+      );
+    }
+
+    return (
+      <div className="teacher-card-grid">
+        {visibleTeachers.map((teacher) => (
+          <TeacherCard
+            key={teacher.id}
+            teacher={teacher}
+            selected={selectedIds.has(teacher.id)}
+            onSelect={toggleTeacher}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const hasTeachers = !isTeachersLoading && teachers.length > 0;
+
   return (
     <>
-      <div className="drawer-content px-2 pt-2">
+      <div className="d-flex flex-column gap-3 pt-2 px-2 pb-2 flex-shrink-0">
+        <SpecialtySummary specialtyId={specialtyId} />
+        <SearchInput
+          placeholder="Search by name, qualification or level"
+          value={search}
+          onChange={(value) => setSearch(value ?? "")}
+          enableShortcut={false}
+          disabled={!hasTeachers}
+        />
+        {hasTeachers && (
+          <div className="d-flex flex-row align-items-center justify-content-between font-size-sm">
+            <span className="text-iron-400 fw-light">
+              Assignable teachers
+              {debouncedSearch
+                ? ` · ${visibleTeachers.length} of ${teachers.length}`
+                : ` · ${teachers.length}`}
+            </span>
+            <button
+              type="button"
+              className="border-none bg-none color-primary font-size-sm"
+              onClick={toggleAllVisible}
+              disabled={visibleIds.length === 0}
+            >
+              {allVisibleSelected ? "Deselect all" : "Select all"}
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="drawer-content px-2 pb-3 d-flex flex-column">
         <FormErrorBanner
           ref={errorBannerRef}
           error={formError}
           onDismiss={clearFormError}
           className="mb-2"
         />
-        <div className="d-flex flex-column gap-3 pb-4">
-          {isSpecialtyLoading ? (
-            <RectangleSkeleton />
-          ) : specialtyError ? (
-            <div className="card rounded-3 p-2"></div>
-          ) : (
-            <div className="card rounded-4 p-2 font-size-sm d-flex flex-column gap-2">
-              <div className="d-flex flex-column gap-1">
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <span className="fw-semibold">
-                    {specialty?.data?.specialty_name}
-                  </span>
-                  <div
-                    style={{
-                      background: "#e3f5e3",
-                      color: "#5cb85c",
-                      fontSize: "0.7rem",
-                      width: "max-content",
-                      padding: "0.1rem",
-                    }}
-                    className="rounded-pill px-2 d-flex flex-row align-items-center gap-1"
-                  >
-                    <span>{specialty?.data?.status}</span>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center gap-1 fw-medium">
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <Icon icon="mynaui:graduation-cap" width={16} height={16} />
-                    <span>{specialty?.data?.level?.name}</span>
-                  </div>
-                  <span>
-                    <Icon icon="icon-park-outline:dot" width={14} height={14} />
-                  </span>
-                  <div className="d-flex flex-row align-items-center gap-1">
-                    <Icon
-                      icon="material-symbols:grid-on-outline"
-                      width={16}
-                      height={16}
-                    />
-                    <span>{specialty?.data?.department?.department_name}</span>
-                  </div>
-                </div>
-              </div>
-              <p className="text-muted">{specialty?.data?.description}</p>
-              <div>
-                <hr />
-                <div className="d-flex flex-row align-items-center justify-content-around">
-                  <div className="d-flex flex-column gap-1 align-center  text-center">
-                    <span style={{ fontSize: "0.7rem" }} className="text-muted">
-                      Courses Assigned
-                    </span>
-                    <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                      <span>
-                        <Icon icon="ion:book-outline" width={18} height={18} />
-                      </span>
-                      <span className="fw-bold font-size-md">
-                        {specialty?.data?.total_courses}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="d-flex flex-column gap-1">
-                    <span style={{ fontSize: "0.7rem" }} className="text-muted">
-                      Halls Assigned
-                    </span>
-                    <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                      <span>
-                        <Icon
-                          icon="streamline-flex:city-hall"
-                          width={18}
-                          height={18}
-                        />
-                      </span>
-                      <span className="fw-bold font-size-md">
-                        {specialty?.data?.total_halls}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="d-flex flex-column gap-1">
-                    <span style={{ fontSize: "0.7rem" }} className="text-muted">
-                      Teachers Assigned
-                    </span>
-                    <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                      <span>
-                        <Icon icon="solar:user-linear" width={18} height={18} />
-                      </span>
-                      <span className="fw-bold font-size-md">
-                        {specialty?.data?.total_teachers}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="d-flex flex-column gap-1">
-                    <span style={{ fontSize: "0.7rem" }} className="text-muted">
-                      Student
-                    </span>
-                    <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                      <span>
-                        <Icon icon="ph:student-light" width={18} height={18} />
-                      </span>
-                      <span className="fw-bold font-size-md">
-                        {specialty?.data?.total_students}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          <div className="d-flex flex-column gap-3">
-            <div className="d-flex flex-row align-items-center justify-content-end">
-              <input
-                type="search"
-                className="form-control font-size-sm w-50"
-                placeholder="Search Teacher"
-              />
-            </div>
-            {isTeachersLoading ? (
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(2, 1fr)",
-                }}
-                className="gap-2"
-              >
-                {[...Array(6)].map((_, index) => (
-                  <Fragment key={index}>
-                    <RectangleSkeleton
-                      borderRadius={6}
-                    />
-                  </Fragment>
-                ))}
-              </div>
-            ) : teachersError ? (
-              <NotFoundError
-                title={teachersError?.response?.data?.errors?.title || "Error"}
-                description={
-                  teachersError?.response?.data?.errors?.description ||
-                  "Something went wrong"
-                }
-              />
-            ) : (
-              <div className="d-flex flex-column gap-2">
-                <span className="font-size-sm fw-semibold">Teachers</span>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(2, 1fr)",
-                  }}
-                  className="gap-2"
-                >
-                  {teachers?.data?.map((teacher) => (
-                    <Fragment key={teacher.id}>
-                      <Teacher
-                        teacher={teacher}
-                        selectedTeachers={selectedTeachers}
-                        setSelectedTeachers={setSelectedTeachers}
-                      />
-                    </Fragment>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <div className="flex-grow-1">{renderTeachers()}</div>
       </div>
+
       <div className="drawer-footer">
         <div className="d-flex flex-column w-100 font-size-sm">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
-            <button
-              className="border-none bg-none"
-              onClick={() => handleClose()}
-            >
+            <button type="button" className="border-none bg-none" onClick={() => handleClose?.()}>
               Cancel
             </button>
-            <button
-              className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
-              onClick={() => handleAssignTeachers()}
-              disabled={isAssigning}
-            >
-              {isAssigning ? <SingleSpinner /> : "Assign Teacher"}
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function Teacher({ teacher, selectedTeachers, setSelectedTeachers }) {
-  return (
-    <>
-      <div
-        className="card font-size-sm rounded-4 p-2 d-flex flex-column pointer-cursor d-flex flex-column gap-3 shadow-sm"
-        onClick={() =>
-          setSelectedTeachers((value) => {
-            const newValue = [...value];
-            const existingSelection = newValue.find((t) => t.id === teacher.id);
-            if (existingSelection) {
-              const index = newValue.findIndex((t) => t.id === teacher.id);
-              newValue.splice(index, 1);
-              return newValue;
-            }
-            newValue.push(teacher);
-            return newValue;
-          })
-        }
-      >
-        <div className="d-flex flex-row align-items-center pe-1 justify-content-between">
-          <div className="d-flex flex-row align-items-center gap-1">
-            <img
-              src="./images/user.png"
-              alt=""
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                objectFit: "contain",
-              }}
-            />
-            <div className="d-flex flex-column">
-              <span className="fw-medium">{teacher?.name}</span>
-              <span className="text-muted">@{teacher?.username}</span>
-            </div>
-          </div>
-          {selectedTeachers.find((t) => t.id === teacher.id) && (
-            <Icon
-              icon="material-symbols:check-circle-rounded"
-              width={20}
-              height={20}
-              className="green-color"
-            />
-          )}
-        </div>
-        <div className="d-flex flex-column gap-3">
-          <div className="card p-2 rounded-4 d-flex flex-column gap-2 border-none">
-            <div className="d-flex flex-column gap-1">
-              {teacher?.qualifications?.map((quali, index) => {
-                return (
-                  <Fragment key={quali.id}>
-                    <div
-                      style={{ fontSize: "0.7rem" }}
-                      className="d-flex flex-column gap-1"
-                    >
-                      <div className="d-flex flex-row align-items-center gap-1">
-                        <span>
-                          <Icon
-                            icon="streamline-plump:graduation-cap"
-                            width={14}
-                            height={14}
-                          />
-                        </span>
-                        <span className="fw-semibold">{quali?.name}</span>
-                      </div>
-                      <div className="d-flex flex-row align-items-center gap-1 fw-normal">
-                        <span>University of Buea</span>
-                        <span style={{ lineHeight: 0 }}>
-                          <Icon icon="icon-park-outline:dot" />
-                        </span>
-                        <span> 2018</span>
-                      </div>
-                    </div>
-                    {!teacher.qualifications.length == index && <hr />}
-                  </Fragment>
-                );
-              })}
-            </div>
-          </div>
-          <div className="d-flex flex-row flex-wrap gap-2">
-            {teacher?.levels?.map((level) => (
-              <Fragment key={level?.id}>
-                <div
-                  style={{
-                    background: "#e0f2fe",
-                    color: "#38bff8",
-                    fontSize: "0.7rem",
-                    width: "max-content",
-                    padding: "0.1rem",
-                  }}
-                  className="rounded-pill px-2 d-flex flex-row align-items-center gap-1"
-                >
-                  <span>{level?.name}</span>
-                </div>
-              </Fragment>
-            ))}
-          </div>
-        </div>
-        <div>
-          <hr />
-          <div className="d-flex flex-row align-items-center justify-content-around">
-            <div className="d-flex flex-column gap-1 align-center  text-center">
-              <span style={{ fontSize: "0.7rem" }} className="text-muted">
-                Courses Assigned
-              </span>
-              <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                <span>
-                  <Icon icon="ion:book-outline" width={18} height={18} />
+            <div className="d-flex flex-row align-items-center gap-3">
+              {selectedIds.size > 0 && (
+                <span className="text-iron-500">
+                  {selectedIds.size} selected
                 </span>
-                <span className="fw-bold font-size-md">
-                  {teacher?.num_assigned_courses}
-                </span>
-              </div>
-            </div>
-            <div
-              style={{ height: "2.5rem", background: "#ddd", width: "0.05rem" }}
-            ></div>
-            <div className="d-flex flex-column gap-1">
-              <span style={{ fontSize: "0.7rem" }} className="text-muted">
-                Specailties Assigned
-              </span>
-              <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                <span>
-                  <Icon icon="ion:book-outline" width={18} height={18} />
-                </span>
-                <span className="fw-bold font-size-md">
-                  {teacher?.num_assigned_specialties}
-                </span>
-              </div>
+              )}
+              <button
+                type="button"
+                className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2"
+                onClick={handleAssignTeachers}
+                disabled={isAssigning || selectedIds.size === 0}
+                style={{ opacity: selectedIds.size === 0 ? 0.6 : 1 }}
+              >
+                {isAssigning ? (
+                  <SingleSpinner />
+                ) : selectedIds.size > 1 ? (
+                  `Assign ${selectedIds.size} Teachers`
+                ) : (
+                  "Assign Teacher"
+                )}
+              </button>
             </div>
           </div>
         </div>
