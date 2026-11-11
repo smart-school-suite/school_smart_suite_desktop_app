@@ -43,4 +43,11 @@ export const semesterSettingMap = {
     component: Switch,
     dependsOn: whileAutoCreateEnabled,
   },
+  "semester.auto_create_require_students": {
+    key: "semester.auto_create_require_students",
+    editor: "switch",
+    valueType: "boolean",
+    component: Switch,
+    dependsOn: whileAutoCreateEnabled,
+  },
 };
