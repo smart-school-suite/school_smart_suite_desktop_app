@@ -21,7 +21,7 @@ const toLevelIds = (raw) => {
 };
 
 // Multi-select: only the checked levels receive synchronized semesters.
-function SemesterSyncLevelsSetting({ handleClose = () => {}, rowData }) {
+function AutoCreateLevelsSetting({ handleClose = () => {}, rowData }) {
   const { data: levels, isLoading, error: levelError } = useGetLevels();
   const { mutate: updateSetting, isPending } = useUpdateSetting(handleClose);
   const { formError, errorBannerRef, handleServerError, clearFormError } =
@@ -64,7 +64,7 @@ function SemesterSyncLevelsSetting({ handleClose = () => {}, rowData }) {
         style={{ height: "6dvh", background: "#f9f9f9" }}
       >
         <div className="d-flex flex-row align-items-center justify-content-between">
-          <span className="font-size-sm fw-semibold">Allowed Synchronization Levels</span>
+          <span className="font-size-sm fw-semibold">Applicable Academic Levels</span>
           <button
             type="button"
             onClick={handleClose}
@@ -90,7 +90,7 @@ function SemesterSyncLevelsSetting({ handleClose = () => {}, rowData }) {
           </div>
         )}
         <span className="text-iron-400">
-          Only the selected levels receive synchronized semesters. The level a
+          Only the selected levels receive automatically created semesters. The level a
           semester is created for always receives it.
         </span>
         {isLoading ? (
@@ -143,4 +143,4 @@ function SemesterSyncLevelsSetting({ handleClose = () => {}, rowData }) {
     </div>
   );
 }
-export default SemesterSyncLevelsSetting;
+export default AutoCreateLevelsSetting;

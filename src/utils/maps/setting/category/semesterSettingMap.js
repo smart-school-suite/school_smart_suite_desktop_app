@@ -1,38 +1,46 @@
 import Switch from "../../../../components/input/Switch";
-import SemesterSyncLevelsSetting from "../../../../ModalContent/Setting/Semester/SemesterSyncLevelsSetting";
-import SemesterSyncModeSetting from "../../../../ModalContent/Setting/Semester/SemesterSyncModeSetting";
-import SemesterSyncScopeSetting from "../../../../ModalContent/Setting/Semester/SemesterSyncScopeSetting";
+import AutoCreateLevelsSetting from "../../../../ModalContent/Setting/Semester/AutoCreateLevelsSetting";
+import AutoCreateModeSetting from "../../../../ModalContent/Setting/Semester/AutoCreateModeSetting";
 import {
+  AUTO_CREATE_MODE_KEY,
+  autoCreateModeOptions,
   optionLabel,
-  semesterSyncModeOptions,
-  semesterSyncScopeOptions,
-} from "../../../../ModalContent/Setting/Semester/semesterSyncOptions";
+} from "../../../../ModalContent/Setting/Semester/semesterAutoCreateOptions";
+
+// Hidden while Automatic Semester Creation is disabled: they only apply when it is on.
+const whileAutoCreateEnabled = {
+  key: AUTO_CREATE_MODE_KEY,
+  hiddenWhen: (modeValue) => !modeValue || modeValue === "disabled",
+};
 
 export const semesterSettingMap = {
-  "semester.sync_mode": {
-    key: "semester.sync_mode",
+  [AUTO_CREATE_MODE_KEY]: {
+    key: AUTO_CREATE_MODE_KEY,
     editor: "modal",
     valueType: "string",
-    component: SemesterSyncModeSetting,
-    formatValue: (value) => optionLabel(semesterSyncModeOptions, value),
+    component: AutoCreateModeSetting,
+    formatValue: (value) => optionLabel(autoCreateModeOptions, value),
   },
-  "semester.sync_allowed_levels": {
-    key: "semester.sync_allowed_levels",
+  "semester.auto_create_levels": {
+    key: "semester.auto_create_levels",
     editor: "modal",
     valueType: "json",
-    component: SemesterSyncLevelsSetting,
+    component: AutoCreateLevelsSetting,
+    dependsOn: whileAutoCreateEnabled,
   },
-  "semester.sync_scope": {
-    key: "semester.sync_scope",
-    editor: "modal",
-    valueType: "string",
-    component: SemesterSyncScopeSetting,
-    formatValue: (value) => optionLabel(semesterSyncScopeOptions, value),
-  },
-  "semester.sync_require_students": {
-    key: "semester.sync_require_students",
+  // Independent switches: both may be on at the same time.
+  "semester.auto_create_across_specialties": {
+    key: "semester.auto_create_across_specialties",
     editor: "switch",
     valueType: "boolean",
     component: Switch,
+    dependsOn: whileAutoCreateEnabled,
+  },
+  "semester.auto_create_across_all_levels": {
+    key: "semester.auto_create_across_all_levels",
+    editor: "switch",
+    valueType: "boolean",
+    component: Switch,
+    dependsOn: whileAutoCreateEnabled,
   },
 };

@@ -134,7 +134,7 @@ function AppSettings() {
             >
               <span className="fw-semibold">{category.category_name}</span>
               <div className="bg-white card border w-100 d-flex flex-column rounded-4 gap-2 p-3 font-size-sm">
-                {category?.setting?.map((setting, index) => {
+                {visibleSettings(category?.setting).map((setting, index, shown) => {
                   const resolvedMap = resolveSetting(setting.key);
                   const isClickable = setting.data_type !== "boolean";
                   const handler =
@@ -204,7 +204,7 @@ function AppSettings() {
                           )}
                         </div>
                       </div>
-                      {!isLastElement(index, category.setting) && (
+                      {!isLastElement(index, shown) && (
                         <HorizontalDashedLine
                           color={"#ccc"}
                           dashed={false}
@@ -272,4 +272,14 @@ function resolveConfig(editor) {
     showHeader: false,
   };
   return editor === "modal" ? modalConfig : drawerConfig;
+}
+
+// Drops settings whose map entry depends on another setting in the same
+// category whose current value hides them.
+function visibleSettings(settings = []) {
+  const valueByKey = Object.fromEntries(settings.map((s) => [s.key, s.value]));
+  return settings.filter((setting) => {
+    const dependsOn = resolveSetting(setting.key)?.dependsOn;
+    return !dependsOn || !dependsOn.hiddenWhen(valueByKey[dependsOn.key]);
+  });
 }

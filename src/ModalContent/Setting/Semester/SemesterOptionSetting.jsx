@@ -6,7 +6,7 @@ import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import { useFormError } from "../../../hooks/form/useFormError";
 
 // A single-choice setting: exactly one option is selected at a time.
-function SemesterSyncOptionSetting({ handleClose = () => {}, rowData, title, options, note }) {
+function SemesterOptionSetting({ handleClose = () => {}, rowData, title, options, note }) {
   const { mutate: updateSetting, isPending } = useUpdateSetting(handleClose);
   const { formError, errorBannerRef, handleServerError, clearFormError } =
     useFormError();
@@ -126,4 +126,4 @@ function SemesterSyncOptionSetting({ handleClose = () => {}, rowData, title, opt
     </div>
   );
 }
-export default SemesterSyncOptionSetting;
+export default SemesterOptionSetting;
