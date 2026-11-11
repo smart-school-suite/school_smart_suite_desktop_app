@@ -57,6 +57,7 @@ export const examRoutes = [
   "/exam/joint-course-timetable",
   "/exam-result",
   "/exam-invigilator",
+  "/exam-timetable/arrangement"
 ];
 
 export const resitRoutes = [

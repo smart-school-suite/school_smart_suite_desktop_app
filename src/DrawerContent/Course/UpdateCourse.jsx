@@ -121,6 +121,7 @@ function UpdateCourse({ handleClose, drawerData }) {
         courseId,
         updateData: {
           ...formData,
+          semester_id: formData.semester_id.id,
           typeIds: formData.type.map((items) => ({
             type_id: items.id,
           })),
