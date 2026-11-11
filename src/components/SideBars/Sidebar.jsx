@@ -13,9 +13,9 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   LogOut,
-  PanelLeftClose,
-  PanelLeftOpen,
   Settings,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -62,6 +62,25 @@ function Sidebar() {
 }
 export default Sidebar;
 
+// Round button sitting on the sidebar's right border, level with the logo
+// row; it collapses the full sidebar to the icon rail and back.
+function SidebarEdgeToggle({ collapsed, onToggle }) {
+  const label = collapsed ? "Expand sidebar" : "Collapse sidebar";
+  const Icon = collapsed ? ChevronRight : ChevronLeft;
+  return (
+    <button
+      type="button"
+      className="snav__edge-toggle"
+      onClick={onToggle}
+      aria-label={label}
+      aria-expanded={!collapsed}
+      title={label}
+    >
+      <Icon size={14} strokeWidth={2} />
+    </button>
+  );
+}
+
 function SideBarLg({ darkMode, onCollapse }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -76,16 +95,8 @@ function SideBarLg({ darkMode, onCollapse }) {
     <aside className={`snav ${darkMode ? "snav--dark" : ""}`}>
       <div className="snav__head">
         <img src="/logo/logo-transparent.png" alt="" className="snav__logo" />
-        <button
-          type="button"
-          className="snav__icon-btn"
-          onClick={onCollapse}
-          aria-label="Collapse sidebar"
-          title="Collapse sidebar"
-        >
-          <PanelLeftClose size={16} strokeWidth={1.5} />
-        </button>
       </div>
+      <SidebarEdgeToggle collapsed={false} onToggle={onCollapse} />
 
       <nav className="snav__body" aria-label="Main">
         <ul className="snav__list">
@@ -190,17 +201,8 @@ function SideBarSm({ darkMode, onExpand }) {
       <div className="snav__head">
         <img src="/logo/logo-transparent.png" alt="" className="snav__logo" />
       </div>
-      {onExpand && (
-        <button
-          type="button"
-          className="snav__rail-btn"
-          onClick={onExpand}
-          aria-label="Expand sidebar"
-          title="Expand sidebar"
-        >
-          <PanelLeftOpen size={16} strokeWidth={1.5} />
-        </button>
-      )}
+      {/* small screens force the rail, so there is nothing to expand */}
+      {onExpand && <SidebarEdgeToggle collapsed onToggle={onExpand} />}
 
       <nav className="snav__body" aria-label="Main">
         <ul className="snav__list">
