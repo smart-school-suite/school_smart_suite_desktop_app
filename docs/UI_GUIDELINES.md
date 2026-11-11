@@ -17,8 +17,10 @@ small variation; add a prop to the shared component rather than copying it.
 | Loading placeholder | `components/SkeletonPageLoader/RectangularSkeleton` |
 | Drawer | `components/drawer/DrawerTrigger` |
 | Form errors | `components/errors/FormErrorBanner` + `hooks/form/useFormError` |
-| Tooltip | `components/Tooltips/Tooltip` |
-| Teacher summary | `components/Card/TeacherCard` |
+| Tooltip (hover hint only) | `components/Tooltips/Tooltip` |
+| Click-to-open list / small panel | `components/Popover/Popover` |
+| Dialog | `ModalButton` (`components/DataTableComponents/ActionComponent`) + content in `src/ModalContent/` |
+| Teacher summary / full profile | `components/Card/TeacherCard` / `ModalContent/Teacher/TeacherQuickView` |
 
 Only create a new component when nothing reusable exists, and put it in
 `src/components/` so the next page can use it. Pieces that only one page
@@ -26,7 +28,8 @@ will ever use can live in that page's file.
 
 ## 2. Shared logic lives in hooks and utils
 
-- Generic hooks go in `src/hooks/common/` (e.g. `useDebounce`). Do not
+- Generic hooks go in `src/hooks/common/` (e.g. `useDebounce`,
+  `useEscapeKey`). Do not
   redefine helpers like `useDebounce` inside a component file.
 - Domain helpers go in `src/utils/<domain>/` (e.g.
   `utils/teacher/teacherFilters.js` for search and empty-list handling).
@@ -76,16 +79,36 @@ Mascots are small and centred: pass `height="100%"` and a small
 Some endpoints answer **404 for an empty list**. Treat that as state 4, not
 state 3, and do not retry it (`isEmptyListError` / `retryUnlessEmpty`).
 
-## 6. Cards stay the same size
+## 6. Cards stay the same size; details open on demand
 
-Cards in a grid must not grow with their data:
+Cards are summaries. They never grow or expand in place, because one tall
+card stretches its whole grid row and breaks scanning. Use three layers:
 
-- Use an auto-fill grid (`.teacher-card-grid`) with `align-items: stretch`
-  and cards at `height: 100%`.
-- Chip rows are one line with a cap (`MAX_CHIPS`); the rest collapse into a
-  `+N` chip whose tooltip lists them.
-- Long text is truncated to one line with the full value in `title`.
-- Footers are pushed to the bottom (`margin-top: auto`) so they line up.
+1. **Card**: fixed size.
+   - Auto-fill grid (`.teacher-card-grid`) with `align-items: stretch` and
+     cards at `height: 100%`; footers pushed down with `margin-top: auto`.
+   - Chip rows are one line with a cap (`MAX_CHIPS`).
+   - Long text is truncated to one line with the full value in `title`.
+2. **Popover** for "more of the same": the `+N` chip is a button that opens
+   `Popover` with the full list. Use a popover, not a hover tooltip, for
+   anything the user needs to read; tooltips can't be reached by keyboard.
+3. **Dialog** for the full record: a "View details" button opens a
+   `ModalContent` component through `ModalButton`, showing everything the
+   card can't (e.g. institution and year per qualification). Pass the data
+   the card already has as `rowData` so it opens instantly.
+
+Avoid a second drawer on top of a drawer; use a dialog.
+
+### Popovers and dialogs inside cards and drawers
+
+- React events from portalled content still bubble through the React tree.
+  Stop click/keydown propagation at the boundary so using a popover or
+  dialog never toggles the card's selection (`Popover` does this itself;
+  wrap `ModalButton` in an element that stops propagation).
+- A selectable card only reacts to Enter/Space when the card itself has
+  focus (`event.target === event.currentTarget`), so buttons inside it work.
+- Drawers close on Escape. Popovers and dialogs use `useEscapeKey` so Escape
+  closes only the top layer.
 
 ## 7. Search and selection
 

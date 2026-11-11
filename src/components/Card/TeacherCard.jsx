@@ -1,26 +1,20 @@
 import { CircleCheck } from "lucide-react";
-import CustomTooltip from "../Tooltips/Tooltip";
+import TeacherQuickView from "../../ModalContent/Teacher/TeacherQuickView";
+import { ModalButton } from "../DataTableComponents/ActionComponent";
+import Popover from "../Popover/Popover";
+import TeacherAvatar from "./TeacherAvatar";
 
 // Chips shown per row before the rest collapse into a "+N" chip, so every
 // card keeps the same height however many qualifications or levels it has.
 const MAX_CHIPS = 3;
 
-const initialsOf = (teacher) => {
-  const first = teacher?.first_name?.trim()?.charAt(0) ?? "";
-  const last = teacher?.last_name?.trim()?.charAt(0) ?? "";
-  if (first || last) return `${first}${last}`.toUpperCase();
-  return (teacher?.name ?? teacher?.username ?? "?")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part.charAt(0))
-    .join("")
-    .toUpperCase();
-};
-
 const unique = (values) => [...new Set(values.filter(Boolean))];
 
-function ChipRow({ items, variant }) {
+// The details dialog renders inside the card's React tree, so its clicks and
+// key presses would otherwise bubble up and toggle the card's selection.
+const stop = (event) => event.stopPropagation();
+
+function ChipRow({ items, variant, label }) {
   const visible = items.slice(0, MAX_CHIPS);
   const hidden = items.slice(MAX_CHIPS);
   return (
@@ -35,11 +29,27 @@ function ChipRow({ items, variant }) {
         </span>
       ))}
       {hidden.length > 0 && (
-        <CustomTooltip tooltipText={hidden.join(", ")}>
-          <span className="teacher-card__chip teacher-card__chip--more">
-            +{hidden.length}
-          </span>
-        </CustomTooltip>
+        <Popover
+          trigger={`+${hidden.length}`}
+          triggerClassName="teacher-card__chip teacher-card__chip--more"
+          ariaLabel={`Show all ${items.length} ${label.toLowerCase()}`}
+        >
+          <div className="d-flex flex-column gap-2">
+            <span className="teacher-card__label">
+              {label} · {items.length}
+            </span>
+            <div className="d-flex flex-row flex-wrap gap-1">
+              {items.map((item) => (
+                <span
+                  key={item}
+                  className={`teacher-card__chip teacher-card__chip--${variant} teacher-card__chip--full`}
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        </Popover>
       )}
     </div>
   );
@@ -47,12 +57,21 @@ function ChipRow({ items, variant }) {
 
 /**
  * Teacher summary card: avatar, name, qualifications and teaching levels.
+ * Always the same size; "+N" opens a popover with the full list and
+ * "View details" opens the full profile in a dialog.
  *
  *   <TeacherCard teacher={teacher} />                        // read only
  *   <TeacherCard teacher={teacher} selected onSelect={fn} /> // selectable
  *   <TeacherCard teacher={teacher}>{footer}</TeacherCard>    // extra content
+ *   <TeacherCard teacher={teacher} showDetails={false} />    // no dialog
  */
-export default function TeacherCard({ teacher, selected = false, onSelect, children }) {
+export default function TeacherCard({
+  teacher,
+  selected = false,
+  onSelect,
+  showDetails = true,
+  children,
+}) {
   const selectable = typeof onSelect === "function";
   const qualifications = teacher?.qualifications ?? [];
   const degrees = unique(
@@ -62,6 +81,8 @@ export default function TeacherCard({ teacher, selected = false, onSelect, child
   const levels = unique((teacher?.levels ?? []).map((level) => level?.name));
 
   const handleKeyDown = (event) => {
+    // only when the card itself has focus, not a button inside it
+    if (event.target !== event.currentTarget) return;
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       onSelect(teacher);
@@ -82,9 +103,7 @@ export default function TeacherCard({ teacher, selected = false, onSelect, child
       })}
     >
       <div className="d-flex flex-row align-items-center gap-2">
-        <div className="teacher-card__avatar" aria-hidden="true">
-          {initialsOf(teacher)}
-        </div>
+        <TeacherAvatar teacher={teacher} />
         <div className="d-flex flex-column flex-grow-1" style={{ minWidth: 0 }}>
           <span className="fw-semibold text-truncate">{teacher?.name ?? "Unnamed teacher"}</span>
           {teacher?.username && (
@@ -104,7 +123,7 @@ export default function TeacherCard({ teacher, selected = false, onSelect, child
         <span className="teacher-card__label">Qualifications</span>
         {degrees.length > 0 ? (
           <>
-            <ChipRow items={degrees} variant="primary" />
+            <ChipRow items={degrees} variant="primary" label="Qualifications" />
             <span
               className="font-size-xs text-iron-600 text-truncate"
               title={fields.join(" · ")}
@@ -120,13 +139,30 @@ export default function TeacherCard({ teacher, selected = false, onSelect, child
       <div className="d-flex flex-column gap-1">
         <span className="teacher-card__label">Teaching levels</span>
         {levels.length > 0 ? (
-          <ChipRow items={levels} variant="neutral" />
+          <ChipRow items={levels} variant="neutral" label="Teaching levels" />
         ) : (
           <span className="font-size-xs text-iron-400">No teaching levels set</span>
         )}
       </div>
 
-      {children && <div className="teacher-card__footer">{children}</div>}
+      {(children || showDetails) && (
+        <div className="teacher-card__footer">
+          {children}
+          {showDetails && (
+            <div onClick={stop} onKeyDown={stop}>
+              <ModalButton
+                action={{ modalContent: TeacherQuickView }}
+                rowData={teacher}
+                classname="w-100"
+              >
+                <button type="button" className="teacher-card__details-btn">
+                  View details
+                </button>
+              </ModalButton>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

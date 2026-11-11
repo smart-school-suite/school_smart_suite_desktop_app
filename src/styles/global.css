@@ -2373,7 +2373,44 @@ textarea::-webkit-scrollbar-thumb:hover {
   background: #fff;
   border: 1px solid var(--iron-200);
   color: var(--iron-600);
-  cursor: default;
+  font-family: inherit;
+  line-height: inherit;
+  cursor: pointer;
+}
+.teacher-card__chip--more:hover {
+  border-color: var(--primary-color-300);
+  color: var(--primary-color-600);
+}
+/* full lists (popover, details dialog) show whole names */
+.teacher-card__chip--full {
+  max-width: none;
+}
+.teacher-card__details-btn {
+  width: 100%;
+  padding: 0.35rem;
+  border: 1px solid var(--iron-200);
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--iron-700);
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.teacher-card__details-btn:hover {
+  border-color: var(--primary-color-300);
+  color: var(--primary-color-600);
+}
+
+/* ── Popover (components/Popover/Popover.jsx) ─────────────────── */
+.app-popover {
+  z-index: 1070;
+  max-width: 18rem;
+  padding: 0.625rem;
+  background: #fff;
+  border: 1px solid var(--iron-200);
+  border-radius: 0.625rem;
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.2);
+  font-size: 0.8rem;
 }
 .teacher-card__chip--primary {
   background: var(--primary-color-50);
