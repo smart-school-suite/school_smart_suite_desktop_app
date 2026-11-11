@@ -1,4 +1,3 @@
-import { Icon } from "@iconify/react";
 import {
   autoUpdate,
   flip,
@@ -10,6 +9,7 @@ import {
   useInteractions,
   useRole,
 } from "@floating-ui/react";
+import { Icon } from "@iconify/react";
 import NumberFlow from "@number-flow/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
@@ -254,9 +254,9 @@ function ConfigurationSummary() {
     ["Exam period", exam?.start_date && exam?.end_date ? `${formatExamDate(exam.start_date?.slice(0, 10))} – ${formatExamDate(exam.end_date?.slice(0, 10))}` : "Set on the exam"],
     ["Exam hours", `${op.start_time} – ${op.end_time}${op.date_exclusions.length ? ` · ${op.date_exclusions.length} date(s) excluded` : ""}`],
     ["Exam length", `${constraints.session_duration.duration} minutes${constraints.session_duration.course_exceptions.length ? ` · ${constraints.session_duration.course_exceptions.length} exception(s)` : ""}`],
-    ["Exams per day", constraints.student_daily_load_range.enabled ? `${constraints.student_daily_load_range.min_sessions} to ${constraints.student_daily_load_range.max_sessions}` : "No limit, spread over the period"],
-    ["Invigilators", Number(constraints.candidates_per_invigilator) > 0 ? `One per ${constraints.candidates_per_invigilator} candidates` : "One per hall"],
-    ["Requests", requests ? `${requests} request(s)` : "None"],
+    // ["Exams per day", constraints.student_daily_load_range.enabled ? `${constraints.student_daily_load_range.min_sessions} to ${constraints.student_daily_load_range.max_sessions}` : "No limit, spread over the period"],
+    // ["Invigilators", Number(constraints.candidates_per_invigilator) > 0 ? `One per ${constraints.candidates_per_invigilator} candidates` : "One per hall"],
+    // ["Requests", requests ? `${requests} request(s)` : "None"],
     ["Joint courses", joint.length ? `${scheduled.length} of ${joint.length} time(s) set` : "None"],
   ];
 

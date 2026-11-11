@@ -14,6 +14,7 @@ const ExamInvigilator = React.lazy(
 );
 
 const ExamResults = React.lazy(() => import("../../pages/Exam/ExamResults"));
+const ExamArrangement = React.lazy(() => import("../../pages/Exam/ExamArrangement"));
 const ExamRoutes = [
   <Route
     key={"examInvigilator"}
@@ -40,6 +41,16 @@ const ExamRoutes = [
       element={
         <Suspense>
           <ExamTimetable />
+        </Suspense>
+      }
+    />
+    ,
+     <Route
+      key="examTimetableArrangement"
+      path="/exam-timetable/arrangement"
+      element={
+        <Suspense>
+          <ExamArrangement />
         </Suspense>
       }
     />
