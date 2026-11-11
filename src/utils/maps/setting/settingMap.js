@@ -5,6 +5,7 @@ import { graduationSettingMap } from "./category/graduationSettingMap"
 import { levelSettingMap } from "./category/levelSettingMap"
 import { promotionSettingMap } from "./category/promotionSettingMap"
 import { resitSettingMap } from "./category/resitSettingMap"
+import { semesterSettingMap } from "./category/semesterSettingMap"
 import { timetableSettingMap } from "./category/timetableSettingMap"
 export const settingMap = {
      ...electionSettingMap,
@@ -14,5 +15,6 @@ export const settingMap = {
      ...levelSettingMap,
      ...promotionSettingMap,
      ...resitSettingMap,
+     ...semesterSettingMap,
      ...timetableSettingMap
  }
