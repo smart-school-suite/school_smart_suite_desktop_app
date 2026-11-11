@@ -1,5 +1,6 @@
 import { getTeachersBySpecialty } from "../../services/teacher";
 import { useQuery } from "@tanstack/react-query";
+import { retryUnlessEmpty } from "../../utils/teacher/teacherFilters";
 
 export const useGetTeacherBySpecialty = (specialtyId) => {
   return useQuery({
@@ -7,6 +8,6 @@ export const useGetTeacherBySpecialty = (specialtyId) => {
     queryFn: () => getTeachersBySpecialty(specialtyId),
     enabled: !!specialtyId,
     refetchOnWindowFocus: false,
-    retry: 1,
+    retry: retryUnlessEmpty,
   });
 };

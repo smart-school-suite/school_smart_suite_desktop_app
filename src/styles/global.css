@@ -2282,3 +2282,75 @@ textarea::-webkit-scrollbar-thumb:hover {
   font-size: 11px;
   font-weight: 600;
 }
+
+/* ── Teacher card (components/Card/TeacherCard.jsx) ───────────── */
+.teacher-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 0.75rem;
+  align-items: start;
+}
+.teacher-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  background: #fff;
+  border: 1px solid var(--iron-200);
+  border-radius: 0.875rem;
+  font-size: 0.8rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.teacher-card--selectable {
+  cursor: pointer;
+  user-select: none;
+}
+.teacher-card--selectable:hover {
+  border-color: var(--primary-color-300);
+}
+.teacher-card--selectable:focus-visible {
+  outline: 2px solid var(--primary-color-500);
+  outline-offset: 2px;
+}
+.teacher-card--selected {
+  border-color: var(--primary-color-500);
+  box-shadow: 0 0 0 3px var(--primary-color-50);
+}
+.teacher-card__avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--iron-100);
+  color: var(--iron-700);
+  font-weight: 600;
+}
+.teacher-card__divider {
+  height: 1px;
+  background: var(--iron-200);
+}
+.teacher-card__label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--iron-500);
+}
+.teacher-card__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+.teacher-card__chip--primary {
+  background: var(--primary-color-50);
+  color: var(--primary-color-600);
+}
+.teacher-card__chip--neutral {
+  background: var(--iron-100);
+  color: var(--iron-700);
+}
