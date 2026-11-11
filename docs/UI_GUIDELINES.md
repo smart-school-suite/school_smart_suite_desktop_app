@@ -21,6 +21,10 @@ small variation; add a prop to the shared component rather than copying it.
 | Click-to-open list / small panel | `components/Popover/Popover` |
 | Dialog | `ModalButton` (`components/DataTableComponents/ActionComponent`) + content in `src/ModalContent/` |
 | Teacher summary / full profile | `components/Card/TeacherCard` / `ModalContent/Teacher/TeacherQuickView` |
+| Pick teachers from a list (all states built in) | `components/Teacher/TeacherSelectList` |
+| Course summary | `components/Card/CourseCard` (+ `CourseStatusPill`), drawer header `DrawerContent/Course/CourseSummary` |
+| One line of chips with a "+N" popover | `components/Card/ChipRow` |
+| Teacher course/specialty counts | `components/Card/TeacherStats` |
 
 Only create a new component when nothing reusable exists, and put it in
 `src/components/` so the next page can use it. Pieces that only one page
@@ -72,6 +76,11 @@ Each list or grid renders one of these, checked in this order:
    "all eligible teachers already assigned") and link to the fix.
 5. **No search results**: `EmptyState mascot="notFound"` with "Clear search".
 6. **Content.**
+
+For teacher pickers, `TeacherSelectList` already renders states 2 to 6; pass
+it the `empty` copy. `useSpecialtyTeachersEmptyState` builds that copy for
+"teachers of a specialty" lists, telling "no teachers created yet" apart
+from "none assigned to this specialty".
 
 Mascots are small and centred: pass `height="100%"` and a small
 `mascotHeight` (`6rem` to `7rem`).
