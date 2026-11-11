@@ -1,3 +1,4 @@
+import { academicYearSettingMap } from "./category/academicYearSettingMap"
 import { electionSettingMap } from "./category/electionSettingMap"
 import { examSettingMap } from "./category/examSettingMap"
 import { gradeSettingMap } from "./category/gradeSettingMap"
@@ -8,6 +9,7 @@ import { resitSettingMap } from "./category/resitSettingMap"
 import { semesterSettingMap } from "./category/semesterSettingMap"
 import { timetableSettingMap } from "./category/timetableSettingMap"
 export const settingMap = {
+     ...academicYearSettingMap,
      ...electionSettingMap,
      ...examSettingMap,
      ...gradeSettingMap,

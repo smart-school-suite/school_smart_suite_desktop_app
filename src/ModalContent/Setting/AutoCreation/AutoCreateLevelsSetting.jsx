@@ -20,8 +20,9 @@ const toLevelIds = (raw) => {
   return Array.isArray(parsed) ? parsed.filter((id) => typeof id === "string") : [];
 };
 
-// Multi-select: only the checked levels receive synchronized semesters.
-function AutoCreateLevelsSetting({ handleClose = () => {}, rowData }) {
+// Multi-select: only the checked levels receive automatically created
+// records (semesters or academic years, named by `noun`).
+function AutoCreateLevelsSetting({ handleClose = () => {}, rowData, noun = "semester" }) {
   const { data: levels, isLoading, error: levelError } = useGetLevels();
   const { mutate: updateSetting, isPending } = useUpdateSetting(handleClose);
   const { formError, errorBannerRef, handleServerError, clearFormError } =
@@ -90,8 +91,8 @@ function AutoCreateLevelsSetting({ handleClose = () => {}, rowData }) {
           </div>
         )}
         <span className="text-iron-400">
-          Only the selected levels receive automatically created semesters. The level a
-          semester is created for always receives it.
+          Only the selected levels receive automatically created {noun}s. The
+          level {noun === "academic year" ? "an" : "a"} {noun} is created for always receives it.
         </span>
         {isLoading ? (
           [...Array(4)].map((_, i) => <RectangleSkeleton key={i} width="100%" height="4dvh" />)

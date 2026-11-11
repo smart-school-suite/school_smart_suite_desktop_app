@@ -299,9 +299,9 @@ function resolveDisabledReason(resolvedMap, settings = []) {
   return resolvedMap.disabledReason(valueByKey);
 }
 
-// Settings whose map entries give an `order` are shown in that order (after
-// any without one); the rest keep the order the API returns.
+// Settings whose map entries give an `order` are shown first, in that order;
+// the rest follow in the order the API returns.
 function orderSettings(settings = []) {
-  const rank = (setting) => resolveSetting(setting.key)?.order ?? 0;
+  const rank = (setting) => resolveSetting(setting.key)?.order ?? Number.MAX_SAFE_INTEGER;
   return [...settings].sort((a, b) => rank(a) - rank(b));
 }
