@@ -15,6 +15,7 @@ import {
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetDepartments } from "../../hooks/department/useGetDepartments";
 import { useGetLevels } from "../../hooks/level/useGetLevels";
+import { useGetSchoolBranchSetting } from "../../hooks/schoolBranchSetting/useGetSchoolBranchSetting";
 import { useCreateSpecialty } from "../../hooks/specialty/useCreateSpecialty";
 import { allFieldsValid } from "../../utils/functions";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
@@ -57,6 +58,42 @@ function CreateSpecialty({ handleClose }) {
 
   const { data: departments, isFetching: departmentIsLoading } =
     useGetDepartments();
+
+  const { data: settings } = useGetSchoolBranchSetting();
+
+  // The fee configured for a level in the "Registration/Tuition Fees by
+  // Academic Level" settings, or null when there is none.
+  const levelFee = (key, levelId) => {
+    const setting = settings?.data
+      ?.flatMap((category) => category.setting ?? [])
+      .find((s) => s.key === key);
+    let fees = setting?.value;
+    if (typeof fees === "string") {
+      try {
+        fees = JSON.parse(fees);
+      } catch {
+        return null;
+      }
+    }
+    const fee = Array.isArray(fees)
+      ? fees.find((item) => item?.level_id === levelId)?.fee
+      : null;
+    return fee === null || fee === undefined || fee === "" ? null : String(fee);
+  };
+
+  // Picking a level fills in its configured fees, but only in fee fields
+  // that are still empty; the admin can still change them.
+  const prefillLevelFees = (levelId) => {
+    [
+      ["registration_fee", "level.registration_fees"],
+      ["school_fee", "level.tuition_fees"],
+    ].forEach(([field, key]) => {
+      const fee = levelFee(key, levelId);
+      if (fee === null || formData[field] !== "") return;
+      setFormData((prev) => ({ ...prev, [field]: fee }));
+      setIsFieldValid((prev) => ({ ...prev, [field]: true }));
+    });
+  };
 
   const handleStateChange = (field, value, stateFn) => {
     if (stateFn === setFormData) clearFormError();
@@ -232,9 +269,10 @@ function CreateSpecialty({ handleClose }) {
               renameMapping={{ id: "id", name: "name", level: "level" }}
               isLoading={educationIsLoading}
               direction="up"
-              onSelect={(value) =>
-                handleStateChange("level_id", value, setFormData)
-              }
+              onSelect={(value) => {
+                handleStateChange("level_id", value, setFormData);
+                if (value?.id) prefillLevelFees(value.id);
+              }}
               placeholder="Select Level"
               error={errors.level_id}
               onError={(value) =>
