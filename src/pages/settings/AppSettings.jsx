@@ -178,7 +178,9 @@ function AppSettings() {
                             </span>
                           ) : (
                             <span className="w-75 font-size-sm text-iron-400">
-                              {`${setting.value} ${unit ? ` ${currency ?? ""}` : ""}`}
+                              {resolvedMap?.formatValue
+                                ? resolvedMap.formatValue(setting.value)
+                                : `${setting.value} ${unit ? ` ${currency ?? ""}` : ""}`}
                             </span>
                           )}
                         </div>
