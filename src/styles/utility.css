@@ -3808,3 +3808,11 @@ body {
 .lh-1     { line-height: 1rem; }
 .lh-1-5   { line-height: 1.5rem; }
 .lh-2     { line-height: 2rem; }
+/* Clamp text to two lines with an ellipsis */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}

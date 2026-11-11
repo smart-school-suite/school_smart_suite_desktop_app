@@ -1,7 +1,7 @@
-import { Icon } from "@iconify/react";
 import { ArrowDown, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import TeacherCard from "../../components/Card/TeacherCard";
+import TeacherStats from "../../components/Card/TeacherStats";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import SearchInput from "../../components/input/search";
@@ -130,27 +130,7 @@ function TeacherSpecialty() {
       <div className="teacher-card-grid">
         {visibleTeachers.map((teacher) => (
           <TeacherCard key={teacher?.id} teacher={teacher}>
-            <div className="teacher-card__divider" />
-            <div className="d-flex flex-row align-items-center justify-content-around font-size-xs text-iron-500">
-              <div className="d-flex flex-row align-items-center gap-1">
-                <Icon icon="ion:book-outline" width={14} height={14} />
-                <span>
-                  <span className="fw-semibold text-iron-700">
-                    {teacher?.num_assigned_courses ?? 0}
-                  </span>{" "}
-                  Courses
-                </span>
-              </div>
-              <div className="d-flex flex-row align-items-center gap-1">
-                <Icon icon="material-symbols:grid-on-outline" width={14} height={14} />
-                <span>
-                  <span className="fw-semibold text-iron-700">
-                    {teacher?.num_assigned_specialties ?? 0}
-                  </span>{" "}
-                  Specialties
-                </span>
-              </div>
-            </div>
+            <TeacherStats teacher={teacher} />
           </TeacherCard>
         ))}
       </div>

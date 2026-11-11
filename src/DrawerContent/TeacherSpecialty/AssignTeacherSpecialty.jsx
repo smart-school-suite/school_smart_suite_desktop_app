@@ -2,13 +2,13 @@ import { Icon } from "@iconify/react";
 import { Dot, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TeacherCard from "../../components/Card/TeacherCard";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import { EmptyStateButton } from "../../components/errors/EmptyState";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import SearchInput from "../../components/input/search";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import TeacherSelectList from "../../components/Teacher/TeacherSelectList";
 import { useDebounce } from "../../hooks/common/useDebounce";
 import { useFormError } from "../../hooks/form/useFormError";
 import { useGetSpecialtyDetails } from "../../hooks/specialty/useGetSpecialtyDetail";
@@ -18,8 +18,6 @@ import { useGetAssignableTeachers } from "../../hooks/teacherSpecialty/useGetAss
 import { SpecialtyIcon } from "../../icons/Icons";
 import { filterTeachers, isEmptyListError } from "../../utils/teacher/teacherFilters";
 
-const MASCOT_HEIGHT = "6rem";
-const EMPTY_HEIGHT = "100%";
 
 function SpecialtySummary({ specialtyId }) {
   const { data, isLoading, error } = useGetSpecialtyDetails(specialtyId);
@@ -158,92 +156,25 @@ export default function AssignTeacherSpecialty({ handleClose, drawerData }) {
     navigate("/teacher");
   };
 
-  const renderTeachers = () => {
-    if (isTeachersLoading || (noAssignableTeachers && isAllTeachersLoading)) {
-      return (
-        <div className="teacher-card-grid">
-          {[...Array(6)].map((_, index) => (
-            <RectangleSkeleton key={index} height="11rem" />
-          ))}
-        </div>
-      );
-    }
-
-    if (teachersError && !isEmptyListError(teachersError)) {
-      return (
-        <EmptyState
-          mascot="error"
-          height={EMPTY_HEIGHT}
-          mascotHeight={MASCOT_HEIGHT}
-          title={teachersError?.response?.data?.errors?.title || "Unable to load teachers"}
-          description={
-            teachersError?.response?.data?.errors?.description ||
-            "Something went wrong while loading the teachers you can assign."
-          }
-        />
-      );
-    }
-
-    if (schoolHasNoTeachers) {
-      return (
-        <EmptyState
-          mascot="sad"
-          height={EMPTY_HEIGHT}
-          mascotHeight={MASCOT_HEIGHT}
-          title="No teachers created yet"
-          description="Your school has no teachers yet. Create teachers first, then come back to assign them to this specialty."
-          actions={
-            <EmptyStateButton icon={Plus} onClick={goToTeachers}>
-              Go to Teachers
-            </EmptyStateButton>
-          }
-        />
-      );
-    }
-
-    if (noAssignableTeachers) {
-      return (
-        <EmptyState
-          mascot="empty"
-          height={EMPTY_HEIGHT}
-          mascotHeight={MASCOT_HEIGHT}
-          title="No teachers available to assign"
-          description="Every teacher who teaches this specialty's level is already assigned to it."
-          hint="Teachers only appear here when one of their teaching levels matches the specialty's level."
-        />
-      );
-    }
-
-    if (visibleTeachers.length === 0) {
-      return (
-        <EmptyState
-          mascot="notFound"
-          height={EMPTY_HEIGHT}
-          mascotHeight={MASCOT_HEIGHT}
-          title="No matching teachers"
-          description={`No assignable teacher matches "${debouncedSearch}". Try a name, username, qualification or level.`}
-          actions={
-            <EmptyStateButton variant="secondary" onClick={() => setSearch("")}>
-              Clear search
-            </EmptyStateButton>
-          }
-        />
-      );
-    }
-
-    return (
-      <div className="teacher-card-grid">
-        {visibleTeachers.map((teacher) => (
-          <TeacherCard
-            key={teacher.id}
-            teacher={teacher}
-            selected={selectedIds.has(teacher.id)}
-            onSelect={toggleTeacher}
-          />
-        ))}
-      </div>
-    );
-  };
+  const empty = schoolHasNoTeachers
+    ? {
+        mascot: "sad",
+        title: "No teachers created yet",
+        description:
+          "Your school has no teachers yet. Create teachers first, then come back to assign them to this specialty.",
+        actions: (
+          <EmptyStateButton icon={Plus} onClick={goToTeachers}>
+            Go to Teachers
+          </EmptyStateButton>
+        ),
+      }
+    : {
+        mascot: "empty",
+        title: "No teachers available to assign",
+        description:
+          "Every teacher who teaches this specialty's level is already assigned to it.",
+        hint: "Teachers only appear here when one of their teaching levels matches the specialty's level.",
+      };
 
   const hasTeachers = !isTeachersLoading && teachers.length > 0;
 
@@ -285,7 +216,19 @@ export default function AssignTeacherSpecialty({ handleClose, drawerData }) {
           onDismiss={clearFormError}
           className="mb-2"
         />
-        <div className="flex-grow-1">{renderTeachers()}</div>
+        <div className="flex-grow-1">
+          <TeacherSelectList
+            teachers={teachers}
+            isLoading={isTeachersLoading || (noAssignableTeachers && isAllTeachersLoading)}
+            error={teachersError}
+            search={debouncedSearch}
+            onClearSearch={() => setSearch("")}
+            isSelected={(teacher) => selectedIds.has(teacher.id)}
+            onSelect={toggleTeacher}
+            empty={empty}
+            noun="assignable teacher"
+          />
+        </div>
       </div>
 
       <div className="drawer-footer">

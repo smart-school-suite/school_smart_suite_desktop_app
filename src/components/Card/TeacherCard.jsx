@@ -1,59 +1,14 @@
 import { CircleCheck } from "lucide-react";
 import TeacherQuickView from "../../ModalContent/Teacher/TeacherQuickView";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
-import Popover from "../Popover/Popover";
+import ChipRow from "./ChipRow";
 import TeacherAvatar from "./TeacherAvatar";
-
-// Chips shown per row before the rest collapse into a "+N" chip, so every
-// card keeps the same height however many qualifications or levels it has.
-const MAX_CHIPS = 3;
 
 const unique = (values) => [...new Set(values.filter(Boolean))];
 
 // The details dialog renders inside the card's React tree, so its clicks and
 // key presses would otherwise bubble up and toggle the card's selection.
 const stop = (event) => event.stopPropagation();
-
-function ChipRow({ items, variant, label }) {
-  const visible = items.slice(0, MAX_CHIPS);
-  const hidden = items.slice(MAX_CHIPS);
-  return (
-    <div className="teacher-card__chips">
-      {visible.map((item) => (
-        <span
-          key={item}
-          className={`teacher-card__chip teacher-card__chip--${variant}`}
-          title={item}
-        >
-          {item}
-        </span>
-      ))}
-      {hidden.length > 0 && (
-        <Popover
-          trigger={`+${hidden.length}`}
-          triggerClassName="teacher-card__chip teacher-card__chip--more"
-          ariaLabel={`Show all ${items.length} ${label.toLowerCase()}`}
-        >
-          <div className="d-flex flex-column gap-2">
-            <span className="teacher-card__label">
-              {label} · {items.length}
-            </span>
-            <div className="d-flex flex-row flex-wrap gap-1">
-              {items.map((item) => (
-                <span
-                  key={item}
-                  className={`teacher-card__chip teacher-card__chip--${variant} teacher-card__chip--full`}
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
-        </Popover>
-      )}
-    </div>
-  );
-}
 
 /**
  * Teacher summary card: avatar, name, qualifications and teaching levels.
@@ -64,12 +19,14 @@ function ChipRow({ items, variant, label }) {
  *   <TeacherCard teacher={teacher} selected onSelect={fn} /> // selectable
  *   <TeacherCard teacher={teacher}>{footer}</TeacherCard>    // extra content
  *   <TeacherCard teacher={teacher} showDetails={false} />    // no dialog
+ *   <TeacherCard teacher={teacher} badge={<span>…</span>} /> // e.g. "Current"
  */
 export default function TeacherCard({
   teacher,
   selected = false,
   onSelect,
   showDetails = true,
+  badge,
   children,
 }) {
   const selectable = typeof onSelect === "function";
@@ -112,6 +69,7 @@ export default function TeacherCard({
             </span>
           )}
         </div>
+        {badge}
         {selectable && selected && (
           <CircleCheck size={18} className="text-primary-500 flex-shrink-0" />
         )}

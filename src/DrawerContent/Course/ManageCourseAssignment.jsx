@@ -1,588 +1,293 @@
-import { Icon } from "@iconify/react";
-import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpecialty";
-import { Fragment, useState } from "react";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { useAssignTeacherCourse } from "../../hooks/teacherCourse/useAssignTeacherCourse";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useRemoveAssignedTeacherCourse } from "../../hooks/teacherCourse/useRemoveTeacherAssignedCourse";
-import { useChangeTeacherCourse } from "../../hooks/teacherCourse/useChangeTeacherCourse";
+import { ArrowRightLeft, UserMinus, UserPlus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { CourseTeacher } from "../../components/Card/CourseCard";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import SearchInput from "../../components/input/search";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import TeacherSelectList from "../../components/Teacher/TeacherSelectList";
+import { useDebounce } from "../../hooks/common/useDebounce";
 import { useFormError } from "../../hooks/form/useFormError";
+import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpecialty";
+import { useSpecialtyTeachersEmptyState } from "../../hooks/teacher/useSpecialtyTeachersEmptyState";
+import { useChangeTeacherCourse } from "../../hooks/teacherCourse/useChangeTeacherCourse";
+import { useRemoveAssignedTeacherCourse } from "../../hooks/teacherCourse/useRemoveTeacherAssignedCourse";
+import CourseSummary from "./CourseSummary";
+
+const ACTIONS = [
+  {
+    id: "update",
+    icon: ArrowRightLeft,
+    title: "Change Teacher",
+    description: "Give this course to another teacher in the specialty.",
+  },
+  {
+    id: "remove",
+    icon: UserMinus,
+    title: "Remove Assignment",
+    description: "Leave this course without a teacher for now.",
+  },
+];
+
+function Footer({ children }) {
+  return (
+    <div className="drawer-footer font-size-sm">
+      <div className="d-flex flex-column w-100">
+        <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+        <div className="d-flex flex-row align-items-center justify-content-between gap-2 p-2">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ManageCourseAssignment({ handleClose, drawerData }) {
-  const [selectedAction, setSelectedAction] = useState(null);
+  const [action, setAction] = useState(null);
+
   return (
     <>
-      <div
-        className="font-size-sm d-flex flex-column gap-4 pt-2"
-        style={{ flex: 1, minHeight: 0 }}
-      >
-        <div className="drawer-content px-2">
-          <div className="d-flex flex-column gap-3">
-            <div className="card p-2 rounded-4  shadow-sm d-flex flex-column gap-3 font-size-sm">
-              <div className="d-flex flex-column gap-1">
-                <div className="d-flex flex-row align-items-center justify-content-between">
-                  <span style={{ width: "65%" }} className="fw-semibold">
-                    {drawerData?.course_title}
+      <div className="d-flex flex-column gap-3 pt-2 px-2 pb-2 flex-shrink-0 font-size-sm">
+        <CourseSummary course={drawerData} />
+        <div className="d-flex flex-column gap-1">
+          <span className="teacher-card__label">Current teacher</span>
+          <CourseTeacher course={drawerData} />
+        </div>
+        <div className="d-flex flex-column gap-1">
+          <span className="teacher-card__label">Choose action</span>
+          <div className="d-flex flex-row gap-2" role="radiogroup" aria-label="Choose action">
+            {ACTIONS.map((item) => {
+              const Icon = item.icon;
+              const active = action === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setAction(item.id)}
+                  className={`teacher-card teacher-card--selectable text-start flex-grow-1 gap-1 ${
+                    active ? "teacher-card--selected" : ""
+                  }`}
+                  style={{ flexBasis: 0, height: "auto" }}
+                >
+                  <span className="d-flex flex-row align-items-center gap-2 fw-semibold">
+                    <Icon size={16} className={active ? "text-primary-500" : "text-iron-500"} />
+                    {item.title}
                   </span>
-                  {drawerData.assignment_status === "unassigned" ? (
-                    <div
-                      style={{
-                        background: "#fbedd9",
-                        color: "#e9994e",
-                        fontSize: "0.7rem",
-                        padding: "0.2rem",
-                      }}
-                      className="rounded-pill px-1 d-flex flex-row align-items-center gap-1"
-                    >
-                      <span>
-                        <Icon
-                          icon="fluent:warning-16-regular"
-                          width={16}
-                          height={16}
-                        />
-                      </span>
-                      <span>unassigned</span>
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        background: "#e3f5e3",
-                        color: "#5cb85c",
-                        fontSize: "0.7rem",
-                      }}
-                      className="rounded-pill px-1 d-flex flex-row align-items-center gap-1"
-                    >
-                      <span>
-                        <Icon
-                          icon="lets-icons:check-fill"
-                          width={18}
-                          height={18}
-                        />
-                      </span>
-                      <span>assigned</span>
-                    </div>
-                  )}
-                </div>
-                <div className="d-flex flex-row align-items-center gap-2 fw-medium">
-                  <div className="d-flex flex-row align-items-center gap-1">
-                    <span style={{ lineHeight: 0 }}>
-                      <Icon icon="iconoir:medal" width={18} height={18} />
-                    </span>
-                    <span>{drawerData.course_credit} Credit</span>
-                  </div>
-                  <span>
-                    <Icon icon="icon-park-outline:dot" />
-                  </span>
-                  <div className="d-flex flex-row align-items-center gap-1">
-                    <span style={{ lineHeight: 0 }}>
-                      <Icon icon="mynaui:hash-waves" width={18} height={18} />
-                    </span>
-                    <span>{drawerData.course_code}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="d-flex flex-column gap-2">
-                <p
-                  className="text-muted font-size-sm m-0"
-                  style={{
-                    height: "auto",
-                    maxHeight: "80px",
-                    display: "-webkit-box",
-                    WebkitLineClamp: "3",
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {drawerData?.description}
-                </p>
-                <div className="d-flex flex-row gap-2">
-                  {drawerData.types.map((type) => (
-                    <Fragment key={type.id}>
-                      <div
-                        style={{
-                          background: type?.background_color,
-                          color: type?.text_color,
-                          fontSize: "0.75rem",
-                        }}
-                        className="rounded-pill px-2"
-                      >
-                        {type?.name}
-                      </div>
-                    </Fragment>
-                  ))}
-                </div>
-                {drawerData?.assignment_status === "assigned" && (
-                  <div className="d-flex flex-row align-items-center gap-1">
-                    <img
-                      src="./images/user.png"
-                      alt=""
-                      style={{
-                        width: "2rem",
-                        height: "2rem",
-                        objectFit: "contain",
-                      }}
-                    />
-                    <div className="d-flex flex-column">
-                      <span className="fw-medium">
-                        {drawerData?.teachers[0]?.name}
-                      </span>
-                      <span className="text-muted">
-                        @ {drawerData?.teachers[0]?.username}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="d-flex flex-column gap-1">
-              <span className="font-size-sm">Choose Action</span>
-              <div className="d-flex flex-row align-items-center gap-2">
-                <div
-                  className="card w-50 p-2 rounded-4 font-size-sm d-flex flex-column pointer-cursor"
-                  style={{ height: "16dvh" }}
-                  onClick={() => setSelectedAction("update")}
-                >
-                  <div className="d-flex flex-row align-items-center justify-content-between">
-                    <span className="fw-semibold">Change Teacher</span>
-                    {selectedAction === "update" && (
-                      <span>
-                        <Icon
-                          icon="material-symbols:check-circle-rounded"
-                          width={18}
-                          height={18}
-                          className="green-color"
-                        />
-                      </span>
-                    )}
-                  </div>
-
-                  <p className="mt-auto m-0">
-                    Assign this course to a different teacher while replacing
-                    the current assignment.
-                  </p>
-                </div>
-                <div
-                  className="card w-50 p-2 rounded-4 font-size-sm d-flex flex-column pointer-cursor"
-                  style={{ height: "16dvh" }}
-                  onClick={() => setSelectedAction("remove")}
-                >
-                  <div className="d-flex flex-row align-items-center justify-content-between">
-                    <span className="fw-semibold">Remove Assignment</span>
-                    {selectedAction === "remove" && (
-                      <span>
-                        <Icon
-                          icon="material-symbols:check-circle-rounded"
-                          width={18}
-                          height={18}
-                          className="green-color"
-                        />
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-auto m-0">
-                    Remove the current teacher and leave this course without an
-                    assigned teacher.
-                  </p>
-                </div>
-              </div>
-            </div>
-            {selectedAction === "update" ? (
-              <ChangeTeacher
-                drawerData={drawerData}
-                handleClose={handleClose}
-              />
-            ) : selectedAction === "remove" ? (
-              <RemoveAssignment
-                drawerData={drawerData}
-                setSelectedAction={setSelectedAction}
-                handleClose={handleClose}
-              />
-            ) : null}
+                  <span className="font-size-xs text-iron-500">{item.description}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
+
+      {action === "update" ? (
+        <ChangeTeacher drawerData={drawerData} handleClose={handleClose} />
+      ) : action === "remove" ? (
+        <RemoveAssignment
+          drawerData={drawerData}
+          handleClose={handleClose}
+          onBack={() => setAction(null)}
+        />
+      ) : (
+        <>
+          <div className="drawer-content px-2" />
+          <Footer>
+            <button type="button" className="border-none bg-none" onClick={() => handleClose?.()}>
+              Cancel
+            </button>
+            <span className="text-iron-400">Choose an action to continue</span>
+          </Footer>
+        </>
+      )}
     </>
   );
 }
 export default ManageCourseAssignment;
 
 function ChangeTeacher({ drawerData, handleClose }) {
-  const teacherId = drawerData?.teachers[0]?.id;
-  const [selectedTeacher, setSelectedTeacher] = useState(teacherId);
-  const {
-    data: teachers,
-    isLoading: isTeacherLoading,
-    error: teacherError,
-  } = useGetTeacherBySpecialty(drawerData.specialtyId);
-  const { mutate: changeTeacher, isPending: isChanging } =
-    useChangeTeacherCourse(drawerData.specialtyId, handleClose);
+  const navigate = useNavigate();
+  const specialtyId = drawerData?.specialtyId;
+  const currentTeacher = drawerData?.teachers?.[0];
+  const { data, isLoading, error } = useGetTeacherBySpecialty(specialtyId);
+  const { mutate: changeTeacher, isPending } = useChangeTeacherCourse(specialtyId, handleClose);
   const { formError, errorBannerRef, handleServerError, clearFormError } =
     useFormError("Failed To Change Teacher");
-  const handleChangeTeacher = () => {
+
+  const [selected, setSelected] = useState(null);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 250);
+
+  const allTeachers = useMemo(() => (Array.isArray(data?.data) ? data.data : []), [data]);
+  // The current teacher is shown above; only the others can take the course.
+  const candidates = useMemo(
+    () => allTeachers.filter((teacher) => teacher.id !== currentTeacher?.id),
+    [allTeachers, currentTeacher],
+  );
+  const { empty: specialtyEmpty, isCheckingSchool } = useSpecialtyTeachersEmptyState({
+    teachers: allTeachers,
+    isLoading,
+    error,
+    handleClose,
+  });
+  // The specialty has teachers, but the current one is the only one.
+  const onlyCurrentTeacher = !isLoading && allTeachers.length > 0 && candidates.length === 0;
+  const empty = onlyCurrentTeacher
+    ? {
+        mascot: "empty",
+        title: "No other teachers in this specialty",
+        description: `${currentTeacher?.name ?? "The current teacher"} is the only teacher in this specialty. Assign more teachers to the specialty to hand this course over.`,
+        actions: (
+          <EmptyStateButton
+            icon={UserPlus}
+            onClick={() => {
+              handleClose?.();
+              navigate("/teacher-specialty");
+            }}
+          >
+            Assign Teachers To Specialty
+          </EmptyStateButton>
+        ),
+      }
+    : specialtyEmpty;
+
+  const handleChange = () => {
+    if (!selected) return;
     clearFormError();
-    changeTeacher({
-      course_id: drawerData?.course_id,
-      new_teacher_id: selectedTeacher,
-      old_teacher_id: teacherId,
-    }, { onError: handleServerError });
+    changeTeacher(
+      {
+        course_id: drawerData?.course_id,
+        new_teacher_id: selected.id,
+        old_teacher_id: currentTeacher?.id,
+      },
+      { onError: handleServerError },
+    );
   };
+
   return (
     <>
-      <div className="d-flex flex-column gap-3">
-        <div className="d-flex flex-column gap-4">
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <span className="font-size-sm fw-medium">Assign To</span>
-            <input
-              type="search"
-              className="form-control font-size-sm w-50"
-              placeholder="Search Teacher........"
-            />
-          </div>
-          <div>
-            {isTeacherLoading ? (
-              <div className="d-flex flex-row align-items-center flex-wrap gap-2">
-                {[...Array(6)].map((_, index) => (
-                  <Fragment key={index}>
-                    <RectangleSkeleton
-                      width={"32.5%"}
-                      height={"18dvh"}
-                      borderRadius={6}
-                    />
-                  </Fragment>
-                ))}
-              </div>
-            ) : teacherError ? (
-              <NotFoundError
-                title={teacherError?.response?.data?.errors?.title || "Error"}
-                description={
-                  teacherError?.response?.data?.errors?.description ||
-                  "Something went wrong"
-                }
-              />
-            ) : (
-              <div className="d-flex flex-row align-items-start flex-wrap gap-2">
-                {teachers.data.map((teacher) => (
-                  <Fragment key={teacher.id}>
-                    <div
-                      className="card font-size-sm rounded-4 p-2 d-flex flex-column pointer-cursor d-flex flex-column gap-3"
-                      style={{ width: "49%" }}
-                      onClick={() => setSelectedTeacher(teacher.id)}
-                    >
-                      <div className="d-flex flex-row align-items-start justify-content-between">
-                        <div className="d-flex flex-row align-items-center gap-1">
-                          <img
-                            src="./images/user.png"
-                            alt=""
-                            style={{
-                              width: "2rem",
-                              height: "2rem",
-                              objectFit: "contain",
-                            }}
-                          />
-                          <div className="d-flex flex-column">
-                            <span className="fw-medium">{teacher?.name}</span>
-                            <span className="text-muted">
-                              @{teacher?.username}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="d-flex flex-row align-items-center gap-2">
-                          {teacherId === teacher.id && (
-                            <div
-                              style={{
-                                background: "#e3f5e3",
-                                color: "#5cb85c",
-                                fontSize: "0.7rem",
-                              }}
-                              className="rounded-pill px-1 d-flex flex-row align-items-center gap-1"
-                            >
-                              <span>current teacher</span>
-                            </div>
-                          )}
-                          {selectedTeacher === teacher?.id && (
-                            <span>
-                              <Icon
-                                icon="material-symbols:check-circle-rounded"
-                                width={18}
-                                height={18}
-                                className="green-color"
-                              />
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="d-flex flex-column gap-1">
-                        <span
-                          style={{ fontSize: "0.7rem" }}
-                          className="text-muted"
-                        >
-                          Qualifications
-                        </span>
-                        <div className="flex-row align-items-center flex-wrap gap-2">
-                          {teacher.qualifications.map((quali) => (
-                            <Fragment key={quali.id}>
-                              <div
-                                style={{
-                                  background: "#e0f2fe",
-                                  color: "#38bff8",
-                                  fontSize: "0.7rem",
-                                  width: "max-content",
-                                }}
-                                className="rounded-pill p-1 d-flex flex-row align-items-center gap-1 m-1"
-                              >
-                                <span>{quali?.abbreviation}</span>
-                                <span style={{ lineHeight: 0 }}>
-                                  <Icon icon="icon-park-outline:dot" />
-                                </span>
-                                <span>{quali?.pivot?.field_of_study}</span>
-                              </div>
-                            </Fragment>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="mt-auto ps-1">
-                        <hr />
-                        <div className="d-flex flex-row align-items-center justify-content-around">
-                          <div className="d-flex flex-column gap-1 align-center  text-center">
-                            <span
-                              style={{ fontSize: "0.7rem" }}
-                              className="text-muted"
-                            >
-                              Courses Assigned
-                            </span>
-                            <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                              <span>
-                                <Icon
-                                  icon="ion:book-outline"
-                                  width={18}
-                                  height={18}
-                                />
-                              </span>
-                              <span className="fw-bold font-size-md">
-                                {teacher?.num_assigned_courses}
-                              </span>
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              height: "2.5rem",
-                              background: "#ddd",
-                              width: "0.05rem",
-                            }}
-                          ></div>
-                          <div className="d-flex flex-column gap-1">
-                            <span
-                              style={{ fontSize: "0.7rem" }}
-                              className="text-muted"
-                            >
-                              Specailties Assigned
-                            </span>
-                            <div className="d-flex flex-row align-items-center gap-2 justify-content-center">
-                              <span>
-                                <Icon
-                                  icon="ion:book-outline"
-                                  width={18}
-                                  height={18}
-                                />
-                              </span>
-                              <span className="fw-bold font-size-md">
-                                {teacher?.num_assigned_specialties}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Fragment>
-                ))}
-              </div>
-            )}
-          </div>
+      {candidates.length > 0 && (
+        <div className="d-flex flex-column gap-2 px-2 pb-2 flex-shrink-0 font-size-sm">
+          <SearchInput
+            placeholder="Search by name, qualification or level"
+            value={search}
+            onChange={(value) => setSearch(value ?? "")}
+            enableShortcut={false}
+          />
+          <span className="text-iron-400 fw-light">Other teachers · {candidates.length}</span>
         </div>
+      )}
+      <div className="drawer-content px-2 pb-3 d-flex flex-column">
         <FormErrorBanner
           ref={errorBannerRef}
           error={formError}
           onDismiss={clearFormError}
           className="mb-2"
         />
-        {teacherId != selectedTeacher && (
-          <button
-            className="border-none rounded-pill p-2 primary-background text-white font-size-sm w-100"
-            onClick={() => handleChangeTeacher()}
-            disabled={isChanging}
-          >
-            {isChanging ? <SingleSpinner /> : "Change Teacher"}
-          </button>
-        )}
+        <div className="flex-grow-1">
+          <TeacherSelectList
+            teachers={candidates}
+            isLoading={isLoading || isCheckingSchool}
+            error={error}
+            search={debouncedSearch}
+            onClearSearch={() => setSearch("")}
+            isSelected={(teacher) => selected?.id === teacher.id}
+            onSelect={(teacher) =>
+              setSelected((current) => (current?.id === teacher.id ? null : teacher))
+            }
+            empty={empty}
+            noun="other teacher in this specialty"
+          />
+        </div>
       </div>
+      <Footer>
+        <button type="button" className="border-none bg-none" onClick={() => handleClose?.()}>
+          Cancel
+        </button>
+        <button
+          type="button"
+          className="border-none rounded-3 primary-background text-white font-size-sm px-3 py-2 text-truncate"
+          style={{ maxWidth: "60%", opacity: selected ? 1 : 0.6 }}
+          onClick={handleChange}
+          disabled={isPending || !selected}
+        >
+          {isPending ? <SingleSpinner /> : selected ? `Change to ${selected.name}` : "Change Teacher"}
+        </button>
+      </Footer>
     </>
   );
 }
 
-function RemoveAssignment({ drawerData, setSelectedAction, handleClose }) {
-  const { mutate: removeAssigedCourse, isPending: isRemoving } =
-    useRemoveAssignedTeacherCourse(drawerData.specialtyId);
+function RemoveAssignment({ drawerData, handleClose, onBack }) {
+  const currentTeacher = drawerData?.teachers?.[0];
+  const { mutate: removeAssignedCourse, isPending } = useRemoveAssignedTeacherCourse(
+    drawerData?.specialtyId,
+    handleClose,
+  );
   const { formError, errorBannerRef, handleServerError, clearFormError } =
     useFormError("Failed To Remove Assignment");
+
   const handleRemove = () => {
     clearFormError();
-    removeAssigedCourse({
-      teacher_id: drawerData?.teachers[0]?.id,
-      courseIds: [
-        {
-          course_id: drawerData?.course_id,
-        },
-      ],
-    }, { onError: handleServerError });
+    removeAssignedCourse(
+      {
+        teacher_id: currentTeacher?.id,
+        courseIds: [{ course_id: drawerData?.course_id }],
+      },
+      { onError: handleServerError },
+    );
   };
+
   return (
     <>
-      <div className="d-flex flex-column gap-3">
-        <p className="font-size-sm fw-medium">
-          You are about to remove the teacher assigned to this course.
-        </p>
-        <div className="card p-2 rounded-4  shadow-sm d-flex flex-column gap-3 font-size-sm">
-          <div className="d-flex flex-column gap-1">
-            <div className="d-flex flex-row align-items-center justify-content-between">
-              <span style={{ width: "65%" }} className="fw-semibold">
-                {drawerData?.course_title}
-              </span>
-              {drawerData.assignment_status === "unassigned" ? (
-                <div
-                  style={{
-                    background: "#fbedd9",
-                    color: "#e9994e",
-                    fontSize: "0.7rem",
-                    padding: "0.2rem",
-                  }}
-                  className="rounded-pill px-1 d-flex flex-row align-items-center gap-1"
-                >
-                  <span>
-                    <Icon
-                      icon="fluent:warning-16-regular"
-                      width={16}
-                      height={16}
-                    />
-                  </span>
-                  <span>unassigned</span>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    background: "#e3f5e3",
-                    color: "#5cb85c",
-                    fontSize: "0.7rem",
-                  }}
-                  className="rounded-pill px-1 d-flex flex-row align-items-center gap-1"
-                >
-                  <span>
-                    <Icon icon="lets-icons:check-fill" width={18} height={18} />
-                  </span>
-                  <span>assigned</span>
-                </div>
-              )}
-            </div>
-            <div className="d-flex flex-row align-items-center gap-2 fw-medium">
-              <div className="d-flex flex-row align-items-center gap-1">
-                <span style={{ lineHeight: 0 }}>
-                  <Icon icon="iconoir:medal" width={18} height={18} />
-                </span>
-                <span>{drawerData.course_credit} Credit</span>
-              </div>
-              <span>
-                <Icon icon="icon-park-outline:dot" />
-              </span>
-              <div className="d-flex flex-row align-items-center gap-1">
-                <span style={{ lineHeight: 0 }}>
-                  <Icon icon="mynaui:hash-waves" width={18} height={18} />
-                </span>
-                <span>{drawerData.course_code}</span>
-              </div>
-            </div>
-          </div>
-          <div className="d-flex flex-column gap-2">
-            <p
-              className="text-muted font-size-sm m-0"
-              style={{
-                height: "auto",
-                maxHeight: "80px",
-                display: "-webkit-box",
-                WebkitLineClamp: "3",
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                wordBreak: "break-word",
-              }}
-            >
-              {drawerData?.description}
-            </p>
-            <div className="d-flex flex-row gap-2">
-              {drawerData.types.map((type) => (
-                <Fragment key={type.id}>
-                  <div
-                    style={{
-                      background: type?.background_color,
-                      color: type?.text_color,
-                      fontSize: "0.75rem",
-                    }}
-                    className="rounded-pill px-2"
-                  >
-                    {type?.name}
-                  </div>
-                </Fragment>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="d-flex flex-column gap-2">
-          <span className="fw-medium font-size-sm">Current Teacher</span>
-          <div className="d-flex flex-row align-items-center gap-1 font-size-sm">
-            <img
-              src="./images/user.png"
-              alt=""
-              style={{
-                width: "2rem",
-                height: "2rem",
-                objectFit: "contain",
-              }}
-            />
-            <div className="d-flex flex-column">
-              <span className="fw-medium">{drawerData?.teachers[0]?.name}</span>
-              <span className="text-muted">
-                @ {drawerData?.teachers[0]?.first_name}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="d-flex flex-column gap-2 font-size-sm">
-          <span className="fw-medium font-size-sm">After Removal</span>
-          <ul>
-            <li>No Teacher Assigned</li>
-          </ul>
-        </div>
+      <div className="drawer-content px-2 pb-3 d-flex flex-column">
         <FormErrorBanner
           ref={errorBannerRef}
           error={formError}
           onDismiss={clearFormError}
           className="mb-2"
         />
-        <div className="d-flex flex-row align-items-center gap-2">
-          <button
-            className="border-none rounded-pill p-2 transparent-bg border font-size-sm w-50"
-            onClick={() => setSelectedAction(null)}
-            disabled={isRemoving}
-          >
-            Cancel
-          </button>
-          <button
-            className="border-none rounded-pill p-2 bg-danger text-white font-size-sm w-50"
-            disabled={isRemoving}
-            onClick={() => handleRemove()}
-          >
-            {isRemoving ? <SingleSpinner /> : "Remove Assignment"}
-          </button>
-        </div>
+        {currentTeacher ? (
+          <div className="d-flex flex-column gap-2 rounded-3 bg-iron-50 p-3 font-size-sm">
+            <span className="fw-semibold">Remove {currentTeacher.name} from this course?</span>
+            <span className="text-iron-500">
+              The course will show as <span className="fw-medium">Unassigned</span> until you
+              assign another teacher. {currentTeacher.name} stays in the specialty and keeps
+              their other courses.
+            </span>
+          </div>
+        ) : (
+          <EmptyState
+            mascot="notFound"
+            height="100%"
+            mascotHeight="6rem"
+            title="No teacher to remove"
+            description="This course has no assigned teacher."
+          />
+        )}
       </div>
+      <Footer>
+        <button
+          type="button"
+          className="border-none bg-none"
+          onClick={onBack}
+          disabled={isPending}
+        >
+          Back
+        </button>
+        <button
+          type="button"
+          className="border-none rounded-3 bg-danger text-white font-size-sm px-3 py-2"
+          onClick={handleRemove}
+          disabled={isPending || !currentTeacher}
+        >
+          {isPending ? <SingleSpinner /> : "Remove Assignment"}
+        </button>
+      </Footer>
     </>
   );
 }
