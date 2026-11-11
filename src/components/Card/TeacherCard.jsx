@@ -1,5 +1,9 @@
 import { CircleCheck } from "lucide-react";
-import { Fragment } from "react";
+import CustomTooltip from "../Tooltips/Tooltip";
+
+// Chips shown per row before the rest collapse into a "+N" chip, so every
+// card keeps the same height however many qualifications or levels it has.
+const MAX_CHIPS = 3;
 
 const initialsOf = (teacher) => {
   const first = teacher?.first_name?.trim()?.charAt(0) ?? "";
@@ -16,6 +20,31 @@ const initialsOf = (teacher) => {
 
 const unique = (values) => [...new Set(values.filter(Boolean))];
 
+function ChipRow({ items, variant }) {
+  const visible = items.slice(0, MAX_CHIPS);
+  const hidden = items.slice(MAX_CHIPS);
+  return (
+    <div className="teacher-card__chips">
+      {visible.map((item) => (
+        <span
+          key={item}
+          className={`teacher-card__chip teacher-card__chip--${variant}`}
+          title={item}
+        >
+          {item}
+        </span>
+      ))}
+      {hidden.length > 0 && (
+        <CustomTooltip tooltipText={hidden.join(", ")}>
+          <span className="teacher-card__chip teacher-card__chip--more">
+            +{hidden.length}
+          </span>
+        </CustomTooltip>
+      )}
+    </div>
+  );
+}
+
 /**
  * Teacher summary card: avatar, name, qualifications and teaching levels.
  *
@@ -30,7 +59,7 @@ export default function TeacherCard({ teacher, selected = false, onSelect, child
     qualifications.map((item) => item?.abbreviation || item?.name),
   );
   const fields = unique(qualifications.map((item) => item?.pivot?.field_of_study));
-  const levels = teacher?.levels ?? [];
+  const levels = unique((teacher?.levels ?? []).map((level) => level?.name));
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" || event.key === " ") {
@@ -75,23 +104,13 @@ export default function TeacherCard({ teacher, selected = false, onSelect, child
         <span className="teacher-card__label">Qualifications</span>
         {degrees.length > 0 ? (
           <>
-            <div className="d-flex flex-row flex-wrap gap-1">
-              {degrees.map((degree) => (
-                <span key={degree} className="teacher-card__chip teacher-card__chip--primary">
-                  {degree}
-                </span>
-              ))}
-            </div>
-            {fields.length > 0 && (
-              <span className="font-size-xs text-iron-600">
-                {fields.map((field, index) => (
-                  <Fragment key={field}>
-                    {index > 0 && " · "}
-                    {field}
-                  </Fragment>
-                ))}
-              </span>
-            )}
+            <ChipRow items={degrees} variant="primary" />
+            <span
+              className="font-size-xs text-iron-600 text-truncate"
+              title={fields.join(" · ")}
+            >
+              {fields.length > 0 ? fields.join(" · ") : "Field of study not recorded"}
+            </span>
           </>
         ) : (
           <span className="font-size-xs text-iron-400">No qualifications recorded</span>
@@ -101,22 +120,13 @@ export default function TeacherCard({ teacher, selected = false, onSelect, child
       <div className="d-flex flex-column gap-1">
         <span className="teacher-card__label">Teaching levels</span>
         {levels.length > 0 ? (
-          <div className="d-flex flex-row flex-wrap gap-1">
-            {levels.map((level) => (
-              <span
-                key={level?.id ?? level?.name}
-                className="teacher-card__chip teacher-card__chip--neutral"
-              >
-                {level?.name}
-              </span>
-            ))}
-          </div>
+          <ChipRow items={levels} variant="neutral" />
         ) : (
           <span className="font-size-xs text-iron-400">No teaching levels set</span>
         )}
       </div>
 
-      {children}
+      {children && <div className="teacher-card__footer">{children}</div>}
     </div>
   );
 }

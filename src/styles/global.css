@@ -2288,7 +2288,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
   gap: 0.75rem;
-  align-items: start;
+  align-items: stretch;
 }
 .teacher-card {
   display: flex;
@@ -2298,8 +2298,24 @@ textarea::-webkit-scrollbar-thumb:hover {
   background: #fff;
   border: 1px solid var(--iron-200);
   border-radius: 0.875rem;
+  height: 100%;
+  min-width: 0;
   font-size: 0.8rem;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.teacher-card__footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+/* one line of chips; long lists collapse into a "+N" chip */
+.teacher-card__chips {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+  min-width: 0;
+  overflow: hidden;
 }
 .teacher-card--selectable {
   cursor: pointer;
@@ -2345,6 +2361,19 @@ textarea::-webkit-scrollbar-thumb:hover {
   border-radius: 9999px;
   font-size: 0.7rem;
   font-weight: 600;
+  white-space: nowrap;
+  min-width: 0;
+  max-width: 8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+}
+.teacher-card__chip--more {
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid var(--iron-200);
+  color: var(--iron-600);
+  cursor: default;
 }
 .teacher-card__chip--primary {
   background: var(--primary-color-50);
