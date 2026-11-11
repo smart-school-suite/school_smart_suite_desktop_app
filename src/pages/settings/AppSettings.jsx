@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Info } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
@@ -134,9 +134,15 @@ function AppSettings() {
             >
               <span className="fw-semibold">{category.category_name}</span>
               <div className="bg-white card border w-100 d-flex flex-column rounded-4 gap-2 p-3 font-size-sm">
-                {category?.setting?.map((setting, index) => {
+                {orderSettings(category?.setting).map((setting, index, ordered) => {
                   const resolvedMap = resolveSetting(setting.key);
-                  const isClickable = setting.data_type !== "boolean";
+                  const disabledReason = resolveDisabledReason(
+                    resolvedMap,
+                    category.setting,
+                  );
+                  const isDisabled = Boolean(disabledReason);
+                  const isClickable =
+                    setting.data_type !== "boolean" && !isDisabled;
                   const handler =
                     resolvedMap?.editor === "modal"
                       ? handleShowModal
@@ -151,10 +157,11 @@ function AppSettings() {
                     <div
                       key={setting.id}
                       className={`d-flex flex-column gap-2 ${
-                        isClickable && "cursor-pointer"
-                      }`}
+                        isClickable ? "cursor-pointer" : ""
+                      } ${isDisabled ? "cursor-not-allowed" : ""}`}
+                      aria-disabled={isDisabled}
                       onClick={() => {
-                        if (handler && Component) {
+                        if (!isDisabled && handler && Component) {
                           handler(Component, {
                             ...config,
                             payload: {
@@ -166,7 +173,11 @@ function AppSettings() {
                         }
                       }}
                     >
-                      <div className="d-flex flex-row align-items-center justify-content-between">
+                      <div
+                        className={`d-flex flex-row align-items-center justify-content-between ${
+                          isDisabled ? "opacity-50" : ""
+                        }`}
+                      >
                         <div className="d-flex flex-column gap-1">
                           <span className="fw-medium font-size-sm">
                             {setting.name}
@@ -178,7 +189,9 @@ function AppSettings() {
                             </span>
                           ) : (
                             <span className="w-75 font-size-sm text-iron-400">
-                              {`${setting.value} ${unit ? ` ${currency ?? ""}` : ""}`}
+                              {resolvedMap?.formatValue
+                                ? resolvedMap.formatValue(setting.value)
+                                : `${setting.value} ${unit ? ` ${currency ?? ""}` : ""}`}
                             </span>
                           )}
                         </div>
@@ -195,14 +208,20 @@ function AppSettings() {
                                   value: !setting?.value,
                                 });
                               }}
-                              disabled={isPending}
+                              disabled={isPending || isDisabled}
                             />
                           ) : (
                             <ChevronRight size={16} />
                           )}
                         </div>
                       </div>
-                      {!isLastElement(index, category.setting) && (
+                      {isDisabled && (
+                        <div className="d-flex flex-row gap-1 align-items-center text-iron-500 font-size-xs">
+                          <Info size={12} />
+                          <span>{disabledReason}</span>
+                        </div>
+                      )}
+                      {!isLastElement(index, ordered) && (
                         <HorizontalDashedLine
                           color={"#ccc"}
                           dashed={false}
@@ -270,4 +289,19 @@ function resolveConfig(editor) {
     showHeader: false,
   };
   return editor === "modal" ? modalConfig : drawerConfig;
+}
+
+// A setting can depend on others in its category (see the setting maps):
+// returns why it is disabled right now, or null when it can be changed.
+function resolveDisabledReason(resolvedMap, settings = []) {
+  if (!resolvedMap?.disabledReason) return null;
+  const valueByKey = Object.fromEntries(settings.map((s) => [s.key, s.value]));
+  return resolvedMap.disabledReason(valueByKey);
+}
+
+// Settings whose map entries give an `order` are shown in that order (after
+// any without one); the rest keep the order the API returns.
+function orderSettings(settings = []) {
+  const rank = (setting) => resolveSetting(setting.key)?.order ?? 0;
+  return [...settings].sort((a, b) => rank(a) - rank(b));
 }
