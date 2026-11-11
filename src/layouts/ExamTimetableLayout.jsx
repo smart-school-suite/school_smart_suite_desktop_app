@@ -16,10 +16,10 @@ function ExamTimetableLayout() {
       title: "Joint Course Timetable",
       path: "/exam/joint-course-timetable",
     },
-    {
-      title:"Exam Arrangements",
-      path:"/exam-timetable/arrangement"
-    }
+    // {
+    //   title:"Exam Arrangements",
+    //   path:"/exam-timetable/arrangement"
+    // }
   ];
   return (
     <>
