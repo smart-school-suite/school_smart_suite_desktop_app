@@ -34,6 +34,8 @@ function TableToolbar({
   tableRef,
   searchPlaceholder = "Search",
   onReset,
+  // optional page actions shown after the table tools (e.g. a Create button)
+  actions,
 }) {
   const { state, columns, chipFields, activeCount } = filters;
   const conditionCount = state.applied.length;
@@ -112,6 +114,7 @@ function TableToolbar({
               aria-label="Table settings"
             />
           </ModalButton>
+          {actions}
         </div>
       </div>
 

@@ -1,24 +1,19 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deactivateRole } from "../../services/electionRole";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-export const useDeactivateElectionRole = (handleClose) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (electionRoleId) => deactivateRole(electionRoleId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["electionRoles"] });
+import { deactivateElectionRole } from "../../services/electionRole";
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
 
-      if (handleClose) {
-        handleClose();
-      }
-
-      toast.custom(
-        <ToastSuccess
-          title={"Deactivation Succesfull"}
-          description={"Election Role Deactivated Successfully"}
-        />
-      );
-    },
+export const useDeactivateElectionRole = (handleClose) =>
+  useElectionMutation({
+    mutationFn: deactivateElectionRole,
+    invalidate: [
+      ["electionRoles"],
+      ["electionRole"],
+      ["electionRolesByElection"],
+      ["electionTypes"],
+      ["electionType"],
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Position Deactivated",
+    successDescription: "The position will not be offered in new elections.",
+    onSuccess: closeAfter(handleClose),
   });
-};

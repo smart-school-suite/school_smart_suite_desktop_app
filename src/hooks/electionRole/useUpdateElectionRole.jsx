@@ -1,24 +1,19 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateElectionRole } from "../../services/electionRole";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-export const useUpdateElectionRole = (handleClose) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ electionRoleId, updateData }) =>
-      updateElectionRole(electionRoleId, updateData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["electionRoles"] });
-      if (handleClose) {
-        handleClose();
-      }
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
 
-      toast.custom(
-        <ToastSuccess
-          title={"Update Successfull"}
-          description={"Election Role Updated Successfully"}
-        />
-      );
-    },
+export const useUpdateElectionRole = (handleClose) =>
+  useElectionMutation({
+    mutationFn: updateElectionRole,
+    invalidate: [
+      ["electionRoles"],
+      ["electionRole"],
+      ["electionRolesByElection"],
+      ["electionTypes"],
+      ["electionType"],
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Position Updated",
+    successDescription: "Your changes to the position were saved.",
+    onSuccess: closeAfter(handleClose),
   });
-};

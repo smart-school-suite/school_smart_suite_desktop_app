@@ -1,23 +1,19 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createElectionRole } from "../../services/electionRole";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-import toast from "react-hot-toast";
-export const useCreateElectionRole = (handleClose) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: createElectionRole,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["electionRoles"] });
-      if (handleClose) {
-        handleClose();
-      }
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
 
-      toast.custom(
-        <ToastSuccess
-          title={"Election Role Created"}
-          description={"Election Role Created Successfully"}
-        />
-      );
-    },
+export const useCreateElectionRole = (handleClose) =>
+  useElectionMutation({
+    mutationFn: createElectionRole,
+    invalidate: [
+      ["electionRoles"],
+      ["electionRole"],
+      ["electionRolesByElection"],
+      ["electionTypes"],
+      ["electionType"],
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Position Created",
+    successDescription: "The position is ready to be contested.",
+    onSuccess: closeAfter(handleClose),
   });
-};

@@ -1,25 +1,14 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateElection } from "../../services/election";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-export const useUpdateElection = (handleClose) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ electionId, electionData }) =>
-      updateElection(electionId, electionData),
-    onSuccess: (electionId) => {
-      queryClient.invalidateQueries({ queryKey: ["elections"] });
-      queryClient.removeQueries({ queryKey: ["election", electionId] });
-      if (handleClose) {
-        handleClose();
-      }
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
 
-      toast.custom(
-        <ToastSuccess
-          title={"Election Create"}
-          description={"Election Created Successfully"}
-        />
-      );
-    },
+export const useUpdateElection = (handleClose) =>
+  useElectionMutation({
+    mutationFn: updateElection,
+    invalidate: [
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Election Updated",
+    successDescription: "Your changes to the election were saved.",
+    onSuccess: closeAfter(handleClose),
   });
-};

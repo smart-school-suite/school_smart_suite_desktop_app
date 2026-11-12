@@ -1,24 +1,18 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteApplication } from "../../services/electionApplication";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-export const useDeleteApplications = (handleClose) => {
-    const queryClient = useQueryClient();
-    return useMutation({
-         mutationFn:deleteApplication,
-         onSuccess:() => {
-            queryClient.invalidateQueries({ queryKey:["electionApplications"] })
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
 
-            if(handleClose){
-                 handleClose();
-            }
-
-            toast.custom(
-                 <ToastSuccess 
-                   title={"Delete Successfull"}
-                   description={"Election Application Deleted Successfully"}
-                 />
-            )
-         },
-    })
-}
+export const useDeleteApplications = (handleClose) =>
+  useElectionMutation({
+    mutationFn: deleteApplication,
+    invalidate: [
+      ["electionApplications"],
+      ["electionApplication"],
+      ["electionCandidates"],
+      ["electionBallot"],
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Application Deleted",
+    successDescription: "The application was deleted.",
+    onSuccess: closeAfter(handleClose),
+  });

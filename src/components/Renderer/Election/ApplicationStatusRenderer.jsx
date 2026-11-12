@@ -17,6 +17,11 @@ const STATUS_CONFIG = {
     icon: "pajamas:expire",
     label: "Rejected",
   },
+  withdrawn: {
+    className: "bg-iron-100 text-iron-600",
+    icon: "icon-park-outline:back",
+    label: "Withdrawn",
+  },
   default: {
     className: "bg-iron-100 text-iron-600",
     icon: "icon-park-solid:check-one",

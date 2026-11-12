@@ -1,161 +1,83 @@
-import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
+import { Plus } from "lucide-react";
 import { useSelector } from "react-redux";
-import { Outlet, useNavigate } from "react-router-dom";
-import { ModalButton } from "../components/DataTableComponents/ActionComponent";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
-import JobPopOver from "../components/Popover/JobPopover";
 import CreateElection from "../DrawerContent/Election/CreateElection";
 import { ElectionIcon } from "../icons/Icons";
+
+const TABS = [
+  { title: "Elections", path: "/elections" },
+  { title: "Types", path: "/election-type" },
+  { title: "Positions", path: "/election-roles" },
+  { title: "Applications", path: "/election-application" },
+  { title: "Candidates", path: "/election-candidates" },
+  { title: "Office Holders", path: "/election-office-holders" },
+  { title: "History", path: "/election-history" },
+];
+
 function SchoolElectionLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const moduleState = useSelector((state) => state?.election?.voting);
   const navigate = useNavigate();
-  const sideBarData = [
-    {
-      id: 2,
-      title: "Elections",
-      path: "/elections",
-    },
-    {
-      id: 3,
-      title: "Type",
-      path: "/election-type",
-    },
-    {
-      id: 4,
-      title: "Roles",
-      path: "/election-roles",
-    },
-    {
-      id: 5,
-      title: "Candidates",
-      path: "/election-candidates",
-    },
-    {
-      id: 6,
-      title: "Applications",
-      path: "/election-application",
-    },
-    {
-      id: 7,
-      title: "Election History",
-      path: "/election-history",
-    },
-  ];
-  return (
-    <>
-      <main className="main-container gap-2">
-        {!moduleState?.context?.id && (
-          <div className="page-head">
-            <div className="d-flex flex-row align-items-center justify-content-between">
-              <div className="d-flex align-items-center gap-2">
-                <div
-                  className={`${
-                    darkMode ? "dark-mode-active" : "light-mode-active"
-                  } d-flex justify-content-center align-items-center`}
-                  style={{
-                    width: "2rem",
-                    height: "2rem",
-                    borderRadius: "0.5rem",
-                  }}
-                >
-                  <ElectionIcon size={16} />
-                </div>
-                <span className="font-size-sm fw-semibold">
-                  Manage Elections
-                </span>
-              </div>
+  const { pathname } = useLocation();
+  // An election's workspace (/elections/:id) has its own header.
+  const isWorkspace = /^\/elections\/[^/]+/.test(pathname);
 
-              <div className="d-flex flex-row align-item-center gap-2">
-                <JobPopOver category={"Hall"} />
-                <ModalButton
-                  classname={
-                    "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
-                  }
-                >
-                  <span style={{ lineHeight: "16px" }}>Import</span>
-                  <span>
-                    <Icon icon="tabler:arrow-down" width={14} height={14} />
-                  </span>
-                </ModalButton>
-                <ModalButton
-                  classname={
-                    "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
-                  }
-                >
-                  <span style={{ lineHeight: "16px" }}>Actions</span>
-                  <span>
-                    <Icon
-                      icon="majesticons:chevron-down"
-                      width={16}
-                      height={16}
-                    />
-                  </span>
-                </ModalButton>
-                <DrawerTrigger
-                  title="Create Election"
-                  placement="right"
-                  drawerChildren={CreateElection}
-                >
-                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
-                    <span>Create Election</span>
-                  </button>
-                </DrawerTrigger>
+  return (
+    <main className="main-container gap-2">
+      {!isWorkspace && (
+        <div className="page-head flex-shrink-0">
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <div className="d-flex align-items-center gap-2">
+              <div
+                className={`${darkMode ? "dark-mode-active" : "light-mode-active"} d-flex justify-content-center align-items-center`}
+                style={{ width: "2rem", height: "2rem", borderRadius: "0.5rem" }}
+              >
+                <ElectionIcon size={16} />
               </div>
+              <span className="font-size-sm fw-semibold">Manage Elections</span>
             </div>
-            <div className="page-head__tabs d-flex flex-row align-items-center gap-4 font-size-sm">
-              {sideBarData.map((tab) => {
-                const isActive = location.pathname === tab.path;
-                return (
-                  <div
-                    key={tab.path}
-                    className="d-flex flex-column gap-1 position-relative"
-                  >
-                    <button
-                      onClick={() => navigate(tab.path)}
-                      className={`border-none transparent-bg transition-four-sec ${
-                        isActive ? "color-primary fw-medium" : "text-muted"
-                      }`}
-                    >
-                      <div className="d-flex flex-row align-items-center gap-1">
-                        <span>{tab.title}</span>
-                      </div>
-                    </button>
-                    <div
-                      style={{
-                        height: "0.1rem",
-                        width: "100%",
-                        position: "relative",
-                      }}
-                    >
-                      {isActive ? (
-                        <motion.div
-                          layoutId="activeUnderline"
-                          className="position-absolute start-0 end-0 bottom-0"
-                          style={{
-                            height: "0.1rem",
-                            background: "#0ea7e9",
-                          }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 380,
-                            damping: 30,
-                          }}
-                        />
-                      ) : null}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <DrawerTrigger title="Create Election" placement="right" drawerChildren={CreateElection}>
+              <button className="border-none rounded-3 font-size-sm px-3 py-2 primary-background text-white d-flex flex-row align-items-center gap-1">
+                <Plus size={15} />
+                <span>Create Election</span>
+              </button>
+            </DrawerTrigger>
           </div>
-        )}
-        <div className="h-100">
-          <Outlet />
+          <div className="page-head__tabs d-flex flex-row align-items-center gap-4 font-size-sm">
+            {TABS.map((tab) => {
+              const isActive = pathname === tab.path;
+              return (
+                <div key={tab.path} className="d-flex flex-column gap-1 position-relative">
+                  <button
+                    onClick={() => navigate(tab.path)}
+                    className={`border-none transparent-bg transition-four-sec ${isActive ? "color-primary fw-medium" : "text-muted"}`}
+                  >
+                    {tab.title}
+                  </button>
+                  <div style={{ height: "0.1rem", width: "100%", position: "relative" }}>
+                    {isActive ? (
+                      <motion.div
+                        layoutId="activeUnderline"
+                        className="position-absolute start-0 end-0 bottom-0"
+                        style={{ height: "0.1rem", background: "var(--primary-color-500)" }}
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    ) : null}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </main>
-    </>
+      )}
+      {/* The page fills the space left under the header; table pages size
+          their grid from this height. */}
+      <div className="h-100" style={{ minHeight: 0 }}>
+        <Outlet />
+      </div>
+    </main>
   );
 }
+
 export default SchoolElectionLayout;

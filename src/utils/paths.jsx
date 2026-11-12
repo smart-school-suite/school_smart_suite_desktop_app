@@ -83,6 +83,7 @@ export const electionRoutes = [
   "/election-candidates",
   "/election-roles",
   "/election-type",
+  "/election-office-holders",
 ];
 
 export const eventRoutes = [

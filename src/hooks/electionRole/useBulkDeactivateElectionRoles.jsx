@@ -1,28 +1,19 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bulkDeactivateRole } from "../../services/electionRole";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
+import { bulkDeactivateElectionRole } from "../../services/electionRole";
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
 
-export const useBulkDeactivateElectionRole = (handleClose, resetAll) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: bulkDeactivateRole,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["electionRoles"] });
-
-      if (handleClose) {
-        handleClose();
-      }
-
-      if (resetAll) {
-        resetAll();
-      }
-      toast.custom(
-        <ToastSuccess
-          title={"Deactivation Successfull"}
-          description={"Election Roles Deactivated Successfully"}
-        />
-      );
-    },
+export const useBulkDeactivateElectionRole = (handleClose, resetAll) =>
+  useElectionMutation({
+    mutationFn: bulkDeactivateElectionRole,
+    invalidate: [
+      ["electionRoles"],
+      ["electionRole"],
+      ["electionRolesByElection"],
+      ["electionTypes"],
+      ["electionType"],
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Positions Deactivated",
+    successDescription: "The selected positions were deactivated.",
+    onSuccess: closeAfter(handleClose, resetAll),
   });
-};

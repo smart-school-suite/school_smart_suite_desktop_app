@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { getActiveRolesForElection } from "../../services/electionRole";
+import { getActiveElectionRolesByElection } from "../../services/electionRole";
+import { electionKeys } from "../election/electionQueryKeys";
 
-export const useGetActiveElectionRolesByElectionId = (electionId) => {
-     return useQuery({
-        queryKey: ["activeElectionRoleByElections", electionId],
-        queryFn: () => getActiveRolesForElection(electionId),
-        enabled: !!electionId,
-      });
-}
+export const useGetActiveElectionRolesByElectionId = (electionId, options = {}) =>
+  useQuery({
+    queryKey: [...electionKeys.rolesByElection(electionId), "active"],
+    queryFn: () => getActiveElectionRolesByElection(electionId),
+    enabled: Boolean(electionId),
+    ...options,
+  });

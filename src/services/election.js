@@ -1,33 +1,93 @@
 import axiosInstance from "../axios/authAxios";
 
-
-export const createElection = async (createdata) => {
-  const response = await axiosInstance.post("election", createdata);
-  return response.data;
-};
-
-export const getElections = async () => {
-  const response = await axiosInstance.get("election");
-  return response.data;
-};
-
-export const bulkDeleteElection = async (deleteData) => {
-  const response = await axiosInstance.post("election/bulk-delete", deleteData);
-  return response.data;
-};
-
-export const bulkUpdateElection = async (updateData) => {
-  const response = await axiosInstance.patch("election/bulk-update", updateData);
-  return response.data;
-};
-
-export const getCurrentElectionWinners = async () => {
-  const response = await axiosInstance.get("election/current-election-winners");
+// ── Elections ────────────────────────────────────────────────────────
+export const getElections = async (params = {}) => {
+  const response = await axiosInstance.get("election", { params });
   return response.data;
 };
 
 export const getElectionDetails = async (electionId) => {
-  const response = await axiosInstance.get(`election/election/${electionId}`);
+  const response = await axiosInstance.get(`election/${electionId}`);
+  return response.data;
+};
+
+export const createElection = async (data) => {
+  const response = await axiosInstance.post("election", data);
+  return response.data;
+};
+
+export const updateElection = async ({ electionId, data }) => {
+  const response = await axiosInstance.put(`election/${electionId}`, data);
+  return response.data;
+};
+
+export const deleteElection = async (electionId) => {
+  const response = await axiosInstance.delete(`election/${electionId}`);
+  return response.data;
+};
+
+export const bulkDeleteElection = async (data) => {
+  const response = await axiosInstance.post("election/bulk-delete", data);
+  return response.data;
+};
+
+export const getPastElections = async () => {
+  const response = await axiosInstance.get("election/past");
+  return response.data;
+};
+
+export const getElectionHistory = async (params = {}) => {
+  const response = await axiosInstance.get("election/history", { params });
+  return response.data;
+};
+
+export const getElectionStats = async (year) => {
+  const response = await axiosInstance.get(`election/stats/${year}`);
+  return response.data;
+};
+
+// ── Lifecycle ────────────────────────────────────────────────────────
+export const publishElection = async (electionId) => {
+  const response = await axiosInstance.post(`election/${electionId}/publish`);
+  return response.data;
+};
+
+export const cancelElection = async (electionId) => {
+  const response = await axiosInstance.post(`election/${electionId}/cancel`);
+  return response.data;
+};
+
+export const closeElectionVoting = async (electionId) => {
+  const response = await axiosInstance.post(`election/${electionId}/close-voting`);
+  return response.data;
+};
+
+// ── Participants (who can vote / who can apply) ──────────────────────
+export const getElectionParticipants = async ({ electionId, params = {} }) => {
+  const response = await axiosInstance.get(`election/${electionId}/participants`, { params });
+  return response.data;
+};
+
+export const configureElectionParticipants = async ({ electionId, data }) => {
+  const response = await axiosInstance.put(`election/${electionId}/participants`, data);
+  return response.data;
+};
+
+export const refreshElectionParticipants = async (electionId) => {
+  const response = await axiosInstance.post(`election/${electionId}/participants/refresh`);
+  return response.data;
+};
+
+export const copyElectionParticipants = async ({ electionId, sourceElectionId }) => {
+  const response = await axiosInstance.post(
+    `election/${electionId}/participants/from/${sourceElectionId}`,
+  );
+  return response.data;
+};
+
+// ── Voting & results (derived from votes) ────────────────────────────
+export const castVote = async (data) => {
+  const response = await axiosInstance.post("election/cast-vote", data);
   return response.data;
 };
 
@@ -36,67 +96,7 @@ export const getElectionResults = async (electionId) => {
   return response.data;
 };
 
-export const getLiveElectionResults = async (electionId) => {
-   const response = await axiosInstance.get(`election/${electionId}/live-results`);
-   return response.data;
-}
-
-export const getPastElectionWinners = async () => {
-  const response = await axiosInstance.get("election/past-election-winners");
+export const publishElectionResults = async ({ electionId, data }) => {
+  const response = await axiosInstance.post(`election/${electionId}/results/publish`, data);
   return response.data;
 };
-
-
-export const deleteElection = async (electionId) => {
-  const response = await axiosInstance.delete(`election/${electionId}`);
-  return response.data;
-};
-
-export const updateElection = async (electionId, data) => {
-  const response = await axiosInstance.put(`election/${electionId}`, data);
-  return response.data;
-};
-
-export const getAllowedParticipants = async (electionId) => {
-  const response = await axiosInstance.get(`election/${electionId}/allowed-participants`);
-  return response.data;
-};
-
-
-export const addAllowedParticipants = async (electionId, participantData) => {
-  const response = await axiosInstance.post(`election/${electionId}/allowed-participants`, participantData);
-  return response.data;
-};
-
-
-export const addAllowedParticipantsByElection = async (electionId, targetElectionId) => {
-  const response = await axiosInstance.post(`election/${electionId}/allowed-participants/from/${targetElectionId}`);
-  return response.data;
-};
-
-
-export const getElectionCandidates = async (electionId) => {
-  const response = await axiosInstance.get(`election-candidate/${electionId}`);
-  return response.data;
-};
-
-export const getElectionStats = async (year) => {
-   const response = await axiosInstance.get(`election/stats/${year}`);
-   return response.data;
-}
-
-export const castVote = async (data) => {
-   const response = await axiosInstance.post("election/cast-vote", data);
-   return response.data;
-}
-
-export const getPastElections = async () => {
-   const response = await axiosInstance.get("election/past");
-   return response.data;
-}
-
-export const getPastElectionsResults = async (electionId) => {
-   const response = await axiosInstance.get(`election/${electionId}/past-results`);
-   return response.data;
-}
-

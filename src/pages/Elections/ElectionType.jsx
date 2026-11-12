@@ -1,3 +1,8 @@
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import { serverErrorCopy } from "../../utils/election/electionDisplay";
+import { Plus } from "lucide-react";
+import CreateElectionType from "../../DrawerContent/ElectionType/CreateElectionType";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import React, {
   useCallback,
   useEffect,
@@ -10,7 +15,6 @@ import ActionButtonDropdown, {
   DropDownMenuItem,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -68,10 +72,25 @@ function ElectionType() {
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
           ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+            <EmptyState
+              mascot="error"
+              height="100%"
+              mascotHeight="7rem"
+              {...serverErrorCopy(error, "Unable to load election types", "Something went wrong while loading this list.")}
+            />
+          ) : memoizedRowData.length === 0 ? (
+            <EmptyState
+              mascot="sad"
+              height="100%"
+              mascotHeight="7rem"
+              title="No election types yet"
+              description="An election type, such as Student Union Government, groups the positions that are elected together. Create one to start running elections."
+              actions={
+                <DrawerTrigger title="Create Election Type" placement="right" drawerChildren={CreateElectionType}>
+                  <EmptyStateButton icon={Plus}>Create Election Type</EmptyStateButton>
+                </DrawerTrigger>
+              }
+            />
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">
@@ -80,6 +99,17 @@ function ElectionType() {
                   tableRef={tableRef}
                   searchPlaceholder="Search Election Type"
                   onReset={handleResetSelections}
+                  actions={
+                    <DrawerTrigger title="Create Election Type" placement="right" drawerChildren={CreateElectionType}>
+                      <button
+                        type="button"
+                        className="border-none rounded-3 font-size-sm px-3 primary-background text-white text-nowrap"
+                        style={{ padding: "0.38rem" }}
+                      >
+                        Create Type
+                      </button>
+                    </DrawerTrigger>
+                  }
                 />
                 <TableFilterLayout
                   filters={filters}
