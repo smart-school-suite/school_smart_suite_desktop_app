@@ -1,27 +1,17 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { bulkDisqualifyCandidates } from "../../services/electionCandidate";
-export const useBulkDisqualifyCandidates = (handleClose, resetAll) => {
-  const queryClient = useQueryClient();
-  return useMutation({
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
+
+export const useBulkDisqualifyCandidates = (handleClose, resetAll) =>
+  useElectionMutation({
     mutationFn: bulkDisqualifyCandidates,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["electionCandidates"] });
-      if (handleClose) {
-        handleClose();
-      }
-
-      if (resetAll) {
-        resetAll();
-      }
-
-      toast.custom(
-        <ToastSuccess
-          title={"Disqualification Successfull"}
-          description={"Election Candidates Disqualified Successfully"}
-        />
-      );
-    },
+    invalidate: [
+      ["electionCandidates"],
+      ["electionCandidate"],
+      ["electionBallot"],
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Candidates Disqualified",
+    successDescription: "The selected candidates were disqualified.",
+    onSuccess: closeAfter(handleClose, resetAll),
   });
-};

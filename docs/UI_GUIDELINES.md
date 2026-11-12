@@ -25,6 +25,14 @@ small variation; add a prop to the shared component rather than copying it.
 | Course summary | `components/Card/CourseCard` (+ `CourseStatusPill`), drawer header `DrawerContent/Course/CourseSummary` |
 | One line of chips with a "+N" popover | `components/Card/ChipRow` |
 | Teacher course/specialty counts | `components/Card/TeacherStats` |
+| Confirmation dialog (title, copy, optional fields, error banner) | `components/Modals/ConfirmDialog` |
+| Multi-step drawer step bar | `components/Wizard/WizardStepBar` |
+| Status label with tone (and live pulse) | `components/Election/StatusPill` |
+| Person (student, teacher, admin) avatar + name + type | `components/Election/ParticipantIdentity` |
+| Pick one student, teacher or administrator | `components/Election/PersonPicker` |
+| KPI tile / white panel with header | `components/Election/StatTile` / `components/Election/SectionCard` |
+| Who-can-vote / who-can-apply audience picker | `components/Election/ParticipantAudiencePicker` |
+| Election card, lifecycle timeline, vote share bar, office holder card | `components/Election/*` |
 
 Only create a new component when nothing reusable exists, and put it in
 `src/components/` so the next page can use it. Pieces that only one page

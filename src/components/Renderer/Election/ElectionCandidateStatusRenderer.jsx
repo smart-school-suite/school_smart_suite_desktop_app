@@ -11,6 +11,11 @@ const STATUS_CONFIG = {
     icon: "ci:triangle-warning",
     label: "Disqualified",
   },
+  withdrawn: {
+    className: "bg-iron-100 text-iron-600",
+    icon: "icon-park-outline:back",
+    label: "Withdrawn",
+  },
   default: {
     className: "bg-iron-100 text-iron-600",
     icon: "icon-park-solid:check-one",

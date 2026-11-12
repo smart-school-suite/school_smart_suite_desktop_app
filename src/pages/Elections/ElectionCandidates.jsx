@@ -1,3 +1,8 @@
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import { serverErrorCopy } from "../../utils/election/electionDisplay";
+import { Vote } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { participantTypeLabel } from "../../utils/election/electionDisplay";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import ActionButtonDropdown, {
@@ -5,7 +10,6 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -46,8 +50,14 @@ function ElectionCandidate() {
       ActionComponent,
     });
   }, []);
+  const navigate = useNavigate();
   const memoizedRowData = useMemo(() => {
-    return candidates?.data ?? [];
+    return (candidates?.data ?? []).map((candidate) => ({
+      ...candidate,
+      position_name: candidate.position?.name,
+      election_title: candidate.election?.title,
+      candidate_type_label: participantTypeLabel(candidate.candidate_type),
+    }));
   }, [candidates]);
   const handleRowDataFromChild = useCallback((Data) => {
     setSelectedCandidates(Data);
@@ -62,10 +72,23 @@ function ElectionCandidate() {
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
           ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+            <EmptyState
+              mascot="error"
+              height="100%"
+              mascotHeight="7rem"
+              {...serverErrorCopy(error, "Unable to load candidates", "Something went wrong while loading this list.")}
+            />
+          ) : memoizedRowData.length === 0 ? (
+            <EmptyState
+              mascot="sad"
+              height="100%"
+              mascotHeight="7rem"
+              title="No candidates yet"
+              description="Applicants become candidates when their application is approved. Review applications from the workspace of each election."
+              actions={
+                <EmptyStateButton icon={Vote} onClick={() => navigate("/elections")}>Go to Elections</EmptyStateButton>
+              }
+            />
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">

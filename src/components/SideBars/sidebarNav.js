@@ -220,5 +220,10 @@ export const sideBarData = [
   },
 ];
 
+// A route also covers its detail pages, e.g. "/elections" → "/elections/:id".
+const matchesRoute = (route, pathname) => pathname === route || pathname.startsWith(`${route}/`);
+
 export const isRouteActive = (entry, pathname) =>
-  entry.routes ? entry.routes.includes(pathname) : entry.path === pathname;
+  entry.routes
+    ? entry.routes.some((route) => matchesRoute(route, pathname))
+    : matchesRoute(entry.path, pathname);

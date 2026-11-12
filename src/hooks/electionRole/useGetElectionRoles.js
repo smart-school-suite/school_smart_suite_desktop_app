@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getElectionRoles } from "../../services/electionRole";
+import { electionKeys } from "../election/electionQueryKeys";
 
-export const useGetElectionRoles = () => {
-    return useQuery({
-        queryKey: ['electionRoles'],
-        queryFn: () =>  getElectionRoles(),
-      });
-}
+export const useGetElectionRoles = (filters = {}, options = {}) =>
+  useQuery({
+    queryKey: electionKeys.roles(filters),
+    queryFn: () => getElectionRoles(filters),
+    ...options,
+  });

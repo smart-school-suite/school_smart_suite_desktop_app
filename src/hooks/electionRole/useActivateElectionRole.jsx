@@ -1,23 +1,19 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { activateRole } from "../../services/electionRole";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-export const useActivateElectionRole = (handleClose) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (electionRoleId) => activateRole(electionRoleId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["electionRoles"] });
-      if (handleClose) {
-        handleClose();
-      }
+import { activateElectionRole } from "../../services/electionRole";
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
 
-      toast.custom(
-        <ToastSuccess
-          title={"Activation Sucessfull"}
-          description={"Election Role Activated Successfully"}
-        />
-      );
-    },
+export const useActivateElectionRole = (handleClose) =>
+  useElectionMutation({
+    mutationFn: activateElectionRole,
+    invalidate: [
+      ["electionRoles"],
+      ["electionRole"],
+      ["electionRolesByElection"],
+      ["electionTypes"],
+      ["electionType"],
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Position Activated",
+    successDescription: "The position is open for new elections.",
+    onSuccess: closeAfter(handleClose),
   });
-};

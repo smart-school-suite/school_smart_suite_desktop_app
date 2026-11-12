@@ -1,287 +1,38 @@
-import { Dot } from "lucide-react";
-import { Fragment } from "react";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { NotFoundError } from "../../components/errors/Error";
-import CircularSkeleton from "../../components/SkeletonPageLoader/CircularSkeleton";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { useGetApplicationDetails } from "../../hooks/electionApplication/useGetApplicationDetails";
-import { isLastElement } from "../../utils/functions";
-function ElectionApplicationDetails({ handleClose, drawerData }) {
-  const { id: applicationId } = drawerData;
-  const {
-    data: applicationDetails,
-    isLoading,
-    error,
-  } = useGetApplicationDetails(applicationId);
+import ParticipantIdentity from "../../components/Election/ParticipantIdentity";
+import StatusPill from "../../components/Election/StatusPill";
+import { APPLICATION_STATUS, formatElectionDateTime } from "../../utils/election/electionDisplay";
+
+function Block({ label, children }) {
   return (
-    <>
-      <div
-        className="drawer-content ps-2 pt-3 font-size-sm"
-        style={{ paddingBottom: "10rem" }}
-      >
-        <div className="d-flex flex-column">
-          {isLoading ? (
-            <div className="d-flex flex-column gap-4">
-              <div className="d-flex flex-row align-items-center justify-content-center">
-                <div className="d-flex flex-column gap-2 align-items-center">
-                  <CircularSkeleton size={100} />
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <RectangleSkeleton width="4rem" height="1dvh" speed={0.5} />
-                    <RectangleSkeleton width="4rem" height="1dvh" speed={0.5} />
-                  </div>
-                </div>
-              </div>
-              {[...Array(6)].map((index) => (
-                <Fragment key={index}>
-                  <div className="d-flex flex-column gap-2">
-                    <RectangleSkeleton width="25%" height="1dvh" speed={0.5} />
-                    <RectangleSkeleton width="75%" height="1dvh" speed={0.5} />
-                  </div>
-                  {!isLastElement(index, [...Array(3)]) && (
-                    <HorizontalDashedLine
-                      dashed={false}
-                      color="#ccc"
-                      thickness={0.2}
-                    />
-                  )}
-                </Fragment>
-              ))}
-            </div>
-          ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
-          ) : (
-            <div className="d-flex flex-column gap-3">
-              <div className="d-flex flex-column align-items-center">
-                {applicationDetails?.data?.student?.profile_picture ? (
-                  <div
-                    style={{ width: "6rem", height: "6rem" }}
-                    className="rounded-circle"
-                  >
-                    <img
-                      src={`http://127.0.0.1:8000/storage/TeacherAvatars/${applicationDetails?.data?.student?.profile_picture}`}
-                      alt=""
-                      className="object-fit-cover w-100 h-100"
-                      style={{ borderRadius: "2.8rem" }}
-                    />
-                  </div>
-                ) : (
-                  <div className="d-flex flex-column align-items-center gap-3 font-size-sm">
-                    <div
-                      style={{
-                        width: "5rem",
-                        height: "5rem",
-                        display: "grid",
-                        placeItems: "center",
-                        flexShrink: 0,
-                      }}
-                      className="rounded-circle primary-background-100 color-primary 
-                         d-flex align-items-center justify-content-center fw-semibold
-                          overflow-hidden"
-                    >
-                      <span className="font-size-xl">
-                        {getInitials(
-                          applicationDetails?.data?.student?.first_name,
-                          applicationDetails?.data?.student?.last_name,
-                        )}
-                      </span>
-                    </div>
-                    <div className="d-flex flex-column align-items-center gap-1">
-                      <span
-                        style={{
-                          textOverflow: "ellipsis",
-                          overflow: "hidden",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {applicationDetails?.data?.student?.name}
-                      </span>
-                      <div className="d-flex flex-row align-items-center gap-2">
-                        <span
-                          style={{
-                            textOverflow: "ellipsis",
-                            overflow: "hidden",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {
-                            applicationDetails?.data?.student?.specialty
-                              ?.specialty_name
-                          }
-                        </span>
-                        <Dot />
-                        <span
-                          style={{
-                            textOverflow: "ellipsis",
-                            overflow: "hidden",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {
-                            applicationDetails?.data?.student?.specialty?.level
-                              ?.name
-                          }
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="d-flex flex-column gap-3">
-                <span className="fw-light text-iron-400">Student Details</span>
-                <div className="d-flex flex-column gap-2">
-                  <div className="d-flex flex-column gap-1">
-                    <span className="fw-light">Full Names</span>
-                    <span className="fw-medium">
-                      {applicationDetails?.data?.student?.name}
-                    </span>
-                  </div>
-                  <HorizontalDashedLine
-                    dashed={false}
-                    color="#ccc"
-                    thickness={0.2}
-                  />
-                  <div className="d-flex flex-column gap-1">
-                    <span className="fw-light">First Name</span>
-                    <span className="fw-medium">
-                      {applicationDetails?.data?.student?.first_name}
-                    </span>
-                  </div>
-                  <HorizontalDashedLine
-                    dashed={false}
-                    color="#ccc"
-                    thickness={0.2}
-                  />
-                  <div className="d-flex flex-column gap-1">
-                    <span className="fw-light">Last Name</span>
-                    <span className="fw-medium">
-                      {applicationDetails?.data?.student?.last_name}
-                    </span>
-                  </div>
-                  <HorizontalDashedLine
-                    dashed={false}
-                    color="#ccc"
-                    thickness={0.2}
-                  />
-                  <div className="d-flex flex-column gap-1">
-                    <span className="fw-light">Specialty</span>
-                    <span className="fw-medium">
-                      {
-                        applicationDetails?.data?.student?.specialty
-                          ?.specialty_name
-                      }
-                    </span>
-                  </div>
-                  <HorizontalDashedLine
-                    dashed={false}
-                    color="#ccc"
-                    thickness={0.2}
-                  />
-                  <div className="d-flex flex-column gap-1">
-                    <span className="fw-light">Level</span>
-                    <span className="fw-medium">
-                      {
-                        applicationDetails?.data?.student?.specialty?.level
-                          ?.name
-                      }
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="d-flex flex-column gap-3">
-                <span className="fw-light text-iron-400">Role Detail</span>
-                <div className="d-flex flex-column gap-2">
-                  <div className="d-flex flex-column gap-1">
-                    <span className="fw-light">Role Title</span>
-                    <span className="fw-medium">
-                      {applicationDetails?.data?.election_role?.name}
-                    </span>
-                  </div>
-                  <HorizontalDashedLine
-                    dashed={false}
-                    color="#ccc"
-                    thickness={0.2}
-                  />
-                  <div className="d-flex flex-column gap-1">
-                    <span className="fw-light">Description</span>
-                    <span className="fw-medium">
-                      {applicationDetails?.data?.election_role?.description}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="d-flex flex-column gap-3">
-                <span className="fw-light text-iron-400">
-                  Application Detail
-                </span>
-                <div className="d-flex flex-column gap-2">
-                  <div className="d-flex flex-column gap-1">
-                    <span className="fw-light">Manifesto</span>
-                    <span className="fw-medium">
-                      {
-                        applicationDetails?.data?.manifesto
-                      }
-                    </span>
-                  </div>
-                  <HorizontalDashedLine
-                    dashed={false}
-                    color="#ccc"
-                    thickness={0.2}
-                  />
-                  <div className="d-flex flex-column gap-1">
-                    <span className="fw-light">Personal Vision</span>
-                    <span className="fw-medium">
-                      {
-                        applicationDetails?.data?.personal_vision
-                      }
-                    </span>
-                  </div>
-                  <HorizontalDashedLine
-                    dashed={false}
-                    color="#ccc"
-                    thickness={0.2}
-                  />
-                  <div className="d-flex flex-column gap-1">
-                    <span className="fw-light">Commitment Statement</span>
-                    <span className="fw-medium">
-                      {
-                        applicationDetails?.data?.commitment_statement
-                      }
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="drawer-footer font-size-sm">
-        <div className="d-flex flex-column w-100">
-          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
-          <div className="d-flex flex-row align-items-center justify-content-between py-3 px-2">
-            <button
-              className="border-none bg-none"
-              onClick={() => handleClose()}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+    <div className="d-flex flex-column gap-1 py-2 border-bottom">
+      <span className="text-iron-500 font-size-xs">{label}</span>
+      <span className="font-size-sm" style={{ whiteSpace: "pre-line", lineHeight: 1.6 }}>{children || "—"}</span>
+    </div>
   );
 }
-export default ElectionApplicationDetails;
 
-function getInitials(firstName, lastName) {
-  if (!firstName || !lastName) {
-    return "";
-  }
-
-  const firstInitial = firstName.charAt(0).toUpperCase();
-  const lastInitial = lastName.charAt(0).toUpperCase();
-
-  return firstInitial + lastInitial;
+/** Application details from the table row (drawerData: an application). */
+function ElectionApplicationDetails({ drawerData: application }) {
+  return (
+    <div className="drawer-content px-2 pt-2 pb-4 d-flex flex-column gap-2">
+      <ParticipantIdentity
+        person={application?.applicant}
+        name={application?.applicant_name}
+        type={application?.applicant_type}
+        trailing={<StatusPill meta={APPLICATION_STATUS[application?.application_status]} />}
+      />
+      <div className="d-flex flex-column">
+        <Block label="Election">{application?.election_title}</Block>
+        <Block label="Position">{application?.position?.name}</Block>
+        <Block label="Manifesto">{application?.manifesto}</Block>
+        <Block label="Personal vision">{application?.personal_vision}</Block>
+        <Block label="Commitment statement">{application?.commitment_statement}</Block>
+        {application?.review_remarks && <Block label="Review remarks">{application.review_remarks}</Block>}
+        <Block label="Submitted">{formatElectionDateTime(application?.created_at)}</Block>
+        {application?.reviewed_at && <Block label="Reviewed">{formatElectionDateTime(application.reviewed_at)}</Block>}
+      </div>
+    </div>
+  );
 }
+
+export default ElectionApplicationDetails;

@@ -1,24 +1,17 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { reinstateCandidate } from "../../services/electionCandidate";
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
 
-export const useReinstateCandidate = (handleClose) => {
-  const queryClient = useQueryClient();
-  return useMutation({
+export const useReinstateCandidate = (handleClose) =>
+  useElectionMutation({
     mutationFn: reinstateCandidate,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["electionCandidates"] });
-      if (handleClose) {
-        handleClose();
-      }
-
-      toast.custom(
-        <ToastSuccess
-          title={"Reinstation Successfull"}
-          description={"Election Candidates Reinstated Successfully"}
-        />
-      );
-    },
+    invalidate: [
+      ["electionCandidates"],
+      ["electionCandidate"],
+      ["electionBallot"],
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Candidate Reinstated",
+    successDescription: "The candidate is back on the ballot.",
+    onSuccess: closeAfter(handleClose),
   });
-};

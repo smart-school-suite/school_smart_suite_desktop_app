@@ -1,28 +1,19 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bulkDeleteRole } from "../../services/electionRole";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
-export const useBulkDeleteElectionRole = (handleClose, resetAll) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: bulkDeleteRole,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["electionRoles"] });
+import { bulkDeleteElectionRole } from "../../services/electionRole";
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
 
-      if (resetAll) {
-        resetAll();
-      }
-
-      if (handleClose) {
-        handleClose();
-      }
-
-      toast.custom(
-        <ToastSuccess
-          title={"Delete Successfull"}
-          description={"Election Roles Deleted Successfully"}
-        />
-      );
-    },
+export const useBulkDeleteElectionRole = (handleClose, resetAll) =>
+  useElectionMutation({
+    mutationFn: bulkDeleteElectionRole,
+    invalidate: [
+      ["electionRoles"],
+      ["electionRole"],
+      ["electionRolesByElection"],
+      ["electionTypes"],
+      ["electionType"],
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Positions Deleted",
+    successDescription: "The selected positions were deleted.",
+    onSuccess: closeAfter(handleClose, resetAll),
   });
-};

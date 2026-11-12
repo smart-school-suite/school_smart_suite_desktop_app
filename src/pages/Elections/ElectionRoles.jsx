@@ -1,3 +1,8 @@
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import { serverErrorCopy } from "../../utils/election/electionDisplay";
+import { Plus } from "lucide-react";
+import CreateElectionRole from "../../DrawerContent/ElectionRole/CreateElectionRole";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { Icon } from "@iconify/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -6,7 +11,6 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -55,7 +59,16 @@ function ElectionRoles() {
     });
   }, []);
   const memoizedRowData = useMemo(() => {
-    return electionRoles?.data ?? [];
+    return (electionRoles?.data ?? []).map((role) => {
+      const term = role.office_term;
+      const years = term?.duration_academic_years ?? 1;
+      return {
+        ...role,
+        election_type_title: role.election_type?.election_title,
+        seats: role.seats ?? 1,
+        tenure: `${years} year${years > 1 ? "s" : ""} · ${term?.allow_reelection ? `up to ${term.maximum_terms ?? "∞"} terms` : "no re-election"}`,
+      };
+    });
   }, [electionRoles]);
   const handleRowDataFromChild = useCallback((Data) => {
     setSelectedRoles(Data);
@@ -71,18 +84,44 @@ function ElectionRoles() {
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
           ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+            <EmptyState
+              mascot="error"
+              height="100%"
+              mascotHeight="7rem"
+              {...serverErrorCopy(error, "Unable to load positions", "Something went wrong while loading this list.")}
+            />
+          ) : memoizedRowData.length === 0 ? (
+            <EmptyState
+              mascot="sad"
+              height="100%"
+              mascotHeight="7rem"
+              title="No positions yet"
+              description="Positions are what people stand for, such as President or Secretary. Each belongs to an election type and has its own seats and office term."
+              actions={
+                <DrawerTrigger title="Create Position" placement="right" drawerChildren={CreateElectionRole}>
+                  <EmptyStateButton icon={Plus}>Create Position</EmptyStateButton>
+                </DrawerTrigger>
+              }
+            />
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">
                 <TableToolbar
                   filters={filters}
                   tableRef={tableRef}
-                  searchPlaceholder="Search Election Role"
+                  searchPlaceholder="Search positions"
                   onReset={handleResetSelections}
+                  actions={
+                    <DrawerTrigger title="Create Position" placement="right" drawerChildren={CreateElectionRole}>
+                      <button
+                        type="button"
+                        className="border-none rounded-3 font-size-sm px-3 primary-background text-white text-nowrap"
+                        style={{ padding: "0.38rem" }}
+                      >
+                        Create Position
+                      </button>
+                    </DrawerTrigger>
+                  }
                 />
                 <TableFilterLayout
                   filters={filters}
@@ -210,7 +249,7 @@ export function ActionComponent(props) {
           }
           onClick={() =>
             handleShowDrawer(UpdateElectionRole, {
-              title: "Update Election Role",
+              title: "Update Position",
               closeOnOutsideClick: true,
               showHeader: true,
             })
@@ -229,7 +268,7 @@ export function ActionComponent(props) {
           }
           onClick={() =>
             handleShowDrawer(ElectionRoleDetails, {
-              title: "Election Role Details",
+              title: "Position Details",
               closeOnOutsideClick: true,
               showHeader: true,
             })
@@ -237,7 +276,7 @@ export function ActionComponent(props) {
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Election Role Details</span>
+              <span>Position Details</span>
               <DetailsIcon />
             </div>
           </div>

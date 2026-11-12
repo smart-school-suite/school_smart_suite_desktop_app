@@ -23,18 +23,18 @@ export const deleteElectionType = async (electionTypeId) => {
 
 
 export const activateElectionType = async (electionTypeId) => {
-  const response = await axiosInstance.post(`election-type/${electionTypeId}/activate`);
+  const response = await axiosInstance.post(`election-type/activate/${electionTypeId}`);
   return response.data;
 };
 
 
 export const deactivateElectionType = async (electionTypeId) => {
-  const response = await axiosInstance.post(`election-type/${electionTypeId}/deactivate`);
+  const response = await axiosInstance.post(`election-type/deactivate/${electionTypeId}`);
   return response.data;
 };
 
 export const getActiveElectionTypes = async () => {
-  const response = await axiosInstance.get("active-election-type");
+  const response = await axiosInstance.get("election-type/active");
   return response.data;
 };
 

@@ -1,28 +1,17 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { bulkReinstateCandidates } from "../../services/electionCandidate";
+import { closeAfter, useElectionMutation } from "../election/useElectionMutation";
+import { ELECTION_STATE_KEYS } from "../election/electionQueryKeys";
 
-export const useBulkReinstateCandidates = (handleClose, resetAll) => {
-     const queryClient = useQueryClient();
-      return useMutation({
-         mutationFn:bulkReinstateCandidates,
-         onSuccess:() => {
-            queryClient.invalidateQueries({ queryKey: ["electionCandidates"] });
-              if(handleClose){
-                 handleClose();
-              }
-
-              if(resetAll){
-                 resetAll();
-              }
-
-              toast.custom(
-                 <ToastSuccess 
-                   title={"Reinstation Successfull"}
-                   description={"Election Candidates Reinstated Successfully"}
-                 />
-              )
-         },
-      })
- }
+export const useBulkReinstateCandidates = (handleClose, resetAll) =>
+  useElectionMutation({
+    mutationFn: bulkReinstateCandidates,
+    invalidate: [
+      ["electionCandidates"],
+      ["electionCandidate"],
+      ["electionBallot"],
+      ...ELECTION_STATE_KEYS,
+    ],
+    successTitle: "Candidates Reinstated",
+    successDescription: "The selected candidates were reinstated.",
+    onSuccess: closeAfter(handleClose, resetAll),
+  });

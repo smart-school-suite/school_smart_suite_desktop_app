@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllElectionApplications } from "../../services/electionApplication";
+import { getElectionApplications } from "../../services/electionApplication";
+import { electionKeys } from "../election/electionQueryKeys";
 
-export const useGetElectionApplications = () => {
-    return useQuery({
-            queryKey: ['electionApplications'],
-            queryFn: getAllElectionApplications,
-    });
-}
+export const useGetElectionApplications = (filters = {}, options = {}) =>
+  useQuery({
+    queryKey: electionKeys.applications(filters),
+    queryFn: () => getElectionApplications(filters),
+    ...options,
+  });
