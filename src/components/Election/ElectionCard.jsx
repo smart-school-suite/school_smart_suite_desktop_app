@@ -1,9 +1,10 @@
-import { CalendarRange, ChevronRight, FileText, UserRoundCheck, Vote } from "lucide-react";
+import { CalendarRange, FileText, UserRoundCheck, Vote } from "lucide-react";
 import {
   electionStatusMeta,
   formatRange,
   nextMilestone,
 } from "../../utils/election/electionDisplay";
+import ElectionActions from "./ElectionActions";
 import ElectionTimeline from "./ElectionTimeline";
 import StatusPill from "./StatusPill";
 
@@ -11,6 +12,8 @@ import StatusPill from "./StatusPill";
  * Fixed-size election summary used in grids (builds on .teacher-card).
  *
  *   <ElectionCard election={election} onOpen={(election) => navigate(...)} />
+ *
+ * The footer carries the election's actions, so it can be managed from the list.
  */
 export default function ElectionCard({ election, onOpen }) {
   const meta = electionStatusMeta(election?.status);
@@ -71,7 +74,7 @@ export default function ElectionCard({ election, onOpen }) {
               </span>
             ))}
           </div>
-          <ChevronRight size={16} className="text-iron-400" />
+          <ElectionActions election={election} />
         </div>
       </div>
     </div>
