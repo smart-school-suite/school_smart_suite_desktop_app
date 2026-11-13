@@ -1,5 +1,7 @@
 import { Award, FileText, GraduationCap, Percent, UserRoundCheck, Vote } from "lucide-react";
+import ElectionTimeline from "../../../components/Election/ElectionTimeline";
 import SectionCard from "../../../components/Election/SectionCard";
+import ElectionStatusHero from "./ElectionStatusHero";
 import StatTile from "../../../components/Election/StatTile";
 import EmptyState, { EmptyStateButton } from "../../../components/errors/EmptyState";
 import { useNavigate } from "react-router-dom";
@@ -36,7 +38,7 @@ function PositionRow({ position }) {
   );
 }
 
-export default function OverviewTab({ details }) {
+export default function OverviewTab({ details, onTab }) {
   const navigate = useNavigate();
   const election = details?.election;
   const participants = details?.participants;
@@ -45,6 +47,15 @@ export default function OverviewTab({ details }) {
 
   return (
     <div className="d-flex flex-column gap-3">
+      {/* 1. Where the election is and what to do next */}
+      <ElectionStatusHero details={details} onTab={onTab} />
+
+      {/* 2. How the whole election unfolds */}
+      <SectionCard title="Election journey" description="Each stage starts automatically on its scheduled date.">
+        <ElectionTimeline election={election} />
+      </SectionCard>
+
+      {/* 3. Key numbers */}
       <div className="d-grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(12rem, 1fr))" }}>
         <StatTile icon={Vote} label="Eligible voters" value={participants?.total_voters ?? 0} hint={breakdown(participants?.summary, "voters") || "Not configured"} />
         <StatTile icon={GraduationCap} label="Eligible applicants" value={participants?.total_applicants ?? 0} hint={breakdown(participants?.summary, "applicants") || "Not configured"} />
@@ -94,8 +105,6 @@ export default function OverviewTab({ details }) {
               ["Academic year", election?.system_academic_year?.name],
               ["Positions per applicant", election?.max_applications_per_participant ?? 1],
               ["Self-votes", election?.allow_candidate_self_vote ? "Allowed" : "Not allowed"],
-              ["Applications", `${formatElectionDateTime(election?.application_start)} → ${formatElectionDateTime(election?.application_end)}`],
-              ["Voting", `${formatElectionDateTime(election?.voting_start)} → ${formatElectionDateTime(election?.voting_end)}`],
               ["Results", election?.results_published_at ? formatElectionDateTime(election.results_published_at) : "Not published"],
             ].map(([label, value]) => (
               <div key={label} className="d-flex flex-column">
