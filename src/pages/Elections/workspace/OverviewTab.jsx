@@ -5,7 +5,7 @@ import ElectionStatusHero from "./ElectionStatusHero";
 import StatTile from "../../../components/Election/StatTile";
 import EmptyState, { EmptyStateButton } from "../../../components/errors/EmptyState";
 import { useNavigate } from "react-router-dom";
-import { PARTICIPANT_TYPES, formatElectionDateTime } from "../../../utils/election/electionDisplay";
+import { PARTICIPANT_TYPES } from "../../../utils/election/electionDisplay";
 
 const breakdown = (summary, key) =>
   Object.entries(summary ?? {})
@@ -71,53 +71,33 @@ export default function OverviewTab({ details, onTab }) {
         />
       </div>
 
-      <div className="d-grid gap-3" style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}>
-        <SectionCard
-          title="Positions on the ballot"
-          description={`From the ${election?.election_type?.election_title ?? "election"} type. Tenure rules come from each position's office term.`}
-          actions={
-            <button type="button" className="border rounded-3 bg-white font-size-xs px-2 py-1" onClick={() => navigate("/election-roles")}>
-              Manage positions
-            </button>
-          }
-        >
-          {positions.length === 0 ? (
-            <EmptyState
-              mascot="sad"
-              height="14rem"
-              mascotHeight="6rem"
-              title="No positions yet"
-              description="Add positions such as President or Secretary to this election type so people can apply."
-              actions={<EmptyStateButton icon={Award} onClick={() => navigate("/election-roles")}>Add Positions</EmptyStateButton>}
-            />
-          ) : (
-            <div className="d-flex flex-column">
-              {positions.map((position) => (
-                <PositionRow key={position.id} position={position} />
-              ))}
-            </div>
-          )}
-        </SectionCard>
-
-        <SectionCard title="Settings">
-          <dl className="d-flex flex-column gap-2 m-0 font-size-sm">
-            {[
-              ["Academic year", election?.system_academic_year?.name],
-              ["Positions per applicant", election?.max_applications_per_participant ?? 1],
-              ["Self-votes", election?.allow_candidate_self_vote ? "Allowed" : "Not allowed"],
-              ["Results", election?.results_published_at ? formatElectionDateTime(election.results_published_at) : "Not published"],
-            ].map(([label, value]) => (
-              <div key={label} className="d-flex flex-column">
-                <dt className="text-iron-500 font-size-xs fw-normal">{label}</dt>
-                <dd className="m-0">{value ?? "—"}</dd>
-              </div>
+      {/* 4. What is on the ballot */}
+      <SectionCard
+        title="Positions on the ballot"
+        description={`From the ${election?.election_type?.election_title ?? "election"} type. Tenure rules come from each position's office term.`}
+        actions={
+          <button type="button" className="border rounded-3 bg-white font-size-xs px-2 py-1" onClick={() => navigate("/election-roles")}>
+            Manage positions
+          </button>
+        }
+      >
+        {positions.length === 0 ? (
+          <EmptyState
+            mascot="sad"
+            height="14rem"
+            mascotHeight="6rem"
+            title="No positions yet"
+            description="Add positions such as President or Secretary to this election type so people can apply."
+            actions={<EmptyStateButton icon={Award} onClick={() => navigate("/election-roles")}>Add Positions</EmptyStateButton>}
+          />
+        ) : (
+          <div className="d-flex flex-column">
+            {positions.map((position) => (
+              <PositionRow key={position.id} position={position} />
             ))}
-          </dl>
-          {election?.description && (
-            <p className="m-0 mt-3 text-iron-600 font-size-sm" style={{ lineHeight: 1.6 }}>{election.description}</p>
-          )}
-        </SectionCard>
-      </div>
+          </div>
+        )}
+      </SectionCard>
     </div>
   );
 }
