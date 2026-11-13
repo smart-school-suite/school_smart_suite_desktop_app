@@ -1,76 +1,35 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { CalendarDays, Check } from "lucide-react";
-import { Fragment } from "react";
+import { Check } from "lucide-react";
 import {
   ELECTION_PHASES,
   formatElectionDate,
-  formatElectionDateTime,
   phaseIndexOf,
 } from "../../utils/election/electionDisplay";
-import Popover from "../Popover/Popover";
 
 const SHORT = "d MMM, HH:mm";
 
-// What matters about the current phase, shown next to its label.
-const currentCaption = (election) => {
-  switch (election?.status) {
-    case "draft":
-      return "not published";
-    case "upcoming":
-      return `opens ${formatElectionDate(election.application_start, SHORT)}`;
-    case "application_open":
-      return `until ${formatElectionDate(election.application_end, SHORT)}`;
-    case "application_closed":
-      return `voting ${formatElectionDate(election.voting_start, SHORT)}`;
-    case "voting_open":
-      return `until ${formatElectionDate(election.voting_end, SHORT)}`;
-    case "voting_closed":
-      return "awaiting publication";
-    default:
-      return null;
-  }
+// When each phase starts and ends (end may be open).
+const phaseWindows = (election) => ({
+  setup: [election?.created_at, election?.application_start],
+  applications: [election?.application_start, election?.application_end],
+  review: [election?.application_end, election?.voting_start],
+  voting: [election?.voting_start, election?.voting_end],
+  results: [election?.voting_end, election?.results_published_at],
+});
+
+const PHASE_HINT = {
+  setup: "Configure and publish",
+  applications: "Participants apply",
+  review: "Approve candidates",
+  voting: "Ballots are cast",
+  results: "Publish the winners",
 };
 
-function SchedulePopover({ election }) {
-  const rows = [
-    ["Applications open", election?.application_start],
-    ["Applications close", election?.application_end],
-    ["Voting opens", election?.voting_start],
-    ["Voting closes", election?.voting_end],
-    ["Results published", election?.results_published_at],
-  ];
-  return (
-    <Popover
-      ariaLabel="Show the full election schedule"
-      placement="bottom-end"
-      triggerClassName="border-none bg-transparent p-0 d-flex flex-row align-items-center gap-1 text-iron-500 font-size-xs flex-shrink-0"
-      trigger={
-        <>
-          <CalendarDays size={13} />
-          <span>Schedule</span>
-        </>
-      }
-    >
-      <dl className="m-0 d-flex flex-column gap-1" style={{ minWidth: "14rem" }}>
-        {rows.map(([label, value]) => (
-          <div key={label} className="d-flex flex-row justify-content-between gap-3">
-            <dt className="fw-normal text-iron-500">{label}</dt>
-            <dd className="m-0 fw-medium text-nowrap">{value ? formatElectionDateTime(value) : "—"}</dd>
-          </div>
-        ))}
-      </dl>
-    </Popover>
-  );
-}
-
 /**
- * Lifecycle progress of an election: Setup → Applications → Review → Voting → Results.
+ * Lifecycle of an election: Setup → Applications → Review → Voting → Results.
  *
- *   <ElectionTimeline election={election} />          // one-line stepper + schedule popover
  *   <ElectionTimeline election={election} compact />  // progress bar only (cards)
- *
- * Only the current phase is emphasised and carries its deadline; the full
- * schedule is one click away in the popover.
+ *   <ElectionTimeline election={election} />          // full journey with dates (overview)
  */
 export default function ElectionTimeline({ election, compact = false }) {
   const reduceMotion = useReducedMotion();
@@ -94,50 +53,54 @@ export default function ElectionTimeline({ election, compact = false }) {
     );
   }
 
-  const caption = currentCaption(election);
-  const live = election?.status === "voting_open";
+  const windows = phaseWindows(election);
 
   return (
-    <div className="d-flex flex-row align-items-center justify-content-between gap-3 font-size-xs" style={{ minHeight: "1.75rem" }}>
-      <ol className="d-flex flex-row align-items-center list-unstyled m-0 p-0 gap-2" aria-label="Election phases" style={{ minWidth: 0 }}>
-        {ELECTION_PHASES.map((phase, index) => {
-          const isDone = !cancelled && index < current;
-          const isActive = !cancelled && index === current;
-          return (
-            <Fragment key={phase.key}>
-              {index > 0 && (
-                <li aria-hidden="true" className={`rounded-pill flex-shrink-0 ${index <= current && !cancelled ? "bg-primary-300" : "bg-iron-200"}`} style={{ width: "1.25rem", height: 1.5 }} />
-              )}
-              <li
-                className={`d-flex flex-row align-items-center gap-1 text-nowrap ${
-                  isActive ? "text-primary-600 fw-semibold" : isDone ? "text-iron-600" : "text-iron-400"
+    <ol className="list-unstyled m-0 p-0 d-grid gap-2" style={{ gridTemplateColumns: `repeat(${ELECTION_PHASES.length}, minmax(0, 1fr))` }} aria-label="Election phases">
+      {ELECTION_PHASES.map((phase, index) => {
+        const isDone = !cancelled && index < current;
+        const isActive = !cancelled && index === current;
+        const [start, end] = windows[phase.key];
+        const state = cancelled ? "Cancelled" : isDone ? "Done" : isActive ? "In progress" : "Up next";
+        return (
+          <li
+            key={phase.key}
+            aria-current={isActive ? "step" : undefined}
+            className={`d-flex flex-column gap-2 rounded-3 p-2 ${isActive ? "bg-primary-50" : ""}`}
+            style={{ minWidth: 0 }}
+          >
+            <div className="d-flex flex-row align-items-center gap-2">
+              <span
+                className={`d-grid rounded-circle flex-shrink-0 fw-semibold ${
+                  isDone ? "bg-primary-500 text-white" : isActive ? "bg-white border border-primary-500 text-primary-600" : "bg-white border border-iron-300 text-iron-400"
                 }`}
-                aria-current={isActive ? "step" : undefined}
+                style={{ width: "1.5rem", height: "1.5rem", placeItems: "center", fontSize: "0.7rem" }}
               >
-                <span
-                  className={`d-grid rounded-circle flex-shrink-0 position-relative ${
-                    isDone ? "bg-primary-500 text-white" : isActive ? "bg-primary-50 border border-primary-500" : "border border-iron-300"
-                  }`}
-                  style={{ width: "0.9rem", height: "0.9rem", placeItems: "center" }}
-                >
-                  {isDone && <Check size={9} strokeWidth={3.5} />}
-                  {isActive && (
-                    <motion.span
-                      className="rounded-circle bg-primary-500"
-                      style={{ width: 5, height: 5 }}
-                      animate={live && !reduceMotion ? { scale: [1, 1.5, 1] } : undefined}
-                      transition={{ duration: 1.4, repeat: Infinity }}
-                    />
-                  )}
-                </span>
-                <span>{phase.label}</span>
-                {isActive && caption && <span className="fw-normal text-iron-500">· {caption}</span>}
-              </li>
-            </Fragment>
-          );
-        })}
-      </ol>
-      <SchedulePopover election={election} />
-    </div>
+                {isDone ? <Check size={12} strokeWidth={3} /> : index + 1}
+              </span>
+              <div className={`flex-grow-1 rounded-pill ${isDone ? "bg-primary-300" : "bg-iron-200"}`} style={{ height: 2 }} aria-hidden="true" />
+            </div>
+            <div className="d-flex flex-column" style={{ minWidth: 0 }}>
+              <span className={`font-size-sm fw-semibold text-truncate ${isActive ? "text-primary-700" : isDone ? "text-iron-800" : "text-iron-500"}`}>
+                {phase.label}
+              </span>
+              <span className="text-iron-500 text-truncate" style={{ fontSize: "0.7rem" }}>{PHASE_HINT[phase.key]}</span>
+              <span className="text-iron-600 text-truncate mt-1" style={{ fontSize: "0.7rem" }} title={`${formatElectionDate(start, SHORT)} → ${formatElectionDate(end, SHORT)}`}>
+                {formatElectionDate(start, "d MMM")}
+                {end ? ` → ${formatElectionDate(end, "d MMM")}` : ""}
+              </span>
+            </div>
+            <span
+              className={`align-self-start rounded-pill px-2 fw-semibold ${
+                isActive ? "bg-primary-500 text-white" : isDone ? "bg-fern-50 text-fern-600" : "bg-iron-100 text-iron-500"
+              }`}
+              style={{ fontSize: "0.65rem", lineHeight: "1.25rem" }}
+            >
+              {state}
+            </span>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
