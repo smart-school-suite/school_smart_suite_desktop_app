@@ -8,6 +8,7 @@ import {
   MoreHorizontal,
   Pencil,
   Rocket,
+  Settings2,
   Trash2,
   UsersRound,
 } from "lucide-react";
@@ -15,6 +16,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfigureParticipants from "../../DrawerContent/Election/ConfigureParticipants";
 import UpdateElection from "../../DrawerContent/Election/UpdateElection";
+import ElectionSettingsDialog from "../../ModalContent/Elections/ElectionSettingsDialog";
 import {
   CancelElectionDialog,
   CloseVotingDialog,
@@ -41,6 +43,7 @@ export function electionActions(election) {
   const tab = (name) => `/elections/${election?.id}?tab=${name}`;
   const actions = [];
 
+  actions.push({ key: "settings", label: "Election settings", icon: Settings2, kind: "modal", component: ElectionSettingsDialog });
   if (!locked) {
     actions.push({ key: "edit", label: "Edit details", icon: Pencil, kind: "drawer", component: UpdateElection, title: "Edit Election" });
     actions.push({ key: "participants", label: "Voters & candidates", icon: UsersRound, kind: "drawer", component: ConfigureParticipants, title: "Election Participants" });
@@ -151,7 +154,14 @@ export default function ElectionActions({ election }) {
         {active?.kind === "drawer" && <ActiveComponent handleClose={close} drawerData={{ election }} />}
       </Drawer>
       <CustomModal show={active?.kind === "modal"} handleClose={close} size="md" centered>
-        {active?.kind === "modal" && <ActiveComponent rowData={election} handleClose={close} />}
+        {active?.kind === "modal" && (
+          <ActiveComponent
+            rowData={election}
+            handleClose={close}
+            // the settings dialog hands over to the edit drawer
+            onEdit={() => setActive(actions.find((action) => action.key === "edit") ?? null)}
+          />
+        )}
       </CustomModal>
     </div>
   );
