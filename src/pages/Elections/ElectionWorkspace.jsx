@@ -221,7 +221,7 @@ function ElectionWorkspace() {
             <span className="fw-semibold font-size-sm text-truncate" title={title}>{title}</span>
             <StatusPill meta={meta} pulse={election?.status === "voting_open"} />
             <span className="text-iron-400 font-size-xs text-truncate d-none d-lg-inline">
-              {election?.election_type?.election_title} · {election?.system_academic_year?.name} · {nextMilestone(election) ?? meta.description}
+              {election?.election_type?.election_title} · {election?.system_academic_year?.name}
             </span>
           </div>
           <div className="d-flex flex-row align-items-center gap-2 flex-shrink-0">
@@ -262,7 +262,7 @@ function ElectionWorkspace() {
             )}
           </div>
         </div>
-        <div className="pt-1 pb-3" style={{ paddingInline: "var(--app-gutter)" }}>
+        <div className="pb-2" style={{ paddingInline: "var(--app-gutter)" }}>
           <ElectionTimeline election={election} />
         </div>
         <div className="page-head__tabs d-flex flex-row align-items-center gap-4 font-size-sm" role="tablist" aria-label="Election sections">
