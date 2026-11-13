@@ -1,16 +1,11 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Crown, Rocket, UsersRound } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import DrawerTrigger from "../../components/drawer/DrawerTrigger";
-import ElectionTimeline from "../../components/Election/ElectionTimeline";
 import StatusPill from "../../components/Election/StatusPill";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import ConfigureParticipants from "../../DrawerContent/Election/ConfigureParticipants";
 import { useGetElectionDetails } from "../../hooks/election/useGetElectionDetail";
-import { PublishElectionDialog } from "../../ModalContent/Elections/ElectionLifecycleDialogs";
-import { electionStatusMeta, nextMilestone, relativeTo, serverErrorCopy } from "../../utils/election/electionDisplay";
+import { electionStatusMeta, serverErrorCopy } from "../../utils/election/electionDisplay";
 import ApplicationsTab from "./workspace/ApplicationsTab";
 import CandidatesTab from "./workspace/CandidatesTab";
 import OverviewTab from "./workspace/OverviewTab";
@@ -27,95 +22,6 @@ const TABS = [
   { key: "participants", label: "Participants" },
 ];
 
-
-/** The single most useful next action for an administrator, per lifecycle state. */
-function NextStep({ details, onTab }) {
-  const election = details?.election;
-  const positions = details?.positions ?? [];
-  const participants = details?.participants;
-  const navigate = useNavigate();
-
-  let step = null;
-  switch (election?.status) {
-    case "draft":
-      if (positions.filter((p) => p.status === "active").length === 0) {
-        step = {
-          title: "Add positions to contest",
-          description: `The ${election?.election_type?.election_title ?? ""} type has no active positions yet.`,
-          action: <EmptyStateButton onClick={() => navigate("/election-roles")}>Manage positions</EmptyStateButton>,
-        };
-      } else if (!participants?.total_voters || !participants?.total_applicants) {
-        step = {
-          title: "Choose who takes part",
-          description: "Decide who can vote and who can apply before publishing.",
-          action: (
-            <DrawerTrigger title="Election Participants" drawerChildren={ConfigureParticipants} drawerData={{ election }}>
-              <EmptyStateButton icon={UsersRound}>Configure participants</EmptyStateButton>
-            </DrawerTrigger>
-          ),
-        };
-      } else {
-        step = {
-          title: "Ready to publish",
-          description: `${participants.total_voters} voters and ${participants.total_applicants} possible applicants are set up across ${positions.length} position(s).`,
-          action: (
-            <ModalButton action={{ modalContent: PublishElectionDialog }} rowData={election}>
-              <EmptyStateButton icon={Rocket}>Publish election</EmptyStateButton>
-            </ModalButton>
-          ),
-        };
-      }
-      break;
-    case "upcoming":
-      step = {
-        title: "Published and waiting",
-        description: `${nextMilestone(election)}. Eligible participants will be able to apply from then.`,
-        action: <EmptyStateButton onClick={() => onTab("participants")}>View participants</EmptyStateButton>,
-      };
-      break;
-    case "application_open":
-    case "application_closed":
-      step = {
-        title: election.status === "application_open" ? "Applications are coming in" : "Finish reviewing applications",
-        description: `Approve or reject applications before voting opens ${relativeTo(election.voting_start) ?? ""}.`,
-        action: <EmptyStateButton onClick={() => onTab("applications")}>Review applications</EmptyStateButton>,
-      };
-      break;
-    case "voting_open":
-      step = {
-        title: "Voting is live",
-        description: `${details?.turnout?.voters_participated ?? 0} of ${details?.turnout?.eligible_voters ?? 0} eligible voters have voted so far.`,
-        action: <EmptyStateButton onClick={() => onTab("results")}>Follow live results</EmptyStateButton>,
-      };
-      break;
-    case "voting_closed":
-      step = {
-        title: "Publish the results",
-        description: "Check the count and confirm the winners. Winners become office holders for their tenure.",
-        action: <EmptyStateButton icon={Crown} onClick={() => onTab("results")}>Review results</EmptyStateButton>,
-      };
-      break;
-    default:
-      step = null;
-  }
-  if (!step) return null;
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="d-flex flex-row align-items-center justify-content-between gap-3 bg-primary-50 rounded-4 px-3 py-2"
-    >
-      <div className="d-flex flex-row align-items-center gap-3" style={{ minWidth: 0 }}>
-        <img src="/sss-maskot/happy.png" alt="" aria-hidden="true" draggable={false} style={{ height: "3rem", width: "auto", objectFit: "contain" }} />
-        <div className="d-flex flex-column" style={{ minWidth: 0 }}>
-          <span className="fw-semibold font-size-sm text-primary-800">{step.title}</span>
-          <span className="font-size-xs text-iron-600 text-truncate">{step.description}</span>
-        </div>
-      </div>
-      <div className="flex-shrink-0">{step.action}</div>
-    </motion.div>
-  );
-}
 
 function ElectionWorkspace() {
   const { electionId } = useParams();
@@ -192,9 +98,6 @@ function ElectionWorkspace() {
             </span>
           </div>
         </div>
-        <div className="pb-2" style={{ paddingInline: "var(--app-gutter)" }}>
-          <ElectionTimeline election={election} />
-        </div>
         <div className="page-head__tabs d-flex flex-row align-items-center gap-4 font-size-sm" role="tablist" aria-label="Election sections">
         {TABS.map((item) => {
           const active = item.key === tab;
@@ -226,10 +129,8 @@ function ElectionWorkspace() {
         </div>
       </div>
 
-      <NextStep details={details} onTab={setTab} />
-
       <div className="flex-grow-1 scroll-bar-sm over-flow-y-auto over-flow-x-hidden pe-1 pb-3" style={{ minHeight: 0 }}>
-        {tab === "overview" && <OverviewTab details={details} />}
+        {tab === "overview" && <OverviewTab details={details} onTab={setTab} />}
         {tab === "applications" && <ApplicationsTab election={election} />}
         {tab === "candidates" && <CandidatesTab election={election} positions={details?.positions} />}
         {tab === "results" && <ResultsTab election={election} />}
