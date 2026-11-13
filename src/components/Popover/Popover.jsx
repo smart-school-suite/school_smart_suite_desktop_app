@@ -24,6 +24,9 @@ const stop = (event) => event.stopPropagation();
  *   <Popover trigger="+2" triggerClassName="..." ariaLabel="Show 2 more">
  *     ...content...
  *   </Popover>
+ *
+ * Children may be a function receiving `close`, e.g. for menus that close
+ * when an item is picked:  {({ close }) => <button onClick={close}>…</button>}
  */
 export default function Popover({
   trigger,
@@ -67,7 +70,7 @@ export default function Popover({
             className="app-popover"
             {...getFloatingProps({ onClick: stop, onKeyDown: stop })}
           >
-            {children}
+            {typeof children === "function" ? children({ close: () => setIsOpen(false) }) : children}
           </div>
         </FloatingPortal>
       )}
