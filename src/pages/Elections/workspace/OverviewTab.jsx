@@ -4,7 +4,10 @@ import SectionCard from "../../../components/Election/SectionCard";
 import ElectionStatusHero from "./ElectionStatusHero";
 import StatTile from "../../../components/Election/StatTile";
 import EmptyState, { EmptyStateButton } from "../../../components/errors/EmptyState";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import Table from "../../../components/Tables/Tables";
+import { electionBallotPositionColDefs } from "../../../utils/table/colDefs/election/electionBallotPositionColDefs";
 import { PARTICIPANT_TYPES } from "../../../utils/election/electionDisplay";
 
 const breakdown = (summary, key) =>
@@ -13,30 +16,12 @@ const breakdown = (summary, key) =>
     .map(([type, counts]) => `${PARTICIPANT_TYPES[type]?.plural ?? type} ${counts[key]}`)
     .join(" · ");
 
-function PositionRow({ position }) {
-  const term = position?.office_term;
-  const termText = term
+const tenureText = (term) =>
+  term
     ? `${term.duration_academic_years} academic year${term.duration_academic_years > 1 ? "s" : ""} · ${
         term.allow_reelection ? `up to ${term.maximum_terms ?? "unlimited"} terms` : "no re-election"
       }`
     : "1 academic year · no re-election (default)";
-  return (
-    <div className="d-flex flex-row align-items-center justify-content-between gap-3 py-2 border-bottom">
-      <div className="d-flex flex-column" style={{ minWidth: 0 }}>
-        <div className="d-flex flex-row align-items-center gap-2">
-          <span className="fw-semibold font-size-sm text-truncate">{position.name}</span>
-          {position.status !== "active" && <span className="pill-sm-warning">Inactive</span>}
-        </div>
-        <span className="text-iron-500 font-size-xs text-truncate">{termText}</span>
-      </div>
-      <div className="d-flex flex-row align-items-center gap-3 font-size-xs text-iron-500 flex-shrink-0">
-        <span title="Seats"><span className="fw-semibold text-iron-700">{position.seats ?? 1}</span> seat{(position.seats ?? 1) > 1 ? "s" : ""}</span>
-        <span title="Applications"><span className="fw-semibold text-iron-700">{position.applications_count ?? 0}</span> applied</span>
-        <span title="Candidates"><span className="fw-semibold text-iron-700">{position.candidates_count ?? 0}</span> standing</span>
-      </div>
-    </div>
-  );
-}
 
 export default function OverviewTab({ details, onTab }) {
   const navigate = useNavigate();
@@ -44,6 +29,18 @@ export default function OverviewTab({ details, onTab }) {
   const participants = details?.participants;
   const turnout = details?.turnout;
   const positions = details?.positions ?? [];
+  const colDefs = useMemo(() => electionBallotPositionColDefs(), []);
+  const rowData = useMemo(
+    () =>
+      positions.map((position) => ({
+        ...position,
+        seats: position.seats ?? 1,
+        tenure: tenureText(position.office_term),
+        applications_count: position.applications_count ?? 0,
+        candidates_count: position.candidates_count ?? 0,
+      })),
+    [positions],
+  );
 
   return (
     <div className="d-flex flex-column gap-3">
@@ -91,10 +88,9 @@ export default function OverviewTab({ details, onTab }) {
             actions={<EmptyStateButton icon={Award} onClick={() => navigate("/election-roles")}>Add Positions</EmptyStateButton>}
           />
         ) : (
-          <div className="d-flex flex-column">
-            {positions.map((position) => (
-              <PositionRow key={position.id} position={position} />
-            ))}
+          // header + rows + pagination bar, capped so long ballots scroll inside the grid
+          <div style={{ height: `${Math.min(positions.length, 8) * 42 + 48 + 56}px` }}>
+            <Table colDefs={colDefs} rowData={rowData} rowHeight={42} />
           </div>
         )}
       </SectionCard>
