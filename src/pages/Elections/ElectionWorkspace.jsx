@@ -1,15 +1,5 @@
 import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  Ban,
-  Crown,
-  Lock,
-  Pencil,
-  Rocket,
-  Trash2,
-  UsersRound,
-} from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowLeft, Crown, Rocket, UsersRound } from "lucide-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
@@ -18,14 +8,8 @@ import StatusPill from "../../components/Election/StatusPill";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import ConfigureParticipants from "../../DrawerContent/Election/ConfigureParticipants";
-import UpdateElection from "../../DrawerContent/Election/UpdateElection";
 import { useGetElectionDetails } from "../../hooks/election/useGetElectionDetail";
-import {
-  CancelElectionDialog,
-  CloseVotingDialog,
-  DeleteElectionDialog,
-  PublishElectionDialog,
-} from "../../ModalContent/Elections/ElectionLifecycleDialogs";
+import { PublishElectionDialog } from "../../ModalContent/Elections/ElectionLifecycleDialogs";
 import { electionStatusMeta, nextMilestone, relativeTo, serverErrorCopy } from "../../utils/election/electionDisplay";
 import ApplicationsTab from "./workspace/ApplicationsTab";
 import CandidatesTab from "./workspace/CandidatesTab";
@@ -43,19 +27,6 @@ const TABS = [
   { key: "participants", label: "Participants" },
 ];
 
-function HeaderButton({ icon: ButtonIcon, children, variant = "secondary" }) {
-  const styles = {
-    primary: "border-none primary-background text-white",
-    secondary: "border bg-white",
-    danger: "border bg-white text-red-500",
-  }[variant];
-  return (
-    <span className={`rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 ${styles}`}>
-      {ButtonIcon && <ButtonIcon size={14} />}
-      <span>{children}</span>
-    </span>
-  );
-}
 
 /** The single most useful next action for an administrator, per lifecycle state. */
 function NextStep({ details, onTab }) {
@@ -161,10 +132,6 @@ function ElectionWorkspace() {
   const meta = electionStatusMeta(election?.status);
   const locked = LOCKED.includes(election?.status);
 
-  const deleteDialog = useMemo(
-    () => (props) => <DeleteElectionDialog {...props} onSuccessNavigate={() => navigate("/elections")} />,
-    [navigate],
-  );
 
   if (isLoading) {
     return (
@@ -223,43 +190,6 @@ function ElectionWorkspace() {
             <span className="text-iron-400 font-size-xs text-truncate d-none d-lg-inline">
               {election?.election_type?.election_title} · {election?.system_academic_year?.name}
             </span>
-          </div>
-          <div className="d-flex flex-row align-items-center gap-2 flex-shrink-0">
-            {!locked && (
-              <>
-                <DrawerTrigger title="Edit Election" drawerChildren={UpdateElection} drawerData={{ election }}>
-                  <HeaderButton icon={Pencil}>Edit</HeaderButton>
-                </DrawerTrigger>
-                <DrawerTrigger title="Election Participants" drawerChildren={ConfigureParticipants} drawerData={{ election }}>
-                  <HeaderButton icon={UsersRound}>Participants</HeaderButton>
-                </DrawerTrigger>
-              </>
-            )}
-            {election?.status === "draft" && (
-              <ModalButton action={{ modalContent: deleteDialog }} rowData={election}>
-                <HeaderButton icon={Trash2} variant="danger">Delete</HeaderButton>
-              </ModalButton>
-            )}
-            {!["draft", "completed", "cancelled"].includes(election?.status) && (
-              <ModalButton action={{ modalContent: CancelElectionDialog }} rowData={election}>
-                <HeaderButton icon={Ban} variant="danger">Cancel</HeaderButton>
-              </ModalButton>
-            )}
-            {election?.status === "cancelled" && (
-              <ModalButton action={{ modalContent: deleteDialog }} rowData={election}>
-                <HeaderButton icon={Trash2} variant="danger">Delete</HeaderButton>
-              </ModalButton>
-            )}
-            {election?.status === "voting_open" && (
-              <ModalButton action={{ modalContent: CloseVotingDialog }} rowData={election}>
-                <HeaderButton icon={Lock} variant="primary">Close voting</HeaderButton>
-              </ModalButton>
-            )}
-            {election?.status === "draft" && (
-              <ModalButton action={{ modalContent: PublishElectionDialog }} rowData={election}>
-                <HeaderButton icon={Rocket} variant="primary">Publish</HeaderButton>
-              </ModalButton>
-            )}
           </div>
         </div>
         <div className="pb-2" style={{ paddingInline: "var(--app-gutter)" }}>

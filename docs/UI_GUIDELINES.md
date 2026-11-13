@@ -33,6 +33,8 @@ small variation; add a prop to the shared component rather than copying it.
 | KPI tile / white panel with header | `components/Election/StatTile` / `components/Election/SectionCard` |
 | Who-can-vote / who-can-apply audience picker | `components/Election/ParticipantAudiencePicker` |
 | Election card, lifecycle timeline, vote share bar, office holder card | `components/Election/*` |
+| Primary action + "⋯" menu for an election (dialogs/drawers stay open after the menu closes) | `components/Election/ElectionActions` |
+| Menu that closes when an item is picked | `components/Popover/Popover` with children as `({ close }) => …` |
 
 Only create a new component when nothing reusable exists, and put it in
 `src/components/` so the next page can use it. Pieces that only one page
