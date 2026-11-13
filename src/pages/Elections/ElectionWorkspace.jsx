@@ -50,7 +50,7 @@ function HeaderButton({ icon: ButtonIcon, children, variant = "secondary" }) {
     danger: "border bg-white text-red-500",
   }[variant];
   return (
-    <span className={`rounded-3 font-size-sm px-3 py-2 d-flex flex-row align-items-center gap-1 ${styles}`}>
+    <span className={`rounded-3 font-size-sm px-2 py-1 d-flex flex-row align-items-center gap-1 ${styles}`}>
       {ButtonIcon && <ButtonIcon size={14} />}
       <span>{children}</span>
     </span>
@@ -201,23 +201,27 @@ function ElectionWorkspace() {
   const title = election?.title || election?.election_type?.election_title || "Election";
 
   return (
-    <div className="d-flex flex-column gap-3 h-100" style={{ minHeight: 0 }}>
-      <div className="bg-white border rounded-4 p-3 d-flex flex-column gap-3 flex-shrink-0">
-        <div className="d-flex flex-row align-items-start justify-content-between gap-3">
-          <div className="d-flex flex-column gap-1" style={{ minWidth: 0 }}>
+    <div className="d-flex flex-column gap-2 h-100" style={{ minHeight: 0 }}>
+      {/* Same header bar as the other election pages: flush with the sidebar,
+          the title row matches the sidebar's logo row and the tabs sit on its
+          bottom border. */}
+      <div className="page-head">
+        <div className="d-flex flex-row align-items-center justify-content-between gap-3">
+          <div className="d-flex flex-row align-items-center gap-2" style={{ minWidth: 0 }}>
             <button
               type="button"
-              className="border-none bg-none p-0 d-flex flex-row align-items-center gap-1 text-iron-500 font-size-xs"
+              className="border rounded-2 bg-white p-0 d-grid flex-shrink-0 text-iron-600"
+              style={{ width: "1.75rem", height: "1.75rem", placeItems: "center" }}
               onClick={() => navigate("/elections")}
+              aria-label="Back to all elections"
+              title="All elections"
             >
-              <ArrowLeft size={13} /> All elections
+              <ArrowLeft size={14} />
             </button>
-            <div className="d-flex flex-row align-items-center gap-2" style={{ minWidth: 0 }}>
-              <span className="fw-semibold text-truncate" style={{ fontSize: "1.1rem" }} title={title}>{title}</span>
-              <StatusPill meta={meta} pulse={election?.status === "voting_open"} />
-            </div>
-            <span className="text-iron-500 font-size-xs">
-              {election?.election_type?.election_title} · {election?.system_academic_year?.name} · {nextMilestone(election) ?? meta.description}
+            <span className="fw-semibold font-size-sm text-truncate" title={title}>{title}</span>
+            <StatusPill meta={meta} pulse={election?.status === "voting_open"} />
+            <span className="text-iron-400 font-size-xs text-truncate d-none d-lg-inline">
+              {election?.election_type?.election_title} · {election?.system_academic_year?.name}
             </span>
           </div>
           <div className="d-flex flex-row align-items-center gap-2 flex-shrink-0">
@@ -258,12 +262,10 @@ function ElectionWorkspace() {
             )}
           </div>
         </div>
-        <ElectionTimeline election={election} />
-      </div>
-
-      <NextStep details={details} onTab={setTab} />
-
-      <div className="d-flex flex-row align-items-center gap-4 font-size-sm border-bottom flex-shrink-0 px-1" role="tablist" aria-label="Election sections">
+        <div className="pb-2" style={{ paddingInline: "var(--app-gutter)" }}>
+          <ElectionTimeline election={election} />
+        </div>
+        <div className="page-head__tabs d-flex flex-row align-items-center gap-4 font-size-sm" role="tablist" aria-label="Election sections">
         {TABS.map((item) => {
           const active = item.key === tab;
           const count = item.count?.(election);
@@ -291,7 +293,10 @@ function ElectionWorkspace() {
             </button>
           );
         })}
+        </div>
       </div>
+
+      <NextStep details={details} onTab={setTab} />
 
       <div className="flex-grow-1 scroll-bar-sm over-flow-y-auto over-flow-x-hidden pe-1 pb-3" style={{ minHeight: 0 }}>
         {tab === "overview" && <OverviewTab details={details} />}
