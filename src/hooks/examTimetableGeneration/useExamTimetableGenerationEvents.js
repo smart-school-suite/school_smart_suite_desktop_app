@@ -5,26 +5,33 @@ import { useSelector } from "react-redux";
 import { isFinalGenerationEvent } from "../../utils/semesterTimetable/schedulerStatus";
 import { EXAM_TIMETABLE_KEYS } from "./queries";
 
-const EVENT_NAME = "examTimetable.generation";
-
 // Generation progress on the admin's exam timetable channel. Events only make
 // the page react faster; the versions list is polled while generating.
 export function useExamTimetableGenerationEvents(selectedVersionId) {
+  return useTimetableGenerationEvents(selectedVersionId, {
+    channel: "examTimetable",
+    eventName: "examTimetable.generation",
+    versionsKey: EXAM_TIMETABLE_KEYS.versions,
+  });
+}
+
+/** Generation progress on one of the admin's timetable channels ("examTimetable", "resitTimetable"). */
+export function useTimetableGenerationEvents(selectedVersionId, { channel, eventName, versionsKey }) {
   const queryClient = useQueryClient();
   const schoolAdmin = useSelector((state) => state.auth?.user?.authSchoolAdmin);
   const [progress, setProgress] = useState(null);
-  const channelName = `private:schoolBranch.${schoolAdmin?.school_branch_id}.schoolAdmin.${schoolAdmin?.id}.examTimetable`;
+  const channelName = `private:schoolBranch.${schoolAdmin?.school_branch_id}.schoolAdmin.${schoolAdmin?.id}.${channel}`;
 
   const refreshVersions = useCallback(
-    () => queryClient.invalidateQueries({ queryKey: [EXAM_TIMETABLE_KEYS.versions] }),
-    [queryClient],
+    () => queryClient.invalidateQueries({ queryKey: [versionsKey] }),
+    [queryClient, versionsKey],
   );
 
   useEffect(() => {
     setProgress(null);
   }, [selectedVersionId]);
 
-  useChannel(channelName, EVENT_NAME, (message) => {
+  useChannel(channelName, eventName, (message) => {
     const payload = message?.data?.payload;
     if (!payload) return;
     const versionId = payload.version_id ?? payload.version?.id ?? null;

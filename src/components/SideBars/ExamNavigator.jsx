@@ -33,9 +33,11 @@ export function ExamStatusTag({ status }) {
 /**
  * Academic year → semester → exam picker, styled like the teacher course
  * SpecialtyNavigator. Calls `onSelect(exam)` with the whole exam object.
+ * `useExams` lists what to pick from (exams by default; resit exams on the
+ * resit pages), as { data: [exam] } like useGetExams.
  */
-function ExamNavigator({ selectedExam, onSelect, title, description }) {
-  const { data: exams, isLoading, error } = useGetExams();
+function ExamNavigator({ selectedExam, onSelect, title, description, useExams = useGetExams }) {
+  const { data: exams, isLoading, error } = useExams();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   // null until the user opens or closes a year; until then the year holding

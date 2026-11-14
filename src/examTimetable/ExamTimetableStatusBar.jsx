@@ -1,13 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CalendarCheck, CalendarX, CircleAlert, CircleCheckBig, CircleDot, LayoutGrid } from "lucide-react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import CustomModal from "../components/Modals/Modal";
-import { useGetActiveExamTimetable, useGetExamTimetableSolutions } from "../hooks/examTimetableGeneration/queries";
 import { SCHEDULER_STATUS } from "../utils/semesterTimetable/schedulerStatus";
 import ActivateExamTimetableVersion from "./ActivateExamTimetableVersion";
 import DiagnosticWrapper from "./DiagnosticWrapper";
+import { useKindState, useTimetableKind } from "./TimetableKindContext";
 
 const PILL = {
   success: "bg-fern-50 text-fern-700",
@@ -26,11 +25,12 @@ function Pill({ tone, icon: Icon, children }) {
 
 /** Pinned under a generated exam timetable: its state, whether it is active, and how to activate it. */
 function ExamTimetableStatusBar({ examCount }) {
-  const { exam, timetableVersion: version } = useSelector((state) => state.examTimetable);
+  const kind = useTimetableKind();
+  const { exam, timetableVersion: version } = useKindState((state) => state);
   const [showActivate, setShowActivate] = useState(false);
   const isPartial = version?.scheduler_status === SCHEDULER_STATUS.PARTIAL;
-  const { data: activeData, isLoading: isActiveLoading } = useGetActiveExamTimetable(exam?.id);
-  const { data: solutions } = useGetExamTimetableSolutions(isPartial ? version?.id : null);
+  const { data: activeData, isLoading: isActiveLoading } = kind.queries.useActive(exam?.id);
+  const { data: solutions } = kind.queries.useSolutions(isPartial ? version?.id : null);
 
   const activeVersion = activeData?.data?.active_version;
   const isActive = !!activeVersion && activeVersion.id === version?.id;
@@ -39,16 +39,16 @@ function ExamTimetableStatusBar({ examCount }) {
 
   const activation = (() => {
     if (isActiveLoading) return { tone: "muted", icon: CircleDot, text: "Checking activation…" };
-    if (isActive) return { tone: "success", icon: CalendarCheck, text: "Active exam timetable" };
-    if (examEnded) return { tone: "muted", icon: CalendarX, text: "Exam has ended" };
+    if (isActive) return { tone: "success", icon: CalendarCheck, text: `Active ${kind.noun} timetable` };
+    if (examEnded) return { tone: "muted", icon: CalendarX, text: `${kind.Noun} has ended` };
     if (activeVersion) return { tone: "muted", icon: CircleDot, text: `Not active · ${activeVersion.label} is active` };
-    return { tone: "warn", icon: CircleDot, text: "Not active · no exam timetable is active yet" };
+    return { tone: "warn", icon: CircleDot, text: `Not active · no ${kind.noun} timetable is active yet` };
   })();
 
   const hint = isActive
-    ? `${version?.label} is the exam timetable in use; its halls and invigilators are reserved.`
+    ? `${version?.label} is the ${kind.noun} timetable in use; its halls and invigilators are reserved.`
     : examEnded
-      ? "Timetables of an ended exam can no longer be activated."
+      ? `Timetables of an ended ${kind.noun} can no longer be activated.`
       : activeVersion
         ? `Activate ${version?.label} to replace ${activeVersion.label}.`
         : `Activate ${version?.label} to publish it and reserve its halls and invigilators.`;
@@ -72,7 +72,7 @@ function ExamTimetableStatusBar({ examCount }) {
           </AnimatePresence>
           {examCount > 0 && (
             <span className="d-inline-flex align-items-center gap-1 font-size-xs text-iron-500">
-              <LayoutGrid size={12} /> {examCount} {examCount === 1 ? "exam" : "exams"}
+              <LayoutGrid size={12} /> {examCount} {examCount === 1 ? kind.noun : `${kind.noun}s`}
             </span>
           )}
         </div>

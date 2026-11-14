@@ -1,6 +1,5 @@
 import { eachDayOfInterval, format, parseISO } from "date-fns";
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
 import { timeRangeSchema } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown, { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
 import {
@@ -9,8 +8,8 @@ import {
   TimeRangeInput,
 } from "../../components/FormComponents/InputComponents";
 import { TimeField } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
-import { useGetExamSchedulingData } from "../../hooks/examTimetableGeneration/queries";
 import { isTime } from "../../utils/examTimetable/buildRequest";
+import { useKindState, useTimetableKind } from "../TimetableKindContext";
 
 export const formatExamDate = (date, pattern = "EEE d MMM") => {
   if (!date) return "—";
@@ -23,8 +22,9 @@ export const formatExamDate = (date, pattern = "EEE d MMM") => {
 
 /** The selected exam's scheduling data and the dates of its exam period. */
 export function useExamSetup() {
-  const exam = useSelector((state) => state.examTimetable.exam);
-  const query = useGetExamSchedulingData(exam?.id);
+  const kind = useTimetableKind();
+  const exam = useKindState((state) => state.exam);
+  const query = kind.queries.useSchedulingData(exam?.id);
   const setup = query.data?.data;
   const dates = useMemo(() => {
     const start = setup?.exam?.start_date;
@@ -52,6 +52,7 @@ export function useExamSetup() {
 export function useJointCourseReadiness() {
   const setup = useExamSetup();
   const joint = setup.courses.filter((course) => course.is_joint);
+  // Resits shared with other specialties always come with their time.
   const byTime = (a, b) => `${a.joint.slot.date} ${a.joint.slot.start_time}`.localeCompare(`${b.joint.slot.date} ${b.joint.slot.start_time}`);
   return {
     ...setup,
@@ -161,12 +162,13 @@ export function MinutesInput({ value, onChange, placeholder = "Minutes" }) {
 }
 
 export function SetupNotice({ isLoading, error, exam }) {
-  if (!exam) return <p className="text-iron-500 mb-0">Select an exam first.</p>;
-  if (isLoading) return <p className="text-iron-500 mb-0">Loading the exam's courses, halls and invigilators…</p>;
+  const kind = useTimetableKind();
+  if (!exam) return <p className="text-iron-500 mb-0">Select {kind.id === "exam" ? "an exam" : "a resit exam"} first.</p>;
+  if (isLoading) return <p className="text-iron-500 mb-0">Loading the {kind.noun}'s courses, halls and invigilators…</p>;
   if (error)
     return (
       <p className="text-red-700 mb-0">
-        {error?.response?.data?.errors?.description ?? "Could not load the exam's courses, halls and invigilators."}
+        {error?.response?.data?.errors?.description ?? `Could not load the ${kind.noun}'s courses, halls and invigilators.`}
       </p>
     );
   return null;
