@@ -109,7 +109,7 @@ function SetttingLayout() {
             })}
           </div>
         </div>
-        <div className="w-100 h-100">
+        <div className="w-100 flex-grow-1" style={{ minHeight: 0 }}>
           <Outlet />
         </div>
       </main>

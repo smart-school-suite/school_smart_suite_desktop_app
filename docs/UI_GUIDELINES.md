@@ -35,6 +35,9 @@ small variation; add a prop to the shared component rather than copying it.
 | Election card, lifecycle timeline, vote share bar, office holder card | `components/Election/*` |
 | Primary action + "⋯" menu for an election (dialogs/drawers stay open after the menu closes) | `components/Election/ElectionActions` |
 | Menu that closes when an item is picked | `components/Popover/Popover` with children as `({ close }) => …` |
+| Plan summary card (ribbon, price, gains vs current plan) | `components/Subscription/PlanCard` |
+| Usage of a limited feature (meter + status) | `components/Subscription/UsageCard` / `UsageMeter` |
+| Plan recommendation banner / feature-by-plan table | `components/Subscription/RecommendationHero` / `PlanComparisonTable` |
 
 Only create a new component when nothing reusable exists, and put it in
 `src/components/` so the next page can use it. Pieces that only one page
