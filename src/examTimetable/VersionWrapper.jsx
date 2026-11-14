@@ -2,17 +2,15 @@ import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Drawer } from "../components/drawer/Drawer";
 import ToastWarning from "../components/Toast/ToastWarning";
-import { useCreateExamTimetableVersion } from "../hooks/examTimetableGeneration/mutations";
-import { useGetExamTimetableConstraints, useGetExamTimetableVersions } from "../hooks/examTimetableGeneration/queries";
-import { setExamTimetableVersion } from "../Slices/ExamTimetable/examTimetableSlice";
 import { constraintCount } from "../utils/examTimetable/buildRequest";
 import { SCHEDULER_STATUS } from "../utils/semesterTimetable/schedulerStatus";
 import { examTimetableConstraintMap } from "./constraints/constraintMap";
 import { useJointCourseReadiness } from "./constraints/fields";
 import "../styles/constraintWizard.css";
+import { useKindState, useTimetableKind } from "./TimetableKindContext";
 
 const CATEGORY_ICONS = {
   schedule_constraint: "lucide:calendar-clock",
@@ -31,8 +29,9 @@ const collapse = {
 
 /** Left panel of the exam timetable page: versions of the selected exam and its constraints. */
 function VersionWrapper() {
+  const kind = useTimetableKind();
   return (
-    <aside className="ctl" aria-label="Exam timetable versions and constraints">
+    <aside className="ctl" aria-label={`${kind.Noun} timetable versions and constraints`}>
       <div className="ctl-top">
         <CreateVersion />
       </div>
@@ -44,11 +43,12 @@ function VersionWrapper() {
 export default VersionWrapper;
 
 function VersionList() {
+  const kind = useTimetableKind();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(true);
-  const exam = useSelector((state) => state.examTimetable.exam);
-  const selected = useSelector((state) => state.examTimetable.timetableVersion);
-  const { data, isLoading, error } = useGetExamTimetableVersions(exam?.id);
+  const exam = useKindState((state) => state.exam);
+  const selected = useKindState((state) => state.timetableVersion);
+  const { data, isLoading, error } = kind.queries.useVersions(exam?.id);
   const list = data?.data ?? [];
 
   return (
@@ -67,7 +67,7 @@ function VersionList() {
             ) : error ? (
               <p className="ctl-empty ctl-empty--error">Could not load versions.</p>
             ) : !exam ? (
-              <p className="ctl-empty">Select an exam to see its versions.</p>
+              <p className="ctl-empty">Select {kind.id === "exam" ? "an exam" : "a resit exam"} to see its versions.</p>
             ) : list.length === 0 ? (
               <p className="ctl-empty">No versions yet. Create one above, or generate.</p>
             ) : (
@@ -80,7 +80,7 @@ function VersionList() {
                         type="button"
                         className={`ctl-item ${isSelected ? "is-active" : ""}`}
                         aria-current={isSelected ? "true" : undefined}
-                        onClick={() => dispatch(setExamTimetableVersion(version))}
+                        onClick={() => dispatch(kind.actions.setVersion(version))}
                       >
                         <span className="ctl-item__label">{version.label}</span>
                         <span className="ctl-item__meta">
@@ -103,15 +103,16 @@ function VersionList() {
 }
 
 function CreateVersion() {
-  const exam = useSelector((state) => state.examTimetable.exam);
-  const { mutate, isPending } = useCreateExamTimetableVersion();
+  const kind = useTimetableKind();
+  const exam = useKindState((state) => state.exam);
+  const { mutate, isPending } = kind.mutations.useCreateVersion();
 
   const create = () => {
     if (!exam) {
-      toast.custom(<ToastWarning title="Exam Required" description="Select an exam before creating timetable versions." />);
+      toast.custom(<ToastWarning title={kind.id === "exam" ? "Exam Required" : "Resit Exam Required"} description={`Select ${kind.id === "exam" ? "an exam" : "a resit exam"} before creating timetable versions.`} />);
       return;
     }
-    if (!isPending) mutate({ exam_id: exam.id });
+    if (!isPending) mutate({ [kind.ownerKey]: exam.id });
   };
 
   return (
@@ -138,9 +139,10 @@ const matches = (constraint, category, query) =>
     .every((term) => [constraint.name, constraint.description, category].filter(Boolean).join(" ").toLowerCase().includes(term));
 
 function ConstraintNavigator() {
-  const { data, isLoading, error } = useGetExamTimetableConstraints();
-  const exam = useSelector((state) => state.examTimetable.exam);
-  const values = useSelector((state) => state.examTimetable.constraints);
+  const kind = useTimetableKind();
+  const { data, isLoading, error } = kind.queries.useConstraints();
+  const exam = useKindState((state) => state.exam);
+  const values = useKindState((state) => state.constraints);
   const [query, setQuery] = useState("");
   const [openIds, setOpenIds] = useState(() => new Set(["schedule_constraint"]));
   const [active, setActive] = useState(null);
@@ -198,7 +200,7 @@ function ConstraintNavigator() {
       {disabled && !isLoading && !error && (
         <div className="ctl-notice">
           <Icon icon="lucide:info" width={14} height={14} />
-          <span>Select an exam to configure its constraints.</span>
+          <span>Select {kind.id === "exam" ? "an exam" : "a resit exam"} to configure its constraints.</span>
         </div>
       )}
 
@@ -232,7 +234,7 @@ function ConstraintNavigator() {
                           const readOnly = Boolean(constraint.read_only || examTimetableConstraintMap[constraint.key]?.readOnly);
                           const tag = typeTag(constraint.type);
                           const count = readOnly ? 0 : constraintCount(values, constraint.key);
-                          const waiting = readOnly ? jointReadiness.unscheduled.length : 0;
+                          const waiting = readOnly && kind.joint.needsTime ? jointReadiness.unscheduled.length : 0;
                           return (
                             <li key={constraint.id}>
                               <button
@@ -244,7 +246,7 @@ function ConstraintNavigator() {
                                   !ready
                                     ? "This constraint can't be configured yet"
                                     : readOnly
-                                      ? `Read only. ${waiting ? `${waiting} joint course(s) have no exam time yet, so generation is blocked.` : `${jointReadiness.scheduled.length} joint course time(s) set.`}`
+                                      ? `Read only. ${waiting ? `${waiting} joint course(s) have no exam time yet, so generation is blocked.` : `${jointReadiness.scheduled.length} ${kind.joint.rowLabel.toLowerCase()} with a fixed time.`}`
                                       : constraint.description || constraint.name
                                 }
                               >

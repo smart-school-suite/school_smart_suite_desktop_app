@@ -100,7 +100,11 @@ function Links() {
                         <ChannelProvider
                           channelName={`private:schoolBranch.${schoolBranchId}.schoolAdmin.${adminId}.examTimetable`}
                         >
-                          <Layout />
+                          <ChannelProvider
+                            channelName={`private:schoolBranch.${schoolBranchId}.schoolAdmin.${adminId}.resitTimetable`}
+                          >
+                            <Layout />
+                          </ChannelProvider>
                         </ChannelProvider>
                       </ChannelProvider>
                     </ChannelProvider>

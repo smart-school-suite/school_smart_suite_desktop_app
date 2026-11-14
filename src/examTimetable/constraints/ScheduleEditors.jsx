@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Switch from "../../components/input/Switch";
 import {
   IconButton,
@@ -8,21 +8,22 @@ import {
   Stats,
   TextButton,
 } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
-import { patchExamConstraint, setExamConstraint } from "../../Slices/ExamTimetable/examTimetableSlice";
 import { isRange, toMinutes } from "../../utils/examTimetable/buildRequest";
 import { makeExamConstraintEditor } from "./ExamConstraintWizard";
 import { EntitySelect, ExamDateSelect, formatExamDate, MinutesInput, SetupNotice, TimeRange } from "./fields";
+import { useKindState, useTimetableKind } from "../TimetableKindContext";
 
-const useConstraint = (key) => useSelector((state) => state.examTimetable.constraints?.[key]);
+const useConstraint = (key) => useKindState((state) => state.constraints?.[key]);
 
 /* -------------------------------------------------------------------------- */
 /* Exam hours (operational period)                                            */
 /* -------------------------------------------------------------------------- */
 
 function OperationalPeriodConfigure({ setup }) {
+  const kind = useTimetableKind();
   const dispatch = useDispatch();
   const op = useConstraint("operational_period");
-  const patch = (changes) => dispatch(patchExamConstraint({ key: "operational_period", patch: changes }));
+  const patch = (changes) => dispatch(kind.actions.patchConstraint({ key: "operational_period", patch: changes }));
   const exceptions = op.date_exceptions ?? [];
   const exclusions = op.date_exclusions ?? [];
   const hours = isRange(op.start_time, op.end_time) ? toMinutes(op.end_time) - toMinutes(op.start_time) : null;
@@ -149,9 +150,10 @@ const durationLabel = (minutes) => {
 };
 
 function SessionDurationConfigure({ setup }) {
+  const kind = useTimetableKind();
   const dispatch = useDispatch();
   const duration = useConstraint("session_duration");
-  const patch = (changes) => dispatch(patchExamConstraint({ key: "session_duration", patch: changes }));
+  const patch = (changes) => dispatch(kind.actions.patchConstraint({ key: "session_duration", patch: changes }));
   const exceptions = duration.course_exceptions ?? [];
   const courseName = (id) => setup.courses.find((course) => course.course_id === id)?.course_title ?? "Course";
 
@@ -255,9 +257,10 @@ function Stepper({ value, onChange, min = 0, max = 10, label }) {
 }
 
 function DailyLoadConfigure({ setup }) {
+  const kind = useTimetableKind();
   const dispatch = useDispatch();
   const load = useConstraint("student_daily_load_range");
-  const patch = (changes) => dispatch(patchExamConstraint({ key: "student_daily_load_range", patch: changes }));
+  const patch = (changes) => dispatch(kind.actions.patchConstraint({ key: "student_daily_load_range", patch: changes }));
   const exceptions = load.date_exceptions ?? [];
 
   return (
@@ -349,6 +352,7 @@ export const DailyLoadEditor = makeExamConstraintEditor({
 const RATIOS = [null, 20, 30, 40, 50];
 
 function InvigilationConfigure({ setup }) {
+  const kind = useTimetableKind();
   const dispatch = useDispatch();
   const ratio = useConstraint("candidates_per_invigilator");
   const candidates = setup.setup?.exam?.candidate_count ?? 0;
@@ -360,7 +364,7 @@ function InvigilationConfigure({ setup }) {
           <div key={value ?? "hall"} className="col-6">
             <OptionTile
               selected={(ratio ?? null) === value}
-              onClick={() => dispatch(setExamConstraint({ key: "candidates_per_invigilator", value }))}
+              onClick={() => dispatch(kind.actions.setConstraint({ key: "candidates_per_invigilator", value }))}
               title={value ? `${value} candidates` : "Hall (one per hall)"}
               meta={value && candidates ? `${Math.ceil(candidates / value)} for ${candidates} candidates` : undefined}
             />

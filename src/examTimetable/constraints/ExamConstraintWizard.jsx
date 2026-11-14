@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import ConstraintWizard from "../../components/SemesterTimetable/ConstraintWizard/ConstraintWizard";
 import {
   DayList,
@@ -12,6 +11,7 @@ import {
 } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 import { configurationProblems } from "../../utils/examTimetable/buildRequest";
 import { useExamSetup } from "./fields";
+import { useKindState, useTimetableKind } from "../TimetableKindContext";
 
 /**
  * Every exam constraint editor is the same three steps as the semester
@@ -47,7 +47,8 @@ export function makeExamConstraintEditor(editor) {
   };
 
   const Review = ({ previousStep, handleClose, drawerData }) => {
-    const constraints = useSelector((state) => state.examTimetable.constraints);
+    const kind = useTimetableKind();
+    const constraints = useKindState((state) => state.constraints);
     const setup = useExamSetup();
     const rows = editor.summary(constraints, setup);
     const problems = configurationProblems(constraints).filter((problem) => problem.key === drawerData.constraint?.key);
@@ -55,7 +56,7 @@ export function makeExamConstraintEditor(editor) {
     return (
       <WizardStep
         title="Review"
-        description="These settings are sent with the next generation of the exam timetable."
+        description={`These settings are sent with the next generation of the ${kind.noun} timetable.`}
         footer={<WizardFooter onBack={previousStep} onNext={handleClose} nextLabel="Done" nextIcon="lucide:check" />}
       >
         {problems.length > 0 && (

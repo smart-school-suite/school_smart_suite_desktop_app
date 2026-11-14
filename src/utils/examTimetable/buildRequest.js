@@ -48,14 +48,17 @@ const withoutIds = (entries, fields) =>
     .filter((entry) => fields.every((field) => entry[field] !== undefined && entry[field] !== null && entry[field] !== ""))
     .map((entry) => Object.fromEntries(fields.map((field) => [field, entry[field]])));
 
-/** Request body for POST exam-timetable/generate. */
-export function buildGenerateRequest(exam, version, constraints) {
+/**
+ * Request body for POST exam-timetable/generate, or resit-timetable-generation/generate
+ * with ownerKey "resit_exam_id" (`exam` is then the resit exam).
+ */
+export function buildGenerateRequest(exam, version, constraints, ownerKey = "exam_id") {
   const op = constraints.operational_period;
   const duration = constraints.session_duration;
   const load = constraints.student_daily_load_range;
 
   const body = {
-    exam_id: exam.id,
+    [ownerKey]: exam.id,
     version_id: version?.id ?? null,
     operational_period: {
       start_time: op.start_time,

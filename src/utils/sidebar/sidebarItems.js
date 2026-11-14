@@ -177,6 +177,12 @@ export const sidebarItems = [
         routes: resitRoutes,
       },
       {
+        id: "resit-invigilator",
+        label: "Resit Invigilator",
+        path: "/resit-invigilator",
+        routes: resitRoutes,
+      },
+      {
         id: "student-resit",
         label: "Student Resit",
         path: "/student-resit",

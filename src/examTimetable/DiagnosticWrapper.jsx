@@ -1,8 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { TimetableResolution } from "../DrawerContent/SemesterTimetable/Error/SemesterTimetableError";
-import { useApplyExamTimetableSolutions } from "../hooks/examTimetableGeneration/mutations";
-import { useGetExamTimetableSolutions } from "../hooks/examTimetableGeneration/queries";
-import { setExamTimetableVersion } from "../Slices/ExamTimetable/examTimetableSlice";
+import { useKindState, useTimetableKind } from "./TimetableKindContext";
 
 // The exam API groups problems by date ("general" when not tied to one);
 // the shared drawer reads days, so dates are presented as its days.
@@ -30,10 +28,11 @@ export const normalizeExamSolutions = (insight) =>
  * solutions and applying them generates a new version; this one stays.
  */
 function DiagnosticWrapper({ handleClose }) {
+  const kind = useTimetableKind();
   const dispatch = useDispatch();
-  const version = useSelector((state) => state.examTimetable.timetableVersion);
-  const query = useGetExamTimetableSolutions(version?.id);
-  const apply = useApplyExamTimetableSolutions();
+  const version = useKindState((state) => state.timetableVersion);
+  const query = kind.queries.useSolutions(version?.id);
+  const apply = kind.mutations.useApplySolutions();
 
   return (
     <TimetableResolution
@@ -41,7 +40,7 @@ function DiagnosticWrapper({ handleClose }) {
       query={query}
       apply={apply}
       normalize={normalizeExamSolutions}
-      onOpenVersion={(newVersion) => dispatch(setExamTimetableVersion(newVersion))}
+      onOpenVersion={(newVersion) => dispatch(kind.actions.setVersion(newVersion))}
       handleClose={handleClose}
     />
   );

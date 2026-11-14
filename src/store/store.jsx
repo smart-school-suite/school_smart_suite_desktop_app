@@ -80,6 +80,7 @@ import expenseCategoryReducer from "../Slices/schoolExpense/expenseCategorySlice
 import semesterTimetableReducer from "../Slices/SemesterTimetable/semesterTimetableSlice";
 import jointCourseTimetableReducer from "../Slices/jointCourse/jointCourseTimetableSlice";
 import examTimetableReducer from "../Slices/ExamTimetable/examTimetableSlice";
+import resitTimetableReducer from "../Slices/ResitTimetable/resitTimetableSlice";
 import examJointCourseTimetableReducer from "../Slices/ExamJointCourse/examJointCourseTimetableSlice";
 import tableFiltersReducer from "../Slices/tableFilters/tableFiltersSlice";
 import parentReducer from "../Slices/student/parentSlice";
@@ -143,6 +144,7 @@ const rootReducer = combineReducers({
   semesterTimetable: persistReducer({ key: "semesterTimetable", storage}, semesterTimetableReducer),
   jointCourseTimetable: persistReducer({ key: "jointCourseTimetable", storage }, jointCourseTimetableReducer),
   examTimetable: persistReducer({ key: "examTimetable", storage }, examTimetableReducer),
+  resitTimetable: persistReducer({ key: "resitTimetable", storage }, resitTimetableReducer),
   examJointCourseTimetable: persistReducer({ key: "examJointCourseTimetable", storage }, examJointCourseTimetableReducer),
   teachers: persistReducer(teacherPersistConfig, teacherReducer),
   specialty: persistReducer({ key: "specialties", storage }, specialtyReducer),

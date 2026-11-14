@@ -4,9 +4,8 @@ import FormErrorBanner from "../components/errors/FormErrorBanner";
 import RectangleSkeleton from "../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../components/Spinners/Spinners";
 import { useFormError } from "../hooks/form/useFormError";
-import { useActivateExamTimetable } from "../hooks/examTimetableGeneration/mutations";
-import { useGetExamTimetableActivationCheck } from "../hooks/examTimetableGeneration/queries";
 import { parseServerError } from "../utils/functions";
+import { useTimetableKind } from "./TimetableKindContext";
 
 const CLASH = {
   invigilator: { icon: User, label: "Invigilator clash" },
@@ -15,7 +14,7 @@ const CLASH = {
 };
 const AGAINST = {
   this_timetable: "Within this timetable",
-  active_timetable: "With another exam's active timetable",
+  active_timetable: "With another active exam or resit timetable",
 };
 
 /**
@@ -24,9 +23,10 @@ const AGAINST = {
  * then POST .../activate.
  */
 function ActivateExamTimetableVersion({ handleClose, version }) {
-  const check = useGetExamTimetableActivationCheck(version?.id);
-  const activate = useActivateExamTimetable();
-  const { formError, errorBannerRef, handleServerError, clearFormError } = useFormError("Failed To Activate Exam Timetable");
+  const kind = useTimetableKind();
+  const check = kind.queries.useActivationCheck(version?.id);
+  const activate = kind.mutations.useActivate();
+  const { formError, errorBannerRef, handleServerError, clearFormError } = useFormError(`Failed To Activate ${kind.Noun} Timetable`);
 
   const result = check.data?.data;
   const conflicts = activate.error?.response?.data?.errors?.conflicts ?? result?.conflicts ?? [];
@@ -71,17 +71,17 @@ function ActivateExamTimetableVersion({ handleClose, version }) {
         ) : (
           <>
             <span className="text-iron-600">
-              Students, invigilators and admins will see this version as the exam timetable. Its halls and invigilators become busy for other exams.
+              {kind.copy.activeDescription}
             </span>
             <div className="d-flex align-items-center gap-2 border rounded-3 bg-iron-50 px-2 py-2">
               <VersionBox label={result?.replaces?.label ?? "None"} caption={result?.replaces ? "Currently active" : "Nothing active yet"} muted />
               <ArrowRight size={14} className="text-iron-400 flex-shrink-0" />
-              <VersionBox label={version?.label} caption={`${result?.session_count ?? 0} exams`} />
+              <VersionBox label={version?.label} caption={`${result?.session_count ?? 0} ${kind.noun}s`} />
             </div>
             {conflicts.length === 0 ? (
               <div className="d-flex align-items-center gap-2 bg-fern-50 text-fern-700 rounded-3 px-2 py-1">
                 <CircleCheckBig size={14} />
-                <span>No clashes with other exam timetables. Ready to activate.</span>
+                <span>No clashes with other exam or resit timetables. Ready to activate.</span>
               </div>
             ) : (
               <ConflictList conflicts={conflicts} />
@@ -116,12 +116,13 @@ function VersionBox({ label, caption, muted }) {
 }
 
 function ConflictList({ conflicts }) {
+  const kind = useTimetableKind();
   return (
     <div className="d-flex flex-column gap-2">
       <div className="d-flex align-items-start gap-2 bg-red-50 text-red-700 rounded-3 px-2 py-1">
         <CircleAlert size={14} className="flex-shrink-0 mt-1" />
         <span>
-          {conflicts.length} {conflicts.length === 1 ? "exam clashes" : "exams clash"} with exam timetables already in use. Generate again so the
+          {conflicts.length} {conflicts.length === 1 ? "clash" : "clashes"} with what this or other {kind.noun === "exam" ? "exam" : "exam and resit"} timetables already use. Generate again so the
           scheduler works around them, then activate.
         </span>
       </div>
