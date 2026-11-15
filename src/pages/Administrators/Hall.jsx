@@ -10,6 +10,9 @@ import CreateHall from "../../DrawerContent/Hall/CreateHall";
 import HallDetails from "../../DrawerContent/Hall/HallDetail";
 import UpdateHall from "../../DrawerContent/Hall/UpdateHall";
 import ActivateHall from "../../ModalContent/Hall/ActivateHall";
+import BulkActivateHall from "../../ModalContent/Hall/BulkActivateHall";
+import BulkDeactivateHall from "../../ModalContent/Hall/BulkDeactivateHall";
+import BulkDeleteHall from "../../ModalContent/Hall/BulkDeleteHall";
 import DeactivateHall from "../../ModalContent/Hall/DeactivateHall";
 import DeleteHall from "../../ModalContent/Hall/DeleteHall";
 import ActionButtonDropdown, {
@@ -387,7 +390,8 @@ function ActionButtons({ selectedHalls, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0 text-iron-700"}
-        // action={{ modalContent: BulkDeleteDepartment }}
+        action={{ modalContent: BulkDeleteHall }}
+        rowData={{ selectedHalls }}
         bulkData={selectedHalls}
         resetAll={resetAll}
       >
@@ -479,13 +483,13 @@ function DropdownItems({ selectedHalls, resetAll, onModalStateChange }) {
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        // onClick={() =>
-        //   handleShowModal(BulkDeleteDepartment, {
-        //     size: "md",
-        //     closeOnOutsideClick: true,
-        //     closeOnEscape: true,
-        //   })
-        // }
+        onClick={() =>
+          handleShowModal(BulkDeleteHall, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Delete All</span>
@@ -495,13 +499,13 @@ function DropdownItems({ selectedHalls, resetAll, onModalStateChange }) {
       <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        // onClick={() =>
-        //   handleShowModal(BulkDeactivateDepartment, {
-        //     size: "md",
-        //     closeOnOutsideClick: true,
-        //     closeOnEscape: true,
-        //   })
-        // }
+        onClick={() =>
+          handleShowModal(BulkDeactivateHall, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Deactivate All</span>
@@ -511,13 +515,13 @@ function DropdownItems({ selectedHalls, resetAll, onModalStateChange }) {
       <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        // onClick={() =>
-        //   handleShowModal(BulkActivateDepartment, {
-        //     size: "md",
-        //     closeOnOutsideClick: true,
-        //     closeOnEscape: true,
-        //   })
-        // }
+        onClick={() =>
+          handleShowModal(BulkActivateHall, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Activate All</span>
@@ -559,6 +563,7 @@ function DropdownItems({ selectedHalls, resetAll, onModalStateChange }) {
               ...modalConfig.modalData,
             }}
             handleClose={handleCloseModal}
+            resetAll={resetAll}
           />
         )}
       </CustomModal>
