@@ -9,7 +9,7 @@ import {
   WizardStep,
 } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 import { formatExamDate } from "../../examTimetable/constraints/fields";
-import { useConfirmExamJointCourseTime } from "../../hooks/examJointCourseTimetable";
+import { useJointCourseKind } from "../jointCourseKinds";
 import { describeError } from "../../utils/jointCourseTimetable/recommendSlot";
 import { formatDuration } from "../../utils/semesterTimetable/timeUtils";
 
@@ -17,7 +17,8 @@ const PICK_STEP_INDEX = 1;
 
 function ReviewTimeStep({ previousStep, handleNavigate, handleClose, drawerData }) {
   const { course, proposal, pick, generate, runGenerate } = drawerData;
-  const confirm = useConfirmExamJointCourseTime();
+  const { hooks, copy } = useJointCourseKind();
+  const confirm = hooks.useConfirm();
   const [saveError, setSaveError] = useState(null);
 
   if (!pick) {
@@ -50,7 +51,7 @@ function ReviewTimeStep({ previousStep, handleNavigate, handleClose, drawerData 
   return (
     <WizardStep
       title="Review and save"
-      description="When you save, the time is checked again against the students' other exams, hall bookings and invigilators. Every linked exam timetable then places this course at this time."
+      description={`When you save, the time is checked again against the students' other exams, hall bookings and invigilators. Every linked ${copy.timetables.replace(/s$/, "")} then places this course at this time.`}
       footer={
         <WizardFooter
           onBack={previousStep}
@@ -76,7 +77,7 @@ function ReviewTimeStep({ previousStep, handleNavigate, handleClose, drawerData 
           <Icon icon="lucide:replace" width={18} height={18} className="jcs-alert__icon" />
           <span>
             This course is already set for {formatExamDate(course.slot.date)} {course.slot.start_time} – {course.slot.end_time}. Saving
-            replaces it; generate the linked exam timetables again afterwards.
+            replaces it; generate the linked {copy.timetables} again afterwards.
           </span>
         </div>
       )}
