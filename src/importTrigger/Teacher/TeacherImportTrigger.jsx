@@ -1,19 +1,19 @@
+import { ArrowUpFromLine } from "lucide-react";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { teacherImportColDefs } from "../../utils/table/colDefs/teachers/teacherImportColdefs";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
-import { TEACHER_COLUMNS } from "../../utils/teacher/teacherColumns";
 import {
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  removeRepeatableGroup,
   addRepeatableGroup,
+  removeRepeatableGroup,
+  setColumnMapping,
+  setImportReset,
+  setImportSelectedFile,
+  setImportStatus,
   setRepeatableGroupValue,
   setStandardGroupValue,
 } from "../../Slices/teacher/teacherSlice";
 import { teacherInstanceMap } from "../../utils/maps/teacher/teacherInstanceMap";
-import { Icon } from "@iconify/react";
+import { teacherImportColDefs } from "../../utils/table/colDefs/teachers/teacherImportColdefs";
+import { TEACHER_COLUMNS } from "../../utils/teacher/teacherColumns";
 function TeacherImportTrigger() {
   return (
     <>
@@ -35,14 +35,14 @@ function TeacherImportTrigger() {
           module: { name: "Teacher" },
           importModuleColDefs: teacherImportColDefs,
         }}
-        style={{padding: "0.5rem"}}
+        style={{padding: "0.5rem", height:36}}
         classname={
           "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-1 white-bg"
         }
       >
         <span style={{ lineHeight: "16px" }}>Import</span>
         <span>
-          <Icon icon="tabler:arrow-down" width={14} height={14} />
+          <ArrowUpFromLine size={12} />
         </span>
       </ModalButton>
     </>

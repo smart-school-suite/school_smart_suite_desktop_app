@@ -1,15 +1,15 @@
+import { ArrowUpFromLine } from "lucide-react";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
-import { teacherCourseImportColDefs } from "../../utils/table/colDefs/teachers/teacherCourseImportColDefs";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
-import { TEACHER_COURSE_COLUMNS } from "../../utils/teacher/teacherCourseColumns";
 import {
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
   setColumnMapping,
+  setImportReset,
+  setImportSelectedFile,
+  setImportStatus,
   setStandardGroupValue,
 } from "../../Slices/teacher/teacherCourseSlice";
-import { ArrowDown } from "lucide-react";
+import { teacherCourseImportColDefs } from "../../utils/table/colDefs/teachers/teacherCourseImportColDefs";
+import { TEACHER_COURSE_COLUMNS } from "../../utils/teacher/teacherCourseColumns";
 function TeacherCourseImportTrigger() {
   return (
     <>
@@ -28,13 +28,13 @@ function TeacherCourseImportTrigger() {
           module: { name: "Teacher Course" },
           importModuleColDefs: teacherCourseImportColDefs,
         }}
-        style={{padding: "0.6rem"}}
+        style={{padding: "0.6rem", height:36}}
         classname={
           "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
         }
       >
         <span style={{ lineHeight: "16px" }}>Import</span>
-        <ArrowDown size={16} />
+        <ArrowUpFromLine size={16} />
       </ModalButton>
     </>
   );

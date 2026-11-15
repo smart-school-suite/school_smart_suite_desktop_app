@@ -1,13 +1,13 @@
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { TeacherIcon } from "../icons/Icons";
-import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
-import { ModalButton } from "../components/DataTableComponents/ActionComponent";
+import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
-import CreateTeacher from "../DrawerContent/Teacher/CreateTeacher";
+import { useSelector } from "react-redux";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import JobPopOver from "../components/Popover/JobPopover";
+import CreateTeacher from "../DrawerContent/Teacher/CreateTeacher";
+import { TeacherIcon } from "../icons/Icons";
 import { TEACHER_IMPORT_TRIGGER_MAP } from "../utils/maps/teacher/teacherImportMap";
 export const sideBarData = [
   { title: "Teacher", path: "/teacher" },
@@ -58,6 +58,7 @@ function TeacherLayout() {
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
+                 style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <span>
