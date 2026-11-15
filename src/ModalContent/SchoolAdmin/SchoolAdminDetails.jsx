@@ -1,7 +1,7 @@
-import Pageloaderspinner, { SingleSpinner } from "../../components/Spinners/Spinners";
 import { Icon } from "@iconify/react";
-import { formatNumber, formatDate, formatDateWithAge, formatDateWithSuffix } from "../../utils/functions";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetSchoolAdminDetails } from "../../hooks/schoolAdmin/useGetSchoolAdminDetails";
+import { formatDate } from "../../utils/functions";
 const SchoolAdminDetails = ({  rowData, handleClose }) => {
   const { id:schoolAdminId } = rowData;
   const { data:schoolAdminDetails, isFetching} = useGetSchoolAdminDetails(schoolAdminId);

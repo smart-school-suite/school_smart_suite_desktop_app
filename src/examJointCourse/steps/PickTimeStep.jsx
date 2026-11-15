@@ -49,12 +49,12 @@ function ExamTimeCard({ course, time, selected, recommended, disabled, onSelect,
           choose();
         }
       }}
-      className={`card rounded-3 p-3 w-100 h-100 d-flex flex-column gap-2 ${
+      className={`card rounded-4 font-size-sm p-2 w-100 h-100 d-flex flex-column gap-2 ${
         selected ? "border-1 border-solid border-primary-500 bg-primary-50" : "border-1 border-solid border-iron-200 bg-white"
       } ${disabled ? "opacity-50" : "pointer-cursor"}`}
     >
       <div className="d-flex flex-row align-items-start justify-content-between gap-2">
-        <span className="cw-option__title">
+        <span >
           <TimeSpan start={time.start_time} end={time.end_time} />
         </span>
         <span className="d-flex flex-row align-items-center gap-2 flex-shrink-0">
@@ -108,10 +108,10 @@ function PickTimeStep({ nextStep, previousStep, drawerData }) {
 
   return (
     <WizardStep
-      title="Pick the time of the joint exam"
-      description={`A joint exam takes place once, at the same time for every linked specialty. Every time below is free for all their students, with enough hall seats${
-        proposal.checks?.invigilators === false ? "" : " and invigilators"
-      }.`}
+      // title="Pick the time of the joint exam"
+      // description={`A joint exam takes place once, at the same time for every linked specialty. Every time below is free for all their students, with enough hall seats${
+      //   proposal.checks?.invigilators === false ? "" : " and invigilators"
+      // }.`}
       footer={
         <WizardFooter
           onBack={previousStep}

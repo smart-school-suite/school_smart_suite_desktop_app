@@ -1,10 +1,10 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { useFloating, offset, shift, autoUpdate } from "@floating-ui/react";
-import React, { useState, useEffect } from "react";
+import { autoUpdate, offset, shift, useFloating } from "@floating-ui/react";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { SquareMousePointer } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
-import { Icon } from "@iconify/react";
-import { SquareMousePointer } from "lucide-react";
 
 function BulkActionsToast({
   anchorRef,
@@ -113,7 +113,7 @@ function BulkActionsToast({
             )}
           </AnimatePresence>
 
-          <div className="w-100 p-2 rounded-3 d-flex flex-row justify-content-between align-items-center shadow-sm bg-white border">
+          <div className="w-100 p-2 rounded-3  text-iron-700 d-flex flex-row justify-content-between align-items-center shadow-sm bg-white border">
             <div className="d-flex flex-row align-items-center gap-3">
               <SquareMousePointer size={16} />
               <span className="font-size-sm">
@@ -128,7 +128,7 @@ function BulkActionsToast({
                 type="button"
                 className={
                   darkMode
-                    ? "dark-mode-text border-none transparent-bg"
+                    ? "text-iron-700 border-none transparent-bg"
                     : "border-none transparent-bg text-color"
                 }
                 onClick={toggleDropdown}
@@ -142,7 +142,7 @@ function BulkActionsToast({
                 type="button"
                 className={
                   darkMode
-                    ? "dark-mode-text border-none transparent-bg"
+                    ? "text-iron-700 border-none transparent-bg"
                     : "border-none transparent-bg text-color"
                 }
                 onClick={resetAll}

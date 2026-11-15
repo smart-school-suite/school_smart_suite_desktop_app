@@ -1,26 +1,26 @@
-import { useState, useEffect, Fragment, useMemo } from "react";
-import { useGetJobs } from "../../hooks/job/useGetJobs";
+import { JOB_STATUS, JOB_STATUS_LABEL } from "@/constants";
 import {
-  useFloating,
   autoUpdate,
-  offset,
   flip,
+  FloatingPortal,
+  offset,
   shift,
   useClick,
   useDismiss,
-  useRole,
+  useFloating,
   useInteractions,
-  FloatingPortal,
+  useRole,
 } from "@floating-ui/react";
-import { useChannel } from "ably/react";
-import { jobProgressMap } from "../../utils/maps/jobProgressMap";
-import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
-import { JOB_STATUS_LABEL, JOB_STATUS } from "@/constants";
-import { motion, AnimatePresence } from "framer-motion";
-import { useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
+import { useChannel } from "ably/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { useGetJobs } from "../../hooks/job/useGetJobs";
 import { isLastElement } from "../../utils/functions";
+import { jobProgressMap } from "../../utils/maps/jobProgressMap";
 import HorizontalDashedLine from "../DashedLine/HorizonetalDashedLine";
+import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 export default function JobPopOver({ category }) {
   const [isOpen, setIsOpen] = useState(false);
   const [jobs, setJobs] = useState([]);
@@ -185,6 +185,7 @@ export default function JobPopOver({ category }) {
         ref={refs.setReference}
         {...getReferenceProps()}
         className="border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
+        style={{ height:36}}
       >
         <span style={{ lineHeight: "16px" }}>Jobs</span>
         {activeJobsCount > 0 && (

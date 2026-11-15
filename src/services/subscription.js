@@ -1,3 +1,4 @@
+import axiosInstance from "../axios/authAxios";
 import axios from "../axios/axios";
 
 export const getSubscriptionPlans = async (countryId) => {
@@ -10,10 +11,8 @@ export const getSubscriptionPlanDetails = async (planId) => {
     return response.data;
 }
 
-// Current subscription, usage per feature, every plan compared with the
-// current one and the usage-based recommendation.
 export const getPlanInsights = async () => {
-    const response = await axios.get(`school-subscription/plan-insights`);
+    const response = await axiosInstance.get(`school-subscription/plan-insights`);
     return response.data;
 }
 

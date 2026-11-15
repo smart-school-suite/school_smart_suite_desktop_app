@@ -48,21 +48,18 @@ function TableFilterPanel({ filters }) {
 
   return (
     <aside className="tf-panel" aria-label="Filters">
-      <header className="tf-panel__head">
-        <div>
-          <h3 className="tf-panel__title">Filters</h3>
-          <p className="tf-panel__sub">
-            Show only rows that match these conditions.
-          </p>
+      <header className="tf-panel__head p-2 text-iron-600">
+        <div className="d-flex flex-row align-items-center justify-content-between w-100">
+          <span>General Filter</span>
+          <button
+            type="button"
+            className="tf-icon-btn"
+            onClick={() => filters.togglePanel(false)}
+            aria-label="Close filters"
+          >
+            <X size={16} strokeWidth={1.75} />
+          </button>
         </div>
-        <button
-          type="button"
-          className="tf-icon-btn"
-          onClick={() => filters.togglePanel(false)}
-          aria-label="Close filters"
-        >
-          <X size={16} strokeWidth={1.75} />
-        </button>
       </header>
 
       <div className="tf-panel__body">
@@ -235,10 +232,6 @@ function TableFilterPanel({ filters }) {
   );
 }
 
-/**
- * Lays the table out next to the filter panel. Pass the table (and anything
- * anchored to it, like the bulk-actions toast) as children.
- */
 export function TableFilterLayout({ filters, children, tableWrapperRef }) {
   const open = filters.state.panelOpen;
   return (

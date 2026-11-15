@@ -1,5 +1,5 @@
 import {
-  ArrowUpFromLine,
+  ArrowDownFromLine,
   Check,
   ChevronDown,
   ListFilter,
@@ -34,7 +34,6 @@ function TableToolbar({
   tableRef,
   searchPlaceholder = "Search",
   onReset,
-  // optional page actions shown after the table tools (e.g. a Create button)
   actions,
 }) {
   const { state, columns, chipFields, activeCount } = filters;
@@ -95,7 +94,7 @@ function TableToolbar({
             rowData={{ tableRef, columns }}
             classname="tf-btn"
           >
-            <ArrowUpFromLine size={14} strokeWidth={1.75} />
+            <ArrowDownFromLine size={12} strokeWidth={1.75} />
             <span>Export</span>
           </ModalButton>
           <ModalButton

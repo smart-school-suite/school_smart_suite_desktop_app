@@ -17,6 +17,9 @@ import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import CustomModal from "../../components/Modals/Modal";
 import JobPopOver from "../../components/Popover/JobPopover";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
@@ -49,9 +52,6 @@ import {
 import { DEPARTMENT_COLUMNS } from "../../utils/department/departmentColumns";
 import { departmentColDefs } from "../../utils/table/colDefs/department/departmentColDefs";
 import { departmentImportColDefs } from "../../utils/table/colDefs/department/departmentImportColDefs";
-import TableToolbar from "../../components/TableFilters/TableToolbar";
-import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
-import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function Departments() {
   const tableRef = useRef();
   const filters = useTableFilters("administrators/departments", tableRef);

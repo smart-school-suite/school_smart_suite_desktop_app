@@ -1,16 +1,15 @@
 import { useRef, useState } from "react";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { Icon } from "@iconify/react";
-import { useCreateSchoolAdmin } from "../../hooks/schoolAdmin/useCreateSchoolAdmin";
-import { TextInput } from "../../components/FormComponents/InputComponents";
 import {
   emailValidationSchema,
   nameSchema,
 } from "../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid, objectHasEmpty } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { TextInput } from "../../components/FormComponents/InputComponents";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useFormError } from "../../hooks/form/useFormError";
+import { useCreateSchoolAdmin } from "../../hooks/schoolAdmin/useCreateSchoolAdmin";
+import { allFieldsValid } from "../../utils/functions";
 function CreateSchoolAdmin({ handleClose }) {
   const { mutate: createAdmin, isPending } = useCreateSchoolAdmin(handleClose);
   const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
@@ -62,7 +61,7 @@ function CreateSchoolAdmin({ handleClose }) {
   };
   return (
     <>
-      <div className="drawer-content px-2 pt-2">
+      <div className="drawer-content ps-2 pt-2">
         <FormErrorBanner
           ref={errorBannerRef}
           error={formError}

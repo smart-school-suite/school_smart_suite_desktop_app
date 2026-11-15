@@ -1,8 +1,8 @@
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useDeactivateSchoolAdmin } from "../../hooks/schoolAdmin/useDeactivateSchoolAdmin";
 import { CircleX } from "lucide-react";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useFormError } from "../../hooks/form/useFormError";
+import { useDeactivateSchoolAdmin } from "../../hooks/schoolAdmin/useDeactivateSchoolAdmin";
 function DeactivateSchoolAdmin({ handleClose, rowData }) {
   const { id: schoolAdminId } = rowData;
   const { mutate: deactivate, isPending } =
@@ -65,7 +65,7 @@ function DeactivateSchoolAdmin({ handleClose, rowData }) {
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
               onClick={() => {
-                handleDeactivateSpecialty();
+                handleDeactivate();
               }}
             >
               {isPending ? <SingleSpinner /> : <>Yes, Deactivate</>}
