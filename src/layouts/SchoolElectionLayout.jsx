@@ -38,7 +38,7 @@ function SchoolElectionLayout() {
               <span className="font-size-sm fw-semibold">Manage Elections</span>
             </div>
             <DrawerTrigger title="Create Election" placement="right" drawerChildren={CreateElection}>
-              <button className="border-none rounded-3 font-size-sm px-3 py-2 primary-background text-white d-flex flex-row align-items-center gap-1">
+              <button className="border-none rounded-3 font-size-sm px-3 py-2 primary-background text-white d-flex flex-row align-items-center gap-1" style={{ height: 36 }}>
                 <Plus size={15} />
                 <span>Create Election</span>
               </button>
