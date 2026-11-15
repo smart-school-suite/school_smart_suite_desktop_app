@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import CreateTeacher from "../../DrawerContent/Teacher/CreateTeacher";
+import TeacherDetails from "../../DrawerContent/Teacher/TeacherDetails";
 import UpdateTeacher from "../../DrawerContent/Teacher/UpdateTeacher";
 import ActivateTeacher from "../../ModalContent/Teacher/ActivateTeacher";
 import BulkActivateTeacher from "../../ModalContent/Teacher/BulkActivateTeacher";
@@ -30,7 +31,6 @@ import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { useGetTeachers } from "../../hooks/teacher/useGetTeachers";
 import { teacherColDefs } from "../../utils/table/colDefs/teachers/teacherColDefs";
-import TeacherDetails from "../../DrawerContent/Teacher/TeacherDetails";
 function Teachers() {
   const tableWrapperRef = useRef(null);
   const { data: teachers, isLoading, error } = useGetTeachers();

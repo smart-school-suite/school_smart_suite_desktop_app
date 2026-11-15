@@ -1,6 +1,5 @@
-import { Icon } from "@iconify/react";
 import { AnimatePresence } from "framer-motion";
-import { ArrowDown, ChevronDown } from "lucide-react";
+import { ArrowUpFromLine, ChevronDown, CircleCheck, CircleOff, FilePen, FileSliders, Trash } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
@@ -12,6 +11,9 @@ import { NotFoundError } from "../../components/errors/Error";
 import CustomModal from "../../components/Modals/Modal";
 import JobPopOver from "../../components/Popover/JobPopover";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
@@ -22,13 +24,10 @@ import GradeScaleCategoryDetail from "../../DrawerContent/GradeScale/GradeScaleC
 import UpdateGradeScaleWizzard from "../../DrawerContent/GradeScale/UpdateGradeScale/UpdateGradeScaleWizzard";
 import { useGetGradeScaleCategories } from "../../hooks/gradeScale/useGetGradeScaleCategories";
 import {
-  ActivateIcon,
-  CreateIcon,
   DeleteIcon,
   DetailsIcon,
   ReuseIcon,
-  SuspendIcon,
-  UpdateIcon,
+  SuspendIcon
 } from "../../icons/ActionIcons";
 import { GradeIcon } from "../../icons/Icons";
 import ActivateGradeScaleCategory from "../../ModalContent/GradesConfig/ActivateGradeScaleCategory";
@@ -49,9 +48,6 @@ import {
 import { GRADE_SCALE_COLUMNS } from "../../utils/gradeScale/gradeScaleColumns";
 import { gradeScaleColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleColDefs";
 import { gradeScaleImportColDefs } from "../../utils/table/colDefs/gradeScale/gradeScaleImportColDefs";
-import TableToolbar from "../../components/TableFilters/TableToolbar";
-import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
-import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function Gradesconfiguration() {
   const { data: gradeScales, isLoading, error } = useGetGradeScaleCategories();
   const tableWrapperRef = useRef(null);
@@ -134,14 +130,16 @@ function Gradesconfiguration() {
                     classname={
                       "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
                     }
+                     style={{ height: 36 }}
                   >
                     <span style={{ lineHeight: "16px" }}>Import</span>
-                    <ArrowDown size={16} />
+                    <ArrowUpFromLine size={12} />
                   </ModalButton>
                   <ModalButton
                     classname={
                       "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
                     }
+                     style={{ height: 36 }}
                   >
                     <span style={{ lineHeight: "16px" }}>Actions</span>
                     <ChevronDown size={16} />
@@ -292,7 +290,7 @@ function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Update Grades Scale</span>
-                <UpdateIcon />
+                <FilePen size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -313,7 +311,7 @@ function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Configure Grade</span>
-                <CreateIcon />
+                <FileSliders size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -391,7 +389,7 @@ function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Deactivate</span>
-                <SuspendIcon />
+                <CircleOff size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -411,7 +409,7 @@ function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Activate</span>
-                <ActivateIcon />
+                <CircleCheck size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -431,7 +429,7 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Grade Scale</span>
-              <DeleteIcon />
+              <Trash size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -481,7 +479,7 @@ function ActionButtons({ selectedGradeScales, resetAll }) {
       >
         <CustomTooltip tooltipText={"Delete All Grade Scales"}>
           <span className="pointer-cursor">
-            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+            <Trash  size={16} strokeWidth={1.5} />
           </span>
         </CustomTooltip>
       </ModalButton>
@@ -595,7 +593,7 @@ function DropdownItems({ selectedGradeScales, resetAll, onModalStateChange }) {
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-color">
           <span className="font-size-sm">Activate All Grade Scales</span>
-          <ActivateIcon />
+          <CircleCheck size={16} strokeWidth={1.5} />
         </div>
       </DropDownMenuItem>
       <hr />

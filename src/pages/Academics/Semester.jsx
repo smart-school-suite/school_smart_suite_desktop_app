@@ -21,6 +21,9 @@ import ActionButtonDropdown, {
 import CustomModal from "../../components/Modals/Modal";
 import JobPopOver from "../../components/Popover/JobPopover";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
@@ -30,9 +33,6 @@ import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSe
 import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { SemesterIcon } from "../../icons/Icons";
 import { semesterColDefs } from "../../utils/table/colDefs/semester/semesterColDefs";
-import TableToolbar from "../../components/TableFilters/TableToolbar";
-import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
-import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function Semester() {
   const { data: schoolSemesters, isLoading, error } = useGetSchoolSemesters();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -86,18 +86,18 @@ function Semester() {
               <JobPopOver />
               <ModalButton
                 classname={
-                  "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
+                  "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg p-2"
                 }
-                style={{ padding: "0.6rem" }}
+                 style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Import</span>
                 <ArrowDown size={16} />
               </ModalButton>
               <ModalButton
                 classname={
-                  "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
+                  "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg p-2"
                 }
-                style={{ padding: "0.6rem" }}
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <ChevronDown size={16} />
