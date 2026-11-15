@@ -13,6 +13,7 @@ const ResitInvigilator = React.lazy(
   () => import("../../pages/Resit/ResitInvigilator"),
 );
 const ResitResult = React.lazy(() => import("../../pages/Resit/ResitResult"));
+const ResitJointCourseTimetable = React.lazy(() => import("../../pages/Resit/ResitJointCourseTimetable"));
 const ResitRoutes = [
   <Route
     key="ResitCandidate"
@@ -57,6 +58,15 @@ const ResitRoutes = [
       element={
         <Suspense>
           <ResitTimetable />
+        </Suspense>
+      }
+    />
+    <Route
+      key="ResitJointCourseTimetable"
+      path="/resit/joint-course-timetable"
+      element={
+        <Suspense>
+          <ResitJointCourseTimetable />
         </Suspense>
       }
     />

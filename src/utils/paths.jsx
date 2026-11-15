@@ -64,6 +64,7 @@ export const resitRoutes = [
   "/resit-candidate",
   "/resit-exams",
   "/resit-timetable",
+  "/resit/joint-course-timetable",
   "/student-resit",
   "/resit-invigilator",
   "/resit-result",

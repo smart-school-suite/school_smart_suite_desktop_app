@@ -1,42 +1,29 @@
 import { Icon } from "@iconify/react";
 import { CalendarClock, CircleAlert, RefreshCw, Users } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import TermDropdown from "../components/JointCourseTimetable/TermDropdown";
 import { formatExamDate } from "../examTimetable/constraints/fields";
-import { useGetExamJointCourseTerm, useGetExamJointCourseTerms, useRemoveExamJointCourseTime } from "../hooks/examJointCourseTimetable";
-import { setExamJointCourseTerm } from "../Slices/ExamJointCourse/examJointCourseTimetableSlice";
 import GenerateJointExamTimeDrawer from "./GenerateJointExamTimeDrawer";
-
-const TERM_TEXT = {
-  title: "Select academic year and exam",
-  hint: "Choose which exam's joint courses to schedule",
-  search: "Search academic year or exam",
-  empty: "No exams found. Create an exam first.",
-};
-const termMeta = (term) =>
-  term.joint_course_count === 0 ? "No joint exams" : `${term.configured_count} of ${term.joint_course_count} joint exams set`;
+import { useJointCourseKind, useJointCourseState } from "./jointCourseKinds";
 
 /** Right side of the joint exam page: the selected joint exam and its one time. */
 function ExamJointCourseWorkspace() {
+  const kind = useJointCourseKind();
   const dispatch = useDispatch();
-  const { term, selectedCourseId } = useSelector((state) => state.examJointCourseTimetable);
-  const termsQuery = useGetExamJointCourseTerms();
-  const { data } = useGetExamJointCourseTerm(term);
+  const { term, selectedCourseId } = useJointCourseState((state) => state);
+  const termsQuery = kind.hooks.useTerms();
+  const { data } = kind.hooks.useTerm(term);
   const course = (data?.data?.courses ?? []).find((item) => item.id === selectedCourseId);
 
   return (
     <div style={{ width: "75%", height: "100%" }} className="d-flex flex-column align-items-center px-2 gap-2">
       <div className="d-flex flex-row justify-content-center w-100">
-        <TermDropdown value={term} onChange={(value) => dispatch(setExamJointCourseTerm(value))} termsQuery={termsQuery} text={TERM_TEXT} meta={termMeta} />
+        <TermDropdown value={term} onChange={(value) => dispatch(kind.actions.setTerm(value))} termsQuery={termsQuery} text={kind.copy.term} meta={kind.copy.termMeta} />
       </div>
       {!course ? (
         <Placeholder
-          text={
-            term
-              ? "Select a joint exam from the list to see and set its time."
-              : "Choose an academic year and exam to see the courses several specialties sit together."
-          }
+          text={term ? kind.copy.selectHint : kind.copy.noTermHint}
         />
       ) : (
         <CourseDetails course={course} />
@@ -72,7 +59,8 @@ function Placeholder({ text, children }) {
 }
 
 function CourseDetails({ course }) {
-  const remove = useRemoveExamJointCourseTime();
+  const { copy, hooks } = useJointCourseKind();
+  const remove = hooks.useRemove();
   const slot = course.slot;
   const missing = course.specialties_without_exam ?? [];
   const stale = (course.affected_timetables ?? []).filter((item) => item.needs_regeneration);
@@ -83,7 +71,7 @@ function CourseDetails({ course }) {
         <div className="d-flex flex-column">
           <span className="fw-semibold">{course.course?.title}</span>
           <span className="text-iron-500 font-size-xs">
-            {[course.course?.code, course.exam_type?.name, `${course.specialties?.length ?? 0} specialties sit it together`].filter(Boolean).join(" · ")}
+            {[course.course?.code, course.exam_type?.name, `${course.specialties?.length ?? 0} ${copy.sitsTogether}`].filter(Boolean).join(" · ")}
           </span>
         </div>
         {slot && <FindTimeButton course={course} label="Change time" outline />}
@@ -115,7 +103,7 @@ function CourseDetails({ course }) {
           </button>
         </div>
       ) : (
-        <Placeholder text="This joint exam has no time yet. Find the times every linked specialty is free, then pick one.">
+        <Placeholder text={copy.noTime}>
           <FindTimeButton course={course} label="Find a time" />
         </Placeholder>
       )}
@@ -123,7 +111,7 @@ function CourseDetails({ course }) {
       {stale.length > 0 && (
         <div className="d-flex align-items-start gap-2 bg-old-lace-50 text-old-lace-700 rounded-3 p-2">
           <RefreshCw size={14} className="flex-shrink-0 mt-1" />
-          <span>Generate these exam timetables again so they use the new time: {stale.map((item) => item.label).join(", ")}.</span>
+          <span>Generate these {copy.timetables} again so they use the new time: {stale.map((item) => item.label).join(", ")}.</span>
         </div>
       )}
 
@@ -134,9 +122,12 @@ function CourseDetails({ course }) {
         <div className="border rounded-3 bg-white">
           {(course.specialties ?? []).map((specialty, index) => (
             <div key={specialty.exam_id} className={`d-flex flex-row justify-content-between gap-2 px-3 py-2 ${index ? "border-top" : ""}`}>
-              <span>{specialty.label}</span>
+              <span>
+                {specialty.label}
+                {specialty.candidate_count != null && <span className="text-iron-500 font-size-xs"> · {specialty.candidate_count} candidate{specialty.candidate_count === 1 ? "" : "s"}</span>}
+              </span>
               <span className="text-iron-500 font-size-xs">
-                Exam period {formatExamDate(specialty.exam_period?.start_date)} – {formatExamDate(specialty.exam_period?.end_date)}
+                {copy.period} {formatExamDate(specialty.exam_period?.start_date)} – {formatExamDate(specialty.exam_period?.end_date)}
               </span>
             </div>
           ))}

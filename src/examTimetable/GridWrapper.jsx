@@ -131,7 +131,7 @@ function useStartGeneration() {
   const unscheduled = kind.joint.needsTime ? readiness.unscheduled : [];
   const isSetupLoading = readiness.isLoading;
   const blockedReason = unscheduled.length
-    ? `Set the exam time of ${unscheduled.map((course) => course.course_title).join(", ")} on the Joint Course Timetable page first.`
+    ? `Set the exam time of ${unscheduled.map((course) => course.course_title).join(", ")} on the ${kind.joint.pageName} page first.`
     : null;
 
   const start = () => {
@@ -277,7 +277,7 @@ function ConfigurationSummary() {
                 other specialties and {unscheduled.length === 1 ? "has" : "have"} no exam time yet.
               </span>
               <button type="button" className="cw-text-btn jcs-link" onClick={() => navigate(kind.joint.path)}>
-                <span>Configure joint course timetable</span>
+                <span>Configure {kind.joint.pageName.toLowerCase()}</span>
                 <Icon icon="lucide:arrow-up-right" width={15} height={15} />
               </button>
             </div>

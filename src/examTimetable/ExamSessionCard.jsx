@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { Users } from "lucide-react";
+import { useTimetableKind } from "./TimetableKindContext";
 
 const SOURCE_LABELS = {
   course_requested_slot: "Requested time",
@@ -12,6 +13,7 @@ const SOURCE_LABELS = {
  * before generation) get a tinted card and a badge.
  */
 function ExamSessionCard({ slot }) {
+  const kind = useTimetableKind();
   const joint = slot?.slot_type === "joint";
   const halls = slot?.halls ?? [];
   const invigilators = halls.flatMap((hall) => hall.invigilators ?? []);
@@ -34,9 +36,9 @@ function ExamSessionCard({ slot }) {
               <span
                 className="d-inline-flex align-items-center gap-1 rounded-pill px-2 font-size-xs text-nowrap bg-white text-primary-700"
                 style={{ border: "1px solid var(--primary-color-200)" }}
-                title="Shared with other specialties. Its time is set on the Joint Course Timetable page."
+                title={`Shared with other specialties. Its time is set on the ${kind.joint.pageName} page.`}
               >
-                <Users size={11} /> Joint exam
+                <Users size={11} /> Joint {kind.noun}
               </span>
             )}
             {sourceLabel && <span className="rounded-pill px-2 font-size-xs text-nowrap bg-iron-100 text-iron-600">{sourceLabel}</span>}
