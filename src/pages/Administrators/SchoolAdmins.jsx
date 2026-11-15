@@ -153,7 +153,7 @@ function SchoolAdmins() {
                     placement="right"
                     drawerChildren={CreateSchoolAdmin}
                   >
-                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                    <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                       <span>Create Admin</span>
                     </button>
                   </DrawerTrigger>
