@@ -54,6 +54,7 @@ function SchoolEventLayout() {
                 className={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Import</span>
                 <span>
@@ -64,6 +65,7 @@ function SchoolEventLayout() {
                 className={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <span>
@@ -82,7 +84,7 @@ function SchoolEventLayout() {
                 closeOnEscape={false}
                 showHeader={false}
               >
-                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                   <span>Create Event</span>
                 </button>
               </DrawerTrigger>

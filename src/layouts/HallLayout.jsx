@@ -99,7 +99,7 @@ function HallLayout() {
                   placement="right"
                   drawerChildren={CreateHall}
                 >
-                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                     <span>Create Hall</span>
                   </button>
                 </DrawerTrigger>

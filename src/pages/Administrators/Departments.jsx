@@ -137,7 +137,7 @@ function Departments() {
                 placement="right"
                 drawerChildren={CreateDepartment}
               >
-                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                   <span>Create Department</span>
                 </button>
               </DrawerTrigger>

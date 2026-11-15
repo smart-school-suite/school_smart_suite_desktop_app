@@ -38,6 +38,7 @@ function CourseImportTrigger() {
           module: { name: "Course" },
           importModuleColDefs: courseImportColDefs,
         }}
+        style={{ height: 36 }}
       >
         <span style={{ lineHeight: "16px" }}>Import</span>
         <span>
