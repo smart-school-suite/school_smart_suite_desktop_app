@@ -1,7 +1,6 @@
 import { autoUpdate, offset, shift, useFloating } from "@floating-ui/react";
-import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { SquareMousePointer } from "lucide-react";
+import { CircleX, EllipsisVertical, SquareMousePointer } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
@@ -115,7 +114,7 @@ function BulkActionsToast({
 
           <div className="w-100 p-2 rounded-3  text-iron-700 d-flex flex-row justify-content-between align-items-center shadow-sm bg-white border">
             <div className="d-flex flex-row align-items-center gap-3">
-              <SquareMousePointer size={16} />
+              <SquareMousePointer size={16}  strokeWidth={1.5}/>
               <span className="font-size-sm">
                 {rowCount} {label}
               </span>
@@ -134,7 +133,7 @@ function BulkActionsToast({
                 onClick={toggleDropdown}
               >
                 <span className="pointer-cursor">
-                  <Icon icon="circum:menu-kebab" width="24" height="24" />
+                  <EllipsisVertical size={22} strokeWidth={1.75} />
                 </span>
               </button>
 
@@ -148,11 +147,7 @@ function BulkActionsToast({
                 onClick={resetAll}
               >
                 <span className="pointer-cursor">
-                  <Icon
-                    icon="material-symbols-light:cancel-outline"
-                    width="24"
-                    height="24"
-                  />
+                  <CircleX size={20} strokeWidth={1.5} />
                 </span>
               </button>
             </div>

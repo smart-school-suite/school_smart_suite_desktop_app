@@ -1,13 +1,12 @@
-import { Icon } from "@iconify/react";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import React, {
+import { ArrowUpFromLine, ChevronDown, CircleCheck, CircleOff, Trash } from "lucide-react";
+import {
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import CreateSpecialty from "../../DrawerContent/Specialty/CreateSpecialty";
 import SpecialtyDetails from "../../DrawerContent/Specialty/SpecialtyDetails";
 import UpdateSpecialty from "../../DrawerContent/Specialty/UpdateSpecialty";
@@ -32,6 +31,9 @@ import ActionButtonDropdown, {
 import CustomModal from "../../components/Modals/Modal";
 import JobPopOver from "../../components/Popover/JobPopover";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
@@ -49,14 +51,11 @@ import { SpecialtyIcon } from "../../icons/Icons";
 import { SPECIALTY_COLUMNS } from "../../utils/specialty/specialtyColumns";
 import { specialtyColDefs } from "../../utils/table/colDefs/specialty/specialtyColDefs";
 import { specialtyImportColDefs } from "../../utils/table/colDefs/specialty/specialtyImportColDefs";
-import TableToolbar from "../../components/TableFilters/TableToolbar";
-import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
-import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function Specialties() {
   const { data: specialty, isLoading, error } = useGetSpecialties();
   const tableRef = useRef();
+  const tableWrapperRef = useRef(null);
   const filters = useTableFilters("administrators/specialties", tableRef);
-  const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
@@ -125,14 +124,16 @@ function Specialties() {
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
                 }
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Import</span>
-                <ArrowDown size={16} />
+                <ArrowUpFromLine size={12} />
               </ModalButton>
               <ModalButton
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
                 }
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <ChevronDown size={16} />
@@ -191,11 +192,14 @@ function Specialties() {
               <TableToolbar
                 filters={filters}
                 tableRef={tableRef}
-                searchPlaceholder="Search Specialty"
+                searchPlaceholder="Search name, description, department"
                 onReset={handleResetSelections}
               />
 
-              <TableFilterLayout filters={filters}>
+              <TableFilterLayout
+                filters={filters}
+                tableWrapperRef={tableWrapperRef}
+              >
                 <Table
                   {...filters.gridProps}
                   colDefs={memoizedColDefs}
@@ -206,11 +210,13 @@ function Specialties() {
                 />
                 {rowCount > 0 && (
                   <BulkActionsToast
+                    key="bulk-actions-toast"
+                    anchorRef={tableWrapperRef}
                     rowCount={rowCount}
                     label={`${
-                      rowCount > 0
-                        ? "Specialty Selected"
-                        : "Specialties Selected"
+                      rowCount > 1
+                        ? "Specialties Selected"
+                        : "Specialty Selected"
                     }`}
                     resetAll={handleResetSelections}
                     dropDownItems={
@@ -377,14 +383,14 @@ function ActionButtons({ selectedSpecialties, resetAll }) {
   return (
     <>
       <ModalButton
-        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        classname={"border-none transparent-bg w-100 p-0 text-iron-700"}
         action={{ modalContent: BulkDeleteSpecialty }}
         bulkData={selectedSpecialties}
         resetAll={resetAll}
       >
         <CustomTooltip tooltipText={"Delete All"}>
           <span className="pointer-cursor">
-            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+            <Trash size={20} strokeWidth={1.4} />
           </span>
         </CustomTooltip>
       </ModalButton>
@@ -393,66 +399,159 @@ function ActionButtons({ selectedSpecialties, resetAll }) {
 }
 function DropdownItems({ selectedSpecialties, resetAll, onModalStateChange }) {
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
+  const [showDrawer, setShowDrawer] = useState(false);
   const modalRef = useRef(null);
+
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+    modalData: {},
+  });
+
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+    drawerData: {},
+  });
+
   useEffect(() => {
-    onModalStateChange(showModal, modalRef);
+    if (typeof onModalStateChange === "function") {
+      onModalStateChange(showModal, modalRef);
+    }
   }, [showModal, onModalStateChange]);
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        handleClose: handleCloseModal,
-        resetAll,
-        bulkData: selectedSpecialties,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+      modalData = {},
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+      modalData,
+    });
     setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+      drawerData = {},
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+      drawerData,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteSpecialty, "md")}
+        onClick={() => handleShowModal(BulkDeleteSpecialty, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Delete All</span>
-          <DeleteIcon />
+          <Trash size={16} strokeWidth={1.5} />
         </div>
       </DropDownMenuItem>
+      <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeactivateSpecialty, "md")}
+        onClick={() => handleShowModal(BulkDeactivateSpecialty, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Deactivate All</span>
-          <SuspendIcon />
+          <CircleOff size={16} strokeWidth={1.5} />
         </div>
       </DropDownMenuItem>
+      <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkActivateSpecialty, "md")}
+        onClick={() => handleShowModal(BulkActivateSpecialty, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })}
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Activate All</span>
-          <ActivateIcon />
+          <CircleCheck size={16} strokeWidth={1.5} />
         </div>
       </DropDownMenuItem>
+     <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={{
+              selectedSpecialties: selectedSpecialties,
+              ...drawerConfig.drawerData,
+            }}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
+        ref={modalRef}
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
-        ref={modalRef}
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={{
+              selectedSpecialties: selectedSpecialties,
+              ...modalConfig.modalData,
+            }}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );
