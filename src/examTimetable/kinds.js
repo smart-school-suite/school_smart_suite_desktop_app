@@ -50,6 +50,7 @@ export const EXAM_TIMETABLE_KIND = Object.freeze({
     // Joint exams get their time on their own page; generation waits for it.
     needsTime: true,
     path: "/exam/joint-course-timetable",
+    pageName: "Joint Course Timetable",
     rowLabel: "Joint courses",
     title: "Courses examined with other specialties",
     description:
@@ -92,17 +93,18 @@ export const RESIT_TIMETABLE_KIND = Object.freeze({
     candidates: "resit candidates",
   },
   joint: {
-    // Shared resits take the time another specialty's active resit timetable gives them; nothing to wait for.
-    needsTime: false,
-    path: null,
-    rowLabel: "Shared resit courses",
-    title: "Resits shared with other specialties",
+    // Joint resits get their time on the resit joint course timetable; generation waits for it.
+    needsTime: true,
+    path: "/resit/joint-course-timetable",
+    pageName: "Resit Joint Course Timetable",
+    rowLabel: "Joint resits",
+    title: "Courses resat with other specialties",
     description:
-      "A course several specialties resit is sat once. Once another specialty's resit timetable that examines it is active, this timetable places it at that same time, so it can't be changed here.",
-    emptyTitle: "No shared resits",
-    emptyText: "No course of this resit exam is already examined by another specialty's active resit timetable.",
-    fixedBy: "Fixed by another specialty's active resit timetable",
-    requestNote: "Shared resits are not listed: they keep the time another specialty's active resit timetable gives them.",
-    gridBadge: "shared",
+      "A course students of several specialties resit is sat once, at the same time for all of them. Its time is set on the Resit Joint Course Timetable page and this timetable places it exactly there, so it can't be changed here.",
+    emptyTitle: "No joint resits",
+    emptyText: "No course of this resit exam is resat by another specialty, so there is nothing to wait for.",
+    fixedBy: "Fixed by the Resit Joint Course Timetable",
+    requestNote: "Joint resits are not listed: their time is set on the Resit Joint Course Timetable page.",
+    gridBadge: "joint",
   },
 });

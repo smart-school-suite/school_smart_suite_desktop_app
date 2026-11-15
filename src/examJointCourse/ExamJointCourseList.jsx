@@ -1,10 +1,8 @@
 import { Icon } from "@iconify/react";
 import { useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useGetExams } from "../hooks/exam/useGetExams";
-import { useGetExamJointCourseTerm, useSyncExamJointCourses } from "../hooks/examJointCourseTimetable";
-import { setSelectedExamJointCourse } from "../Slices/ExamJointCourse/examJointCourseTimetableSlice";
+import { useDispatch } from "react-redux";
 import { formatExamDate } from "../examTimetable/constraints/fields";
+import { useJointCourseKind, useJointCourseState } from "./jointCourseKinds";
 import "../styles/constraintWizard.css";
 
 const matches = (course, query) =>
@@ -20,34 +18,35 @@ const matches = (course, query) =>
         .includes(term),
     );
 
-/** Left panel: the joint exams of the selected academic year and exam type. */
+/** Left panel: the joint courses of the selected academic year and exam type. */
 function ExamJointCourseList() {
+  const kind = useJointCourseKind();
+  const { copy } = kind;
   const dispatch = useDispatch();
-  const { term, selectedCourseId } = useSelector((state) => state.examJointCourseTimetable);
-  const { data, isLoading, error } = useGetExamJointCourseTerm(term);
-  const { data: exams } = useGetExams();
-  const sync = useSyncExamJointCourses();
+  const { term, selectedCourseId } = useJointCourseState((state) => state);
+  const { data, isLoading, error } = kind.hooks.useTerm(term);
+  const examIds = kind.useSyncIds();
+  const sync = kind.hooks.useSync();
   const [query, setQuery] = useState("");
 
   const courses = data?.data?.courses ?? [];
   const summary = data?.data?.summary;
   const normalised = query.trim().toLowerCase();
   const filtered = useMemo(() => courses.filter((course) => matches(course, normalised)), [courses, normalised]);
-  const examIds = (exams?.data ?? []).filter((exam) => exam.exam_type !== "resit").map((exam) => exam.id);
 
   return (
-    <aside className="ctl" aria-label="Joint exams">
+    <aside className="ctl" aria-label={copy.listTitle}>
       <div className="ctl-top d-flex flex-column gap-2">
-        <span className="fw-semibold">Joint exams</span>
+        <span className="fw-semibold">{copy.listTitle}</span>
         <button
           type="button"
           className="ctl-new"
           disabled={sync.isPending || examIds.length === 0}
           onClick={() => sync.mutate(examIds)}
-          title="Links every exam to the courses it shares with other specialties. New exams are linked when they are created."
+          title={copy.findHint}
         >
           <Icon icon={sync.isPending ? "lucide:loader-circle" : "lucide:refresh-cw"} width={16} height={16} className={sync.isPending ? "ctl-spin" : undefined} />
-          <span>{sync.isPending ? "Finding joint exams…" : "Find joint exams"}</span>
+          <span>{sync.isPending ? copy.finding : copy.find}</span>
         </button>
       </div>
 
@@ -67,7 +66,7 @@ function ExamJointCourseList() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               onKeyDown={(event) => event.key === "Escape" && setQuery("")}
-              aria-label="Find a joint exam"
+              aria-label={copy.search}
             />
             {query && (
               <button type="button" className="ctl-search__clear" onClick={() => setQuery("")} aria-label="Clear search">
@@ -79,11 +78,11 @@ function ExamJointCourseList() {
 
         <div className="ctl-scroll">
           {!term ? (
-            <p className="ctl-empty">Choose an academic year and exam above.</p>
+            <p className="ctl-empty">{copy.choose}</p>
           ) : isLoading ? (
             [...Array(5)].map((_, index) => <div key={index} className="ctl-skeleton" />)
           ) : error ? (
-            <p className="ctl-empty ctl-empty--error">{error?.response?.data?.errors?.description ?? "Could not load joint exams."}</p>
+            <p className="ctl-empty ctl-empty--error">{error?.response?.data?.errors?.description ?? copy.loadError}</p>
           ) : courses.length === 0 ? (
             <p className="ctl-empty">{summary?.message}</p>
           ) : filtered.length === 0 ? (
@@ -99,7 +98,7 @@ function ExamJointCourseList() {
                       type="button"
                       className={`ctl-item ${isSelected ? "is-active" : ""}`}
                       aria-current={isSelected ? "true" : undefined}
-                      onClick={() => dispatch(setSelectedExamJointCourse(course.id))}
+                      onClick={() => dispatch(kind.actions.setSelected(course.id))}
                       title={(course.specialties ?? []).map((specialty) => specialty.label).join(", ")}
                     >
                       <span className="d-flex flex-column flex-grow-1 text-start" style={{ minWidth: 0 }}>

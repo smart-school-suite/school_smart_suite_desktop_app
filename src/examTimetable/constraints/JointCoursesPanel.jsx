@@ -80,7 +80,7 @@ function JointCoursesPanel({ handleClose, constraint }) {
         // While times are missing, the fallback carries the call to configure them.
         footer={
           unscheduled.length === 0 && kind.joint.path && (
-            <WizardFooter onNext={openJointTimetable} nextLabel="Open joint course timetable" nextIcon="lucide:arrow-up-right" />
+            <WizardFooter onNext={openJointTimetable} nextLabel={`Open ${kind.joint.pageName.toLowerCase()}`} nextIcon="lucide:arrow-up-right" />
           )
         }
       >
@@ -92,6 +92,7 @@ function JointCoursesPanel({ handleClose, constraint }) {
 
 /** Shown while joint courses have no time: generation is blocked until they do. */
 function ConfigureFallback({ courses, allMissing, onConfigure }) {
+  const kind = useTimetableKind();
   return (
     <div className="d-flex flex-column align-items-center text-center gap-2 border rounded-3 bg-white p-3">
       <img src="/sss-maskot/timetable.png" alt="" aria-hidden="true" style={{ height: "140px", width: "140px", objectFit: "contain" }} />
@@ -99,8 +100,8 @@ function ConfigureFallback({ courses, allMissing, onConfigure }) {
         {allMissing ? "Set the joint course exam times first" : `${courses.length} joint course${courses.length === 1 ? " still needs" : "s still need"} a time`}
       </span>
       <span className="font-size-sm text-iron-500" style={{ maxWidth: "28rem" }}>
-        This exam timetable can't be generated until every joint course has its exam time. Configure{" "}
-        {courses.length === 1 ? "it" : "them"} on the Joint Course Timetable page, then come back and generate.
+        This {kind.noun} timetable can't be generated until every joint course has its time. Configure{" "}
+        {courses.length === 1 ? "it" : "them"} on the {kind.joint.pageName} page, then come back and generate.
       </span>
       <div className="jcs-context justify-content-center mb-0">
         {courses.map((course) => (
@@ -111,7 +112,7 @@ function ConfigureFallback({ courses, allMissing, onConfigure }) {
         ))}
       </div>
       <button type="button" className="cw-btn cw-btn--primary mt-1" onClick={onConfigure}>
-        <span>Configure joint course timetable</span>
+        <span>Configure {kind.joint.pageName.toLowerCase()}</span>
         <Icon icon="lucide:arrow-up-right" width={16} height={16} />
       </button>
     </div>

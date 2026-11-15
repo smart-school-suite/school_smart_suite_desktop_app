@@ -1,7 +1,7 @@
 import { eachDayOfInterval, format, parseISO } from "date-fns";
 import { useMemo, useState } from "react";
 import ConstraintWizard from "../components/SemesterTimetable/ConstraintWizard/ConstraintWizard";
-import { useGenerateExamJointCourseTimes } from "../hooks/examJointCourseTimetable";
+import { useJointCourseKind } from "./jointCourseKinds";
 import "../styles/jointCourseSlots.css";
 import ChooseDurationStep from "./steps/ChooseDurationStep";
 import PickTimeStep from "./steps/PickTimeStep";
@@ -38,7 +38,8 @@ function GenerateJointExamTimeDrawer({ handleClose, drawerData }) {
   }));
   const [proposal, setProposal] = useState(null);
   const [pick, setPick] = useState(null);
-  const generate = useGenerateExamJointCourseTimes();
+  const kind = useJointCourseKind();
+  const generate = kind.hooks.useGenerate();
 
   const updateForm = (changes) => {
     setForm((current) => ({ ...current, ...changes }));
@@ -76,7 +77,7 @@ function GenerateJointExamTimeDrawer({ handleClose, drawerData }) {
     <ConstraintWizard
       flow={FLOW}
       title={course.course?.title}
-      category={["Joint exam", course.course?.code].filter(Boolean).join(" · ")}
+      category={[kind.copy.category, course.course?.code].filter(Boolean).join(" · ")}
       meta={<CourseMeta course={course} />}
       handleClose={handleClose}
       drawerData={{ course, dates, form, updateForm, proposal, pick, setPick, generate, runGenerate }}
