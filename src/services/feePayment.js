@@ -79,3 +79,8 @@ export const getTuitionFeeDetails = async (feeId) => {
   const response = await axiosInstance.get(`fee-payment/tuition-fee/${feeId}`);
   return response.data;
 };
+
+export const bulkDeleteTuitionFees = async (data) => {
+  const response = await axiosInstance.post("tuition-fee/bulk-delete", data);
+  return response.data;
+};

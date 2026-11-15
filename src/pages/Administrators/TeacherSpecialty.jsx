@@ -1,5 +1,5 @@
-import { ArrowDown, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowDown, CheckCheck, Plus, UserMinus } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 import TeacherCard from "../../components/Card/TeacherCard";
 import TeacherStats from "../../components/Card/TeacherStats";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
@@ -8,7 +8,11 @@ import SearchInput from "../../components/input/search";
 import SpecialtyNavigator from "../../components/SideBars/SpecialtyNavigator";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import AssignTeacherSpecialty from "../../DrawerContent/TeacherSpecialty/AssignTeacherSpecialty";
+import { CardBulkActions } from "../../components/Toast/BulkActionMenu";
+import BulkActionConfirm from "../../ModalContent/Common/BulkActionConfirm";
+import { useCardSelection } from "../../hooks/common/useCardSelection";
 import { useDebounce } from "../../hooks/common/useDebounce";
+import { useRemoveTeachers } from "../../hooks/teacherSpecialty/useRemoveTeachers";
 import { useGetTeacherBySpecialty } from "../../hooks/teacher/useGetTeacherBySpecialty";
 import { filterTeachers, isEmptyListError } from "../../utils/teacher/teacherFilters";
 
@@ -45,6 +49,35 @@ function TeacherSpecialty() {
     () => filterTeachers(allTeachers, debouncedSearch),
     [allTeachers, debouncedSearch],
   );
+
+  const selection = useCardSelection(allTeachers, undefined, specialty);
+  const gridRef = useRef(null);
+  const bulkActions = [
+    {
+      label: "Select All",
+      icon: CheckCheck,
+      onClick: () => selection.selectAll(visibleTeachers),
+    },
+    {
+      label: "Remove From Specialty",
+      icon: UserMinus,
+      quick: true,
+      modal: BulkActionConfirm,
+      props: {
+        useAction: useRemoveTeachers,
+        actionArgs: [specialty],
+        buildPayload: (items) => ({
+          specialty_id: specialty,
+          teacher_ids: items.map((item) => item.id),
+        }),
+        title: "Remove Teachers From Specialty",
+        description:
+          "The selected teachers will no longer be assigned to this specialty and cannot be scheduled for its courses.",
+        confirmLabel: "Yes, Remove All",
+        errorTitle: "Failed To Remove Teachers",
+      },
+    },
+  ];
 
   const handleSpecialtyChange = (next) => {
     setSpecialty(next);
@@ -129,7 +162,12 @@ function TeacherSpecialty() {
     return (
       <div className="teacher-card-grid">
         {visibleTeachers.map((teacher) => (
-          <TeacherCard key={teacher?.id} teacher={teacher}>
+          <TeacherCard
+            key={teacher?.id}
+            teacher={teacher}
+            selected={selection.isSelected(teacher)}
+            onSelect={selection.toggle}
+          >
             <TeacherStats teacher={teacher} />
           </TeacherCard>
         ))}
@@ -183,11 +221,18 @@ function TeacherSpecialty() {
         {/* flex-grow + min-height: 0 makes this the only scrolling region and
             lets it fill exactly the space left under the toolbar */}
         <div
+          ref={gridRef}
           className="flex-grow-1 scroll-bar-sm over-flow-y-auto over-flow-x-hidden pe-1 pb-2"
           style={{ minHeight: 0 }}
         >
           {renderContent()}
         </div>
+        <CardBulkActions
+          anchorRef={gridRef}
+          selection={selection}
+          noun={["Teacher", "Teachers"]}
+          actions={bulkActions}
+        />
       </div>
     </main>
   );

@@ -16,6 +16,13 @@ import { Drawer } from "../../components/drawer/Drawer";
 import TableToolbar from "../../components/TableFilters/TableToolbar";
 import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
 import { useTableFilters } from "../../components/TableFilters/useTableFilters";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import {
+  BulkActionButtons,
+  BulkDropdownItems,
+} from "../../components/Toast/BulkActionMenu";
+import BulkDeleteFeeSchedule from "../../ModalContent/FeeSchedule/BulkDeleteFeeSchedule";
+import { Trash } from "lucide-react";
 function FeeSchedule() {
   const { data: feeSchedule, isLoading, error } = useGetFeeSchedule();
   const tableRef = useRef();
@@ -87,13 +94,7 @@ function FeeSchedule() {
                       key="bulk-actions-toast"
                       anchorRef={tableWrapperRef}
                       rowCount={rowCount}
-                      label={`${
-                        rowCount >= 1
-                          ? "Schedule Selected"
-                          : rowCount >= 2
-                            ? "Schedules Selected"
-                            : null
-                      }`}
+                      label={rowCount > 1 ? "Schedules Selected" : "Schedule Selected"}
                       resetAll={handleResetSelections}
                       dropDownItems={
                         <DropdownItems
@@ -268,5 +269,29 @@ export function ActionComponent(props) {
         )}
       </CustomModal>
     </>
+  );
+}
+
+const FEE_SCHEDULE_BULK_ACTIONS = [
+  { label: "Delete All", icon: Trash, modal: BulkDeleteFeeSchedule, quick: true },
+];
+
+function ActionButtons({ selectedSchedules, resetAll }) {
+  return (
+    <BulkActionButtons
+      actions={FEE_SCHEDULE_BULK_ACTIONS}
+      selected={selectedSchedules}
+      resetAll={resetAll}
+    />
+  );
+}
+function DropdownItems({ selectedSchedules, resetAll, onModalStateChange }) {
+  return (
+    <BulkDropdownItems
+      actions={FEE_SCHEDULE_BULK_ACTIONS}
+      selected={selectedSchedules}
+      resetAll={resetAll}
+      onModalStateChange={onModalStateChange}
+    />
   );
 }

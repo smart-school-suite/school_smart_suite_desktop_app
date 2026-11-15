@@ -38,3 +38,8 @@ export const getSpecialties = async () => {
   const response = await axiosInstance.get("specialty-hall/specialties");
   return response.data;
 };
+
+export const bulkRemoveAllAssignedHalls = async (data) => {
+  const response = await axiosInstance.post("specialty-hall/bulk-remove-all", data);
+  return response.data;
+};

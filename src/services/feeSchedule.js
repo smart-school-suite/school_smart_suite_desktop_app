@@ -31,3 +31,8 @@ export const autoGenerateFeeSchedule = async (data) => {
    const response = await axiosInstance.post('fee-schedule/auto-generate', data);
    return response.data;
 }
+
+export const bulkDeleteFeeSchedule = async (data) => {
+  const response = await axiosInstance.post("fee-schedule/bulk-delete", data);
+  return response.data;
+};

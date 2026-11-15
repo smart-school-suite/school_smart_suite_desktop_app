@@ -19,6 +19,22 @@ import { hallSpecialtyColDefs } from "../../utils/table/colDefs/hall/hallSpecial
 import TableToolbar from "../../components/TableFilters/TableToolbar";
 import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
 import { useTableFilters } from "../../components/TableFilters/useTableFilters";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import {
+  BulkActionButtons,
+  BulkDropdownItems,
+} from "../../components/Toast/BulkActionMenu";
+import BulkRemoveAllAssignedHalls from "../../ModalContent/SpecialtyHall/BulkRemoveAllAssignedHalls";
+import { Trash } from "lucide-react";
+const SPECIALTY_HALL_BULK_ACTIONS = [
+  {
+    label: "Remove All Assigned Halls",
+    icon: Trash,
+    modal: BulkRemoveAllAssignedHalls,
+    quick: true,
+  },
+];
+
 function SpecialtyHall() {
   const { data: specialties, isLoading, error } = useGetSpecialties();
   const dispatch = useDispatch();
@@ -142,6 +158,29 @@ function SpecialtyHall() {
                     handleRowCountFromChild={handleRowCountFromChild}
                     handleRowDataFromChild={handleRowDataFromChild}
                   />
+                  {rowCount > 0 && (
+                    <BulkActionsToast
+                      key="bulk-actions-toast"
+                      anchorRef={tableWrapperRef}
+                      rowCount={rowCount}
+                      label={rowCount > 1 ? "Specialties Selected" : "Specialty Selected"}
+                      resetAll={handleResetSelections}
+                      dropDownItems={
+                        <BulkDropdownItems
+                          actions={SPECIALTY_HALL_BULK_ACTIONS}
+                          selected={selectedSpecialties}
+                          resetAll={handleResetSelections}
+                        />
+                      }
+                      actionButton={
+                        <BulkActionButtons
+                          actions={SPECIALTY_HALL_BULK_ACTIONS}
+                          selected={selectedSpecialties}
+                          resetAll={handleResetSelections}
+                        />
+                      }
+                    />
+                  )}
                 </TableFilterLayout>
               </div>
             </>

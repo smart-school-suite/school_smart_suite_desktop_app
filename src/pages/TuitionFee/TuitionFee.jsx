@@ -17,9 +17,17 @@ import { tuitionFeeColDefs } from "../../utils/table/colDefs/tuitionfee/tuitionF
 import TableToolbar from "../../components/TableFilters/TableToolbar";
 import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
 import { useTableFilters } from "../../components/TableFilters/useTableFilters";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import {
+  BulkActionButtons,
+  BulkDropdownItems,
+} from "../../components/Toast/BulkActionMenu";
+import BulkDeleteTuitionFee from "../../ModalContent/TuitionFee/BulkDeleteTuitionFee";
+import { Trash } from "lucide-react";
 function TuitionFees() {
   const { data: tuitionFees, isLoading, error } = useGetTuitionFees();
   const tableRef = useRef();
+  const tableWrapperRef = useRef(null);
   const filters = useTableFilters("tuition-fee/tuition-fee", tableRef);
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -67,25 +75,24 @@ function TuitionFees() {
                   searchPlaceholder="Search Tuition Fee"
                   onReset={handleResetSelections}
                 />
-                <TableFilterLayout filters={filters}>
+                <TableFilterLayout
+                  filters={filters}
+                  tableWrapperRef={tableWrapperRef}
+                >
                   <Table
                     {...filters.gridProps}
                     colDefs={memoizedColDefs}
-                    rowData={tuitionFees.data}
+                    rowData={memoizedRowData}
                     ref={tableRef}
                     handleRowCountFromChild={handleRowCountFromChild}
                     handleRowDataFromChild={handleRowDataFromChild}
                   />
                   {rowCount > 0 && (
                     <BulkActionsToast
+                      key="bulk-actions-toast"
+                      anchorRef={tableWrapperRef}
                       rowCount={rowCount}
-                      label={`${
-                        rowCount >= 1
-                          ? "Tuition Fee Selected"
-                          : rowCount >= 2
-                            ? "Tuition Fees Selected"
-                            : null
-                      }`}
+                      label={rowCount > 1 ? "Tuition Fees Selected" : "Tuition Fee Selected"}
                       resetAll={handleResetSelections}
                       dropDownItems={
                         <DropdownItems
@@ -258,5 +265,29 @@ export function ActionComponent(props) {
         )}
       </CustomModal>
     </>
+  );
+}
+
+const TUITION_FEE_BULK_ACTIONS = [
+  { label: "Delete All", icon: Trash, modal: BulkDeleteTuitionFee, quick: true },
+];
+
+function ActionButtons({ selectedTuitionFees, resetAll }) {
+  return (
+    <BulkActionButtons
+      actions={TUITION_FEE_BULK_ACTIONS}
+      selected={selectedTuitionFees}
+      resetAll={resetAll}
+    />
+  );
+}
+function DropdownItems({ selectedTuitionFees, resetAll, onModalStateChange }) {
+  return (
+    <BulkDropdownItems
+      actions={TUITION_FEE_BULK_ACTIONS}
+      selected={selectedTuitionFees}
+      resetAll={resetAll}
+      onModalStateChange={onModalStateChange}
+    />
   );
 }

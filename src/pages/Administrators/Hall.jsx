@@ -5,16 +5,22 @@ import {
   ReceiptText,
   Trash,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import CreateHall from "../../DrawerContent/Hall/CreateHall";
 import HallDetails from "../../DrawerContent/Hall/HallDetail";
 import UpdateHall from "../../DrawerContent/Hall/UpdateHall";
 import ActivateHall from "../../ModalContent/Hall/ActivateHall";
 import DeactivateHall from "../../ModalContent/Hall/DeactivateHall";
 import DeleteHall from "../../ModalContent/Hall/DeleteHall";
+import BulkActivateHall from "../../ModalContent/Hall/BulkActivateHall";
+import BulkDeactivateHall from "../../ModalContent/Hall/BulkDeactivateHall";
+import BulkDeleteHall from "../../ModalContent/Hall/BulkDeleteHall";
+import {
+  BulkActionButtons,
+  BulkDropdownItems,
+} from "../../components/Toast/BulkActionMenu";
 import ActionButtonDropdown, {
   DropDownMenuItem,
-  ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -23,7 +29,6 @@ import TableToolbar from "../../components/TableFilters/TableToolbar";
 import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
-import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { useGetHalls } from "../../hooks/hall/useGetHalls";
@@ -382,186 +387,28 @@ export function ActionComponent(props) {
   );
 }
 
+const HALL_BULK_ACTIONS = [
+  { label: "Delete All", icon: Trash, modal: BulkDeleteHall, quick: true },
+  { label: "Deactivate All", icon: CircleOff, modal: BulkDeactivateHall },
+  { label: "Activate All", icon: CircleCheck, modal: BulkActivateHall },
+];
+
 function ActionButtons({ selectedHalls, resetAll }) {
   return (
-    <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0 text-iron-700"}
-        // action={{ modalContent: BulkDeleteDepartment }}
-        bulkData={selectedHalls}
-        resetAll={resetAll}
-      >
-        <CustomTooltip tooltipText={"Delete All"}>
-          <span className="pointer-cursor">
-            <Trash size={20} strokeWidth={1.5} />
-          </span>
-        </CustomTooltip>
-      </ModalButton>
-    </>
+    <BulkActionButtons
+      actions={HALL_BULK_ACTIONS}
+      selected={selectedHalls}
+      resetAll={resetAll}
+    />
   );
 }
 function DropdownItems({ selectedHalls, resetAll, onModalStateChange }) {
-  const [showModal, setShowModal] = useState(false);
-  const [showDrawer, setShowDrawer] = useState(false);
-  const modalRef = useRef(null);
-
-  const [modalConfig, setModalConfig] = useState({
-    component: null,
-    size: "md",
-    closeOnOutsideClick: true,
-    closeOnEscape: true,
-    modalData: {},
-  });
-
-  const [drawerConfig, setDrawerConfig] = useState({
-    component: null,
-    placement: "right",
-    title: "",
-    closeOnOutsideClick: true,
-    showHeader: true,
-    drawerData: {},
-  });
-
-  useEffect(() => {
-    if (typeof onModalStateChange === "function") {
-      onModalStateChange(showModal, modalRef);
-    }
-  }, [showModal, onModalStateChange]);
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setModalConfig((prev) => ({ ...prev, component: null }));
-  };
-
-  const handleShowModal = (Component, options = {}) => {
-    const {
-      size = "md",
-      closeOnOutsideClick = true,
-      closeOnEscape = true,
-      modalData = {},
-    } = options;
-
-    setModalConfig({
-      component: Component,
-      size,
-      closeOnOutsideClick,
-      closeOnEscape,
-      modalData,
-    });
-    setShowModal(true);
-  };
-
-  const handleCloseDrawer = () => {
-    setShowDrawer(false);
-    setDrawerConfig((prev) => ({ ...prev, component: null }));
-  };
-
-  const handleShowDrawer = (Component, options = {}) => {
-    const {
-      title = "",
-      placement = "right",
-      closeOnOutsideClick = true,
-      showHeader = true,
-      drawerData = {},
-    } = options;
-
-    setDrawerConfig({
-      component: Component,
-      title,
-      placement,
-      closeOnOutsideClick,
-      showHeader,
-      drawerData,
-    });
-    setShowDrawer(true);
-  };
   return (
-    <>
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        // onClick={() =>
-        //   handleShowModal(BulkDeleteDepartment, {
-        //     size: "md",
-        //     closeOnOutsideClick: true,
-        //     closeOnEscape: true,
-        //   })
-        // }
-      >
-        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
-          <span className="font-size-sm">Delete All</span>
-          <Trash size={16} strokeWidth={1.5} />
-        </div>
-      </DropDownMenuItem>
-      <hr />
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        // onClick={() =>
-        //   handleShowModal(BulkDeactivateDepartment, {
-        //     size: "md",
-        //     closeOnOutsideClick: true,
-        //     closeOnEscape: true,
-        //   })
-        // }
-      >
-        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
-          <span className="font-size-sm">Deactivate All</span>
-          <CircleOff size={16} strokeWidth={1.5} />
-        </div>
-      </DropDownMenuItem>
-      <hr />
-      <DropDownMenuItem
-        className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        // onClick={() =>
-        //   handleShowModal(BulkActivateDepartment, {
-        //     size: "md",
-        //     closeOnOutsideClick: true,
-        //     closeOnEscape: true,
-        //   })
-        // }
-      >
-        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
-          <span className="font-size-sm">Activate All</span>
-          <CircleCheck size={16} strokeWidth={1.5} />
-        </div>
-      </DropDownMenuItem>
-      <Drawer
-        isOpen={showDrawer}
-        onClose={handleCloseDrawer}
-        placement={drawerConfig.placement}
-        title={drawerConfig.title}
-        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
-        showHeader={drawerConfig.showHeader}
-      >
-        {drawerConfig.component && (
-          <drawerConfig.component
-            handleClose={handleCloseDrawer}
-            drawerData={{
-              selectedHalls: selectedHalls,
-              ...drawerConfig.drawerData,
-            }}
-          />
-        )}
-      </Drawer>
-
-      <CustomModal
-        ref={modalRef}
-        show={showModal}
-        handleClose={handleCloseModal}
-        size={modalConfig.size}
-        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
-        closeOnEscape={modalConfig.closeOnEscape}
-        centered
-      >
-        {modalConfig.component && (
-          <modalConfig.component
-            rowData={{
-              selectedHalls: selectedHalls,
-              ...modalConfig.modalData,
-            }}
-            handleClose={handleCloseModal}
-          />
-        )}
-      </CustomModal>
-    </>
+    <BulkDropdownItems
+      actions={HALL_BULK_ACTIONS}
+      selected={selectedHalls}
+      resetAll={resetAll}
+      onModalStateChange={onModalStateChange}
+    />
   );
 }

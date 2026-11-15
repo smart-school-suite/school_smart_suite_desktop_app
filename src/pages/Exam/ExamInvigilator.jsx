@@ -1,5 +1,5 @@
-import { ArrowDown, ChevronDown, ClipboardList, UserCheck, UserPlus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowDown, CheckCheck, ChevronDown, ClipboardList, UserCheck, UserMinus, UserPlus } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import InvigilatorCard from "../../components/Card/InvigilatorCard";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
@@ -11,6 +11,9 @@ import ExamNavigator, { ExamStatusTag } from "../../components/SideBars/ExamNavi
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import AssignInvigilator from "../../DrawerContent/Invigilator/AssignInvigilator";
+import { CardBulkActions } from "../../components/Toast/BulkActionMenu";
+import BulkActionConfirm from "../../ModalContent/Common/BulkActionConfirm";
+import { useCardSelection } from "../../hooks/common/useCardSelection";
 import { useDebounce } from "../../hooks/common/useDebounce";
 import { useGetAssignedInvigilators } from "../../hooks/invigilator/useGetAssignedInvigilators";
 import { useRemoveInvigilator } from "../../hooks/invigilator/useRemoveInvigilator";
@@ -149,6 +152,38 @@ export function InvigilatorManager({ config }) {
     () => groupInvigilators(invigilators?.data, debouncedSearch),
     [invigilators, debouncedSearch],
   );
+  const allInvigilators = useMemo(() => allGroups.flatMap((group) => group.items), [allGroups]);
+  const visibleInvigilators = useMemo(
+    () => visibleGroups.flatMap((group) => group.items),
+    [visibleGroups],
+  );
+  const selection = useCardSelection(allInvigilators, undefined, examId);
+  const gridRef = useRef(null);
+  const bulkActions = [
+    {
+      label: "Select All",
+      icon: CheckCheck,
+      onClick: () => selection.selectAll(visibleInvigilators),
+    },
+    {
+      label: copy.remove,
+      icon: UserMinus,
+      quick: true,
+      modal: BulkActionConfirm,
+      props: {
+        useAction: config.useRemove,
+        actionArgs: [examId],
+        buildPayload: (items) => ({
+          [config.ownerKey]: examId,
+          invigilator_ids: items.map((item) => item.id),
+        }),
+        title: "Remove Invigilators",
+        description: `The selected invigilators will be removed from this ${copy.owner} and can no longer be scheduled onto its sessions.`,
+        confirmLabel: "Yes, Remove All",
+        errorTitle: "Failed To Remove Invigilators",
+      },
+    },
+  ];
   const total = allGroups.reduce((sum, group) => sum + group.total, 0);
   const visibleTotal = visibleGroups.reduce((sum, group) => sum + group.items.length, 0);
   const isEmpty = error ? isEmptyListError(error) : total === 0;
@@ -239,7 +274,12 @@ export function InvigilatorManager({ config }) {
                   const pending =
                     isRemoving && removing?.invigilator_ids?.includes(invigilator?.id);
                   return (
-                    <InvigilatorCard key={invigilator?.id} invigilator={invigilator}>
+                    <InvigilatorCard
+                      key={invigilator?.id}
+                      invigilator={invigilator}
+                      selected={selection.isSelected(invigilator)}
+                      onSelect={selection.toggle}
+                    >
                       <button
                         type="button"
                         className="teacher-card__details-btn invigilator-card__remove"
@@ -335,11 +375,18 @@ export function InvigilatorManager({ config }) {
               </div>
               {/* the only scrolling region; fills the space under the toolbar */}
               <div
+                ref={gridRef}
                 className="flex-grow-1 scroll-bar-sm over-flow-y-auto over-flow-x-hidden pe-1 pb-2"
                 style={{ minHeight: 0 }}
               >
                 {renderContent()}
               </div>
+              <CardBulkActions
+                anchorRef={gridRef}
+                selection={selection}
+                noun={["Invigilator", "Invigilators"]}
+                actions={bulkActions}
+              />
             </>
           )}
         </div>

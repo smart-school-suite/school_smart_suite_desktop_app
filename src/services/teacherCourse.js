@@ -31,3 +31,8 @@ export const changeTeacherCourse = async (data) => {
   );
   return response.data;
 };
+
+export const bulkRemoveAssignedTeacherCourses = async (data) => {
+  const response = await axiosInstance.post("teacher-course/bulk-remove", data);
+  return response.data;
+};

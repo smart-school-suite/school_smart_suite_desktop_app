@@ -1,5 +1,5 @@
-import { ArrowDown, BookPlus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowDown, BookPlus, CheckCheck, UserMinus } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CourseCard from "../../components/Card/CourseCard";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
@@ -9,7 +9,11 @@ import SpecialtyNavigator from "../../components/SideBars/SpecialtyNavigator";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import AssignCourse from "../../DrawerContent/Course/AssignCourse";
 import ManageCourseAssignment from "../../DrawerContent/Course/ManageCourseAssignment";
+import { CardBulkActions } from "../../components/Toast/BulkActionMenu";
+import BulkActionConfirm from "../../ModalContent/Common/BulkActionConfirm";
+import { useCardSelection } from "../../hooks/common/useCardSelection";
 import { useDebounce } from "../../hooks/common/useDebounce";
+import { useBulkRemoveTeacherCourses } from "../../hooks/teacherCourse/useBulkRemoveTeacherCourses";
 import { useGetCourseSpecialtyId } from "../../hooks/course/useGetCourseSpecialtyId";
 import {
   countCourses,
@@ -19,6 +23,17 @@ import {
 import { isEmptyListError } from "../../utils/teacher/teacherFilters";
 
 const MASCOT_HEIGHT = "7rem";
+
+const courseId = (course) => course?.course_id;
+
+// Every (teacher, course) pair on the selected courses, for teacher-course/bulk-remove.
+const toAssignments = (courses) => ({
+  assignments: courses.flatMap((course) =>
+    (course?.teachers ?? [])
+      .filter((teacher) => teacher?.id)
+      .map((teacher) => ({ teacher_id: teacher.id, course_id: course.course_id })),
+  ),
+});
 
 function CourseAction({ course, specialtyId }) {
   const assigned = isCourseAssigned(course);
@@ -58,6 +73,45 @@ function TeacherCourse() {
   const total = countCourses(semesters);
   const visibleTotal = countCourses(visibleSemesters);
   const isEmpty = error ? isEmptyListError(error) : total === 0;
+
+  const allCourses = useMemo(
+    () => semesters.flatMap((semester) => semester?.courses ?? []),
+    [semesters],
+  );
+  const visibleCourses = useMemo(
+    () => visibleSemesters.flatMap((semester) => semester?.courses ?? []),
+    [visibleSemesters],
+  );
+  const selection = useCardSelection(allCourses, courseId, specialty);
+  const gridRef = useRef(null);
+  const bulkActions = [
+    {
+      label: "Select All",
+      icon: CheckCheck,
+      onClick: () => selection.selectAll(visibleCourses),
+    },
+    {
+      label: "Select Assigned",
+      icon: CheckCheck,
+      onClick: () => selection.selectAll(visibleCourses.filter(isCourseAssigned)),
+    },
+    {
+      label: "Unassign Teachers",
+      icon: UserMinus,
+      quick: true,
+      modal: BulkActionConfirm,
+      props: {
+        useAction: useBulkRemoveTeacherCourses,
+        actionArgs: [specialty],
+        buildPayload: toAssignments,
+        title: "Unassign Teachers From Courses",
+        description:
+          "Every teacher assigned to the selected courses will be unassigned. Courses without a teacher are skipped.",
+        confirmLabel: "Yes, Unassign All",
+        errorTitle: "Failed To Unassign Teachers",
+      },
+    },
+  ];
 
   const handleSpecialtyChange = (next) => {
     setSpecialty(next);
@@ -156,7 +210,12 @@ function TeacherCourse() {
               </div>
               <div className="teacher-card-grid">
                 {semesterCourses.map((course) => (
-                  <CourseCard key={course?.course_id} course={course}>
+                  <CourseCard
+                    key={course?.course_id}
+                    course={course}
+                    selected={selection.isSelected(course)}
+                    onSelect={selection.toggle}
+                  >
                     <CourseAction course={course} specialtyId={specialty} />
                   </CourseCard>
                 ))}
@@ -203,11 +262,18 @@ function TeacherCourse() {
         </div>
         {/* the only scrolling region; fills the space under the toolbar */}
         <div
+          ref={gridRef}
           className="flex-grow-1 scroll-bar-sm over-flow-y-auto over-flow-x-hidden pe-1 pb-2"
           style={{ minHeight: 0 }}
         >
           {renderContent()}
         </div>
+        <CardBulkActions
+          anchorRef={gridRef}
+          selection={selection}
+          noun={["Course", "Courses"]}
+          actions={bulkActions}
+        />
       </div>
     </main>
   );

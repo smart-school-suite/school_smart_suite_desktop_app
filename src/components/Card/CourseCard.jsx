@@ -1,4 +1,5 @@
-import { Dot } from "lucide-react";
+import { CircleCheck, Dot } from "lucide-react";
+import { selectableCardProps, stopPropagation } from "./selectable";
 import { isCourseAssigned } from "../../utils/course/courseFilters";
 import ChipRow from "./ChipRow";
 import CourseStatusPill from "./CourseStatusPill";
@@ -46,15 +47,21 @@ export function CourseTeacher({ course }) {
  * types and the assigned teacher. Put actions in `children`; they sit at the
  * bottom so footers line up across a grid.
  */
-export default function CourseCard({ course, children }) {
+export default function CourseCard({ course, selected = false, onSelect, children }) {
+  const selectable = selectableCardProps({ item: course, selected, onSelect });
   return (
-    <div className="teacher-card course-card">
+    <div className={`teacher-card course-card ${selectable.className}`} {...selectable.props}>
       <div className="d-flex flex-column gap-1">
         <div className="d-flex flex-row align-items-start justify-content-between gap-2">
           <span className="fw-semibold line-clamp-2" title={course?.course_title}>
             {course?.course_title ?? "Untitled course"}
           </span>
-          <CourseStatusPill course={course} />
+          <div className="d-flex flex-row align-items-center gap-1 flex-shrink-0">
+            <CourseStatusPill course={course} />
+            {onSelect && selected && (
+              <CircleCheck size={18} className="text-primary-500 flex-shrink-0" />
+            )}
+          </div>
         </div>
         <div className="d-flex flex-row align-items-center font-size-xs text-iron-500">
           <span>{course?.course_credit ?? "-"} Credit</span>
@@ -81,7 +88,11 @@ export default function CourseCard({ course, children }) {
       <div className="teacher-card__divider" />
       <CourseTeacher course={course} />
 
-      {children && <div className="teacher-card__footer">{children}</div>}
+      {children && (
+        <div className="teacher-card__footer" onClick={stopPropagation} onKeyDown={stopPropagation}>
+          {children}
+        </div>
+      )}
     </div>
   );
 }

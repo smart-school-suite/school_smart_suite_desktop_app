@@ -1,4 +1,5 @@
-import { Mail, Phone } from "lucide-react";
+import { CircleCheck, Mail, Phone } from "lucide-react";
+import { selectableCardProps, stopPropagation } from "./selectable";
 import "../../styles/invigilator.css";
 import TeacherAvatar from "./TeacherAvatar";
 
@@ -12,7 +13,7 @@ function ContactRow({ icon: IconComponent, value, href, empty }) {
     <div className="invigilator-card__contact">
       <IconComponent size={14} className="flex-shrink-0 text-iron-500" />
       {value ? (
-        <a href={href} className="text-truncate" title={value}>
+        <a href={href} className="text-truncate" title={value} onClick={stopPropagation}>
           {value}
         </a>
       ) : (
@@ -27,12 +28,13 @@ function ContactRow({ icon: IconComponent, value, href, empty }) {
  * how to reach them. Put actions in `children`; they sit at the bottom so
  * footers line up across a grid.
  */
-export default function InvigilatorCard({ invigilator, children }) {
+export default function InvigilatorCard({ invigilator, selected = false, onSelect, children }) {
+  const selectable = selectableCardProps({ item: invigilator, selected, onSelect });
   const role =
     ROLE_LABEL[invigilator?.actorable_type] ??
     invigilator?.actorable_type?.replaceAll("_", " ");
   return (
-    <div className="teacher-card invigilator-card">
+    <div className={`teacher-card invigilator-card ${selectable.className}`} {...selectable.props}>
       <div className="d-flex flex-row align-items-center gap-2">
         <TeacherAvatar teacher={invigilator} />
         <div className="d-flex flex-column flex-grow-1" style={{ minWidth: 0 }}>
@@ -56,6 +58,9 @@ export default function InvigilatorCard({ invigilator, children }) {
             {role}
           </span>
         )}
+        {onSelect && selected && (
+          <CircleCheck size={18} className="text-primary-500 flex-shrink-0" />
+        )}
       </div>
 
       <div className="teacher-card__divider" />
@@ -75,7 +80,11 @@ export default function InvigilatorCard({ invigilator, children }) {
         />
       </div>
 
-      {children && <div className="teacher-card__footer">{children}</div>}
+      {children && (
+        <div className="teacher-card__footer" onClick={stopPropagation} onKeyDown={stopPropagation}>
+          {children}
+        </div>
+      )}
     </div>
   );
 }
