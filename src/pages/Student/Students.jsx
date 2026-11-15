@@ -125,7 +125,7 @@ function Students() {
                 classname={
                   "border-none border rounded-3 font-size-sm  d-flex flex-row align-items-center gap-2 white-bg"
                 }
-                style={{ padding: "0.6rem" }}
+                style={{ height: 36, padding: "0.6rem" }}
               >
                 <span style={{ lineHeight: "16px" }}>Import</span>
                 <ArrowDown size={16} />
@@ -134,7 +134,7 @@ function Students() {
                 classname={
                   "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
                 }
-                style={{ padding: "0.6rem" }}
+                style={{ height: 36, padding: "0.6rem" }}
               >
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <ChevronDown size={16} />
@@ -144,7 +144,7 @@ function Students() {
                 placement="right"
                 drawerChildren={CreateStudent}
               >
-                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                   <span>Create Student</span>
                 </button>
               </DrawerTrigger>

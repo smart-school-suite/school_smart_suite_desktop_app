@@ -38,6 +38,7 @@ function JointCourseImportTrigger() {
           module: { name: "Joint Course" },
           importModuleColDefs: jointCourseImportColDefs,
         }}
+        style={{ height: 36 }}
       >
         <span style={{ lineHeight: "16px" }}>Import</span>
         <span>

@@ -58,6 +58,7 @@ function CourseLayout() {
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <span>
@@ -74,7 +75,7 @@ function CourseLayout() {
                   placement="right"
                   drawerChildren={CreateCourse}
                 >
-                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                     <span>create course</span>
                   </button>
                 </DrawerTrigger>
@@ -84,7 +85,7 @@ function CourseLayout() {
                   placement="right"
                   drawerChildren={CreateJointCourse}
                 >
-                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                     <span>Create Joint Course</span>
                   </button>
                 </DrawerTrigger>

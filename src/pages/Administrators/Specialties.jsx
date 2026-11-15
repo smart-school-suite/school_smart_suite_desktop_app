@@ -138,7 +138,7 @@ function Specialties() {
                 placement="right"
                 drawerChildren={CreateSpecialty}
               >
-                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize">
+                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                   <span>Create Specialty</span>
                 </button>
               </DrawerTrigger>

@@ -56,6 +56,7 @@ function PromotionLayout() {
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Import</span>
                 <span>
@@ -66,6 +67,7 @@ function PromotionLayout() {
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <span>
