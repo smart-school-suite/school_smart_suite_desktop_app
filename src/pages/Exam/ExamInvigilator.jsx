@@ -24,13 +24,40 @@ import { isEmptyListError } from "../../utils/teacher/teacherFilters";
 
 const MASCOT_HEIGHT = "7rem";
 
-function AssignButton({ exam, variant = "header" }) {
+/**
+ * What the invigilator page works on. The exam invigilator page uses
+ * EXAM_INVIGILATOR_CONFIG; the resit invigilator page passes its own.
+ */
+export const EXAM_INVIGILATOR_CONFIG = {
+  ownerKey: "exam_id",
+  useSelected: () => {
+    const dispatch = useDispatch();
+    const selected = useSelector((state) => state.examInvigilator.selectedExam);
+    return [selected, (exam) => dispatch(setSelectedExam({ exam }))];
+  },
+  useAssigned: useGetAssignedInvigilators,
+  useRemove: useRemoveInvigilator,
+  useExams: undefined,
+  drawerData: {},
+  copy: {
+    heading: "Manage Exam Invigilators",
+    owner: "exam",
+    navigatorTitle: "Exam invigilators",
+    navigatorDescription: "Select an exam to see and assign who supervises it.",
+    readyTitle: "Ready to manage exam invigilators?",
+    readyDescription: "Select an exam on the left to see who supervises it and assign teachers or school admins.",
+    emptyDescription: "Assign teachers or school admins to supervise this exam. They can then be scheduled onto exam sessions.",
+    remove: "Remove from exam",
+  },
+};
+
+function AssignButton({ exam, variant = "header", config = EXAM_INVIGILATOR_CONFIG }) {
   return (
     <DrawerTrigger
       title="Assign Invigilator"
       placement="right"
       drawerChildren={AssignInvigilator}
-      drawerData={{ selectedExam: exam }}
+      drawerData={{ selectedExam: exam, ownerKey: config.ownerKey, ...config.drawerData }}
       showHeader={false}
     >
       {variant === "empty" ? (
@@ -99,19 +126,23 @@ function ExamSummary({ exam, groups, isLoading }) {
 }
 
 function ExamInvigilator() {
-  const dispatch = useDispatch();
+  return <InvigilatorManager config={EXAM_INVIGILATOR_CONFIG} />;
+}
+
+export function InvigilatorManager({ config }) {
+  const { copy } = config;
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const selectedExam = useSelector((state) => state.examInvigilator.selectedExam);
+  const [selectedExam, setSelected] = config.useSelected();
   const examId = selectedExam?.id;
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 250);
 
-  const { data: invigilators, isLoading, error } = useGetAssignedInvigilators(examId);
+  const { data: invigilators, isLoading, error } = config.useAssigned(examId);
   const {
     mutate: removeInvigilator,
     isPending: isRemoving,
     variables: removing,
-  } = useRemoveInvigilator(examId);
+  } = config.useRemove(examId);
 
   const allGroups = useMemo(() => groupInvigilators(invigilators?.data), [invigilators]);
   const visibleGroups = useMemo(
@@ -123,12 +154,12 @@ function ExamInvigilator() {
   const isEmpty = error ? isEmptyListError(error) : total === 0;
 
   const handleSelectExam = (exam) => {
-    dispatch(setSelectedExam({ exam }));
+    setSelected(exam);
     setSearch("");
   };
 
   const handleRemove = (invigilatorId) =>
-    removeInvigilator({ exam_id: examId, invigilator_ids: [invigilatorId] });
+    removeInvigilator({ [config.ownerKey]: examId, invigilator_ids: [invigilatorId] });
 
   const renderContent = () => {
     if (isLoading) {
@@ -153,7 +184,7 @@ function ExamInvigilator() {
           title={error?.response?.data?.errors?.title || "Unable to load invigilators"}
           description={
             error?.response?.data?.errors?.description ||
-            "Something went wrong while loading the invigilators for this exam."
+            `Something went wrong while loading the invigilators for this ${copy.owner}.`
           }
         />
       );
@@ -166,8 +197,8 @@ function ExamInvigilator() {
           height="100%"
           mascotHeight={MASCOT_HEIGHT}
           title="No invigilators assigned yet"
-          description="Assign teachers or school admins to supervise this exam. They can then be scheduled onto exam sessions."
-          actions={<AssignButton exam={selectedExam} variant="empty" />}
+          description={copy.emptyDescription}
+          actions={<AssignButton exam={selectedExam} variant="empty" config={config} />}
         />
       );
     }
@@ -179,7 +210,7 @@ function ExamInvigilator() {
           height="100%"
           mascotHeight={MASCOT_HEIGHT}
           title="No matching invigilators"
-          description={`Nobody assigned to this exam matches "${debouncedSearch}". Try a name, username, email or phone number.`}
+          description={`Nobody assigned to this ${copy.owner} matches "${debouncedSearch}". Try a name, username, email or phone number.`}
           actions={
             <EmptyStateButton variant="secondary" onClick={() => setSearch("")}>
               Clear search
@@ -215,7 +246,7 @@ function ExamInvigilator() {
                         disabled={isRemoving}
                         onClick={() => handleRemove(invigilator?.id)}
                       >
-                        {pending ? <SingleSpinner /> : "Remove from exam"}
+                        {pending ? <SingleSpinner /> : copy.remove}
                       </button>
                     </InvigilatorCard>
                   );
@@ -239,7 +270,7 @@ function ExamInvigilator() {
           >
             <UserCheck size={16} />
           </div>
-          <span className="fw-semibold font-size-sm">Manage Exam Invigilators</span>
+          <span className="fw-semibold font-size-sm">{copy.heading}</span>
         </div>
         <div className="d-flex flex-row align-item-center gap-2">
           <JobPopOver />
@@ -258,10 +289,11 @@ function ExamInvigilator() {
           the sidebar and the card list scroll on their own */}
       <div className="d-flex flex-row gap-2 flex-grow-1 w-100" style={{ minHeight: 0 }}>
         <ExamNavigator
-          title="Exam invigilators"
-          description="Select an exam to see and assign who supervises it."
+          title={copy.navigatorTitle}
+          description={copy.navigatorDescription}
           selectedExam={selectedExam}
           onSelect={handleSelectExam}
+          {...(config.useExams && { useExams: config.useExams })}
         />
 
         <div className="d-flex flex-column gap-2 h-100" style={{ width: "75%", minHeight: 0 }}>
@@ -270,8 +302,8 @@ function ExamInvigilator() {
               mascot="empty"
               height="100%"
               mascotHeight={MASCOT_HEIGHT}
-              title="Ready to manage exam invigilators?"
-              description="Select an exam on the left to see who supervises it and assign teachers or school admins."
+              title={copy.readyTitle}
+              description={copy.readyDescription}
             />
           ) : (
             <>
@@ -298,7 +330,7 @@ function ExamInvigilator() {
                     <span>Export</span>
                     <ArrowDown size={16} />
                   </button>
-                  <AssignButton exam={selectedExam} />
+                  <AssignButton exam={selectedExam} config={config} />
                 </div>
               </div>
               {/* the only scrolling region; fills the space under the toolbar */}

@@ -16,11 +16,19 @@ import { Icon } from "@iconify/react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+/**
+ * Assigns teachers and school admins to supervise an exam. The resit
+ * invigilator page passes its own `usePotential` and `useAssign` hooks and
+ * `ownerKey` ("resit_exam_id") in drawerData.
+ */
 function AssignInvigilator({ handleClose, drawerData }) {
-  const { selectedExam } = drawerData;
-  const { mutate: assignInvigilator, isPending } = useAssignInvigilators(
-    selectedExam?.id,
-  );
+  const {
+    selectedExam,
+    usePotential = useGetPotInvigilators,
+    useAssign = useAssignInvigilators,
+    ownerKey = "exam_id",
+  } = drawerData;
+  const { mutate: assignInvigilator, isPending } = useAssign(selectedExam?.id);
   const { formError, errorBannerRef, handleServerError, clearFormError } =
     useFormError("Failed To Assign Invigilator");
   const dispatch = useDispatch();
@@ -29,10 +37,10 @@ function AssignInvigilator({ handleClose, drawerData }) {
     data: potInvigs,
     isLoading,
     error,
-  } = useGetPotInvigilators(selectedExam?.id);
+  } = usePotential(selectedExam?.id);
   const handleAssignInvigilator = () => {
     const payload = {
-      exam_id: selectedExam?.id,
+      [ownerKey]: selectedExam?.id,
       invigilators: moduleState?.assignInvigilator?.selectedInvigilator.map(
         (invig) => ({
           actorable_id: invig.actorable_id,

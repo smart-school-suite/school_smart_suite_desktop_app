@@ -129,6 +129,8 @@ export const sideBarData = [
       { title: "Resit Exams", icon: FileCheck2, path: "/resit-exams" },
       { title: "Candidates", icon: FileSpreadsheet, path: "/resit-candidate" },
       { title: "Student Resits", icon: RotateCcw, path: "/student-resit" },
+      { title: "Invigilators", icon: Eye, path: "/resit-invigilator" },
+      { title: "Resit Timetable", icon: CalendarClock, path: "/resit-timetable" },
       { title: "Results", icon: BarChart2, path: "/resit-result" },
     ],
   },

@@ -4,23 +4,30 @@ import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { CourseIcon } from "../icons/Icons";
+const EXAM_TABS = [
+  {
+    title: "Exam Timetable",
+    path: "/exam-timetable",
+  },
+  {
+    title: "Joint Course Timetable",
+    path: "/exam/joint-course-timetable",
+  },
+  // {
+  //   title:"Exam Arrangements",
+  //   path:"/exam-timetable/arrangement"
+  // }
+];
+
 function ExamTimetableLayout() {
+  return <TimetablePageLayout heading="Manage Exam Timetable" tabs={EXAM_TABS} />;
+}
+
+/** Page head with a title and tabs above the routed timetable page; shared by the exam and resit timetables. */
+export function TimetablePageLayout({ heading, tabs }) {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
-  const sideBarData = [
-    {
-      title: "Exam Timetable",
-      path: "/exam-timetable",
-    },
-    {
-      title: "Joint Course Timetable",
-      path: "/exam/joint-course-timetable",
-    },
-    // {
-    //   title:"Exam Arrangements",
-    //   path:"/exam-timetable/arrangement"
-    // }
-  ];
+  const sideBarData = tabs;
   return (
     <>
       <main className="main-container gap-2">
@@ -40,7 +47,7 @@ function ExamTimetableLayout() {
                 <CourseIcon />
               </div>
               <span className="font-size-sm fw-semibold">
-                Manage Exam Timetable
+                {heading}
               </span>
             </div>
             <div className="d-flex flex-row align-item-center gap-2">

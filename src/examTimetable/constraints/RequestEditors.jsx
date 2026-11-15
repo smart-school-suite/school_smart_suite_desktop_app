@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   EmptyState,
   IconButton,
@@ -7,10 +7,10 @@ import {
   Section,
   TextButton,
 } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
-import { addExamRequest, removeExamRequest, updateExamRequest } from "../../Slices/ExamTimetable/examTimetableSlice";
 import { fromMinutes, toMinutes } from "../../utils/examTimetable/buildRequest";
 import { makeExamConstraintEditor } from "./ExamConstraintWizard";
 import { EntitySelect, ExamDateSelect, formatExamDate, MultiPicker, SetupNotice, TimeInput, TimeRange, useExamSetup } from "./fields";
+import { useKindState, useTimetableKind } from "../TimetableKindContext";
 
 /** Exam length of a course from the session duration constraint. */
 const courseDuration = (constraints, courseId) => {
@@ -28,10 +28,11 @@ const endFor = (start, minutes) => (toMinutes(start) === null ? null : fromMinut
  */
 function makeRequestEditor(config) {
   function Configure({ setup }) {
+    const kind = useTimetableKind();
     const dispatch = useDispatch();
-    const constraints = useSelector((state) => state.examTimetable.constraints);
+    const constraints = useKindState((state) => state.constraints);
     const rows = constraints[config.key] ?? [];
-    const update = (id, patch) => dispatch(updateExamRequest({ key: config.key, id, patch }));
+    const update = (id, patch) => dispatch(kind.actions.updateRequest({ key: config.key, id, patch }));
 
     const options = {
       course_id: setup.courses.map((course) => ({ value: course.course_id, label: course.course_title, disabled: course.is_joint, joint: course.is_joint })),
@@ -41,7 +42,7 @@ function makeRequestEditor(config) {
 
     const addRow = () =>
       dispatch(
-        addExamRequest({
+        kind.actions.addRequest({
           key: config.key,
           entry: {
             [config.field]: null,
@@ -57,7 +58,7 @@ function makeRequestEditor(config) {
       <>
         <SetupNotice {...setup} />
         {config.field === "course_id" && setup.courses.some((course) => course.is_joint) && (
-          <Note>Joint courses are not listed: their exam time is set on the Joint Course Timetable page.</Note>
+          <Note>{kind.joint.requestNote}</Note>
         )}
         <Section
           label={config.listLabel}
@@ -91,7 +92,7 @@ function makeRequestEditor(config) {
                         update(row.id, patch);
                       }}
                     />
-                    <IconButton icon="lucide:trash-2" label="Remove request" tone="danger" onClick={() => dispatch(removeExamRequest({ key: config.key, id: row.id }))} />
+                    <IconButton icon="lucide:trash-2" label="Remove request" tone="danger" onClick={() => dispatch(kind.actions.removeRequest({ key: config.key, id: row.id }))} />
                   </div>
                   <ExamDateSelect value={row.date} dates={setup.dates} onChange={(date) => update(row.id, { date })} />
                   {isCourse ? (
