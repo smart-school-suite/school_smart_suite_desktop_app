@@ -18,7 +18,7 @@ export const createHall = async (data) => {
 };
 
 export const deleteHall = async (hallId) => {
-  const response = await axiosInstance.delete(`hall/${hallId}/delete`);
+  const response = await axiosInstance.delete(`hall/delete/${hallId}`);
   return response.data;
 };
 
@@ -55,5 +55,28 @@ export const importHall = async (payload) => {
     "hall/import",
     formData,
   );
+  return response.data;
+};
+
+export const bulkDeleteHall = async (deleteData) => {
+  const response = await axiosInstance.post("hall/bulk-delete", deleteData);
+  return response.data;
+};
+
+export const bulkActivateHall = async (activateData) => {
+  const response = await axiosInstance.post("hall/bulk-activate", activateData);
+  return response.data;
+};
+
+export const bulkDeactivateHall = async (deactivateData) => {
+  const response = await axiosInstance.post(
+    "hall/bulk-deactivate",
+    deactivateData,
+  );
+  return response.data;
+};
+
+export const bulkUpdateHall = async (updates) => {
+  const response = await axiosInstance.patch("hall/bulk-update", updates);
   return response.data;
 };
