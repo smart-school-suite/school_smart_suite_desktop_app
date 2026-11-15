@@ -1,25 +1,26 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import { HallIcon } from "../icons/Icons";
-import { useSelector } from "react-redux";
-import JobPopOver from "../components/Popover/JobPopover";
-import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
+import { ArrowUpFromLine } from "lucide-react";
+import { useSelector } from "react-redux";
+import { Outlet, useNavigate } from "react-router-dom";
+import { ModalButton } from "../components/DataTableComponents/ActionComponent";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import JobPopOver from "../components/Popover/JobPopover";
+import CreateHall from "../DrawerContent/Hall/CreateHall";
+import { HallIcon } from "../icons/Icons";
+import ImportWizzard from "../ModalContent/Import/ImportWizzard";
 import {
-  setImportStatus,
-  setImportSelectedFile,
-  setImportReset,
-  setColumnMapping,
-  removeRepeatableGroup,
   addRepeatableGroup,
+  removeRepeatableGroup,
+  setColumnMapping,
+  setImportReset,
+  setImportSelectedFile,
+  setImportStatus,
   setRepeatableGroupValue,
   setStandardGroupValue,
 } from "../Slices/administrator/hallSlice";
 import { HALL_COLUMNS } from "../utils/hall/hallColumns";
 import { hallImportColDefs } from "../utils/table/colDefs/hall/hallImportColDefs";
-import ImportWizzard from "../ModalContent/Import/ImportWizzard";
-import DrawerTrigger from "../components/drawer/DrawerTrigger";
-import CreateHall from "../DrawerContent/Hall/CreateHall";
 function HallLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
@@ -70,16 +71,18 @@ function HallLayout() {
                   module: { name: "Hall" },
                   importModuleColDefs: hallImportColDefs,
                 }}
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Import</span>
                 <span>
-                  <Icon icon="tabler:arrow-down" width={14} height={14} />
+                  <ArrowUpFromLine  size={12} />
                 </span>
               </ModalButton>
               <ModalButton
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
                 }
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <span>
