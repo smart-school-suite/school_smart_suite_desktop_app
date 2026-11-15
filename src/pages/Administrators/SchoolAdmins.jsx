@@ -5,7 +5,7 @@ import {
   Trash,
   UserPen,
   UserRoundMinus,
-  UserRoundPlus,
+  UserRoundPlus
 } from "lucide-react";
 import {
   useCallback,
@@ -14,7 +14,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import CreateSchoolAdmin from "../../DrawerContent/SchoolAdmin/CreateSchoolAdmin";
 import SchoolAdminDetails from "../../DrawerContent/SchoolAdmin/SchoolAdminDetails";
 import UpdateSchoolAdmin from "../../DrawerContent/SchoolAdmin/UpdateSchoolAdmin";
@@ -56,7 +56,6 @@ function SchoolAdmins() {
   const tableRef = useRef();
   const tableWrapperRef = useRef(null);
   const filters = useTableFilters("administrators/school-admins", tableRef);
-  const dispatch = useDispatch();
   const { data: schoolAdmins, isLoading, error } = useGetSchoolAdmins();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);

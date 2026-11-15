@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bulkActivateDepartment } from "../../services/department";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
+import { bulkActivateDepartment } from "../../services/department";
 export const useBulkActivateDepartment = (handleClose, resetAll) => {
   const queryClient = useQueryClient();
   return useMutation({

@@ -1,30 +1,34 @@
-import { Icon } from "@iconify/react";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useEffect, useState } from "react";
-import { useUpdateDepartment } from "../../hooks/department/useUpdateDepartment";
-import { useGetDepartmentDetails } from "../../hooks/department/useGetDepartmentDetails";
-import {
-  TextAreaInput,
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
 import {
   nameSchema,
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import {
+  TextAreaInput,
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useGetDepartmentDetails } from "../../hooks/department/useGetDepartmentDetails";
+import { useUpdateDepartment } from "../../hooks/department/useUpdateDepartment";
+import { useFormError } from "../../hooks/form/useFormError";
 import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
 function UpdateDepartment({ handleClose, drawerData }) {
   const { mutate: updateDepartment, isPending } =
     useUpdateDepartment(handleClose);
-  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
-    useFormError("Failed To Update Department");
+  const {
+    formError,
+    errorBannerRef,
+    setClientError,
+    handleServerError,
+    clearFormError,
+  } = useFormError("Failed To Update Department");
   const { id: departmentId, department_name, description } = drawerData;
   const {
     data: departmentDetails,
@@ -57,16 +61,25 @@ function UpdateDepartment({ handleClose, drawerData }) {
   };
   const handleDepartmentUpdate = () => {
     if (optionalValidateObject(isFieldValid) == false) {
-      setClientError("Invalid Fields", "Please ensure all fields are valid before updating.");
+      setClientError(
+        "Invalid Fields",
+        "Please ensure all fields are valid before updating.",
+      );
       return;
     }
 
     if (hasNonEmptyValue(formData) == false) {
-      setClientError("Nothing to Update", "Please ensure all fields are filled before updating.");
+      setClientError(
+        "Nothing to Update",
+        "Please ensure all fields are filled before updating.",
+      );
       return;
     }
     clearFormError();
-    updateDepartment({ departmentId, updateData: formData }, { onError: handleServerError });
+    updateDepartment(
+      { departmentId, updateData: formData },
+      { onError: handleServerError },
+    );
   };
   return (
     <>
@@ -94,58 +107,60 @@ function UpdateDepartment({ handleClose, drawerData }) {
           ></NotFoundError>
         ) : (
           <>
-            <div className="drawer-content px-2">
+            <div className="drawer-content ps-2 pt-3">
               <FormErrorBanner
                 ref={errorBannerRef}
                 error={formError}
                 onDismiss={clearFormError}
                 className="mb-2"
               />
-              <div>
-                <label htmlFor="departmentName" className="font-size-sm">
-                  Department Name
-                </label>
-                <TextInput
-                  onChange={(value) =>
-                    handleStateChange("department_name", value, setFormData)
-                  }
-                  onValidationChange={(value) =>
-                    handleStateChange("department_name", value, setFieldValid)
-                  }
-                  validationSchema={nameSchema({
-                    min: 3,
-                    max: 100,
-                    required: false,
-                    messages: {
-                      min: "Department Name Must Be Atleast 3 characters Long",
-                      max: "Department Description Must Not Exceed 100 Characters",
-                    },
-                  })}
-                  value={formData.department_name}
-                />
-              </div>
-              <div>
-                <label htmlFor="description" className="font-size-sm">
-                  Department Description
-                </label>
-                <TextAreaInput
-                  onChange={(value) =>
-                    handleStateChange("description", value, setFormData)
-                  }
-                  onValidationChange={(value) =>
-                    handleStateChange("description", value, setFieldValid)
-                  }
-                  validationSchema={textareaSchema({
-                    min: 10,
-                    max: 1000,
-                    required: false,
-                    messages: {
-                      min: "Description Must Be Atleast 10 characters long",
-                      max: "Description Must Not Exceed 1000 characters",
-                    },
-                  })}
-                  value={formData.description}
-                />
+              <div className="d-flex flex-column gap-3">
+                <div>
+                  <label htmlFor="departmentName" className="font-size-sm">
+                    Department Name
+                  </label>
+                  <TextInput
+                    onChange={(value) =>
+                      handleStateChange("department_name", value, setFormData)
+                    }
+                    onValidationChange={(value) =>
+                      handleStateChange("department_name", value, setFieldValid)
+                    }
+                    validationSchema={nameSchema({
+                      min: 3,
+                      max: 100,
+                      required: false,
+                      messages: {
+                        min: "Department Name Must Be Atleast 3 characters Long",
+                        max: "Department Description Must Not Exceed 100 Characters",
+                      },
+                    })}
+                    value={formData.department_name}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="description" className="font-size-sm">
+                    Department Description
+                  </label>
+                  <TextAreaInput
+                    onChange={(value) =>
+                      handleStateChange("description", value, setFormData)
+                    }
+                    onValidationChange={(value) =>
+                      handleStateChange("description", value, setFieldValid)
+                    }
+                    validationSchema={textareaSchema({
+                      min: 10,
+                      max: 1000,
+                      required: false,
+                      messages: {
+                        min: "Description Must Be Atleast 10 characters long",
+                        max: "Description Must Not Exceed 1000 characters",
+                      },
+                    })}
+                    value={formData.description}
+                  />
+                </div>
               </div>
             </div>
             <div className="drawer-footer font-size-sm">

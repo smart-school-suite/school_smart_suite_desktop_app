@@ -1,13 +1,20 @@
-import { Icon } from "@iconify/react";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import React, {
+import {
+  ArrowUpFromLine,
+  ChevronDown,
+  CircleCheck,
+  CircleOff,
+  FilePen,
+  ReceiptText,
+  Trash,
+} from "lucide-react";
+import {
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import ActionButtonDropdown, {
   DropDownMenuItem,
   ModalButton,
@@ -27,13 +34,6 @@ import CreateDepartment from "../../DrawerContent/Department/CreateDepartment";
 import DepartmentDetails from "../../DrawerContent/Department/DepartmentDetails";
 import UpdateDepartment from "../../DrawerContent/Department/UpdateDepartment";
 import { useGetDepartments } from "../../hooks/department/useGetDepartments";
-import {
-  ActivateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  SuspendIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
 import { DepartmentIcon } from "../../icons/Icons";
 import ActivateDepartment from "../../ModalContent/Department/ActivateDepartment";
 import BulkActivateDepartment from "../../ModalContent/Department/BulkActivateDepartment";
@@ -54,8 +54,8 @@ import { departmentColDefs } from "../../utils/table/colDefs/department/departme
 import { departmentImportColDefs } from "../../utils/table/colDefs/department/departmentImportColDefs";
 function Departments() {
   const tableRef = useRef();
+  const tableWrapperRef = useRef(null);
   const filters = useTableFilters("administrators/departments", tableRef);
-  const dispatch = useDispatch();
   const { data: departments, isLoading, error } = useGetDepartments();
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [rowCount, setRowCount] = useState(0);
@@ -124,14 +124,16 @@ function Departments() {
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
                 }
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Import</span>
-                <ArrowDown size={16} />
+                <ArrowUpFromLine size={12} />
               </ModalButton>
               <ModalButton
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
                 }
+                style={{ height: 36 }}
               >
                 <span style={{ lineHeight: "16px" }}>Actions</span>
                 <ChevronDown size={16} />
@@ -188,11 +190,14 @@ function Departments() {
               <TableToolbar
                 filters={filters}
                 tableRef={tableRef}
-                searchPlaceholder="Search Department"
+                searchPlaceholder="Search name, description, status"
                 onReset={handleResetSelections}
               />
 
-              <TableFilterLayout filters={filters}>
+              <TableFilterLayout
+                filters={filters}
+                tableWrapperRef={tableWrapperRef}
+              >
                 <Table
                   {...filters.gridProps}
                   colDefs={memoizedColDefs}
@@ -203,22 +208,24 @@ function Departments() {
                 />
                 {rowCount > 0 && (
                   <BulkActionsToast
+                    key="bulk-actions-toast"
+                    anchorRef={tableWrapperRef}
                     rowCount={rowCount}
                     label={`${
-                      rowCount > 0
-                        ? "Department Selected"
-                        : "Departments Selected"
+                      rowCount > 1
+                        ? "Departments Selected"
+                        : "Department Selected"
                     }`}
                     resetAll={handleResetSelections}
                     dropDownItems={
                       <DropdownItems
-                        selectedSpecialties={selectedSpecialties}
+                        selectedDepartments={selectedDepartments}
                         resetAll={handleResetSelections}
                       />
                     }
                     actionButton={
                       <ActionButtons
-                        selectedSpecialties={selectedSpecialties}
+                        selectedDepartments={selectedDepartments}
                         resetAll={handleResetSelections}
                       />
                     }
@@ -269,7 +276,6 @@ export function ActionComponent(props) {
   return (
     <>
       <ActionButtonDropdown
-        buttonContent={"Edit Actions"}
         style={
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
@@ -283,7 +289,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Update</span>
-              <UpdateIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -295,7 +301,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Delete</span>
-              <DeleteIcon />
+              <Trash size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -309,7 +315,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
               <span>Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -322,7 +328,7 @@ export function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
                 <span>Deactivate</span>
-                <SuspendIcon />
+                <CircleOff size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -334,7 +340,7 @@ export function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
                 <span>Activate</span>
-                <ActivateIcon />
+                <CircleCheck size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -373,14 +379,14 @@ function ActionButtons({ selectedDepartments, resetAll }) {
   return (
     <>
       <ModalButton
-        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
+        classname={"border-none transparent-bg w-100 p-0 text-iron-700"}
         action={{ modalContent: BulkDeleteDepartment }}
         bulkData={selectedDepartments}
         resetAll={resetAll}
       >
         <CustomTooltip tooltipText={"Delete All"}>
           <span className="pointer-cursor">
-            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+            <Trash size={20} strokeWidth={1.5} />
           </span>
         </CustomTooltip>
       </ModalButton>
@@ -389,66 +395,165 @@ function ActionButtons({ selectedDepartments, resetAll }) {
 }
 function DropdownItems({ selectedDepartments, resetAll, onModalStateChange }) {
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
+  const [showDrawer, setShowDrawer] = useState(false);
   const modalRef = useRef(null);
+
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+    modalData: {},
+  });
+
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+    drawerData: {},
+  });
+
   useEffect(() => {
-    onModalStateChange(showModal, modalRef);
+    if (typeof onModalStateChange === "function") {
+      onModalStateChange(showModal, modalRef);
+    }
   }, [showModal, onModalStateChange]);
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        handleClose: handleCloseModal,
-        resetAll,
-        bulkData: selectedDepartments,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+      modalData = {},
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+      modalData,
+    });
     setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+      drawerData = {},
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+      drawerData,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteDepartment, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeleteDepartment, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Delete All</span>
-          <DeleteIcon />
+          <Trash size={16} strokeWidth={1.5} />
         </div>
       </DropDownMenuItem>
+      <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeactivateDepartment, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeactivateDepartment, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Deactivate All</span>
-          <SuspendIcon />
+          <CircleOff size={16} strokeWidth={1.5} />
         </div>
       </DropDownMenuItem>
+      <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkActivateDepartment, "md")}
+        onClick={() =>
+          handleShowModal(BulkActivateDepartment, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Activate All</span>
-          <ActivateIcon />
+          <CircleCheck size={16} strokeWidth={1.5} />
         </div>
       </DropDownMenuItem>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={{
+              selectedDepartments: selectedDepartments,
+              ...drawerConfig.drawerData,
+            }}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
+        ref={modalRef}
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
-        ref={modalRef}
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={{
+              selectedDepartments: selectedDepartments,
+              ...modalConfig.modalData,
+            }}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );
