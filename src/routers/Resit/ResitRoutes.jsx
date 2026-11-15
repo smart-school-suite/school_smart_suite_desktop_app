@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { Route } from "react-router-dom";
+import ResitTimetableLayout from "../../layouts/ResitTimetableLayout";
 const ResitCandidate = React.lazy(
   () => import("../../pages/Resit/ResitCandidate"),
 );
@@ -49,15 +50,17 @@ const ResitRoutes = [
       </Suspense>
     }
   />,
-  <Route
-    key="ResitTimetable"
-    path="/resit-timetable"
-    element={
-      <Suspense>
-        <ResitTimetable />
-      </Suspense>
-    }
-  />,
+  <Route key="resitTimetableLayout" element={<ResitTimetableLayout />}>
+    <Route
+      key="ResitTimetable"
+      path="/resit-timetable"
+      element={
+        <Suspense>
+          <ResitTimetable />
+        </Suspense>
+      }
+    />
+  </Route>,
   <Route
     key="StudentResit"
     path="/student-resit"

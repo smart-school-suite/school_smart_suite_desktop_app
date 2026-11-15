@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Badge, EmptyState, Section, Stats, TimeSpan, WizardFooter, WizardStep } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 import "../../styles/jointCourseSlots.css";
 import { formatExamDate, SetupNotice, useJointCourseReadiness } from "./fields";
-
-const JOINT_COURSE_TIMETABLE_PATH = "/exam/joint-course-timetable";
+import { useTimetableKind } from "../TimetableKindContext";
 
 /**
  * Read-only view of the exam's joint courses. Their times are set on the Joint
@@ -13,13 +12,14 @@ const JOINT_COURSE_TIMETABLE_PATH = "/exam/joint-course-timetable";
  * until every one has a time.
  */
 function JointCoursesPanel({ handleClose, constraint }) {
+  const kind = useTimetableKind();
   const navigate = useNavigate();
   const readiness = useJointCourseReadiness();
   const { exam, joint, scheduled, unscheduled, isLoading, error } = readiness;
 
   const openJointTimetable = () => {
     handleClose();
-    navigate(JOINT_COURSE_TIMETABLE_PATH);
+    if (kind.joint.path) navigate(kind.joint.path);
   };
 
   const body = () => {
@@ -34,14 +34,14 @@ function JointCoursesPanel({ handleClose, constraint }) {
       );
     }
     if (joint.length === 0) {
-      return <EmptyState icon="lucide:users" title="No joint courses" text="This exam has no course shared with other specialties, so there is nothing to wait for." />;
+      return <EmptyState icon="lucide:users" title={kind.joint.emptyTitle} text={kind.joint.emptyText} />;
     }
 
     return (
       <div className="d-flex flex-column gap-4">
         <Stats
           items={[
-            { label: "Joint courses", value: joint.length },
+            { label: kind.joint.rowLabel, value: joint.length },
             { label: "Time set", value: scheduled.length },
             { label: "Waiting", value: unscheduled.length },
           ]}
@@ -66,7 +66,7 @@ function JointCoursesPanel({ handleClose, constraint }) {
                 <Lock size={11} /> Read only
               </span>
             </div>
-            <h2 className="cw-title font-size-sm fw-medium">{constraint?.name ?? "Joint Courses"}</h2>
+            <h2 className="cw-title font-size-sm fw-medium">{constraint?.name ?? kind.joint.rowLabel}</h2>
           </div>
           <button type="button" className="cw-icon-btn" onClick={handleClose} aria-label="Close">
             <Icon icon="lucide:x" width={18} height={18} />
@@ -75,11 +75,11 @@ function JointCoursesPanel({ handleClose, constraint }) {
       </header>
 
       <WizardStep
-        title="Courses examined with other specialties"
-        description="A course several specialties take is examined once, at the same time for all of them. Its time is set on the Joint Course Timetable page and this timetable places it exactly there, so it can't be changed here."
+        title={kind.joint.title}
+        description={kind.joint.description}
         // While times are missing, the fallback carries the call to configure them.
         footer={
-          unscheduled.length === 0 && (
+          unscheduled.length === 0 && kind.joint.path && (
             <WizardFooter onNext={openJointTimetable} nextLabel="Open joint course timetable" nextIcon="lucide:arrow-up-right" />
           )
         }
@@ -120,6 +120,7 @@ function ConfigureFallback({ courses, allMissing, onConfigure }) {
 
 /** The joint exam times, by date, as fixed sessions. */
 function Schedules({ courses }) {
+  const kind = useTimetableKind();
   const dates = [...new Set(courses.map((course) => course.joint.slot.date))];
   return dates.map((date) => {
     const onDate = courses.filter((course) => course.joint.slot.date === date);
@@ -140,7 +141,7 @@ function Schedules({ courses }) {
                   <span className="cw-option__meta">{[course.course_code, formatExamDate(date, "EEE d MMM")].filter(Boolean).join(" · ")}</span>
                 </div>
                 <span className="jcs-field-hint d-flex flex-row align-items-center gap-1">
-                  <Lock size={12} /> Fixed by the Joint Course Timetable
+                  <Lock size={12} /> {kind.joint.fixedBy}
                 </span>
               </div>
             </div>

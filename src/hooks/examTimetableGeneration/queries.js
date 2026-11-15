@@ -23,58 +23,87 @@ export const EXAM_TIMETABLE_KEYS = Object.freeze({
   schedulingData: "exam-scheduling-data",
 });
 
-export const useGetExamTimetableConstraints = () =>
-  useQuery({
-    queryKey: [EXAM_TIMETABLE_KEYS.constraints],
-    queryFn: getExamTimetableConstraints,
-    staleTime: Infinity,
-  });
+/**
+ * The queries of a timetable of exams, for an API and its query keys.
+ * The exam and resit timetables share them; `ownerId` is the exam or resit exam.
+ */
+export function makeTimetableQueries(api, keys) {
+  return {
+    useConstraints: () =>
+      useQuery({
+        queryKey: [keys.constraints],
+        queryFn: api.getConstraints,
+        staleTime: Infinity,
+      }),
 
-export const useGetExamSchedulingData = (examId) =>
-  useQuery({
-    queryKey: [EXAM_TIMETABLE_KEYS.schedulingData, examId],
-    queryFn: () => getExamSchedulingData(examId),
-    enabled: !!examId,
-  });
+    useSchedulingData: (ownerId) =>
+      useQuery({
+        queryKey: [keys.schedulingData, ownerId],
+        queryFn: () => api.getSchedulingData(ownerId),
+        enabled: !!ownerId,
+      }),
 
-// Polled while a version is generating, so a lost realtime event can't leave the page stuck.
-export const useGetExamTimetableVersions = (examId) =>
-  useQuery({
-    queryKey: [EXAM_TIMETABLE_KEYS.versions, examId],
-    queryFn: () => getExamTimetableVersions(examId),
-    enabled: !!examId,
-    refetchInterval: (query) =>
-      query.state.data?.data?.some(isGenerating) ? GENERATION_POLL_INTERVAL_MS : false,
-    refetchIntervalInBackground: true,
-  });
+    // Polled while a version is generating, so a lost realtime event can't leave the page stuck.
+    useVersions: (ownerId) =>
+      useQuery({
+        queryKey: [keys.versions, ownerId],
+        queryFn: () => api.getVersions(ownerId),
+        enabled: !!ownerId,
+        refetchInterval: (query) =>
+          query.state.data?.data?.some(isGenerating) ? GENERATION_POLL_INTERVAL_MS : false,
+        refetchIntervalInBackground: true,
+      }),
 
-export const useGetExamTimetableSlots = (versionId) =>
-  useQuery({
-    queryKey: [EXAM_TIMETABLE_KEYS.slots, versionId],
-    queryFn: () => getExamTimetableSlots(versionId),
-    enabled: !!versionId,
-  });
+    useSlots: (versionId) =>
+      useQuery({
+        queryKey: [keys.slots, versionId],
+        queryFn: () => api.getSlots(versionId),
+        enabled: !!versionId,
+      }),
 
-export const useGetExamTimetableSolutions = (versionId) =>
-  useQuery({
-    queryKey: [EXAM_TIMETABLE_KEYS.solutions, versionId],
-    queryFn: () => getExamTimetableSolutions(versionId),
-    enabled: !!versionId,
-  });
+    useSolutions: (versionId) =>
+      useQuery({
+        queryKey: [keys.solutions, versionId],
+        queryFn: () => api.getSolutions(versionId),
+        enabled: !!versionId,
+      }),
 
-// Refused with a 422 when the version is not ready or the exam has ended.
-export const useGetExamTimetableActivationCheck = (versionId) =>
-  useQuery({
-    queryKey: [EXAM_TIMETABLE_KEYS.activationCheck, versionId],
-    queryFn: () => examTimetableActivationCheck(versionId),
-    enabled: !!versionId,
-    retry: false,
-    staleTime: 0,
-  });
+    // Refused with a 422 when the version is not ready or the exam has ended.
+    useActivationCheck: (versionId) =>
+      useQuery({
+        queryKey: [keys.activationCheck, versionId],
+        queryFn: () => api.activationCheck(versionId),
+        enabled: !!versionId,
+        retry: false,
+        staleTime: 0,
+      }),
 
-export const useGetActiveExamTimetable = (examId) =>
-  useQuery({
-    queryKey: [EXAM_TIMETABLE_KEYS.active, examId],
-    queryFn: () => getActiveExamTimetable(examId),
-    enabled: !!examId,
-  });
+    useActive: (ownerId) =>
+      useQuery({
+        queryKey: [keys.active, ownerId],
+        queryFn: () => api.getActive(ownerId),
+        enabled: !!ownerId,
+      }),
+  };
+}
+
+export const examTimetableQueries = makeTimetableQueries(
+  {
+    getConstraints: getExamTimetableConstraints,
+    getSchedulingData: getExamSchedulingData,
+    getVersions: getExamTimetableVersions,
+    getSlots: getExamTimetableSlots,
+    getSolutions: getExamTimetableSolutions,
+    activationCheck: examTimetableActivationCheck,
+    getActive: getActiveExamTimetable,
+  },
+  EXAM_TIMETABLE_KEYS,
+);
+
+export const useGetExamTimetableConstraints = examTimetableQueries.useConstraints;
+export const useGetExamSchedulingData = examTimetableQueries.useSchedulingData;
+export const useGetExamTimetableVersions = examTimetableQueries.useVersions;
+export const useGetExamTimetableSlots = examTimetableQueries.useSlots;
+export const useGetExamTimetableSolutions = examTimetableQueries.useSolutions;
+export const useGetExamTimetableActivationCheck = examTimetableQueries.useActivationCheck;
+export const useGetActiveExamTimetable = examTimetableQueries.useActive;

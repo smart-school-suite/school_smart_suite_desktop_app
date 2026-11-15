@@ -17,6 +17,8 @@ const initialState = {
     mapping: {},
   },
   selectedExam: null,
+  // The resit invigilator page's own selection.
+  selectedResitExam: null,
   selectedAcademicYear: null,
   assignInvigilator: {
     selectedInvigilator: [],
@@ -27,6 +29,9 @@ const examInvigilatorSlice = createSlice({
   name: "examInvigilator",
   initialState,
   reducers: {
+    setSelectedResitExam: (state, action) => {
+      state.selectedResitExam = action.payload?.exam ?? null;
+    },
     setImportStatus: (state, action) => {
       const { status } = action.payload;
       state.import.status = status;
@@ -126,6 +131,7 @@ export const {
   setImportReset,
   setColumnMapping,
   setSelectedExam,
+  setSelectedResitExam,
   setSelectedAcademicYear,
   toggleInvigilator,
   resetAssignInvigilatorState

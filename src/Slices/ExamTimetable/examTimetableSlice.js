@@ -49,8 +49,13 @@ const initialState = {
 let nextId = 0;
 const newId = () => `req-${Date.now().toString(36)}-${(nextId++).toString(36)}`;
 
-const examTimetableSlice = createSlice({
-  name: "examTimetable",
+/**
+ * The page state of a generated timetable of exams. The exam timetable and
+ * the resit timetable use the same reducers; for resits `exam` holds the
+ * selected resit exam.
+ */
+export const createExamTimetableSlice = (name) => createSlice({
+  name,
   initialState,
   reducers: {
     setTimetableExam(state, action) {
@@ -102,6 +107,8 @@ const examTimetableSlice = createSlice({
     },
   },
 });
+
+const examTimetableSlice = createExamTimetableSlice("examTimetable");
 
 export const {
   setTimetableExam,
