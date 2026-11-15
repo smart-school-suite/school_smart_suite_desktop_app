@@ -1,8 +1,7 @@
-import { Icon } from "@iconify/react";
-import { useGetDepartmentDetails } from "../../hooks/department/useGetDepartmentDetails";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import { useGetDepartmentDetails } from "../../hooks/department/useGetDepartmentDetails";
 function DepartmentDetails({ handleClose, drawerData }) {
   const {
     data: departmentDetails,
@@ -16,12 +15,12 @@ function DepartmentDetails({ handleClose, drawerData }) {
         style={{ flex: 1, minHeight: 0 }}
       >
         {isLoading ? (
-          <div className="d-flex flex-column gap-2">
+          <div className="d-flex flex-column gap-2 px-2">
             <div className="d-flex flex-column gap-4">
               {[...Array(4)].map((_, index) => (
                 <div className="d-flex gap-1 flex-column" key={index}>
-                  <RectangleSkeleton height="1dvh" width="40%" />
                   <RectangleSkeleton height="1dvh" width="15%" />
+                  <RectangleSkeleton height="1dvh" width="100%" />
                 </div>
               ))}
             </div>
@@ -33,11 +32,11 @@ function DepartmentDetails({ handleClose, drawerData }) {
           ></NotFoundError>
         ) : (
           <>
-            <div className="drawer-content px-2">
+            <div className="drawer-content ps-2 font-size-sm">
               <div className="d-flex align-items-center justify-content-between my-2 w-100">
                 <div className=" py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm">Department Name</span>
-                  <span className="my-0 gainsboro-color font-size-sm">
+                  <span className="text-iron-500">Department Name</span>
+                  <span>
                     {departmentDetails.data.department_name}
                   </span>
                 </div>
@@ -45,10 +44,10 @@ function DepartmentDetails({ handleClose, drawerData }) {
               <hr />
               <div className="d-flex align-items-center justify-content-between my-2 w-100">
                 <div className=" py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm">
+                  <span className="text-iron-500">
                     Department Description
                   </span>
-                  <span className="my-0  gainsboro-color font-size-sm">
+                  <span>
                     {departmentDetails.data.description}
                   </span>
                 </div>

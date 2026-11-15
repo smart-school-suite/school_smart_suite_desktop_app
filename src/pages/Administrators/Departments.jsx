@@ -7,13 +7,7 @@ import {
   ReceiptText,
   Trash,
 } from "lucide-react";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import ActionButtonDropdown, {
   DropDownMenuItem,
@@ -244,35 +238,67 @@ export default Departments;
 export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
-  const [ModalComponent, setModalComponent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [DrawerComponent, setDrawerComponent] = useState(null);
-  const [drawerDetail, setDrawerDetail] = useState({
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
     placement: "right",
     title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
   });
+
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalComponent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
-  const handleShowModal = (Component, size = "md") => {
-    setModalComponent(() => Component);
-    setModalSize(size);
+
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
   };
-  const handleShowDrawer = (Component, title = "") => {
-    setDrawerDetail((prev) => ({ ...prev, title }));
-    setDrawerComponent(() => Component);
-    setShowDrawer(true);
-  };
+
   const handleCloseDrawer = () => {
     setShowDrawer(false);
-    setDrawerComponent(null);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
   };
-  const menuItemClassName =
-    "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor";
 
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
+  };
+
+  const menuItemClassName = "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor";
   return (
     <>
       <ActionButtonDropdown
@@ -283,7 +309,11 @@ export function ActionComponent(props) {
         <DropDownMenuItem
           className={menuItemClassName}
           onClick={() =>
-            handleShowDrawer(UpdateDepartment, "Update Department")
+            handleShowDrawer(UpdateDepartment, {
+              title: "Update Department",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
           }
         >
           <div>
@@ -296,7 +326,13 @@ export function ActionComponent(props) {
 
         <DropDownMenuItem
           className={menuItemClassName}
-          onClick={() => handleShowModal(DeleteDepartment, "md")}
+          onClick={() =>
+            handleShowModal(DeleteDepartment, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
@@ -309,7 +345,11 @@ export function ActionComponent(props) {
         <DropDownMenuItem
           className={menuItemClassName}
           onClick={() =>
-            handleShowDrawer(DepartmentDetails, "Department Details")
+            handleShowDrawer(DepartmentDetails, {
+              title: "Department Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
           }
         >
           <div>
@@ -323,7 +363,13 @@ export function ActionComponent(props) {
         {rowData?.status === "active" ? (
           <DropDownMenuItem
             className={menuItemClassName}
-            onClick={() => handleShowModal(DeactivateDepartment, "md")}
+            onClick={() =>
+              handleShowModal(DeactivateDepartment, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
@@ -335,7 +381,13 @@ export function ActionComponent(props) {
         ) : (
           <DropDownMenuItem
             className={menuItemClassName}
-            onClick={() => handleShowModal(ActivateDepartment, "md")}
+            onClick={() =>
+              handleShowModal(ActivateDepartment, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
@@ -350,11 +402,13 @@ export function ActionComponent(props) {
       <Drawer
         isOpen={showDrawer}
         onClose={handleCloseDrawer}
-        placement={drawerDetail?.placement}
-        title={drawerDetail?.title}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
       >
-        {DrawerComponent && (
-          <DrawerComponent
+        {drawerConfig.component && (
+          <drawerConfig.component
             handleClose={handleCloseDrawer}
             drawerData={rowData}
           />
@@ -364,11 +418,16 @@ export function ActionComponent(props) {
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {ModalComponent && (
-          <ModalComponent rowData={rowData} handleClose={handleCloseModal} />
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
         )}
       </CustomModal>
     </>

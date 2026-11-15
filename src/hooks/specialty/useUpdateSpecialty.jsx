@@ -1,14 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateSpecialty } from "../../services/specialty";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
-export const useUpdateSpecialty = (handleClose) => {
+import { updateSpecialty } from "../../services/specialty";
+export const useUpdateSpecialty = (handleClose, specialtyId) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ specialtyId, updateData }) =>
       updateSpecialty(specialtyId, updateData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["specialties"] });
+      queryClient.invalidateQueries({ queryKey: ["specialty", specialtyId] });
       if (handleClose) {
         toast.custom(
           <ToastSuccess

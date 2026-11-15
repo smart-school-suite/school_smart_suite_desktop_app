@@ -1,31 +1,30 @@
 import { useEffect, useState } from "react";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { Icon } from "@iconify/react";
-import {
-  InputGroup,
-  TextAreaInput,
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
-import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import { useSelector } from "react-redux";
-import { useUpdateSpecialty } from "../../hooks/specialty/useUpdateSpecialty";
-import { useGetDepartments } from "../../hooks/department/useGetDepartments";
-import { useGetLevels } from "../../hooks/level/useGetLevels";
 import {
   nameSchema,
   numberSchema,
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import {
+  InputGroup,
+  TextAreaInput,
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useGetDepartments } from "../../hooks/department/useGetDepartments";
+import { useFormError } from "../../hooks/form/useFormError";
+import { useGetLevels } from "../../hooks/level/useGetLevels";
+import { useGetSpecialtyDetails } from "../../hooks/specialty/useGetSpecialtyDetail";
+import { useUpdateSpecialty } from "../../hooks/specialty/useUpdateSpecialty";
 import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import { useGetSpecialtyDetails } from "../../hooks/specialty/useGetSpecialtyDetail";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
 function UpdateSpecialty({ handleClose, drawerData }) {
   const { id: specialtyId } = drawerData;
   const {
@@ -47,9 +46,14 @@ function UpdateSpecialty({ handleClose, drawerData }) {
   const currency =
     currencyState?.schoolDetails?.school?.country?.currency || "";
   const { mutate: updateSpecialty, isPending } =
-    useUpdateSpecialty(handleClose);
-  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
-    useFormError("Failed To Update Specialty");
+    useUpdateSpecialty(handleClose, specialtyId);
+  const {
+    formError,
+    errorBannerRef,
+    setClientError,
+    handleServerError,
+    clearFormError,
+  } = useFormError("Failed To Update Specialty");
   const [formData, setFormData] = useState({
     specialty_name: "",
     registration_fee: "",
@@ -85,11 +89,17 @@ function UpdateSpecialty({ handleClose, drawerData }) {
   };
   const handleSpecialtyUpdate = async () => {
     if (optionalValidateObject(isFieldValid) == false) {
-      setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
+      setClientError(
+        "Invalid Fields",
+        "Please Ensure All Fields Are Valid Before Submitting",
+      );
       return;
     }
     if (hasNonEmptyValue(formData) == false) {
-      setClientError("Nothing To Update", "Please Ensure Atleast One Field Is Updated Before Submitting");
+      setClientError(
+        "Nothing To Update",
+        "Please Ensure Atleast One Field Is Updated Before Submitting",
+      );
       return;
     }
     const payload = {
@@ -101,7 +111,10 @@ function UpdateSpecialty({ handleClose, drawerData }) {
       description: formData.description,
     };
     clearFormError();
-    updateSpecialty({ specialtyId, updateData: payload }, { onError: handleServerError });
+    updateSpecialty(
+      { specialtyId, updateData: payload },
+      { onError: handleServerError },
+    );
   };
   return (
     <>
@@ -110,11 +123,11 @@ function UpdateSpecialty({ handleClose, drawerData }) {
         style={{ flex: 1, minHeight: 0 }}
       >
         {isSpecialtyDetailsLoading ? (
-          <div className="d-flex flex-column w-100 gap-3">
+          <div className="d-flex flex-column w-100 gap-3 px-2">
             {[...Array(6)].map((_, index) => (
               <div className="d-flex flex-column gap-2 w-100" key={index}>
                 <RectangleSkeleton width="25%" height="1dvh" />
-                <RectangleSkeleton width="100%" height="5dvh" />
+                <RectangleSkeleton width="100%" height="4dvh" />
               </div>
             ))}
           </div>
@@ -133,155 +146,168 @@ function UpdateSpecialty({ handleClose, drawerData }) {
           ></NotFoundError>
         ) : (
           <>
-            <div className="drawer-content px-2">
+            <div className="drawer-content ps-2 pt-3">
               <FormErrorBanner
                 ref={errorBannerRef}
                 error={formError}
                 onDismiss={clearFormError}
                 className="mb-2"
               />
-              <div>
-                <label htmlFor="specialtyName" className="font-size-sm">
-                  Specialty Name
-                </label>
-                <TextInput
-                  value={formData.specialty_name}
-                  onChange={(value) =>
-                    handleStateChange("specialty_name", value, setFormData)
-                  }
-                  onValidationChange={(value) =>
-                    handleStateChange("specialty_name", value, setIsFieldValid)
-                  }
-                  validationSchema={nameSchema({
-                    min: 3,
-                    max: 150,
-                    required: false,
-                    messages: {
-                      min: `Specialty Name Must Be Atleast 3 Characters`,
-                      max: `Specialty Name Must Not Exceed 150 Characters`,
-                    },
-                  })}
-                />
-              </div>
-              <div className="d-flex flex-row align-items-center gap-2 w-100">
-                <div className="w-50">
-                  <label htmlFor="registrationFees" className="font-size-sm">
-                    Registration Fees
+              <div className="d-flex flex-column gap-3">
+                <div>
+                  <label htmlFor="specialtyName" className="font-size-sm">
+                    Specialty Name
                   </label>
-                  <InputGroup
+                  <TextInput
+                    value={formData.specialty_name}
                     onChange={(value) =>
-                      handleStateChange("registration_fee", value, setFormData)
+                      handleStateChange("specialty_name", value, setFormData)
                     }
                     onValidationChange={(value) =>
                       handleStateChange(
-                        "registration_fee",
+                        "specialty_name",
                         value,
                         setIsFieldValid,
                       )
                     }
-                    step="0.01"
-                    validationSchema={numberSchema({
-                      min: 1,
-                      max: 500000,
+                    validationSchema={nameSchema({
+                      min: 3,
+                      max: 150,
                       required: false,
-                      integerOnly: false,
                       messages: {
-                        min: `Registration Fee Must Be Atleast 1 ${currency}`,
-                        max: `Registration Fee Must Not Exceed 500000 ${currency}`,
+                        min: `Specialty Name Must Be Atleast 3 Characters`,
+                        max: `Specialty Name Must Not Exceed 150 Characters`,
                       },
                     })}
-                    type="number"
-                    InputGroupText={currency}
-                    value={formData.registration_fee}
                   />
                 </div>
-                <div className="w-50">
-                  <label htmlFor="schoolFees" className="font-size-sm">
-                    School Fees
+                <div className="d-flex flex-row align-items-center gap-2 w-100">
+                  <div className="w-50">
+                    <label htmlFor="registrationFees" className="font-size-sm">
+                      Registration Fees
+                    </label>
+                    <InputGroup
+                      onChange={(value) =>
+                        handleStateChange(
+                          "registration_fee",
+                          value,
+                          setFormData,
+                        )
+                      }
+                      onValidationChange={(value) =>
+                        handleStateChange(
+                          "registration_fee",
+                          value,
+                          setIsFieldValid,
+                        )
+                      }
+                      step="0.01"
+                      validationSchema={numberSchema({
+                        min: 1,
+                        max: 500000,
+                        required: false,
+                        integerOnly: false,
+                        messages: {
+                          min: `Registration Fee Must Be Atleast 1 ${currency}`,
+                          max: `Registration Fee Must Not Exceed 500000 ${currency}`,
+                        },
+                      })}
+                      type="number"
+                      InputGroupText={currency}
+                      value={formData.registration_fee}
+                    />
+                  </div>
+                  <div className="w-50">
+                    <label htmlFor="schoolFees" className="font-size-sm">
+                      School Fees
+                    </label>
+                    <InputGroup
+                      onChange={(value) =>
+                        handleStateChange("school_fee", value, setFormData)
+                      }
+                      onValidationChange={(value) =>
+                        handleStateChange("school_fee", value, setIsFieldValid)
+                      }
+                      step="0.01"
+                      validationSchema={numberSchema({
+                        min: 1,
+                        max: 10000000,
+                        required: false,
+                        integerOnly: false,
+                        messages: {
+                          min: `Registration Fee Must Be Atleast 1 ${currency}`,
+                          max: `Registration Fee Must Not Exceed  10000000 ${currency}`,
+                        },
+                      })}
+                      type="number"
+                      InputGroupText={currency}
+                      value={formData.school_fee}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="departmentName" className="font-size-sm">
+                    Department Name
                   </label>
-                  <InputGroup
-                    onChange={(value) =>
-                      handleStateChange("school_fee", value, setFormData)
+                  <CustomDropdown
+                    data={departments?.data || []}
+                    displayKey={["department_name"]}
+                    valueKey={["id"]}
+                    isLoading={departmentIsLoading}
+                    direction="up"
+                    onSelect={(value) =>
+                      handleStateChange("department_id", value.id, setFormData)
                     }
-                    onValidationChange={(value) =>
-                      handleStateChange("school_fee", value, setIsFieldValid)
-                    }
-                    step="0.01"
-                    validationSchema={numberSchema({
-                      min: 1,
-                      max: 10000000,
-                      required: false,
-                      integerOnly: false,
-                      messages: {
-                        min: `Registration Fee Must Be Atleast 1 ${currency}`,
-                        max: `Registration Fee Must Not Exceed  10000000 ${currency}`,
-                      },
-                    })}
-                    type="number"
-                    InputGroupText={currency}
-                    value={formData.school_fee}
+                    placeholder={"Select Department"}
+                    optional={true}
+                    value={formData.department_id}
                   />
                 </div>
-              </div>
-              <div>
-                <label htmlFor="departmentName" className="font-size-sm">
-                  Department Name
-                </label>
-                <CustomDropdown
-                  data={departments?.data || []}
-                  displayKey={["department_name"]}
-                  valueKey={["id"]}
-                  isLoading={departmentIsLoading}
-                  direction="up"
-                  onSelect={(value) =>
-                    handleStateChange("department_id", value.id, setFormData)
-                  }
-                  placeholder={"Select Department"}
-                  optional={true}
-                  value={formData.department_id}
-                />
-              </div>
-              <div>
-                <label htmlFor="level" className="font-size-sm">
-                  Level
-                </label>
-                <CustomDropdown
-                  data={educationLevels?.data || []}
-                  displayKey={["name", "level"]}
-                  valueKey={["id"]}
-                  isLoading={educationIsLoading}
-                  direction="up"
-                  onSelect={(value) =>
-                    handleStateChange("level_id", value.id, setFormData)
-                  }
-                  placeholder={"Select Level"}
-                  optional={true}
-                  value={formData.level_id}
-                />
-              </div>
-              <div>
-                <label htmlFor="specialtyDescription" className="font-size-sm">
-                  Specialty Description
-                </label>
-                <TextAreaInput
-                  onValidationChange={(value) =>
-                    handleStateChange("description", value, setIsFieldValid)
-                  }
-                  onChange={(value) =>
-                    handleStateChange("description", value, setFormData)
-                  }
-                  validationSchema={textareaSchema({
-                    min: 10,
-                    max: 1000,
-                    required: false,
-                    messages: {
-                      min: "Description Must Be Atleast 10 Characters",
-                      max: "Description Must Not Exceed 1000 Characters",
-                      required: "Description Is Required",
-                    },
-                  })}
-                  value={formData.description}
-                />
+                <div>
+                  <label htmlFor="level" className="font-size-sm">
+                    Level
+                  </label>
+                  <CustomDropdown
+                    data={educationLevels?.data || []}
+                    displayKey={["name", "level"]}
+                    valueKey={["id"]}
+                    isLoading={educationIsLoading}
+                    direction="up"
+                    onSelect={(value) =>
+                      handleStateChange("level_id", value.id, setFormData)
+                    }
+                    placeholder={"Select Level"}
+                    optional={true}
+                    value={formData.level_id}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="specialtyDescription"
+                    className="font-size-sm"
+                  >
+                    Specialty Description
+                  </label>
+                  <TextAreaInput
+                    onValidationChange={(value) =>
+                      handleStateChange("description", value, setIsFieldValid)
+                    }
+                    onChange={(value) =>
+                      handleStateChange("description", value, setFormData)
+                    }
+                    validationSchema={textareaSchema({
+                      min: 10,
+                      max: 1000,
+                      required: false,
+                      messages: {
+                        min: "Description Must Be Atleast 10 Characters",
+                        max: "Description Must Not Exceed 1000 Characters",
+                        required: "Description Is Required",
+                      },
+                    })}
+                    value={formData.description}
+                  />
+                </div>
               </div>
             </div>
             <div className="drawer-footer font-size-sm">
