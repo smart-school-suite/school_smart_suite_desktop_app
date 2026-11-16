@@ -536,6 +536,11 @@ function CreateSemesterExam({
 
 function toDateInputValue(value) {
   if (!value) return "";
-  // The API serialises dates as ISO timestamps; the date inputs expect YYYY-MM-DD.
-  return String(value).slice(0, 10);
+  const text = String(value);
+  // The API returns plain calendar dates (YYYY-MM-DD), which the inputs expect as-is.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+  // A full timestamp (e.g. "2027-01-04T23:00:00.000000Z") is converted to the local
+  // calendar day; slicing the UTC string would land on the previous day for UTC+ zones.
+  const parsed = parseISO(text);
+  return Number.isNaN(parsed.getTime()) ? "" : format(parsed, "yyyy-MM-dd");
 }
