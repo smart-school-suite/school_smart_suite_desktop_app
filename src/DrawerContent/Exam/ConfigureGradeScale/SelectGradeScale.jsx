@@ -1,4 +1,5 @@
-import { Dot, Scale, CircleCheck, X, BookOpenCheck } from "lucide-react";
+import { Dot, Scale, CircleCheck, X, BookOpenCheck, Lock } from "lucide-react";
+import { useGetExamDetails } from "../../../hooks/exam/useGetExamDetails";
 import SearchInput from "../../../components/input/search";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { useGetGradeScaleCategories } from "../../../hooks/gradeScale/useGetGradeScaleCategories";
@@ -26,6 +27,9 @@ function SelectGradeScale({
     isLoading,
     error,
   } = useGetGradeScaleCategories();
+  const { data: examDetails } = useGetExamDetails(drawerData?.id);
+  // The API refuses grade scale changes once candidates are evaluated.
+  const gradeScaleLocked = !!examDetails?.data?.has_evaluated_candidates;
   return (
     <>
       <div className="d-flex flex-row align-items-center justify-content-between border-bottom p-2 font-size-sm">
@@ -49,6 +53,15 @@ function SelectGradeScale({
         </button>
       </div>
       <div className="drawer-content px-2 font-size-sm pt-2 pb-5">
+        {gradeScaleLocked && (
+          <div className="mb-3 p-3 font-size-sm rounded-3 d-flex flex-row gap-2 align-items-start border">
+            <Lock size={16} className="flex-shrink-0 mt-1" />
+            <span>
+              The grade scale can no longer be changed because candidates have
+              already been evaluated for this exam.
+            </span>
+          </div>
+        )}
         <div className="d-flex flex-column gap-3">
           <div className="d-flex flex-column gap-3">
             <div className="d-flex flex-row align-items-center justify-content-between">
@@ -170,7 +183,8 @@ function SelectGradeScale({
                         </div>
                         <div>
                           <AnimatePresence>
-                            {moduleState?.selectedGradeScale?.id == category.id && (
+                            {moduleState?.selectedGradeScale?.id ==
+                              category.id && (
                               <motion.div
                                 initial={{ scale: 0, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
@@ -213,8 +227,14 @@ function SelectGradeScale({
             {moduleState?.selectedGradeScale && (
               <button
                 className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
+                disabled={gradeScaleLocked}
+                style={
+                  gradeScaleLocked
+                    ? { opacity: 0.5, cursor: "not-allowed" }
+                    : undefined
+                }
                 onClick={() => {
-                  nextStep();
+                  if (!gradeScaleLocked) nextStep();
                 }}
               >
                 Review Scale
