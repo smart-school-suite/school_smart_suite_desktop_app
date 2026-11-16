@@ -6,17 +6,18 @@ export const useCreateFeeScheduleSlots = (handleClose) => {
     const queryClient = useQueryClient();
     return useMutation({
          mutationFn:({ feeScheduleId, scheduleData }) => createFeeScheduleSlots(feeScheduleId, scheduleData),
-         onSuccess:() => {
+         onSuccess:(_, { feeScheduleId }) => {
             queryClient.invalidateQueries({ queryKey:["feeSchedules"] })
+            queryClient.invalidateQueries({ queryKey:["feeScheduleSlots", feeScheduleId] })
 
             if(handleClose){
                 handleClose();
             }
 
             toast.custom(
-                <ToastSuccess 
+                <ToastSuccess
                   title={"Fee Schedule Created"}
-                  description={"Fee Schedule Created Successfully"}
+                  description={"The payment schedule is now live for this academic year."}
                 />
             )
          },

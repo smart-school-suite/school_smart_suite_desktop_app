@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFeeScheduleSlots } from "../../services/feeSchedule";
 
-export const useGetFeeScheduleSlots = (feeScheduleId) => {
+export const useGetFeeScheduleSlots = (feeScheduleId, options = {}) => {
     return useQuery({
-         queryKey:["feeScheduleSlots"],
-         queryFn:() => getFeeScheduleSlots(feeScheduleId)
+         queryKey:["feeScheduleSlots", feeScheduleId],
+         queryFn:() => getFeeScheduleSlots(feeScheduleId),
+         enabled: Boolean(feeScheduleId),
+         ...options,
     })
 }

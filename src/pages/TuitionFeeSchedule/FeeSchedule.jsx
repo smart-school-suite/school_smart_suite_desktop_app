@@ -1,17 +1,17 @@
 import Table from "../../components/Tables/Tables";
 import { useGetFeeSchedule } from "../../hooks/feeSchedule/useGetFeeSchedule";
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useRef, useMemo } from "react";
 import CustomModal from "../../components/Modals/Modal";
 import { DropDownMenuItem } from "../../components/DataTableComponents/ActionComponent";
 import ActionButtonDropdown from "../../components/DataTableComponents/ActionComponent";
 import DeleteFeeScheduleSlot from "../../ModalContent/FeeSchedule/DeleteFeeSchedule";
-import AutoGenerateFeeSchedule from "../../ModalContent/FeeSchedule/AutoGenerateFeeSchedule";
+import CreateFeeSchedule from "../../DrawerContent/FeeSchedule/CreateFeeSchedule";
+import UpdateFeeSchedule from "../../DrawerContent/FeeSchedule/UpdateFeeSchedule";
 import FeeScheduleSlots from "../../ModalContent/FeeSchedule/FeeScheduleSlots";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { DeleteIcon, DetailsIcon, GenerateIcon } from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { tuitionFeeScheduleColDefs } from "../../utils/table/colDefs/tuitionfee/tuitionFeeScheduleColDefs";
 import { NotFoundError } from "../../components/errors/Error";
-import { useSelector, useDispatch } from "react-redux";
 import { Drawer } from "../../components/drawer/Drawer";
 import TableToolbar from "../../components/TableFilters/TableToolbar";
 import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
@@ -24,23 +24,7 @@ function FeeSchedule() {
     tableRef,
   );
   const tableWrapperRef = useRef(null);
-  const dispatch = useDispatch();
-  const darkMode = useSelector((state) => state.theme.darkMode);
-  const [rowCount, setRowCount] = useState(0);
-  const [selectedSchedules, setSelectedSchedules] = useState([]);
-  const handleResetSelections = () => {
-    if (tableRef.current) {
-      tableRef.current.deselectAll();
-      setRowCount(0);
-      setSelectedSchedules([]);
-    }
-  };
-  const handleRowDataFromChild = useCallback((Data) => {
-    setSelectedSchedules(Data);
-  }, []);
-  const handleRowCountFromChild = useCallback((count) => {
-    setRowCount(count);
-  }, []);
+  const handleResetFilters = () => tableRef.current?.deselectAll?.();
   const memoizedColDefs = useMemo(() => {
     return tuitionFeeScheduleColDefs({
       ActionComponent,
@@ -68,7 +52,7 @@ function FeeSchedule() {
                   filters={filters}
                   tableRef={tableRef}
                   searchPlaceholder="Search Schedule"
-                  onReset={handleResetSelections}
+                  onReset={handleResetFilters}
                 />
                 <TableFilterLayout
                   filters={filters}
@@ -79,36 +63,7 @@ function FeeSchedule() {
                     colDefs={memoizedColDefs}
                     rowData={memoizedRowData}
                     ref={tableRef}
-                    handleRowCountFromChild={handleRowCountFromChild}
-                    handleRowDataFromChild={handleRowDataFromChild}
                   />
-                  {rowCount > 0 && (
-                    <BulkActionsToast
-                      key="bulk-actions-toast"
-                      anchorRef={tableWrapperRef}
-                      rowCount={rowCount}
-                      label={`${
-                        rowCount >= 1
-                          ? "Schedule Selected"
-                          : rowCount >= 2
-                            ? "Schedules Selected"
-                            : null
-                      }`}
-                      resetAll={handleResetSelections}
-                      dropDownItems={
-                        <DropdownItems
-                          selectedSchedules={selectedSchedules}
-                          resetAll={handleResetSelections}
-                        />
-                      }
-                      actionButton={
-                        <ActionButtons
-                          selectedSchedules={selectedSchedules}
-                          resetAll={handleResetSelections}
-                        />
-                      }
-                    />
-                  )}
                 </TableFilterLayout>
               </div>
             </>
@@ -190,51 +145,33 @@ export function ActionComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(AutoGenerateFeeSchedule, {
-              title: "Create Fee Schedule",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Auto Generate Schedule</span>
-              <GenerateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(FeeScheduleSlots, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>View Schedule</span>
-              <DetailsIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(DeleteFeeScheduleSlot, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Schedule</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
+        {rowData?.config_status ? (
+          <MenuItem
+            label="Edit Schedule"
+            icon={<UpdateIcon />}
+            onClick={() =>
+              handleShowDrawer(UpdateFeeSchedule, { title: "Edit Payment Schedule" })
+            }
+          />
+        ) : (
+          <MenuItem
+            label="Configure Schedule"
+            icon={<CreateIcon />}
+            onClick={() =>
+              handleShowDrawer(CreateFeeSchedule, { title: "Configure Payment Schedule" })
+            }
+          />
+        )}
+        <MenuItem
+          label="View Schedule"
+          icon={<DetailsIcon />}
+          onClick={() => handleShowModal(FeeScheduleSlots, { size: "md" })}
+        />
+        <MenuItem
+          label="Delete Schedule"
+          icon={<DeleteIcon />}
+          onClick={() => handleShowModal(DeleteFeeScheduleSlot, { size: "md" })}
+        />
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}
@@ -268,5 +205,19 @@ export function ActionComponent(props) {
         )}
       </CustomModal>
     </>
+  );
+}
+
+function MenuItem({ label, icon, onClick }) {
+  return (
+    <DropDownMenuItem
+      className="remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+      onClick={onClick}
+    >
+      <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
+        <span>{label}</span>
+        {icon}
+      </div>
+    </DropDownMenuItem>
   );
 }
