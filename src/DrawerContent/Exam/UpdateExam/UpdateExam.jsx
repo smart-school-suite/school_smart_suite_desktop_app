@@ -13,7 +13,7 @@ import {
 import { AnimatePresence } from "framer-motion";
 import { NotFoundError } from "../../../components/errors/Error";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   DateRangeInput,
   NumberInput,
@@ -22,13 +22,13 @@ import {
   dateRangeValidationSchema,
   numberSchema,
 } from "../../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid } from "../../../utils/functions";
 import { useGetRelatedCaExam } from "../../../hooks/exam/useGetRelatedCaExam";
 import { format, parseISO } from "date-fns";
 import { getDayWindow } from "../../../utils/time/date";
 import { resetCreateExamState } from "../../../Slices/exam/examSlice";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import { useUpdateExam } from "../../../hooks/exam/useUpdateExam";
+import { useGetExamDetails } from "../../../hooks/exam/useGetExamDetails";
 import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import { useFormError } from "../../../hooks/form/useFormError";
 function UpdateExam({
@@ -41,36 +41,66 @@ function UpdateExam({
 }) {
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.exam.createExam);
+  const { data: examDetails } = useGetExamDetails(drawerData?.id);
+  const handleUpdated = () => {
+    dispatch(resetCreateExamState());
+    handleClose?.();
+  };
   const { mutate: updateExam, isPending } = useUpdateExam(
-    handleClose,
-    drawerData.id,
+    handleUpdated,
+    drawerData?.id,
   );
+  // The selection only differs from the saved exam if the user picked a new
+  // exam type / school year in the previous steps.
+  const originalExamTypeId = examDetails?.data?.exam_type_id;
+  const originalSchoolYearId = examDetails?.data?.school_year_id;
+  const selectionUnchanged =
+    !!originalExamTypeId &&
+    moduleState?.examType?.id === originalExamTypeId &&
+    moduleState?.academicYear?.id === originalSchoolYearId;
   const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
     useFormError("Failed To Update Exam");
   const [formData, setFormData] = useState({
-    start_date: drawerData?.start_date || "",
-    end_date: drawerData?.end_date || "",
-    max_score: drawerData?.max_score || "",
+    start_date: toDateInputValue(drawerData?.start_date),
+    end_date: toDateInputValue(drawerData?.end_date),
+    // A CA's stored max score is exactly what the user entered. A semester
+    // exam's stored max score already includes its CA, so its own portion is
+    // filled in once the related CA has loaded (see CreateSemesterExam).
+    max_score:
+      drawerData?.exam_type === "ca" ? (drawerData?.max_score ?? "") : "",
   });
+  const [maxScoreTouched, setMaxScoreTouched] = useState(false);
   const [isInvalid, setIsInvalid] = useState({
     start_date: "",
     end_date: "",
     max_score: "",
   });
   const handleStateChange = (field, value, stateFn) => {
-    if (stateFn === setFormData) clearFormError();
+    if (stateFn === setFormData) {
+      clearFormError();
+      if (field === "max_score") setMaxScoreTouched(true);
+    }
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handleSubmit = async () => {
-    if (!allFieldsValid(isInvalid)) {
-      setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
+    if (Object.values(isInvalid).some((value) => value === false)) {
+      setClientError(
+        "Invalid Fields",
+        "Some Fields Seem To Be Invalid Please Go Through the form and try again",
+      );
       return;
     }
     const payload = {
-      ...formData,
-      school_year_id: moduleState.academicYear.id,
-      exam_type_id: moduleState.examType.id,
+      start_date: formData.start_date || null,
+      end_date: formData.end_date || null,
+      school_year_id: moduleState?.academicYear?.id,
+      exam_type_id: moduleState?.examType?.id,
     };
+    // Only send the score when the user changed it; the API otherwise keeps
+    // the exam's current score (re-combined with the CA if the CA changes).
+    if (maxScoreTouched && formData.max_score !== "") {
+      payload.max_score = formData.max_score;
+    }
     clearFormError();
     updateExam({
       examId: drawerData?.id,
@@ -149,6 +179,9 @@ function UpdateExam({
               setFormData={setFormData}
               setIsInvalid={setIsInvalid}
               moduleState={moduleState}
+              originalMaxScore={drawerData?.max_score}
+              selectionUnchanged={selectionUnchanged}
+              maxScoreTouched={maxScoreTouched}
             />
           ) : null}
         </div>
@@ -165,6 +198,7 @@ function UpdateExam({
             </button>
             <button
               className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
+              disabled={isPending}
               onClick={() => handleSubmit()}
             >
               {isPending ? <SingleSpinner /> : "Update Exam"}
@@ -188,7 +222,6 @@ function CreateCAExam({
       <div>
         <DateRangeInput
           validationSchema={dateRangeValidationSchema({
-            futureOnly: true,
             optional: true,
           })}
           onStartDateChange={(value) =>
@@ -225,7 +258,7 @@ function CreateCAExam({
             integerOnly: false,
             messages: {
               min: "Exam Score Must Be Atleast 1",
-              max: "Exam Score Must Not Exceed 100",
+              max: "Exam Score Must Not Exceed 500",
             },
           })}
           value={formData.max_score}
@@ -241,6 +274,9 @@ function CreateSemesterExam({
   setIsInvalid,
   formData,
   moduleState,
+  originalMaxScore,
+  selectionUnchanged,
+  maxScoreTouched,
 }) {
   const {
     data: relatedCa,
@@ -250,6 +286,33 @@ function CreateSemesterExam({
     moduleState?.academicYear?.id,
     moduleState?.examType?.id,
   );
+  const relatedCaMaxScore = relatedCa?.data?.max_score;
+  useEffect(() => {
+    // Show the exam's own portion (stored total minus its CA). Only possible
+    // when the CA shown is the one the exam is currently combined with.
+    if (
+      maxScoreTouched ||
+      !selectionUnchanged ||
+      relatedCaMaxScore == null ||
+      originalMaxScore == null
+    ) {
+      return;
+    }
+    const portion =
+      parseFloat(originalMaxScore) - parseFloat(relatedCaMaxScore);
+    setFormData((prev) => ({
+      ...prev,
+      max_score: Number.isFinite(portion)
+        ? String(parseFloat(portion.toFixed(2)))
+        : prev.max_score,
+    }));
+  }, [
+    relatedCaMaxScore,
+    originalMaxScore,
+    selectionUnchanged,
+    maxScoreTouched,
+    setFormData,
+  ]);
   return isLoading ? (
     <div className="d-flex flex-column gap-2">
       <RectangleSkeleton height="20dvh" width="100%" />
@@ -338,7 +401,6 @@ function CreateSemesterExam({
         </div>
         <DateRangeInput
           validationSchema={dateRangeValidationSchema({
-            futureOnly: true,
             optional: true,
           })}
           onStartDateChange={(value) =>
@@ -374,7 +436,7 @@ function CreateSemesterExam({
               integerOnly: false,
               messages: {
                 min: "Exam Max Score Must Be Atleast 1",
-                max: "Exam Max Score Must Not Exceed 100",
+                max: "Exam Max Score Must Not Exceed 500",
               },
             })}
             value={formData.max_score}
@@ -470,4 +532,10 @@ function CreateSemesterExam({
       </div>
     </>
   );
+}
+
+function toDateInputValue(value) {
+  if (!value) return "";
+  // The API serialises dates as ISO timestamps; the date inputs expect YYYY-MM-DD.
+  return String(value).slice(0, 10);
 }
