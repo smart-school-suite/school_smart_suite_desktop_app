@@ -1,6 +1,6 @@
-import { textColumn, actionsColumn } from "@/utils/table/columns";
-import TextComponent from "../../../../components/DataTableComponents/TextComponent";
+import { actionsColumn, textColumn } from "@/utils/table/columns";
 import GradeSubmittedStatus from "../../../../components/Badges/GradeSubmittedStatus";
+import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 
 export function examCandidateColDefs({ ActionComponent }) {
   return [
