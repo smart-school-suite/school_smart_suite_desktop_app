@@ -6,7 +6,9 @@ import { DateRangeInput } from "../../components/FormComponents/InputComponents"
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useGetSchoolAcademicYears } from "../../hooks/academicYear/useGetSchoolAcademicYears";
+import { useFormError } from "../../hooks/form/useFormError";
 import { useGetSchoolSemesterDetails } from "../../hooks/schoolSemester/useGetSchoolSemesterDetails";
 import { useUpdateSchoolSemester } from "../../hooks/schoolSemester/useUpdateSchoolSemester";
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
@@ -14,8 +16,6 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
 function UpdateSemester({ handleClose, drawerData }) {
   const { id: semesterId } = drawerData;
   const {
@@ -90,11 +90,11 @@ function UpdateSemester({ handleClose, drawerData }) {
         style={{ flex: 1, minHeight: 0 }}
       >
         {isSchoolSemeterDetailsLoading || isSchoolAcademicYearLoading ? (
-          <div className="d-flex flex-column w-100 gap-3">
+          <div className="d-flex flex-column w-100 gap-3 px-2">
             {[...Array(6)].map((_, index) => (
               <div className="d-flex flex-column gap-2 w-100" key={index}>
                 <RectangleSkeleton width="25%" height="1dvh" />
-                <RectangleSkeleton width="100%" height="5dvh" />
+                <RectangleSkeleton width="100%" height="4dvh" />
               </div>
             ))}
           </div>

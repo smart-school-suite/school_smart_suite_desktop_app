@@ -19,11 +19,11 @@ function GradeScale({ drawerData, handleClose }) {
   } = useGetGradeScaleCategoryId(drawerData.id);
   return (
     <>
-      <div className="drawer-content px-2 font-size-sm pt-2">
+      <div className="drawer-content ps-2 font-size-sm pt-2">
         <div className="d-flex flex-column gap-4">
           <div className="d-flex flex-row align-items-center gap-2">
             <div
-              className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
+              className="d-flex flex-row align-items-center justify-content-center fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
               style={{ height: "2.5rem", width: "2.5rem" }}
             >
               <Scale size={16} />
@@ -31,17 +31,17 @@ function GradeScale({ drawerData, handleClose }) {
             <div className="d-flex flex-column">
               <small className="text-muted">Category</small>
               <div className="d-flex flex-row align-items-center gap-1">
-                <span className="fw-semibold font-size-md">
+                <span className="fw-semibold">
                   {drawerData.grade_title}
                 </span>
                 <Dot size={16} />
-                <span className="fw-semibold font-size-md text-capitalize">
+                <span className="fw-semibold text-capitalize">
                   {drawerData.exam_type}
                 </span>
                 {drawerData?.max_score && (
                   <>
                     <Dot size={16} />
-                    <span className="fw-semibold font-size-md text-capitalize">
+                    <span className="fw-semibold text-capitalize">
                       {drawerData?.max_score ?? 0}
                     </span>
                   </>
@@ -113,25 +113,24 @@ function GradeListCard({ grade }) {
         <div className="d-flex flex-row justify-content-between">
           <div className="d-flex flex-row align-items-center gap-2">
             <div
-              className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
+              className="d-flex flex-row align-items-center justify-content-center fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
               style={{ height: "2.5rem", width: "2.5rem" }}
             >
               {grade?.letter_grade}
             </div>
             <div className="d-flex flex-column">
               <small className="text-muted">Grade Tier</small>
-              <span className="fw-semibold font-size-md">
+              <span className="fw-semibold">
                 Grade {grade?.letter_grade}
               </span>
             </div>
           </div>
           <span
-            className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2"
+            className="rounded-pill d-inline-flex align-items-center gap-1 border-0 fw-normal px-2 font-size-xs"
             style={{
               backgroundColor: "#e3f5e3",
               color: "#5cb85c",
-              fontSize: "0.75rem",
-              height: "1.5rem",
+              height: "1rem",
             }}
           >
             Configured
@@ -201,7 +200,7 @@ function NotConfiguredCard({ grade }) {
         <div className="d-flex flex-row justify-content-between">
           <div className="d-flex flex-row align-items-center gap-2">
             <div
-              className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3"
+              className="d-flex flex-row align-items-center justify-content-center fw-semibold gap-2 rounded-3"
               style={{
                 height: "2.5rem",
                 width: "2.5rem",
@@ -214,7 +213,7 @@ function NotConfiguredCard({ grade }) {
             </div>
             <div className="d-flex flex-column">
               <small className="text-muted">Grade Tier</small>
-              <span className="fw-semibold font-size-md">
+              <span className="fw-semibold">
                 Grade {grade?.letter_grade}
               </span>
             </div>

@@ -1,7 +1,7 @@
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { useGetGradeScaleDetails } from "../../hooks/gradeScale/useGetGradeScaleCategoryDetails";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { useGetGradeScaleDetails } from "../../hooks/gradeScale/useGetGradeScaleCategoryDetails";
 import { formatDate } from "../../utils/functions";
 function GradeScaleCategoryDetail({ handleClose, drawerData }) {
   const {
@@ -16,12 +16,12 @@ function GradeScaleCategoryDetail({ handleClose, drawerData }) {
         style={{ flex: 1, minHeight: 0 }}
       >
         {isLoading ? (
-          <div className="d-flex flex-column gap-2">
+          <div className="d-flex flex-column gap-2 px-2">
             <div className="d-flex flex-column gap-4">
               {[...Array(4)].map((_, index) => (
                 <div className="d-flex gap-1 flex-column" key={index}>
-                  <RectangleSkeleton height="1dvh" width="40%" />
                   <RectangleSkeleton height="1dvh" width="15%" />
+                  <RectangleSkeleton height="1dvh" width="100%" />
                 </div>
               ))}
             </div>
@@ -33,91 +33,79 @@ function GradeScaleCategoryDetail({ handleClose, drawerData }) {
           ></NotFoundError>
         ) : (
           <>
-            <div className="drawer-content px-2">
-              <div className="d-flex align-items-center justify-content-between my-2 w-100">
-                <div className=" py-2 d-flex flex-column fw-medium">
-                  <span className="my-0 font-size-sm">Grade Scale Title</span>
-                  <span className="my-0 font-size-sm">
-                    {details.data.system_grade_category.title}
-                  </span>
+            <div className="drawer-content px-2 pt-3">
+              <div className="d-flex flex-column gap-3">
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Grade Scale Title</span>
+                    <span className="fw-medium">{details.data.system_grade_category.title}</span>
+                  </div>
                 </div>
-              </div>
-              <HorizontalDashedLine
-                dashed={false}
-                color="#ccc"
-                thickness={0.5}
-              />
-              <div className="d-flex align-items-center justify-content-between my-2 w-100">
-                <div className=" py-2 d-flex flex-column fw-medium">
-                  <span className="my-0 font-size-sm">Exam Type</span>
-                  <span className="my-0 font-size-sm">
-                    {details.data.system_grade_category.exam_type}
-                  </span>
-                </div>
-              </div>
-              <HorizontalDashedLine
-                dashed={false}
-                color="#ccc"
-                thickness={0.4}
-              />
-              <div className="d-flex align-items-center justify-content-between my-2 w-100">
-                <div className=" py-2 d-flex flex-column fw-medium">
-                  <span className="my-0 font-size-sm">Exam Type</span>
-                  <span className="my-0 font-size-sm">
-                    {details.data.max_score ?? "N/A"}
-                  </span>
-                </div>
-              </div>
-              <HorizontalDashedLine
-                dashed={false}
-                color="#ccc"
-                thickness={0.4}
-              />
-              <div className="d-flex align-items-center justify-content-between my-2 w-100">
-                <div className=" py-2 d-flex flex-column fw-medium">
-                  <span className="my-0 font-size-sm">Configuration Status</span>
-                  <span className="my-0 font-size-sm">
-                    {details.data.max_score ?? "N/A"}
-                  </span>
-                </div>
-              </div>
                 <HorizontalDashedLine
-                dashed={false}
-                color="#ccc"
-                thickness={0.4}
-              />
-              <div className="d-flex align-items-center justify-content-between my-2 w-100">
-                <div className=" py-2 d-flex flex-column fw-medium">
-                  <span className="my-0 font-size-sm">Status</span>
-                  <span className="my-0 font-size-sm">
-                    {details.data.status ?? "N/A"}
-                  </span>
+                  dashed={false}
+                  color="#ccc"
+                  thickness={0.2}
+                />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Exam Type</span>
+                    <span className="fw-medium">{details.data.system_grade_category.exam_type}</span>
+                  </div>
                 </div>
-              </div>
-               <HorizontalDashedLine
-                dashed={false}
-                color="#ccc"
-                thickness={0.4}
-              />
-              <div className="d-flex align-items-center justify-content-between my-2 w-100">
-                <div className=" py-2 d-flex flex-column fw-medium">
-                  <span className="my-0 font-size-sm">Created At</span>
-                  <span className="my-0 font-size-sm">
-                    {formatDate(details.data.created_at)}
-                  </span>
+                <HorizontalDashedLine
+                  dashed={false}
+                  color="#ccc"
+                  thickness={0.2}
+                />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Exam Max Score</span>
+                    <span className="fw-medium">{details.data.max_score ?? "N/A"}</span>
+                  </div>
                 </div>
-              </div>
-               <HorizontalDashedLine
-                dashed={false}
-                color="#ccc"
-                thickness={0.4}
-              />
-              <div className="d-flex align-items-center justify-content-between my-2 w-100">
-                <div className=" py-2 d-flex flex-column fw-medium">
-                  <span className="my-0 font-size-sm">Updated At</span>
-                  <span className="my-0 font-size-sm">
-                    {formatDate(details.data.updated_at)}
-                  </span>
+                <HorizontalDashedLine
+                  dashed={false}
+                  color="#ccc"
+                  thickness={0.2}
+                />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Configuration Status</span>
+                    <span className="fw-medium">{details.data.is_configured ? "Configured" : "Not Configured"}</span>
+                  </div>
+                </div>
+                <HorizontalDashedLine
+                  dashed={false}
+                  color="#ccc"
+                  thickness={0.2}
+                />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Status</span>
+                    <span className="fw-medium">{details.data.status ?? "N/A"}</span>
+                  </div>
+                </div>
+                <HorizontalDashedLine
+                  dashed={false}
+                  color="#ccc"
+                  thickness={0.2}
+                />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Created At</span>
+                    <span className="fw-medium">{formatDate(details.data.created_at)}</span>
+                  </div>
+                </div>
+                <HorizontalDashedLine
+                  dashed={false}
+                  color="#ccc"
+                  thickness={0.2}
+                />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Updated At</span>
+                    <span className="fw-medium">{formatDate(details.data.updated_at)}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -126,7 +114,7 @@ function GradeScaleCategoryDetail({ handleClose, drawerData }) {
                 <HorizontalDashedLine
                   dashed={false}
                   color="#ccc"
-                  thickness={0.4}
+                  thickness={0.2}
                 />
                 <div className="d-flex flex-row align-items-center justify-content-between py-3 px-2">
                   <button

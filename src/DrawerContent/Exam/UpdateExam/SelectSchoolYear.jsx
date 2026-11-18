@@ -1,24 +1,24 @@
-import { useDispatch, useSelector } from "react-redux";
+import { format, parseISO } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  Dot,
-  X,
+  ArrowRight,
   BookOpenCheck,
   Calendar,
   CircleCheck,
-  ArrowRight,
+  Dot,
+  X,
 } from "lucide-react";
-import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { Fragment } from "react";
-import {
-  setCreateExamValue,
-  resetCreateExamState,
-} from "../../../Slices/exam/examSlice";
-import { useGetSchoolAcademicYears } from "../../../hooks/academicYear/useGetSchoolAcademicYears";
-import SearchInput from "../../../components/input/search";
-import { motion, AnimatePresence } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import { NotFoundError } from "../../../components/errors/Error";
+import SearchInput from "../../../components/input/search";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
-import { format, parseISO } from "date-fns";
+import { useGetSchoolAcademicYears } from "../../../hooks/academicYear/useGetSchoolAcademicYears";
+import {
+  resetCreateExamState,
+  setCreateExamValue,
+} from "../../../Slices/exam/examSlice";
 import { getTimeRemaining } from "../../../utils/time/date";
 function SelectSchoolYear({
   handleClose,
@@ -53,7 +53,7 @@ function SelectSchoolYear({
           <X size={16} />
         </button>
       </div>
-      <div className="drawer-content px-2 font-size-sm pt-2 pb-5">
+      <div className="drawer-content px-2 font-size-sm pt-2 pb-5 text-iron-700">
         <div className="d-flex flex-column gap-4">
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div className="d-flex flex-row align-items-center gap-2">
@@ -111,7 +111,7 @@ function SelectSchoolYear({
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.98 }}
                       className={`card p-2 transition-all
-                   d-flex flex-column gap-3 pointer-cursor 
+                   d-flex flex-column gap-3 pointer-cursor text-iron-700 
                   ${
                     moduleState?.academicYear?.id == academicYear?.id
                       ? "shadow-fern-100-lg border-fern-300"

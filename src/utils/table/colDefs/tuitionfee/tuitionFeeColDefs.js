@@ -1,19 +1,19 @@
 import {
-  textColumn,
   actionsColumn,
   dateColumn,
   numberColumn,
+  textColumn,
 } from "@/utils/table/columns";
-import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
 import TuitionFeePaymentStatusRenderer from "../../../../components/Badges/TuitionFeePaymentStatusRenderer";
+import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
+import TextComponent from "../../../../components/DataTableComponents/TextComponent";
+import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
 export function tuitionFeeColDefs({ ActionComponent }) {
   return [
     textColumn({
       field: "profile_picture",
       headerName: "Avatar",
-      cellRenderer: TeacherAvatarComponent,
+      cellRenderer: AvatarRenderer,
     }),
     textColumn({
       field: "name",
