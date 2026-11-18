@@ -62,8 +62,8 @@ function BulkBillStudentAdditionalFee({ handleClose, drawerData }) {
     if (stateFn === setFormData) clearFormError();
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
-  const handleSubmit = () => {
-    const prevalidation = handlePrevalidation();
+  const handleSubmit = async () => {
+    const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
       setClientError("Invalid Fields", "Please Ensure All Fields Are Valid Before Submitting");
 
@@ -77,7 +77,7 @@ function BulkBillStudentAdditionalFee({ handleClose, drawerData }) {
     const formattedData = selectedStudents?.map((items) => ({
       student_id: items.id,
       reason: formData.reason,
-      due: formData.date,
+      due_date: formData.date,
       additionalfee_category_id: formData.additionalfee_category_id?.id,
       amount: formData.amount,
     }));
@@ -129,11 +129,11 @@ function BulkBillStudentAdditionalFee({ handleClose, drawerData }) {
               type="number"
               validationSchema={numberSchema({
                 min: 1,
-                max: 1000000,
+                max: 999999.99,
                 required: true,
                 messages: {
                   min: "Amount Must Be Greater Than 1",
-                  max: "Amount Must Not Exceed 1000000",
+                  max: "Amount Must Not Exceed 999,999.99",
                 },
               })}
               InputGroupText={currency}

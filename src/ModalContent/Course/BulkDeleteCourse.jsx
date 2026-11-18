@@ -3,8 +3,9 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useBulkDeleteCourse } from "../../hooks/course/useBulkDeleteCourse";
 import { useFormError } from "../../hooks/form/useFormError";
-function BulkDeleteCourse({ handleClose, rowData, resetAll }) {
-  const { selectedCourses } = rowData;
+function BulkDeleteCourse({ handleClose, rowData, bulkData, resetAll }) {
+  // The dropdown passes rowData.selectedCourses; the toast icon (ModalButton) passes bulkData.
+  const selectedCourses = rowData?.selectedCourses ?? bulkData ?? [];
   const { mutate: bulkDeleteCourse, isPending } = useBulkDeleteCourse(
     handleClose,
     resetAll,
@@ -56,8 +57,7 @@ function BulkDeleteCourse({ handleClose, rowData, resetAll }) {
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>
-            This action cannot be undone. This will Permanently delete This
-            account and remove this account data from our servers
+            This permanently deletes the selected courses and cannot be undone.
           </p>
         </div>
 
@@ -71,6 +71,7 @@ function BulkDeleteCourse({ handleClose, rowData, resetAll }) {
             </button>
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
+              disabled={isPending || selectedCourses.length === 0}
               onClick={() => {
                 handleBulkDeleteCourse();
               }}

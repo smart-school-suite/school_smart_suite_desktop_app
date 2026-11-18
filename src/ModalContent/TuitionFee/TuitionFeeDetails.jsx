@@ -91,7 +91,7 @@ function TuitionFeeDetails({ rowData, handleClose }) {
             <div className="py-2">
               <p className="my-0 font-size-sm">Status</p>
               <p className="my-0 gainsboro-color font-size-sm">
-                {tuitionFeeDetails?.data?.status}
+                {tuitionFeeDetails?.data?.payment_status}
               </p>
             </div>
           </div>
@@ -118,7 +118,7 @@ function TuitionFeeDetails({ rowData, handleClose }) {
             <div className="py-2">
               <p className="my-0 font-size-sm">Level</p>
               <p className="my-0 gainsboro-color font-size-sm">
-                {tuitionFeeDetails?.data?.level?.name}
+                {tuitionFeeDetails?.data?.specialty?.level?.name}
               </p>
             </div>
           </div>

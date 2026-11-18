@@ -1,8 +1,10 @@
 import { Icon } from "@iconify/react";
 import { Dot, Plus, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { dateValidationSchema, numberSchema } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import { DateInput, InputGroup } from "../../components/FormComponents/InputComponents";
 import StatusPill from "../../components/Election/StatusPill";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -11,6 +13,7 @@ import { useFormError } from "../../hooks/form/useFormError";
 import {
   amountFor,
   formatScheduleDate,
+  nextDay,
   sameSchedule,
   sortRows,
   splitEvenly,
@@ -129,16 +132,66 @@ function AllocationMeter({ total, onSplitEvenly, canSplit }) {
   );
 }
 
-function InstallmentRow({ row, error, tuitionFee, bounds, canRemove, onChange, onRemove }) {
+/**
+ * One installment: its due date (DateInput) and share of the tuition
+ * (InputGroup), each validated by the shared schemas. triggerValidation()
+ * shows both fields' messages, as on a failed save.
+ */
+const InstallmentRow = forwardRef(function InstallmentRow(
+  { row, previous, highlight, tuitionFee, bounds, canRemove, onChange, onRemove },
+  ref,
+) {
   const currency = useCurrencySymbol();
-  const darkMode = useSelector((state) => state.theme.darkMode);
-  const inputClass = `form-control font-size-sm p-2 ${darkMode ? "dark-mode-input" : ""}`;
-  const hasError = Boolean(error?.due_date || error?.fee_percentage);
+  const dateRef = useRef();
+  const shareRef = useRef();
   const dateId = `due-${row.installment_id}`;
-  const percentageId = `share-${row.installment_id}`;
+
+  useImperativeHandle(ref, () => ({
+    triggerValidation: async () => {
+      const results = await Promise.all([dateRef.current?.triggerValidation(), shareRef.current?.triggerValidation()]);
+      return results.every((result) => result !== false);
+    },
+  }));
+
+  // Due on or after the academic year start, after the previous installment,
+  // and by the academic year end.
+  const afterPrevious = nextDay(previous?.due_date);
+  const min = afterPrevious && (!bounds.start || afterPrevious > bounds.start)
+    ? { date: afterPrevious, reason: `it must be after the ${previous.installment?.name ?? "previous installment"}` }
+    : bounds.start ? { date: bounds.start, reason: "it must fall within the academic year" } : null;
+  const max = bounds.end ? { date: bounds.end, reason: "it must fall within the academic year" } : null;
+
+  const dateSchema = useMemo(
+    () =>
+      dateValidationSchema({
+        required: true,
+        min,
+        max,
+        messages: {
+          required: "Pick a due date",
+          min: min && `Must be on or after ${formatScheduleDate(min.date)}: ${min.reason}`,
+          max: max && `Must be on or before ${formatScheduleDate(max.date)}: ${max.reason}`,
+        },
+      }),
+    [min?.date, max?.date], // eslint-disable-line react-hooks/exhaustive-deps
+  );
+  const shareSchema = useMemo(
+    () =>
+      numberSchema({
+        min: 0.01,
+        max: TOTAL_PERCENTAGE,
+        required: true,
+        messages: {
+          required: "Enter a percentage",
+          min: "Must be more than 0%",
+          max: "Cannot exceed 100%",
+        },
+      }),
+    [],
+  );
 
   return (
-    <div className={`border rounded-3 p-2 d-flex flex-column gap-2 ${hasError ? "border-red-300" : ""}`}>
+    <div className={`border rounded-3 p-2 d-flex flex-column gap-2 ${highlight ? "border-red-300" : ""}`}>
       <div className="d-flex flex-row align-items-center gap-2 font-size-sm">
         <span
           className="bg-primary-50 text-primary-600 rounded-circle fw-semibold font-size-xs flex-shrink-0"
@@ -168,42 +221,33 @@ function InstallmentRow({ row, error, tuitionFee, bounds, canRemove, onChange, o
           <label htmlFor={dateId} className="font-size-xs text-iron-500 m-0">
             Due date
           </label>
-          <input
+          <DateInput
+            ref={dateRef}
             id={dateId}
-            type="date"
-            className={`${inputClass} ${error?.due_date ? "is-invalid" : ""}`}
+            name={dateId}
             value={row.due_date || ""}
-            min={bounds.start}
-            max={bounds.end}
-            onChange={(e) => onChange("due_date", e.target.value)}
+            validationSchema={dateSchema}
+            onChange={(value) => onChange("due_date", value)}
           />
-          {error?.due_date && <span className="font-size-xs text-red-600">{error.due_date}</span>}
         </div>
         <div className="col-5 d-flex flex-column gap-1">
-          <label htmlFor={percentageId} className="font-size-xs text-iron-500 m-0">
-            Share of tuition
-          </label>
-          <div className="input-group">
-            <input
-              id={percentageId}
-              type="number"
-              inputMode="decimal"
-              step="0.01"
-              min="0"
-              max="100"
-              placeholder="0"
-              className={`${inputClass} ${error?.fee_percentage ? "is-invalid" : ""}`}
-              value={row.fee_percentage}
-              onChange={(e) => onChange("fee_percentage", e.target.value)}
-            />
-            <span className="input-group-text font-size-sm bg-iron-50 text-iron-500">%</span>
-          </div>
-          {error?.fee_percentage && <span className="font-size-xs text-red-600">{error.fee_percentage}</span>}
+          <span className="font-size-xs text-iron-500">Share of tuition</span>
+          <InputGroup
+            ref={shareRef}
+            type="number"
+            step="0.01"
+            placeholder="0"
+            InputGroupText="%"
+            value={row.fee_percentage}
+            validationSchema={shareSchema}
+            onChange={(value) => onChange("fee_percentage", value)}
+            onValidationChange={() => {}}
+          />
         </div>
       </div>
     </div>
   );
-}
+});
 
 /** Loading layout matching the editor: summary, meter and installment rows. */
 export function FeeScheduleEditorSkeleton() {
@@ -237,8 +281,8 @@ export default function FeeScheduleEditor({
   handleClose,
 }) {
   const [rows, setRows] = useState(() => sortRows(initialRows));
-  const [touched, setTouched] = useState(() => new Set());
   const [attempted, setAttempted] = useState(false);
+  const rowRefs = useRef(new Map());
   const { formError, errorBannerRef, handleServerError, setClientError, clearFormError } = useFormError(
     mode === "create" ? "Failed To Create Fee Schedule" : "Failed To Update Fee Schedule",
   );
@@ -264,7 +308,6 @@ export default function FeeScheduleEditor({
   };
 
   const updateRow = (installmentId, field, value) => {
-    setTouched((current) => new Set(current).add(installmentId));
     edit((current) => current.map((row) => (row.installment_id === installmentId ? { ...row, [field]: value } : row)));
   };
 
@@ -274,13 +317,14 @@ export default function FeeScheduleEditor({
   const addRow = () => nextInstallment && edit((current) => [...current, nextInstallment]);
 
   const handleSplitEvenly = () => {
-    setTouched(new Set(rows.map((row) => row.installment_id)));
     edit((current) => splitEvenly(current, { startDate: bounds.start, endDate: bounds.end }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!isValid) {
       setAttempted(true);
+      // Each field shows its own message, as in the app's other forms.
+      await Promise.all([...rowRefs.current.values()].map((rowRef) => rowRef?.triggerValidation()));
       setClientError("This schedule is not ready yet", problems);
       return;
     }
@@ -288,7 +332,6 @@ export default function FeeScheduleEditor({
     onSave(toSlotPayload(rows), { onError: handleServerError });
   };
 
-  const showErrorsFor = (row) => attempted || touched.has(row.installment_id);
   const saveLabel = mode === "create" ? "Create Schedule" : "Save Changes";
   const canSave = !isSaving && (mode === "create" || isDirty);
 
@@ -301,11 +344,16 @@ export default function FeeScheduleEditor({
 
       <div className="drawer-content px-2 pb-3 d-flex flex-column gap-2">
         <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} className="mb-1" />
-        {rows.map((row) => (
+        {rows.map((row, index) => (
           <InstallmentRow
             key={row.installment_id}
+            ref={(instance) => {
+              if (instance) rowRefs.current.set(row.installment_id, instance);
+              else rowRefs.current.delete(row.installment_id);
+            }}
             row={row}
-            error={showErrorsFor(row) ? rowErrors[row.installment_id] : undefined}
+            previous={rows[index - 1]}
+            highlight={attempted && Boolean(rowErrors[row.installment_id])}
             tuitionFee={schedule?.tuition_fee}
             bounds={bounds}
             canRemove={rows.length > 1}

@@ -39,3 +39,21 @@ export const getJointCourseDetails = async (jointCourseId) => {
   );
   return response.data;
 };
+
+// Joint courses are courses shared by several specialties, so the bulk
+// actions use the course bulk endpoints. Each takes
+// { courseIds: [{ course_id }] }.
+export const bulkDeleteJointCourses = async (payload) => {
+  const response = await axiosInstance.post("course/bulk-delete", payload);
+  return response.data;
+};
+
+export const bulkActivateJointCourses = async (payload) => {
+  const response = await axiosInstance.post("course/bulk-activate", payload);
+  return response.data;
+};
+
+export const bulkDeactivateJointCourses = async (payload) => {
+  const response = await axiosInstance.post("course/bulk-deactivate", payload);
+  return response.data;
+};

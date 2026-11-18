@@ -9,7 +9,8 @@ export const useUpdateSchoolSemester = (handleClose, schoolSemesterId) => {
       updateSchoolSemester(schoolSemesterId, updateData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schoolSemesters"] });
-      queryClient.removeQueries(["schoolSemester", schoolSemesterId]);
+      queryClient.removeQueries({ queryKey: ["schoolSemester", schoolSemesterId] });
+      queryClient.removeQueries({ queryKey: ["school-semester-update-rules", schoolSemesterId] });
 
       if (handleClose) {
         handleClose();

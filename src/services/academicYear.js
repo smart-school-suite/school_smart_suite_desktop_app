@@ -11,9 +11,17 @@ export const createSchoolAcademicYear = async (payload) => {
 };
 
 export const updateSchoolAcademicYear = async (payload, schoolAcademicYearId) => {
-  const response = await axiosInstance.post(
+  const response = await axiosInstance.put(
     `school-academic-year/${schoolAcademicYearId}/update`,
     payload,
+  );
+  return response.data;
+};
+
+// What can change on the academic year, why not, and within which dates.
+export const getSchoolAcademicYearUpdateRules = async (schoolAcademicYearId) => {
+  const response = await axiosInstance.get(
+    `school-academic-year/${schoolAcademicYearId}/update-rules`,
   );
   return response.data;
 };
