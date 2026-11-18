@@ -7,19 +7,19 @@ import {
 } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown, { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import {
   NumberInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateCourse } from "../../hooks/course/useCreateCourse";
 import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
+import { useFormError } from "../../hooks/form/useFormError";
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { allFieldsValid } from "../../utils/functions";
-import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
-import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateCourse({ handleClose }) {
   const courseCodeRef = useRef();
   const courseTitleRef = useRef();
@@ -107,7 +107,7 @@ function CreateCourse({ handleClose }) {
 
   return (
     <>
-      <div className="drawer-content ps-2 pt-2">
+      <div className="drawer-content ps-2 pt-2" style={{ paddingBottom:"10rem"}}>
         <FormErrorBanner
           ref={errorBannerRef}
           error={formError}

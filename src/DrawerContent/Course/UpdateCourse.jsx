@@ -13,6 +13,7 @@ import {
   NumberInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { NotFoundError } from "../../components/errors/Error";
@@ -27,7 +28,6 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateCourse({ handleClose, drawerData }) {
   const { id: courseId } = drawerData;
   const {
@@ -160,7 +160,7 @@ function UpdateCourse({ handleClose, drawerData }) {
           ></NotFoundError>
         ) : (
           <>
-            <div className="drawer-content ps-2">
+            <div className="drawer-content ps-2" style={{ paddingBottom:"10rem"}}>
               <FormErrorBanner
                 ref={errorBannerRef}
                 error={formError}
