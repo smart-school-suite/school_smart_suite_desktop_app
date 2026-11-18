@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 function AssignTeacherSpecialty({ handleClose, rowData }) {
   const {
     data: specialty,
@@ -139,7 +140,7 @@ function AssignTeacherSpecialty({ handleClose, rowData }) {
                     </div>
                   </div>
                 </div>
-                <p className="text-muted">{specialty?.data?.description}</p>
+                <RichTextContent content={specialty?.data?.description} className="text-muted mb-3" />
                 <div>
                   <hr />
                   <div className="d-flex flex-row align-items-center justify-content-around">

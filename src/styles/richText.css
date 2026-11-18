@@ -232,3 +232,58 @@
 .dark-mode-rte .rte-content code {
   background: #333;
 }
+/* Read-only rendering of saved rich-text descriptions (RichTextContent) */
+.rte-rendered {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.rte-rendered > :first-child {
+  margin-top: 0;
+}
+.rte-rendered > :last-child {
+  margin-bottom: 0;
+}
+.rte-rendered p {
+  margin: 0 0 0.5em;
+}
+.rte-rendered h1,
+.rte-rendered h2,
+.rte-rendered h3 {
+  margin: 0.6em 0 0.3em;
+  font-weight: 600;
+}
+.rte-rendered h1 { font-size: 1.4em; }
+.rte-rendered h2 { font-size: 1.2em; }
+.rte-rendered h3 { font-size: 1.05em; }
+.rte-rendered ul,
+.rte-rendered ol {
+  margin: 0 0 0.5em;
+  padding-left: 1.4em;
+}
+.rte-rendered a {
+  color: #0ea7e9;
+  text-decoration: underline;
+}
+.rte-rendered blockquote {
+  border-left: 3px solid #d7d7d7;
+  margin: 8px 0;
+  padding-left: 12px;
+  color: #555;
+}
+.rte-rendered code {
+  background: #f1f1f1;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.rte-rendered img {
+  max-width: 100%;
+  border-radius: 6px;
+}
+.dark-mode-rte-rendered blockquote {
+  color: #bbb;
+  border-left-color: #555;
+}
+.dark-mode-rte-rendered code {
+  background: #2b2b2b;
+}

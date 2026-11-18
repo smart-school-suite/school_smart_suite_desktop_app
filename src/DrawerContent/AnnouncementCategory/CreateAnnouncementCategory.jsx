@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateAnnouncementCategory } from "../../hooks/announcement/useCreateAnnouncementCategory";
 import {
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import {
@@ -13,6 +12,7 @@ import { allFieldsValid } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateAnnouncementCategory({ handleClose }) {
   const titleRef = useRef();
   const descriptionRef = useRef();
@@ -92,7 +92,7 @@ function CreateAnnouncementCategory({ handleClose }) {
             <label htmlFor="description" className="font-size-sm">
               Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               onChange={(value) =>
                 handleInputChange("description", value, setFormData)
               }

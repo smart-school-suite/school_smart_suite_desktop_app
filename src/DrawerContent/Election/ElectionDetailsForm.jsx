@@ -4,12 +4,12 @@ import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import {
   DateTimeRangeInput,
   NumberInput,
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import Switch from "../../components/input/Switch";
 import { useGetAllSystemAcademicYear } from "../../hooks/academicYear/useGetAllSystemAcademicYear";
 import { useGetActiveElectionTypes } from "../../hooks/electionType/useGetActiveElectionTypes";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 
 export const emptyElectionDetails = {
   title: "",
@@ -183,10 +183,9 @@ const ElectionDetailsForm = forwardRef(function ElectionDetailsForm(
           />
         </Field>
         <Field label="Description">
-          <TextAreaInput
+          <RichTextEditor
             value={value.description}
             optional
-            rows={3}
             placeholder="What this election is for and what voters should know."
             onChange={(next) => set("description", next)}
             onValidationChange={() => {}}

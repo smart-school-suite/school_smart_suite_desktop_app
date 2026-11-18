@@ -3,7 +3,6 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import {
   TextInput,
-  TextAreaInput,
 } from "../../components/FormComponents/InputComponents";
 import {
   nameSchema,
@@ -16,6 +15,7 @@ import {
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateAdditionalFeeCategory({ handleClose, drawerData }) {
   const { id: categoryId, title, description } = drawerData;
   console.log(drawerData);
@@ -85,7 +85,7 @@ function UpdateAdditionalFeeCategory({ handleClose, drawerData }) {
             <label htmlFor="description" className="font-size-sm">
               Category Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               onChange={(value) =>
                 handleStateChange("description", value, setFormData)
               }

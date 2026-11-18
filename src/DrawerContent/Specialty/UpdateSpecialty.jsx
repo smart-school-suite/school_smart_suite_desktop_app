@@ -9,7 +9,6 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import {
   InputGroup,
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -25,6 +24,7 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateSpecialty({ handleClose, drawerData }) {
   const { id: specialtyId } = drawerData;
   const {
@@ -288,7 +288,7 @@ function UpdateSpecialty({ handleClose, drawerData }) {
                   >
                     Specialty Description
                   </label>
-                  <TextAreaInput
+                  <RichTextEditor
                     onValidationChange={(value) =>
                       handleStateChange("description", value, setIsFieldValid)
                     }

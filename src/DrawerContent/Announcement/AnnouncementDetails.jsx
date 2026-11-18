@@ -6,6 +6,7 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import { getDayWindow, getTimeRemaining } from "../../utils/time/date";
 import { format, parseISO } from "date-fns";
 import { Megaphone } from "lucide-react";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 function AnnouncementDetails({ handleClose, drawerData }) {
   const { id: announcementId } = drawerData;
   const {
@@ -119,9 +120,7 @@ function AnnouncementDetails({ handleClose, drawerData }) {
               <span className="fw-medium">
                 {announcementDetails?.data?.announcement_category?.name}
               </span>
-              <span className="text-iron-400 fw-light">
-                {announcementDetails?.data?.announcement_category?.description}
-              </span>
+              <RichTextContent content={announcementDetails?.data?.announcement_category?.description} className="text-iron-400 fw-light" />
             </div>
             <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
             <div className="d-flex flex-column gap-1">
