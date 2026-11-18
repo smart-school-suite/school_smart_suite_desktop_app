@@ -418,7 +418,7 @@ function ActionButtons({ selectedCourses, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeleteCourse }}
+        // action={{ modalContent: BulkDeleteCourse }}
         bulkData={selectedCourses}
         resetAll={resetAll}
       >
