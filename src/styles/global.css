@@ -899,6 +899,12 @@ button.disabled {
   justify-content: center;
 }
 
+/* Cells are centred above; the selection checkbox column keeps the grid's
+   left padding so row checkboxes line up with the header checkbox. */
+.ag-cell[col-id="ag-Grid-ControlsColumn"] {
+  justify-content: flex-start;
+}
+
 .ag-row.ag-row-no-focus.ag-row-level-0.ag-row-position-absolute {
   z-index: 0;
 }
