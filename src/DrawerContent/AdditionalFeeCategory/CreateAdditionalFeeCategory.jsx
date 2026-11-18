@@ -3,7 +3,6 @@ import { useCreateAdditionalFeeCategory } from "../../hooks/additionalFee/useCre
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import {
   TextInput,
-  TextAreaInput,
 } from "../../components/FormComponents/InputComponents";
 import {
   nameSchema,
@@ -13,6 +12,7 @@ import { allFieldsValid } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateAdditionalFeeCategory({ handleClose }) {
   const titleRef = useRef();
   const descriptionRef = useRef();
@@ -93,7 +93,7 @@ function CreateAdditionalFeeCategory({ handleClose }) {
             <label htmlFor="description" className="font-size-sm">
               Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               onChange={(value) =>
                 handleInputChange("description", value, setFormData)
               }

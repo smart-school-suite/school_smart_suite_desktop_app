@@ -4,6 +4,7 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetSpecialtyDetails } from "../../hooks/specialty/useGetSpecialtyDetail";
 import { formatDate, formatNumber } from "../../utils/functions";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 function SpecialtyDetails({ handleClose, drawerData }) {
   const currency = useSelector((state) => state.auth.user);
   const specialtyId = drawerData.id;
@@ -114,9 +115,7 @@ function SpecialtyDetails({ handleClose, drawerData }) {
                   <span className="text-iron-500">
                     Description
                   </span>
-                  <span>
-                    {specialtyDetails?.data?.description}
-                  </span>
+                  <RichTextContent content={specialtyDetails?.data?.description} />
                 </div>
               </div>
               <hr />

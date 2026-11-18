@@ -9,6 +9,7 @@ import { useGetSchoolEventDetails } from "../../hooks/schoolEvent/useGetSchoolEv
 import { EventIcon } from "../../icons/Icons";
 import { eventImageUrl } from "./CreateSchoolEvent/EventContent";
 import ImageCarousel from "../../components/image/ImageCarousel";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 
 // Show the time as it was entered (the API's wall-clock time), not shifted to
 // the viewer's timezone: drop any timezone suffix before parsing.
@@ -108,7 +109,7 @@ function SchoolEventDetails({ handleClose, drawerData }) {
             <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
             <div className="d-flex flex-column gap-1">
               <span className="text-iron-400">Description</span>
-              <span className="fw-light">{event?.description}</span>
+              <RichTextContent content={event?.description} className="fw-light" />
               <div className="d-flex flex-row align-items-center gap-1 flex-wrap">
                 {parseTags(event?.tags).map((tag) => (
                   <span

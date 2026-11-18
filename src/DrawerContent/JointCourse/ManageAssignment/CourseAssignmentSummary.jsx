@@ -1,6 +1,7 @@
 import { BookOpen, Dot, Layers } from "lucide-react";
 import { useState } from "react";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
+import { htmlToPlainText } from "../../../utils/richText/richText";
 
 function CourseAssignmentSummary({ course }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -9,7 +10,7 @@ function CourseAssignmentSummary({ course }) {
   const specialtiesCount = course.specialties?.length ?? 0;
   const specialties = course.specialties ?? [];
 
-  const description = course.description ?? "";
+  const description = htmlToPlainText(course.description);
   const maxLength = 110;
   const isLongDescription = description.length > maxLength;
   const displayedDescription = isExpanded || !isLongDescription 

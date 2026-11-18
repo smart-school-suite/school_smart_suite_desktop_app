@@ -9,7 +9,6 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import CustomDropdown, { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
 import {
   NumberInput,
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
@@ -20,6 +19,7 @@ import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { allFieldsValid } from "../../utils/functions";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateCourse({ handleClose }) {
   const courseCodeRef = useRef();
   const courseTitleRef = useRef();
@@ -269,7 +269,7 @@ function CreateCourse({ handleClose }) {
             <label htmlFor="courseDescription" className="font-size-sm">
               Course Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               onChange={(value) =>
                 handleStateChange("description", value, setFormData)
               }

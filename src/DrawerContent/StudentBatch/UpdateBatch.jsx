@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useUpdateBatch } from "../../hooks/studentBatch/useUpdateBatch";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import {
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import {
@@ -19,6 +18,7 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateBatch({ handleClose, drawerData }) {
   const { id: batchId } = drawerData;
   const { mutate: updateBatch, isPending } = useUpdateBatch(handleClose);
@@ -117,7 +117,7 @@ function UpdateBatch({ handleClose, drawerData }) {
               <label htmlFor="description" className="font-size-sm">
                 Description
               </label>
-              <TextAreaInput
+              <RichTextEditor
                 onChange={(value) =>
                   handleStateChange("description", value, setFormData)
                 }

@@ -3,6 +3,7 @@ import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useGetEventCategoryDetails } from "../../hooks/eventCategory/useGetEventCategoryDetails";
 import { formatISODate } from "../../utils/functions";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 function CategoryDetails({ handleClose, drawerData }) {
   const { id: categoryId } = drawerData;
   const {
@@ -41,7 +42,7 @@ function CategoryDetails({ handleClose, drawerData }) {
             <div>
               <div className="d-flex flex-column gap-1">
                 <span>Description</span>
-                <span>{eventCategoryDetails.data.description}</span>
+                <RichTextContent content={eventCategoryDetails.data.description} />
               </div>
             </div>
             <hr />

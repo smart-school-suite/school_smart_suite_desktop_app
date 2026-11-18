@@ -4,6 +4,7 @@ import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useGetGraduationBatchDetails } from "../../hooks/graduationBatch/useGetGraduationBatchDetails";
 import { formatDate } from "../../utils/functions";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 function GraduationBatchDetails({ drawerData, handleClose }) {
   const { id: batchId } = drawerData;
   const {
@@ -45,7 +46,7 @@ function GraduationBatchDetails({ drawerData, handleClose }) {
             <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
             <div className="d-flex flex-column">
               <span className="fw-normal text-iron-500">Description</span>
-              <span className="fw-medium">{details?.data?.description}</span>
+              <RichTextContent content={details?.data?.description} className="fw-medium" />
             </div>
             <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
             <div className="d-flex flex-column">

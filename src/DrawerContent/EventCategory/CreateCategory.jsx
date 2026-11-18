@@ -3,7 +3,6 @@ import { useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useRef } from "react";
 import {
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import {
@@ -14,6 +13,7 @@ import { allFieldsValid } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateCategory({ handleClose }) {
   const { mutate: createCategory, isPending } =
     useCreateEventCategory(handleClose);
@@ -96,7 +96,7 @@ function CreateCategory({ handleClose }) {
             <label htmlFor="eventCategoryDescription" className="font-size-sm">
               Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               placeholder={"Enter Event Category Description"}
               onChange={(value) =>
                 handleStateChange("description", value, setFormData)

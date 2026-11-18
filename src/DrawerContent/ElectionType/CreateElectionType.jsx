@@ -5,14 +5,14 @@ import {
 } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import {
-    TextAreaInput,
-    TextInput,
+    TextInput
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateElectionType } from "../../hooks/electionType/useCreateElectionType";
 import { allFieldsValid } from "../../utils/functions";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateElectionType({ handleClose }) {
   const { mutate: createElectionType, isPending } =
     useCreateElectionType(handleClose);
@@ -96,7 +96,7 @@ function CreateElectionType({ handleClose }) {
             <label htmlFor="description" className="font-size-sm">
               Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               placeholder={"Write A Short Description of election type"}
               onChange={(value) =>
                 handleStateChange("description", value, setFormData)

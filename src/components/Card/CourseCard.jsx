@@ -3,6 +3,7 @@ import { isCourseAssigned } from "../../utils/course/courseFilters";
 import ChipRow from "./ChipRow";
 import CourseStatusPill from "./CourseStatusPill";
 import TeacherAvatar from "./TeacherAvatar";
+import { htmlToPlainText } from "../../utils/richText/richText";
 
 const typeChips = (course) =>
   (course?.types ?? []).map((type) => ({
@@ -65,9 +66,9 @@ export default function CourseCard({ course, children }) {
 
       <p
         className="font-size-xs text-iron-600 m-0 line-clamp-2 course-card__description"
-        title={course?.description || undefined}
+        title={htmlToPlainText(course?.description) || undefined}
       >
-        {course?.description || <span className="text-iron-400">No description</span>}
+        {htmlToPlainText(course?.description) || <span className="text-iron-400">No description</span>}
       </p>
 
       {typeChips(course).length > 0 ? (

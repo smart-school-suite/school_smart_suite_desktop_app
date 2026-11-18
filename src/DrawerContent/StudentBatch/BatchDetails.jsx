@@ -3,6 +3,7 @@ import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { formatISODate } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 function BatchDetails({ handleClose, drawerData }) {
   const { id: batchId } = drawerData;
   const {
@@ -43,9 +44,7 @@ function BatchDetails({ handleClose, drawerData }) {
             <div className="d-flex align-items-center justify-content-between w-100">
               <div className="d-flex flex-column gap-1">
                 <span className="text-iron-400">Description</span>
-                <span className="fw-medium">
-                  {studentBatchDetails?.data.description}
-                </span>
+                <RichTextContent content={studentBatchDetails?.data.description} className="fw-medium" />
               </div>
             </div>
             <span className="font-size-sm text-iron-400">System info</span>

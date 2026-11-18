@@ -1,7 +1,6 @@
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
 import {
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import {
@@ -16,6 +15,7 @@ import { useUpdateEventCategory } from "../../hooks/eventCategory/useUpdateEvent
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateCategory({ drawerData, handleClose }) {
   const { id: categoryId, name, description } = drawerData;
   const { mutate: updateEventCategory, isPending } =
@@ -85,7 +85,7 @@ function UpdateCategory({ drawerData, handleClose }) {
             <label htmlFor="eventCategoryDescription" className="font-size-sm">
               Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               placeholder={description}
               onChange={(value) =>
                 handleStateChange("description", value, setFormData)
