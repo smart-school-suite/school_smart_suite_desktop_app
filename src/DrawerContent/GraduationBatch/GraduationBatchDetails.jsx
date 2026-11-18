@@ -2,78 +2,83 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import StatusPill from "../../components/Election/StatusPill";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
-import { useGetGraduationBatchDetails } from "../../hooks/graduationBatch/useGetGraduationBatchDetails";
-import { formatDate } from "../../utils/functions";
 import RichTextContent from "../../components/TextComponents/RichTextContent";
+import { useGetGraduationBatchDetails } from "../../hooks/graduationBatch/useGetGraduationBatchDetails";
+import { formatDate, formatNumber } from "../../utils/functions";
+
+const CEREMONY = {
+  upcoming: { label: "Upcoming", tone: "primary" },
+  in_progress: { label: "In progress", tone: "success" },
+  held: { label: "Held", tone: "neutral" },
+  not_scheduled: { label: "Not scheduled", tone: "warning" },
+};
+
+const count = (value) => formatNumber(Number(value ?? 0));
+const when = (value, fallback = "-") => (value ? formatDate(value) : fallback);
+
+/** "2 eligible · 1 pending review · 1 ineligible", skipping zeros. */
+const breakdown = (counts, labels) =>
+  Object.entries(labels)
+    .filter(([key]) => (counts?.[key] ?? 0) > 0)
+    .map(([key, label]) => `${count(counts[key])} ${label}`)
+    .join(" · ") || "None yet";
+
+function detailRows(batch) {
+  const ceremony = CEREMONY[batch.ceremony_status] ?? CEREMONY.not_scheduled;
+  const year = batch.academic_year;
+  return [
+    { label: "Batch Name", value: batch.name ?? "-" },
+    { label: "Description", value: batch.description ? <RichTextContent content={batch.description} /> : "No description" },
+    { label: "Academic Year", value: year ? `${year.name}${year.year_start ? ` (${year.year_start} – ${year.year_end})` : ""}` : "-" },
+    { label: "Ceremony", value: <StatusPill tone={ceremony.tone}>{ceremony.label}</StatusPill> },
+    { label: "Location", value: batch.location || "Not set" },
+    { label: "Graduation Starts", value: when(batch.graduation_start_date, "Not scheduled") },
+    { label: "Graduation Ends", value: when(batch.graduation_end_date, "Not scheduled") },
+    { label: "Graduates", value: count(batch.total_graduates) },
+    {
+      label: "Graduation Status",
+      value: breakdown(batch.status_counts, { alumni: "alumni", continuing: "continuing", pending: "pending" }),
+    },
+    {
+      label: "Eligibility",
+      value: breakdown(batch.eligibility_counts, { eligible: "eligible", pending_review: "pending review", ineligible: "ineligible" }),
+    },
+    {
+      label: "Clearance",
+      value: breakdown(batch.clearance_counts, { cleared: "cleared", pending: "pending", blocked: "blocked" }),
+    },
+    { label: "Updated At", value: when(batch.updated_at) },
+    { label: "Created At", value: when(batch.created_at) },
+  ];
+}
+
+function Row({ label, value, first }) {
+  return (
+    <div>
+      {!first && <hr />}
+      <div className="d-flex align-items-center justify-content-between my-1 w-100">
+        <div className="py-2 d-flex flex-column align-items-start gap-1">
+          <span className="text-iron-500">{label}</span>
+          <span>{value}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** A graduation batch, laid out like the other details drawers. */
 function GraduationBatchDetails({ drawerData, handleClose }) {
   const { data, isLoading, error } = useGetGraduationBatchDetails(drawerData?.id);
   const batch = data?.data;
 
   return (
-    <>
-      <div className="drawer-content ps-2 pt-3 font-size-sm">
-        {isLoading ? (
-          <div className="d-flex flex-column gap-2">
-            {[...Array(5)].map((_, index) => (
-              <Fragment key={index}>
-                <div className="d-flex flex-column gap-2">
-                  <RectangleSkeleton width="25%" height="1dvh" />
-                  <RectangleSkeleton width="100%" height="1dvh" />
-                </div>
-              </Fragment>
-            ))}
-          </div>
-        ) : error ? (
-          <NotFoundError
-            title={
-              error?.response?.data?.errors?.title ||
-              "Graduation Batch Not Found"
-            }
-            description={
-              error?.response?.data?.errors?.description ||
-              "Unable to load graduation batch details. Please try again."
-            }
-          />
-        ) : (
-          <div className="d-flex flex-column gap-2">
-            <div className="d-flex flex-column">
-              <span className="fw-normal text-iron-500">Title</span>
-              <span className="fw-medium">{details?.data?.name}</span>
-            </div>
-            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
-            <div className="d-flex flex-column">
-              <span className="fw-normal text-iron-500">Description</span>
-              <RichTextContent content={details?.data?.description} className="fw-medium" />
-            </div>
-            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
-            <div className="d-flex flex-column">
-              <span className="fw-normal text-iron-500">
-                Graduation Start Date
-              </span>
-              <span className="fw-medium">
-                {formatDate(details?.data?.graduation_start_date)}
-              </span>
-            </div>
-            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
-            <div className="d-flex flex-column">
-              <span className="fw-normal text-iron-500">
-                Graduation End Date
-              </span>
-              <span className="fw-medium">
-                {formatDate(details?.data?.graduation_end_date)}
-              </span>
-            </div>
-            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
-            <div className="d-flex flex-column">
-              <span className="fw-normal text-iron-500">Location</span>
-              <span className="fw-medium">{details?.data?.location}</span>
-            </div>
-            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
-            <div className="d-flex flex-column">
-              <span className="fw-normal text-iron-500">Academic Year</span>
-              <span className="fw-medium">
-                {details?.data?.academic_year?.name}
-              </span>
+    <div className="font-size-sm d-flex flex-column gap-4 pt-2" style={{ flex: 1, minHeight: 0 }}>
+      {isLoading ? (
+        <div className="d-flex flex-column gap-4 ps-2">
+          {[...Array(8)].map((_, index) => (
+            <div className="d-flex gap-1 flex-column" key={index}>
+              <RectangleSkeleton height="1dvh" width="15%" />
+              <RectangleSkeleton height="1dvh" width="100%" />
             </div>
           ))}
         </div>
