@@ -20,6 +20,9 @@ import UpdateJointCourse from "../../DrawerContent/JointCourse/UpdateJointCourse
 import ActivateJointCourse from "../../ModalContent/JointCourse/ActivateJointCourse";
 import DeactivateJointCourse from "../../ModalContent/JointCourse/DeactivateJointCourse";
 import DeleteJointCourse from "../../ModalContent/JointCourse/DeleteJointCourse";
+import BulkActivateJointCourse from "../../ModalContent/JointCourse/BulkActivateJointCourse";
+import BulkDeactivateJointCourse from "../../ModalContent/JointCourse/BulkDeactivateJointCourse";
+import BulkDeleteJointCourse from "../../ModalContent/JointCourse/BulkDeleteJointCourse";
 import ActionButtonDropdown, {
   DropDownMenuItem,
   ModalButton,
@@ -418,7 +421,7 @@ function ActionButtons({ selectedCourses, resetAll }) {
     <>
       <ModalButton
         classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkDeleteCourse }}
+        action={{ modalContent: BulkDeleteJointCourse }}
         bulkData={selectedCourses}
         resetAll={resetAll}
       >
@@ -510,7 +513,13 @@ function DropdownItems({ selectedCourses, resetAll, onModalStateChange }) {
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        //onClick={() => handleShowModal(BulkDeleteCourse, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeleteJointCourse, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Delete All</span>
@@ -520,7 +529,13 @@ function DropdownItems({ selectedCourses, resetAll, onModalStateChange }) {
       <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        //onClick={() => handleShowModal(BulkDeactivateCourse, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeactivateJointCourse, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Deactivate All</span>
@@ -530,7 +545,13 @@ function DropdownItems({ selectedCourses, resetAll, onModalStateChange }) {
       <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        //onClick={() => handleShowModal(BulkActivateCourse, "md")}
+        onClick={() =>
+          handleShowModal(BulkActivateJointCourse, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
         <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Activate All</span>
@@ -571,6 +592,7 @@ function DropdownItems({ selectedCourses, resetAll, onModalStateChange }) {
               selectedCourses: selectedCourses,
               ...modalConfig.modalData,
             }}
+            resetAll={resetAll}
             handleClose={handleCloseModal}
           />
         )}
