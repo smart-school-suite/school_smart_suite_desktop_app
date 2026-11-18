@@ -1,12 +1,11 @@
-import { Icon } from "@iconify/react";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { useDispatch } from "react-redux";
+import {
+  CircleCheck,
+  CircleOff,
+  FilePen,
+  ReceiptText,
+  Trash,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import CourseDetails from "../../DrawerContent/Course/CourseDetails";
 import CreateCourse from "../../DrawerContent/Course/CreateCourse";
 import UpdateCourse from "../../DrawerContent/Course/UpdateCourse";
@@ -31,16 +30,9 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { useGetCourses } from "../../hooks/course/useGetCourses";
-import {
-  ActivateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  SuspendIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
 import { courseColDefs } from "../../utils/table/colDefs/course/courseColDefs";
 function Courses() {
-  const dispatch = useDispatch();
+  const tableWrapperRef = useRef(null);
   const { data: courses, isLoading, error } = useGetCourses();
   const tableRef = useRef(null);
   const filters = useTableFilters("academics/courses", tableRef);
@@ -145,10 +137,13 @@ function Courses() {
                 <TableToolbar
                   filters={filters}
                   tableRef={tableRef}
-                  searchPlaceholder="Search Course"
+                  searchPlaceholder="Search Course title, code, credit, description"
                   onReset={handleResetSelections}
                 />
-                <TableFilterLayout filters={filters}>
+                <TableFilterLayout
+                  filters={filters}
+                  tableWrapperRef={tableWrapperRef}
+                >
                   <Table
                     {...filters.gridProps}
                     colDefs={memoizedColDefs}
@@ -159,13 +154,11 @@ function Courses() {
                   />
                   {rowCount > 0 && (
                     <BulkActionsToast
+                      key="bulk-actions-toast"
+                      anchorRef={tableWrapperRef}
                       rowCount={rowCount}
                       label={`${
-                        rowCount >= 1
-                          ? "Course Selected"
-                          : rowCount >= 2
-                            ? "Courses Selected"
-                            : null
+                        rowCount > 1 ? "Courses Selected" : "Course Selected"
                       }`}
                       resetAll={handleResetSelections}
                       dropDownItems={
@@ -196,31 +189,64 @@ export default Courses;
 export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
-  const [ModalComponent, setModalComponent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [DrawerComponent, setDrawerComponent] = useState(null);
-  const [drawerDetail, setDrawerDetail] = useState({
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
     placement: "right",
     title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
   });
+
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalComponent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
-  const handleShowModal = (Component, size = "md") => {
-    setModalComponent(() => Component);
-    setModalSize(size);
+
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
   };
-  const handleShowDrawer = (Component, title = "") => {
-    setDrawerDetail((prev) => ({ ...prev, title }));
-    setDrawerComponent(() => Component);
-    setShowDrawer(true);
-  };
+
   const handleCloseDrawer = () => {
     setShowDrawer(false);
-    setDrawerComponent(null);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
@@ -234,12 +260,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowDrawer(UpdateCourse, "Update Course")}
+          onClick={() =>
+            handleShowDrawer(UpdateCourse, {
+              title: "Update Course",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update</span>
-              <UpdateIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -247,12 +279,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowDrawer(CourseDetails, "Course Details")}
+          onClick={() =>
+            handleShowDrawer(CourseDetails, {
+              title: "Course Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -260,12 +298,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteCourse, "md")}
+          onClick={() =>
+            handleShowModal(DeleteCourse, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete</span>
-              <DeleteIcon />
+              <Trash size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -274,12 +318,18 @@ export function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() => handleShowModal(DeactivateCourse, "md")}
+            onClick={() =>
+              handleShowModal(DeactivateCourse, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Deactivate</span>
-                <SuspendIcon />
+                <CircleOff size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -288,12 +338,18 @@ export function ActionComponent(props) {
             className={
               "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
             }
-            onClick={() => handleShowModal(ActivateCourse, "md")}
+            onClick={() =>
+              handleShowModal(ActivateCourse, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
           >
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Activate</span>
-                <ActivateIcon />
+                <CircleCheck size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -302,11 +358,13 @@ export function ActionComponent(props) {
       <Drawer
         isOpen={showDrawer}
         onClose={handleCloseDrawer}
-        placement={drawerDetail?.placement}
-        title={drawerDetail?.title}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
       >
-        {DrawerComponent && (
-          <DrawerComponent
+        {drawerConfig.component && (
+          <drawerConfig.component
             handleClose={handleCloseDrawer}
             drawerData={rowData}
           />
@@ -316,11 +374,16 @@ export function ActionComponent(props) {
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {ModalComponent && (
-          <ModalComponent rowData={rowData} handleClose={handleCloseModal} />
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
         )}
       </CustomModal>
     </>
@@ -331,14 +394,14 @@ function ActionButtons({ selectedCourses, resetAll }) {
   return (
     <>
       <ModalButton
-        classname={"border-none transparent-bg w-100 p-0 dark-mode-text"}
-        //action={{ modalContent: BulkDeleteTeacher }}
+        classname={"border-none transparent-bg w-100 p-0"}
+        action={{ modalContent: BulkDeleteCourse }}
         bulkData={selectedCourses}
         resetAll={resetAll}
       >
         <CustomTooltip tooltipText={"Delete All"}>
           <span className="pointer-cursor">
-            <Icon icon="iconamoon:trash-thin" width="24" height="24" />
+            <Trash size={20} strokeWidth={1.5} />
           </span>
         </CustomTooltip>
       </ModalButton>
@@ -347,66 +410,165 @@ function ActionButtons({ selectedCourses, resetAll }) {
 }
 function DropdownItems({ selectedCourses, resetAll, onModalStateChange }) {
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalSize, setModalSize] = useState("lg");
+  const [showDrawer, setShowDrawer] = useState(false);
   const modalRef = useRef(null);
+
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+    modalData: {},
+  });
+
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
+    placement: "right",
+    title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
+    drawerData: {},
+  });
+
   useEffect(() => {
-    onModalStateChange(showModal, modalRef);
+    if (typeof onModalStateChange === "function") {
+      onModalStateChange(showModal, modalRef);
+    }
   }, [showModal, onModalStateChange]);
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalContent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
 
-  const handleShowModal = (ContentComponent, size = "lg") => {
-    setModalContent(
-      React.createElement(ContentComponent, {
-        handleClose: handleCloseModal,
-        resetAll,
-        bulkData: selectedCourses,
-      }),
-    );
-    setModalSize(size);
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+      modalData = {},
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+      modalData,
+    });
     setShowModal(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
+  };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+      drawerData = {},
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+      drawerData,
+    });
+    setShowDrawer(true);
   };
   return (
     <>
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeleteCourse, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeleteCourse, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Delete All</span>
-          <DeleteIcon />
+          <Trash size={16} strokeWidth={1.5} />
         </div>
       </DropDownMenuItem>
+      <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkDeactivateCourse, "md")}
+        onClick={() =>
+          handleShowModal(BulkDeactivateCourse, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Deactivate All</span>
-          <SuspendIcon />
+          <CircleOff size={16} strokeWidth={1.5} />
         </div>
       </DropDownMenuItem>
+      <hr />
       <DropDownMenuItem
         className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
-        onClick={() => handleShowModal(BulkActivateCourse, "md")}
+        onClick={() =>
+          handleShowModal(BulkActivateCourse, {
+            size: "md",
+            closeOnOutsideClick: true,
+            closeOnEscape: true,
+          })
+        }
       >
-        <div className="py-2 px-1  rounded-1 d-flex flex-row justify-content-between dropdown-content-item dark-mode-text">
+        <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
           <span className="font-size-sm">Activate All</span>
-          <ActivateIcon />
+          <CircleCheck size={16} strokeWidth={1.5} />
         </div>
       </DropDownMenuItem>
+      <Drawer
+        isOpen={showDrawer}
+        onClose={handleCloseDrawer}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
+      >
+        {drawerConfig.component && (
+          <drawerConfig.component
+            handleClose={handleCloseDrawer}
+            drawerData={{
+              selectedCourses: selectedCourses,
+              ...drawerConfig.drawerData,
+            }}
+          />
+        )}
+      </Drawer>
+
       <CustomModal
+        ref={modalRef}
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
-        ref={modalRef}
       >
-        {modalContent}
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={{
+              selectedCourses: selectedCourses,
+              ...modalConfig.modalData,
+            }}
+            handleClose={handleCloseModal}
+          />
+        )}
       </CustomModal>
     </>
   );

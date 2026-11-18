@@ -1,4 +1,8 @@
-import { ArrowDown, ChevronDown } from "lucide-react";
+import {
+  ArrowDown, ChevronDown, FilePen,
+  ReceiptText,
+  Trash
+} from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import AcademicYearDetails from "../../DrawerContent/AcademicYear/AcademicYearDetails";
@@ -12,16 +16,15 @@ import ActionButtonDropdown, {
 import CustomModal from "../../components/Modals/Modal";
 import JobPopOver from "../../components/Popover/JobPopover";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 import Table from "../../components/Tables/Tables";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { useGetSchoolAcademicYears } from "../../hooks/academicYear/useGetSchoolAcademicYears";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { AcademicYearIcon } from "../../icons/Icons";
 import { academicYearColDefs } from "../../utils/table/colDefs/academicYear/academicYearColDefs";
-import TableToolbar from "../../components/TableFilters/TableToolbar";
-import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
-import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function AcademicYear() {
   const {
     data: schoolAcademicYears,
@@ -102,7 +105,10 @@ function AcademicYear() {
                 placement="right"
                 drawerChildren={CreateAcademicYear}
               >
-                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
+                <button
+                  className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
+                  style={{ height: 36 }}
+                >
                   <span>Create Academic Year</span>
                 </button>
               </DrawerTrigger>
@@ -176,32 +182,66 @@ export default AcademicYear;
 export function ActionComponent(props) {
   const rowData = props.data;
   const [showModal, setShowModal] = useState(false);
-  const [ModalComponent, setModalComponent] = useState(null);
-  const [modalSize, setModalSize] = useState("md");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [DrawerComponent, setDrawerComponent] = useState(null);
-  const [drawerDetail, setDrawerDetail] = useState({
+  const [modalConfig, setModalConfig] = useState({
+    component: null,
+    size: "md",
+    closeOnOutsideClick: true,
+    closeOnEscape: true,
+  });
+  const [drawerConfig, setDrawerConfig] = useState({
+    component: null,
     placement: "right",
     title: "",
+    closeOnOutsideClick: true,
+    showHeader: true,
   });
+
+  // Modal handlers
   const handleCloseModal = () => {
     setShowModal(false);
-    setModalComponent(null);
+    setModalConfig((prev) => ({ ...prev, component: null }));
   };
-  const handleShowModal = (Component, size = "md") => {
-    setModalComponent(() => Component);
-    setModalSize(size);
+
+  const handleShowModal = (Component, options = {}) => {
+    const {
+      size = "md",
+      closeOnOutsideClick = true,
+      closeOnEscape = true,
+    } = options;
+
+    setModalConfig({
+      component: Component,
+      size,
+      closeOnOutsideClick,
+      closeOnEscape,
+    });
     setShowModal(true);
   };
-  const handleShowDrawer = (Component, title = "") => {
-    setDrawerDetail((prev) => ({ ...prev, title }));
-    setDrawerComponent(() => Component);
-    setShowDrawer(true);
-  };
+
   const handleCloseDrawer = () => {
     setShowDrawer(false);
-    setDrawerComponent(null);
+    setDrawerConfig((prev) => ({ ...prev, component: null }));
   };
+
+  const handleShowDrawer = (Component, options = {}) => {
+    const {
+      title = "",
+      placement = "right",
+      closeOnOutsideClick = true,
+      showHeader = true,
+    } = options;
+
+    setDrawerConfig({
+      component: Component,
+      title,
+      placement,
+      closeOnOutsideClick,
+      showHeader,
+    });
+    setShowDrawer(true);
+  };
+
   return (
     <>
       <ActionButtonDropdown
@@ -215,13 +255,17 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowDrawer(UpdateAcademicYear, "Update Academic Year")
+            handleShowDrawer(UpdateAcademicYear, {
+              title: "Update Academic Year",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
           }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update Academic Year</span>
-              <UpdateIcon />
+              <span>Update</span>
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -230,13 +274,17 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowDrawer(AcademicYearDetails, "Academic Year Details")
+            handleShowDrawer(AcademicYearDetails, {
+              title: "Academic Year Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
           }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Academic Year Details</span>
-              <DetailsIcon />
+              <span>Details</span>
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -244,12 +292,18 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(DeleteAcademicYear, "md")}
+          onClick={() =>
+            handleShowModal(DeleteAcademicYear, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Acadenuc Year</span>
-              <DeleteIcon />
+              <span>Delete</span>
+              <Trash size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -257,11 +311,13 @@ export function ActionComponent(props) {
       <Drawer
         isOpen={showDrawer}
         onClose={handleCloseDrawer}
-        placement={drawerDetail?.placement}
-        title={drawerDetail?.title}
+        placement={drawerConfig.placement}
+        title={drawerConfig.title}
+        closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
+        showHeader={drawerConfig.showHeader}
       >
-        {DrawerComponent && (
-          <DrawerComponent
+        {drawerConfig.component && (
+          <drawerConfig.component
             handleClose={handleCloseDrawer}
             drawerData={rowData}
           />
@@ -271,11 +327,16 @@ export function ActionComponent(props) {
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        size={modalSize}
+        size={modalConfig.size}
+        closeOnOutsideClick={modalConfig.closeOnOutsideClick}
+        closeOnEscape={modalConfig.closeOnEscape}
         centered
       >
-        {ModalComponent && (
-          <ModalComponent rowData={rowData} handleClose={handleCloseModal} />
+        {modalConfig.component && (
+          <modalConfig.component
+            rowData={rowData}
+            handleClose={handleCloseModal}
+          />
         )}
       </CustomModal>
     </>
