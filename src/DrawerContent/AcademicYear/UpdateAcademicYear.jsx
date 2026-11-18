@@ -1,21 +1,24 @@
 import { Icon } from "@iconify/react";
-import { BookOpen, CalendarDays, ClipboardList, Dot, GraduationCap, Lock, ReceiptText, RotateCcw, Wallet } from "lucide-react";
+import { BookOpen, CalendarDays, ClipboardList, Dot, GraduationCap, ReceiptText, RotateCcw, Wallet } from "lucide-react";
 import { useMemo, useState } from "react";
-import { dateValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import SectionCard from "../../components/Election/SectionCard";
 import StatTile from "../../components/Election/StatTile";
 import StatusPill from "../../components/Election/StatusPill";
-import { DateInput } from "../../components/FormComponents/InputComponents";
 import EmptyState from "../../components/errors/EmptyState";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import LockedList from "../../components/UpdateRules/LockedList";
+import LockedValue from "../../components/UpdateRules/LockedValue";
+import ReadOnlyNotice from "../../components/UpdateRules/ReadOnlyNotice";
+import RuleDateField from "../../components/UpdateRules/RuleDateField";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useGetSchoolAcademicYearUpdateRules } from "../../hooks/academicYear/useGetSchoolAcademicYearUpdateRules";
 import { useUpdateSchoolAcademicYear } from "../../hooks/academicYear/useUpdateSchoolAcademicYear";
 import { useFormError } from "../../hooks/form/useFormError";
-import { boundsFor, dateError, FIELD_LABELS } from "../../utils/academicYear/updateRules";
+import { FIELD_LABELS, systemYearLimits } from "../../utils/academicYear/updateRules";
+import { boundsFor, dateError } from "../../utils/updateRules/dateRules";
 import { formatScheduleDate } from "../../utils/feeSchedule/scheduleRules";
 
 const STATUS = {
@@ -67,91 +70,6 @@ function YearSummary({ rules }) {
   );
 }
 
-/** A locked field: its current value with a lock, in place of the input. */
-function LockedValue({ value }) {
-  return (
-    <div className="d-flex flex-row align-items-center justify-content-between border rounded-2 bg-iron-50 px-2 py-2 font-size-sm text-iron-500">
-      <span className="text-truncate">{value}</span>
-      <Lock size={14} />
-    </div>
-  );
-}
-
-const rangeHint = (bounds) =>
-  bounds.min && bounds.max
-    ? `between ${formatScheduleDate(bounds.min.date)} and ${formatScheduleDate(bounds.max.date)}`
-    : bounds.min
-      ? `from ${formatScheduleDate(bounds.min.date)}`
-      : bounds.max
-        ? `until ${formatScheduleDate(bounds.max.date)}`
-        : null;
-
-function DateField({ id, label, value, onChange, bounds, editable, lockedValue }) {
-  // The shared date schema enforces the range; its message says why.
-  const schema = useMemo(
-    () =>
-      dateValidationSchema({
-        required: true,
-        min: bounds.min,
-        max: bounds.max,
-        messages: {
-          min: bounds.min && `Must be on or after ${formatScheduleDate(bounds.min.date)}: ${bounds.min.reason}.`,
-          max: bounds.max && `Must be on or before ${formatScheduleDate(bounds.max.date)}: ${bounds.max.reason}.`,
-        },
-      }),
-    [bounds.min, bounds.max],
-  );
-  const hint = editable ? rangeHint(bounds) : null;
-
-  return (
-    <div className="d-flex flex-column gap-1">
-      <label htmlFor={id} className="font-size-sm m-0">
-        {label}
-        {hint && <span className="text-iron-400 font-size-xs"> · {hint}</span>}
-      </label>
-      {editable ? (
-        <DateInput id={id} name={id} value={value} onChange={onChange} validationSchema={schema} />
-      ) : (
-        <LockedValue value={lockedValue} />
-      )}
-    </div>
-  );
-}
-
-/** Every field the user cannot change, and why. Fields locked for the same reasons share a row. */
-function LockedList({ rules }) {
-  const groups = [];
-  Object.entries(rules.fields)
-    .filter(([, field]) => !field.editable)
-    .forEach(([name, field]) => {
-      const key = field.reasons.join("\n");
-      const group = groups.find((item) => item.key === key);
-      if (group) group.names.push(name);
-      else groups.push({ key, names: [name], reasons: field.reasons });
-    });
-  if (groups.length === 0) return null;
-
-  return (
-    <SectionCard
-      title="What can't be changed"
-      description="Protected because of the academic year's status or the records that depend on it."
-      bodyClassName="p-0 pt-2"
-    >
-      {groups.map((group) => (
-        <div key={group.key} className="d-flex flex-row align-items-start gap-2 px-3 py-2 border-top">
-          <Lock size={14} className="text-iron-400 flex-shrink-0" style={{ marginTop: "0.2rem" }} />
-          <div className="d-flex flex-column font-size-sm" style={{ minWidth: 0 }}>
-            <span className="fw-semibold">{group.names.map((name) => FIELD_LABELS[name] ?? name).join(", ")}</span>
-            {group.reasons.map((reason) => (
-              <span key={reason} className="font-size-xs text-iron-500" style={{ lineHeight: 1.5 }}>{reason}</span>
-            ))}
-          </div>
-        </div>
-      ))}
-    </SectionCard>
-  );
-}
-
 function Dependents({ counts }) {
   const shown = DEPENDENTS.filter((item) => (counts?.[item.key] ?? 0) > 0);
   if (shown.length === 0) return null;
@@ -191,11 +109,11 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
   const systemYearChanged = form.system_academic_year?.id !== rules.system_academic_year?.id;
 
   const startBounds = useMemo(
-    () => boundsFor("start_date", fields.start_date, { systemYear: selectedSystemYear, start: form.start_date, end: form.end_date }),
+    () => boundsFor("start_date", fields.start_date, { replace: systemYearLimits(selectedSystemYear), start: form.start_date, end: form.end_date }),
     [fields.start_date, selectedSystemYear, form.start_date, form.end_date],
   );
   const endBounds = useMemo(
-    () => boundsFor("end_date", fields.end_date, { systemYear: selectedSystemYear, start: form.start_date, end: form.end_date }),
+    () => boundsFor("end_date", fields.end_date, { replace: systemYearLimits(selectedSystemYear), start: form.start_date, end: form.end_date }),
     [fields.end_date, selectedSystemYear, form.start_date, form.end_date],
   );
 
@@ -239,12 +157,7 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
       <div className="drawer-content px-2 pb-3 d-flex flex-column gap-3">
         <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} className="mb-0" />
 
-        {rules.read_only && (
-          <div className="d-flex flex-row align-items-start gap-2 rounded-3 bg-old-lace-50 text-old-lace-700 px-3 py-2 font-size-sm">
-            <Lock size={15} className="flex-shrink-0" style={{ marginTop: "0.15rem" }} />
-            <span>This academic year is read-only. Nothing on it can be changed.</span>
-          </div>
-        )}
+        {rules.read_only && <ReadOnlyNotice>This academic year is read-only. Nothing on it can be changed.</ReadOnlyNotice>}
 
         {anyEditable && (
           <SectionCard title="What you can change" description="Only these fields can be changed right now." bodyClassName="p-3 d-flex flex-column gap-2">
@@ -272,7 +185,7 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
                 <LockedValue value={rules.system_academic_year?.name ?? "-"} />
               )}
             </div>
-            <DateField
+            <RuleDateField
               id="academic-year-start"
               label="Start date"
               value={form.start_date}
@@ -281,7 +194,7 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
               editable={fields.start_date.editable}
               lockedValue={formatScheduleDate(rules.start_date)}
             />
-            <DateField
+            <RuleDateField
               id="academic-year-end"
               label="End date"
               value={form.end_date}
@@ -293,7 +206,11 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
           </SectionCard>
         )}
 
-        <LockedList rules={rules} />
+        <LockedList
+          fields={rules.fields}
+          labels={FIELD_LABELS}
+          description="Protected because of the academic year's status or the records that depend on it."
+        />
         <Dependents counts={rules.dependents} />
       </div>
 
