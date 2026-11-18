@@ -39,3 +39,9 @@ export const getSchoolSemesterDetails = async (schoolSemesterId) => {
     const response = await axiosInstance.get(`school-semester/${schoolSemesterId}`);
     return response.data;
 }
+
+// What can change on the semester, why not, and within which dates.
+export const getSchoolSemesterUpdateRules = async (schoolSemesterId) => {
+  const response = await axiosInstance.get(`school-semester/${schoolSemesterId}/update-rules`);
+  return response.data;
+};

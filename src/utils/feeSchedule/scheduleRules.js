@@ -18,6 +18,18 @@ export const formatScheduleDate = (value) => {
   return date && isValid(date) ? format(date, "d MMM yyyy") : "-";
 };
 
+/** True for a complete YYYY-MM-DD date (masked inputs report partial ones like "2026-1_-__"). */
+export const isCompleteDate = (value) =>
+  /^\d{4}-\d{2}-\d{2}$/.test(String(value ?? "")) && isValid(parseISO(String(value)));
+
+/** The day after a YYYY-MM-DD date, or null when it is not a complete date. */
+export const nextDay = (value) => {
+  if (!isCompleteDate(value)) return null;
+  const date = parseISO(String(value));
+  date.setDate(date.getDate() + 1);
+  return format(date, "yyyy-MM-dd");
+};
+
 export const roundTo2 = (value) => Math.round((Number(value) || 0) * 100) / 100;
 
 export const amountFor = (tuitionFee, percentage) =>
@@ -52,6 +64,7 @@ export function validateSchedule(rows, { startDate, endDate } = {}) {
     const percentage = Number(row.fee_percentage);
 
     if (!date) setError(row, "due_date", "Pick a due date.");
+    else if (!isCompleteDate(date)) setError(row, "due_date", "Enter the full due date (YYYY-MM-DD).");
     else if ((start && date < start) || (end && date > end))
       setError(row, "due_date", "Must fall within the academic year.");
     else if (index > 0) {

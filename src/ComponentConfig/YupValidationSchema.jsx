@@ -279,9 +279,15 @@ export const promoCodeSchema = ({
   return schema;
 };
 
+/**
+ * min / max (optional): { date: "YYYY-MM-DD", reason } inclusive limits; the
+ * message explains which limit was broken and why.
+ */
 export const dateValidationSchema = ({
   required = true,
   futureOrToday = false,
+  min = null,
+  max = null,
   messages = {},
 } = {}) => {
   let schema = Yup.string()
@@ -311,6 +317,22 @@ export const dateValidationSchema = ({
         const inputDate = new Date(val);
         return inputDate >= today;
       },
+    );
+  }
+
+  if (min?.date) {
+    schema = schema.test(
+      "is-on-or-after-min",
+      messages.min || `Must be on or after ${min.date}${min.reason ? `: ${min.reason}` : ""}.`,
+      (val) => !val || val >= min.date,
+    );
+  }
+
+  if (max?.date) {
+    schema = schema.test(
+      "is-on-or-before-max",
+      messages.max || `Must be on or before ${max.date}${max.reason ? `: ${max.reason}` : ""}.`,
+      (val) => !val || val <= max.date,
     );
   }
 

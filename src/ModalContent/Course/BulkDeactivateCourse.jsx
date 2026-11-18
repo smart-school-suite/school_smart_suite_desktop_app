@@ -3,8 +3,9 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useBulkDeactivateCourse } from "../../hooks/course/useBulkDeactivateCourse";
 import { useFormError } from "../../hooks/form/useFormError";
-function BulkDeactivateCourse({ handleClose, rowData, resetAll }) {
-  const { selectedCourses } = rowData;
+function BulkDeactivateCourse({ handleClose, rowData, bulkData, resetAll }) {
+  // The dropdown passes rowData.selectedCourses; the toast icon (ModalButton) passes bulkData.
+  const selectedCourses = rowData?.selectedCourses ?? bulkData ?? [];
   const { mutate: bulkDeactivateCourse, isPending } = useBulkDeactivateCourse(
     handleClose,
     resetAll,
@@ -59,8 +60,7 @@ function BulkDeactivateCourse({ handleClose, rowData, resetAll }) {
         <div className="px-1 d-flex flex-column gap-2 font-size-sm pt-3">
           <span className="fw-semibold">Are you Absolutely sure ?</span>
           <p>
-            This action cannot be undone. This will Permanently delete This
-            account and remove this account data from our servers
+            The selected courses become inactive and can no longer be scheduled. You can activate them again at any time.
           </p>
         </div>
 
@@ -74,6 +74,7 @@ function BulkDeactivateCourse({ handleClose, rowData, resetAll }) {
             </button>
             <button
               className="border-none px-3 py-2 rounded-3 font-size-sm primary-background text-white w-50"
+              disabled={isPending || selectedCourses.length === 0}
               onClick={() => {
                 handleBulkDeactivateCourse();
               }}

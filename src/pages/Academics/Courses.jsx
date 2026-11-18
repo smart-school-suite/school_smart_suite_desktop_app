@@ -566,6 +566,7 @@ function DropdownItems({ selectedCourses, resetAll, onModalStateChange }) {
               selectedCourses: selectedCourses,
               ...modalConfig.modalData,
             }}
+            resetAll={resetAll}
             handleClose={handleCloseModal}
           />
         )}
