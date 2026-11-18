@@ -29,3 +29,20 @@ export const triggerPromotionRun = async (payload) => {
   const response = await axiosInstance.post("promotion-run/trigger", payload);
   return response.data;
 };
+
+// Bulk actions: each applies to the selected runs whose status allows it and
+// returns { action, done: [...], skipped: [{ id, name, reason }] }.
+export const bulkTriggerPromotionRuns = async (payload) => {
+  const response = await axiosInstance.post("promotion-run/bulk-trigger", payload);
+  return response.data;
+};
+
+export const bulkRetryPromotionRuns = async (payload) => {
+  const response = await axiosInstance.post("promotion-run/bulk-retry", payload);
+  return response.data;
+};
+
+export const bulkCancelPromotionRuns = async (payload) => {
+  const response = await axiosInstance.post("promotion-run/bulk-cancel", payload);
+  return response.data;
+};

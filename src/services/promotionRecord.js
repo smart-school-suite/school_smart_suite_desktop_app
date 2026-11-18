@@ -41,3 +41,19 @@ export const approveRepeat = async (payload) => {
   );
   return response.data;
 };
+
+export const bulkPromoteStudents = async (payload) => {
+  const response = await axiosInstance.post(
+    "student-promotion-record/bulk-promote",
+    payload
+  );
+  return response.data;
+};
+
+export const bulkRepeatStudents = async (payload) => {
+  const response = await axiosInstance.post(
+    "student-promotion-record/bulk-repeat",
+    payload
+  );
+  return response.data;
+};
