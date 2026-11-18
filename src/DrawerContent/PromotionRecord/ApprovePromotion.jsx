@@ -45,7 +45,7 @@ function ApprovePromotion({ drawerData = {}, handleClose = () => {} }) {
 
       if (typeof approvePromotion === "function") {
         const payload = {
-          admin_notes: formData?.admin_notes?.trim() || "",
+          admin_note: formData?.admin_notes?.trim() || null,
           record_id: drawerData.id,
         };
         clearFormError();

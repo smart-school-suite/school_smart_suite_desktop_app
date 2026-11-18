@@ -1,13 +1,19 @@
-import { Ban, MessageSquareCode, Play, RotateCcw } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { Ban, MessageSquareCode, Play, RotateCcw, SquareText } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import PromotionDetails from "../../DrawerContent/PromotionRun/PromotionDetails";
 import PromotionRunLog from "../../DrawerContent/PromotionRun/PromotionRunLog";
 import TriggerPromotionRun from "../../DrawerContent/PromotionRun/TriggerPromotionRun";
 import CancelPromotionRun from "../../ModalContent/PromotionRun/CancelPromotionRun";
 import RetryPromotionRun from "../../ModalContent/PromotionRun/RetryPromotionRun";
+import BulkCancelPromotionRuns from "../../ModalContent/PromotionRun/BulkCancelPromotionRuns";
+import BulkRetryPromotionRuns from "../../ModalContent/PromotionRun/BulkRetryPromotionRuns";
+import BulkTriggerPromotionRuns from "../../ModalContent/PromotionRun/BulkTriggerPromotionRuns";
 import ActionButtonDropdown, {
   DropDownMenuItem,
+  ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
+import BulkActionsToast from "../../components/Toast/BulkActionsToast";
+import CustomTooltip from "../../components/Tooltips/Tooltip";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -20,10 +26,21 @@ import { TableFilterLayout } from "../../components/TableFilters/TableFilterPane
 import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function PromotionRun() {
   const { data: promotionRuns, isLoading, error } = useGetPromotionRuns();
-  const dispatch = useDispatch();
   const tableRef = useRef(null);
   const filters = useTableFilters("academics/promotion-run", tableRef);
   const tableWrapperRef = useRef(null);
+  const [rowCount, setRowCount] = useState(0);
+  const [selectedRuns, setSelectedRuns] = useState([]);
+
+  const handleResetSelections = () => {
+    if (tableRef.current) {
+      tableRef.current.deselectAll();
+      setRowCount(0);
+      setSelectedRuns([]);
+    }
+  };
+  const handleRowDataFromChild = useCallback((data) => setSelectedRuns(data), []);
+  const handleRowCountFromChild = useCallback((count) => setRowCount(count), []);
 
   const memoizedColDefs = useMemo(() => {
     return promotionRunColDefs({
@@ -51,6 +68,7 @@ function PromotionRun() {
                   filters={filters}
                   tableRef={tableRef}
                   searchPlaceholder="Search Promotion Run"
+                  onReset={handleResetSelections}
                 />
                 <TableFilterLayout
                   filters={filters}
@@ -61,7 +79,30 @@ function PromotionRun() {
                     colDefs={memoizedColDefs}
                     rowData={memoizedRowData}
                     ref={tableRef}
+                    handleRowCountFromChild={handleRowCountFromChild}
+                    handleRowDataFromChild={handleRowDataFromChild}
                   />
+                  {rowCount > 0 && (
+                    <BulkActionsToast
+                      key="bulk-actions-toast"
+                      anchorRef={tableWrapperRef}
+                      rowCount={rowCount}
+                      label={rowCount > 1 ? "Runs Selected" : "Run Selected"}
+                      resetAll={handleResetSelections}
+                      dropDownItems={
+                        <DropdownItems
+                          selectedRuns={selectedRuns}
+                          resetAll={handleResetSelections}
+                        />
+                      }
+                      actionButton={
+                        <ActionButtons
+                          selectedRuns={selectedRuns}
+                          resetAll={handleResetSelections}
+                        />
+                      }
+                    />
+                  )}
                 </TableFilterLayout>
               </div>
             </>
@@ -75,6 +116,8 @@ export default PromotionRun;
 
 export function ActionComponent(props) {
   const rowData = props.data;
+  // Offer only the actions the server allows for this run's status.
+  const allows = (action) => rowData?.available_actions?.[action]?.allowed ?? true;
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [modalConfig, setModalConfig] = useState({
@@ -149,6 +192,25 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
+            handleShowDrawer(PromotionDetails, {
+              title: "Promotion Run Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Run Details</span>
+              <SquareText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
             handleShowDrawer(PromotionRunLog, {
               title: "Promotion Run Log",
               closeOnOutsideClick: true,
@@ -163,25 +225,7 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        {/* <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(PromotionDetails, {
-              title: "Promotion Details",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Run Details</span>
-              <SquareText size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem> */}
+        {allows("trigger") && (
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -201,6 +245,8 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
+        )}
+        {allows("retry") && (
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -220,6 +266,8 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
+        )}
+        {allows("cancel") && (
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -239,6 +287,7 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
+        )}
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}
@@ -267,6 +316,92 @@ export function ActionComponent(props) {
         {modalConfig.component && (
           <modalConfig.component
             rowData={rowData}
+            handleClose={handleCloseModal}
+          />
+        )}
+      </CustomModal>
+    </>
+  );
+}
+
+const BULK_ACTIONS = [
+  { label: "Trigger All", icon: Play, component: BulkTriggerPromotionRuns },
+  { label: "Retry All", icon: RotateCcw, component: BulkRetryPromotionRuns },
+  { label: "Cancel All", icon: Ban, component: BulkCancelPromotionRuns },
+];
+
+function ActionButtons({ selectedRuns, resetAll }) {
+  return (
+    <ModalButton
+      classname={"border-none transparent-bg w-100 p-0 text-iron-700"}
+      action={{ modalContent: BulkTriggerPromotionRuns }}
+      bulkData={selectedRuns}
+      resetAll={resetAll}
+    >
+      <CustomTooltip tooltipText={"Trigger All"}>
+        <span className="pointer-cursor">
+          <Play size={20} strokeWidth={1.4} />
+        </span>
+      </CustomTooltip>
+    </ModalButton>
+  );
+}
+
+function DropdownItems({ selectedRuns, resetAll, onModalStateChange }) {
+  const [showModal, setShowModal] = useState(false);
+  const [modalComponent, setModalComponent] = useState(null);
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof onModalStateChange === "function") {
+      onModalStateChange(showModal, modalRef);
+    }
+  }, [showModal, onModalStateChange]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalComponent(null);
+  };
+
+  const handleShowModal = (Component) => {
+    setModalComponent(() => Component);
+    setShowModal(true);
+  };
+
+  const ModalComponent = modalComponent;
+
+  return (
+    <>
+      {BULK_ACTIONS.map((item, index) => {
+        const ItemIcon = item.icon;
+        return (
+          <div key={item.label}>
+            {index > 0 && <hr />}
+            <DropDownMenuItem
+              className="remove-button-styles w-100 border-none transparent-bg p-0 rounded-2 pointer-cursor"
+              onClick={() => handleShowModal(item.component)}
+            >
+              <div className="py-2 px-1 rounded-1 d-flex flex-row justify-content-between hover-text-primary-400 text-iron-700">
+                <span className="font-size-sm">{item.label}</span>
+                <ItemIcon size={16} strokeWidth={1.5} />
+              </div>
+            </DropDownMenuItem>
+          </div>
+        );
+      })}
+      <CustomModal
+        ref={modalRef}
+        show={showModal}
+        handleClose={handleCloseModal}
+        size="md"
+        closeOnOutsideClick
+        closeOnEscape
+        centered
+      >
+        {ModalComponent && (
+          <ModalComponent
+            rowData={{ selectedRuns }}
+            resetAll={resetAll}
             handleClose={handleCloseModal}
           />
         )}

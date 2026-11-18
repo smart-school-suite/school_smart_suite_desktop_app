@@ -1,113 +1,168 @@
-import { Dot, GraduationCap } from "lucide-react";
-import { Fragment } from "react";
+import { ArrowRight, CircleAlert, CircleCheck, CircleX } from "lucide-react";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import StatusPill from "../../components/Election/StatusPill";
+import EmptyState from "../../components/errors/EmptyState";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
 import { useGetPromotionRecordLogs } from "../../hooks/promotionRecord/useGetPromotionLog";
-function PromotionRecordLog({ drawerData, handleClose }) {
-  const { id: recordId } = drawerData;
-  const { data: logs, isLoading, error } = useGetPromotionRecordLogs(recordId);
-    return (
-    <>
-      <div className="px-2 py-2 font-size-sm">
-        <div className="d-flex flex-row align-items-center gap-2">
-          <div
-            className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
-            style={{ height: "2.5rem", width: "2.5rem" }}
-          >
-            <GraduationCap size={20} strokeWidth={1.5} />
-          </div>
-          <div className="d-flex flex-column">
-            <span className="fw-medium">
-              {drawerData?.specialty || "General"} Promotion Run
+import { isEmptyListError } from "../../utils/teacher/teacherFilters";
+
+const OUTCOME = {
+  promoted: { label: "Promoted", tone: "success" },
+  graduated: { label: "Graduated", tone: "success" },
+  repeated: { label: "Repeating", tone: "danger" },
+  pending_review: { label: "Needs review", tone: "warning" },
+  excluded: { label: "Excluded", tone: "neutral" },
+};
+
+const RESULT = {
+  failed: { icon: CircleX, className: "text-red-500", label: "Not met" },
+  needs_review: { icon: CircleAlert, className: "text-old-lace-600", label: "Needs review" },
+  passed: { icon: CircleCheck, className: "text-fern-600", label: "Met" },
+};
+
+const COUNTS = [
+  { key: "failed", label: "Not met" },
+  { key: "needs_review", label: "Need review" },
+  { key: "passed", label: "Met" },
+];
+
+const levelLabel = (name, level) => [name, level].filter(Boolean).join(" · ");
+
+function RecordHeader({ record }) {
+  const outcome = OUTCOME[record?.outcome];
+  return (
+    <div className="d-flex flex-column gap-2 font-size-sm">
+      <div className="d-flex flex-row align-items-center justify-content-between gap-2">
+        <div className="d-flex flex-row align-items-center gap-2" style={{ minWidth: 0 }}>
+          <img
+            src={record?.s_profile_picture || "/images/user.png"}
+            alt=""
+            className="rounded-circle object-fit-cover flex-shrink-0"
+            style={{ width: "2.5rem", height: "2.5rem" }}
+            onError={(e) => { e.currentTarget.src = "/images/user.png"; }}
+          />
+          <div className="d-flex flex-column" style={{ minWidth: 0 }}>
+            <span className="fw-semibold text-truncate">{record?.s_full_name ?? "Student"}</span>
+            <span className="text-iron-400 fw-light text-truncate">
+              {record?.s_username ? `@${record.s_username}` : ""}{record?.academic_year ? ` · ${record.academic_year}` : ""}
             </span>
-            <div className="d-flex flex-row align-items-center gap-1 text-iron-500 fw-light">
-              <span>
-                {drawerData?.level_name || "N/A"}{" "}
-                {drawerData?.level ? `(${drawerData.level})` : ""}
-              </span>
-              <Dot size={16} />
-              <span>{drawerData?.academic_year || "N/A"}</span>
-              <Dot size={16} />
-              <span>{drawerData?.department || "N/A"}</span>
-            </div>
           </div>
         </div>
+        {outcome && <StatusPill tone={outcome.tone}>{outcome.label}</StatusPill>}
       </div>
-      <div className="drawer-content ps-2 pt-3 font-size-sm bg-iron-100">
-        {isLoading ? (
-          <div className="d-flex flex-column gap-2">
-            {[...Array(4)].map((_, index) => (
-              <Fragment key={index}>
-                <RectangleSkeleton width="100%" height="20dvh" />
-              </Fragment>
-            ))}
-          </div>
-        ) : error ? (
-          <NotFoundError
-            title={error?.response?.data?.errors?.title}
-            description={error?.response?.data?.errors?.description}
-          ></NotFoundError>
-        ) : (
-          <div className="d-flex flex-column gap-2">
-            <div className="card rounded-4 border-none border p-2">
-              <div className="d-flex flex-column gap-2">
-                <div className="d-flex flex-row align-items-center gap-2">
-                  <div
-                    className="d-flex flex-row align-items-center justify-content-center
-                     font-size-md fw-semibold gap-2
-                      rounded-3 bg-red-100 text-red-700"
-                    style={{ height: "2.5rem", width: "2.5rem" }}
-                  >
-                    <GraduationCap size={20} strokeWidth={1.5} />
-                  </div>
-                  <div className="d-flex d-flex flex-column">
-                    <span className="fw-medium">Next Specialty Missing</span>
-                    <span className="fw-light text-iron-500">
-                      Target Next Specialty Could Not Be Determined
-                    </span>
-                  </div>
-                </div>
-                <div className="d-flex flex-column gap-1">
-                  <span className="fw-medium">Current Specialty</span>
-                  <div className="d-flex flex-column gap-2">
-                    <div className="d-flex flex-row align-items-center justify-content-between fw-light">
-                      <span>Specialty Name</span>
-                      <span className="fw-medium">Software Engineering</span>
-                    </div>
-                    <HorizontalDashedLine
-                      dashed={false}
-                      color="#ccc"
-                      thickness={0.2}
-                    />
-                    <div className="d-flex flex-row align-items-center justify-content-between fw-light">
-                      <span>Specialty Name</span>
-                      <span className="fw-medium">Software Engineering</span>
-                    </div>
-                    <HorizontalDashedLine
-                      dashed={false}
-                      color="#ccc"
-                      thickness={0.2}
-                    />
-                    <div className="d-flex flex-row align-items-center justify-content-between fw-light">
-                      <span>Specialty Name</span>
-                      <span className="fw-medium">Software Engineering</span>
-                    </div>
-                  </div>
-                </div>
+      <div className="d-flex flex-row align-items-center gap-2 text-iron-500 font-size-xs">
+        <span className="text-truncate">{levelLabel(record?.from_spec_name, record?.from_level_name) || "-"}</span>
+        <ArrowRight size={14} className="flex-shrink-0" />
+        <span className="text-truncate">{levelLabel(record?.to_spec_name, record?.to_level_name) || "Not decided yet"}</span>
+      </div>
+    </div>
+  );
+}
+
+function RuleRow({ rule }) {
+  const result = RESULT[rule.result] ?? RESULT.failed;
+  const ResultIcon = result.icon;
+  return (
+    <div className="d-flex flex-row align-items-start gap-2 py-2">
+      <ResultIcon size={15} className={`flex-shrink-0 ${result.className}`} style={{ marginTop: "0.15rem" }} />
+      <div className="d-flex flex-column" style={{ minWidth: 0 }}>
+        <div className="d-flex flex-row align-items-center gap-2">
+          <span className="fw-semibold">{rule.title}</span>
+          <span className={`font-size-xs ${result.className}`}>{result.label}</span>
+        </div>
+        {rule.reasons.map((reason) => (
+          <span key={reason} className="text-iron-600" style={{ lineHeight: 1.5 }}>{reason}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LogBody({ log, note }) {
+  return (
+    <div className="d-flex flex-column gap-4 font-size-sm">
+      <div className="d-flex flex-column gap-2">
+        <span className="text-iron-700" style={{ lineHeight: 1.5 }}>{log.summary}</span>
+        {log.rules.length > 0 && (
+          <div className="d-flex flex-row flex-wrap gap-4">
+            {COUNTS.map((count) => (
+              <div key={count.key} className="d-flex flex-column">
+                <span className="fw-semibold" style={{ fontSize: "1.1rem" }}>{log.counts?.[count.key] ?? 0}</span>
+                <span className="font-size-xs text-iron-500">{count.label}</span>
               </div>
-            </div>
+            ))}
           </div>
         )}
       </div>
+
+      {log.rules.length > 0 && (
+        <div className="d-flex flex-column">
+          <span className="font-size-xs fw-semibold text-iron-500 text-uppercase" style={{ letterSpacing: "0.04em" }}>
+            Promotion rules · {log.rules.length}
+          </span>
+          {log.rules.map((rule) => (
+            <div key={rule.rule} className="border-top"><RuleRow rule={rule} /></div>
+          ))}
+        </div>
+      )}
+
+      {note && (
+        <div className="d-flex flex-column gap-1">
+          <span className="font-size-xs fw-semibold text-iron-500 text-uppercase" style={{ letterSpacing: "0.04em" }}>
+            Admin note
+          </span>
+          <span className="text-iron-700" style={{ lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{note}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * How a student was evaluated in their promotion run: the decision, and
+ * each promotion rule with whether it was met and why. Built from
+ * GET student-promotion-record/{id}/log.
+ */
+function PromotionRecordLog({ drawerData, handleClose }) {
+  const { data, isLoading, error } = useGetPromotionRecordLogs(drawerData?.id);
+  const log = data?.data;
+  const apiError = error?.response?.data?.errors;
+
+  return (
+    <>
+      <div className="pt-2 px-2 pb-2 flex-shrink-0">
+        <RecordHeader record={drawerData} />
+      </div>
+
+      <div className="drawer-content px-2 pb-3">
+        <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+        <div className="pt-3">
+          {isLoading ? (
+            <div className="d-flex flex-column gap-2">
+              <RectangleSkeleton height="2.5rem" />
+              <RectangleSkeleton height="3.5rem" />
+              <RectangleSkeleton height="3.5rem" />
+              <RectangleSkeleton height="3.5rem" />
+            </div>
+          ) : error ? (
+            <EmptyState
+              mascot={isEmptyListError(error) ? "empty" : "error"}
+              height="16rem"
+              mascotHeight="6rem"
+              title={apiError?.title ?? (isEmptyListError(error) ? "No log yet" : "The log could not be loaded")}
+              description={apiError?.description ?? (isEmptyListError(error) ? "This student has not been evaluated yet." : "Check your connection and try again.")}
+            />
+          ) : (
+            log && <LogBody log={log} note={drawerData?.admin_note} />
+          )}
+        </div>
+      </div>
+
       <div className="drawer-footer font-size-sm">
         <div className="d-flex flex-column w-100">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
-          <div className="d-flex flex-row align-items-center justify-content-between py-3 px-2">
-            <button
-              className="border-none bg-none"
-              onClick={() => handleClose()}
-            >
+          <div className="d-flex flex-row align-items-center p-2">
+            <button type="button" className="border-none bg-none" onClick={() => handleClose?.()}>
               Close
             </button>
           </div>

@@ -45,7 +45,7 @@ function ApproveRepeat({ drawerData = {}, handleClose = () => {} }) {
 
       if (typeof approveRepeat === "function") {
         const payload = {
-          admin_notes: formData?.admin_notes?.trim() || "",
+          admin_note: formData?.admin_notes?.trim() || null,
           record_id: drawerData.id,
         };
         clearFormError();
