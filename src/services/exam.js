@@ -35,6 +35,11 @@ export const getExamDetails = async (examId) => {
   return response.data;
 };
 
+export const getExamUpdateRules = async (examId) => {
+  const response = await axiosInstance.get(`exam/${examId}/update-rules`);
+  return response.data;
+};
+
 export const updateExam = async (examId, data) => {
   const response = await axiosInstance.put(`exam/${examId}`, data);
   return response.data;
