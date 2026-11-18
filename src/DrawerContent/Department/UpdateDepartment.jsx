@@ -7,7 +7,6 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import { NotFoundError } from "../../components/errors/Error";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import {
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -19,6 +18,7 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateDepartment({ handleClose, drawerData }) {
   const { mutate: updateDepartment, isPending } =
     useUpdateDepartment(handleClose);
@@ -142,7 +142,7 @@ function UpdateDepartment({ handleClose, drawerData }) {
                   <label htmlFor="description" className="font-size-sm">
                     Department Description
                   </label>
-                  <TextAreaInput
+                  <RichTextEditor
                     onChange={(value) =>
                       handleStateChange("description", value, setFormData)
                     }

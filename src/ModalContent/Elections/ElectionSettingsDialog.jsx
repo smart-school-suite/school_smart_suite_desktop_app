@@ -2,6 +2,7 @@ import { CircleX, Pencil } from "lucide-react";
 import {
   formatElectionDateTime,
 } from "../../utils/election/electionDisplay";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 
 const LOCKED = ["voting_open", "voting_closed", "completed", "cancelled"];
 
@@ -49,7 +50,7 @@ export default function ElectionSettingsDialog({ rowData: election, handleClose,
         {election?.description && (
           <div className="d-flex flex-column gap-1 py-2">
             <span className="font-size-sm fw-medium">Description</span>
-            <p className="m-0 text-iron-600 font-size-sm" style={{ lineHeight: 1.6 }}>{election.description}</p>
+            <RichTextContent content={election.description} className="m-0 text-iron-600 font-size-sm" />
           </div>
         )}
       </div>

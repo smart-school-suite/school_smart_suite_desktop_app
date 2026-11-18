@@ -6,13 +6,13 @@ import {
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import {
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateDepartment } from "../../hooks/department/useCreateDepartment";
 import { useFormError } from "../../hooks/form/useFormError";
 import { allFieldsValid } from "../../utils/functions";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateDepartment({ handleClose }) {
   const departmentNameRef = useRef();
   const descriptionRef = useRef();
@@ -92,7 +92,7 @@ function CreateDepartment({ handleClose }) {
           <label htmlFor="description" className="font-size-sm">
             Department Description
           </label>
-          <TextAreaInput
+          <RichTextEditor
             placeholder={`Write a short description of ${formData.department_name}`}
             onChange={(value) =>
               handleStateChange("description", value, setFormData)

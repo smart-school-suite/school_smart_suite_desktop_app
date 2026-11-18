@@ -10,8 +10,7 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import { NotFoundError } from "../../components/errors/Error";
 import {
    DateTimeRangeInput,
-   TextAreaInput,
-   TextInput,
+   TextInput
 } from "../../components/FormComponents/InputComponents";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
@@ -19,6 +18,7 @@ import { useGetGraduationBatchDetails } from "../../hooks/graduationBatch/useGet
 import { useUpdateGraduationBatch } from "../../hooks/graduationBatch/useUpdateGraduationBatch";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 
 function UpdateGraduationBatch({ drawerData = {}, handleClose = () => {} }) {
   const batchId = drawerData?.id;
@@ -206,7 +206,7 @@ function UpdateGraduationBatch({ drawerData = {}, handleClose = () => {} }) {
 
             <div className="d-flex flex-column gap-1">
               <span className="fw-medium">Graduation Batch Description</span>
-              <TextAreaInput
+              <RichTextEditor
                 onChange={(value) =>
                   handleStateChange("description", value, setFormData)
                 }

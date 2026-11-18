@@ -6,8 +6,7 @@ import {
 } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import {
-    TextAreaInput,
-    TextInput,
+    TextInput
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useUpdateElectionType } from "../../hooks/electionType/useUpdateElectionType";
@@ -17,6 +16,7 @@ import {
 } from "../../utils/functions";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateElectionType({ drawerData, handleClose }) {
   const {
     id: electionTypeId,
@@ -101,7 +101,7 @@ function UpdateElectionType({ drawerData, handleClose }) {
             <label htmlFor="description" className="font-size-sm">
               Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               placeholder={description}
               onChange={(value) =>
                 handleStateChange("description", value, setFormData)

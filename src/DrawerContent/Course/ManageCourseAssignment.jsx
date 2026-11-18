@@ -15,6 +15,7 @@ import { useSpecialtyTeachersEmptyState } from "../../hooks/teacher/useSpecialty
 import { useChangeTeacherCourse } from "../../hooks/teacherCourse/useChangeTeacherCourse";
 import { useRemoveAssignedTeacherCourse } from "../../hooks/teacherCourse/useRemoveTeacherAssignedCourse";
 import CourseSummary from "./CourseSummary";
+import { htmlToPlainText } from "../../utils/richText/richText";
 
 const ACTIONS = [
   {
@@ -77,7 +78,7 @@ function ManageCourseAssignment({ handleClose, drawerData }) {
                     <Icon size={16} className={active ? "text-primary-500" : "text-iron-500"} />
                     {item.title}
                   </span>
-                  <span className="font-size-xs text-iron-500">{item.description}</span>
+                  <span className="font-size-xs text-iron-500">{htmlToPlainText(item.description)}</span>
                 </button>
               );
             })}

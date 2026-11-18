@@ -8,7 +8,6 @@ import { useSelector } from "react-redux";
 import {
   DateInput,
   InputGroup,
-  TextAreaInput,
 } from "../../components/FormComponents/InputComponents";
 import {
   dateValidationSchema,
@@ -19,6 +18,7 @@ import { allFieldsValid } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateSchoolExpense({ handleClose }) {
   const dateRef = useRef();
   const amountRef = useRef();
@@ -161,7 +161,7 @@ function CreateSchoolExpense({ handleClose }) {
             <label htmlFor="description" className="font-size-sm">
               Reason
             </label>
-            <TextAreaInput
+            <RichTextEditor
               onChange={(value) =>
                 handleStateChange("description", value, setFormData)
               }

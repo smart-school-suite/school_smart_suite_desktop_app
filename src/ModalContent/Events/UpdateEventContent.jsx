@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { X } from "lucide-react";
 import {
   DateTimeRangeInput,
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
@@ -39,6 +38,7 @@ import {
   orderImageItems,
   toImageOrderPayload,
 } from "../../components/FormComponents/MultiImageUploader";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 
 /** Drawer for updating a school event's content and images. */
 function UpdateEventContent({ drawerData, handleClose }) {
@@ -314,7 +314,7 @@ function UpdateEventContent({ drawerData, handleClose }) {
             </div>
             <div className="d-flex flex-column gap-1">
               <span className="fw-medium">Description</span>
-              <TextAreaInput
+              <RichTextEditor
                 onChange={(value) => setField("description", { value })}
                 onValidationChange={(isValid) =>
                   setField("description", { isValid })

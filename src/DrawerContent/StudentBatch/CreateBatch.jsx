@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateStudentBatch } from "../../hooks/studentBatch/useCreateBatch";
 import {
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import {
@@ -13,6 +12,7 @@ import { allFieldsValid } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateBatch({ handleClose }) {
   const batchTitleRef = useRef();
   const batchDescriptionRef = useRef();
@@ -93,7 +93,7 @@ function CreateBatch({ handleClose }) {
             <label htmlFor="batchDescription" className="font-size-sm">
               Batch Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               onChange={(value) =>
                 handleStateChange("description", value, setFormData)
               }

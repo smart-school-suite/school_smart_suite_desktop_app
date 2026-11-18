@@ -4,6 +4,7 @@ import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useUpdateAnnouncementCategory } from "../../hooks/announcement/useUpdateAnnouncementCategory";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateAnnouncementCategory({ handleClose, rowData }) {
   const { id:categoryId } = rowData;
   const [formData, setFormData] = useState({
@@ -54,12 +55,12 @@ function UpdateAnnouncementCategory({ handleClose, rowData }) {
         </div>
         <div className="my-1">
           <label htmlFor="">Description</label>
-          <textarea
-            name="description"
-            className="form-control"
+          <RichTextEditor
+            value={formData.description}
             placeholder="Enter Description"
-            onChange={(e) => handleInputChange("description", e.target.value)}
-          ></textarea>
+            optional
+            onChange={(value) => handleInputChange("description", value)}
+          />
         </div>
         <FormErrorBanner
           ref={errorBannerRef}

@@ -11,7 +11,6 @@ import CustomDropdown, {
 } from "../../components/Dropdowns/Dropdowns";
 import {
   NumberInput,
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -28,6 +27,7 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateCourse({ handleClose, drawerData }) {
   const { id: courseId } = drawerData;
   const {
@@ -311,7 +311,7 @@ function UpdateCourse({ handleClose, drawerData }) {
                   <label htmlFor="courseDescription" className="font-size-sm">
                     Course Description
                   </label>
-                  <TextAreaInput
+                  <RichTextEditor
                     onChange={(value) =>
                       handleStateChange("description", value, setFormData)
                     }

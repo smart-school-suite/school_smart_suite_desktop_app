@@ -1,9 +1,10 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { nameSchema, textareaSchema } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import { NumberInput, TextAreaInput, TextInput } from "../../components/FormComponents/InputComponents";
+import { NumberInput, TextInput } from "../../components/FormComponents/InputComponents";
 import Switch from "../../components/input/Switch";
 import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionTypes";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 
 export const positionFromRole = (role) => ({
   name: role?.name ?? "",
@@ -93,10 +94,9 @@ const PositionForm = forwardRef(function PositionForm({ value, onChange }, ref) 
           <NumberInput value={value.seats} onChange={(next) => set("seats", next)} onValidationChange={() => {}} />
         </Field>
         <Field label="Description">
-          <TextAreaInput
+          <RichTextEditor
             ref={descriptionRef}
             value={value.description}
-            rows={3}
             placeholder="Responsibilities of this position"
             onChange={(next) => set("description", next)}
             onValidationChange={(ok) => setValidity((prev) => ({ ...prev, description: ok }))}
