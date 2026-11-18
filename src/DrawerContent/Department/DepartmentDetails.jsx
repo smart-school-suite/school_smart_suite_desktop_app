@@ -2,6 +2,7 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetDepartmentDetails } from "../../hooks/department/useGetDepartmentDetails";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 function DepartmentDetails({ handleClose, drawerData }) {
   const {
     data: departmentDetails,
@@ -47,9 +48,7 @@ function DepartmentDetails({ handleClose, drawerData }) {
                   <span className="text-iron-500">
                     Department Description
                   </span>
-                  <span>
-                    {departmentDetails.data.description}
-                  </span>
+                  <RichTextContent content={departmentDetails.data.description} />
                 </div>
               </div>
             </div>

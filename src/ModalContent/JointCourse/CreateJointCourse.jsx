@@ -8,7 +8,6 @@ import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { useCreateJointCourse } from "../../hooks/jointCourse/useCreateJointCourse";
 import {
   NumberInput,
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import {
@@ -22,6 +21,7 @@ import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
 import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateJointCourse({ handleClose }) {
   const courseCodeRef = useRef();
   const courseTitleRef = useRef();
@@ -271,7 +271,7 @@ function CreateJointCourse({ handleClose }) {
             <label htmlFor="courseDescription" className="font-size-sm">
               Course Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               onChange={(value) =>
                 handleStateChange("description", value, setFormData)
               }

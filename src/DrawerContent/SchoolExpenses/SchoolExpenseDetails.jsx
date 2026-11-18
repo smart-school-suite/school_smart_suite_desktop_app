@@ -3,6 +3,7 @@ import { useGetExpenseDetails } from "../../hooks/schoolExpenses/useGetSchoolExp
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 function SchoolExpenseDetails({ handleClose, drawerData }) {
   const { id: expenseId } = drawerData;
   const {
@@ -45,9 +46,7 @@ function SchoolExpenseDetails({ handleClose, drawerData }) {
                 <div className="d-flex align-items-center justify-content-between">
                   <div className="d-flex flex-column gap-2">
                     <span className="text-iron-400">Reason</span>
-                    <span className="fw-medium">
-                      {expenseDetails.data.description}
-                    </span>
+                    <RichTextContent content={expenseDetails.data.description} className="fw-medium" />
                   </div>
                 </div>
                 <hr />

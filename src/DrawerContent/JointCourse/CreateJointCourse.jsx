@@ -12,7 +12,6 @@ import CustomDropdown, {
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import {
   NumberInput,
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
@@ -22,6 +21,7 @@ import { useCreateJointCourse } from "../../hooks/jointCourse/useCreateJointCour
 import { useGetSemester } from "../../hooks/semester/useGetSemesters";
 import { useGetSpecialties } from "../../hooks/specialty/useGetSpecialties";
 import { allFieldsValid } from "../../utils/functions";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateJointCourse({ handleClose }) {
   const courseCodeRef = useRef();
   const courseTitleRef = useRef();
@@ -282,7 +282,7 @@ function CreateJointCourse({ handleClose }) {
             <label htmlFor="courseDescription" className="font-size-sm">
               Course Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               onChange={(value) =>
                 handleStateChange("description", value, setFormData)
               }

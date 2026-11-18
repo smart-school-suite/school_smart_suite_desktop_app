@@ -4,12 +4,13 @@ import EmptyState from "../../components/errors/EmptyState";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useGetElectionRoleDetails } from "../../hooks/electionRole/useGetElectionRoleDetails";
 import { formatElectionDate, serverErrorCopy } from "../../utils/election/electionDisplay";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 
 function Item({ label, children }) {
   return (
     <div className="d-flex flex-column gap-1 py-2 border-bottom">
       <span className="text-iron-500 font-size-xs">{label}</span>
-      <span className="font-size-sm">{children ?? "—"}</span>
+      <div className="font-size-sm">{children ?? "—"}</div>
     </div>
   );
 }
@@ -53,7 +54,9 @@ function ElectionRoleDetails({ drawerData }) {
             ? `${term.duration_academic_years} academic year(s) · ${term.allow_reelection ? `re-election allowed, up to ${term.maximum_terms ?? "unlimited"} terms` : "no re-election"}`
             : "1 academic year · no re-election (default)"}
         </Item>
-        <Item label="Description">{role?.description}</Item>
+        <Item label="Description">
+          <RichTextContent content={role?.description} fallback="—" />
+        </Item>
         <Item label="Created">{formatElectionDate(role?.created_at)}</Item>
       </div>
       <div className="d-flex flex-column gap-2">

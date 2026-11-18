@@ -2,6 +2,7 @@ import { useGetSchoolEventDetails } from "../../hooks/schoolEvent/useGetSchoolEv
 import { Icon } from "@iconify/react";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { formatISODate } from "../../utils/functions";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 function EventDetails({ handleClose, rowData }) {
   const { id: schoolEventId } = rowData;
   const {
@@ -55,9 +56,7 @@ function EventDetails({ handleClose, rowData }) {
               <span className="fw-semibold">{eventDetails.data.title}</span>
             </div>
             <div>
-              <span className="font-size-sm">
-                {eventDetails.data.description}
-              </span>
+              <RichTextContent content={eventDetails.data.description} className="font-size-sm" />
             </div>
             <div className="d-flex flex-row flex-wrap gap-2">
               {JSON.parse(eventDetails.data.tags).map((tag) => (

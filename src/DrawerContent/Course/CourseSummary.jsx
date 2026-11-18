@@ -2,6 +2,7 @@ import { Dot } from "lucide-react";
 import ChipRow from "../../components/Card/ChipRow";
 import CourseStatusPill from "../../components/Card/CourseStatusPill";
 import { CourseIcon } from "../../icons/Icons";
+import { htmlToPlainText } from "../../utils/richText/richText";
 
 // Compact course header shared by the course assignment drawers.
 export default function CourseSummary({ course }) {
@@ -32,8 +33,8 @@ export default function CourseSummary({ course }) {
         </div>
       </div>
       {course?.description && (
-        <p className="font-size-xs text-iron-600 m-0 line-clamp-2" title={course.description}>
-          {course.description}
+        <p className="font-size-xs text-iron-600 m-0 line-clamp-2" title={htmlToPlainText(course.description)}>
+          {htmlToPlainText(course.description)}
         </p>
       )}
       {types.length > 0 && <ChipRow items={types} label="Course types" />}

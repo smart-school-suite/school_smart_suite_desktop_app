@@ -7,7 +7,6 @@ import { useGetExpensesCategories } from "../../hooks/expenseCategory/useGetExpe
 import {
   DateInput,
   InputGroup,
-  TextAreaInput,
 } from "../../components/FormComponents/InputComponents";
 import {
   dateValidationSchema,
@@ -21,6 +20,7 @@ import {
 } from "../../utils/functions";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function BulkUpdateExpense({ handleClose, resetAll, bulkData }) {
   const [formData, setFormData] = useState({
     date: "",
@@ -149,7 +149,7 @@ function BulkUpdateExpense({ handleClose, resetAll, bulkData }) {
           <label htmlFor="description" className="font-size-sm">
             Description
           </label>
-          <TextAreaInput
+          <RichTextEditor
             onChange={(value) =>
               handleStateChange("description", value, setFormData)
             }

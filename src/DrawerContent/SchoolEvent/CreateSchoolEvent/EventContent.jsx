@@ -1,5 +1,4 @@
 import {
-  TextAreaInput,
   TextInput,
   DateTimeRangeInput,
 } from "../../../components/FormComponents/InputComponents";
@@ -27,6 +26,7 @@ import {
   EventWizardCancel,
   EventWizardHeader,
 } from "../../../ModalContent/Events/CreateEvent";
+import { RichTextEditor } from "../../../components/FormComponents/RichTextEditor/RichTextEditor";
 
 export const MAX_EVENT_IMAGES = 5;
 export const MAX_EVENT_IMAGE_SIZE = 2 * 1024 * 1024;
@@ -261,7 +261,7 @@ function EventContent({
           </div>
           <div className="d-flex flex-column gap-1">
             <span className="fw-medium">Description</span>
-            <TextAreaInput
+            <RichTextEditor
               onChange={(value) => setField("description", { value })}
               onValidationChange={(isValid) =>
                 setField("description", { isValid })

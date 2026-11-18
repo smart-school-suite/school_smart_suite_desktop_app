@@ -5,12 +5,13 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import { useGetElectionTypeDetails } from "../../hooks/electionType/useGetElectionTypeDetails";
 import { formatElectionDate } from "../../utils/election/electionDisplay";
 import CreateElectionRole from "../ElectionRole/CreateElectionRole";
+import RichTextContent from "../../components/TextComponents/RichTextContent";
 
 function Item({ label, children }) {
   return (
     <div className="d-flex flex-column gap-1 py-2 border-bottom">
       <span className="text-iron-500 font-size-xs">{label}</span>
-      <span className="font-size-sm">{children || "—"}</span>
+      <div className="font-size-sm">{children || "—"}</div>
     </div>
   );
 }
@@ -24,7 +25,9 @@ function ElectionTypeDetail({ drawerData }) {
     <div className="drawer-content px-2 pt-2 pb-4 d-flex flex-column gap-3">
       <div className="d-flex flex-column">
         <Item label="Election type">{type.election_title}</Item>
-        <Item label="Description">{type.description}</Item>
+        <Item label="Description">
+          <RichTextContent content={type.description} fallback="—" />
+        </Item>
         <Item label="Status"><span className="text-capitalize">{type.status}</span></Item>
         <Item label="Elections held">{type.elections_count ?? 0}</Item>
         <Item label="Created">{formatElectionDate(type.created_at)}</Item>

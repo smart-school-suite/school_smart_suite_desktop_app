@@ -6,7 +6,6 @@ import { useGetExpensesCategories } from "../../hooks/expenseCategory/useGetExpe
 import {
   DateInput,
   InputGroup,
-  TextAreaInput,
 } from "../../components/FormComponents/InputComponents";
 import {
   dateValidationSchema,
@@ -24,6 +23,7 @@ import { useGetExpenseDetails } from "../../hooks/schoolExpenses/useGetSchoolExp
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateSchoolExpense({ handleClose, drawerData }) {
   const { id: expenseId } = drawerData;
   const currencyState = useSelector((state) => state.auth.user);
@@ -180,7 +180,7 @@ function UpdateSchoolExpense({ handleClose, drawerData }) {
               <label htmlFor="description" className="font-size-sm">
                 Description
               </label>
-              <TextAreaInput
+              <RichTextEditor
                 onChange={(value) =>
                   handleStateChange("description", value, setFormData)
                 }

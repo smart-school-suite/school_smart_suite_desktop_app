@@ -9,7 +9,6 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import {
   InputGroup,
-  TextAreaInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
@@ -20,6 +19,7 @@ import { useCreateSpecialty } from "../../hooks/specialty/useCreateSpecialty";
 import { allFieldsValid } from "../../utils/functions";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 
 function CreateSpecialty({ handleClose }) {
   const currency = useSelector(
@@ -287,7 +287,7 @@ function CreateSpecialty({ handleClose }) {
             <label htmlFor="specialtyDescription" className="font-size-sm">
               Specialty Description
             </label>
-            <TextAreaInput
+            <RichTextEditor
               onValidationChange={(value) =>
                 handleStateChange("description", value, setIsFieldValid)
               }
