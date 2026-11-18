@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import ActionButtonDropdown, {
   DropDownMenuItem,
-  ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { NotFoundError } from "../../components/errors/Error";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -267,18 +267,18 @@ export function ActionComponent(props) {
 function ActionButtons({ selectedStudents, resetAll }) {
   return (
     <>
-      <ModalButton
-        classname={"border-none transparent-bg w-100 p-0"}
-        action={{ modalContent: BulkBillStudentAdditionalFees }}
-        bulkData={selectedStudents}
-        resetAll={resetAll}
+      <DrawerTrigger
+        className="border-none transparent-bg w-100 p-0"
+        drawerChildren={BulkBillStudentAdditionalFees}
+        drawerData={{ selectedStudents, resetAll }}
+        title="Bill Student Additional Fee"
       >
         <CustomTooltip tooltipText={"Bill All Selected Student"}>
           <span className="pointer-cursor hover-text-primary-400 ">
             <CreateIcon />
           </span>
         </CustomTooltip>
-      </ModalButton>
+      </DrawerTrigger>
     </>
   );
 }
