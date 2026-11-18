@@ -10,7 +10,8 @@ function PublishExamResult({ handleClose, rowData }) {
     useFormError("Failed To Publish Exam Result");
   const handlePublishExam = () => {
     clearFormError();
-    publish(examId, { onError: handleServerError });
+    // The API needs the exam and when to publish (now); it refused a bare id.
+    publish({ exam_id: examId, status: "active" }, { onError: handleServerError });
   };
   return (
     <>

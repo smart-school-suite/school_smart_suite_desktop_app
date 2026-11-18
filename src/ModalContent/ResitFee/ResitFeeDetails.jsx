@@ -44,7 +44,7 @@ function ResitFeeDetails({ rowData, handleClose }) {
                 <div className="py-2 d-flex flex-column">
                   <span className="my-0 font-size-sm">Course Title</span>
                   <span className="my-0 font-size-sm gainsboro-color">
-                    {resitDetails?.data?.courses.course_name}
+                    {resitDetails?.data?.course_title}
                   </span>
                 </div>
               </div>
@@ -53,7 +53,7 @@ function ResitFeeDetails({ rowData, handleClose }) {
                 <div className="py-2 d-flex flex-column">
                   <span className="my-0 font-size-sm">Course Code</span>
                   <span className="my-0 font-size-sm gainsboro-color">
-                    {resitDetails?.data?.courses.course_code}
+                    {resitDetails?.data?.course_code}
                   </span>
                 </div>
               </div>
@@ -62,7 +62,7 @@ function ResitFeeDetails({ rowData, handleClose }) {
                 <div className="py-2 d-flex flex-column">
                   <span className="my-0 font-size-sm">Course Credit</span>
                   <span className="my-0 font-size-sm gainsboro-color">
-                    {resitDetails?.data?.courses.credit}
+                    {resitDetails?.data?.course_credit}
                   </span>
                 </div>
               </div>
@@ -71,16 +71,16 @@ function ResitFeeDetails({ rowData, handleClose }) {
                 <div className="py-2 d-flex flex-column">
                   <span className="my-0 font-size-sm">Exam Name</span>
                   <span className="my-0 font-size-sm gainsboro-color">
-                    {resitDetails?.data?.exam.examtype.exam_name}
+                    {resitDetails?.data?.exam_name}
                   </span>
                 </div>
               </div>
               <hr />
               <div className="d-flex align-items-center justify-content-between">
                 <div className="py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm">Weighted Mark</span>
+                  <span className="my-0 font-size-sm">Resit Score</span>
                   <span className="my-0 font-size-sm gainsboro-color">
-                    {resitDetails?.data?.exam.weighted_mark}
+                    {resitDetails?.data?.resit_score ?? "Not evaluated yet"}
                   </span>
                 </div>
               </div>
@@ -89,16 +89,16 @@ function ResitFeeDetails({ rowData, handleClose }) {
                 <div className="py-2 d-flex flex-column">
                   <span className="my-0 font-size-sm">Student Name</span>
                   <span className="my-0 font-size-sm gainsboro-color">
-                    {resitDetails?.data?.student.name}
+                    {resitDetails?.data?.student_name}
                   </span>
                 </div>
               </div>
               <hr />
               <div className="d-flex align-items-center justify-content-between">
                 <div className="py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm">Gender</span>
+                  <span className="my-0 font-size-sm">Username</span>
                   <span className="my-0 font-size-sm gainsboro-color">
-                    {resitDetails?.data?.student.gender}
+                    {resitDetails?.data?.student_username}
                   </span>
                 </div>
               </div>
@@ -107,7 +107,7 @@ function ResitFeeDetails({ rowData, handleClose }) {
                 <div className="py-2 d-flex flex-column">
                   <span className="my-0 font-size-sm">Specialty Name</span>
                   <span className="my-0 font-size-sm gainsboro-color">
-                    {resitDetails?.data?.specialty.specialty_name}
+                    {resitDetails?.data?.specialty_name}
                   </span>
                 </div>
               </div>
@@ -116,7 +116,7 @@ function ResitFeeDetails({ rowData, handleClose }) {
                 <div className="py-2 d-flex flex-column">
                   <span className="my-0 font-size-sm">Level Name</span>
                   <span className="my-0 font-size-sm gainsboro-color">
-                    {resitDetails?.data?.level.name}
+                    {resitDetails?.data?.level_name}
                   </span>
                 </div>
               </div>
@@ -134,7 +134,7 @@ function ResitFeeDetails({ rowData, handleClose }) {
                 <div className="py-2 d-flex flex-column">
                   <span className="my-0 font-size-sm">Payment Status</span>
                   <span className="my-0 font-size-sm gainsboro-color">
-                    {resitDetails?.data?.paid_status}
+                    {resitDetails?.data?.payment_status}
                   </span>
                 </div>
               </div>
