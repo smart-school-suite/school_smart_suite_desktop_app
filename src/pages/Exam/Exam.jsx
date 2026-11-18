@@ -18,7 +18,7 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import ConfigureGradeScaleWizzard from "../../DrawerContent/Exam/ConfigureGradeScale/ConfigureGradeScaleWizzard";
 import CreateExamWizzard from "../../DrawerContent/Exam/CreateExam/CreateExamWizzard";
 import ExamDetails from "../../DrawerContent/Exam/ExamDetails";
-import UpdateExamWizzard from "../../DrawerContent/Exam/UpdateExam/UpdateExamWizzard";
+import UpdateExam from "../../DrawerContent/Exam/UpdateExam/UpdateExam";
 import { useGetExams } from "../../hooks/exam/useGetExams";
 import {
   CreateIcon,
@@ -291,10 +291,10 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowDrawer(UpdateExamWizzard, {
+            handleShowDrawer(UpdateExam, {
               title: "Update Exam",
               closeOnOutsideClick: false,
-              showHeader: false,
+              showHeader: true,
             })
           }
         >

@@ -1,6 +1,7 @@
-import { PenLine } from "lucide-react";
+import { PenLine, SquareText } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+import GraduationBatchDetails from "../../DrawerContent/GraduationBatch/GraduationBatchDetails";
 import UpdateGraduationBatch from "../../DrawerContent/GraduationBatch/UpdateGraduationBatch";
 import ActionButtonDropdown, {
   DropDownMenuItem,
@@ -146,6 +147,25 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
+            handleShowDrawer(GraduationBatchDetails, {
+              title: "Graduation Batch Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Details</span>
+              <SquareText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
             handleShowDrawer(UpdateGraduationBatch, {
               title: "Update Graduation Batch",
               closeOnOutsideClick: true,
@@ -160,25 +180,6 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        {/* <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(GraduationBatchDetails, {
-              title: "Graduation Batch Details",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Details</span>
-              <SquareText size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem> */}
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}

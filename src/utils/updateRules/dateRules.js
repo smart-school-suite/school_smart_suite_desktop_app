@@ -2,7 +2,7 @@ import { formatScheduleDate as human } from "../feeSchedule/scheduleRules";
 
 /**
  * Client-side helpers for the API's update rules (the update-rules endpoints
- * of academic years and semesters). For each date the API sends every limit
+ * of academic years, semesters and exams). For each date the API sends every limit
  * as { date, reason, kind }. The form recomputes:
  *  - "pair" limits (start before end) from the dates being entered, and
  *  - limits of the kind given in `replace` (e.g. "system_year") when the
@@ -22,16 +22,20 @@ const shiftDate = (date, days) => {
  *   field: rules.fields[fieldName]
  *   start, end: the dates as currently entered
  *   replace: optional { kind, min, max } limits replacing those of that kind
+ *   sameDay: true when start and end may be the same day (exams)
  */
-export function boundsFor(fieldName, field, { start, end, replace } = {}) {
+export function boundsFor(fieldName, field, { start, end, replace, sameDay = false } = {}) {
   const keep = (list = []) => list.filter((limit) => limit.kind !== "pair" && (!replace || limit.kind !== replace.kind));
   const min = keep(field?.limits?.min);
   const max = keep(field?.limits?.max);
 
   if (replace?.min) min.push(replace.min);
   if (replace?.max) max.push(replace.max);
-  if (fieldName === "start_date" && end) max.push({ date: shiftDate(end, -1), reason: "it must be before the end date" });
-  if (fieldName === "end_date" && start) min.push({ date: shiftDate(start, 1), reason: "it must be after the start date" });
+  const gap = sameDay ? 0 : 1;
+  if (fieldName === "start_date" && end)
+    max.push({ date: shiftDate(end, -gap), reason: sameDay ? "it must be on or before the end date" : "it must be before the end date" });
+  if (fieldName === "end_date" && start)
+    min.push({ date: shiftDate(start, gap), reason: sameDay ? "it must be on or after the start date" : "it must be after the start date" });
 
   const tightestMin = min.sort((a, b) => (a.date < b.date ? 1 : -1))[0] ?? null;
   const tightestMax = max.sort((a, b) => (a.date > b.date ? 1 : -1))[0] ?? null;
