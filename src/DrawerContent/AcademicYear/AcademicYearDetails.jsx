@@ -1,13 +1,15 @@
-import { useGetSchoolAcademicYearDetails } from "../../hooks/academicYear/useGetSchoolAcademicYearDetails";
-import { useSelector } from "react-redux";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { Icon } from "@iconify/react";
+import { useGetSchoolAcademicYearDetails } from "../../hooks/academicYear/useGetSchoolAcademicYearDetails";
+import { formatDate } from "../../utils/functions";
 function AcademicYearDetails({ handleClose, drawerData }) {
   const { id: academicYearId } = drawerData;
-  const { data: academicYear, isLoading, error } =
-    useGetSchoolAcademicYearDetails(academicYearId);
+  const {
+    data: academicYear,
+    isLoading,
+    error,
+  } = useGetSchoolAcademicYearDetails(academicYearId);
   return (
     <>
       <div
@@ -19,8 +21,8 @@ function AcademicYearDetails({ handleClose, drawerData }) {
             <div className="d-flex flex-column gap-4 w-100">
               {[...Array(8)].map((_, index) => (
                 <div className="d-flex gap-1 flex-column" key={index}>
-                  <RectangleSkeleton height="1dvh" width="40%" />
                   <RectangleSkeleton height="1dvh" width="15%" />
+                  <RectangleSkeleton height="1dvh" width="100%" />
                 </div>
               ))}
             </div>
@@ -32,92 +34,82 @@ function AcademicYearDetails({ handleClose, drawerData }) {
           ></NotFoundError>
         ) : (
           <>
-            <div className="drawer-content px-2">
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className=" py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm fw-semibold">
-                    Academic Year
-                  </span>
-                  <span className=" font-size-sm">
-                    {academicYear?.data?.system_academic_year?.name}
-                  </span>
+            <div className="drawer-content ps-2 font-size-sm">
+              <div className="d-flex flex-column gap-2">
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Academic Year</span>
+                    <span className="fw-medium">
+                      {academicYear?.data?.system_academic_year?.name}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className=" py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm fw-semibold">
-                    Academic Year Start Date
-                  </span>
-                  <span className=" font-size-sm">
-                    {academicYear?.data?.start_date}
-                  </span>
+                <hr />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">
+                      Academic Year Start Date
+                    </span>
+                    <span className="fw-medium">
+                      {academicYear?.data?.start_date}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className=" py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm fw-semibold">
-                    Academic Year End Date
-                  </span>
-                  <span className=" font-size-sm">
-                   {academicYear?.data?.end_date}
-                  </span>
+                <hr />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">
+                      Academic Year End Date
+                    </span>
+                    <span className="fw-medium">
+                      {academicYear?.data?.end_date}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className=" py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm fw-semibold">
-                    Specialty
-                  </span>
-                  <span className=" font-size-sm">
-                    {academicYear?.data?.specialty?.specialty_name}
-                  </span>
+                <hr />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Specialty</span>
+                    <span className="fw-medium">
+                      {academicYear?.data?.specialty?.specialty_name}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className=" py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm fw-semibold">
-                    Level Name
-                  </span>
-                  <span className=" font-size-sm">
-                    {academicYear?.data?.specialty?.level?.name}
-                  </span>
+                <hr />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Level Name</span>
+                    <span className="fw-medium">
+                      {academicYear?.data?.specialty?.level?.name}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className=" py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm fw-semibold">
-                    Level Number
-                  </span>
-                  <span className=" font-size-sm">
-                    {academicYear?.data?.specialty?.level?.level}
-                  </span>
+                <hr />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">Level Number</span>
+                    <span className="fw-medium">
+                      {academicYear?.data?.specialty?.level?.level}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className=" py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm fw-semibold">
-                    created at
-                  </span>
-                  <span className=" font-size-sm">
-                    {academicYear?.data?.created_at}
-                  </span>
+                <hr />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">created at</span>
+                    <span className="fw-medium">
+                      {formatDate(academicYear?.data?.created_at)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <hr />
-              <div className="d-flex align-items-center justify-content-between my-1 w-100">
-                <div className=" py-2 d-flex flex-column">
-                  <span className="my-0 font-size-sm fw-semibold">
-                    updated at
-                  </span>
-                  <span className=" font-size-sm">
-                    {academicYear?.data?.updated_at}
-                  </span>
+                <hr />
+                <div className="d-flex align-items-center justify-content-between w-100">
+                  <div className="d-flex flex-column">
+                    <span className="text-iron-500">updated at</span>
+                    <span className="fw-medium">
+                      {formatDate(academicYear?.data?.updated_at)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
