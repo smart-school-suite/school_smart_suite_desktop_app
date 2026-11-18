@@ -18,7 +18,12 @@ const STATUS_CONFIG = {
   scheduled: {
     className: "primary-background-50 color-primary",
     icon: "iconmind:scheduled-run-duotone-thin",
-    label: "Pending",
+    label: "Scheduled",
+  },
+  evaluating: {
+    className: "primary-background-50 color-primary",
+    icon: "fluent-mdl2:processing",
+    label: "Evaluating",
   },
   processing: {
     className: "primary-background-50 color-primary",

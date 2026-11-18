@@ -84,7 +84,7 @@ function TriggerPromotionRun({ drawerData = {}, handleClose = () => {} }) {
         clearFormError();
         triggerPromotionRun({
           status: formData.status,
-          initiated_at: formData.published_at || null,
+          initiate_at: formData.published_at || null,
           promotion_run_id: drawerData?.id
         }, { onError: handleServerError });
       }
