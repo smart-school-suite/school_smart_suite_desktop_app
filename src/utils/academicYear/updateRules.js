@@ -51,6 +51,8 @@ export function boundsFor(fieldName, field, { systemYear, start, end }) {
 
 export function dateError(label, value, bounds) {
   if (!value) return `Pick a ${label}.`;
+  // DateInput is masked, so partly typed dates arrive as e.g. "2027-0_-__".
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return `Enter the full ${label} (YYYY-MM-DD).`;
   if (bounds.min && bounds.max && bounds.min.date > bounds.max.date)
     return `No ${label} fits: ${bounds.min.reason}, but ${bounds.max.reason}.`;
   if (bounds.min && value < bounds.min.date) return `Must be on or after ${human(bounds.min.date)}: ${bounds.min.reason}.`;

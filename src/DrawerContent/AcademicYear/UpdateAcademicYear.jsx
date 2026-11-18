@@ -1,10 +1,13 @@
-import { Dot, Lock } from "lucide-react";
 import { Icon } from "@iconify/react";
+import { BookOpen, CalendarDays, ClipboardList, Dot, GraduationCap, Lock, ReceiptText, RotateCcw, Wallet } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { dateValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import SectionCard from "../../components/Election/SectionCard";
+import StatTile from "../../components/Election/StatTile";
 import StatusPill from "../../components/Election/StatusPill";
+import { DateInput } from "../../components/FormComponents/InputComponents";
 import EmptyState from "../../components/errors/EmptyState";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -22,14 +25,15 @@ const STATUS = {
 };
 
 const DEPENDENTS = [
-  { key: "students", label: "Students", icon: "ph:student-light" },
-  { key: "tuition_fees", label: "Tuition records", icon: "solar:wallet-money-linear" },
-  { key: "semesters", label: "Semesters", icon: "solar:calendar-linear" },
-  { key: "exams", label: "Exams", icon: "solar:document-text-linear" },
-  { key: "resit_exams", label: "Resit exams", icon: "solar:restart-linear" },
-  { key: "fee_installments", label: "Fee installments", icon: "solar:bill-list-linear" },
+  { key: "students", label: "Students", icon: GraduationCap },
+  { key: "tuition_fees", label: "Tuition records", icon: Wallet, hintKey: "paid_tuition_fees", hint: (n) => `${n} with payments` },
+  { key: "semesters", label: "Semesters", icon: CalendarDays },
+  { key: "exams", label: "Exams", icon: ClipboardList },
+  { key: "resit_exams", label: "Resit exams", icon: RotateCcw },
+  { key: "fee_installments", label: "Fee installments", icon: ReceiptText },
 ];
 
+/** What the academic year is: school year, status, specialty, level and dates. */
 function YearSummary({ rules }) {
   const status = STATUS[rules.status] ?? STATUS.upcoming;
   return (
@@ -39,7 +43,7 @@ function YearSummary({ rules }) {
           style={{ width: "2.5rem", height: "2.5rem", display: "grid", placeItems: "center" }}
           className="bg-primary-50 rounded-2 text-primary-500 flex-shrink-0"
         >
-          <Icon icon="solar:calendar-mark-linear" width={20} height={20} />
+          <BookOpen size={18} />
         </div>
         <div className="d-flex flex-column flex-grow-1" style={{ minWidth: 0 }}>
           <div className="d-flex flex-row align-items-center gap-2">
@@ -63,16 +67,7 @@ function YearSummary({ rules }) {
   );
 }
 
-function SectionTitle({ children, hint }) {
-  return (
-    <div className="d-flex flex-column">
-      <span className="fw-semibold font-size-sm">{children}</span>
-      {hint && <span className="font-size-xs text-iron-500">{hint}</span>}
-    </div>
-  );
-}
-
-/** A locked field: its current value with a lock, instead of an input. */
+/** A locked field: its current value with a lock, in place of the input. */
 function LockedValue({ value }) {
   return (
     <div className="d-flex flex-row align-items-center justify-content-between border rounded-2 bg-iron-50 px-2 py-2 font-size-sm text-iron-500">
@@ -82,36 +77,40 @@ function LockedValue({ value }) {
   );
 }
 
-function DateField({ id, label, value, onChange, bounds, error, editable, lockedValue }) {
-  const darkMode = useSelector((state) => state.theme.darkMode);
+const rangeHint = (bounds) =>
+  bounds.min && bounds.max
+    ? `between ${formatScheduleDate(bounds.min.date)} and ${formatScheduleDate(bounds.max.date)}`
+    : bounds.min
+      ? `from ${formatScheduleDate(bounds.min.date)}`
+      : bounds.max
+        ? `until ${formatScheduleDate(bounds.max.date)}`
+        : null;
+
+function DateField({ id, label, value, onChange, bounds, editable, lockedValue }) {
+  // The shared date schema enforces the range; its message says why.
+  const schema = useMemo(
+    () =>
+      dateValidationSchema({
+        required: true,
+        min: bounds.min,
+        max: bounds.max,
+        messages: {
+          min: bounds.min && `Must be on or after ${formatScheduleDate(bounds.min.date)}: ${bounds.min.reason}.`,
+          max: bounds.max && `Must be on or before ${formatScheduleDate(bounds.max.date)}: ${bounds.max.reason}.`,
+        },
+      }),
+    [bounds.min, bounds.max],
+  );
+  const hint = editable ? rangeHint(bounds) : null;
+
   return (
     <div className="d-flex flex-column gap-1">
-      <label htmlFor={id} className="font-size-sm m-0">{label}</label>
+      <label htmlFor={id} className="font-size-sm m-0">
+        {label}
+        {hint && <span className="text-iron-400 font-size-xs"> · {hint}</span>}
+      </label>
       {editable ? (
-        <>
-          <input
-            id={id}
-            type="date"
-            className={`form-control font-size-sm p-2 ${darkMode ? "dark-mode-input" : ""} ${error ? "is-invalid" : ""}`}
-            value={value}
-            min={bounds.min?.date}
-            max={bounds.max?.date}
-            onChange={(e) => onChange(e.target.value)}
-          />
-          {error ? (
-            <span className="font-size-xs text-red-600">{error}</span>
-          ) : (
-            <span className="font-size-xs text-iron-500">
-              {bounds.min && bounds.max
-                ? `Between ${formatScheduleDate(bounds.min.date)} and ${formatScheduleDate(bounds.max.date)}.`
-                : bounds.min
-                  ? `On or after ${formatScheduleDate(bounds.min.date)}.`
-                  : bounds.max
-                    ? `On or before ${formatScheduleDate(bounds.max.date)}.`
-                    : null}
-            </span>
-          )}
-        </>
+        <DateInput id={id} name={id} value={value} onChange={onChange} validationSchema={schema} />
       ) : (
         <LockedValue value={lockedValue} />
       )}
@@ -119,9 +118,8 @@ function DateField({ id, label, value, onChange, bounds, error, editable, locked
   );
 }
 
-/** Every field the user cannot change, and why. */
+/** Every field the user cannot change, and why. Fields locked for the same reasons share a row. */
 function LockedList({ rules }) {
-  // Fields locked for the same reasons share one row.
   const groups = [];
   Object.entries(rules.fields)
     .filter(([, field]) => !field.editable)
@@ -134,24 +132,23 @@ function LockedList({ rules }) {
   if (groups.length === 0) return null;
 
   return (
-    <div className="d-flex flex-column gap-2">
-      <SectionTitle hint="These are protected because of the academic year's status or the records that depend on it.">
-        What can&apos;t be changed
-      </SectionTitle>
-      <div className="d-flex flex-column border rounded-3">
-        {groups.map((group, index) => (
-          <div key={group.key} className={`d-flex flex-row align-items-start gap-2 px-3 py-2 ${index > 0 ? "border-top" : ""}`}>
-            <Lock size={14} className="text-iron-400 flex-shrink-0" style={{ marginTop: "0.2rem" }} />
-            <div className="d-flex flex-column font-size-sm" style={{ minWidth: 0 }}>
-              <span className="fw-semibold">{group.names.map((name) => FIELD_LABELS[name] ?? name).join(", ")}</span>
-              {group.reasons.map((reason) => (
-                <span key={reason} className="font-size-xs text-iron-500" style={{ lineHeight: 1.5 }}>{reason}</span>
-              ))}
-            </div>
+    <SectionCard
+      title="What can't be changed"
+      description="Protected because of the academic year's status or the records that depend on it."
+      bodyClassName="p-0 pt-2"
+    >
+      {groups.map((group) => (
+        <div key={group.key} className="d-flex flex-row align-items-start gap-2 px-3 py-2 border-top">
+          <Lock size={14} className="text-iron-400 flex-shrink-0" style={{ marginTop: "0.2rem" }} />
+          <div className="d-flex flex-column font-size-sm" style={{ minWidth: 0 }}>
+            <span className="fw-semibold">{group.names.map((name) => FIELD_LABELS[name] ?? name).join(", ")}</span>
+            {group.reasons.map((reason) => (
+              <span key={reason} className="font-size-xs text-iron-500" style={{ lineHeight: 1.5 }}>{reason}</span>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+      ))}
+    </SectionCard>
   );
 }
 
@@ -159,18 +156,21 @@ function Dependents({ counts }) {
   const shown = DEPENDENTS.filter((item) => (counts?.[item.key] ?? 0) > 0);
   if (shown.length === 0) return null;
   return (
-    <div className="d-flex flex-column gap-2">
-      <SectionTitle hint="Dates must keep these inside the academic year.">Linked to this academic year</SectionTitle>
-      <div className="d-flex flex-row flex-wrap gap-3 font-size-xs text-iron-500">
+    <SectionCard title="Linked to this academic year" description="Dates must keep these inside the academic year.">
+      <div className="row g-2">
         {shown.map((item) => (
-          <div key={item.key} className="d-flex flex-row align-items-center gap-1">
-            <Icon icon={item.icon} width={14} height={14} />
-            <span className="fw-semibold text-iron-700">{counts[item.key]}</span>
-            <span>{item.label}</span>
+          <div key={item.key} className="col-6">
+            <StatTile
+              icon={item.icon}
+              label={item.label}
+              value={counts[item.key]}
+              hint={item.hintKey ? item.hint(counts[item.hintKey] ?? 0) : undefined}
+              tone="neutral"
+            />
           </div>
         ))}
       </div>
-    </div>
+    </SectionCard>
   );
 }
 
@@ -181,7 +181,6 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
     end_date: rules.end_date ?? "",
     system_academic_year: rules.system_academic_year ?? null,
   });
-  const [touched, setTouched] = useState(false);
   const { mutate: updateYear, isPending } = useUpdateSchoolAcademicYear(handleClose, rules.id);
   const { formError, errorBannerRef, handleServerError, setClientError, clearFormError } =
     useFormError("Failed To Update Academic Year");
@@ -191,9 +190,14 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
     systemYearOptions.find((option) => option.id === form.system_academic_year?.id) ?? form.system_academic_year;
   const systemYearChanged = form.system_academic_year?.id !== rules.system_academic_year?.id;
 
-  const context = { systemYear: selectedSystemYear, start: form.start_date, end: form.end_date };
-  const startBounds = useMemo(() => boundsFor("start_date", fields.start_date, context), [fields, form]); // eslint-disable-line react-hooks/exhaustive-deps
-  const endBounds = useMemo(() => boundsFor("end_date", fields.end_date, context), [fields, form]); // eslint-disable-line react-hooks/exhaustive-deps
+  const startBounds = useMemo(
+    () => boundsFor("start_date", fields.start_date, { systemYear: selectedSystemYear, start: form.start_date, end: form.end_date }),
+    [fields.start_date, selectedSystemYear, form.start_date, form.end_date],
+  );
+  const endBounds = useMemo(
+    () => boundsFor("end_date", fields.end_date, { systemYear: selectedSystemYear, start: form.start_date, end: form.end_date }),
+    [fields.end_date, selectedSystemYear, form.start_date, form.end_date],
+  );
 
   const changes = {
     ...(fields.start_date.editable && form.start_date !== rules.start_date ? { start_date: form.start_date } : {}),
@@ -211,7 +215,6 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
 
   const set = (field, value) => {
     clearFormError();
-    setTouched(true);
     setForm((current) => ({ ...current, [field]: value }));
   };
 
@@ -233,7 +236,7 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
         <YearSummary rules={rules} />
       </div>
 
-      <div className="drawer-content px-2 pb-3 d-flex flex-column gap-4">
+      <div className="drawer-content px-2 pb-3 d-flex flex-column gap-3">
         <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} className="mb-0" />
 
         {rules.read_only && (
@@ -244,59 +247,50 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
         )}
 
         {anyEditable && (
-          <div className="d-flex flex-column gap-3">
-            <SectionTitle hint="Only the fields below can be changed right now.">What you can change</SectionTitle>
+          <SectionCard title="What you can change" description="Only these fields can be changed right now." bodyClassName="p-3 d-flex flex-column gap-2">
             <div className="d-flex flex-column gap-1">
-              <label className="font-size-sm m-0">School year</label>
+              <label className="font-size-sm m-0">
+                School year
+                {fields.system_academic_year_id.editable && systemYearChanged && selectedSystemYear && (
+                  <span className="text-iron-400 font-size-xs">
+                    {" "}· dates must fall within {selectedSystemYear.year_start}–{selectedSystemYear.year_end}
+                  </span>
+                )}
+              </label>
               {fields.system_academic_year_id.editable ? (
-                <>
-                  <CustomDropdown
-                    data={systemYearOptions}
-                    displayKey={["name"]}
-                    valueKey={["id"]}
-                    onSelect={(value) => set("system_academic_year", value)}
-                    placeholder="Select school year"
-                    value={form.system_academic_year}
-                    defaultValue={form.system_academic_year}
-                    showFeedback={false}
-                  />
-                  {systemYearChanged && selectedSystemYear && (
-                    <span className="font-size-xs text-iron-500">
-                      Dates must fall within {selectedSystemYear.name} ({selectedSystemYear.year_start}–{selectedSystemYear.year_end}).
-                    </span>
-                  )}
-                </>
+                <CustomDropdown
+                  data={systemYearOptions}
+                  displayKey={["name"]}
+                  valueKey={["id"]}
+                  onSelect={(value) => set("system_academic_year", value)}
+                  placeholder="Select school year"
+                  value={form.system_academic_year}
+                  defaultValue={form.system_academic_year}
+                  showFeedback={false}
+                />
               ) : (
                 <LockedValue value={rules.system_academic_year?.name ?? "-"} />
               )}
             </div>
-            <div className="row g-2">
-              <div className="col-6">
-                <DateField
-                  id="academic-year-start"
-                  label="Start date"
-                  value={form.start_date}
-                  onChange={(value) => set("start_date", value)}
-                  bounds={startBounds}
-                  error={startError}
-                  editable={fields.start_date.editable}
-                  lockedValue={formatScheduleDate(rules.start_date)}
-                />
-              </div>
-              <div className="col-6">
-                <DateField
-                  id="academic-year-end"
-                  label="End date"
-                  value={form.end_date}
-                  onChange={(value) => set("end_date", value)}
-                  bounds={endBounds}
-                  error={endError}
-                  editable={fields.end_date.editable}
-                  lockedValue={formatScheduleDate(rules.end_date)}
-                />
-              </div>
-            </div>
-          </div>
+            <DateField
+              id="academic-year-start"
+              label="Start date"
+              value={form.start_date}
+              onChange={(value) => set("start_date", value)}
+              bounds={startBounds}
+              editable={fields.start_date.editable}
+              lockedValue={formatScheduleDate(rules.start_date)}
+            />
+            <DateField
+              id="academic-year-end"
+              label="End date"
+              value={form.end_date}
+              onChange={(value) => set("end_date", value)}
+              bounds={endBounds}
+              editable={fields.end_date.editable}
+              lockedValue={formatScheduleDate(rules.end_date)}
+            />
+          </SectionCard>
         )}
 
         <LockedList rules={rules} />
@@ -316,7 +310,7 @@ function UpdateAcademicYearForm({ rules, handleClose }) {
                   className={`text-truncate ${problems.length ? "text-red-600" : isDirty ? "text-fern-600" : "text-iron-500"}`}
                   title={problems[0]}
                 >
-                  {problems.length ? problems[0] : isDirty ? "Ready to save" : touched ? "No changes" : "No changes yet"}
+                  {problems.length ? problems[0] : isDirty ? "Ready to save" : "No changes yet"}
                 </span>
                 <button
                   type="button"
@@ -348,7 +342,7 @@ function UpdateAcademicYear({ handleClose, drawerData }) {
     return (
       <div className="d-flex flex-column gap-3 p-2">
         <RectangleSkeleton height="3.5rem" />
-        <RectangleSkeleton height="5rem" />
+        <RectangleSkeleton height="12rem" />
         <RectangleSkeleton height="7rem" />
       </div>
     );
