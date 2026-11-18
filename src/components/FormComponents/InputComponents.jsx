@@ -58,11 +58,13 @@ function AcademicYearInputComponent(
     [validationSchema, onValidationChange],
   );
 
-  // 🔹 Sync displayValue with value prop
+  // 🔹 Sync displayValue with value prop. A value set from outside (e.g. a
+  // "fill in" action) is re-validated even after the field was touched, so a
+  // stale error does not stay on a now-valid date.
   useEffect(() => {
     if (value !== displayValue) {
       setDisplayValue(value || "");
-      if (value && !isInputTouched) {
+      if (value) {
         setIsInputTouched(true);
         validateInput(value);
       }
@@ -699,11 +701,13 @@ function DateInputComponent(
     [validationSchema, onValidationChange],
   );
 
-  // 🔹 Sync displayValue with value prop
+  // 🔹 Sync displayValue with value prop. A value set from outside (e.g. a
+  // "fill in" action) is re-validated even after the field was touched, so a
+  // stale error does not stay on a now-valid date.
   useEffect(() => {
     if (value !== displayValue) {
       setDisplayValue(value || "");
-      if (value && !isInputTouched) {
+      if (value) {
         setIsInputTouched(true);
         validateInput(value);
       }
