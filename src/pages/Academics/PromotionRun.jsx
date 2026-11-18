@@ -1,5 +1,6 @@
-import { Ban, MessageSquareCode, Play, RotateCcw } from "lucide-react";
+import { Ban, MessageSquareCode, Play, RotateCcw, SquareText } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import PromotionDetails from "../../DrawerContent/PromotionRun/PromotionDetails";
 import PromotionRunLog from "../../DrawerContent/PromotionRun/PromotionRunLog";
 import TriggerPromotionRun from "../../DrawerContent/PromotionRun/TriggerPromotionRun";
 import CancelPromotionRun from "../../ModalContent/PromotionRun/CancelPromotionRun";
@@ -191,6 +192,25 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
+            handleShowDrawer(PromotionDetails, {
+              title: "Promotion Run Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Run Details</span>
+              <SquareText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
             handleShowDrawer(PromotionRunLog, {
               title: "Promotion Run Log",
               closeOnOutsideClick: true,
@@ -205,25 +225,6 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
-        {/* <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(PromotionDetails, {
-              title: "Promotion Details",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Run Details</span>
-              <SquareText size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem> */}
         {allows("trigger") && (
         <DropDownMenuItem
           className={
