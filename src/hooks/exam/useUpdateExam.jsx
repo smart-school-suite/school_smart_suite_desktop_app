@@ -9,6 +9,7 @@ export const useUpdateExam = (handleClose, examId) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exams"] });
       queryClient.removeQueries({ queryKey: ["exam", examId] });
+      queryClient.removeQueries({ queryKey: ["exam-update-rules", examId] });
 
       if (handleClose) {
         handleClose();

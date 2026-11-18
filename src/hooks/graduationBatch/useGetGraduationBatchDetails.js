@@ -5,5 +5,6 @@ export const useGetGraduationBatchDetails = (batchId) => {
   return useQuery({
     queryKey: ["graduation-batch", batchId],
     queryFn: () => getGraduationBatchDetails(batchId),
+    enabled: Boolean(batchId),
   });
 };

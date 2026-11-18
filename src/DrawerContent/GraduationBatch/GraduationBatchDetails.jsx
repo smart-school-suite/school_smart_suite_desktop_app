@@ -1,17 +1,14 @@
-import { Fragment } from "react";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { NotFoundError } from "../../components/errors/Error";
+import StatusPill from "../../components/Election/StatusPill";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { NotFoundError } from "../../components/errors/Error";
 import { useGetGraduationBatchDetails } from "../../hooks/graduationBatch/useGetGraduationBatchDetails";
 import { formatDate } from "../../utils/functions";
 import RichTextContent from "../../components/TextComponents/RichTextContent";
 function GraduationBatchDetails({ drawerData, handleClose }) {
-  const { id: batchId } = drawerData;
-  const {
-    data: details,
-    isLoading,
-    error,
-  } = useGetGraduationBatchDetails(batchId);
+  const { data, isLoading, error } = useGetGraduationBatchDetails(drawerData?.id);
+  const batch = data?.data;
+
   return (
     <>
       <div className="drawer-content ps-2 pt-3 font-size-sm">
@@ -78,41 +75,52 @@ function GraduationBatchDetails({ drawerData, handleClose }) {
                 {details?.data?.academic_year?.name}
               </span>
             </div>
-            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
-
-            <span className="fw-normal text-iron-500">System Info</span>
-            <div className="d-flex flex-column">
-              <span className="fw-normal text-iron-500">Created At</span>
-              <span className="fw-medium">
-                {formatDate(details?.data?.created_at)}
-              </span>
-            </div>
-            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
-            <div className="d-flex flex-column">
-              <span className="fw-normal text-iron-500">Updated At</span>
-              <span className="fw-medium">
-                {formatDate(details?.data?.updated_at)}
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-      <div className="drawer-footer font-size-sm">
-        <div className="d-flex flex-column w-100">
-          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
-          <div className="d-flex flex-row align-items-center justify-content-between px-2 py-3">
-            <button
-              type="button"
-              className="border-none bg-none cursor-pointer"
-              onClick={() => handleClose?.()}
-              disabled={isLoading}
-            >
-              Close
-            </button>
-          </div>
+          ))}
         </div>
-      </div>
-    </>
+      ) : error ? (
+        <NotFoundError
+          title={error?.response?.data?.errors?.title ?? "Graduation Batch Not Found"}
+          description={error?.response?.data?.errors?.description ?? "Unable to load graduation batch details. Please try again."}
+        />
+      ) : (
+        batch && (
+          <>
+            <div className="drawer-content px-2">
+              {detailRows(batch).map((row, index) => (
+                <Row key={row.label} label={row.label} value={row.value} first={index === 0} />
+              ))}
+              {batch.specialties?.length > 0 && (
+                <>
+                  <hr />
+                  <div className="py-2 d-flex flex-column gap-2">
+                    <span className="text-iron-500">Graduates By Specialty</span>
+                    {batch.specialties.map((specialty) => (
+                      <div key={specialty.specialty_id} className="d-flex flex-row align-items-center justify-content-between gap-2">
+                        <span className="text-truncate">
+                          {specialty.specialty_name ?? "Unknown specialty"}
+                          {specialty.level_name && <span className="text-iron-400"> · {specialty.level_name}</span>}
+                        </span>
+                        <span className="fw-semibold flex-shrink-0">{count(specialty.graduates)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="drawer-footer font-size-sm">
+              <div className="d-flex flex-column w-100">
+                <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
+                <div className="d-flex flex-row align-items-center justify-content-between py-3 px-2">
+                  <button type="button" className="border-none bg-none" onClick={() => handleClose?.()}>
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )
+      )}
+    </div>
   );
 }
 export default GraduationBatchDetails;
