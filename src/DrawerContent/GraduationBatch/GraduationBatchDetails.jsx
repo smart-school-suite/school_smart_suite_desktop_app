@@ -59,7 +59,8 @@ function Row({ label, value, first }) {
       <div className="d-flex align-items-center justify-content-between my-1 w-100">
         <div className="py-2 d-flex flex-column align-items-start gap-1">
           <span className="text-iron-500">{label}</span>
-          <span>{value}</span>
+          {/* A div, not a span: the description renders block HTML (paragraphs, lists). */}
+          <div>{value}</div>
         </div>
       </div>
     </div>
