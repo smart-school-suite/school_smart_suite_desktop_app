@@ -1,13 +1,13 @@
 import {
-  textColumn,
   actionsColumn,
   dateColumn,
   numberColumn,
+  textColumn,
 } from "@/utils/table/columns";
-import TextComponent from "../../../../components/DataTableComponents/TextComponent";
+import RegistrationFeeTableBadge from "../../../../components/Badges/RegistrationFeeTableBadge";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
 import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
-import RegistrationFeeTableBadge from "../../../../components/Badges/RegistrationFeeTableBadge";
+import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 
 export function additionalFeeColDefs({ ActionComponent }) {
   return [
@@ -37,7 +37,7 @@ export function additionalFeeColDefs({ ActionComponent }) {
     textColumn({
       field: "level_number",
       headerName: "Level Number",
-      hide: false,
+      hide: true,
       cellRenderer: TextComponent,
     }),
     numberColumn({
@@ -45,6 +45,12 @@ export function additionalFeeColDefs({ ActionComponent }) {
       headerName: "Amount",
       hide: false,
       cellRenderer: CurrencyComponent,
+    }),
+    textColumn({
+      field: "category",
+      headerName: "Category",
+      hide: false,
+      cellRenderer: TextComponent,
     }),
     dateColumn({
       field: "due_date",

@@ -9,6 +9,9 @@ import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
@@ -27,9 +30,6 @@ import AdditionalFeeDetail from "../../ModalContent/AdditionalFees/AdditionalFee
 import BulkDeleteAdditionalFee from "../../ModalContent/AdditionalFees/BulkDeleteAdditionalFee";
 import DeleteAdditionalFees from "../../ModalContent/AdditionalFees/DeleteAdditionalFees";
 import { additionalFeeColDefs } from "../../utils/table/colDefs/finance/additionalFeeColDefs";
-import TableToolbar from "../../components/TableFilters/TableToolbar";
-import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
-import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function AdditionalFees() {
   const { data: additionalFee, isLoading, error } = useGetAdditionalFees();
   const tableRef = useRef();
@@ -100,11 +100,10 @@ function AdditionalFees() {
                       anchorRef={tableWrapperRef}
                       rowCount={rowCount}
                       label={`${
-                        rowCount >= 1
-                          ? "Additional Fee Selected"
-                          : rowCount >= 2
-                            ? "Additional Fees Selected"
-                            : null
+                        rowCount > 1
+                          ? "Additional Fees Selected"
+                          :  "Additional Fee Selected"
+                        
                       }`}
                       resetAll={handleResetSelections}
                       dropDownItems={

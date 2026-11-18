@@ -1,10 +1,11 @@
-import { useBulkDeleteStudent } from "../../hooks/student/useBulkDeleteStudent";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useFormError } from "../../hooks/form/useFormError";
-function BulkDeleteStudent({ handleClose, resetAll, bulkData }) {
-  const formattedData = bulkData.map((items) => ({ student_id: items.id }));
+import { useBulkDeleteStudent } from "../../hooks/student/useBulkDeleteStudent";
+function BulkDeleteStudent({ handleClose, resetAll, rowData }) {
+  const { selectedStudents } = rowData;
+  const formattedData = selectedStudents.map((items) => ({ student_id: items.id }));
   const { mutate: bulkDeleteStudent, isPending } = useBulkDeleteStudent(
     handleClose,
     resetAll,

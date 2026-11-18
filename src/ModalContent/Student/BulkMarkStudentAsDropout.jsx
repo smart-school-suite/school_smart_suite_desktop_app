@@ -1,10 +1,11 @@
-import { useBulkMarkStudentAsDropout } from "../../hooks/student/useBulkMarkStudentAsDropout";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { CircleX } from "lucide-react";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useFormError } from "../../hooks/form/useFormError";
-function BulkMarkStudentAsDropout({ resetAll, handleClose, bulkData }) {
-  const formattedData = bulkData.map((items) => ({ student_id: items.id }));
+import { useBulkMarkStudentAsDropout } from "../../hooks/student/useBulkMarkStudentAsDropout";
+function BulkMarkStudentAsDropout({ resetAll, handleClose, rowData }) {
+  const { selectedStudents } = rowData;
+  const formattedData = selectedStudents.map((items) => ({ student_id: items.id }));
   const { mutate: bulkMarkStudentAsDropout, isPending } =
     useBulkMarkStudentAsDropout(resetAll, handleClose);
   const { formError, errorBannerRef, handleServerError, clearFormError } =
