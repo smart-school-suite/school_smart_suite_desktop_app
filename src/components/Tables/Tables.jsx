@@ -23,9 +23,12 @@ const Table = forwardRef((props, ref) => {
     [],
   );
 
-  // Define themes for light and dark
+  // Define themes for light and dark. The header is shorter than the
+  // theme's default (about 48px) so it doesn't tower over the rows.
+  const HEADER_HEIGHT = 36;
   const lightTheme = themeQuartz.withParams({
     browserColorScheme: "light",
+    headerHeight: HEADER_HEIGHT,
     headerFontSize: "0.75rem",
     fontFamily: { googleFont: "Poppins, sans-serif" },
     foregroundColor: "#333",
@@ -33,6 +36,7 @@ const Table = forwardRef((props, ref) => {
 
   const darkTheme = themeQuartz.withParams({
     browserColorScheme: "dark",
+    headerHeight: HEADER_HEIGHT,
     headerFontSize: "0.75rem",
     fontFamily: { googleFont: "Poppins, sans-serif" },
     backgroundColor: "#111",
