@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import InputMask from "react-input-mask";
 import { useSelector } from "react-redux";
+import { caretAfterDigits, digitsBefore, formatPhone, normalizePhone, splitPhone } from "../../utils/phone/phoneMask";
 
 const normalizeAcademicYear = (val) => (val && /\d/.test(val) ? val : "");
 
@@ -160,17 +161,22 @@ function AcademicYearInputComponent(
 export const AcademicYearInput = forwardRef(AcademicYearInputComponent);
 
 
+/**
+ * A Cameroon phone number: shown as 677-123-456, reported to onChange as the
+ * nine national digits (677123456). Values loaded with a country code
+ * (+237 677 123 456) are shown without it, the caret stays where the user
+ * is editing, and Backspace / Delete step over the hyphens.
+ */
 function PhoneNumberInputComponent(
-  { onChange, value, onValidationChange, validationSchema, optional = false },
+  { onChange, value, onValidationChange, validationSchema, optional = false, placeholder = "6XX-XXX-XXX" },
   ref,
 ) {
-  const [phoneNumber, setPhoneNumber] = useState(value || "");
-  const [error, setError] = useState("");
-  const [isTouched, setIsTouched] = useState(false);
   const darkMode = useSelector((state) => state.theme.darkMode);
-  useEffect(() => {
-    setPhoneNumber(value || "");
-  }, [value]);
+  const inputRef = useRef(null);
+  const [digits, setDigits] = useState(() => normalizePhone(value));
+  const [error, setError] = useState("");
+  const [isTouched, setIsTouched] = useState(() => Boolean(normalizePhone(value)));
+  const formatted = formatPhone(digits);
 
   const validatePhoneNumber = async (phone) => {
     if (optional && !phone) {
@@ -178,12 +184,11 @@ function PhoneNumberInputComponent(
       onValidationChange?.(true);
       return true;
     }
-
     if (!validationSchema) {
+      setError("");
       onValidationChange?.(true);
       return true;
     }
-
     try {
       await validationSchema.validate(phone);
       setError("");
@@ -196,63 +201,77 @@ function PhoneNumberInputComponent(
     }
   };
 
-  useImperativeHandle(ref, () => ({
-    triggerValidation: async () => {
-      const rawValue = phoneNumber.replace(/\D/g, "");
-      if (!rawValue) {
+  // Follow the value from the parent (e.g. a number loaded into an edit form).
+  // The parent usually echoes back the digits we reported, which changes nothing.
+  useEffect(() => {
+    const next = normalizePhone(value);
+    if (next !== digits) {
+      setDigits(next);
+      if (next) {
         setIsTouched(true);
-        return validatePhoneNumber(rawValue);
+        validatePhoneNumber(next);
       }
-      return await validatePhoneNumber(rawValue);
-    },
-  }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  // Validate a pre-filled number once, so edit forms know it is valid.
+  useEffect(() => {
+    if (digits) validatePhoneNumber(digits);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keep the caret where the user was editing. React re-renders the formatted
+  // text (or restores it when nothing changed, e.g. a letter or a tenth digit
+  // was typed) before the next frame, so the caret is set then.
+  const update = (nextDigits, caretDigits) => {
+    const position = caretAfterDigits(formatPhone(nextDigits), Math.min(caretDigits, nextDigits.length));
+    requestAnimationFrame(() => inputRef.current?.setSelectionRange(position, position));
+    setDigits(nextDigits);
+    if (nextDigits !== digits) onChange?.(nextDigits);
+    if (isTouched) validatePhoneNumber(nextDigits);
+  };
 
   const handleInputChange = (e) => {
-    let rawValue = e.target.value.replace(/\D/g, "");
-    if (rawValue.length > 9) {
-      rawValue = rawValue.slice(0, 9);
+    const text = e.target.value;
+    const caret = e.target.selectionStart ?? text.length;
+    const { digits: next, stripped } = splitPhone(text);
+    // A stripped country code moves every digit that many places to the left.
+    const before = digitsBefore(text, caret) - stripped;
+    update(next, Math.max(0, before));
+  };
+
+  // Backspace just after a hyphen (or Delete just before one) removes the
+  // neighbouring digit; otherwise re-formatting would put the hyphen back.
+  const handleKeyDown = (e) => {
+    const input = e.target;
+    const { selectionStart: start, selectionEnd: end } = input;
+    if (start !== end) return;
+    if (e.key === "Backspace" && start > 0 && formatted[start - 1] === "-") {
+      e.preventDefault();
+      const index = digitsBefore(formatted, start) - 1;
+      if (index >= 0) update(digits.slice(0, index) + digits.slice(index + 1), index);
+    } else if (e.key === "Delete" && formatted[start] === "-") {
+      e.preventDefault();
+      const index = digitsBefore(formatted, start);
+      if (index < digits.length) update(digits.slice(0, index) + digits.slice(index + 1), index);
     }
-
-    const formattedValue = rawValue
-      .replace(/(\d{3})(\d{1,3})?(\d{1,3})?/, (match, p1, p2, p3) => {
-        let parts = [p1];
-        if (p2) parts.push(p2);
-        if (p3) parts.push(p3);
-        return parts.join("-");
-      })
-      .trim();
-
-    setPhoneNumber(formattedValue);
-    onChange?.(rawValue);
-
-    if (isTouched) {
-      validatePhoneNumber(rawValue);
-    }
   };
 
-  const handleFocus = () => {
-    setIsTouched(true);
-  };
+  useImperativeHandle(ref, () => ({
+    triggerValidation: async () => {
+      setIsTouched(true);
+      return validatePhoneNumber(digits);
+    },
+    getValue: () => digits,
+  }));
 
-  const handleBlur = () => {
-    validatePhoneNumber(phoneNumber.replace(/\D/g, ""));
-  };
-
-  const feedbackContent =
-    isTouched && error
-      ? error
-      : isTouched && !error && phoneNumber && "Looks good!";
-
+  const showValid = isTouched && !error && digits;
+  const feedbackContent = isTouched && error ? error : showValid ? "Looks good!" : "";
   const feedbackClasses = [
     "transition-all font-size-sm",
-    isTouched && error
-      ? "invalid-feedback transition-all"
-      : isTouched && !error && phoneNumber
-        ? "valid-feedback transition-all"
-        : null,
-    isTouched && (error || (!error && phoneNumber))
-      ? "opacity-100 transition-all"
-      : "opacity-0 transition-all",
+    isTouched && error ? "invalid-feedback transition-all" : showValid ? "valid-feedback transition-all" : null,
+    isTouched && (error || showValid) ? "opacity-100 transition-all" : "opacity-0 transition-all",
   ]
     .filter(Boolean)
     .join(" ");
@@ -261,24 +280,28 @@ function PhoneNumberInputComponent(
     <div className="input-container">
       <div className="input-group position-relative z-0 has-validation">
         <span
-          className={`${darkMode ? "input-group-text-dark" : null} input-group-text font-size-sm  fw-semibold `}
+          className={`${darkMode ? "input-group-text-dark" : ""} input-group-text font-size-sm fw-semibold gap-1`}
           id="basic-addon1"
         >
           <Icon icon="twemoji:flag-cameroon" width="24" height="24" />
+          <span className="text-iron-500">+237</span>
         </span>
         <input
+          ref={inputRef}
           type="tel"
-          className={`form-control font-size-sm p-2 ${darkMode ? "dark-mode-input" : null}   ${
+          inputMode="numeric"
+          autoComplete="tel-national"
+          className={`form-control font-size-sm p-2 ${darkMode ? "dark-mode-input" : ""} ${
             isTouched && error ? "is-invalid" : ""
-          } ${isTouched && !error && phoneNumber ? "is-valid" : ""}`}
-          placeholder="6XX-XXX-XXX"
-          aria-label="tel"
+          } ${showValid ? "is-valid" : ""}`}
+          placeholder={placeholder}
+          aria-label="Phone number"
           aria-describedby="basic-addon1"
-          maxLength={12}
-          value={phoneNumber}
+          value={formatted}
           onChange={handleInputChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsTouched(true)}
+          onBlur={() => validatePhoneNumber(digits)}
         />
         <div className={`${feedbackClasses} mt-auto`}>{feedbackContent}</div>
       </div>
