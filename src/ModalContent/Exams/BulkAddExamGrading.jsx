@@ -32,9 +32,11 @@ function BulkAddExamGrading({ handleClose, resetAll, bulkData }) {
       gradeConfig,
     };
   };
-  const handleSaveChanges = () => {
-    const prevalidationError = handlePrevalidation();
-    if (!allFieldsValid(prevalidationError)) {
+  const handleSaveChanges = async () => {
+    // Awaited: an unresolved promise passed allFieldsValid, so saving without
+    // a grade scale crashed on gradeConfig.id.
+    const prevalidationError = await handlePrevalidation();
+    if (!allFieldsValid(prevalidationError) || !gradeConfig?.id) {
       setClientError("Invalid Fields", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
       return;
     }
