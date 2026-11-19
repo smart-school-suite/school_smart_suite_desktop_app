@@ -18,6 +18,8 @@ import { useSelector } from "react-redux";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
+import { useDefaultDueDate } from "../../hooks/additionalFee/useDefaultDueDate";
+import { formatScheduleDate } from "../../utils/feeSchedule/scheduleRules";
 function BillStudentAdditionalFees({ handleClose, drawerData }) {
   const { id: studentId } = drawerData;
   const amountRef = useRef();
@@ -32,6 +34,7 @@ function BillStudentAdditionalFees({ handleClose, drawerData }) {
   const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
     useFormError("Failed To Bill Student Additional Fees");
   const { data: category, isFetching } = useGetAdditionalFeeCategory();
+  const defaultDue = useDefaultDueDate();
   const [formData, setFormData] = useState({
     amount: "",
     reason: "",
@@ -42,7 +45,8 @@ function BillStudentAdditionalFees({ handleClose, drawerData }) {
   const [isValid, setIsValid] = useState({
     amount: null,
     reason: null,
-    date: null,
+    // Optional: an empty due date is valid.
+    date: true,
   });
   const [errors, setErrors] = useState({
     additionalfee_category_id: "",
@@ -80,7 +84,8 @@ function BillStudentAdditionalFees({ handleClose, drawerData }) {
     createAdditionalFee({
       ...formData,
       additionalfee_category_id: formData.additionalfee_category_id.id,
-      due_date: formData.date,
+      // Left blank: the API uses today plus the default due period setting.
+      due_date: formData.date || undefined,
     }, { onError: handleServerError });
   };
   return (
@@ -95,11 +100,11 @@ function BillStudentAdditionalFees({ handleClose, drawerData }) {
         <div className="d-flex flex-column gap-3">
           <div>
             <label htmlFor="date" className="font-size-sm">
-             Due Date
+              Due Date <span className="text-iron-400">(optional)</span>
             </label>
             <DateInput
               validationSchema={dateValidationSchema({
-                required: true,
+                required: false,
                 futureOrToday: true,
               })}
               onChange={(value) =>
@@ -111,6 +116,11 @@ function BillStudentAdditionalFees({ handleClose, drawerData }) {
               ref={dateRef}
               value={formData.date}
             />
+            {!formData.date && defaultDue.date && (
+              <span className="font-size-xs text-iron-500">
+                Leave blank to make it due on {formatScheduleDate(defaultDue.date)}, {defaultDue.days} {defaultDue.days === 1 ? "day" : "days"} from today (the default due period in Settings).
+              </span>
+            )}
           </div>
           <div>
             <label htmlFor="amount" className="font-size-sm">

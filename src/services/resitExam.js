@@ -7,7 +7,7 @@ export const getAllResitExams = async () => {
 
 export const bulkAddResitExamGradingConfigs = async (gradingConfigs) => {
   const response = await axiosInstance.post(
-    "resit-exam/bulk-add-grading-configs",
+    "resit-exam/grade-scale/bulk-add",
     gradingConfigs,
   );
   return response.data;
