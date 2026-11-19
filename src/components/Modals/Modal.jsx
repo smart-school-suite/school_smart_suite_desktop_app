@@ -1,6 +1,6 @@
 import { Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { Icon } from "@iconify/react"
+import ErrorBoundary from "../errors/ErrorBoundary";
 
 function CustomModal({
   show,
@@ -34,7 +34,10 @@ function CustomModal({
       {...props}
     >
       <Modal.Body className="custom-modal-body p-0">
-        {children}
+        {/* A dialog that fails to render shows an error instead of crashing the app. */}
+        <ErrorBoundary resetKeys={[show]} onClose={handleClose}>
+          {children}
+        </ErrorBoundary>
       </Modal.Body>
     </Modal>
   );
