@@ -10,6 +10,7 @@ import {
 } from "@floating-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import ErrorBoundary from "../errors/ErrorBoundary";
 
 const slideVariants = {
   right: {
@@ -163,7 +164,9 @@ export const Drawer = ({
                   </div>
                 )}
 
-                {children}
+                <ErrorBoundary resetKeys={[isOpen]} onClose={onClose}>
+                  {children}
+                </ErrorBoundary>
               </motion.div>
             </FloatingFocusManager>
           </FloatingOverlay>

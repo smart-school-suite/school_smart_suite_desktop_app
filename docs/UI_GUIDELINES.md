@@ -17,6 +17,9 @@ small variation; add a prop to the shared component rather than copying it.
 | Loading placeholder | `components/SkeletonPageLoader/RectangularSkeleton` |
 | Drawer | `components/drawer/DrawerTrigger` |
 | Form errors | `components/errors/FormErrorBanner` + `hooks/form/useFormError` |
+| A request that failed to load in a dialog or drawer (retry + close) | `components/errors/QueryErrorState` |
+| Keep a rendering error inside one area (already around every page, `CustomModal` and `Drawer`) | `components/errors/ErrorBoundary` |
+| Enter CA, exam or resit scores (all states, inline validation) | `components/Evaluation/ScoreEntryDialog` + `hooks/evaluation/useScoreEntry` |
 | Tooltip (hover hint only) | `components/Tooltips/Tooltip` |
 | Click-to-open list / small panel | `components/Popover/Popover` |
 | Dialog | `ModalButton` (`components/DataTableComponents/ActionComponent`) + content in `src/ModalContent/` |

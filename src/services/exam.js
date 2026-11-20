@@ -35,6 +35,13 @@ export const getExamDetails = async (examId) => {
   return response.data;
 };
 
+// The school semesters an exam can be created for, with their exam types,
+// date limits and the recommended semester and type.
+export const getExamCreationOptions = async () => {
+  const response = await axiosInstance.get("exam/creation-options");
+  return response.data;
+};
+
 export const getExamUpdateRules = async (examId) => {
   const response = await axiosInstance.get(`exam/${examId}/update-rules`);
   return response.data;

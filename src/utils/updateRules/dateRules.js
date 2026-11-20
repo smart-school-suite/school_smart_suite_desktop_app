@@ -44,7 +44,7 @@ export function boundsFor(fieldName, field, { start, end, replace, sameDay = fal
 
 /** A message when the value breaks the range, else null. */
 export function dateError(label, value, bounds) {
-  if (!value) return `Pick a ${label}.`;
+  if (!value) return `Pick ${/^[aeiou]/i.test(label) ? "an" : "a"} ${label}.`;
   // DateInput is masked, so partly typed dates arrive as e.g. "2027-0_-__".
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return `Enter the full ${label} (YYYY-MM-DD).`;
   if (bounds.min && bounds.max && bounds.min.date > bounds.max.date)

@@ -16,9 +16,10 @@ const initialState = {
     selectedFile: null,
     mapping: {},
   },
+  // An exam is created for a school semester (its academic year follows).
   createExam: {
+    schoolSemester: null,
     examType: null,
-    academicYear: null,
   },
   gradeScale: {
     selectedGradeScale: {},
