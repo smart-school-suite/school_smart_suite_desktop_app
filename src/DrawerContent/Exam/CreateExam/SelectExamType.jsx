@@ -1,13 +1,15 @@
 import { motion } from "framer-motion";
-import { BookOpenCheck, CalendarRange, CircleCheck, Dot, Lock, Sparkles, X } from "lucide-react";
+import { ArrowRight, BookOpenCheck, CalendarRange, CircleCheck, Dot, Lock, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
 import StatusPill from "../../../components/Election/StatusPill";
 import EmptyState from "../../../components/errors/EmptyState";
 import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import { resetCreateExamState, setCreateExamValue } from "../../../Slices/exam/examSlice";
 import { formatScheduleDate } from "../../../utils/feeSchedule/scheduleRules";
+import { IssueNote } from "./SelectSchoolSemester";
 
 const TYPE_LABEL = { ca: "Continuous Assessment", exam: "Semester Exam" };
 
@@ -39,15 +41,16 @@ export function SelectedSemester({ semester, currentStep, fullStep }) {
   );
 }
 
-function ExamTypeCard({ type, selected, onSelect }) {
+function ExamTypeCard({ type, selected, onSelect, onAction, onPickCa }) {
   const disabled = !type.available;
   const select = () => !disabled && onSelect(type);
   return (
     <motion.div
-      role="button"
-      tabIndex={disabled ? -1 : 0}
-      aria-pressed={selected}
-      aria-disabled={disabled}
+      // An unavailable card is not a control: it holds its own action button.
+      role={disabled ? undefined : "button"}
+      tabIndex={disabled ? undefined : 0}
+      aria-pressed={disabled ? undefined : selected}
+      data-unavailable={disabled || undefined}
       whileHover={disabled ? undefined : { scale: 1.01 }}
       whileTap={disabled ? undefined : { scale: 0.98 }}
       onClick={select}
@@ -96,9 +99,22 @@ function ExamTypeCard({ type, selected, onSelect }) {
           <Dot size={12} />
           Out of {type.exam.max_score}
         </span>
-      ) : disabled && type.reasons?.[0] ? (
-        <span className="font-size-xs text-iron-500">{type.reasons[0]}</span>
-      ) : type.type === "exam" && type.ca_max_score != null ? (
+      ) : null}
+      {disabled && !type.created && (
+        <>
+          <IssueNote issue={type.issue} onAction={onAction} />
+          {type.issue?.action === "create_ca" && type.issue?.data?.exam_type_id && (
+            <button
+              type="button"
+              className="border-none bg-none p-0 d-inline-flex align-items-center gap-1 fw-semibold text-primary-600 font-size-xs align-self-start"
+              onClick={() => onPickCa(type.issue.data.exam_type_id)}
+            >
+              Create the CA instead <ArrowRight size={12} />
+            </button>
+          )}
+        </>
+      )}
+      {!disabled && type.type === "exam" && type.ca_max_score != null ? (
         <span className="font-size-xs text-iron-500">Its max score adds the CA's {type.ca_max_score} points.</span>
       ) : null}
     </motion.div>
@@ -107,6 +123,7 @@ function ExamTypeCard({ type, selected, onSelect }) {
 
 function SelectExamType({ handleClose, nextStep, previousStep, fullStep, currentStep }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const moduleState = useSelector((state) => state.exam.createExam);
   const semester = moduleState?.schoolSemester;
   const types = Array.isArray(semester?.exam_types) ? semester.exam_types : [];
@@ -116,6 +133,16 @@ function SelectExamType({ handleClose, nextStep, previousStep, fullStep, current
   const handleSelect = (type) => {
     setStepError(null);
     dispatch(setCreateExamValue({ value: type, field: "examType" }));
+  };
+
+  const goTo = (path) => {
+    dispatch(resetCreateExamState());
+    handleClose();
+    navigate(path);
+  };
+  const pickCa = (examTypeId) => {
+    const ca = types.find((type) => type.id === examTypeId && type.available);
+    if (ca) handleSelect(ca);
   };
 
   const handleNext = () => {
@@ -163,7 +190,14 @@ function SelectExamType({ handleClose, nextStep, previousStep, fullStep, current
             />
           ) : (
             types.map((type) => (
-              <ExamTypeCard key={type.id} type={type} selected={type.id === selectedId} onSelect={handleSelect} />
+              <ExamTypeCard
+                key={type.id}
+                type={type}
+                selected={type.id === selectedId}
+                onSelect={handleSelect}
+                onAction={goTo}
+                onPickCa={pickCa}
+              />
             ))
           )}
         </div>

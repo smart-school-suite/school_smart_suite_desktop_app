@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CalendarPlus, CalendarRange, CircleCheck, CircleDashed, Dot, Info, SearchX, Sparkles, X } from "lucide-react";
+import { ArrowRight, CalendarPlus, CalendarRange, CircleAlert, CircleCheck, CircleDashed, Dot, ScanSearch, SearchX, Sparkles, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,14 @@ import RectangleSkeleton from "../../../components/SkeletonPageLoader/Rectangula
 import { useDebounce } from "../../../hooks/common/useDebounce";
 import { useGetExamCreationOptions } from "../../../hooks/exam/useGetExamCreationOptions";
 import { resetCreateExamState, setCreateExamValue } from "../../../Slices/exam/examSlice";
-import { filterSemesters, SEMESTER_STATUS, suggestedExamType, USAGE_LABEL } from "../../../utils/exam/examCreation";
+import {
+  describeOptionsError,
+  filterSemesters,
+  ISSUE_ACTIONS,
+  SEMESTER_STATUS,
+  suggestedExamType,
+  USAGE_LABEL,
+} from "../../../utils/exam/examCreation";
 import { formatScheduleDate } from "../../../utils/feeSchedule/scheduleRules";
 
 const GROUPS = [
@@ -42,7 +49,43 @@ function ExamTypeChip({ type }) {
   );
 }
 
-function SemesterCard({ semester, selected, onSelect }) {
+/** A button for an issue's action code, or nothing when it has none. */
+export function IssueAction({ action, onAction }) {
+  const target = ISSUE_ACTIONS[action];
+  if (!target) return null;
+  return (
+    <button
+      type="button"
+      className="border-none bg-none p-0 d-inline-flex align-items-center gap-1 fw-semibold text-primary-600 font-size-xs"
+      onClick={(event) => {
+        event.stopPropagation();
+        onAction(target.path);
+      }}
+    >
+      {target.label} <ArrowRight size={12} />
+    </button>
+  );
+}
+
+/** Why something can't be used: what was found, then what to do next. */
+export function IssueNote({ issue, onAction }) {
+  if (!issue) return null;
+  return (
+    <div className="bg-old-lace-50 rounded-3 p-2 d-flex flex-row gap-2 font-size-xs">
+      <CircleAlert size={14} className="flex-shrink-0 text-old-lace-700 mt-1" />
+      <div className="d-flex flex-column gap-1">
+        <span className="fw-semibold text-old-lace-700">{issue.title}</span>
+        <span className="text-iron-700">{issue.message}</span>
+        <span className="text-iron-700">
+          <span className="fw-medium">Next step:</span> {issue.next_step}
+        </span>
+        <IssueAction action={issue.action} onAction={onAction} />
+      </div>
+    </div>
+  );
+}
+
+function SemesterCard({ semester, selected, onSelect, onAction }) {
   const status = SEMESTER_STATUS[semester.status] ?? SEMESTER_STATUS.upcoming;
   const year = semester.academic_year ?? {};
   const disabled = !semester.available;
@@ -50,10 +93,11 @@ function SemesterCard({ semester, selected, onSelect }) {
 
   return (
     <motion.div
-      role="button"
-      tabIndex={disabled ? -1 : 0}
-      aria-pressed={selected}
-      aria-disabled={disabled}
+      // An unavailable card is not a control: it holds its own action button.
+      role={disabled ? undefined : "button"}
+      tabIndex={disabled ? undefined : 0}
+      aria-pressed={disabled ? undefined : selected}
+      data-unavailable={disabled || undefined}
       whileHover={disabled ? undefined : { scale: 1.01 }}
       whileTap={disabled ? undefined : { scale: 0.98 }}
       onClick={select}
@@ -63,7 +107,7 @@ function SemesterCard({ semester, selected, onSelect }) {
           select();
         }
       }}
-      className={`card p-2 d-flex flex-column gap-2 ${disabled ? "opacity-50" : "pointer-cursor"} ${
+      className={`card p-2 d-flex flex-column gap-2 ${disabled ? "" : "pointer-cursor"} ${
         selected ? "shadow-fern-100-lg border-fern-300" : "border-none border shadow-sm"
       }`}
       style={{ borderRadius: "0.85rem" }}
@@ -116,32 +160,29 @@ function SemesterCard({ semester, selected, onSelect }) {
       )}
       {semester.recommended && semester.recommendation ? (
         <span className="font-size-xs text-primary-600">{semester.recommendation}</span>
-      ) : disabled && semester.reasons?.[0] ? (
-        <span className="font-size-xs text-iron-500">{semester.reasons[0]}</span>
+      ) : disabled ? (
+        <IssueNote issue={semester.issue} onAction={onAction} />
       ) : null}
     </motion.div>
   );
 }
 
-/** Still-running academic years that can't take exams until their semesters exist. */
-function YearsWithoutSemesters({ years, onCreateSemesters }) {
-  if (!years?.length) return null;
-  const names = years
-    .slice(0, 3)
-    .map((year) => [year.specialty, year.level, year.name].filter(Boolean).join(" · "))
-    .join("; ");
+/** What the options found across the school, with the next step for each problem. */
+function WhatWeFound({ summary, onAction }) {
+  if (!summary?.headline) return null;
+  const findings = Array.isArray(summary.findings) ? summary.findings : [];
   return (
-    <div className="bg-primary-50 text-primary-600 rounded-3 p-2 d-flex flex-row gap-2 font-size-xs">
-      <Info size={14} className="flex-shrink-0 mt-1" />
-      <div className="d-flex flex-column gap-1">
-        <span>
-          {years.length === 1 ? "1 academic year has" : `${years.length} academic years have`} no semesters yet ({names}
-          {years.length > 3 ? `, and ${years.length - 3} more` : ""}). Exams are created for a semester, so create
-          their semesters first.
-        </span>
-        <button type="button" className="border-none bg-none p-0 text-start fw-semibold text-primary-600" onClick={onCreateSemesters}>
-          Go to semesters
-        </button>
+    <div className="bg-primary-50 rounded-3 p-2 d-flex flex-row gap-2 font-size-xs">
+      <ScanSearch size={15} className="flex-shrink-0 text-primary-600 mt-1" />
+      <div className="d-flex flex-column gap-2" style={{ minWidth: 0 }}>
+        <span className="fw-semibold text-primary-600 font-size-sm">{summary.headline}</span>
+        {findings.map((finding) => (
+          <div key={finding.code} className="d-flex flex-column gap-1">
+            <span className="text-iron-700">{finding.text}</span>
+            <span className="text-iron-500">{finding.next_step}</span>
+            <IssueAction action={finding.action} onAction={onAction} />
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -157,7 +198,7 @@ function SelectSchoolSemester({ handleClose, nextStep, fullStep, currentStep }) 
   const [stepError, setStepError] = useState(null);
 
   const semesters = Array.isArray(data?.data?.semesters) ? data.data.semesters : [];
-  const yearsWithout = data?.data?.academic_years_without_semesters ?? [];
+  const summary = data?.data?.summary;
   const visible = useMemo(() => filterSemesters(semesters, debouncedQuery), [semesters, debouncedQuery]);
   const selectedId = moduleState?.schoolSemester?.id;
 
@@ -165,10 +206,11 @@ function SelectSchoolSemester({ handleClose, nextStep, fullStep, currentStep }) 
     dispatch(resetCreateExamState());
     handleClose();
   };
-  const goToSemesters = () => {
+  const goTo = (path) => {
     close();
-    navigate("/semesters");
+    navigate(path);
   };
+  const goToSemesters = () => goTo("/semesters");
 
   const handleSelect = (semester) => {
     setStepError(null);
@@ -196,10 +238,13 @@ function SelectSchoolSemester({ handleClose, nextStep, fullStep, currentStep }) 
       return [...Array(4)].map((_, index) => <RectangleSkeleton key={index} height="9rem" width="100%" />);
     }
     if (error) {
+      const known = describeOptionsError(error);
       return (
         <QueryErrorState
           error={error}
           fallbackTitle="Couldn't load the semesters"
+          title={known?.title}
+          description={known?.description}
           onRetry={refetch}
           isRetrying={isFetching}
           height="60dvh"
@@ -211,10 +256,20 @@ function SelectSchoolSemester({ handleClose, nextStep, fullStep, currentStep }) 
         <EmptyState
           mascot="sad"
           title="No school semesters yet"
-          description="Exams are created for a school semester, which also sets the academic year. Create the semesters of your academic years first."
+          description={
+            summary?.findings?.[0]
+              ? `${summary.findings[0].text} ${summary.findings[0].next_step}`
+              : "Exams are created for a school semester, which also sets the academic year. Create the semesters of your academic years first."
+          }
           height="60dvh"
           mascotHeight="7rem"
-          actions={<EmptyStateButton icon={CalendarPlus} onClick={goToSemesters}>Create semesters</EmptyStateButton>}
+          actions={
+            summary?.findings?.[0]?.action === "create_academic_year" ? (
+              <EmptyStateButton icon={CalendarPlus} onClick={() => goTo("/academic-year")}>Create an academic year</EmptyStateButton>
+            ) : (
+              <EmptyStateButton icon={CalendarPlus} onClick={goToSemesters}>Create semesters</EmptyStateButton>
+            )
+          }
         />
       );
     }
@@ -242,7 +297,7 @@ function SelectSchoolSemester({ handleClose, nextStep, fullStep, currentStep }) 
             <span className="font-size-xs text-iron-400">{group.hint}</span>
           </div>
           {items.map((semester) => (
-            <SemesterCard key={semester.id} semester={semester} selected={semester.id === selectedId} onSelect={handleSelect} />
+            <SemesterCard key={semester.id} semester={semester} selected={semester.id === selectedId} onSelect={handleSelect} onAction={goTo} />
           ))}
         </div>
       );
@@ -274,7 +329,7 @@ function SelectSchoolSemester({ handleClose, nextStep, fullStep, currentStep }) 
             </div>
             <span className="text-end fw-medium text-capitalize text-nowrap">{`step ${currentStep} of ${fullStep}`}</span>
           </div>
-          <YearsWithoutSemesters years={yearsWithout} onCreateSemesters={goToSemesters} />
+          {!isLoading && !error && semesters.length > 0 && <WhatWeFound summary={summary} onAction={goTo} />}
           <div className="d-flex flex-row align-items-center gap-2">
             <div className="flex-grow-1">
               <SearchInput

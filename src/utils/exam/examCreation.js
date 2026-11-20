@@ -44,3 +44,30 @@ export const suggestedExamType = (semester) => {
   const types = Array.isArray(semester?.exam_types) ? semester.exam_types : [];
   return types.find((type) => type.recommended) ?? types.find((type) => type.available) ?? null;
 };
+
+/**
+ * Buttons for the API's issue and finding `action` codes. `path` opens a
+ * page (the drawer closes first); create_ca is handled in the exam type step.
+ */
+export const ISSUE_ACTIONS = {
+  add_students: { label: "Add students", path: "/students" },
+  manage_semesters: { label: "Go to semesters", path: "/semesters" },
+  create_academic_year: { label: "Go to academic years", path: "/academic-year" },
+  view_exams: { label: "View exams", path: "/exam" },
+};
+
+/**
+ * A failed options request in plain words. A 404 means the API doesn't
+ * have the endpoint yet (it is older than this app), not that something
+ * of the school's is missing.
+ */
+export const describeOptionsError = (error) => {
+  if (error?.response?.status === 404) {
+    return {
+      title: "Creating exams by semester isn't available yet",
+      description:
+        "The server is running an older version that can't list semesters for new exams. Ask your administrator to update it, then try again.",
+    };
+  }
+  return null;
+};
