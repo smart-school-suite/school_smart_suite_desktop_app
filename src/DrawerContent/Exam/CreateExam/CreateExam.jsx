@@ -1,140 +1,127 @@
-import { format, parseISO } from "date-fns";
-import { AnimatePresence } from "framer-motion";
-import {
-  ArrowRight,
-  BookOpenCheck,
-  Calculator,
-  Calendar,
-  Dot,
-  FileText,
-  Target,
-  X,
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { BookOpenCheck, Calculator, Dot, X } from "lucide-react";
+import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  dateRangeValidationSchema,
-  numberSchema,
-} from "../../../ComponentConfig/YupValidationSchema";
-import { resetCreateExamState } from "../../../Slices/exam/examSlice";
+import { numberSchema } from "../../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import {
-  DateRangeInput,
-  NumberInput,
-} from "../../../components/FormComponents/InputComponents";
-import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
-import { SingleSpinner } from "../../../components/Spinners/Spinners";
-import { NotFoundError } from "../../../components/errors/Error";
 import FormErrorBanner from "../../../components/errors/FormErrorBanner";
+import { NumberInput } from "../../../components/FormComponents/InputComponents";
+import { SingleSpinner } from "../../../components/Spinners/Spinners";
+import RuleDateField from "../../../components/UpdateRules/RuleDateField";
 import { useCreateExam } from "../../../hooks/exam/useCreateExam";
-import { useGetRelatedCaExam } from "../../../hooks/exam/useGetRelatedCaExam";
-import { allFieldsValid, parseServerError } from "../../../utils/functions";
-import { getDayWindow } from "../../../utils/time/date";
+import { useFormError } from "../../../hooks/form/useFormError";
+import { resetCreateExamState } from "../../../Slices/exam/examSlice";
+import { boundsFor, dateError } from "../../../utils/updateRules/dateRules";
+import { SelectedSemester } from "./SelectExamType";
 
-const formatDate = (date) =>
-  date ? format(parseISO(date), "MMM d, yyyy") : "N/A";
-function CreateExam({
-  handleClose,
-  nextStep,
-  previousStep,
-  fullStep,
-  currentStep,
-}) {
+const TYPE_LABEL = { ca: "Continuous Assessment", exam: "Semester Exam" };
+
+const scoreSchema = numberSchema({
+  min: 1,
+  max: 500,
+  required: true,
+  integerOnly: false,
+  messages: {
+    required: "Exam Score Required",
+    min: "Exam Mark Must Be Atleast 1",
+    max: "Exam Mark Must Not Exceed 500",
+  },
+});
+
+const round = (value) => Math.round(Number(value) * 100) / 100;
+
+/** How a semester exam's max score adds up: the CA's plus the exam's own part. */
+function ScoreCalculation({ caMax, examMax }) {
+  const total = round(Number(caMax) + Number(examMax));
+  return (
+    <div className="d-flex flex-column gap-2">
+      <div className="d-flex flex-row align-items-center gap-2 fw-medium">
+        <Calculator size={16} />
+        <span>Exam score calculation</span>
+      </div>
+      {[
+        ["CA maximum", caMax, "primary-background-200"],
+        ["Exam maximum", examMax, "primary-background-400"],
+      ].map(([label, value, tone]) => (
+        <div key={label} className="d-flex flex-row justify-content-between">
+          <div className="d-flex flex-row align-items-center gap-2">
+            <span className={`rounded-circle ${tone}`} style={{ width: "0.65rem", height: "0.65rem" }} />
+            <span>{label}</span>
+          </div>
+          <span className="fw-semibold">{value}</span>
+        </div>
+      ))}
+      <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+      <div className="d-flex flex-row align-items-center justify-content-between">
+        <span className="fw-semibold">Final exam score</span>
+        <span className="font-size-lg fw-bold">
+          {total.toFixed(2)} <small className="text-iron-400 font-size-sm fw-normal">pts</small>
+        </span>
+      </div>
+      <span className="font-size-xs text-iron-500">
+        When results are entered, each student's CA and exam scores are added together, out of {total.toFixed(2)}.
+      </span>
+    </div>
+  );
+}
+
+function CreateExam({ handleClose, previousStep, fullStep, currentStep }) {
   const dispatch = useDispatch();
   const moduleState = useSelector((state) => state.exam.createExam);
-  const dateRangeRef = useRef();
-  const maxScoreRef = useRef();
-  const errorBannerRef = useRef(null);
-  const { mutate: createExam, isPending } = useCreateExam(handleClose);
-  const [clientError, setClientError] = useState(null);
-  const [serverError, setServerError] = useState(null);
+  const semester = moduleState?.schoolSemester;
+  const examType = moduleState?.examType;
+  const isSemesterExam = examType?.type === "exam";
+  const fields = semester?.fields ?? {};
 
-  const isCaExam = moduleState?.examType?.type == "ca";
-  const relatedCaQuery = useGetRelatedCaExam(
-    moduleState?.academicYear?.id,
-    moduleState?.examType?.id,
-    { enabled: !isCaExam },
+  const [form, setForm] = useState({ start_date: "", end_date: "", max_score: "" });
+  const [scoreValid, setScoreValid] = useState(false);
+  const { mutate: createExam, isPending } = useCreateExam(handleClose);
+  const { formError, errorBannerRef, handleServerError, setClientError, clearFormError } =
+    useFormError("Failed To Create Exam");
+
+  const startBounds = useMemo(
+    () => boundsFor("start_date", fields.start_date, { start: form.start_date, end: form.end_date, sameDay: true }),
+    [fields.start_date, form.start_date, form.end_date],
+  );
+  const endBounds = useMemo(
+    () => boundsFor("end_date", fields.end_date, { start: form.start_date, end: form.end_date, sameDay: true }),
+    [fields.end_date, form.start_date, form.end_date],
   );
 
-  useEffect(() => {
-    if ((clientError || serverError) && errorBannerRef.current) {
-      errorBannerRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  }, [clientError, serverError]);
+  const set = (field, value) => {
+    clearFormError();
+    setForm((previous) => ({ ...previous, [field]: value }));
+  };
 
-  const clearBannerErrors = () => {
-    setClientError(null);
-    setServerError(null);
+  const close = () => {
+    dispatch(resetCreateExamState());
+    handleClose();
   };
-  const [formData, setFormData] = useState({
-    start_date: "",
-    end_date: "",
-    max_score: "",
-  });
-  const [isInvalid, setIsInvalid] = useState({
-    start_date: "",
-    end_date: "",
-    max_score: "",
-  });
-  const handlePrevalidation = async () => {
-    const startDate = await dateRangeRef.current.preValidateStart();
-    const endDate = await dateRangeRef.current.preValidateEnd();
-    const maxScore = await maxScoreRef.current.triggerValidation();
-    return {
-      startDate,
-      endDate,
-      maxScore,
-    };
-  };
-  const handleStateChange = (field, value, stateFn) => {
-    if (stateFn === setFormData) clearBannerErrors();
-    stateFn((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleSubmit = async () => {
-    clearBannerErrors();
 
-    if (!moduleState?.examType?.id || !moduleState?.academicYear?.id) {
-      setClientError({
-        title: "Missing selection.",
-        messages: [
-          "Please go back and select both an exam type and an academic year.",
-        ],
-      });
+  const handleSubmit = () => {
+    clearFormError();
+    if (!semester?.id || !examType?.id) {
+      setClientError("Missing selection.", ["Go back and pick a semester and an exam type."]);
       return;
     }
-
-    if (!isCaExam && !relatedCaQuery.data?.data) {
-      setClientError({
-        title: "No related Continuous Assessment (CA) found.",
-        messages: [
-          "Create the CA exam for this semester and academic year before creating the semester exam.",
-        ],
-      });
-      return;
-    }
-
-    const prevalidation = await handlePrevalidation();
-    if (!allFieldsValid(prevalidation)) {
-      setClientError({
-        title: "Please correct the highlighted fields before creating the exam.",
-        messages: [],
-      });
+    const problems = [
+      dateError("start date", form.start_date, startBounds),
+      dateError("end date", form.end_date, endBounds),
+      !scoreValid ? "Enter a max score between 1 and 500." : null,
+    ].filter(Boolean);
+    if (problems.length > 0) {
+      setClientError("Please correct these before creating the exam.", problems);
       return;
     }
 
     createExam(
       {
-        ...formData,
-        school_year_id: moduleState.academicYear.id,
-        exam_type_id: moduleState.examType.id,
+        school_semester_id: semester.id,
+        exam_type_id: examType.id,
+        start_date: form.start_date,
+        end_date: form.end_date,
+        max_score: form.max_score,
       },
-      {
-        onError: (error) =>
-          setServerError(parseServerError(error, "Failed To Create Exam")),
-      },
+      { onError: handleServerError },
     );
   };
 
@@ -145,76 +132,67 @@ function CreateExam({
         <button
           className="bg-none border-none border rounded-circle"
           aria-label="Close drawer"
-          onClick={() => {
-            handleClose();
-            dispatch(resetCreateExamState());
-          }}
-          style={{
-            width: "2rem",
-            height: "2rem",
-            display: "grid",
-            placeItems: "center",
-            cursor: "pointer",
-          }}
+          onClick={close}
+          disabled={isPending}
+          style={{ width: "2rem", height: "2rem", display: "grid", placeItems: "center", cursor: "pointer" }}
         >
           <X size={16} />
         </button>
       </div>
       <div className="drawer-content px-2 font-size-sm pt-2 pb-5">
-        <FormErrorBanner
-          ref={errorBannerRef}
-          error={clientError || serverError}
-          onDismiss={clearBannerErrors}
-        />
-        <div className="d-flex flex-column gap-4">
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <div className="d-flex flex-row align-items-center gap-2">
-              <div
-                className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
-                style={{ height: "2.5rem", width: "2.5rem" }}
-              >
-                <BookOpenCheck size={16} />
-              </div>
-              <div className="d-flex flex-column">
-                <small className="text-muted">Selected Exam Type</small>
-
-                <div className="d-flex flex-row align-items-center gap-1 text-capitalize">
-                  <span className="fw-semibold">
-                    {moduleState?.examType?.exam_name}
-                  </span>
-                  <Dot size={16} />
-                  <span className="fw-semibold">
-                    {moduleState?.examType?.type}
-                  </span>
-                </div>
+        <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} />
+        <div className="d-flex flex-column gap-3">
+          <SelectedSemester semester={semester} currentStep={currentStep} fullStep={fullStep} />
+          <div className="d-flex flex-row align-items-center gap-2">
+            <div
+              className="d-flex align-items-center justify-content-center rounded-3 primary-background-50 color-primary flex-shrink-0"
+              style={{ height: "2.5rem", width: "2.5rem" }}
+            >
+              <BookOpenCheck size={16} />
+            </div>
+            <div className="d-flex flex-column">
+              <small className="text-muted">Exam to create</small>
+              <div className="d-flex flex-row align-items-center">
+                <span className="fw-semibold">{examType?.name}</span>
+                <Dot size={14} />
+                <span className="text-iron-500">{TYPE_LABEL[examType?.type] ?? examType?.type}</span>
               </div>
             </div>
-            <span className="text-end fw-medium text-capitalize">
-              {`step ${currentStep} of ${fullStep} completed`}
-            </span>
           </div>
-          {isCaExam ? (
-            <CreateCAExam
-              handleStateChange={handleStateChange}
-              formData={formData}
-              isInvalid={isInvalid}
-              setFormData={setFormData}
-              setIsInvalid={setIsInvalid}
-              dateRangeRef={dateRangeRef}
-              maxScoreRef={maxScoreRef}
-              moduleState={moduleState}
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+
+          <RuleDateField
+            id="exam-create-start"
+            label="Start date"
+            value={form.start_date}
+            onChange={(value) => set("start_date", value)}
+            bounds={startBounds}
+            editable
+          />
+          <RuleDateField
+            id="exam-create-end"
+            label="End date"
+            value={form.end_date}
+            onChange={(value) => set("end_date", value)}
+            bounds={endBounds}
+            editable
+          />
+          <div className="d-flex flex-column gap-1">
+            <label htmlFor="exam-create-score" className="font-size-sm m-0">
+              {isSemesterExam ? "Exam score (without the CA)" : "Max score"}
+            </label>
+            <NumberInput
+              id="exam-create-score"
+              value={form.max_score}
+              onChange={(value) => set("max_score", value ?? "")}
+              onValidationChange={(valid) => setScoreValid(valid)}
+              validationSchema={scoreSchema}
+              step="0.01"
+              placeholder={isSemesterExam ? "e.g 70" : "e.g 30"}
             />
-          ) : (
-            <CreateSemesterExam
-              handleStateChange={handleStateChange}
-              formData={formData}
-              isInvalid={isInvalid}
-              setFormData={setFormData}
-              setIsInvalid={setIsInvalid}
-              dateRangeRef={dateRangeRef}
-              maxScoreRef={maxScoreRef}
-              relatedCaQuery={relatedCaQuery}
-            />
+          </div>
+          {isSemesterExam && examType?.ca_max_score != null && Number(form.max_score) > 0 && (
+            <ScoreCalculation caMax={examType.ca_max_score} examMax={round(form.max_score)} />
           )}
         </div>
       </div>
@@ -222,23 +200,14 @@ function CreateExam({
         <div className="d-flex flex-column w-100">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
-            <button
-              type="button"
-              className="border-none bg-none p-2"
-              onClick={() => previousStep()}
-              disabled={isPending}
-            >
-              Back (select School Year)
+            <button type="button" className="border-none bg-none p-2" onClick={previousStep} disabled={isPending}>
+              Back (select exam)
             </button>
             <button
               type="button"
-              className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
+              className="primary-background text-white border-none px-3 py-2 rounded-3"
               onClick={handleSubmit}
-              disabled={
-                isPending ||
-                (!isCaExam &&
-                  (relatedCaQuery.isLoading || !!relatedCaQuery.error))
-              }
+              disabled={isPending}
             >
               {isPending ? <SingleSpinner /> : "Create Exam"}
             </button>
@@ -248,305 +217,5 @@ function CreateExam({
     </>
   );
 }
+
 export default CreateExam;
-
-function CreateCAExam({
-  handleStateChange,
-  setFormData,
-  setIsInvalid,
-  isInvalid,
-  formData,
-  dateRangeRef,
-  maxScoreRef,
-  moduleState,
-}) {
-  return (
-    <>
-      <div>
-        <DateRangeInput
-          validationSchema={dateRangeValidationSchema({
-            futureOnly: true,
-            optional: false,
-          })}
-          onStartDateChange={(value) =>
-            handleStateChange("start_date", value, setFormData)
-          }
-          onEndDateChange={(value) =>
-            handleStateChange("end_date", value, setFormData)
-          }
-          onStartDateValidationChange={(value) =>
-            handleStateChange("start_date", value, setIsInvalid)
-          }
-          onEndDateValidationChange={(value) =>
-            handleStateChange("end_date", value, setIsInvalid)
-          }
-          ref={dateRangeRef}
-          startValue={formData.start_date}
-          endValue={formData.end_date}
-        />
-      </div>
-      <div>
-        <label htmlFor="maxScore" className="font-size-sm">
-          Exam Score
-        </label>
-        <NumberInput
-          onChange={(value) =>
-            handleStateChange("max_score", value, setFormData)
-          }
-          step="0.01"
-          onValidationChange={(value) => {
-            handleStateChange("max_score", value, setIsInvalid);
-          }}
-          validationSchema={numberSchema({
-            min: 1,
-            max: 500,
-            required: true,
-            integerOnly: false,
-            messages: {
-              required: "Exam Score Required",
-              min: "Exam Mark Must Be Atleast 1",
-              max: "Exam Mark Must Not Exceed 500",
-            },
-          })}
-          placeholder={"e.g 100"}
-          ref={maxScoreRef}
-          value={formData.max_score}
-        />
-      </div>
-    </>
-  );
-}
-
-function CreateSemesterExam({
-  handleStateChange,
-  setFormData,
-  setIsInvalid,
-  isInvalid,
-  formData,
-  dateRangeRef,
-  maxScoreRef,
-  relatedCaQuery,
-}) {
-  const { data: relatedCa, isLoading, error } = relatedCaQuery;
-  return isLoading ? (
-    <div className="d-flex flex-column gap-2">
-      <RectangleSkeleton height="20dvh" width="100%" />
-      <div className="d-flex flex-column gap-1">
-        <RectangleSkeleton height="2dvh" width="10%" />
-        <RectangleSkeleton height="10dvh" width="100%" />
-      </div>
-      <div className="d-flex flex-column gap-1">
-        <RectangleSkeleton height="2dvh" width="10%" />
-        <RectangleSkeleton height="10dvh" width="100%" />
-      </div>
-      <div className="d-flex flex-column gap-1">
-        <RectangleSkeleton height="2dvh" width="10%" />
-        <RectangleSkeleton height="10dvh" width="100%" />
-      </div>
-      <div className="d-flex flex-column gap-1">
-        <RectangleSkeleton height="2dvh" width="10%" />
-        <RectangleSkeleton height="10dvh" width="100%" />
-      </div>
-    </div>
-  ) : error ? (
-    <NotFoundError
-      title={error?.response?.data?.errors?.title}
-      description={error?.response?.data?.errors?.description}
-    ></NotFoundError>
-  ) : (
-    <>
-      <div className="d-flex flex-column gap-2">
-        <div className="d-flex flex-column gap-1">
-          <span className="fw-medium ">Related Continuous Assessment (CA)</span>
-          <div className="card p-2 border border-none rounded-4 d-flex flex-column gap-3 shadow-sm">
-            <div className="d-flex flex-row align-items-center gap-2">
-              <div
-                className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3 primary-background-50 color-primary"
-                style={{ height: "2.5rem", width: "2.5rem" }}
-              >
-                <FileText size={16} />
-              </div>
-              <div className="d-flex flex-column">
-                <small className="text-uppercase text-muted">
-                  {relatedCa?.data?.exam_type?.semester} Semester
-                </small>
-                <span className="font-size-sm fw-semibold">
-                  {relatedCa?.data?.exam_type?.exam_name}
-                </span>
-              </div>
-            </div>
-            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
-            <div className="d-flex flex-row gap-4">
-              <div className="d-flex flex-column gap-1">
-                <small className="text-muted">MAX SCORE</small>
-                <div className="d-flex flex-row align-items-baseline gap-2">
-                  <div className="d-flex flex-row align-items-baseline gap-2">
-                    <Target size={12} style={{ color: "#ccc" }} />
-                    <span className="fw-semibold font-size-md">
-                      {relatedCa?.data?.max_score}
-                    </span>
-                  </div>
-                  <small style={{ color: "#ccc" }}>Pts</small>
-                </div>
-              </div>
-              <div className="d-flex flex-column gap-1">
-                <small className="text-muted">WINDOW</small>
-                <span className="fw-semibold font-size-md">
-                  {getDayWindow(
-                    relatedCa?.data?.start_date,
-                    relatedCa?.data?.end_date,
-                  )}
-                </span>
-              </div>
-            </div>
-            <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
-            <div>
-              <div className="d-flex flex-row align-items-center gap-2 fw-medium">
-                <Calendar size={16} style={{ color: "#ccc" }} />
-                <span>{formatDate(relatedCa?.data?.start_date)}</span>
-                <ArrowRight size={16} style={{ color: "#ccc" }} />
-                <span>{formatDate(relatedCa?.data?.end_date)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <DateRangeInput
-          validationSchema={dateRangeValidationSchema({
-            futureOnly: true,
-            optional: false,
-          })}
-          onStartDateChange={(value) =>
-            handleStateChange("start_date", value, setFormData)
-          }
-          onEndDateChange={(value) =>
-            handleStateChange("end_date", value, setFormData)
-          }
-          onStartDateValidationChange={(value) =>
-            handleStateChange("start_date", value, setIsInvalid)
-          }
-          onEndDateValidationChange={(value) =>
-            handleStateChange("end_date", value, setIsInvalid)
-          }
-          ref={dateRangeRef}
-          startValue={formData.start_date}
-          endValue={formData.end_date}
-        />
-        <div>
-          <label htmlFor="maxScore" className="font-size-sm">
-            Exam Score
-          </label>
-          <NumberInput
-            onChange={(value) =>
-              handleStateChange("max_score", value, setFormData)
-            }
-            step="0.01"
-            onValidationChange={(value) => {
-              handleStateChange("max_score", value, setIsInvalid);
-            }}
-            validationSchema={numberSchema({
-              min: 1,
-              max: 500,
-              required: true,
-              integerOnly: false,
-              messages: {
-                required: "Exam Score Required",
-                min: "Exam Mark Must Be Atleast 1",
-                max: "Exam Mark Must Not Exceed 500",
-              },
-            })}
-            placeholder={"e.g 100"}
-            ref={maxScoreRef}
-            value={formData.max_score}
-          />
-        </div>
-        {formData.max_score && (
-          <AnimatePresence>
-            <div className="d-flex flex-column gap-3">
-              <div className="d-flex flex-row align-items-center gap-2 fw-medium">
-                <Calculator size={16} />
-                <span>Exam Score Calculation</span>
-              </div>
-              <div className="d-flex flex-column gap-3">
-                <div className="d-flex flex-row justify-content-between">
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <div
-                      style={{
-                        width: "0.65rem",
-                        height: "0.65rem",
-                        borderRadius: "1rem",
-                      }}
-                      className="primary-background-200"
-                    ></div>
-                    <span>CA Maximum</span>
-                  </div>
-                  <span className="fw-semibold font-size-sm">
-                    {relatedCa?.data?.max_score}
-                  </span>
-                </div>
-                <div className="d-flex flex-row justify-content-between">
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <div
-                      style={{
-                        width: "0.65rem",
-                        height: "0.65rem",
-                        borderRadius: "1rem",
-                      }}
-                      className="primary-background-400"
-                    ></div>
-                    <span>Exam Maximum</span>
-                  </div>
-                  <span className="fw-semibold font-size-sm">
-                    {formData?.max_score}
-                  </span>
-                </div>
-              </div>
-              <HorizontalDashedLine
-                dashed={false}
-                color="#ccc"
-                thickness={0.2}
-              />
-              <div className="d-flex flex-row align-items-center justify-content-between">
-                <span className="fw-semibold">Final Exam Score</span>
-                <div className="d-flex flex-row align-items-baseline gap-1">
-                  <span className="font-size-lg fw-bold">
-                    {parseFloat(
-                      parseFloat(formData?.max_score) +
-                        parseFloat(relatedCa?.data?.max_score),
-                    ).toFixed(2)}
-                  </span>
-                  <small style={{ color: "#ccc" }} className="font-size-sm">
-                    Pts
-                  </small>
-                </div>
-              </div>
-              <div className="p-3 font-size-sm primary-background-100 rounded-3 primary-color-dark d-flex align-items-center">
-                <ul className="mb-0">
-                  <li>
-                    When results are entered, the CA and exam scores will be
-                    combined to produce a final exam score out of{" "}
-                    {parseFloat(
-                      parseFloat(formData?.max_score) +
-                        parseFloat(relatedCa?.data?.max_score),
-                    ).toFixed(2)}
-                    .
-                  </li>
-                  <li>
-                    The exam’s {parseFloat(formData?.max_score)} points will be
-                    combined with the selected CA’s
-                    {relatedCa?.data?.max_score} points when the exam is
-                    created, for a total of{" "}
-                    {parseFloat(
-                      parseFloat(formData?.max_score) +
-                        parseFloat(relatedCa?.data?.max_score),
-                    ).toFixed(2)}
-                    points.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </AnimatePresence>
-        )}
-      </div>
-    </>
-  );
-}

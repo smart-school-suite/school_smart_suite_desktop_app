@@ -12,6 +12,7 @@ export const useCreateExam = (handleClose) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exams"] });
       queryClient.invalidateQueries({ queryKey: ["examCandidates"] });
+      queryClient.invalidateQueries({ queryKey: ["exam-creation-options"] });
 
       if (handleClose) {
         handleClose();

@@ -1,36 +1,126 @@
-import { useGetExamTypes } from "../../../ModalContent/ExamType/useGetExamType";
+import { motion } from "framer-motion";
+import { BookOpenCheck, CalendarRange, CircleCheck, Dot, Lock, Sparkles, X } from "lucide-react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
-import { Dot, CircleCheck, X, BookOpenCheck } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { NotFoundError } from "../../../components/errors/Error";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import { Fragment, useState } from "react";
+import StatusPill from "../../../components/Election/StatusPill";
+import EmptyState from "../../../components/errors/EmptyState";
 import FormErrorBanner from "../../../components/errors/FormErrorBanner";
-import {
-  setCreateExamValue,
-  resetCreateExamState,
-} from "../../../Slices/exam/examSlice";
-function SelectExamType({ handleClose, nextStep, fullStep, currentStep }) {
+import { resetCreateExamState, setCreateExamValue } from "../../../Slices/exam/examSlice";
+import { formatScheduleDate } from "../../../utils/feeSchedule/scheduleRules";
+
+const TYPE_LABEL = { ca: "Continuous Assessment", exam: "Semester Exam" };
+
+/** The semester chosen in step 1, as a header for the next steps. */
+export function SelectedSemester({ semester, currentStep, fullStep }) {
+  const year = semester?.academic_year ?? {};
+  return (
+    <div className="d-flex flex-row align-items-center justify-content-between gap-2">
+      <div className="d-flex flex-row align-items-center gap-2" style={{ minWidth: 0 }}>
+        <div
+          className="d-flex align-items-center justify-content-center rounded-3 primary-background-100 color-primary flex-shrink-0"
+          style={{ height: "2.5rem", width: "2.5rem" }}
+        >
+          <CalendarRange size={16} />
+        </div>
+        <div className="d-flex flex-column" style={{ minWidth: 0 }}>
+          <small className="text-muted">Selected semester</small>
+          <span className="fw-semibold text-truncate">
+            {semester?.name} · {year.name}
+          </span>
+          <span className="font-size-xs text-iron-400 text-truncate">
+            {[year.specialty, year.level].filter(Boolean).join(" · ")} · {formatScheduleDate(semester?.start_date)} –{" "}
+            {formatScheduleDate(semester?.end_date)}
+          </span>
+        </div>
+      </div>
+      <span className="text-end fw-medium text-capitalize text-nowrap">{`step ${currentStep} of ${fullStep}`}</span>
+    </div>
+  );
+}
+
+function ExamTypeCard({ type, selected, onSelect }) {
+  const disabled = !type.available;
+  const select = () => !disabled && onSelect(type);
+  return (
+    <motion.div
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-pressed={selected}
+      aria-disabled={disabled}
+      whileHover={disabled ? undefined : { scale: 1.01 }}
+      whileTap={disabled ? undefined : { scale: 0.98 }}
+      onClick={select}
+      onKeyDown={(event) => {
+        if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          select();
+        }
+      }}
+      className={`card p-2 d-flex flex-column gap-2 ${disabled ? "" : "pointer-cursor"} ${
+        selected ? "shadow-fern-100-lg border-fern-300" : "border-none border shadow-sm"
+      }`}
+      style={{ borderRadius: "0.85rem" }}
+    >
+      <div className="d-flex flex-row align-items-center justify-content-between gap-2">
+        <div className="d-flex flex-row align-items-center gap-2">
+          <div
+            className={`d-flex align-items-center justify-content-center rounded-3 flex-shrink-0 ${
+              disabled ? "bg-iron-100 text-iron-700" : "primary-background-50 color-primary"
+            }`}
+            style={{ height: "2.5rem", width: "2.5rem" }}
+          >
+            {disabled ? <Lock size={15} /> : <BookOpenCheck size={16} />}
+          </div>
+          <div className="d-flex flex-column">
+            <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
+              <span className={`fw-semibold ${disabled ? "text-iron-500" : ""}`}>{type.name}</span>
+              {type.created ? (
+                <StatusPill tone="success">Created</StatusPill>
+              ) : type.recommended ? (
+                <StatusPill tone="primary">
+                  <span className="d-inline-flex align-items-center gap-1">
+                    <Sparkles size={11} /> Recommended
+                  </span>
+                </StatusPill>
+              ) : null}
+            </div>
+            <span className="font-size-xs text-iron-400">{TYPE_LABEL[type.type] ?? type.type}</span>
+          </div>
+        </div>
+        {selected && <CircleCheck size={16} className="green-color flex-shrink-0" />}
+      </div>
+      {type.created && type.exam ? (
+        <span className="font-size-xs text-iron-500">
+          {formatScheduleDate(type.exam.start_date)} – {formatScheduleDate(type.exam.end_date)}
+          <Dot size={12} />
+          Out of {type.exam.max_score}
+        </span>
+      ) : disabled && type.reasons?.[0] ? (
+        <span className="font-size-xs text-iron-500">{type.reasons[0]}</span>
+      ) : type.type === "exam" && type.ca_max_score != null ? (
+        <span className="font-size-xs text-iron-500">Its max score adds the CA's {type.ca_max_score} points.</span>
+      ) : null}
+    </motion.div>
+  );
+}
+
+function SelectExamType({ handleClose, nextStep, previousStep, fullStep, currentStep }) {
   const dispatch = useDispatch();
-  const { data: examTypes, isLoading, error } = useGetExamTypes();
   const moduleState = useSelector((state) => state.exam.createExam);
+  const semester = moduleState?.schoolSemester;
+  const types = Array.isArray(semester?.exam_types) ? semester.exam_types : [];
+  const selectedId = moduleState?.examType?.id;
   const [stepError, setStepError] = useState(null);
 
-  const selectableExamTypes =
-    examTypes?.data?.filter((t) => t.type !== "resit") ?? [];
-
-  const handleSelect = (examType) => {
+  const handleSelect = (type) => {
     setStepError(null);
-    dispatch(setCreateExamValue({ value: examType, field: "examType" }));
+    dispatch(setCreateExamValue({ value: type, field: "examType" }));
   };
 
   const handleNext = () => {
-    if (!moduleState?.examType?.id) {
-      setStepError({
-        title: "No exam type selected.",
-        messages: ["Please select an exam type to continue."],
-      });
+    if (!types.find((type) => type.id === selectedId)?.available) {
+      setStepError({ title: "No exam type selected.", messages: ["Pick the exam to create to continue."] });
       return;
     }
     nextStep();
@@ -47,136 +137,49 @@ function SelectExamType({ handleClose, nextStep, fullStep, currentStep }) {
             dispatch(resetCreateExamState());
             handleClose();
           }}
-          style={{
-            width: "2rem",
-            height: "2rem",
-            display: "grid",
-            placeItems: "center",
-            cursor: "pointer",
-          }}
+          style={{ width: "2rem", height: "2rem", display: "grid", placeItems: "center", cursor: "pointer" }}
         >
           <X size={16} />
         </button>
       </div>
       <div className="drawer-content px-2 font-size-sm pt-2 pb-5">
-        {isLoading ? (
-          <div className="d-flex flex-column gap-2 px-2">
-            {[...Array(8)].map((_, index) => (
-              <Fragment key={index}>
-                <RectangleSkeleton height="20dvh" width="100%" />
-              </Fragment>
-            ))}
+        <FormErrorBanner error={stepError} onDismiss={() => setStepError(null)} />
+        <div className="d-flex flex-column gap-3">
+          <SelectedSemester semester={semester} currentStep={currentStep} fullStep={fullStep} />
+          <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+          <div className="d-flex flex-column">
+            <span className="fw-semibold">Which exam do you want to create?</span>
+            <span className="font-size-xs text-iron-400">
+              Each is created once for the academic year. The semester exam needs its CA first.
+            </span>
           </div>
-        ) : error ? (
-          <>
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
-          </>
-        ) : (
-          <div className="d-flex flex-column gap-2">
-            <div className="d-flex flex-row justify-content-end">
-              <span className="text-end fw-medium text-capitalize">
-                {`step ${currentStep} of ${fullStep} completed`}
-              </span>
-            </div>
-            <FormErrorBanner
-              error={stepError}
-              onDismiss={() => setStepError(null)}
-              className="mb-2"
+          {types.length === 0 ? (
+            <EmptyState
+              mascot="sad"
+              title="No exam types for this semester"
+              description="No CA or exam types are set up for this semester. Go back and pick another semester."
+              height="40dvh"
+              mascotHeight="6rem"
             />
-            <span className="fw-medium">Select Exam Type</span>
-            {selectableExamTypes.length === 0 && (
-              <div className="alert alert-warning font-size-sm m-0">
-                No exam types are available. Please create an exam type first.
-              </div>
-            )}
-            <div className="d-flex flex-column gap-3">
-              {selectableExamTypes.map((examType) => (
-                <Fragment key={examType.id}>
-                  <motion.div
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`card p-2 transition-all
-                   d-flex flex-column gap-3 pointer-cursor 
-                  ${
-                    moduleState?.examType?.id == examType?.id
-                      ? "shadow-fern-100-lg border-fern-300"
-                      : "border-none border shadow-sm"
-                  } `}
-                    style={{ borderRadius: "0.8rem", gap: "2rem" }}
-                    onClick={() => handleSelect(examType)}
-                  >
-                    <div className="d-flex flex-row align-items-center justify-content-between">
-                      <div className="d-flex flex-row align-items-center gap-2">
-                        <div
-                          className="d-flex flex-row align-items-center justify-content-center font-size-md fw-semibold gap-2 rounded-3 primary-background-100 color-primary"
-                          style={{ height: "2.5rem", width: "2.5rem" }}
-                        >
-                          <BookOpenCheck size={16} />
-                        </div>
-                        <div className="d-flex flex-column">
-                          <span className="fw-semibold">
-                            {examType.exam_name}
-                          </span>
-                          <div className="d-flex flex-row align-items-center gap-1 text-capitalize">
-                            <small className="text-muted">
-                              {examType.semester} Semester
-                            </small>
-                            <Dot size={16} />
-                            <small className="text-muted">
-                              {examType.type}
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      <AnimatePresence>
-                        {moduleState?.examType?.id == examType.id && (
-                          <motion.div
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0, opacity: 0 }}
-                            transition={{
-                              type: "spring",
-                              stiffness: 500,
-                              damping: 30,
-                            }}
-                          >
-                            <CircleCheck size={16} className="green-color" />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                    <p className="text-muted font-light">
-                      {examType?.description}
-                    </p>
-                  </motion.div>
-                </Fragment>
-              ))}
-            </div>
-          </div>
-        )}
+          ) : (
+            types.map((type) => (
+              <ExamTypeCard key={type.id} type={type} selected={type.id === selectedId} onSelect={handleSelect} />
+            ))
+          )}
+        </div>
       </div>
       <div className="drawer-footer font-size-sm">
         <div className="d-flex flex-column w-100">
           <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.5} />
           <div className="d-flex flex-row align-items-center justify-content-between p-2">
-            <button
-              type="button"
-              className="border-none bg-none p-2"
-              onClick={() => {
-                handleClose();
-                dispatch(resetCreateExamState());
-              }}
-            >
-              cancel
+            <button type="button" className="border-none bg-none p-2" onClick={previousStep}>
+              Back (select semester)
             </button>
             <button
               type="button"
-              className="rouned primary-background text-white border-none px-3 py-2 rounded-3"
+              className={`primary-background text-white border-none px-3 py-2 rounded-3 ${!selectedId ? "opacity-50" : ""}`}
               onClick={handleNext}
-              disabled={isLoading || !!error}
+              disabled={!selectedId}
             >
               Next
             </button>
@@ -186,4 +189,5 @@ function SelectExamType({ handleClose, nextStep, fullStep, currentStep }) {
     </>
   );
 }
+
 export default SelectExamType;
