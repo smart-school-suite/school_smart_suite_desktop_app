@@ -27,6 +27,12 @@ export function tuitionFeeTransacColDefs({ ActionComponent }) {
       cellRenderer: TextComponent,
     }),
     textColumn({
+      field: "academic_year_name",
+      headerName: "Academic Year",
+      hide: false,
+      cellRenderer: TextComponent,
+    }),
+    textColumn({
       field: "department_name",
       headerName: "Department",
       hide: false,

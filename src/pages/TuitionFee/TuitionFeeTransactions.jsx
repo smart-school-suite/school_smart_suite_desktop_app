@@ -6,7 +6,11 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
+import { Receipt } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import QueryErrorState from "../../components/errors/QueryErrorState";
+import { isEmptyListError } from "../../utils/query/emptyList";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -28,7 +32,10 @@ function TuitionFeeTransactions() {
     data: transactions,
     isLoading,
     error,
+    refetch,
+    isFetching,
   } = useGetTuitionFeeTransactions();
+  const navigate = useNavigate();
   const tableRef = useRef(null);
   const filters = useTableFilters(
     "tuition-fee/tuition-fee-transactions",
@@ -67,11 +74,25 @@ function TuitionFeeTransactions() {
         <div className="h-100">
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
-          ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+          ) : error && !isEmptyListError(error) ? (
+            <QueryErrorState
+              error={error}
+              fallbackTitle="Couldn't load the tuition fee transactions"
+              onRetry={refetch}
+              isRetrying={isFetching}
+              mascotHeight="6rem"
+            />
+          ) : memoizedRowData.length === 0 ? (
+            <EmptyState
+              mascot="sad"
+              title="No tuition fee payments yet"
+              description="Payments show here once a student pays tuition. Record a payment from the Tuition Fees list."
+              height="100%"
+              mascotHeight="6rem"
+              actions={
+                <EmptyStateButton icon={Receipt} onClick={() => navigate("/fee-payments")}>Go to tuition fees</EmptyStateButton>
+              }
+            />
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">
@@ -98,13 +119,7 @@ function TuitionFeeTransactions() {
                       key="bulk-actions-toast"
                       anchorRef={tableWrapperRef}
                       rowCount={rowCount}
-                      label={`${
-                        rowCount >= 1
-                          ? "Transaction Selected"
-                          : rowCount >= 2
-                            ? "Transactions Selected"
-                            : null
-                      }`}
+                      label={rowCount === 1 ? "Transaction Selected" : "Transactions Selected"}
                       resetAll={handleResetSelections}
                       dropDownItems={
                         <DropdownItems

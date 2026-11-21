@@ -46,6 +46,12 @@ export function registrationFeeTransactionColDefs({ ActionComponent }) {
       cellRenderer: TextComponent,
     }),
     textColumn({
+      field: "academic_year_name",
+      headerName: "Academic Year",
+      hide: false,
+      cellRenderer: TextComponent,
+    }),
+    textColumn({
       field: "level_name",
       headerName: "Level",
       hide: false,

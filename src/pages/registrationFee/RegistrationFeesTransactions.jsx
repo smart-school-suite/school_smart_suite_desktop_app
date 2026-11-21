@@ -6,7 +6,11 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
+import { Receipt } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import QueryErrorState from "../../components/errors/QueryErrorState";
+import { isEmptyListError } from "../../utils/query/emptyList";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -28,7 +32,10 @@ function RegistrationFeeTransactions() {
     data: transactions,
     isLoading,
     error,
+    refetch,
+    isFetching,
   } = useGetRegistrationFeeTransations();
+  const navigate = useNavigate();
   const tableRef = useRef(null);
   const filters = useTableFilters(
     "registration-fee/registration-fees-transactions",
@@ -67,11 +74,25 @@ function RegistrationFeeTransactions() {
         <div className="h-100">
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
-          ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+          ) : error && !isEmptyListError(error) ? (
+            <QueryErrorState
+              error={error}
+              fallbackTitle="Couldn't load the registration fee transactions"
+              onRetry={refetch}
+              isRetrying={isFetching}
+              mascotHeight="6rem"
+            />
+          ) : memoizedRowData.length === 0 ? (
+            <EmptyState
+              mascot="sad"
+              title="No registration fee payments yet"
+              description="Payments show here once a student pays their registration fee. Record a payment from the Registration Fees list."
+              height="100%"
+              mascotHeight="6rem"
+              actions={
+                <EmptyStateButton icon={Receipt} onClick={() => navigate("/registration-fees")}>Go to registration fees</EmptyStateButton>
+              }
+            />
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">
@@ -98,13 +119,7 @@ function RegistrationFeeTransactions() {
                       key="bulk-actions-toast"
                       anchorRef={tableWrapperRef}
                       rowCount={rowCount}
-                      label={`${
-                        rowCount >= 1
-                          ? "Transaction Selected"
-                          : rowCount >= 2
-                            ? "Transactions Selected"
-                            : null
-                      }`}
+                      label={rowCount === 1 ? "Transaction Selected" : "Transactions Selected"}
                       resetAll={handleResetSelections}
                       dropDownItems={
                         <DropdownItems

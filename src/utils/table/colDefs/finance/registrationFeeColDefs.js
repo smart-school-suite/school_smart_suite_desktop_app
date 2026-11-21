@@ -28,6 +28,12 @@ export function registrationFeeColDefs({ ActionComponent }) {
       hide: false,
       cellRenderer: TextComponent,
     }),
+     textColumn({
+       field: "academic_year_name",
+       headerName: "Academic Year",
+       hide: false,
+       cellRenderer: TextComponent,
+     }),
     textColumn({
       field: "level_name",
       headerName: "Level",
