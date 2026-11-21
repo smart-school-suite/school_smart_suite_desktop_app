@@ -1,30 +1,31 @@
 import {
-    createDynamicRefCallback,
-    isValidationSuccessful,
-    removeDynamicFieldValidation,
-    removeDynamicRefs,
-    updateDynamicFieldValidation,
-    validateCustomRules,
-    validateDynamicSection,
-    validateRefs,
+  createDynamicRefCallback,
+  isValidationSuccessful,
+  removeDynamicFieldValidation,
+  removeDynamicRefs,
+  updateDynamicFieldValidation,
+  validateCustomRules,
+  validateDynamicSection,
+  validateRefs,
 } from "@/utils/form";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    academicYearSchema,
-    addressSchema,
-    emailValidationSchema,
-    nameSchema,
-    phoneValidationSchema,
+  academicYearSchema,
+  addressSchema,
+  emailValidationSchema,
+  nameSchema,
+  phoneValidationSchema,
+  titleSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
 import {
-    AcademicYearInput,
-    PhoneNumberInput,
-    TextInput,
+  AcademicYearInput,
+  PhoneNumberInput,
+  TextInput,
 } from "../../components/FormComponents/InputComponents";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
@@ -784,7 +785,7 @@ function UpdateTeacherForm({ teacherId, teacher, handleClose }) {
                                   value,
                                 )
                               }
-                              validationSchema={nameSchema({
+                              validationSchema={titleSchema({
                                 min: 3,
                                 max: 200,
                                 required: true,
@@ -823,7 +824,7 @@ function UpdateTeacherForm({ teacherId, teacher, handleClose }) {
                                   value,
                                 )
                               }
-                              validationSchema={nameSchema({
+                              validationSchema={titleSchema({
                                 min: 3,
                                 max: 150,
                                 required: true,

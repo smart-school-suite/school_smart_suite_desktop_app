@@ -2,12 +2,12 @@ import { useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
+import TableToolbar from "../../components/TableFilters/TableToolbar";
+import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 import Table from "../../components/Tables/Tables";
 import { useGetTeacherActivationCodeStatus } from "../../hooks/activationCode/useGetTeacherActivationCodeStatus";
 import { teacherActivationCodeColDefs } from "../../utils/table/colDefs/activationCode/teacherActivationCodeColDefs";
-import TableToolbar from "../../components/TableFilters/TableToolbar";
-import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
-import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function Teacher() {
   const {
     data: teacherActivationStatus,

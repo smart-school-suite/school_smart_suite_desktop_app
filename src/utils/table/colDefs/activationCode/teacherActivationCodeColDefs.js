@@ -1,11 +1,11 @@
 import {
-  textColumn,
   actionsColumn,
-  dateColumn
+  dateColumn,
+  textColumn
 } from "@/utils/table/columns";
+import TeacherAction from "../../../../components/Badges/ActivationCode/TeacherAction";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
-import TeacherAction from "../../../../components/Badges/ActivationCode/TeacherAction";
 export function teacherActivationCodeColDefs() {
   return [
     textColumn({
@@ -14,7 +14,7 @@ export function teacherActivationCodeColDefs() {
       cellRenderer:  AvatarRenderer,
     }),
     textColumn({
-      field: "teacher_name",
+      field: "name",
       headerName: "Teacher Name",
       hide: false,
       cellRenderer: TextComponent,

@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
-import { useUpdateBatch } from "../../hooks/studentBatch/useUpdateBatch";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import {
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
 import {
   nameSchema,
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import {
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useFormError } from "../../hooks/form/useFormError";
+import { useGetStudentBatchDetails } from "../../hooks/studentBatch/useGetBatchDetails";
+import { useUpdateBatch } from "../../hooks/studentBatch/useUpdateBatch";
 import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import { useGetStudentBatchDetails } from "../../hooks/studentBatch/useGetBatchDetails";
-import { NotFoundError } from "../../components/errors/Error";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
-import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateBatch({ handleClose, drawerData }) {
   const { id: batchId } = drawerData;
   const { mutate: updateBatch, isPending } = useUpdateBatch(handleClose);
@@ -67,7 +67,7 @@ function UpdateBatch({ handleClose, drawerData }) {
   };
   return (
     <>
-      <div className="drawer-content px-2 pt-3">
+      <div className="drawer-content ps-2 pt-3">
         <FormErrorBanner
           ref={errorBannerRef}
           error={formError}

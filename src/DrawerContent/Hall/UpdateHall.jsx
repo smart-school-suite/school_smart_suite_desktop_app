@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 import {
-  nameSchema,
   numberSchema,
+  titleSchema
 } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
@@ -12,6 +12,8 @@ import {
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { NotFoundError } from "../../components/errors/Error";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import { useFormError } from "../../hooks/form/useFormError";
 import { useGetHallDetail } from "../../hooks/hall/useGetHallDetail";
 import { useGetHallTypes } from "../../hooks/hall/useGetHallTypes";
 import { useUpdateHall } from "../../hooks/hall/useUpdateHall";
@@ -19,8 +21,6 @@ import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
 function UpdateHall({ handleClose, drawerData }) {
   const { id: hallId } = drawerData;
   const {
@@ -129,7 +129,7 @@ function UpdateHall({ handleClose, drawerData }) {
                     onValidationChange={(value) =>
                       handleStateChange("name", value, setFieldValid)
                     }
-                    validationSchema={nameSchema({
+                    validationSchema={titleSchema({
                       min: 3,
                       max: 150,
                       required: false,
@@ -153,7 +153,7 @@ function UpdateHall({ handleClose, drawerData }) {
                     onValidationChange={(value) =>
                       handleStateChange("location", value, setFieldValid)
                     }
-                    validationSchema={nameSchema({
+                    validationSchema={titleSchema({
                       min: 3,
                       max: 150,
                       required: false,

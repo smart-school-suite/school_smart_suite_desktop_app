@@ -1,9 +1,9 @@
-import { useGetStudentBatchDetails } from "../../hooks/studentBatch/useGetBatchDetails";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { formatISODate } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import RichTextContent from "../../components/TextComponents/RichTextContent";
+import { useGetStudentBatchDetails } from "../../hooks/studentBatch/useGetBatchDetails";
+import { formatISODate } from "../../utils/functions";
 function BatchDetails({ handleClose, drawerData }) {
   const { id: batchId } = drawerData;
   const {
@@ -13,9 +13,9 @@ function BatchDetails({ handleClose, drawerData }) {
   } = useGetStudentBatchDetails(batchId);
   return (
     <>
-      <div className="drawer-content px-2 pt-3">
+      <div className="drawer-content ps-2 pt-3">
         {isLoading ? (
-          <div className="d-flex flex-column gap-2 modal-content-container">
+          <div className="d-flex flex-column gap-2">
             <div className="d-flex flex-column gap-4">
               {[...Array(8)].map((_, index) => (
                 <div className="d-flex gap-1 flex-column" key={index}>

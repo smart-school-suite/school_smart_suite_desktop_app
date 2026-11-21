@@ -1,18 +1,18 @@
 import { useRef, useState } from "react";
 import {
-  nameSchema,
   textareaSchema,
+  titleSchema
 } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import {
   TextInput,
 } from "../../components/FormComponents/InputComponents";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useCreateDepartment } from "../../hooks/department/useCreateDepartment";
 import { useFormError } from "../../hooks/form/useFormError";
 import { allFieldsValid } from "../../utils/functions";
-import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function CreateDepartment({ handleClose }) {
   const departmentNameRef = useRef();
   const descriptionRef = useRef();
@@ -74,7 +74,7 @@ function CreateDepartment({ handleClose }) {
             onValidationChange={(value) =>
               handleStateChange("department_name", value, setFieldValid)
             }
-            validationSchema={nameSchema({
+            validationSchema={titleSchema({
               min: 3,
               max: 100,
               required: true,

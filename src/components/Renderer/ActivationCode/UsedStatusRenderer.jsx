@@ -1,4 +1,3 @@
-import React from "react";
 import { Icon } from "@iconify/react";
 
 const STATUS_CONFIG = {
@@ -8,7 +7,7 @@ const STATUS_CONFIG = {
     label: "Used",
   },
   unused: {
-    className: "bg-fern-100 text-fern-600",
+    className: "bg-fern-50 text-fern-600",
     icon: "icon-park-solid:check-one",
     label: "Unused",
   },

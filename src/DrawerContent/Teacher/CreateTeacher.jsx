@@ -18,6 +18,7 @@ import {
   emailValidationSchema,
   nameSchema,
   phoneValidationSchema,
+  titleSchema,
 } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
@@ -692,7 +693,7 @@ function CreateTeacher({ handleClose }) {
                                   value,
                                 )
                               }
-                              validationSchema={nameSchema({
+                              validationSchema={titleSchema({
                                 min: 3,
                                 max: 200,
                                 required: true,
@@ -731,7 +732,7 @@ function CreateTeacher({ handleClose }) {
                                   value,
                                 )
                               }
-                              validationSchema={nameSchema({
+                              validationSchema={titleSchema({
                                 min: 3,
                                 max: 150,
                                 required: true,

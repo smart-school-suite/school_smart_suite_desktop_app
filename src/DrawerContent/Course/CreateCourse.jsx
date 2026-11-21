@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import {
   courseCodeSchema,
-  nameSchema,
   numberSchema,
   textareaSchema,
+  titleSchema
 } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import CustomDropdown, { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
@@ -127,7 +127,7 @@ function CreateCourse({ handleClose }) {
               onValidationChange={(value) =>
                 handleStateChange("course_title", value, setFieldValid)
               }
-              validationSchema={nameSchema({
+              validationSchema={titleSchema({
                 min: 3,
                 max: 150,
                 required: true,

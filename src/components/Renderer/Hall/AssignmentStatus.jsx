@@ -1,4 +1,3 @@
-import React from "react";
 import { Icon } from "@iconify/react";
 
 const STATUS_CONFIG = {
@@ -19,7 +18,7 @@ const STATUS_CONFIG = {
   },
 };
 
-export default function AssignmentStatusRenderer({ value }) {
+export default function HallAssignmentStatusRenderer({ value }) {
   const config = STATUS_CONFIG[value] || STATUS_CONFIG.default;
 
   return (

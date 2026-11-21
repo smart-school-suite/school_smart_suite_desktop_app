@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createHall } from "../../services/hall";
 import toast from "react-hot-toast";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
+import { createHall } from "../../services/hall";
 
 export const useCreateHall = (handleClose) => {
   const queryClient = useQueryClient();
@@ -17,7 +17,7 @@ export const useCreateHall = (handleClose) => {
       if (handleClose) {
         handleClose();
       }
-      queryClient.invalidateQueries({ queryKey: ["hall"] });
+      queryClient.invalidateQueries({ queryKey: ["halls"] });
     },
   });
 };

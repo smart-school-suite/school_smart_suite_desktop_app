@@ -1,15 +1,13 @@
 import {
-  textColumn,
   actionsColumn,
   dateColumn,
   numberColumn,
+  textColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
-import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import ActiveInactiveBadge from "../../../../components/Badges/ActiveInactive";
 import AssignmentPill from "../../../../components/Badges/AssignmentStatus";
-
+import TextComponent from "../../../../components/DataTableComponents/TextComponent";
+import HallStatusRenderer from "../../../../components/Renderer/Hall/HallStatus";
+import HallAssignmentStatusRenderer from "../../../../components/Renderer/Hall/AssignmentStatus"
 export function hallColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -38,13 +36,13 @@ export function hallColDefs({ ActionComponent }) {
       field: "assignment_status",
       headerName: "Assignment Status",
       hide: false,
-      cellRenderer: AssignmentPill,
+      cellRenderer: HallAssignmentStatusRenderer,
     }),
     textColumn({
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: ActiveInactiveBadge,
+      cellRenderer: HallStatusRenderer,
     }),
     dateColumn({
       field: "created_at",

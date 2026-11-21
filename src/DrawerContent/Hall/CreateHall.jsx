@@ -1,20 +1,20 @@
 import { useCallback, useRef, useState } from "react";
 import {
-  nameSchema,
   numberSchema,
+  titleSchema
 } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { MultiSelectDropdown } from "../../components/Dropdowns/Dropdowns";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import {
   NumberInput,
   TextInput,
 } from "../../components/FormComponents/InputComponents";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useFormError } from "../../hooks/form/useFormError";
 import { useCreateHall } from "../../hooks/hall/useCreateHall";
 import { useGetHallTypes } from "../../hooks/hall/useGetHallTypes";
 import { allFieldsValid } from "../../utils/functions";
-import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
 function CreateHall({ handleClose }) {
   const { mutate: createHall, isPending } = useCreateHall(handleClose);
   const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
@@ -102,7 +102,7 @@ function CreateHall({ handleClose }) {
               onValidationChange={(value) =>
                 handleStateChange("name", value, setFieldValid)
               }
-              validationSchema={nameSchema({
+              validationSchema={titleSchema({
                 min: 3,
                 max: 150,
                 required: true,
@@ -128,7 +128,7 @@ function CreateHall({ handleClose }) {
               onValidationChange={(value) =>
                 handleStateChange("location", value, setFieldValid)
               }
-              validationSchema={nameSchema({
+              validationSchema={titleSchema({
                 min: 3,
                 max: 150,
                 required: true,

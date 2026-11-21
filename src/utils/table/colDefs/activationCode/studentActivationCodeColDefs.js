@@ -1,20 +1,20 @@
 import {
-  textColumn,
   actionsColumn,
-  dateColumn
+  dateColumn,
+  textColumn
 } from "@/utils/table/columns";
-import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
 import StudentAction from "../../../../components/Badges/ActivationCode/StudentAction";
+import TextComponent from "../../../../components/DataTableComponents/TextComponent";
+import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
 export function studentActivationCodeColDefs() {
   return [
     textColumn({
       field: "profile_picture",
       headerName: "Avatar",
-      cellRenderer: TeacherAvatarComponent,
+      cellRenderer: AvatarRenderer,
     }),
     textColumn({
-      field: "student_name",
+      field: "name",
       headerName: "Student Name",
       hide: false,
       cellRenderer: TextComponent,
