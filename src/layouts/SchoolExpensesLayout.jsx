@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { MoneyIcon } from "../icons/Icons";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
@@ -7,6 +7,9 @@ import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { Icon } from "@iconify/react";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import CreateSchoolExpense from "../DrawerContent/SchoolExpenses/CreateSchoolExpense";
+import CreateExpenseCategory from "../DrawerContent/ExpenseCategory/CreateExpenseCategory";
+
+const CATEGORY_PATH = "/school-expense-category";
 function SchoolExpensesLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const sideBarData = [
@@ -23,6 +26,8 @@ function SchoolExpensesLayout() {
   ];
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const onCategories = location.pathname === CATEGORY_PATH;
   return (
     <>
       <main className="main-container gap-2">
@@ -74,12 +79,13 @@ function SchoolExpensesLayout() {
                 </span>
               </ModalButton>
               <DrawerTrigger
-                title="Create School Expense"
+                key={onCategories ? "category" : "expense"}
+                title={onCategories ? "Create Expense Category" : "Create School Expense"}
                 placement="right"
-                drawerChildren={CreateSchoolExpense}
+                drawerChildren={onCategories ? CreateExpenseCategory : CreateSchoolExpense}
               >
                 <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
-                  <span>Create Expense</span>
+                  <span>{onCategories ? "Create Category" : "Create Expense"}</span>
                 </button>
               </DrawerTrigger>
             </div>

@@ -6,7 +6,10 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
+import CreateFirstState from "../../components/errors/CreateFirstState";
+import QueryErrorState from "../../components/errors/QueryErrorState";
+import CreateAdditionalFeeCategory from "../../DrawerContent/AdditionalFeeCategory/CreateAdditionalFeeCategory";
+import { isEmptyListError } from "../../utils/query/emptyList";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -20,7 +23,7 @@ import TableToolbar from "../../components/TableFilters/TableToolbar";
 import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
 import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function AdditionalFeeCategory() {
-  const { data: categories, isLoading, error } = useGetAdditionalFeeCategory();
+  const { data: categories, isLoading, error, refetch, isFetching } = useGetAdditionalFeeCategory();
   const dispatch = useDispatch();
   const tableRef = useRef(null);
   const filters = useTableFilters(
@@ -58,11 +61,23 @@ function AdditionalFeeCategory() {
         <div className="h-100">
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
-          ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+          ) : error && !isEmptyListError(error) ? (
+            <QueryErrorState
+              error={error}
+              fallbackTitle="Couldn't load the additional fee categories"
+              onRetry={refetch}
+              isRetrying={isFetching}
+              mascotHeight="6rem"
+            />
+          ) : memoizedRowData.length === 0 ? (
+            // The API answers "no categories yet" with a 404; that is this state too.
+            <CreateFirstState
+              title="No additional fee categories yet"
+              description="Categories name the extra fees you bill students, such as Uniform or Lab fees. Create one before billing an additional fee."
+              createLabel="Create category"
+              drawerTitle="Create Additional Fee Category"
+              createDrawer={CreateAdditionalFeeCategory}
+            />
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">

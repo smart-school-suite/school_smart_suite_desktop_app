@@ -6,7 +6,10 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
+import CreateFirstState from "../../components/errors/CreateFirstState";
+import QueryErrorState from "../../components/errors/QueryErrorState";
+import CreateExpenseCategory from "../../DrawerContent/ExpenseCategory/CreateExpenseCategory";
+import { isEmptyListError } from "../../utils/query/emptyList";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -29,7 +32,7 @@ function SchoolExpensesCategory() {
     tableRef,
   );
   const tableWrapperRef = useRef(null);
-  const { data: category, isLoading, error } = useGetExpensesCategories();
+  const { data: category, isLoading, error, refetch, isFetching } = useGetExpensesCategories();
   const [rowCount, setRowCount] = useState(0);
   const [selectedCategories, setSelectedCategory] = useState([]);
 
@@ -60,11 +63,22 @@ function SchoolExpensesCategory() {
         <div className="h-100">
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
-          ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+          ) : error && !isEmptyListError(error) ? (
+            <QueryErrorState
+              error={error}
+              fallbackTitle="Couldn't load the expense categories"
+              onRetry={refetch}
+              isRetrying={isFetching}
+              mascotHeight="6rem"
+            />
+          ) : memoizedRowData.length === 0 ? (
+            <CreateFirstState
+              title="No expense categories yet"
+              description="Categories group your school's spending, such as Utilities or Maintenance. Create one, then file expenses under it."
+              createLabel="Create category"
+              drawerTitle="Create Expense Category"
+              createDrawer={CreateExpenseCategory}
+            />
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">
