@@ -44,11 +44,11 @@ function CreateExpenseCategory({ handleClose }) {
   const handleSubmit = async () => {
     const prevalidation = await handlePrevalidation();
     if (!allFieldsValid(prevalidation)) {
-      setClientError("Invalid Fields 1", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
+      setClientError("Please correct the highlighted fields.", "Check the name and description, then try again.");
       return;
     }
     if (!allFieldsValid(isValid)) {
-      setClientError("Invalid Fields 2", "Some Fields Seem To Be Invalid Please Go Through the form and try again");
+      setClientError("Please correct the highlighted fields.", "Check the name and description, then try again.");
       return;
     }
     clearFormError();

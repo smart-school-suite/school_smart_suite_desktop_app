@@ -18,6 +18,7 @@ small variation; add a prop to the shared component rather than copying it.
 | Drawer | `components/drawer/DrawerTrigger` |
 | Form errors | `components/errors/FormErrorBanner` + `hooks/form/useFormError` |
 | A request that failed to load in a dialog or drawer (retry + close) | `components/errors/QueryErrorState` |
+| Empty list whose fix is creating the first item (small mascot + create button opening its drawer) | `components/errors/CreateFirstState` |
 | Keep a rendering error inside one area (already around every page, `CustomModal` and `Drawer`) | `components/errors/ErrorBoundary` |
 | Enter CA, exam or resit scores (all states, inline validation) | `components/Evaluation/ScoreEntryDialog` + `hooks/evaluation/useScoreEntry` |
 | Tooltip (hover hint only) | `components/Tooltips/Tooltip` |
@@ -102,7 +103,7 @@ Mascots are small and centred: pass `height="100%"` and a small
 `mascotHeight` (`6rem` to `7rem`).
 
 Some endpoints answer **404 for an empty list**. Treat that as state 4, not
-state 3, and do not retry it (`isEmptyListError` / `retryUnlessEmpty`).
+state 3, and do not retry it (`isEmptyListError` / `retryUnlessEmpty` in `utils/query/emptyList`).
 
 ## 6. Cards stay the same size; details open on demand
 

@@ -5,10 +5,15 @@ import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import JobPopOver from "../components/Popover/JobPopover";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import CreateAdditionalFeeCategory from "../DrawerContent/AdditionalFeeCategory/CreateAdditionalFeeCategory";
+
+const CATEGORY_PATH = "/additional-fee/category";
 function AdditionalFeeLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
   const sideBarData = [
     {
       title: "Fee Payment",
@@ -77,6 +82,20 @@ function AdditionalFeeLayout() {
                   />
                 </span>
               </ModalButton>
+              {location.pathname === CATEGORY_PATH && (
+                <DrawerTrigger
+                  title="Create Additional Fee Category"
+                  placement="right"
+                  drawerChildren={CreateAdditionalFeeCategory}
+                >
+                  <button
+                    className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
+                    style={{ height: 36 }}
+                  >
+                    <span>Create Category</span>
+                  </button>
+                </DrawerTrigger>
+              )}
             </div>
           </div>
           <div className="page-head__tabs d-flex flex-row align-items-center gap-4 font-size-sm">

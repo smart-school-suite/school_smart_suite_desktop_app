@@ -1,10 +1,6 @@
-// The teacher-specialty endpoints answer 404 when a list is simply empty,
-// so that status is an empty state, not a failure.
-export const isEmptyListError = (error) => error?.response?.status === 404;
-
-// Retry real failures once, but never retry an empty (404) list.
-export const retryUnlessEmpty = (failureCount, error) =>
-  !isEmptyListError(error) && failureCount < 1;
+// The teacher-specialty endpoints answer 404 when a list is simply empty;
+// the helpers live in utils/query/emptyList and stay importable from here.
+export { isEmptyListError, retryUnlessEmpty } from "../query/emptyList";
 
 const searchableText = (teacher) =>
   [
