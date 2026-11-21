@@ -6,7 +6,11 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
+import { Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import QueryErrorState from "../../components/errors/QueryErrorState";
+import { isEmptyListError } from "../../utils/query/emptyList";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -24,7 +28,8 @@ import TableToolbar from "../../components/TableFilters/TableToolbar";
 import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
 import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function RegistrationFees() {
-  const { data: registrationFees, isLoading, error } = useGetRegistrationFees();
+  const { data: registrationFees, isLoading, error, refetch, isFetching } = useGetRegistrationFees();
+  const navigate = useNavigate();
   const tableRef = useRef();
   const filters = useTableFilters(
     "registration-fee/registration-fees",
@@ -64,11 +69,25 @@ function RegistrationFees() {
         <div className="h-100">
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
-          ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+          ) : error && !isEmptyListError(error) ? (
+            <QueryErrorState
+              error={error}
+              fallbackTitle="Couldn't load the registration fees"
+              onRetry={refetch}
+              isRetrying={isFetching}
+              mascotHeight="6rem"
+            />
+          ) : memoizedRowData.length === 0 ? (
+            <EmptyState
+              mascot="sad"
+              title="No registration fees yet"
+              description="A registration fee is billed to each student when they are admitted. Add students to bill their registration fees."
+              height="100%"
+              mascotHeight="6rem"
+              actions={
+                <EmptyStateButton icon={Users} onClick={() => navigate("/students")}>Go to students</EmptyStateButton>
+              }
+            />
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">
@@ -95,13 +114,7 @@ function RegistrationFees() {
                       key="bulk-actions-toast"
                       anchorRef={tableWrapperRef}
                       rowCount={rowCount}
-                      label={`${
-                        rowCount >= 1
-                          ? "Registration Fee Selected"
-                          : rowCount >= 2
-                            ? "Registration Fees Selected"
-                            : null
-                      }`}
+                      label={rowCount === 1 ? "Registration Fee Selected" : "Registration Fees Selected"}
                       resetAll={handleResetSelections}
                       dropDownItems={
                         <DropdownItems
