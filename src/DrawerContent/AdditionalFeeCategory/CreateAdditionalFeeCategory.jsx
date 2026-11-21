@@ -1,18 +1,18 @@
 import { useRef, useState } from "react";
-import { useCreateAdditionalFeeCategory } from "../../hooks/additionalFee/useCreateAdditionalFeeCategory";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import {
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
 import {
   nameSchema,
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
+import {
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
 import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useCreateAdditionalFeeCategory } from "../../hooks/additionalFee/useCreateAdditionalFeeCategory";
+import { useFormError } from "../../hooks/form/useFormError";
+import { allFieldsValid } from "../../utils/functions";
 function CreateAdditionalFeeCategory({ handleClose }) {
   const titleRef = useRef();
   const descriptionRef = useRef();
@@ -24,8 +24,8 @@ function CreateAdditionalFeeCategory({ handleClose }) {
     title: "",
     description: "",
   });
-  const handleStateChange = (field, value, stateFn) => {
-    if (stateFn === setFormData) clearFormError();
+  
+  const handleInputChange = (field, value, stateFn) => {
     stateFn((prev) => ({ ...prev, [field]: value }));
   };
   const handlePrevalidation = async () => {
@@ -69,10 +69,10 @@ function CreateAdditionalFeeCategory({ handleClose }) {
             </label>
             <TextInput
               onChange={(value) =>
-                handleStateChange("title", value, setFormData)
+                handleInputChange("title", value, setFormData)
               }
               onValidationChange={(value) =>
-                handleStateChange("title", value, setIsValid)
+                handleInputChange("title", value, setIsValid)
               }
               validationSchema={nameSchema({
                 min: 3,
@@ -108,7 +108,7 @@ function CreateAdditionalFeeCategory({ handleClose }) {
                 },
               })}
               onValidationChange={(value) =>
-                handleInputChange("name", value, setIsValid)
+                handleInputChange("description", value, setIsValid)
               }
               placeholder={"Enter Category Description"}
               value={formData.description}

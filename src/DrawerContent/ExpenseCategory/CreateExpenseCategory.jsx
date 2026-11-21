@@ -1,18 +1,18 @@
 import { useRef, useState } from "react";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import { useCreateExpenseCategory } from "../../hooks/expenseCategory/useCreateExpenseCategory";
-import {
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
 import {
   nameSchema,
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
-import { allFieldsValid } from "../../utils/functions";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
+import {
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
 import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useCreateExpenseCategory } from "../../hooks/expenseCategory/useCreateExpenseCategory";
+import { useFormError } from "../../hooks/form/useFormError";
+import { allFieldsValid } from "../../utils/functions";
 function CreateExpenseCategory({ handleClose }) {
   const titleRef = useRef();
   const descriptionRef = useRef();
@@ -56,7 +56,7 @@ function CreateExpenseCategory({ handleClose }) {
   };
   return (
     <>
-      <div className="drawer-content px-2 pt-3">
+      <div className="drawer-content ps-2 pt-3">
         <FormErrorBanner
           ref={errorBannerRef}
           error={formError}
@@ -109,7 +109,7 @@ function CreateExpenseCategory({ handleClose }) {
                 },
               })}
               onValidationChange={(value) =>
-                handleInputChange("name", value, setIsValid)
+                handleInputChange("description", value, setIsValid)
               }
               placeholder={"Enter Category Description"}
               value={formData.description}

@@ -56,10 +56,6 @@ function SetttingLayout() {
               </div>
               <div className="d-flex flex-column">
                 <span className="fw-semibold font-size-sm">Settings</span>
-                <span className="font-size-sm text-muted">
-                  Manage your school's configuration, preferences, and system
-                  behavior.
-                </span>
               </div>
             </div>
           </div>

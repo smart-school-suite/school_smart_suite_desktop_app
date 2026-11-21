@@ -1,21 +1,21 @@
-import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useState } from "react";
-import {
-  TextInput,
-} from "../../components/FormComponents/InputComponents";
 import {
   nameSchema,
   textareaSchema,
 } from "../../ComponentConfig/YupValidationSchema";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import {
+  TextInput,
+} from "../../components/FormComponents/InputComponents";
+import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
+import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useUpdateAnnouncementCategory } from "../../hooks/announcement/useUpdateAnnouncementCategory";
+import { useFormError } from "../../hooks/form/useFormError";
 import {
   hasNonEmptyValue,
   optionalValidateObject,
 } from "../../utils/functions";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { useUpdateAnnouncementCategory } from "../../hooks/announcement/useUpdateAnnouncementCategory";
-import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
-import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 function UpdateExpenseCategory({ handleClose, drawerData }) {
   const { id: categoryId, name, description } = drawerData;
   const { mutate: updateCategory, isPending } =
@@ -49,7 +49,7 @@ function UpdateExpenseCategory({ handleClose, drawerData }) {
   };
   return (
     <>
-      <div className="drawer-content px-2 pt-3">
+      <div className="drawer-content ps-2 pt-3">
         <FormErrorBanner
           ref={errorBannerRef}
           error={formError}
