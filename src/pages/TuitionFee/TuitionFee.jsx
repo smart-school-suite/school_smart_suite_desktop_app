@@ -4,7 +4,11 @@ import ActionButtonDropdown, {
   DropDownMenuItem,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
+import { CalendarRange, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import QueryErrorState from "../../components/errors/QueryErrorState";
+import { isEmptyListError } from "../../utils/query/emptyList";
 import CustomModal from "../../components/Modals/Modal";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import Table from "../../components/Tables/Tables";
@@ -18,7 +22,8 @@ import TableToolbar from "../../components/TableFilters/TableToolbar";
 import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
 import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 function TuitionFees() {
-  const { data: tuitionFees, isLoading, error } = useGetTuitionFees();
+  const { data: tuitionFees, isLoading, error, refetch, isFetching } = useGetTuitionFees();
+  const navigate = useNavigate();
   const tableRef = useRef();
   const filters = useTableFilters("tuition-fee/tuition-fee", tableRef);
   const dispatch = useDispatch();
@@ -53,11 +58,30 @@ function TuitionFees() {
         <div className="h-100">
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
-          ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+          ) : error && !isEmptyListError(error) ? (
+            <QueryErrorState
+              error={error}
+              fallbackTitle="Couldn't load the tuition fees"
+              onRetry={refetch}
+              isRetrying={isFetching}
+              mascotHeight="6rem"
+            />
+          ) : memoizedRowData.length === 0 ? (
+            <EmptyState
+              mascot="sad"
+              title="No tuition fees yet"
+              description="Tuition is billed when a student is registered into a specialty that has an academic year, and again when students are promoted. Add students, or create the academic year of their specialty."
+              height="100%"
+              mascotHeight="6rem"
+              actions={
+                <div className="d-flex flex-row gap-2 justify-content-center">
+                  <EmptyStateButton icon={Users} onClick={() => navigate("/students")}>Go to students</EmptyStateButton>
+                  <EmptyStateButton variant="secondary" icon={CalendarRange} onClick={() => navigate("/academic-year")}>
+                    Go to academic years
+                  </EmptyStateButton>
+                </div>
+              }
+            />
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">
@@ -71,36 +95,11 @@ function TuitionFees() {
                   <Table
                     {...filters.gridProps}
                     colDefs={memoizedColDefs}
-                    rowData={tuitionFees.data}
+                    rowData={memoizedRowData}
                     ref={tableRef}
                     handleRowCountFromChild={handleRowCountFromChild}
                     handleRowDataFromChild={handleRowDataFromChild}
                   />
-                  {rowCount > 0 && (
-                    <BulkActionsToast
-                      rowCount={rowCount}
-                      label={`${
-                        rowCount >= 1
-                          ? "Tuition Fee Selected"
-                          : rowCount >= 2
-                            ? "Tuition Fees Selected"
-                            : null
-                      }`}
-                      resetAll={handleResetSelections}
-                      dropDownItems={
-                        <DropdownItems
-                          selectedTuitionFees={selectedTuitionFees}
-                          resetAll={handleResetSelections}
-                        />
-                      }
-                      actionButton={
-                        <ActionButtons
-                          selectedTuitionFees={selectedTuitionFees}
-                          resetAll={handleResetSelections}
-                        />
-                      }
-                    />
-                  )}
                 </TableFilterLayout>
               </div>
             </>
