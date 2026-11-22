@@ -1,22 +1,8 @@
+import { Badge, BADGE_CONTEXT, APP_STATUS } from "@/components/Renderer/badges";
 import { motion } from "framer-motion";
-import { ArrowRight, Check, Dot, MapPin, TriangleAlert } from "lucide-react";
+import { ArrowRight, Dot, MapPin, TriangleAlert } from "lucide-react";
 import { formatTime } from "../../../../utils/semesterTimetable/timeUtils";
 import { durationLabel, hallSummary } from "./slotLabels";
-
-const PILL = {
-  available: "bg-fern-50 text-fern-700",
-  selected: "bg-primary-50 text-primary-700",
-  assigned: "bg-fern-50 text-fern-700",
-  blocked: "bg-iron-100 text-iron-600",
-};
-
-function StatusPill({ tone, children }) {
-  return (
-    <span className={`d-inline-flex align-items-center gap-1 rounded-pill px-2 font-size-xs fw-medium text-nowrap ${PILL[tone]}`}>
-      {children}
-    </span>
-  );
-}
 
 /**
  * One free teaching period. Click the card to select it; a selected period
@@ -74,17 +60,7 @@ function SlotCard({ course, teacher, day, time, pick, blocked, disabled, student
         <span className="fw-semibold font-size-md tabular-nums">
           {formatTime(time.start_time)} – {formatTime(time.end_time)}
         </span>
-        {state === "assigned" ? (
-          <StatusPill tone="assigned">
-            <Check size={11} strokeWidth={3} /> Hall assigned
-          </StatusPill>
-        ) : state === "selected" ? (
-          <StatusPill tone="selected">Selected</StatusPill>
-        ) : state === "blocked" ? (
-          <StatusPill tone="blocked">Unavailable</StatusPill>
-        ) : (
-          <StatusPill tone="available">Available</StatusPill>
-        )}
+        <Badge status={state} context={BADGE_CONTEXT.SLOT_PICK} />
       </div>
 
       <span className="font-size-xs text-iron-500">
@@ -116,7 +92,7 @@ function SlotCard({ course, teacher, day, time, pick, blocked, disabled, student
                 <span className="d-inline-flex align-items-center gap-2 fw-semibold text-truncate">
                   <MapPin size={15} className="text-fern-600 flex-shrink-0" /> {hall.name}
                 </span>
-                <StatusPill tone="assigned">Assigned</StatusPill>
+                <Badge status={APP_STATUS.ASSIGNED} />
               </div>
               <span className={`font-size-xs ${hall.fits === false ? "text-old-lace-700" : "text-iron-600"}`}>
                 {hall.fits === false && <TriangleAlert size={12} className="me-1" />}

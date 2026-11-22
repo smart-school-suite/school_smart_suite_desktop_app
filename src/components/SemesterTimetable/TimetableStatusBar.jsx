@@ -1,10 +1,7 @@
+import { Badge, BADGE_VARIANT } from "@/components/Renderer/badges";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   CalendarCheck,
-  CalendarX,
-  CircleAlert,
-  CircleCheckBig,
-  CircleDot,
   LayoutGrid,
 } from "lucide-react";
 import { useState } from "react";
@@ -16,22 +13,6 @@ import ActivateTimetableVersion from "../../ModalContent/SemesterTimetable/Activ
 import { SCHEDULER_STATUS } from "../../utils/semesterTimetable/schedulerStatus";
 import DrawerTrigger from "../drawer/DrawerTrigger";
 import CustomModal from "../Modals/Modal";
-
-const PILL = {
-  success: "bg-fern-50 text-fern-700",
-  warn: "bg-old-lace-50 text-old-lace-700",
-  info: "bg-primary-50 text-primary-700",
-  muted: "bg-iron-100 text-iron-600",
-};
-
-function Pill({ tone, icon: Icon, children }) {
-  return (
-    <span className={`d-inline-flex align-items-center gap-1 rounded-pill px-2 py-1 font-size-xs text-nowrap ${PILL[tone]}`}>
-      <Icon size={12} />
-      {children}
-    </span>
-  );
-}
 
 /**
  * Pinned under a generated timetable: what state the version is in, whether
@@ -55,11 +36,11 @@ function TimetableStatusBar({ slotCount }) {
   const warnings = solutions?.data?.summary?.warning_count;
 
   const activation = (() => {
-    if (isActiveLoading) return { tone: "muted", icon: CircleDot, text: "Checking activation…" };
-    if (isActive) return { tone: "success", icon: CalendarCheck, text: "Active timetable" };
-    if (semesterEnded) return { tone: "muted", icon: CalendarX, text: "Semester has ended" };
-    if (activeVersion) return { tone: "muted", icon: CircleDot, text: `Not active · ${activeVersion.label} is active` };
-    return { tone: "warn", icon: CircleDot, text: "Not active · no timetable is active yet" };
+    if (isActiveLoading) return { variant: BADGE_VARIANT.NEUTRAL, icon: "lucide:circle-dot", text: "Checking activation…" };
+    if (isActive) return { variant: BADGE_VARIANT.SUCCESS, icon: "lucide:calendar-check", text: "Active timetable" };
+    if (semesterEnded) return { variant: BADGE_VARIANT.NEUTRAL, icon: "lucide:calendar-x", text: "Semester has ended" };
+    if (activeVersion) return { variant: BADGE_VARIANT.NEUTRAL, icon: "lucide:circle-dot", text: `Not active · ${activeVersion.label} is active` };
+    return { variant: BADGE_VARIANT.WARNING, icon: "lucide:circle-dot", text: "Not active · no timetable is active yet" };
   })();
 
   const hint = isActive
@@ -76,11 +57,11 @@ function TimetableStatusBar({ slotCount }) {
         <div className="d-flex align-items-center flex-wrap gap-2">
           <span className="fw-semibold">{version?.label}</span>
           {isPartial ? (
-            <Pill tone="warn" icon={CircleAlert}>
+            <Badge variant={BADGE_VARIANT.WARNING} icon="lucide:circle-alert">
               {warnings != null ? `${warnings} ${warnings === 1 ? "request" : "requests"} not honoured` : "Some requests not honoured"}
-            </Pill>
+            </Badge>
           ) : (
-            <Pill tone="success" icon={CircleCheckBig}>All rules respected</Pill>
+            <Badge variant={BADGE_VARIANT.SUCCESS} icon="lucide:circle-check-big">All rules respected</Badge>
           )}
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
@@ -90,7 +71,7 @@ function TimetableStatusBar({ slotCount }) {
               exit={{ opacity: 0, y: -3 }}
               transition={{ duration: 0.15 }}
             >
-              <Pill tone={activation.tone} icon={activation.icon}>{activation.text}</Pill>
+              <Badge variant={activation.variant} icon={activation.icon}>{activation.text}</Badge>
             </motion.span>
           </AnimatePresence>
           {slotCount > 0 && (

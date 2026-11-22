@@ -1,3 +1,4 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import {
   actionsColumn,
   dateColumn,
@@ -47,7 +48,8 @@ export function studentActivationCodeColDefs() {
       field: "sub_status",
       headerName: "Subscription Status",
       hide: false,
-      cellRenderer: TextComponent,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.SUBSCRIPTION },
     }),
     textColumn({
       field: "activation_code",

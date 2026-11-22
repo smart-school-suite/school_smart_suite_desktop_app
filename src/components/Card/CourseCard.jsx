@@ -1,7 +1,7 @@
+import { Badge, APP_STATUS } from "@/components/Renderer/badges";
 import { Dot } from "lucide-react";
 import { isCourseAssigned } from "../../utils/course/courseFilters";
 import ChipRow from "./ChipRow";
-import CourseStatusPill from "./CourseStatusPill";
 import TeacherAvatar from "./TeacherAvatar";
 import { htmlToPlainText } from "../../utils/richText/richText";
 
@@ -55,7 +55,7 @@ export default function CourseCard({ course, children }) {
           <span className="fw-semibold line-clamp-2" title={course?.course_title}>
             {course?.course_title ?? "Untitled course"}
           </span>
-          <CourseStatusPill course={course} />
+          <Badge status={course?.assignment_status ?? APP_STATUS.UNASSIGNED} />
         </div>
         <div className="d-flex flex-row align-items-center font-size-xs text-iron-500">
           <span>{course?.course_credit ?? "-"} Credit</span>

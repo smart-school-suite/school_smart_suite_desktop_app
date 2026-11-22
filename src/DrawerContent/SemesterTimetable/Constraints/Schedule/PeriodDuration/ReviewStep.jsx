@@ -1,7 +1,7 @@
+import { Badge, BADGE_VARIANT } from "@/components/Renderer/badges";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import {
-  Badge,
   DayList,
   DayRow,
   Section,
@@ -103,7 +103,7 @@ function ReviewStep({ handleClose, previousStep, goToStep }) {
                 key={day}
                 day={day}
                 badge={
-                  isCustom ? <Badge tone="warn">Custom</Badge> : <Badge>Default</Badge>
+                  isCustom ? <Badge variant={BADGE_VARIANT.WARNING}>Custom</Badge> : <Badge variant={BADGE_VARIANT.NEUTRAL}>Default</Badge>
                 }
               >
                 <span className="d-inline-flex align-items-baseline gap-2">

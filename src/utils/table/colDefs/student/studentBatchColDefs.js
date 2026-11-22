@@ -1,14 +1,12 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
   dateColumn,
   numberColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
-
 export function studentBatchColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -27,7 +25,7 @@ export function studentBatchColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: DepartmentTableBadge,
+      cellRenderer: BadgeRenderer,
     }),
     dateColumn({
       field: "created_at",

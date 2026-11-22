@@ -1,7 +1,9 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { CircleX } from "lucide-react";
 import ParticipantIdentity from "../../components/Election/ParticipantIdentity";
-import StatusPill from "../../components/Election/StatusPill";
-import { APPLICATION_STATUS, formatElectionDateTime } from "../../utils/election/electionDisplay";
+import {
+  formatElectionDateTime,
+} from "../../utils/election/electionDisplay";
 
 function Block({ label, children }) {
   return (
@@ -33,7 +35,7 @@ export default function ApplicationDetailsDialog({ rowData: application, handleC
           person={application?.applicant}
           name={application?.applicant_name}
           type={application?.applicant_type}
-          trailing={<StatusPill meta={APPLICATION_STATUS[application?.application_status]} />}
+          trailing={<Badge status={application?.application_status} context={BADGE_CONTEXT.ELECTION_APPLICATION} />}
         />
         <Block label="Manifesto">{application?.manifesto}</Block>
         <Block label="Personal vision">{application?.personal_vision}</Block>

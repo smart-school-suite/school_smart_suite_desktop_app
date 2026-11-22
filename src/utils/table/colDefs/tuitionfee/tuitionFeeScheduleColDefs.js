@@ -1,3 +1,4 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
@@ -7,9 +8,6 @@ import {
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
 import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
-import TuitionFeePaymentStatusRenderer from "../../../../components/Badges/TuitionFeePaymentStatusRenderer";
-import TuitionFeeScheduleStatusRenderer from "../../../../components/Badges/TuitionFeeScheduleStatusRenderer";
-
 export function tuitionFeeScheduleColDefs({ ActionComponent }) {
   return [
     dateColumn({
@@ -50,7 +48,8 @@ export function tuitionFeeScheduleColDefs({ ActionComponent }) {
       field: "config_status",
       headerName: "Config Status",
       hide: false,
-      cellRenderer: TuitionFeeScheduleStatusRenderer,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.CONFIGURATION },
     }),
     textColumn({
       field: "level_number",

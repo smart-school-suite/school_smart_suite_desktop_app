@@ -1,11 +1,13 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import StatusPill from "../../components/Election/StatusPill";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useGetElectionDetails } from "../../hooks/election/useGetElectionDetail";
-import { electionStatusMeta, serverErrorCopy } from "../../utils/election/electionDisplay";
+import {
+  serverErrorCopy,
+} from "../../utils/election/electionDisplay";
 import ApplicationsTab from "./workspace/ApplicationsTab";
 import CandidatesTab from "./workspace/CandidatesTab";
 import OverviewTab from "./workspace/OverviewTab";
@@ -35,7 +37,6 @@ function ElectionWorkspace() {
   });
   const details = data?.data;
   const election = details?.election;
-  const meta = electionStatusMeta(election?.status);
   const locked = LOCKED.includes(election?.status);
 
 
@@ -92,7 +93,7 @@ function ElectionWorkspace() {
               <ArrowLeft size={14} />
             </button>
             <span className="fw-semibold font-size-sm text-truncate" title={title}>{title}</span>
-            <StatusPill meta={meta} pulse={election?.status === "voting_open"} />
+            <Badge status={election?.status} context={BADGE_CONTEXT.ELECTION} />
             <span className="text-iron-400 font-size-xs text-truncate d-none d-lg-inline">
               {election?.election_type?.election_title} · {election?.system_academic_year?.name}
             </span>

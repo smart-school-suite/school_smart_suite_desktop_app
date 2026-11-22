@@ -1,16 +1,19 @@
+import { Badge } from "@/components/Renderer/badges";
 import { ChevronLeft, ChevronRight, RefreshCw, UsersRound } from "lucide-react";
 import { useState } from "react";
 import DrawerTrigger from "../../../components/drawer/DrawerTrigger";
 import ParticipantIdentity from "../../../components/Election/ParticipantIdentity";
 import SectionCard from "../../../components/Election/SectionCard";
-import StatusPill from "../../../components/Election/StatusPill";
 import EmptyState, { EmptyStateButton } from "../../../components/errors/EmptyState";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../../components/Spinners/Spinners";
 import ConfigureParticipants from "../../../DrawerContent/Election/ConfigureParticipants";
 import { useGetElectionParticipants } from "../../../hooks/election/useGetElectionParticipants";
 import { useRefreshElectionParticipants } from "../../../hooks/election/useRefreshElectionParticipants";
-import { PARTICIPANT_TYPES, serverErrorCopy } from "../../../utils/election/electionDisplay";
+import {
+  PARTICIPANT_TYPES,
+  serverErrorCopy,
+} from "../../../utils/election/electionDisplay";
 
 const FILTERS = [
   { key: "all", label: "Everyone", params: {} },
@@ -81,12 +84,12 @@ export default function ParticipantsTab({ election, locked }) {
           >
             <div className="d-flex flex-row flex-wrap gap-2">
               {Object.entries(payload?.summary ?? {}).map(([type, counts]) => (
-                <StatusPill key={type} tone="neutral">
+                <Badge key={type} tone="neutral">
                   {PARTICIPANT_TYPES[type]?.plural ?? type} · {group === "voters" ? counts.voters : counts.applicants}
-                </StatusPill>
+                </Badge>
               ))}
               {group === "candidates" && election.participants?.candidates?.must_be_voter && (
-                <StatusPill tone="primary">Must also be voters</StatusPill>
+                <Badge variant="primary">Must also be voters</Badge>
               )}
             </div>
           </SectionCard>
@@ -180,8 +183,8 @@ export default function ParticipantsTab({ election, locked }) {
                     size="2rem"
                   />
                   <div className="d-flex flex-row gap-1">
-                    {row.can_vote && <StatusPill tone="success">Can vote</StatusPill>}
-                    {row.can_apply && <StatusPill tone="primary">Can apply</StatusPill>}
+                    {row.can_vote && <Badge variant="success">Can vote</Badge>}
+                    {row.can_apply && <Badge variant="primary">Can apply</Badge>}
                   </div>
                 </div>
               ))}

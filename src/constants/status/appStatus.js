@@ -4,6 +4,7 @@ export const APP_STATUS = Object.freeze({
   DISABLED: "disabled",
   EXPIRED: "expired",
   ENDED: "ended",
+  MAINTENANCE: "maintenance",
 
   DRAFT: "draft",
   SCHEDULED: "scheduled",
@@ -11,8 +12,10 @@ export const APP_STATUS = Object.freeze({
   NO_SCHEDULE: "no_schedule",
   UPCOMING: "upcoming",
   ONGOING: "ongoing",
-  IN_PROGRESS: "inprogress",
+  IN_PROGRESS: "in_progress",
+  RUNNING: "running",
   FINISHED: "finished",
+  HELD: "held",
 
   QUEUED: "queued",
   PENDING: "pending",
@@ -27,6 +30,7 @@ export const APP_STATUS = Object.freeze({
   PARTIAL_SUCCESS: "partial_success",
   OPTIMAL: "optimal",
   CANCELLED: "cancelled",
+  TERMINATED: "terminated",
   FAILED: "failed",
   ERROR: "error",
 
@@ -36,7 +40,15 @@ export const APP_STATUS = Object.freeze({
   DISQUALIFIED: "disqualified",
   WON: "won",
   LOST: "lost",
+  APPLICATION_OPEN: "application_open",
+  APPLICATION_CLOSED: "application_closed",
+  VOTING_OPEN: "voting_open",
+  VOTING_CLOSED: "voting_closed",
+  ELECTED: "elected",
+  APPOINTED: "appointed",
+  REPLACEMENT: "replacement",
 
+  CURRENT: "current",
   ELIGIBLE: "eligible",
   INELIGIBLE: "ineligible",
   CLEARED: "cleared",
@@ -46,12 +58,20 @@ export const APP_STATUS = Object.freeze({
   PROMOTED: "promoted",
   GRADUATED: "graduated",
   REPEATED: "repeated",
+  RETAINED: "retained",
   EXCLUDED: "excluded",
   PASSED: "passed",
+  CARRY_OVER: "carry_over",
+  RESIT_REGISTERED: "resit_registered",
+  RESIT_REQUIRED: "resit",
+  NO_RESIT: "no_resit",
+  HIGH_RESIT_POTENTIAL: "high_resit_potential",
+  LOW_RESIT_POTENTIAL: "low_resit_potential",
 
   EVALUATED: "evaluated",
   NOT_EVALUATED: "not_evaluated",
   PUBLISHED: "published",
+  NOT_PUBLISHED: "not_published",
   READY_TO_PUBLISH: "ready_to_publish",
 
   ASSIGNED: "assigned",
@@ -69,6 +89,13 @@ export const APP_STATUS = Object.freeze({
   NOT_ACCESSED: "not_accessed",
   USED: "used",
   UNUSED: "unused",
+  SELECTED: "selected",
+  INCOMPLETE: "incomplete",
+  INVALID: "invalid",
+  CHECKING: "checking",
+  CONFLICT: "conflict",
+  UNVERIFIED: "unverified",
+  READY: "ready",
 
   PAID: "paid",
   UNPAID: "unpaid",
@@ -79,7 +106,22 @@ export const APP_STATUS = Object.freeze({
   SUBSCRIBED: "subscribed",
   RENEWED: "renewed",
 
+  HEALTHY: "healthy",
+  WARNING: "warning",
+  CRITICAL: "critical",
+  EXCEEDED: "exceeded",
+  UNLIMITED: "unlimited",
+  INCLUDED: "included",
+  LOCKED: "locked",
+
   INFO: "info",
   IMPORTANT: "important",
   URGENT: "urgent",
+});
+
+export const APP_STATUS_ALIASES = Object.freeze({
+  inprogress: APP_STATUS.IN_PROGRESS,
+  maintainance: APP_STATUS.MAINTENANCE,
+  deactivated: APP_STATUS.INACTIVE,
+  activated: APP_STATUS.ACTIVE,
 });

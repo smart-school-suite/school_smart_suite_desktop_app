@@ -1,10 +1,10 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { BarChart3, CalendarClock, CircleAlert, Headset, Layers, ShieldCheck, Zap } from "lucide-react";
 import { useRef, useState } from "react";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import SectionCard from "../../components/Election/SectionCard";
 import StatTile from "../../components/Election/StatTile";
-import StatusPill from "../../components/Election/StatusPill";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import PlanCard from "../../components/Subscription/PlanCard";
 import PlanComparisonTable from "../../components/Subscription/PlanComparisonTable";
@@ -17,7 +17,6 @@ import PlanDetailsDialog from "../../ModalContent/Subscription/PlanDetailsDialog
 import {
   PLAN_PROMISES,
   SALES_CONTACT_URL,
-  STATUS_PILL,
   formatDate,
   formatMoney,
 } from "../../utils/subscription/planDisplay";
@@ -80,7 +79,6 @@ function Subscriptions() {
 export default Subscriptions;
 
 function PageHeader({ subscription }) {
-  const status = STATUS_PILL[subscription?.status];
   return (
     <div className="d-flex flex-row flex-wrap align-items-end justify-content-between gap-2">
       <div className="d-flex flex-column">
@@ -91,7 +89,7 @@ function PageHeader({ subscription }) {
       </div>
       {subscription && (
         <div className="d-flex flex-row align-items-center gap-2 font-size-xs text-iron-500">
-          {status && <StatusPill tone={status.tone}>{status.label}</StatusPill>}
+          {subscription?.status && <Badge status={subscription.status} context={BADGE_CONTEXT.SUBSCRIPTION} />}
           <span>
             {subscription.plan?.name} · renews {formatDate(subscription.end_date)}
           </span>

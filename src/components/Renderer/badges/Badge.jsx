@@ -1,15 +1,20 @@
 import { Icon } from "@iconify/react";
-import { resolveBadgeConfig } from "./badgeConfig";
+import { resolveBadgeConfig } from "./resolveBadgeConfig";
 
 export default function Badge({
   status,
+  context,
   label,
   variant,
   icon,
+  pulse,
   showIcon = true,
+  title,
   className = "",
+  children,
 }) {
-  const config = resolveBadgeConfig(status, { label, variant, icon });
+  const config = resolveBadgeConfig(status, { context, label, variant, icon, pulse });
+  const content = children ?? config.label;
   const badgeClassName = ["status-badge", config.className, className]
     .filter(Boolean)
     .join(" ");
@@ -19,12 +24,13 @@ export default function Badge({
       className={badgeClassName}
       data-status={config.status || undefined}
       data-variant={config.variant}
-      title={config.label}
+      title={title ?? (typeof content === "string" ? content : undefined)}
     >
-      {showIcon && config.icon && (
+      {config.pulse && <span className="status-badge__pulse" aria-hidden="true" />}
+      {showIcon && !config.pulse && config.icon && (
         <Icon icon={config.icon} className="status-badge__icon" />
       )}
-      <span className="status-badge__label">{config.label}</span>
+      <span className="status-badge__label">{content}</span>
     </span>
   );
 }

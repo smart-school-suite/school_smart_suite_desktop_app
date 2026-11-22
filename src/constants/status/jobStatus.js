@@ -1,9 +1,11 @@
+import { APP_STATUS } from "./appStatus";
+
 export const JOB_STATUS = Object.freeze({
-  PROCESSING: "processing",
-  COMPLETED: "completed",
-  COMPLETED_WITH_ISSUES: "completed_with_issues",
-  FAILED: "failed",
-  QUEUED: "queued",
+  PROCESSING: APP_STATUS.PROCESSING,
+  COMPLETED: APP_STATUS.COMPLETED,
+  COMPLETED_WITH_ISSUES: APP_STATUS.COMPLETED_WITH_ISSUES,
+  FAILED: APP_STATUS.FAILED,
+  QUEUED: APP_STATUS.QUEUED,
 });
 
 export const JOB_STATUS_LABEL = Object.freeze({

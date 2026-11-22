@@ -1,9 +1,7 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { actionsColumn, dateColumn, textColumn } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
-import PromotionRecordOutComeRenderer from "../../../../components/Renderer/Promotion/PromotionRecordOutComeRenderer";
-import PromotionRecordStatusRenderer from "../../../../components/Renderer/Promotion/PromotionRecordStatusRenderer";
-
 function promotionRecordColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -28,13 +26,14 @@ function promotionRecordColDefs({ ActionComponent }) {
       field: "outcome",
       headerName: "Outcome",
       hide: false,
-      cellRenderer: PromotionRecordOutComeRenderer,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.PROMOTION_OUTCOME },
     }),
     textColumn({
       field: "status",
       headerName: "Status",
       hide: true,
-      cellRenderer: PromotionRecordStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     dateColumn({
       field: "processed_at",

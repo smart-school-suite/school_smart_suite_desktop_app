@@ -1,2 +1,2 @@
-export  { JOB_STATUS, JOB_STATUS_LABEL, JOB_STATUS_META } from "./jobStatus";
-export { APP_STATUS } from "./appStatus";
+export { JOB_STATUS, JOB_STATUS_LABEL, JOB_STATUS_META } from "./jobStatus";
+export { APP_STATUS, APP_STATUS_ALIASES } from "./appStatus";

@@ -1,11 +1,11 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { Icon } from "@iconify/react";
 import { TimeSpan } from "../../../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
-import { STATUS_META } from "../../../../utils/jointCourseTimetable/slotValidation";
+import { SLOT_STATUS } from "../../../../utils/jointCourseTimetable/slotValidation";
 import { ORIGIN_LABELS } from "./TimetableSlotCard";
 
 /** Read-only row for the review step, with the slot's issues underneath. */
 function SlotSummary({ slot, number, check, serverConflicts = [], onEdit }) {
-  const status = serverConflicts.length ? STATUS_META.conflict : STATUS_META[check.status];
   const issues = [
     ...check.local.errors.map((error) => error.message),
     ...(check.check?.status === "conflict" ? check.check.reasons : []),
@@ -27,7 +27,7 @@ function SlotSummary({ slot, number, check, serverConflicts = [], onEdit }) {
           {slot.hall_id ? (slot.hall_name ?? "Hall selected") : "No hall"}
         </span>
         <span className="jcs-field-hint jcs-summary__origin">{ORIGIN_LABELS[slot.origin] ?? ""}</span>
-        <span className={`cw-badge cw-badge--${status.tone}`}>{status.label}</span>
+        <Badge status={serverConflicts.length ? SLOT_STATUS.CONFLICT : check.status} context={BADGE_CONTEXT.SLOT_CHECK} showIcon={false} />
         <button type="button" className="cw-text-btn" onClick={onEdit}>
           <Icon icon="lucide:pencil" width={14} height={14} />
           <span>Edit</span>

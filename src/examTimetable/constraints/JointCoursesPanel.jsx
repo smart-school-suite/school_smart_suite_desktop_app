@@ -1,7 +1,8 @@
+import { Badge, BADGE_VARIANT } from "@/components/Renderer/badges";
 import { Icon } from "@iconify/react";
 import { Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Badge, EmptyState, Section, Stats, TimeSpan, WizardFooter, WizardStep } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
+import { EmptyState, Section, Stats, TimeSpan, WizardFooter, WizardStep } from "../../components/SemesterTimetable/ConstraintWizard/WizardPrimitives";
 import "../../styles/jointCourseSlots.css";
 import { formatExamDate, SetupNotice, useJointCourseReadiness } from "./fields";
 import { useTimetableKind } from "../TimetableKindContext";
@@ -135,7 +136,7 @@ function Schedules({ courses }) {
                   <span className="cw-option__title">
                     <TimeSpan start={course.joint.slot.start_time} end={course.joint.slot.end_time} />
                   </span>
-                  <Badge tone="success">Time set</Badge>
+                  <Badge variant={BADGE_VARIANT.SUCCESS}>Time set</Badge>
                 </div>
                 <div className="d-flex flex-column">
                   <span className="fw-semibold text-truncate">{course.course_title}</span>

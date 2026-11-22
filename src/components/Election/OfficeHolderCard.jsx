@@ -1,3 +1,4 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { motion, useReducedMotion } from "framer-motion";
 import { History, Repeat2, UserX } from "lucide-react";
@@ -5,15 +6,12 @@ import ReplaceOfficeHolder from "../../DrawerContent/ElectionOffice/ReplaceOffic
 import ParticipantHistoryDialog from "../../ModalContent/ElectionOffice/ParticipantHistoryDialog";
 import TerminateOfficeHolder from "../../ModalContent/ElectionOffice/TerminateOfficeHolder";
 import {
-  APPOINTMENT_TYPE,
-  OFFICE_HOLDER_STATUS,
   formatElectionDate,
 } from "../../utils/election/electionDisplay";
 import ChipRow from "../Card/ChipRow";
 import { ModalButton } from "../DataTableComponents/ActionComponent";
 import DrawerTrigger from "../drawer/DrawerTrigger";
 import ParticipantIdentity from "./ParticipantIdentity";
-import StatusPill from "./StatusPill";
 
 const tenureProgress = (holder) => {
   if (!holder?.started_at || !holder?.expected_end_at) return 0;
@@ -43,14 +41,14 @@ export default function OfficeHolderCard({ holder, readOnly = false }) {
         person={holder?.holder}
         name={holder?.name}
         type={holder?.holder_type}
-        trailing={<StatusPill meta={OFFICE_HOLDER_STATUS[holder?.status]} />}
+        trailing={<Badge status={holder?.status} context={BADGE_CONTEXT.OFFICE_HOLDER} />}
       />
       <div className="d-flex flex-row align-items-center justify-content-between gap-2">
         <div className="d-flex flex-column" style={{ minWidth: 0 }}>
           <span className="teacher-card__label">Position</span>
           <span className="fw-semibold text-truncate">{holder?.position?.name ?? "—"}</span>
         </div>
-        <StatusPill meta={APPOINTMENT_TYPE[holder?.appointment_type]} />
+        <Badge status={holder?.appointment_type} />
       </div>
       <div className="d-flex flex-column gap-1">
         <div className="d-flex flex-row justify-content-between font-size-xs text-iron-500">

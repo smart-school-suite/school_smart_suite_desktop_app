@@ -6,8 +6,8 @@ export {
   STATUS_BADGE_CONFIG,
   UNKNOWN_STATUS_LABEL,
   formatStatusLabel,
-  getStatusBadgeConfig,
   normalizeStatus,
-  resolveBadgeConfig,
 } from "./badgeConfig";
+export { BADGE_CONTEXT, BADGE_CONTEXT_CONFIG } from "./badgeContexts";
+export { resolveBadgeConfig, getBadgeLabel, getBadgeVariant } from "./resolveBadgeConfig";
 export { APP_STATUS } from "@/constants/status";

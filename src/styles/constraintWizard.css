@@ -606,37 +606,10 @@
   color: var(--cw-ink-3);
 }
 
-.cw-badge {
-  display: inline-flex;
-  align-items: center;
-  height: 1.25rem;
-  padding: 0 0.5rem;
-  border-radius: 999px;
-  font-size: 0.6875rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
 
-.cw-badge--neutral {
-  background: var(--cw-muted-weak);
-  color: var(--cw-ink-2);
-}
 
-.cw-badge--accent {
-  background: var(--cw-accent-weak);
-  color: var(--cw-accent-ink);
-}
 
-.cw-badge--warn {
-  background: var(--cw-warn-weak);
-  color: var(--cw-warn-ink);
-}
 
-.cw-badge--muted {
-  background: transparent;
-  color: var(--cw-ink-3);
-  border: 1px dashed var(--cw-line-strong);
-}
 
 .cw-daylist {
   list-style: none;

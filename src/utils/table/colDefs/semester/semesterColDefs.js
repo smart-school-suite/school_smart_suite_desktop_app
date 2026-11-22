@@ -1,11 +1,10 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
   dateColumn,
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import SemesterStatusRenderer from "../../../../components/Renderer/Semester/SemesterStatusRenderer";
-
 export function semesterColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -30,7 +29,7 @@ export function semesterColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: SemesterStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
      dateColumn({
       field: "start_date",

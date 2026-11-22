@@ -1,3 +1,4 @@
+import { BADGE_CONTEXT, getBadgeLabel } from "@/components/Renderer/badges";
 import { Award, UserPlus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,8 +11,6 @@ import AppointOfficeHolder from "../../DrawerContent/ElectionOffice/AppointOffic
 import { useDebounce } from "../../hooks/common/useDebounce";
 import { useGetOfficeHolders } from "../../hooks/electionOffice/useGetOfficeHolders";
 import {
-  APPOINTMENT_TYPE,
-  OFFICE_HOLDER_STATUS,
   matchesQuery,
   participantTypeLabel,
   serverErrorCopy,
@@ -61,8 +60,8 @@ export default function ElectionOfficeHolders() {
             holder.position?.name,
             holder.election?.title,
             participantTypeLabel(holder.holder_type),
-            APPOINTMENT_TYPE[holder.appointment_type]?.label,
-            OFFICE_HOLDER_STATUS[holder.status]?.label,
+            getBadgeLabel(holder.appointment_type),
+            getBadgeLabel(holder.status, BADGE_CONTEXT.OFFICE_HOLDER),
           ],
           debouncedSearch,
         ),

@@ -1,6 +1,6 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import { actionsColumn, dateColumn, numberColumn, textColumn } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import PromotionRunStatusRenderer from "../../../../components/Renderer/Promotion/PromotionRunStatusRenderer";
 function promotionRunColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -31,7 +31,7 @@ function promotionRunColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: PromotionRunStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "department",

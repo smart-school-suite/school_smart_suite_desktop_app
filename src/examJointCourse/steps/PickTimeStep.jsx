@@ -1,8 +1,8 @@
+import { Badge, BADGE_VARIANT } from "@/components/Renderer/badges";
 import { Icon } from "@iconify/react";
 import { Circle, CircleCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
-  Badge,
   DayTabs,
   EmptyState,
   Note,
@@ -58,7 +58,7 @@ function ExamTimeCard({ course, time, selected, recommended, disabled, onSelect,
           <TimeSpan start={time.start_time} end={time.end_time} />
         </span>
         <span className="d-flex flex-row align-items-center gap-2 flex-shrink-0">
-          {recommended && <Badge tone="success">Recommended</Badge>}
+          {recommended && <Badge variant={BADGE_VARIANT.SUCCESS}>Recommended</Badge>}
           {selected ? (
             <CircleCheck size={20} className="text-primary-500" aria-hidden="true" />
           ) : (

@@ -1,3 +1,4 @@
+import { BADGE_VARIANT } from "@/components/Renderer/badges";
 // Display helpers for the subscription page (pages/settings/Subscriptions.jsx).
 
 export const formatMoney = (value, currency) => {
@@ -22,15 +23,12 @@ export const formatLimit = (feature) => {
   return new Intl.NumberFormat("en-US").format(feature.value ?? 0);
 };
 
-// Usage status → colours of the meter and label.
-export const USAGE_STATUS = {
-  healthy: { label: "Healthy", tone: "success", bar: "bg-fern-400" },
-  warning: { label: "Getting close", tone: "warning", bar: "bg-old-lace-400" },
-  critical: { label: "Almost full", tone: "danger", bar: "bg-red-400" },
-  exceeded: { label: "Limit reached", tone: "danger", bar: "bg-red-500" },
-  unlimited: { label: "Unlimited", tone: "primary", bar: "bg-primary-400" },
-  included: { label: "Included", tone: "success", bar: "bg-fern-400" },
-  locked: { label: "Not in plan", tone: "neutral", bar: "bg-iron-300" },
+export const USAGE_BAR_CLASS = {
+  [BADGE_VARIANT.SUCCESS]: "bg-fern-400",
+  [BADGE_VARIANT.WARNING]: "bg-old-lace-400",
+  [BADGE_VARIANT.DANGER]: "bg-red-400",
+  [BADGE_VARIANT.PRIMARY]: "bg-primary-400",
+  [BADGE_VARIANT.NEUTRAL]: "bg-iron-300",
 };
 
 // Recommendation type → hero look and wording around the headline.
@@ -58,13 +56,6 @@ export const planGains = (plan, max = 4, focusKeys = []) => {
     .sort((a, b) => focus(a) - focus(b) || size(b) - size(a));
   const rest = features.filter((f) => f.change !== "up").sort((a, b) => focus(a) - focus(b));
   return [...ups, ...rest].slice(0, max);
-};
-
-export const STATUS_PILL = {
-  active: { label: "Active", tone: "success" },
-  pending: { label: "Pending", tone: "warning" },
-  expired: { label: "Expired", tone: "danger" },
-  cancelled: { label: "Cancelled", tone: "neutral" },
 };
 
 // Why schools pay for a plan, shown under the plans grid.

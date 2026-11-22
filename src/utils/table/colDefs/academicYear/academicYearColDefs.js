@@ -1,3 +1,4 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   actionsColumn,
   dateColumn,
@@ -5,8 +6,6 @@ import {
   textColumn,
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import AcademicYearStatusRenderer from "../../../../components/Renderer/AcademicYear/AcademicYearRenderer";
-
 export function academicYearColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -37,7 +36,7 @@ export function academicYearColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: AcademicYearStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
 
     textColumn({

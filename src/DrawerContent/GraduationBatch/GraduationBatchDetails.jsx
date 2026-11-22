@@ -1,17 +1,11 @@
+import { Badge, BADGE_CONTEXT, APP_STATUS } from "@/components/Renderer/badges";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import StatusPill from "../../components/Election/StatusPill";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import RichTextContent from "../../components/TextComponents/RichTextContent";
 import { useGetGraduationBatchDetails } from "../../hooks/graduationBatch/useGetGraduationBatchDetails";
 import { formatDate, formatNumber } from "../../utils/functions";
 
-const CEREMONY = {
-  upcoming: { label: "Upcoming", tone: "primary" },
-  in_progress: { label: "In progress", tone: "success" },
-  held: { label: "Held", tone: "neutral" },
-  not_scheduled: { label: "Not scheduled", tone: "warning" },
-};
 
 const count = (value) => formatNumber(Number(value ?? 0));
 const when = (value, fallback = "-") => (value ? formatDate(value) : fallback);
@@ -24,13 +18,12 @@ const breakdown = (counts, labels) =>
     .join(" · ") || "None yet";
 
 function detailRows(batch) {
-  const ceremony = CEREMONY[batch.ceremony_status] ?? CEREMONY.not_scheduled;
   const year = batch.academic_year;
   return [
     { label: "Batch Name", value: batch.name ?? "-" },
     { label: "Description", value: batch.description ? <RichTextContent content={batch.description} /> : "No description" },
     { label: "Academic Year", value: year ? `${year.name}${year.year_start ? ` (${year.year_start} – ${year.year_end})` : ""}` : "-" },
-    { label: "Ceremony", value: <StatusPill tone={ceremony.tone}>{ceremony.label}</StatusPill> },
+    { label: "Ceremony", value: <Badge status={batch.ceremony_status ?? APP_STATUS.NOT_SCHEDULED} context={BADGE_CONTEXT.GRADUATION_CEREMONY} /> },
     { label: "Location", value: batch.location || "Not set" },
     { label: "Graduation Starts", value: when(batch.graduation_start_date, "Not scheduled") },
     { label: "Graduation Ends", value: when(batch.graduation_end_date, "Not scheduled") },

@@ -1,5 +1,5 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { actionsColumn, textColumn } from "@/utils/table/columns";
-import GradeSubmittedStatus from "../../../../components/Badges/GradeSubmittedStatus";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 
 export function examCandidateColDefs({ ActionComponent }) {
@@ -50,7 +50,8 @@ export function examCandidateColDefs({ ActionComponent }) {
       field: "is_student_evaluated",
       headerName: "Evaluation Status",
       hide: false,
-      cellRenderer: GradeSubmittedStatus,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.EVALUATION },
     }),
     textColumn({
       field: "academic_year",

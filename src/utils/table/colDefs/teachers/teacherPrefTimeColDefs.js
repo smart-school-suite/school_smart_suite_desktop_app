@@ -1,6 +1,5 @@
-import TeacherTableBadge from "../../../../components/Badges/TeacherTableBadge";
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
-import AddedStatus from "../../../../components/Badges/AddedStatus";
 import {
   textColumn,
   actionsColumn,
@@ -39,7 +38,7 @@ export function teacherPrefTimeColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: AddedStatus,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "specialty_name",

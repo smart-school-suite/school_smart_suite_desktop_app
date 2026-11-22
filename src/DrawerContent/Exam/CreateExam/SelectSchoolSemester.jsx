@@ -1,10 +1,10 @@
+import { Badge, BADGE_CONTEXT, APP_STATUS } from "@/components/Renderer/badges";
 import { motion } from "framer-motion";
 import { ArrowRight, CalendarPlus, CalendarRange, CircleAlert, CircleCheck, CircleDashed, Dot, ScanSearch, SearchX, Sparkles, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import StatusPill from "../../../components/Election/StatusPill";
 import EmptyState, { EmptyStateButton } from "../../../components/errors/EmptyState";
 import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import QueryErrorState from "../../../components/errors/QueryErrorState";
@@ -17,7 +17,6 @@ import {
   describeOptionsError,
   filterSemesters,
   ISSUE_ACTIONS,
-  SEMESTER_STATUS,
   suggestedExamType,
   USAGE_LABEL,
 } from "../../../utils/exam/examCreation";
@@ -86,7 +85,6 @@ export function IssueNote({ issue, onAction }) {
 }
 
 function SemesterCard({ semester, selected, onSelect, onAction }) {
-  const status = SEMESTER_STATUS[semester.status] ?? SEMESTER_STATUS.upcoming;
   const year = semester.academic_year ?? {};
   const disabled = !semester.available;
   const select = () => !disabled && onSelect(semester);
@@ -123,13 +121,13 @@ function SemesterCard({ semester, selected, onSelect, onAction }) {
           <div className="d-flex flex-column" style={{ minWidth: 0 }}>
             <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
               <span className="fw-semibold">{semester.name}</span>
-              <StatusPill tone={status.tone} pulse={status.pulse}>{status.label}</StatusPill>
+              <Badge status={semester.status ?? APP_STATUS.UPCOMING} context={BADGE_CONTEXT.ACADEMIC_PERIOD} />
               {semester.recommended && (
-                <StatusPill tone="primary">
+                <Badge variant="primary">
                   <span className="d-inline-flex align-items-center gap-1">
                     <Sparkles size={11} /> Recommended
                   </span>
-                </StatusPill>
+                </Badge>
               )}
             </div>
             <div className="d-flex flex-row align-items-center text-iron-400 font-size-xs" style={{ minWidth: 0 }}>

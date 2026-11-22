@@ -6,7 +6,6 @@ import {
 } from "@/utils/table/columns";
 import { BadgeRenderer } from "@/components/Renderer/badges";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
 import { AnnouncementAuthorRenderer } from "../../../../components/Badges/AnnouncementAuthorRenderer";
 export function eventCategoryColDefs({ ActionComponent }) {
   return [
@@ -26,7 +25,7 @@ export function eventCategoryColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: DepartmentTableBadge,
+      cellRenderer: BadgeRenderer,
     }),
     dateColumn({
       field: "created_at",

@@ -1,6 +1,6 @@
+import { Badge, APP_STATUS } from "@/components/Renderer/badges";
 import { Dot } from "lucide-react";
 import ChipRow from "../../components/Card/ChipRow";
-import CourseStatusPill from "../../components/Card/CourseStatusPill";
 import { CourseIcon } from "../../icons/Icons";
 import { htmlToPlainText } from "../../utils/richText/richText";
 
@@ -23,7 +23,7 @@ export default function CourseSummary({ course }) {
         <div className="d-flex flex-column flex-grow-1" style={{ minWidth: 0 }}>
           <div className="d-flex flex-row align-items-center gap-2">
             <span className="fw-semibold text-truncate">{course?.course_title ?? "Course"}</span>
-            <CourseStatusPill course={course} />
+            <Badge status={course?.assignment_status ?? APP_STATUS.UNASSIGNED} />
           </div>
           <div className="d-flex flex-row align-items-center text-iron-400 fw-light">
             <span>{course?.course_credit ?? "-"} Credit</span>

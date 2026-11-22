@@ -186,9 +186,6 @@ export function TimeSpan({ start, end, showDuration = true, emptyLabel = "Not se
   );
 }
 
-export function Badge({ tone = "neutral", children }) {
-  return <span className={`cw-badge cw-badge--${tone}`}>{children}</span>;
-}
 
 /** A row in a weekly list: day name, value, optional badge and actions. */
 export function DayRow({ day, children, badge, actions, muted = false }) {

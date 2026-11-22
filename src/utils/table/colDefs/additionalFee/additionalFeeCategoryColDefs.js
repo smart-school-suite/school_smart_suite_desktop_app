@@ -1,10 +1,10 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
   dateColumn
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
 export function additionalFeeCategoryColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -23,7 +23,7 @@ export function additionalFeeCategoryColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: DepartmentTableBadge,
+      cellRenderer: BadgeRenderer,
     }),
     dateColumn({
       field: "created_at",

@@ -1,13 +1,15 @@
+import { APP_STATUS } from "@/constants/status";
+
 // Mirrors SemesterTimetableVersion::STATUS_* on the API. The version's
 // scheduler_status is the source of truth for what the timetable page shows;
 // realtime events only make the page react faster.
 export const SCHEDULER_STATUS = Object.freeze({
-  PENDING: "pending",
-  GENERATING: "generating",
-  OPTIMAL: "optimal",
-  PARTIAL: "partial",
-  FAILED: "failed",
-  ERROR: "error",
+  PENDING: APP_STATUS.PENDING,
+  GENERATING: APP_STATUS.GENERATING,
+  OPTIMAL: APP_STATUS.OPTIMAL,
+  PARTIAL: APP_STATUS.PARTIAL,
+  FAILED: APP_STATUS.FAILED,
+  ERROR: APP_STATUS.ERROR,
 });
 
 // While a version is generating, the versions list is polled at this rate so

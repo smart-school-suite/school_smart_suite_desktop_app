@@ -1,16 +1,12 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
   dateColumn,
   numberColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import ActiveInactiveBadge from "../../../../components/Badges/ActiveInactive";
-import AssignmentPill from "../../../../components/Badges/AssignmentStatus";
-import ResitStatusRenderer from "../../../../components/Badges/ResitStatus";
-
 export function resitColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -64,13 +60,14 @@ export function resitColDefs({ ActionComponent }) {
       field: "payment_status",
       headerName: "Payment Status",
       hide: true,
-      cellRenderer: TextComponent,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "carry_over_status",
       headerName: "Status",
       hide: false,
-      cellRenderer: ResitStatusRenderer,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.CARRY_OVER },
     }),
     textColumn({
       field: "exam_name",

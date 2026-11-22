@@ -1,8 +1,8 @@
+import { Badge, BADGE_CONTEXT, getBadgeLabel } from "@/components/Renderer/badges";
 import { CircleCheck, CircleX, FileText } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
 import ParticipantIdentity from "../../../components/Election/ParticipantIdentity";
-import StatusPill from "../../../components/Election/StatusPill";
 import EmptyState, { EmptyStateButton } from "../../../components/errors/EmptyState";
 import SearchInput from "../../../components/input/search";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -14,7 +14,6 @@ import {
   RejectApplicationDialog,
 } from "../../../ModalContent/ElectionApplication/ApplicationDecisionDialogs";
 import {
-  APPLICATION_STATUS,
   formatElectionDate,
   matchesQuery,
   participantTypeLabel,
@@ -52,7 +51,7 @@ function ApplicationCard({ application, canReview, selected, onToggle }) {
         name={application.applicant_name}
         type={application.applicant_type}
         subtitle={`${participantTypeLabel(application.applicant_type)} · applied ${formatElectionDate(application.created_at, "d MMM")}`}
-        trailing={<StatusPill meta={APPLICATION_STATUS[application.application_status]} />}
+        trailing={<Badge status={application.application_status} context={BADGE_CONTEXT.ELECTION_APPLICATION} />}
       />
       <div className="d-flex flex-column gap-1">
         <span className="teacher-card__label">Position</span>
@@ -167,7 +166,7 @@ export default function ApplicationsTab({ election }) {
           mascot="notFound"
           height="20rem"
           mascotHeight="7rem"
-          title={debouncedSearch ? "No matching applications" : `No ${APPLICATION_STATUS[status].label.toLowerCase()} applications`}
+          title={debouncedSearch ? "No matching applications" : `No ${getBadgeLabel(status, BADGE_CONTEXT.ELECTION_APPLICATION).toLowerCase()} applications`}
           description={debouncedSearch ? `No ${status} application matches "${debouncedSearch}".` : "Choose another status to see other applications."}
           actions={
             debouncedSearch && (
@@ -215,7 +214,7 @@ export default function ApplicationsTab({ election }) {
               }}
               className={`border-none rounded-2 font-size-xs px-2 py-1 d-flex flex-row gap-1 ${status === key ? "bg-primary-50 text-primary-600 fw-semibold" : "bg-transparent text-iron-500"}`}
             >
-              <span>{APPLICATION_STATUS[key].label}</span>
+              <span>{getBadgeLabel(key, BADGE_CONTEXT.ELECTION_APPLICATION)}</span>
               <span className={status === key ? "text-primary-500" : "text-iron-400"}>{counts[key] ?? 0}</span>
             </button>
           ))}

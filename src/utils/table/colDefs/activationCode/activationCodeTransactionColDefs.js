@@ -1,3 +1,4 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   textColumn,
   dateColumn,
@@ -5,7 +6,6 @@ import {
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import TransactionStatus from "../../../../components/Badges/ActivationCode/TransactionStatus";
 export function activationCodeTransactionColDefs() {
   return [
     textColumn({
@@ -42,7 +42,7 @@ export function activationCodeTransactionColDefs() {
       field: "status",
       headerName: "Transaction Status",
       hide: false,
-      cellRenderer: TransactionStatus,
+      cellRenderer: BadgeRenderer,
     }),
     dateColumn({
       field: "created_at",

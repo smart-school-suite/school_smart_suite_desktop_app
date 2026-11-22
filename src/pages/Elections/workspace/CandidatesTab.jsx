@@ -1,9 +1,9 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { ShieldOff, Undo2 } from "lucide-react";
 import { useMemo } from "react";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
 import ParticipantIdentity from "../../../components/Election/ParticipantIdentity";
 import SectionCard from "../../../components/Election/SectionCard";
-import StatusPill from "../../../components/Election/StatusPill";
 import EmptyState from "../../../components/errors/EmptyState";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useGetElectionCandidates } from "../../../hooks/electionCandidate/useGetElectionCandidates";
@@ -11,7 +11,9 @@ import {
   DisqualifyCandidateDialog,
   ReinstateCandidateDialog,
 } from "../../../ModalContent/ElectionCandidate/CandidateStatusDialogs";
-import { CANDIDATE_STATUS, serverErrorCopy } from "../../../utils/election/electionDisplay";
+import {
+  serverErrorCopy,
+} from "../../../utils/election/electionDisplay";
 
 const CLOSED = ["completed", "cancelled"];
 
@@ -22,7 +24,7 @@ function CandidateCard({ candidate, editable }) {
         person={candidate.candidate}
         name={candidate.name}
         type={candidate.candidate_type}
-        trailing={<StatusPill meta={CANDIDATE_STATUS[candidate.status]} />}
+        trailing={<Badge status={candidate.status} context={BADGE_CONTEXT.ELECTION_CANDIDATE} />}
       />
       <p
         className="m-0 text-iron-600 course-card__description"

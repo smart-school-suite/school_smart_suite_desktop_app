@@ -1,3 +1,4 @@
+import { Badge, APP_STATUS } from "@/components/Renderer/badges";
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { timeRangeSchema } from "../../../../ComponentConfig/YupValidationSchema";
@@ -285,7 +286,7 @@ function RequestCard({ config, day, index, request, options, hard }) {
           {start && end && <TimeSpan start={start} end={end} />}
         </span>
         <div className="d-flex flex-row align-items-center gap-2">
-          {complete && <span className="cw-badge cw-badge--accent">Ready</span>}
+          {complete && <Badge status={APP_STATUS.READY} />}
           <IconButton
             icon="lucide:x"
             label="Remove request"

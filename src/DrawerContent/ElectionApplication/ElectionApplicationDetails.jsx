@@ -1,6 +1,8 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import ParticipantIdentity from "../../components/Election/ParticipantIdentity";
-import StatusPill from "../../components/Election/StatusPill";
-import { APPLICATION_STATUS, formatElectionDateTime } from "../../utils/election/electionDisplay";
+import {
+  formatElectionDateTime,
+} from "../../utils/election/electionDisplay";
 
 function Block({ label, children }) {
   return (
@@ -19,7 +21,7 @@ function ElectionApplicationDetails({ drawerData: application }) {
         person={application?.applicant}
         name={application?.applicant_name}
         type={application?.applicant_type}
-        trailing={<StatusPill meta={APPLICATION_STATUS[application?.application_status]} />}
+        trailing={<Badge status={application?.application_status} context={BADGE_CONTEXT.ELECTION_APPLICATION} />}
       />
       <div className="d-flex flex-column">
         <Block label="Election">{application?.election_title}</Block>

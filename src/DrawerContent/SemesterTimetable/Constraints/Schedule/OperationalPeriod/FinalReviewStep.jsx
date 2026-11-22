@@ -1,7 +1,7 @@
+import { Badge, BADGE_VARIANT } from "@/components/Renderer/badges";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  Badge,
   DayList,
   DayRow,
   EmptyState,
@@ -118,9 +118,9 @@ function FinalReviewStep({ handleClose, previousStep, goToStep }) {
                   day={day}
                   badge={
                     isException ? (
-                      <Badge tone="warn">Custom hours</Badge>
+                      <Badge variant={BADGE_VARIANT.WARNING}>Custom hours</Badge>
                     ) : (
-                      <Badge>Normal</Badge>
+                      <Badge variant={BADGE_VARIANT.NEUTRAL}>Normal</Badge>
                     )
                   }
                   actions={

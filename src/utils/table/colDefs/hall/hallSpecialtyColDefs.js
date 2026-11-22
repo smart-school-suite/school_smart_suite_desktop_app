@@ -1,3 +1,4 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
@@ -5,7 +6,6 @@ import {
   numberColumn,
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import AssignmentStatusRenderer from "../../../../components/Renderer/Hall/AssignmentStatus";
 export const hallSpecialtyColDefs = ({ ActionComponent }) => {
   return [
     textColumn({
@@ -42,7 +42,7 @@ export const hallSpecialtyColDefs = ({ ActionComponent }) => {
       field: "assignment_status",
       headerName: "Assignment Status",
       hide: false,
-      cellRenderer: AssignmentStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "department",

@@ -1,6 +1,6 @@
+import { Badge } from "@/components/Renderer/badges";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import PromotionRunStatusRenderer from "../../components/Renderer/Promotion/PromotionRunStatusRenderer";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetPromotionRunDetails } from "../../hooks/promotionRun/useGetPromotionRunDetails";
 import { formatDate, formatNumber } from "../../utils/functions";
@@ -21,7 +21,7 @@ function detailRows(run) {
     { label: "Level Number", value: run.level ?? "-" },
     { label: "Academic Year", value: run.academic_year ?? "-" },
     { label: "Academic Year Dates", value: `${day(run.ac_start_date)} - ${day(run.ac_end_date)}` },
-    { label: "Status", value: <PromotionRunStatusRenderer value={run.status} /> },
+    { label: "Status", value: <Badge status={run.status} /> },
     { label: "Students Evaluated", value: `${count(run.processed_students)} of ${count(run.total_students)}` },
     { label: "Promoted", value: count(run.promoted_count) },
     { label: "Retained", value: count(run.repeated_count) },

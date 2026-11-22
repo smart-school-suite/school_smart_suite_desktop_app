@@ -1,3 +1,4 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
@@ -5,9 +6,6 @@ import {
   numberColumn,
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import GradesConfigTableBadge from "../../../../components/Badges/GradesConfigTableBadge";
-import ExamStatusRenderer from "../../../../components/Badges/ExamStatusRenderer";
-
 export function examColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -73,19 +71,21 @@ export function examColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: ExamStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "timetable_published",
       headerName: "Timetable Status",
       hide: true,
-      cellRenderer: TextComponent,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.TIMETABLE_PUBLICATION },
     }),
     textColumn({
       field: "is_grade_scale_configured",
       headerName: "Grade Scale Status",
       hide: true,
-      cellRenderer: GradesConfigTableBadge,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.CONFIGURATION },
     }),
     dateColumn({
       field: "created_at",

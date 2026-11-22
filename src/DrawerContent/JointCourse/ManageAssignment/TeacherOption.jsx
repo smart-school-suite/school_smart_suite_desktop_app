@@ -1,3 +1,4 @@
+import { Badge, BADGE_CONTEXT, APP_STATUS } from "@/components/Renderer/badges";
 import { motion } from "framer-motion";
 import {
   AlertCircle,
@@ -26,17 +27,13 @@ function TeacherOption({ teacher, selected, onSelect }) {
     ? qualifications
     : qualifications.slice(0, 2);
 
-  const status = teacher.is_current
-    ? { label: "Current teacher", className: "text-primary bg-primary-subtle" }
+  const eligibilityStatus = teacher.is_current
+    ? APP_STATUS.CURRENT
     : !teacher.eligible
-      ? {
-          label: teacher.status === "active" ? "Not eligible" : "Deactivated",
-          className: "text-secondary bg-light",
-        }
-      : {
-          label: "Eligible",
-          className: "text-fern-600 bg-fern-100",
-        };
+      ? teacher.status === APP_STATUS.ACTIVE
+        ? APP_STATUS.INELIGIBLE
+        : APP_STATUS.INACTIVE
+      : APP_STATUS.ELIGIBLE;
 
   const courseLabel = `${teacher.course_count} ${
     teacher.course_count === 1 ? "course" : "courses"
@@ -172,11 +169,7 @@ function TeacherOption({ teacher, selected, onSelect }) {
           {courseLabel}
         </span>
 
-        <span
-          className={`px-2 py-1 rounded-pill font-size-xs fw-medium ${status.className}`}
-        >
-          {status.label}
-        </span>
+        <Badge status={eligibilityStatus} context={BADGE_CONTEXT.TEACHER_ELIGIBILITY} showIcon={false} />
       </div>
 
       {/* Ineligibility explanation */}

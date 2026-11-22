@@ -1,3 +1,4 @@
+import { Badge, BADGE_CONTEXT, APP_STATUS } from "@/components/Renderer/badges";
 import { BookOpenCheck, CalendarClock, ClipboardCheck, Dot, Info, Link2, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import { numberSchema } from "../../../ComponentConfig/YupValidationSchema";
@@ -5,7 +6,6 @@ import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDash
 import CustomDropdown from "../../../components/Dropdowns/Dropdowns";
 import SectionCard from "../../../components/Election/SectionCard";
 import StatTile from "../../../components/Election/StatTile";
-import StatusPill from "../../../components/Election/StatusPill";
 import EmptyState from "../../../components/errors/EmptyState";
 import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import { NumberInput } from "../../../components/FormComponents/InputComponents";
@@ -21,11 +21,6 @@ import { useFormError } from "../../../hooks/form/useFormError";
 import { formatScheduleDate } from "../../../utils/feeSchedule/scheduleRules";
 import { boundsFor, dateError } from "../../../utils/updateRules/dateRules";
 
-const STATUS = {
-  upcoming: { label: "Upcoming", tone: "primary" },
-  ongoing: { label: "Ongoing", tone: "success", pulse: true },
-  ended: { label: "Ended", tone: "neutral" },
-};
 
 const FIELD_LABELS = {
   school_year_id: "Academic year",
@@ -54,7 +49,6 @@ const windowLimits = (window) =>
 
 /** What the exam is: name, status, academic year, specialty, level and dates. */
 function ExamSummary({ rules }) {
-  const status = STATUS[rules.status] ?? STATUS.upcoming;
   const year = rules.academic_year ?? {};
   return (
     <div className="d-flex flex-column gap-2 font-size-sm">
@@ -68,7 +62,7 @@ function ExamSummary({ rules }) {
         <div className="d-flex flex-column flex-grow-1" style={{ minWidth: 0 }}>
           <div className="d-flex flex-row align-items-center gap-2">
             <span className="fw-semibold text-truncate">{rules.exam_type?.name ?? "Exam"}</span>
-            <StatusPill tone={status.tone} pulse={status.pulse}>{status.label}</StatusPill>
+            <Badge status={rules.status ?? APP_STATUS.UPCOMING} context={BADGE_CONTEXT.ACADEMIC_PERIOD} />
           </div>
           <div className="d-flex flex-row align-items-center text-iron-400 fw-light" style={{ minWidth: 0 }}>
             <span className="text-truncate">{year.specialty ?? "-"}</span>

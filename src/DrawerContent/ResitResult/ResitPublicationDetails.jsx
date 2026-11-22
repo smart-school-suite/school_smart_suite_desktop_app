@@ -1,22 +1,20 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import StatusPill from "../../components/Election/StatusPill";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
-import { RESIT_PUBLICATION_STATUS } from "../../components/Renderer/ResitResult/ResitResultPublicationStatusRenderer";
 import { useGetResitResultPublishDetails } from "../../hooks/resitResult/useGetResitResultPublishDetails";
 import { formatDate } from "../../utils/functions";
 
 const when = (value, fallback = "-") => (value ? formatDate(value) : fallback);
 
 function detailRows(details) {
-  const status = RESIT_PUBLICATION_STATUS[details.publication_status] ?? RESIT_PUBLICATION_STATUS.default;
   const published = ["published", "scheduled"].includes(details.publication_status);
   return [
     { label: "Resit Exam", value: details.exam_name ?? "-" },
     { label: "Specialty Name", value: details.specialty_name ?? "-" },
     { label: "Level Name", value: details.level_name ?? "-" },
     { label: "Academic Year", value: details.school_year ?? "-" },
-    { label: "Publication Status", value: <StatusPill tone={status.tone}>{status.label}</StatusPill> },
+    { label: "Publication Status", value: <Badge status={details.publication_status} context={BADGE_CONTEXT.RESULT_PUBLICATION} /> },
     {
       label: details.publication_status === "scheduled" ? "Will Be Published On" : "Published On",
       value: when(details.published_at, "Not published yet"),

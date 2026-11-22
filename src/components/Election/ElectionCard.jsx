@@ -1,3 +1,4 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { CalendarRange, FileText, UserRoundCheck, Vote } from "lucide-react";
 import {
   electionStatusMeta,
@@ -6,7 +7,6 @@ import {
 } from "../../utils/election/electionDisplay";
 import ElectionActions from "./ElectionActions";
 import ElectionTimeline from "./ElectionTimeline";
-import StatusPill from "./StatusPill";
 
 /**
  * Fixed-size election summary used in grids (builds on .teacher-card).
@@ -48,7 +48,7 @@ export default function ElectionCard({ election, onOpen }) {
             {election?.system_academic_year?.name ? ` · ${election.system_academic_year.name}` : ""}
           </span>
         </div>
-        <StatusPill meta={meta} pulse={election?.status === "voting_open"} />
+        <Badge status={election?.status} context={BADGE_CONTEXT.ELECTION} />
       </div>
 
       <ElectionTimeline election={election} compact />
