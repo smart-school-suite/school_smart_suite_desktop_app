@@ -4,9 +4,8 @@ import {
   dateColumn,
   numberColumn,
 } from "@/utils/table/columns";
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import AnnouncementStatusRenderer from "../../../../components/Badges/AnnouncementStatusRenderer";
-import AnnouncementLabelRenderer from "../../../../components/Badges/AnnouncementLabelRenderer";
 import { AnnouncementAuthorRenderer } from "../../../../components/Badges/AnnouncementAuthorRenderer";
 export function announcementColDefs({ ActionComponent }) {
   return [
@@ -31,7 +30,7 @@ export function announcementColDefs({ ActionComponent }) {
       field: "label_name",
       headerName: "Label",
       hide: false,
-      cellRenderer: AnnouncementLabelRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     numberColumn({
       field: "recipient_count",
@@ -48,7 +47,7 @@ export function announcementColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: AnnouncementStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     dateColumn({
       field: "published_at",

@@ -4,9 +4,9 @@ import {
   dateColumn,
   numberColumn,
 } from "@/utils/table/columns";
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
-import AnnouncementStatusRenderer from "../../../../components/Badges/AnnouncementStatusRenderer";
 import { AnnouncementAuthorRenderer } from "../../../../components/Badges/AnnouncementAuthorRenderer";
 export function eventCategoryColDefs({ ActionComponent }) {
   return [
@@ -75,7 +75,7 @@ export function schoolEventColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: AnnouncementStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "location",

@@ -4,7 +4,7 @@ import { CalendarDays, Heart, MapPin, UserRound, Users } from "lucide-react";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import AnnouncementStatusRenderer from "../../components/Badges/AnnouncementStatusRenderer";
+import { Badge } from "../../components/Renderer/badges";
 import { useGetSchoolEventDetails } from "../../hooks/schoolEvent/useGetSchoolEventDetails";
 import { EventIcon } from "../../icons/Icons";
 import { eventImageUrl } from "./CreateSchoolEvent/EventContent";
@@ -104,7 +104,7 @@ function SchoolEventDetails({ handleClose, drawerData }) {
                   </span>
                 </div>
               </div>
-              <AnnouncementStatusRenderer value={event?.status} />
+              <Badge status={event?.status} />
             </div>
             <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
             <div className="d-flex flex-column gap-1">
