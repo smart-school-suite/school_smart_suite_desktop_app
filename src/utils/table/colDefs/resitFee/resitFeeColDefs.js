@@ -1,3 +1,4 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
@@ -6,9 +7,6 @@ import {
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";;
-import ResitStatusRenderer from "../../../../components/Badges/ResitStatus";
-import RegistrationFeeTableBadge from "../../../../components/Badges/RegistrationFeeTableBadge"
-
 export function resitFeeColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -62,13 +60,14 @@ export function resitFeeColDefs({ ActionComponent }) {
       field: "payment_status",
       headerName: "Payment Status",
       hide: false,
-      cellRenderer: RegistrationFeeTableBadge,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "carry_over_status",
       headerName: "Status",
       hide: true,
-      cellRenderer: ResitStatusRenderer,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.CARRY_OVER },
     }),
     textColumn({
       field: "exam_name",

@@ -1,14 +1,18 @@
+import { Badge } from "@/components/Renderer/badges";
 import { Crown, Radio, Scale } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
 import SectionCard from "../../../components/Election/SectionCard";
-import StatusPill from "../../../components/Election/StatusPill";
 import VoteShareBar from "../../../components/Election/VoteShareBar";
 import EmptyState, { EmptyStateButton } from "../../../components/errors/EmptyState";
 import RectangleSkeleton from "../../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useGetElectionResults } from "../../../hooks/election/useGetElectionResults";
 import PublishElectionResults from "../../../ModalContent/Elections/PublishElectionResults";
-import { formatElectionDateTime, relativeTo, serverErrorCopy } from "../../../utils/election/electionDisplay";
+import {
+  formatElectionDateTime,
+  relativeTo,
+  serverErrorCopy,
+} from "../../../utils/election/electionDisplay";
 
 const STARTED = ["voting_open", "voting_closed", "completed"];
 const LIVE_REFRESH_MS = 5000;
@@ -67,13 +71,13 @@ export default function ResultsTab({ election }) {
       <div className="d-flex flex-row align-items-center justify-content-between gap-3 bg-white border rounded-4 px-3 py-2">
         <div className="d-flex flex-row align-items-center gap-3 font-size-sm">
           {live ? (
-            <StatusPill tone="success" pulse>
+            <Badge variant="success" pulse>
               Live · updates every {LIVE_REFRESH_MS / 1000}s
-            </StatusPill>
+            </Badge>
           ) : election?.is_results_published ? (
-            <StatusPill tone="primary"><Crown size={11} /> Final results</StatusPill>
+            <Badge variant="primary"><Crown size={11} /> Final results</Badge>
           ) : (
-            <StatusPill tone="warning">Provisional · not published</StatusPill>
+            <Badge variant="warning">Provisional · not published</Badge>
           )}
           <span className="text-iron-500 font-size-xs">
             {turnout?.voters_participated ?? 0} of {turnout?.eligible_voters ?? 0} voters ({turnout?.turnout_percentage ?? 0}% turnout)

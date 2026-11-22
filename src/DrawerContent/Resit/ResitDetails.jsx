@@ -1,21 +1,16 @@
+import { Badge } from "@/components/Renderer/badges";
 import { useSelector } from "react-redux";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import StatusPill from "../../components/Election/StatusPill";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetResitDetails } from "../../hooks/studentResit/useGetResitDetails";
 import { formatDate, formatNumber } from "../../utils/functions";
 
-const PAYMENT = {
-  paid: { label: "Paid", tone: "success" },
-  unpaid: { label: "Unpaid", tone: "warning" },
-};
 
 const when = (value, fallback = "-") => (value ? formatDate(value) : fallback);
 
 function detailRows(resit, currency) {
   const money = (value) => `${formatNumber(parseFloat(value ?? 0))} ${currency}`.trim();
-  const payment = PAYMENT[resit.payment_status] ?? { label: resit.payment_status ?? "-", tone: "neutral" };
   const level = [resit.level_name, resit.level_number && `(${resit.level_number})`].filter(Boolean).join(" ");
   const score =
     resit.resit_score == null
@@ -40,7 +35,7 @@ function detailRows(resit, currency) {
     { label: "Resit Fee", value: money(resit.resit_fee) },
     { label: "Amount Paid", value: money(resit.amount_paid) },
     { label: "Balance", value: money(resit.balance) },
-    { label: "Payment Status", value: <StatusPill tone={payment.tone}>{payment.label}</StatusPill> },
+    { label: "Payment Status", value: <Badge status={resit.payment_status} /> },
     {
       label: "Payments",
       value: resit.transactions

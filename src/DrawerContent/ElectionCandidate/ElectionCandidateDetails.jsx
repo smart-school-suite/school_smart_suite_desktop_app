@@ -1,7 +1,6 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import ParticipantIdentity from "../../components/Election/ParticipantIdentity";
-import StatusPill from "../../components/Election/StatusPill";
 import { useGetElectionCandidateDetails } from "../../hooks/electionCandidate/useGetElectionCandidateDetails";
-import { CANDIDATE_STATUS } from "../../utils/election/electionDisplay";
 
 function Block({ label, children }) {
   return (
@@ -22,7 +21,7 @@ function ElectionCandidateDetails({ drawerData }) {
         person={candidate?.candidate}
         name={candidate?.name}
         type={candidate?.candidate_type}
-        trailing={<StatusPill meta={CANDIDATE_STATUS[candidate?.status]} />}
+        trailing={<Badge status={candidate?.status} context={BADGE_CONTEXT.ELECTION_CANDIDATE} />}
       />
       <div className="d-flex flex-column">
         <Block label="Election">{candidate?.election?.title}</Block>

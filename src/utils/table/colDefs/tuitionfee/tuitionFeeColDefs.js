@@ -1,10 +1,10 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   actionsColumn,
   dateColumn,
   numberColumn,
   textColumn,
 } from "@/utils/table/columns";
-import TuitionFeePaymentStatusRenderer from "../../../../components/Badges/TuitionFeePaymentStatusRenderer";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
@@ -55,7 +55,7 @@ export function tuitionFeeColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: TuitionFeePaymentStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "level_number",

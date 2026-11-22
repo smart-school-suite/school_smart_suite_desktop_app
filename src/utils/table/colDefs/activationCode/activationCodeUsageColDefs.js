@@ -1,7 +1,6 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { textColumn, dateColumn } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import UsageStatus from "../../../../components/Badges/ActivationCode/UsageStatus";
-
 export function activationCodeUsageColDefs() {
   return [
     textColumn({
@@ -20,7 +19,8 @@ export function activationCodeUsageColDefs() {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: UsageStatus,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.ACTIVATION_CODE },
     }),
     textColumn({
       field: "account_name",

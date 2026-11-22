@@ -1,3 +1,4 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
@@ -7,8 +8,6 @@ import {
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import ActionComponent from "../../../../components/Badges/ActivationCode/ActionComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import ActivationCodeUsedStatusRenderer from "../../../../components/Renderer/ActivationCode/UsedStatusRenderer";
-import ActivationCodeStatusRenderer from "../../../../components/Renderer/ActivationCode/ActivationCodeStatusRenderer";
 export function activationCodeColDefs() {
   return [
     textColumn({
@@ -27,7 +26,7 @@ export function activationCodeColDefs() {
       field: "used_status",
       headerName: "Used Status",
       hide: false,
-      cellRenderer: ActivationCodeUsedStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "expires_in",
@@ -39,7 +38,8 @@ export function activationCodeColDefs() {
       headerName: "Status",
       field: "status",
       hide: true,
-      cellRenderer: ActivationCodeStatusRenderer,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.ACTIVATION_CODE },
     }),
     numberColumn({
       headerName: "Duration",

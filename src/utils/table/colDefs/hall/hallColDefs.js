@@ -1,13 +1,11 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   actionsColumn,
   dateColumn,
   numberColumn,
   textColumn,
 } from "@/utils/table/columns";
-import AssignmentPill from "../../../../components/Badges/AssignmentStatus";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import HallStatusRenderer from "../../../../components/Renderer/Hall/HallStatus";
-import HallAssignmentStatusRenderer from "../../../../components/Renderer/Hall/AssignmentStatus"
 export function hallColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -36,13 +34,13 @@ export function hallColDefs({ ActionComponent }) {
       field: "assignment_status",
       headerName: "Assignment Status",
       hide: false,
-      cellRenderer: HallAssignmentStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: HallStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     dateColumn({
       field: "created_at",

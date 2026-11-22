@@ -1,4 +1,3 @@
-import TeacherTableBadge from "../../../../components/Badges/TeacherTableBadge";
 import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
 import {
   textColumn,

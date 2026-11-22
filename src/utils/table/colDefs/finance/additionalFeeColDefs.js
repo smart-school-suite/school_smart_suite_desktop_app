@@ -1,10 +1,10 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   actionsColumn,
   dateColumn,
   numberColumn,
   textColumn,
 } from "@/utils/table/columns";
-import RegistrationFeeTableBadge from "../../../../components/Badges/RegistrationFeeTableBadge";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
 import { TeacherAvatarComponent } from "../../../../components/DataTableComponents/TeacherTableAvatar";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
@@ -68,7 +68,7 @@ export function additionalFeeColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Payment Status",
       hide: false,
-      cellRenderer: RegistrationFeeTableBadge,
+      cellRenderer: BadgeRenderer,
     }),
     dateColumn({
       field: "created_at",

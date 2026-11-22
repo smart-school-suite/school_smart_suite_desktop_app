@@ -1,6 +1,6 @@
+import { Badge, BADGE_VARIANT } from "@/components/Renderer/badges";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  Badge,
   DayPicker,
   IconButton,
   Section,
@@ -88,9 +88,9 @@ function CustomDurationDaysStep({ nextStep, previousStep }) {
                 <span className="cw-slot__title">
                   {dayLabel(customDay.day)}
                   {customDay.duration_minutes ? (
-                    <Badge tone="accent">{customDay.duration_minutes} min</Badge>
+                    <Badge variant={BADGE_VARIANT.PRIMARY}>{customDay.duration_minutes} min</Badge>
                   ) : (
-                    <Badge tone="muted">Not chosen</Badge>
+                    <Badge variant={BADGE_VARIANT.NEUTRAL}>Not chosen</Badge>
                   )}
                 </span>
                 <IconButton

@@ -1,7 +1,7 @@
+import { Badge, BADGE_VARIANT } from "@/components/Renderer/badges";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  Badge,
   DayPicker,
   EmptyState,
   IconButton,
@@ -284,9 +284,9 @@ export function RequestReviewStep({
                   </span>
                   <span className="cw-dayrow__meta pt-1">
                     {requests.length ? (
-                      <Badge tone="accent">{requests.length}</Badge>
+                      <Badge variant={BADGE_VARIANT.PRIMARY}>{requests.length}</Badge>
                     ) : (
-                      <Badge tone="muted">Empty</Badge>
+                      <Badge variant={BADGE_VARIANT.NEUTRAL}>Empty</Badge>
                     )}
                   </span>
                 </li>

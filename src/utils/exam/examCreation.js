@@ -4,12 +4,6 @@
  * on save; these only search and label what it sends.
  */
 
-export const SEMESTER_STATUS = {
-  ongoing: { label: "Ongoing", tone: "success", pulse: true },
-  upcoming: { label: "Upcoming", tone: "primary" },
-  ended: { label: "Ended", tone: "neutral" },
-};
-
 export const USAGE_LABEL = {
   unused: "No exams yet",
   partial: "Partly created",

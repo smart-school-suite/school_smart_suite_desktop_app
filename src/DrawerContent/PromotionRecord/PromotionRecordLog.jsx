@@ -1,18 +1,11 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { ArrowRight, CircleAlert, CircleCheck, CircleX } from "lucide-react";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import StatusPill from "../../components/Election/StatusPill";
 import EmptyState from "../../components/errors/EmptyState";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useGetPromotionRecordLogs } from "../../hooks/promotionRecord/useGetPromotionLog";
 import { isEmptyListError } from "../../utils/teacher/teacherFilters";
 
-const OUTCOME = {
-  promoted: { label: "Promoted", tone: "success" },
-  graduated: { label: "Graduated", tone: "success" },
-  repeated: { label: "Repeating", tone: "danger" },
-  pending_review: { label: "Needs review", tone: "warning" },
-  excluded: { label: "Excluded", tone: "neutral" },
-};
 
 const RESULT = {
   failed: { icon: CircleX, className: "text-red-500", label: "Not met" },
@@ -29,7 +22,6 @@ const COUNTS = [
 const levelLabel = (name, level) => [name, level].filter(Boolean).join(" · ");
 
 function RecordHeader({ record }) {
-  const outcome = OUTCOME[record?.outcome];
   return (
     <div className="d-flex flex-column gap-2 font-size-sm">
       <div className="d-flex flex-row align-items-center justify-content-between gap-2">
@@ -48,7 +40,7 @@ function RecordHeader({ record }) {
             </span>
           </div>
         </div>
-        {outcome && <StatusPill tone={outcome.tone}>{outcome.label}</StatusPill>}
+        {record?.outcome && <Badge status={record.outcome} context={BADGE_CONTEXT.PROMOTION_OUTCOME} />}
       </div>
       <div className="d-flex flex-row align-items-center gap-2 text-iron-500 font-size-xs">
         <span className="text-truncate">{levelLabel(record?.from_spec_name, record?.from_level_name) || "-"}</span>

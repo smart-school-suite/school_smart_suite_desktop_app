@@ -1,4 +1,4 @@
-import TeacherTableBadge from "../../../../components/Badges/TeacherTableBadge";
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
@@ -49,7 +49,7 @@ export function schoolAdminColDefs({ ActionComponent }) {
     textColumn({
       field: "status",
       headerName: "Status",
-      cellRenderer: TeacherTableBadge,
+      cellRenderer: BadgeRenderer,
     }),
     numberColumn({
       field: "role",

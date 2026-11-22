@@ -64,15 +64,7 @@
   font-size: 0.75rem;
 }
 
-.cw-badge--success {
-  background: #e7f6ec;
-  color: var(--cw-success);
-}
 
-.cw-badge--danger {
-  background: #fdecea;
-  color: #b42318;
-}
 
 .cw-text-btn:disabled {
   opacity: 0.5;

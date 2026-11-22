@@ -1,14 +1,11 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import {
   actionsColumn,
   dateColumn,
   numberColumn,
   textColumn,
 } from "@/utils/table/columns";
-import ExamStatusRenderer from "../../../../components/Badges/ExamStatusRenderer";
-import GradesConfigTableBadge from "../../../../components/Badges/GradesConfigTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import ResitResultPublicationStatusRenderer from "../../../../components/Renderer/ResitResult/ResitResultPublicationStatusRenderer";
-
 /** Columns of the resit results table, like examResultColDefs. */
 export function resitResultColDefs({ ActionComponent }) {
   return [
@@ -21,7 +18,8 @@ export function resitResultColDefs({ ActionComponent }) {
       field: "publication_status",
       headerName: "Publication Status",
       hide: false,
-      cellRenderer: ResitResultPublicationStatusRenderer,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.RESULT_PUBLICATION },
     }),
     numberColumn({ field: "evaluated_candidates", headerName: "Evaluated Candidates", hide: true }),
     numberColumn({ field: "not_evaluated_candidates", headerName: "UnEvaluated Candidates", hide: true }),
@@ -31,12 +29,13 @@ export function resitResultColDefs({ ActionComponent }) {
     textColumn({ field: "specialty_name", headerName: "Specialty", hide: false, cellRenderer: TextComponent }),
     textColumn({ field: "level_name", headerName: "Level Name", hide: false, cellRenderer: TextComponent }),
     textColumn({ field: "level_number", headerName: "Level Number", hide: true, cellRenderer: TextComponent }),
-    textColumn({ field: "status", headerName: "Status", hide: true, cellRenderer: ExamStatusRenderer }),
+    textColumn({ field: "status", headerName: "Status", hide: true, cellRenderer: BadgeRenderer }),
     textColumn({
       field: "is_grade_scale_configured",
       headerName: "Grade Scale Status",
       hide: true,
-      cellRenderer: GradesConfigTableBadge,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.CONFIGURATION },
     }),
     dateColumn({ field: "created_at", headerName: "Created At", format: "dd/MM/yyyy", hide: true, cellRenderer: TextComponent }),
     dateColumn({ field: "updated_at", headerName: "Updated At", format: "dd/MM/yyyy", hide: true, cellRenderer: TextComponent }),

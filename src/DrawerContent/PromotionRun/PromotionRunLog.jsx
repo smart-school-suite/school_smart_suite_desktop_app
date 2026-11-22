@@ -1,7 +1,7 @@
+import { Badge, BADGE_CONTEXT, getBadgeLabel } from "@/components/Renderer/badges";
 import { CircleAlert, Dot, GraduationCap, TriangleAlert } from "lucide-react";
 import { useMemo, useState } from "react";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import StatusPill from "../../components/Election/StatusPill";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import SearchInput from "../../components/input/search";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -9,17 +9,7 @@ import { useDebounce } from "../../hooks/common/useDebounce";
 import { useGetPromotionRunLog } from "../../hooks/promotionRun/useGetPromotionRunLog";
 import { isEmptyListError } from "../../utils/teacher/teacherFilters";
 
-const LOG_STATUS = {
-  completed: { label: "Completed", tone: "success" },
-  failed: { label: "Failed", tone: "danger" },
-  cancelled: { label: "Cancelled", tone: "warning" },
-};
 
-const OUTCOME = {
-  retained: { label: "Retained", tone: "danger" },
-  pending_review: { label: "Needs review", tone: "warning" },
-  promoted: { label: "Promoted", tone: "success" },
-};
 
 const COUNTS = [
   { key: "total", label: "Students" },
@@ -82,12 +72,11 @@ function Issue({ issue }) {
 }
 
 function StudentRow({ student }) {
-  const outcome = OUTCOME[student.outcome] ?? { label: student.outcome, tone: "neutral" };
   return (
     <div className="d-flex flex-column gap-1 py-2">
       <div className="d-flex flex-row align-items-center justify-content-between gap-2">
         <span className="fw-semibold text-truncate" title={student.name}>{student.name ?? "Student"}</span>
-        <StatusPill tone={outcome.tone}>{outcome.label}</StatusPill>
+        <Badge status={student.outcome} context={BADGE_CONTEXT.PROMOTION_OUTCOME} />
       </div>
       {student.problems.length > 0 ? (
         <ul className="m-0 ps-3 text-iron-600" style={{ lineHeight: 1.5 }}>
@@ -125,7 +114,7 @@ function LogBody({ log }) {
     const words = debouncedSearch.trim().toLowerCase().split(/\s+/).filter(Boolean);
     if (words.length === 0) return students;
     return students.filter((student) => {
-      const haystack = [student.name, OUTCOME[student.outcome]?.label, ...student.problems.map((p) => p.message)].join(" ").toLowerCase();
+      const haystack = [student.name, getBadgeLabel(student.outcome, BADGE_CONTEXT.PROMOTION_OUTCOME), ...student.problems.map((p) => p.message)].join(" ").toLowerCase();
       return words.every((word) => haystack.includes(word));
     });
   }, [students, debouncedSearch]);
@@ -211,7 +200,6 @@ function LogBody({ log }) {
 function PromotionRunLog({ drawerData, handleClose }) {
   const { data, isLoading, error } = useGetPromotionRunLog(drawerData?.id);
   const log = data?.data;
-  const status = LOG_STATUS[log?.status];
   const finished = formatFinished(log?.finished_at);
 
   return (
@@ -220,10 +208,10 @@ function PromotionRunLog({ drawerData, handleClose }) {
         <RunHeader run={drawerData} />
         {log && (
           <div className="d-flex flex-row align-items-center gap-2 font-size-xs text-iron-500">
-            {status && <StatusPill tone={status.tone}>{status.label}</StatusPill>}
+            {log?.status && <Badge status={log.status} />}
             {finished && <span>Finished {finished}</span>}
             {["scheduled", "evaluating", "processing"].includes(log.run_status) && (
-              <StatusPill tone="primary" pulse>Running again</StatusPill>
+              <Badge variant="primary" pulse>Running again</Badge>
             )}
           </div>
         )}

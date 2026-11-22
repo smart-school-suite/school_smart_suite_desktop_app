@@ -1,59 +1,29 @@
 import { format, formatDistanceToNowStrict, isValid, parseISO } from "date-fns";
+import { BADGE_CONTEXT, resolveBadgeConfig } from "@/components/Renderer/badges";
 
-// Tone → utility classes (src/styles/utility.css).
-export const TONE_CLASSES = {
-  neutral: "bg-iron-100 text-iron-700",
-  primary: "bg-primary-50 text-primary-600",
-  success: "bg-fern-50 text-fern-600",
-  warning: "bg-old-lace-50 text-old-lace-700",
-  danger: "bg-red-50 text-red-600",
+export const ELECTION_STATUS_DESCRIPTION = {
+  draft:
+    "Only administrators can see this election. Configure it, then publish it.",
+  upcoming:
+    "Published. Applications open on the scheduled date.",
+  application_open:
+    "Eligible participants can apply for the available positions.",
+  application_closed:
+    "Applications are closed. Review them before voting starts.",
+  voting_open:
+    "Eligible voters are casting their ballots.",
+  voting_closed:
+    "Ballots are counted. Review the results and publish them.",
+  completed:
+    "Results are published and winners hold office.",
+  cancelled:
+    "This election was cancelled. Its records are kept for history.",
 };
 
-export const ELECTION_STATUS = {
-  draft: {
-    label: "Draft",
-    tone: "neutral",
-    description: "Only administrators can see this election. Configure it, then publish it.",
-  },
-  upcoming: {
-    label: "Upcoming",
-    tone: "primary",
-    description: "Published. Applications open on the scheduled date.",
-  },
-  application_open: {
-    label: "Applications open",
-    tone: "primary",
-    description: "Eligible participants can apply for the available positions.",
-  },
-  application_closed: {
-    label: "Under review",
-    tone: "warning",
-    description: "Applications are closed. Review them before voting starts.",
-  },
-  voting_open: {
-    label: "Voting live",
-    tone: "success",
-    description: "Eligible voters are casting their ballots.",
-  },
-  voting_closed: {
-    label: "Voting closed",
-    tone: "warning",
-    description: "Ballots are counted. Review the results and publish them.",
-  },
-  completed: {
-    label: "Completed",
-    tone: "success",
-    description: "Results are published and winners hold office.",
-  },
-  cancelled: {
-    label: "Cancelled",
-    tone: "danger",
-    description: "This election was cancelled. Its records are kept for history.",
-  },
-};
-
-export const electionStatusMeta = (status) =>
-  ELECTION_STATUS[status] ?? { label: status ?? "Unknown", tone: "neutral", description: "" };
+export const electionStatusMeta = (status) => ({
+  ...resolveBadgeConfig(status, { context: BADGE_CONTEXT.ELECTION }),
+  description: ELECTION_STATUS_DESCRIPTION[status] ?? "",
+});
 
 // Ordered phases of the lifecycle, used by the timeline and the card progress.
 export const ELECTION_PHASES = [
@@ -77,32 +47,6 @@ export const STATUS_FILTERS = [
   { key: "completed", label: "Completed", statuses: ["completed"] },
   { key: "cancelled", label: "Cancelled", statuses: ["cancelled"] },
 ];
-
-export const APPLICATION_STATUS = {
-  pending: { label: "Pending", tone: "warning" },
-  approved: { label: "Approved", tone: "success" },
-  rejected: { label: "Rejected", tone: "danger" },
-  withdrawn: { label: "Withdrawn", tone: "neutral" },
-};
-
-export const CANDIDATE_STATUS = {
-  active: { label: "Standing", tone: "success" },
-  disqualified: { label: "Disqualified", tone: "danger" },
-  withdrawn: { label: "Withdrawn", tone: "neutral" },
-};
-
-export const OFFICE_HOLDER_STATUS = {
-  scheduled: { label: "Starts soon", tone: "primary" },
-  active: { label: "In office", tone: "success" },
-  completed: { label: "Tenure completed", tone: "neutral" },
-  terminated: { label: "Ended early", tone: "danger" },
-};
-
-export const APPOINTMENT_TYPE = {
-  elected: { label: "Elected", tone: "primary" },
-  appointed: { label: "Appointed", tone: "warning" },
-  replacement: { label: "Replacement", tone: "neutral" },
-};
 
 export const PARTICIPANT_TYPES = {
   student: { label: "Student", plural: "Students" },

@@ -1,8 +1,8 @@
+import { Badge } from "@/components/Renderer/badges";
 import NumberFlow from "@number-flow/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Crown, Scale } from "lucide-react";
 import ParticipantIdentity from "./ParticipantIdentity";
-import StatusPill from "./StatusPill";
 
 /**
  * One candidate's share of a position's votes.
@@ -27,16 +27,16 @@ export default function VoteShareBar({ candidate, leader = false, rank }) {
             trailing={
               <div className="d-flex flex-row align-items-center gap-1">
                 {candidate?.is_winner && (
-                  <StatusPill tone="primary">
+                  <Badge variant="primary">
                     <Crown size={11} /> Winner
-                  </StatusPill>
+                  </Badge>
                 )}
                 {candidate?.is_tied && (
-                  <StatusPill tone="warning">
+                  <Badge variant="warning">
                     <Scale size={11} /> Tied
-                  </StatusPill>
+                  </Badge>
                 )}
-                {disqualified && <StatusPill tone="danger">{candidate.status === "withdrawn" ? "Withdrawn" : "Disqualified"}</StatusPill>}
+                {disqualified && <Badge variant="danger">{candidate.status === "withdrawn" ? "Withdrawn" : "Disqualified"}</Badge>}
               </div>
             }
           />

@@ -1,3 +1,4 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { Icon } from "@iconify/react";
 import { useDispatch } from "react-redux";
 import { TimeRangeInput } from "../../../../components/FormComponents/InputComponents";
@@ -12,7 +13,6 @@ import {
   updateSlot,
 } from "../../../../Slices/jointCourse/jointCourseTimetableSlice";
 import { SLOT_ORIGIN } from "../../../../utils/jointCourseTimetable/slotDraft";
-import { STATUS_META } from "../../../../utils/jointCourseTimetable/slotValidation";
 import { dayLabel } from "../../../../utils/semesterTimetable/timeUtils";
 import HallSelect from "./HallSelect";
 import SlotRecommendation from "./SlotRecommendation";
@@ -38,7 +38,6 @@ function TimetableSlotCard({
 }) {
   const dispatch = useDispatch();
   const update = (changes) => dispatch(updateSlot({ courseId, slotId: slot.id, changes }));
-  const status = STATUS_META[check.status];
   const messages = [
     ...check.local.errors
       .filter((error) => !error.type.startsWith("missing"))
@@ -78,7 +77,7 @@ function TimetableSlotCard({
           </div>
         </div>
         <div className="d-flex flex-row align-items-center gap-1 flex-shrink-0">
-          <span className={`cw-badge cw-badge--${status.tone}`}>{status.label}</span>
+          <Badge status={check.status} context={BADGE_CONTEXT.SLOT_CHECK} showIcon={false} />
           <button
             type="button"
             className="cw-text-btn"

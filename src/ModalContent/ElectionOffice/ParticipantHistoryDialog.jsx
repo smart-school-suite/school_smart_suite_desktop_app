@@ -1,14 +1,10 @@
+import { Badge, BADGE_CONTEXT, getBadgeLabel } from "@/components/Renderer/badges";
 import { CircleX } from "lucide-react";
 import ParticipantIdentity from "../../components/Election/ParticipantIdentity";
-import StatusPill from "../../components/Election/StatusPill";
 import EmptyState from "../../components/errors/EmptyState";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { useGetParticipantElectionHistory } from "../../hooks/electionOffice/useGetParticipantElectionHistory";
 import {
-  APPLICATION_STATUS,
-  APPOINTMENT_TYPE,
-  CANDIDATE_STATUS,
-  OFFICE_HOLDER_STATUS,
   formatElectionDate,
   serverErrorCopy,
 } from "../../utils/election/electionDisplay";
@@ -60,20 +56,20 @@ export default function ParticipantHistoryDialog({ rowData, handleClose }) {
               {history?.offices?.map((office) => (
                 <Row
                   key={office.id}
-                  title={`${office.position?.name} · ${APPOINTMENT_TYPE[office.appointment_type]?.label}`}
+                  title={`${office.position?.name} · ${getBadgeLabel(office.appointment_type)}`}
                   subtitle={`${formatElectionDate(office.started_at)} → ${formatElectionDate(office.ended_at ?? office.expected_end_at)}`}
-                  pill={<StatusPill meta={OFFICE_HOLDER_STATUS[office.status]} />}
+                  pill={<Badge status={office.status} context={BADGE_CONTEXT.OFFICE_HOLDER} />}
                 />
               ))}
             </Section>
             <Section title="Candidacies" count={history?.candidacies?.length ?? 0} empty="Has not stood as a candidate.">
               {history?.candidacies?.map((candidacy) => (
-                <Row key={candidacy.id} title={candidacy.position?.name} subtitle={candidacy.election?.title} pill={<StatusPill meta={CANDIDATE_STATUS[candidacy.status]} />} />
+                <Row key={candidacy.id} title={candidacy.position?.name} subtitle={candidacy.election?.title} pill={<Badge status={candidacy.status} context={BADGE_CONTEXT.ELECTION_CANDIDATE} />} />
               ))}
             </Section>
             <Section title="Applications" count={history?.applications?.length ?? 0} empty="Has not applied for a position.">
               {history?.applications?.map((application) => (
-                <Row key={application.id} title={application.position?.name} subtitle={application.election?.title} pill={<StatusPill meta={APPLICATION_STATUS[application.application_status]} />} />
+                <Row key={application.id} title={application.position?.name} subtitle={application.election?.title} pill={<Badge status={application.application_status} context={BADGE_CONTEXT.ELECTION_APPLICATION} />} />
               ))}
             </Section>
             <span className="text-iron-500 font-size-xs">Voted in {history?.elections_voted ?? 0} election(s).</span>

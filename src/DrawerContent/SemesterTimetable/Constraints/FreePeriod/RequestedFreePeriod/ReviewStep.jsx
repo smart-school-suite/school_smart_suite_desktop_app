@@ -1,7 +1,7 @@
+import { Badge, BADGE_VARIANT } from "@/components/Renderer/badges";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  Badge,
   EmptyState,
   IconButton,
   Section,
@@ -131,11 +131,11 @@ function ReviewStep({ handleClose, previousStep, goToStep }) {
                   </span>
                   <span className="cw-dayrow__meta pt-1">
                     {slots.length ? (
-                      <Badge tone="accent">
+                      <Badge variant={BADGE_VARIANT.PRIMARY}>
                         {slots.length} {slots.length === 1 ? "period" : "periods"}
                       </Badge>
                     ) : (
-                      <Badge tone="muted">Empty</Badge>
+                      <Badge variant={BADGE_VARIANT.NEUTRAL}>Empty</Badge>
                     )}
                   </span>
                 </li>

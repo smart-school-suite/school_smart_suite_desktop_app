@@ -1,3 +1,4 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
@@ -6,8 +7,6 @@ import {
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import RegistrationFeeTableBadge from "../../../../components/Badges/RegistrationFeeTableBadge";
-
 export function registrationFeeColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -50,7 +49,7 @@ export function registrationFeeColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Payment Status",
       hide: false,
-      cellRenderer: RegistrationFeeTableBadge,
+      cellRenderer: BadgeRenderer,
     }),
     
     dateColumn({

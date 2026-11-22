@@ -4,7 +4,6 @@ import {
   dateColumn,
   numberColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
 

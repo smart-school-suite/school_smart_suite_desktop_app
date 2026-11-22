@@ -1,9 +1,7 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import { actionsColumn, dateColumn, textColumn } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
-import GraduationRecordClearanceStatusRenderer from "../../../../components/Renderer/Graduation/GraduationClearanceStatusRenderer";
-import GraduationRecordEligibilityStatusRenderer from "../../../../components/Renderer/Graduation/GraduationEligibilityStatusRenderer";
-import GraduationRecordStatusRenderer from "../../../../components/Renderer/Graduation/GraduationRecordStatusRenderer";
 export function graduationRecordColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -58,19 +56,19 @@ export function graduationRecordColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: GraduationRecordStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "eligibility_status",
       headerName: "Eligibility Status",
       hide: true,
-      cellRenderer: GraduationRecordEligibilityStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "clearance_status",
       headerName: "Clearance Status",
       hide: false,
-      cellRenderer: GraduationRecordClearanceStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "batch",

@@ -1,10 +1,10 @@
+import { Badge } from "@/components/Renderer/badges";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpenCheck, CalendarRange, CircleCheck, Dot, Lock, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import HorizontalDashedLine from "../../../components/DashedLine/HorizonetalDashedLine";
-import StatusPill from "../../../components/Election/StatusPill";
 import EmptyState from "../../../components/errors/EmptyState";
 import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import { resetCreateExamState, setCreateExamValue } from "../../../Slices/exam/examSlice";
@@ -79,13 +79,13 @@ function ExamTypeCard({ type, selected, onSelect, onAction, onPickCa }) {
             <div className="d-flex flex-row align-items-center gap-2 flex-wrap">
               <span className={`fw-semibold ${disabled ? "text-iron-500" : ""}`}>{type.name}</span>
               {type.created ? (
-                <StatusPill tone="success">Created</StatusPill>
+                <Badge variant="success">Created</Badge>
               ) : type.recommended ? (
-                <StatusPill tone="primary">
+                <Badge variant="primary">
                   <span className="d-inline-flex align-items-center gap-1">
                     <Sparkles size={11} /> Recommended
                   </span>
-                </StatusPill>
+                </Badge>
               ) : null}
             </div>
             <span className="font-size-xs text-iron-400">{TYPE_LABEL[type.type] ?? type.type}</span>

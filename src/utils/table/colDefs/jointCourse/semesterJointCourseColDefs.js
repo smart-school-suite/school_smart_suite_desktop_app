@@ -1,3 +1,4 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
@@ -5,8 +6,6 @@ import {
   numberColumn,
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import SlotConfigStatusRenderer from "../../../../components/Renderer/JointCourse/SlotConfigStatusRenderer";
-import JointCourseStatusRenderer from "../../../../components/Renderer/JointCourse/JointCourseStatusRenderer";
 export function semesterJointCourseColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -54,7 +53,7 @@ export function semesterJointCourseColDefs({ ActionComponent }) {
       field: "semester_status",
       headerName: "Status",
       hide: false,
-      cellRenderer: JointCourseStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "academic_year_start",
@@ -78,7 +77,7 @@ export function semesterJointCourseColDefs({ ActionComponent }) {
       field: "slot_config_status",
       headerName: "Slot Config Status",
       hide: false,
-      cellRenderer: SlotConfigStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     dateColumn({
       field: "created_at",

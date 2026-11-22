@@ -1,3 +1,4 @@
+import { APP_STATUS } from "@/constants/status";
 import {
   dayLabel,
   formatDuration,
@@ -12,14 +13,14 @@ export const MIN_SLOT_MINUTES = 15;
 export const MAX_SLOT_MINUTES = 480;
 export const MAX_SLOTS_PER_COURSE = 20;
 
-export const SLOT_STATUS = {
-  INCOMPLETE: "incomplete",
-  INVALID: "invalid",
-  CHECKING: "checking",
-  CONFLICT: "conflict",
-  UNVERIFIED: "unverified",
-  READY: "ready",
-};
+export const SLOT_STATUS = Object.freeze({
+  INCOMPLETE: APP_STATUS.INCOMPLETE,
+  INVALID: APP_STATUS.INVALID,
+  CHECKING: APP_STATUS.CHECKING,
+  CONFLICT: APP_STATUS.CONFLICT,
+  UNVERIFIED: APP_STATUS.UNVERIFIED,
+  READY: APP_STATUS.READY,
+});
 
 const overlaps = (a, b) =>
   toMinutes(a.start_time) < toMinutes(b.end_time) &&
@@ -103,14 +104,6 @@ export const slotStatus = (local, check) => {
   return SLOT_STATUS.READY;
 };
 
-export const STATUS_META = {
-  [SLOT_STATUS.INCOMPLETE]: { label: "Incomplete", tone: "muted" },
-  [SLOT_STATUS.INVALID]: { label: "Needs attention", tone: "danger" },
-  [SLOT_STATUS.CHECKING]: { label: "Checking…", tone: "neutral" },
-  [SLOT_STATUS.CONFLICT]: { label: "Conflict", tone: "danger" },
-  [SLOT_STATUS.UNVERIFIED]: { label: "Not checked", tone: "warn" },
-  [SLOT_STATUS.READY]: { label: "Available", tone: "success" },
-};
 
 /** A slot blocks saving unless it is ready (or could not be pre-checked; the save revalidates). */
 export const blocksSave = (status) =>

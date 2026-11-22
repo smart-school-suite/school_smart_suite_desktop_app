@@ -1,14 +1,11 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import {
   actionsColumn,
   dateColumn,
   numberColumn,
   textColumn,
 } from "@/utils/table/columns";
-import ExamStatusRenderer from "../../../../components/Badges/ExamStatusRenderer";
-import GradesConfigTableBadge from "../../../../components/Badges/GradesConfigTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
-import ExamResultPublicationStatusRenderer from "../../../../components/Renderer/ExamResult/ExamResultPublicationStatusRenderer";
-
 export function examResultColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -50,7 +47,8 @@ export function examResultColDefs({ ActionComponent }) {
       field: "publication_status",
       headerName: "Publication Status",
       hide: false,
-      cellRenderer: ExamResultPublicationStatusRenderer,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.RESULT_PUBLICATION },
     }),
     numberColumn({
       field: "evaluated_candidates",
@@ -96,19 +94,21 @@ export function examResultColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: true,
-      cellRenderer: ExamStatusRenderer,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "timetable_published",
       headerName: "Timetable Status",
       hide: true,
-      cellRenderer: TextComponent,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.TIMETABLE_PUBLICATION },
     }),
     textColumn({
       field: "is_grade_scale_configured",
       headerName: "Grade Scale Status",
       hide: true,
-      cellRenderer: GradesConfigTableBadge,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.CONFIGURATION },
     }),
     dateColumn({
       field: "created_at",

@@ -1,16 +1,12 @@
+import { BadgeRenderer, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
   dateColumn,
   numberColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
-import DepartmentTableBadge from "../../../../components/Badges/DepartmentTableBadge";
-import ActiveInactiveBadge from "../../../../components/Badges/ActiveInactive";
-import GradesConfigTableBadge from "../../../../components/Badges/GradesConfigTableBadge";
-
 export function gradeScaleColDefs({ ActionComponent }) {
   return [
     textColumn({
@@ -49,13 +45,14 @@ export function gradeScaleColDefs({ ActionComponent }) {
       field: "status",
       headerName: "Status",
       hide: false,
-      cellRenderer: ActiveInactiveBadge,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "is_configured",
       headerName: "Config Status",
       hide: false,
-      cellRenderer: GradesConfigTableBadge,
+      cellRenderer: BadgeRenderer,
+      cellRendererParams: { context: BADGE_CONTEXT.CONFIGURATION },
     }),
     dateColumn({
       field: "created_at",

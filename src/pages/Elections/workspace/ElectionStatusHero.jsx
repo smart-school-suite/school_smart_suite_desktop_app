@@ -1,10 +1,10 @@
+import { Badge, BADGE_CONTEXT } from "@/components/Renderer/badges";
 import { differenceInMinutes, isValid, parseISO } from "date-fns";
 import { motion, useReducedMotion } from "framer-motion";
 import { Award, BarChart3, Check, ClipboardCheck, Crown, Rocket, UsersRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ModalButton } from "../../../components/DataTableComponents/ActionComponent";
 import DrawerTrigger from "../../../components/drawer/DrawerTrigger";
-import StatusPill from "../../../components/Election/StatusPill";
 import { EmptyStateButton } from "../../../components/errors/EmptyState";
 import ConfigureParticipants from "../../../DrawerContent/Election/ConfigureParticipants";
 import { PublishElectionDialog } from "../../../ModalContent/Elections/ElectionLifecycleDialogs";
@@ -201,7 +201,6 @@ function StageProgress({ window: [start, end], deadline }) {
 export default function ElectionStatusHero({ details, onTab }) {
   const navigate = useNavigate();
   const election = details?.election;
-  const meta = electionStatusMeta(election?.status);
   const stage = stageFor(election, details);
   const next = nextStepFor(details, { navigate, onTab });
   const phaseIndex = Math.min(phaseIndexOf(election?.status), ELECTION_PHASES.length - 1);
@@ -213,7 +212,7 @@ export default function ElectionStatusHero({ details, onTab }) {
       <div className="d-flex flex-column gap-3 p-4 flex-grow-1" style={{ minWidth: 0 }}>
         <div className="d-flex flex-row align-items-center gap-2 text-iron-500 font-size-xs fw-semibold text-uppercase" style={{ letterSpacing: "0.05em" }}>
           {cancelled ? <span>Stopped</span> : <span>Stage {phaseIndex + 1} of {ELECTION_PHASES.length} · {phase.label}</span>}
-          <StatusPill meta={meta} pulse={election?.status === "voting_open"} />
+          <Badge status={election?.status} context={BADGE_CONTEXT.ELECTION} />
         </div>
         <div className="d-flex flex-column gap-1">
           <h2 className="m-0 fw-semibold" style={{ fontSize: "1.4rem", lineHeight: 1.25 }}>{stage.title}</h2>

@@ -1,6 +1,6 @@
+import { Badge } from "@/components/Renderer/badges";
 import { useMemo, useState } from "react";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import StatusPill from "../../components/Election/StatusPill";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import { NotFoundError } from "../../components/errors/Error";
 import SearchInput from "../../components/input/search";
@@ -47,7 +47,7 @@ function ResitEvaluationDetails({ drawerData, handleClose }) {
                   <span className="text-iron-700">
                     {summary.total_evaluated ?? 0} of {summary.total_candidates ?? 0} candidates evaluated
                   </span>
-                  <StatusPill tone={percent === 100 ? "success" : "warning"}>{percent}%</StatusPill>
+                  <Badge variant={percent === 100 ? "success" : "warning"}>{percent}%</Badge>
                 </div>
                 <div className="rounded-pill bg-iron-100" style={{ height: "0.4rem" }}>
                   <div className="rounded-pill primary-background" style={{ height: "100%", width: `${percent}%` }} />

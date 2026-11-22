@@ -1,10 +1,10 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
   dateColumn,
   numberColumn,
 } from "@/utils/table/columns";
-import SpecailtyTableBadge from "../../../../components/Badges/SpecialtyTableBadge";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import CurrencyComponent from "../../../../components/DataTableComponents/CurrencyComponent";
 
@@ -54,7 +54,7 @@ export function courseColDefs({ ActionComponent }) {
     textColumn({
       field: "status",
       headerName: "Status",
-      cellRenderer: SpecailtyTableBadge,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "level_name",

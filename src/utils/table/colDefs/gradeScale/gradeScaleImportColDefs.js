@@ -1,3 +1,4 @@
+import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
   textColumn,
   actionsColumn,
@@ -40,12 +41,12 @@ export function gradeScaleImportColDefs() {
     textColumn({
       field: "resit_result",
       headerName: "Resit Result",
-      cellRenderer: TextComponent,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "result",
       headerName: "Result",
-      cellRenderer: TextComponent,
+      cellRenderer: BadgeRenderer,
     }),
     textColumn({
       field: "performance",

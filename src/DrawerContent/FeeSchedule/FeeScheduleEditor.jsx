@@ -1,3 +1,4 @@
+import { Badge } from "@/components/Renderer/badges";
 import { Icon } from "@iconify/react";
 import { Dot, Plus, Trash2 } from "lucide-react";
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
@@ -5,7 +6,6 @@ import { useSelector } from "react-redux";
 import { dateValidationSchema, numberSchema } from "../../ComponentConfig/YupValidationSchema";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { DateInput, InputGroup } from "../../components/FormComponents/InputComponents";
-import StatusPill from "../../components/Election/StatusPill";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
@@ -64,7 +64,7 @@ export function FeeScheduleSummary({ schedule, installmentCount }) {
             <span className="fw-semibold text-truncate" title={schedule?.specialty_name}>
               {schedule?.specialty_name ?? "Specialty"}
             </span>
-            {schedule?.academic_year && <StatusPill tone="primary">{schedule.academic_year}</StatusPill>}
+            {schedule?.academic_year && <Badge variant="primary">{schedule.academic_year}</Badge>}
           </div>
           <div className="d-flex flex-row align-items-center text-iron-400 fw-light">
             <span>{schedule?.level_name ?? "-"}</span>

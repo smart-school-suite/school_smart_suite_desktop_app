@@ -1,7 +1,6 @@
+import { Badge, BADGE_CONTEXT, APP_STATUS } from "@/components/Renderer/badges";
 import { TrendingUp } from "lucide-react";
-import StatusPill from "../Election/StatusPill";
 import UsageMeter from "./UsageMeter";
-import { USAGE_STATUS } from "../../utils/subscription/planDisplay";
 
 /**
  * One feature's usage against its limit, with the next plan that raises it.
@@ -9,7 +8,6 @@ import { USAGE_STATUS } from "../../utils/subscription/planDisplay";
  *   <UsageCard row={usageRow} nextPlan={{ name: "Growth Plan", value: 200 }} />
  */
 export default function UsageCard({ row, nextPlan }) {
-  const status = USAGE_STATUS[row.status] ?? USAGE_STATUS.healthy;
   const isBoolean = row.limit_type === "boolean";
   const atRisk = ["warning", "critical", "exceeded"].includes(row.status);
 
@@ -22,7 +20,7 @@ export default function UsageCard({ row, nextPlan }) {
             {row.description}
           </span>
         </div>
-        <StatusPill tone={status.tone}>{status.label}</StatusPill>
+        <Badge status={row.status ?? APP_STATUS.HEALTHY} context={BADGE_CONTEXT.USAGE} />
       </div>
 
       {isBoolean ? (
