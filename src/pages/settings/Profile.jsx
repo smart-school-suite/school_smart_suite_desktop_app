@@ -4,15 +4,14 @@ import {
   ImageUp,
   Mail,
   MapPin,
-  PenLine,
   Phone,
   Trash2,
   UserRound,
   UserRoundPen,
 } from "lucide-react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { Drawer } from "../../components/drawer/Drawer";
+import { SettingsRow, SettingsSection, useSettingsTone } from "../../components/Settings/SettingsSection";
 import { NotFoundError } from "../../components/errors/Error";
 import ProfileAvatar, { getAvatarSources, getInitials } from "../../components/Profile/ProfileAvatar";
 import ProfilePhotoMenu from "../../components/Profile/ProfilePhotoMenu";
@@ -44,51 +43,6 @@ const SECTIONS = [
   },
 ];
 
-function useTone() {
-  const darkMode = useSelector((state) => state.theme.darkMode);
-  return {
-    darkMode,
-    card: darkMode ? "dark-bg profile-card--dark" : "white-bg",
-    row: darkMode ? "hover-bg-iron-900" : "hover-bg-iron-50",
-    iconWrap: darkMode ? "bg-iron-900 text-iron-300" : "bg-iron-100 text-iron-600",
-  };
-}
-
-function ProfileRow({ icon: Icon, label, value, emptyText, plain, onClick }) {
-  const tone = useTone();
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`profile-row d-flex align-items-center gap-3 w-100 px-3 border-0 bg-transparent text-start rounded-3 ${tone.row}`}
-    >
-      <span className={`profile-row__icon d-grid place-items-center rounded-circle flex-shrink-0 ${tone.iconWrap}`}>
-        <Icon size={16} strokeWidth={1.75} />
-      </span>
-      <span className="d-flex flex-column flex-grow-1 overflow-hidden gap-1">
-        <span className="text-iron-500 font-size-xs lh-none">{label}</span>
-        <span
-          className={`text-truncate lh-tight ${value ? `fw-medium ${plain ? "" : "text-capitalize"}` : "text-primary-600"}`}
-        >
-          {value || emptyText}
-        </span>
-      </span>
-      <PenLine size={15} strokeWidth={1.75} className="text-iron-400 flex-shrink-0" aria-hidden="true" />
-      <span className="visually-hidden">Edit {label.toLowerCase()}</span>
-    </button>
-  );
-}
-
-function SectionCard({ title, children }) {
-  const tone = useTone();
-  return (
-    <section className="d-flex flex-column gap-2">
-      <span className="text-iron-500 font-size-xs fw-semibold text-uppercase tracking-wider px-1">{title}</span>
-      <div className={`profile-card border rounded-4 p-1 d-flex flex-column ${tone.card}`}>{children}</div>
-    </section>
-  );
-}
-
 function ProfileSkeleton() {
   return (
     <div className="d-flex flex-column gap-3">
@@ -101,7 +55,7 @@ function ProfileSkeleton() {
 
 function Profile() {
   const { data, isLoading, error } = useGetAuthSchoolAdmin();
-  const tone = useTone();
+  const tone = useSettingsTone();
   const [drawer, setDrawer] = useState({ open: false, focusField: null });
   const schoolAdmin = data?.data?.authSchoolAdmin;
   const school = data?.data?.schoolDetails?.school;
@@ -167,7 +121,7 @@ function Profile() {
         </div>
       </div>
 
-      <SectionCard title="Profile photo">
+      <SettingsSection title="Profile photo">
         <div className="profile-row d-flex align-items-center gap-3 px-3">
           <button
             type="button"
@@ -203,14 +157,14 @@ function Profile() {
             </button>
           )}
         </div>
-      </SectionCard>
+      </SettingsSection>
 
       {SECTIONS.map((section) => (
-        <SectionCard key={section.title} title={section.title}>
+        <SettingsSection key={section.title} title={section.title}>
           {section.rows.map((row) => {
             const raw = schoolAdmin?.[row.field];
             return (
-              <ProfileRow
+              <SettingsRow
                 key={row.field}
                 icon={row.icon}
                 label={row.label}
@@ -221,7 +175,7 @@ function Profile() {
               />
             );
           })}
-        </SectionCard>
+        </SettingsSection>
       ))}
 
       {photo.elements}
