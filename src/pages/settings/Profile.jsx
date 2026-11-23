@@ -123,7 +123,7 @@ function Profile() {
   }
 
   return (
-    <div className="h-100 overflow-y-auto scrollbar-xs d-flex flex-column gap-3 pe-1 pb-3 font-size-sm">
+    <div className="position-relative h-100 overflow-y-auto scrollbar-xs d-flex flex-column gap-3 pe-1 pb-3 font-size-sm">
       <div className={`profile-card border rounded-4 overflow-hidden flex-shrink-0 ${tone.card}`}>
         <div className="profile-cover" aria-hidden="true" />
         <div className="px-4 pb-3 d-flex flex-column gap-3">
@@ -226,7 +226,7 @@ function Profile() {
 
       {photo.elements}
 
-      <Drawer isOpen={drawer.open} onClose={closeEditor} title="Edit profile" className="profile-drawer">
+      <Drawer isOpen={drawer.open} onClose={closeEditor} title="Edit profile" size="md" className="profile-drawer">
         <EditProfile handleClose={closeEditor} drawerData={{ schoolAdmin, focusField: drawer.focusField }} />
       </Drawer>
     </div>

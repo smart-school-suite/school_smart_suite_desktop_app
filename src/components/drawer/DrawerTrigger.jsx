@@ -6,6 +6,7 @@ export default function DrawerTrigger({
   className,
   style,
   placement = "right",
+  size,
   title,
   drawerData,
   drawerChildren,
@@ -46,6 +47,7 @@ export default function DrawerTrigger({
         isOpen={showDrawer}
         onClose={handleClose}
         placement={placement}
+        size={size}
         showHeader={showHeader}
         closeOnOutsideClick={closeOnOutsideClick}
         closeOnEscape={closeOnEscape}

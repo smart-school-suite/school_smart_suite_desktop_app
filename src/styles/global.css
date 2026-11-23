@@ -2146,6 +2146,22 @@ textarea::-webkit-scrollbar-thumb:hover {
   border-bottom-right-radius: 1rem;
 }
 
+:is(.drawer-panel--left, .drawer-panel--right).drawer-panel--sm {
+  max-width: min(300px, 100%);
+}
+
+:is(.drawer-panel--left, .drawer-panel--right).drawer-panel--md {
+  max-width: min(500px, 100%);
+}
+
+:is(.drawer-panel--left, .drawer-panel--right).drawer-panel--lg {
+  max-width: min(800px, 100%);
+}
+
+:is(.drawer-panel--left, .drawer-panel--right).drawer-panel--xl {
+  max-width: min(1140px, 100%);
+}
+
 .drawer-header {
   display: flex;
   align-items: center;
@@ -2909,10 +2925,6 @@ textarea::-webkit-scrollbar-thumb:hover {
   padding-left: 2rem !important;
   padding-right: 2.25rem !important;
   background-image: none !important;
-}
-
-.profile-drawer {
-  max-width: 32rem;
 }
 
 .profile-drawer-body {
