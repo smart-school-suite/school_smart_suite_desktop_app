@@ -58,16 +58,11 @@ function Profile() {
               </div>
             </div>
             <div className="mt-auto px-3">
-              <div className="d-flex flex-column">
+              <div className="d-flex flex-column text-capitalize">
                 <span className="font-size-md fw-semibold">
                   {schoolAdmin.data.authSchoolAdmin.name}
                 </span>
-                <div className="d-flex flex-row ">
-                  <span>
-                    {schoolAdmin.data.schoolDetails.school.country.country}
-                  </span>
-                </div>
-                <div className="d-flex flex-row align-items-center gap-2 text-iron-500">
+                <div className="d-flex flex-row align-items-center gap-2 text-iron-500 text-lowercase">
                   <span>@{schoolAdmin.data.authSchoolAdmin.username}</span>
                   <Dot size={12} />
                   <span>School Admin</span>
