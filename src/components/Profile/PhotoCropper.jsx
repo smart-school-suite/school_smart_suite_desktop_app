@@ -11,14 +11,20 @@ const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const canvasToBlob = (canvas, type, quality) =>
   new Promise((resolve) => canvas.toBlob(resolve, type, quality));
 
-const PhotoCropper = forwardRef(function PhotoCropper({ src }, ref) {
+const DEFAULT_OUTPUT = { type: "image/webp", fileName: "photo" };
+
+const PhotoCropper = forwardRef(function PhotoCropper(
+  { src, shape = "circle", fit = "cover", output = DEFAULT_OUTPUT },
+  ref,
+) {
   const imageRef = useRef(null);
   const dragRef = useRef(null);
   const [natural, setNatural] = useState(null);
   const [zoom, setZoom] = useState(MIN_ZOOM);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
-  const baseScale = natural ? Math.max(VIEWPORT / natural.width, VIEWPORT / natural.height) : 1;
+  const fitScale = fit === "contain" ? Math.min : Math.max;
+  const baseScale = natural ? fitScale(VIEWPORT / natural.width, VIEWPORT / natural.height) : 1;
   const scale = baseScale * zoom;
   const displayWidth = natural ? natural.width * scale : VIEWPORT;
   const displayHeight = natural ? natural.height * scale : VIEWPORT;
@@ -27,8 +33,8 @@ const PhotoCropper = forwardRef(function PhotoCropper({ src }, ref) {
     (next, nextZoom = zoom) => {
       if (!natural) return { x: 0, y: 0 };
       const nextScale = baseScale * nextZoom;
-      const maxX = (natural.width * nextScale - VIEWPORT) / 2;
-      const maxY = (natural.height * nextScale - VIEWPORT) / 2;
+      const maxX = Math.max(0, (natural.width * nextScale - VIEWPORT) / 2);
+      const maxY = Math.max(0, (natural.height * nextScale - VIEWPORT) / 2);
       return { x: clamp(next.x, -maxX, maxX), y: clamp(next.y, -maxY, maxY) };
     },
     [natural, baseScale, zoom],
@@ -83,24 +89,37 @@ const PhotoCropper = forwardRef(function PhotoCropper({ src }, ref) {
       if (!image || !natural) return null;
       const left = VIEWPORT / 2 + offset.x - displayWidth / 2;
       const top = VIEWPORT / 2 + offset.y - displayHeight / 2;
-      const sourceSize = VIEWPORT / scale;
+      const ratio = OUTPUT / VIEWPORT;
       const canvas = document.createElement("canvas");
       canvas.width = OUTPUT;
       canvas.height = OUTPUT;
       const context = canvas.getContext("2d");
       context.imageSmoothingQuality = "high";
-      context.drawImage(image, -left / scale, -top / scale, sourceSize, sourceSize, 0, 0, OUTPUT, OUTPUT);
+      const draw = (background) => {
+        context.clearRect(0, 0, OUTPUT, OUTPUT);
+        if (background) {
+          context.fillStyle = background;
+          context.fillRect(0, 0, OUTPUT, OUTPUT);
+        }
+        context.drawImage(image, left * ratio, top * ratio, displayWidth * ratio, displayHeight * ratio);
+      };
+      draw(null);
+      if (output.type === "image/png") {
+        const png = await canvasToBlob(canvas, "image/png");
+        return png ? new File([png], `${output.fileName}.png`, { type: "image/png" }) : null;
+      }
       const webp = await canvasToBlob(canvas, "image/webp", 0.9);
-      if (webp && webp.type === "image/webp") return new File([webp], "profile-photo.webp", { type: "image/webp" });
+      if (webp && webp.type === "image/webp") return new File([webp], `${output.fileName}.webp`, { type: "image/webp" });
+      draw("#ffffff");
       const jpeg = await canvasToBlob(canvas, "image/jpeg", 0.9);
-      return jpeg ? new File([jpeg], "profile-photo.jpg", { type: "image/jpeg" }) : null;
+      return jpeg ? new File([jpeg], `${output.fileName}.jpg`, { type: "image/jpeg" }) : null;
     },
   }));
 
   return (
     <div className="d-flex flex-column align-items-center gap-3">
       <div
-        className="photo-cropper position-relative overflow-hidden rounded-3 bg-iron-900"
+        className={`photo-cropper position-relative overflow-hidden rounded-3 ${shape === "circle" ? "bg-iron-900" : "photo-cropper--checker"}`}
         style={{ width: VIEWPORT, height: VIEWPORT }}
         role="application"
         aria-label="Drag to reposition the photo. Use the arrow keys to move it and plus or minus to zoom."
@@ -129,7 +148,10 @@ const PhotoCropper = forwardRef(function PhotoCropper({ src }, ref) {
             opacity: natural ? 1 : 0,
           }}
         />
-        <span className="photo-cropper__mask position-absolute rounded-circle" aria-hidden="true" />
+        <span
+          className={`photo-cropper__mask position-absolute ${shape === "circle" ? "rounded-circle" : "photo-cropper__mask--rounded"}`}
+          aria-hidden="true"
+        />
       </div>
       <div className="d-flex align-items-center gap-2 w-100 px-3" style={{ maxWidth: VIEWPORT + 32 }}>
         <button
