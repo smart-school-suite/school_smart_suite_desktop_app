@@ -1,9 +1,9 @@
-import { formatDate, formatNumber } from "../../utils/functions";
-import { useGetExpenseDetails } from "../../hooks/schoolExpenses/useGetSchoolExpenseDetails";
-import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { NotFoundError } from "../../components/errors/Error";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import RichTextContent from "../../components/TextComponents/RichTextContent";
+import { NotFoundError } from "../../components/errors/Error";
+import { useGetExpenseDetails } from "../../hooks/schoolExpenses/useGetSchoolExpenseDetails";
+import { formatDate, formatNumber } from "../../utils/functions";
 function SchoolExpenseDetails({ handleClose, drawerData }) {
   const { id: expenseId } = drawerData;
   const {
@@ -43,11 +43,12 @@ function SchoolExpenseDetails({ handleClose, drawerData }) {
                   </div>
                 </div>
                 <hr />
-                <div className="d-flex align-items-center justify-content-between">
-                  <div className="d-flex flex-column gap-2">
-                    <span className="text-iron-400">Reason</span>
-                    <RichTextContent content={expenseDetails.data.description} className="fw-medium" />
-                  </div>
+                <div className="d-flex flex-column gap-2">
+                  <span className="text-iron-400">Reason</span>
+                  <RichTextContent
+                    content={expenseDetails.data.description}
+                    className="fw-medium"
+                  />
                 </div>
                 <hr />
                 <div className="d-flex align-items-center justify-content-between">
