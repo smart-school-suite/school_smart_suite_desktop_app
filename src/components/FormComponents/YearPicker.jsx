@@ -73,7 +73,7 @@ function YearPicker({
           classNames="dropdown"
           unmountOnExit
         >
-          <div className="p-2 bg-white w-100 d-flex flex-column gap-1 mt-1 rounded-3 scrollable-dropdown z-3 position-absolute">
+          <div className="p-2 bg-white w-100 d-flex flex-column gap-1 mt-1 rounded-3 scrollable-dropdown scrollbar-xs z-3 position-absolute">
             {schoolYears.map((year, index) => (
               <button
                 key={index}
@@ -225,7 +225,7 @@ export const SchoolYearSelector = forwardRef(
             unmountOnExit
           >
             <div className={`${darkMode ? 'dark-bg gainsboro-color dark-mode-border' : 'bg-white border shadow-sm'} p-2 d-flex flex-column gap-1 mt-1 rounded-3 position-absolute w-100 z-3`}>
-              <div className="scrollable-dropdown d-flex flex-column gap-1">
+              <div className={`scrollable-dropdown scrollbar-xs d-flex flex-column gap-1 ${darkMode ? "scrollbar-dark" : ""}`}>
                 {schoolYears.map((year, index) => (
                   <button
                     key={index}
