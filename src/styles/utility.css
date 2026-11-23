@@ -3875,3 +3875,19 @@ body {
   overflow: hidden;
   word-break: break-word;
 }
+
+.animate-spin {
+  animation: utility-spin 0.9s linear infinite;
+}
+
+@keyframes utility-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin {
+    animation-duration: 2.4s;
+  }
+}
