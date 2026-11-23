@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assets";
 import { useEffect, useState } from "react";
 
 export const getInitials = (firstName, lastName, fallbackName) => {
@@ -10,16 +11,23 @@ export const getInitials = (firstName, lastName, fallbackName) => {
     .join("");
 };
 
-export const getAvatarUrl = (schoolAdmin) => schoolAdmin?.current_avatar?.url ?? null;
+export const getAvatarSources = (schoolAdmin) =>
+  [assetUrl(schoolAdmin?.current_avatar?.object_key), schoolAdmin?.current_avatar?.url].filter(
+    (source, index, sources) => Boolean(source) && sources.indexOf(source) === index,
+  );
+
 
 export default function ProfileAvatar({ src, initials, size = "2.5rem", className = "", alt = "" }) {
-  const [failed, setFailed] = useState(false);
+  const sources = (Array.isArray(src) ? src : [src]).filter(Boolean);
+  const sourceKey = sources.join("|");
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    setFailed(false);
-  }, [src]);
+    setAttempt(0);
+  }, [sourceKey]);
 
-  const showImage = Boolean(src) && !failed;
+  const currentSource = sources[attempt];
+  const showImage = Boolean(currentSource);
 
   return (
     <span
@@ -27,7 +35,13 @@ export default function ProfileAvatar({ src, initials, size = "2.5rem", classNam
       style={{ width: size, height: size, fontSize: `calc(${size} * 0.36)` }}
     >
       {showImage ? (
-        <img src={src} alt={alt} className="w-100 h-100 object-fit-cover" onError={() => setFailed(true)} />
+        <img
+          key={currentSource}
+          src={currentSource}
+          alt={alt}
+          className="w-100 h-100 object-fit-cover"
+          onError={() => setAttempt((current) => current + 1)}
+        />
       ) : (
         <span aria-hidden={Boolean(alt)}>{initials || "?"}</span>
       )}
