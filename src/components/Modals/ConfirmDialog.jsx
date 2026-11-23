@@ -19,6 +19,32 @@ import { SingleSpinner } from "../Spinners/Spinners";
  *     optional extra content (e.g. a remarks field)
  *   </ConfirmDialog>
  */
+export function DialogHeader({ icon: HeaderIcon, title, description, tone = "primary", onClose, closeDisabled = false }) {
+  return (
+    <div className="border-bottom rounded-top-4 px-3 py-2 d-flex flex-row align-items-center justify-content-between gap-2 bg-iron-50">
+      <div className="d-flex flex-row align-items-center gap-2 overflow-hidden">
+        {HeaderIcon && (
+          <HeaderIcon size={16} className={`flex-shrink-0 ${tone === "danger" ? "text-red-500" : "text-primary-500"}`} />
+        )}
+        <div className="d-flex flex-column overflow-hidden">
+          <span className="font-size-sm fw-semibold text-truncate">{title}</span>
+          {description && <span className="font-size-xs text-iron-500 fw-light">{description}</span>}
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={() => onClose?.()}
+        disabled={closeDisabled}
+        className="border-none border rounded-circle bg-transparent p-0 d-grid flex-shrink-0"
+        style={{ width: "2rem", height: "2rem", placeItems: "center", opacity: closeDisabled ? 0.6 : 1 }}
+        aria-label="Close"
+      >
+        <CircleX size={16} />
+      </button>
+    </div>
+  );
+}
+
 export default function ConfirmDialog({
   title,
   description,
@@ -30,6 +56,7 @@ export default function ConfirmDialog({
   onCancel,
   isPending = false,
   confirmDisabled = false,
+  cancelDisabled = false,
   tone = "primary",
   error,
   errorRef,
@@ -38,28 +65,20 @@ export default function ConfirmDialog({
   const confirmClass = tone === "danger" ? "bg-red-500 text-white" : "primary-background text-white";
   return (
     <div className="w-100 d-flex flex-column">
-      <div className="border-bottom rounded-top-4 px-3 py-2 d-flex flex-row align-items-center justify-content-between bg-iron-50">
-        <div className="d-flex flex-row align-items-center gap-2">
-          {HeaderIcon && <HeaderIcon size={16} className={tone === "danger" ? "text-red-500" : "text-primary-500"} />}
-          <span className="font-size-sm fw-semibold">{title}</span>
-        </div>
-        <button
-          type="button"
-          onClick={() => onCancel?.()}
-          className="border-none border rounded-circle bg-transparent p-0 d-grid"
-          style={{ width: "2rem", height: "2rem", placeItems: "center" }}
-          aria-label="Close"
-        >
-          <CircleX size={16} />
-        </button>
-      </div>
+      <DialogHeader icon={HeaderIcon} title={title} tone={tone} onClose={onCancel} closeDisabled={cancelDisabled} />
       <FormErrorBanner ref={errorRef} error={error} onDismiss={onDismissError} className="mx-3 mt-3 mb-0" />
       <div className="px-3 pt-3 pb-2 d-flex flex-column gap-3 font-size-sm">
         {description && <p className="m-0 text-iron-600" style={{ lineHeight: 1.6 }}>{description}</p>}
         {children}
       </div>
       <div className="border-top px-3 py-2 mt-2 d-flex flex-row align-items-center justify-content-end gap-2">
-        <button type="button" className="border-none px-3 py-2 border rounded-3 font-size-sm w-50 bg-none" onClick={() => onCancel?.()}>
+        <button
+          type="button"
+          className="border-none px-3 py-2 border rounded-3 font-size-sm w-50 bg-none"
+          onClick={() => onCancel?.()}
+          disabled={cancelDisabled}
+          style={{ opacity: cancelDisabled ? 0.6 : 1 }}
+        >
           {cancelLabel}
         </button>
         <button
