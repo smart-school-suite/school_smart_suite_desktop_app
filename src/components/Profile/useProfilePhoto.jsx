@@ -5,9 +5,8 @@ import ConfirmDialog, { DialogHeader } from "../Modals/ConfirmDialog";
 import CustomModal from "../Modals/Modal";
 import ToastDanger from "../Toast/ToastDanger";
 import { useFormError } from "../../hooks/form/useFormError";
-import { useRemoveSchoolAdminAvatar } from "../../hooks/schoolAdmin/useRemoveSchoolAdminAvatar";
-import { useUploadSchoolAdminAvatar } from "../../hooks/schoolAdmin/useUploadSchoolAdminAvatar";
 import PhotoCropper from "./PhotoCropper";
+import { PHOTO_KIND } from "./photoKinds";
 
 export const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const PHOTO_MAX_BYTES = 10 * 1024 * 1024;
@@ -15,18 +14,18 @@ export const PHOTO_MAX_BYTES = 10 * 1024 * 1024;
 const formatFileSize = (bytes) =>
   bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 
-function CropDialog({ source, file, onCancel, onSaved }) {
+function CropDialog({ kind, source, file, onCancel, onSaved }) {
   const cropperRef = useRef(null);
   const [progress, setProgress] = useState(0);
   const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
-    useFormError("Couldn't upload your photo");
-  const { mutate: upload, isPending } = useUploadSchoolAdminAvatar(onSaved);
+    useFormError(`Couldn't upload your ${kind.noun}`);
+  const { mutate: upload, isPending } = kind.useUpload(onSaved);
 
   const save = async () => {
     clearFormError();
     const picture = await cropperRef.current?.exportImage();
     if (!picture) {
-      setClientError("Couldn't prepare your photo", "Try choosing the photo again.");
+      setClientError(`Couldn't prepare your ${kind.noun}`, `Try choosing the ${kind.noun} again.`);
       return;
     }
     setProgress(0);
@@ -44,9 +43,9 @@ function CropDialog({ source, file, onCancel, onSaved }) {
   return (
     <ConfirmDialog
       icon={Crop}
-      title="Adjust profile photo"
-      description="Drag to reposition the photo, then zoom until it fits the circle."
-      confirmLabel="Save photo"
+      title={kind.cropTitle}
+      description={kind.cropHint}
+      confirmLabel={`Save ${kind.noun}`}
       onConfirm={save}
       onCancel={onCancel}
       isPending={isPending}
@@ -55,7 +54,7 @@ function CropDialog({ source, file, onCancel, onSaved }) {
       errorRef={errorBannerRef}
       onDismissError={clearFormError}
     >
-      <PhotoCropper ref={cropperRef} src={source} />
+      <PhotoCropper ref={cropperRef} src={source} shape={kind.shape} fit={kind.fit} output={kind.output} />
       {file && (
         <div className="d-flex align-items-center gap-3 border rounded-4 p-2" aria-live="polite">
           <span className="d-grid place-items-center rounded-3 bg-primary-50 text-primary-500 profile-file-icon flex-shrink-0">
@@ -82,7 +81,7 @@ function CropDialog({ source, file, onCancel, onSaved }) {
               </>
             ) : (
               <span className="text-iron-500 fw-light">
-                {formatFileSize(file.size)} · Saved as a 512 × 512 px square
+                {formatFileSize(file.size)} · {kind.savedAs}
               </span>
             )}
           </div>
@@ -92,18 +91,18 @@ function CropDialog({ source, file, onCancel, onSaved }) {
   );
 }
 
-function RemoveDialog({ onCancel, onRemoved }) {
+function RemoveDialog({ kind, onCancel, onRemoved }) {
   const { formError, errorBannerRef, handleServerError, clearFormError } =
-    useFormError("Couldn't remove your photo");
-  const { mutate: remove, isPending } = useRemoveSchoolAdminAvatar(onRemoved);
+    useFormError(`Couldn't remove your ${kind.noun}`);
+  const { mutate: remove, isPending } = kind.useRemove(onRemoved);
 
   return (
     <ConfirmDialog
       icon={Trash2}
       tone="danger"
-      title="Remove profile photo"
-      description="Your initials will show instead of your photo. You can add a new photo at any time."
-      confirmLabel="Remove photo"
+      title={kind.removeTitle}
+      description={kind.removeDescription}
+      confirmLabel={`Remove ${kind.noun}`}
       onConfirm={() => {
         clearFormError();
         remove(undefined, { onError: handleServerError });
@@ -118,23 +117,24 @@ function RemoveDialog({ onCancel, onRemoved }) {
   );
 }
 
-function ViewDialog({ sources, name, onClose }) {
+function ViewDialog({ kind, sources, name, onClose }) {
   const [attempt, setAttempt] = useState(0);
   const src = sources[attempt];
+  const title = kind.viewTitle(name);
   return (
     <div className="w-100 d-flex flex-column">
-      <DialogHeader icon={Eye} title={name ? `${name}'s profile photo` : "Profile photo"} onClose={onClose} />
+      <DialogHeader icon={Eye} title={title} onClose={onClose} />
       <div className="p-3 d-grid place-items-center">
         {src ? (
           <img
             key={src}
             src={src}
-            alt={name ? `${name}'s profile photo` : "Profile photo"}
-            className="d-block rounded-4 profile-viewer__image"
+            alt={title}
+            className={`d-block rounded-4 profile-viewer__image ${kind.shape === "rounded" ? "profile-viewer__image--logo" : ""}`}
             onError={() => setAttempt((current) => current + 1)}
           />
         ) : (
-          <span className="text-iron-500 font-size-sm py-4">This photo couldn't be loaded.</span>
+          <span className="text-iron-500 font-size-sm py-4">This {kind.noun} couldn't be loaded.</span>
         )}
       </div>
     </div>
@@ -173,7 +173,8 @@ function PhotoLayer({ show, onClose, dismissible = true, wide = false, children 
   );
 }
 
-export function useProfilePhoto({ photoSources = [], name, inline = false }) {
+export function usePhotoManager({ kind, sources = [], name, inline = false }) {
+  const photoSources = sources;
   const photoUrl = photoSources[0] ?? null;
   const inputRef = useRef(null);
   const [cropSource, setCropSource] = useState(null);
@@ -202,7 +203,7 @@ export function useProfilePhoto({ photoSources = [], name, inline = false }) {
         ? "Choose an image smaller than 10 MB."
         : null;
     if (problem) {
-      toast.custom(<ToastDanger title="Can't use this file" description={problem} />);
+      toast.custom(<ToastDanger title={`Can't use this file as your ${kind.noun}`} description={problem} />);
       return;
     }
     setCropFile(file);
@@ -224,30 +225,38 @@ export function useProfilePhoto({ photoSources = [], name, inline = false }) {
       {inline ? (
         <>
           <PhotoLayer show={dialog === "crop"} onClose={close} dismissible={false}>
-            {cropSource && <CropDialog source={cropSource} file={cropFile} onCancel={close} onSaved={close} />}
+            {cropSource && <CropDialog kind={kind} source={cropSource} file={cropFile} onCancel={close} onSaved={close} />}
           </PhotoLayer>
           <PhotoLayer show={dialog === "remove"} onClose={close}>
-            <RemoveDialog onCancel={close} onRemoved={close} />
+            <RemoveDialog kind={kind} onCancel={close} onRemoved={close} />
           </PhotoLayer>
           <PhotoLayer show={dialog === "view"} onClose={close} wide>
-            {photoUrl && <ViewDialog sources={photoSources} name={name} onClose={close} />}
+            {photoUrl && <ViewDialog kind={kind} sources={photoSources} name={name} onClose={close} />}
           </PhotoLayer>
         </>
       ) : (
         <>
           <CustomModal show={dialog === "crop"} handleClose={close} closeOnOutsideClick={false} centered>
-            {cropSource && <CropDialog source={cropSource} file={cropFile} onCancel={close} onSaved={close} />}
+            {cropSource && <CropDialog kind={kind} source={cropSource} file={cropFile} onCancel={close} onSaved={close} />}
           </CustomModal>
           <CustomModal show={dialog === "remove"} handleClose={close} centered>
-            <RemoveDialog onCancel={close} onRemoved={close} />
+            <RemoveDialog kind={kind} onCancel={close} onRemoved={close} />
           </CustomModal>
           <CustomModal show={dialog === "view"} handleClose={close} size="lg" centered>
-            {photoUrl && <ViewDialog sources={photoSources} name={name} onClose={close} />}
+            {photoUrl && <ViewDialog kind={kind} sources={photoSources} name={name} onClose={close} />}
           </CustomModal>
         </>
       )}
     </>
   );
 
-  return { hasPhoto: Boolean(photoUrl), openPicker, openViewer, requestRemove, elements };
+  return { hasPhoto: Boolean(photoUrl), noun: kind.noun, openPicker, openViewer, requestRemove, elements };
+}
+
+export function useProfilePhoto({ photoSources = [], name, inline = false }) {
+  return usePhotoManager({ kind: PHOTO_KIND.profilePhoto, sources: photoSources, name, inline });
+}
+
+export function useSchoolLogo({ logoSources = [], name, inline = false }) {
+  return usePhotoManager({ kind: PHOTO_KIND.schoolLogo, sources: logoSources, name, inline });
 }

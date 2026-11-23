@@ -23,9 +23,14 @@ export default function ProfilePhotoMenu({
   initials,
   name,
   size = "7rem",
+  shape = "circle",
+  fit = "cover",
   ringClassName = "",
   portal = false,
 }) {
+  const noun = photo.noun ?? "photo";
+  const subject = noun === "photo" ? "profile photo" : "school logo";
+  const roundClass = shape === "circle" ? "rounded-circle" : "profile-avatar--rounded";
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [isOpen, setIsOpen] = useState(false);
   const { refs, floatingStyles, context } = useFloating({
@@ -50,19 +55,19 @@ export default function ProfilePhotoMenu({
   const items = [
     photo.hasPhoto && {
       key: "view",
-      label: "View photo",
+      label: `View ${noun}`,
       Icon: Eye,
       onClick: photo.openViewer,
     },
     {
       key: "upload",
-      label: photo.hasPhoto ? "Change photo" : "Upload photo",
+      label: photo.hasPhoto ? `Change ${noun}` : `Upload ${noun}`,
       Icon: ImageUp,
       onClick: photo.openPicker,
     },
     photo.hasPhoto && {
       key: "remove",
-      label: "Remove photo",
+      label: `Remove ${noun}`,
       Icon: Trash2,
       onClick: photo.requestRemove,
       danger: true,
@@ -75,10 +80,8 @@ export default function ProfilePhotoMenu({
         type="button"
         ref={refs.setReference}
         {...getReferenceProps()}
-        className={`profile-photo-trigger p-0 border-0 bg-transparent rounded-circle ${ringClassName}`}
-        aria-label={
-          photo.hasPhoto ? "Profile photo options" : "Add a profile photo"
-        }
+        className={`profile-photo-trigger p-0 border-0 bg-transparent ${roundClass} ${ringClassName}`}
+        aria-label={photo.hasPhoto ? `${subject.charAt(0).toUpperCase()}${subject.slice(1)} options` : `Add a ${subject}`}
         aria-haspopup="menu"
         aria-expanded={isOpen}
       >
@@ -86,9 +89,13 @@ export default function ProfilePhotoMenu({
           src={src}
           initials={initials}
           size={size}
-          alt={name ? `${name}'s profile photo` : ""}
+          shape={shape}
+          fit={fit}
+          alt={name ? (noun === "photo" ? `${name}'s profile photo` : `${name} logo`) : ""}
         />
-        <span className="profile-photo-trigger__overlay position-absolute top-0 start-0 w-100 h-100 rounded-circle d-grid place-items-center text-white">
+        <span
+          className={`profile-photo-trigger__overlay position-absolute top-0 start-0 w-100 h-100 d-grid place-items-center text-white ${roundClass}`}
+        >
           <Camera size={20} strokeWidth={1.75} />
         </span>
         <span className="profile-photo-trigger__badge position-absolute d-grid place-items-center rounded-circle text-white primary-background">

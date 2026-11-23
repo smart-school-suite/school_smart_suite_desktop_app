@@ -17,7 +17,15 @@ export const getAvatarSources = (schoolAdmin) =>
   );
 
 
-export default function ProfileAvatar({ src, initials, size = "2.5rem", className = "", alt = "" }) {
+export default function ProfileAvatar({
+  src,
+  initials,
+  size = "2.5rem",
+  shape = "circle",
+  fit = "cover",
+  className = "",
+  alt = "",
+}) {
   const sources = (Array.isArray(src) ? src : [src]).filter(Boolean);
   const sourceKey = sources.join("|");
   const [attempt, setAttempt] = useState(0);
@@ -31,7 +39,9 @@ export default function ProfileAvatar({ src, initials, size = "2.5rem", classNam
 
   return (
     <span
-      className={`profile-avatar d-inline-grid place-items-center flex-shrink-0 rounded-circle overflow-hidden bg-primary-100 text-primary-600 fw-semibold ${className}`}
+      className={`profile-avatar d-inline-grid place-items-center flex-shrink-0 overflow-hidden fw-semibold ${
+        shape === "circle" ? "rounded-circle" : "profile-avatar--rounded"
+      } ${showImage && fit === "contain" ? "white-bg" : "bg-primary-100 text-primary-600"} ${className}`}
       style={{ width: size, height: size, fontSize: `calc(${size} * 0.36)` }}
     >
       {showImage ? (
@@ -39,7 +49,7 @@ export default function ProfileAvatar({ src, initials, size = "2.5rem", classNam
           key={currentSource}
           src={currentSource}
           alt={alt}
-          className="w-100 h-100 object-fit-cover"
+          className={`w-100 h-100 ${fit === "contain" ? "object-fit-contain" : "object-fit-cover"}`}
           onError={() => setAttempt((current) => current + 1)}
         />
       ) : (
