@@ -254,7 +254,7 @@ const CustomDropdown = forwardRef(
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
 
-              <div className="scrollable-dropdown d-flex flex-column">
+              <div className={`scrollable-dropdown scrollbar-xs d-flex flex-column ${darkMode ? "scrollbar-dark" : ""}`}>
                 {isLoading ? (
                   <div className="py-3 d-flex justify-content-center align-items-center">
                     <SingleSpinner />
@@ -672,7 +672,7 @@ export const MultiSelectDropdown = forwardRef(
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ padding: "0.5rem" }}
               />
-              <div className="scrollable-dropdown d-flex flex-column">
+              <div className={`scrollable-dropdown scrollbar-xs d-flex flex-column ${darkMode ? "scrollbar-dark" : ""}`}>
                 {isLoading ? (
                   <SingleSpinner />
                 ) : (
