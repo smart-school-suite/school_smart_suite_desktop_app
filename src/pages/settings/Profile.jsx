@@ -1,5 +1,6 @@
 import { Dot, PenLine } from "lucide-react";
 import { useSelector } from "react-redux";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { NotFoundError } from "../../components/errors/Error";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -58,7 +59,9 @@ function Profile() {
             </div>
             <div className="mt-auto px-3">
               <div className="d-flex flex-column">
-                <span className="font-size-md fw-semibold">{schoolAdmin.data.authSchoolAdmin.name}</span>
+                <span className="font-size-md fw-semibold">
+                  {schoolAdmin.data.authSchoolAdmin.name}
+                </span>
                 <div className="d-flex flex-row ">
                   <span>
                     {schoolAdmin.data.schoolDetails.school.country.country}
@@ -66,7 +69,7 @@ function Profile() {
                 </div>
                 <div className="d-flex flex-row align-items-center gap-2 text-iron-500">
                   <span>@{schoolAdmin.data.authSchoolAdmin.username}</span>
-                  <Dot size={12}/>
+                  <Dot size={12} />
                   <span>School Admin</span>
                 </div>
               </div>
@@ -80,8 +83,8 @@ function Profile() {
                 action={{ modalContent: UpdateFullNames }}
               >
                 <div className="d-flex flex-column text-start">
-                  <span className="fw-semibold">Full Names</span>
-                  <span className="fw-light">
+                  <span className="text-iron-400">Full Names</span>
+                  <span className="fw-medium text-capitalize">
                     {schoolAdmin.data.authSchoolAdmin.name === null
                       ? "Add Full Names"
                       : schoolAdmin.data.authSchoolAdmin.name}
@@ -91,11 +94,15 @@ function Profile() {
                   <PenLine size={16} strokeWidth={1.5} />
                 </div>
               </ModalButton>
-              <hr />
+              <HorizontalDashedLine
+                dashed={false}
+                thickness={0.2}
+                color={"#ccc"}
+              />
               <ModalButton classname="d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style">
                 <div className="d-flex flex-column text-start">
-                  <span className="fw-semibold">First Name</span>
-                  <span className=" fw-light">
+                  <span className="text-iron-400">First Name</span>
+                  <span className="fw-medium text-capitalize">
                     {schoolAdmin.data.authSchoolAdmin.first_name === null
                       ? "Add First Name"
                       : schoolAdmin.data.authSchoolAdmin.first_name}
@@ -105,14 +112,18 @@ function Profile() {
                   <PenLine size={16} strokeWidth={1.5} />
                 </div>
               </ModalButton>
-              <hr />
+              <HorizontalDashedLine
+                dashed={false}
+                thickness={0.2}
+                color={"#ccc"}
+              />
               <ModalButton
                 classname="d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"
                 action={{ modalContent: UpdateLastName }}
               >
                 <div className="d-flex flex-column text-start">
-                  <span className="fw-semibold">Last Name</span>
-                  <span className=" fw-light">
+                  <span className="text-iron-400">Last Name</span>
+                  <span className="fw-medium text-capitalize">
                     {schoolAdmin.data.authSchoolAdmin.last_name === null
                       ? "Add Last Name"
                       : schoolAdmin.data.authSchoolAdmin.last_name}
@@ -122,14 +133,18 @@ function Profile() {
                   <PenLine size={16} strokeWidth={1.5} />
                 </div>
               </ModalButton>
-              <hr />
+              <HorizontalDashedLine
+                dashed={false}
+                thickness={0.2}
+                color={"#ccc"}
+              />
               <ModalButton
                 classname="d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"
                 action={{ modalContent: UpdateDOB }}
               >
                 <div className="d-flex flex-column text-start">
-                  <span className="fw-semibold">Date of birth</span>
-                  <span className=" fw-light">
+                  <span className="text-iron-400">Date of birth</span>
+                  <span className="fw-medium text-capitalize">
                     {schoolAdmin.data.authSchoolAdmin.date_of_birth === null
                       ? "Add Date Of Birth"
                       : formatDate(
@@ -151,8 +166,8 @@ function Profile() {
                 action={{ modalContent: UpdateEmail }}
               >
                 <div className="d-flex flex-column text-start">
-                  <span className="fw-semibold">Email</span>
-                  <span className=" fw-light">
+                  <span className="text-iron-400">Email</span>
+                  <span className="fw-medium text-capitalize">
                     {schoolAdmin.data.authSchoolAdmin.email === null
                       ? "Add Email"
                       : schoolAdmin.data.authSchoolAdmin.email}
@@ -162,14 +177,18 @@ function Profile() {
                   <PenLine size={16} strokeWidth={1.5} />
                 </div>
               </ModalButton>
-              <hr />
+              <HorizontalDashedLine
+                dashed={false}
+                thickness={0.2}
+                color={"#ccc"}
+              />
               <ModalButton
                 action={{ modalContent: UpdateContactOne }}
                 classname="d-flex flex-row align-items-center justify-content-between font-size-sm w-100 remove-button-style"
               >
                 <div className="d-flex flex-column text-start">
-                  <span className="fw-semibold">Contact One</span>
-                  <span className=" fw-light">
+                  <span className="text-iron-400">Contact One</span>
+                  <span className="fw-medium text-capitalize">
                     {schoolAdmin.data.authSchoolAdmin.phone
                       ? schoolAdmin.data.authSchoolAdmin.phone
                       : "Add Contact"}
@@ -189,8 +208,8 @@ function Profile() {
                 action={{ modalContent: UpdateAddress }}
               >
                 <div className="d-flex flex-column text-start">
-                  <span className="fw-semibold">Address</span>
-                  <span className=" fw-light">
+                  <span className="text-iron-400">Address</span>
+                  <span className="fw-medium text-capitalize">
                     {schoolAdmin.data.authSchoolAdmin.address === null
                       ? "Add Contact Two"
                       : schoolAdmin.data.authSchoolAdmin.address}
