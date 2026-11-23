@@ -1,9 +1,8 @@
-import { Trash2, X } from "lucide-react";
+import { Crop, Eye, FileImage, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import FormErrorBanner from "../errors/FormErrorBanner";
+import ConfirmDialog, { DialogHeader } from "../Modals/ConfirmDialog";
 import CustomModal from "../Modals/Modal";
-import { SingleSpinner } from "../Spinners/Spinners";
 import ToastDanger from "../Toast/ToastDanger";
 import { useFormError } from "../../hooks/form/useFormError";
 import { useRemoveSchoolAdminAvatar } from "../../hooks/schoolAdmin/useRemoveSchoolAdminAvatar";
@@ -13,7 +12,10 @@ import PhotoCropper from "./PhotoCropper";
 export const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const PHOTO_MAX_BYTES = 10 * 1024 * 1024;
 
-function CropDialog({ source, onCancel, onSaved }) {
+const formatFileSize = (bytes) =>
+  bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+
+function CropDialog({ source, file, onCancel, onSaved }) {
   const cropperRef = useRef(null);
   const [progress, setProgress] = useState(0);
   const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
@@ -40,51 +42,53 @@ function CropDialog({ source, onCancel, onSaved }) {
   };
 
   return (
-    <div className="d-flex flex-column gap-3 p-3 font-size-sm">
-      <div className="d-flex align-items-start justify-content-between gap-2">
-        <div className="d-flex flex-column">
-          <span className="fw-semibold font-size-md">Adjust your photo</span>
-          <span className="text-iron-500">Drag to reposition, then zoom to fit the circle.</span>
-        </div>
-        <button
-          type="button"
-          className="profile-icon-btn d-grid place-items-center border-0 rounded-circle text-iron-500 hover-bg-iron-100"
-          onClick={onCancel}
-          disabled={isPending}
-          aria-label="Close"
-        >
-          <X size={16} />
-        </button>
-      </div>
+    <ConfirmDialog
+      icon={Crop}
+      title="Adjust profile photo"
+      description="Drag to reposition the photo, then zoom until it fits the circle."
+      confirmLabel="Save photo"
+      onConfirm={save}
+      onCancel={onCancel}
+      isPending={isPending}
+      cancelDisabled={isPending}
+      error={formError}
+      errorRef={errorBannerRef}
+      onDismissError={clearFormError}
+    >
       <PhotoCropper ref={cropperRef} src={source} />
-      {isPending && (
-        <div className="d-flex flex-column gap-1" aria-live="polite">
-          <div className="progress" style={{ height: "0.25rem" }}>
-            <div className="progress-bar bg-primary-500" style={{ width: `${progress}%` }} />
+      {file && (
+        <div className="d-flex align-items-center gap-3 border rounded-4 p-2" aria-live="polite">
+          <span className="d-grid place-items-center rounded-3 bg-primary-50 text-primary-500 profile-file-icon flex-shrink-0">
+            <FileImage size={18} strokeWidth={1.75} />
+          </span>
+          <div className="flex-grow-1 overflow-hidden">
+            <div className="fw-semibold text-truncate" title={file.name}>
+              {file.name}
+            </div>
+            {isPending ? (
+              <>
+                <div
+                  className="progress my-1"
+                  role="progressbar"
+                  aria-label="Upload progress"
+                  aria-valuenow={progress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  style={{ height: 6 }}
+                >
+                  <div className="progress-bar primary-background" style={{ width: `${progress}%`, transition: "width 0.2s" }} />
+                </div>
+                <span className="text-iron-500 fw-light">Uploading… {progress}%</span>
+              </>
+            ) : (
+              <span className="text-iron-500 fw-light">
+                {formatFileSize(file.size)} · Saved as a 512 × 512 px square
+              </span>
+            )}
           </div>
-          <span className="text-iron-500 font-size-xs">Uploading… {progress}%</span>
         </div>
       )}
-      <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} />
-      <div className="d-flex justify-content-end gap-2">
-        <button
-          type="button"
-          className="btn btn-light font-size-sm px-3"
-          onClick={onCancel}
-          disabled={isPending}
-        >
-          Cancel
-        </button>
-        <button
-          type="button"
-          className={`profile-primary-btn border-0 rounded-3 primary-background text-white font-size-sm px-3 d-inline-flex align-items-center gap-2 ${isPending ? "opacity-50" : ""}`}
-          onClick={save}
-          disabled={isPending}
-        >
-          {isPending ? <SingleSpinner /> : "Save photo"}
-        </button>
-      </div>
-    </div>
+    </ConfirmDialog>
   );
 }
 
@@ -94,47 +98,33 @@ function RemoveDialog({ onCancel, onRemoved }) {
   const { mutate: remove, isPending } = useRemoveSchoolAdminAvatar(onRemoved);
 
   return (
-    <div className="d-flex flex-column align-items-center text-center gap-3 p-4 font-size-sm">
-      <span className="d-grid place-items-center rounded-circle bg-red-50 text-red-600 profile-remove-icon">
-        <Trash2 size={20} strokeWidth={1.75} />
-      </span>
-      <div className="d-flex flex-column gap-1">
-        <span className="fw-semibold font-size-md">Remove profile photo?</span>
-        <span className="text-iron-500">Your initials will show instead. You can add a new photo at any time.</span>
-      </div>
-      <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} className="w-100" />
-      <div className="d-flex gap-2 w-100">
-        <button type="button" className="btn btn-light font-size-sm flex-grow-1" onClick={onCancel} disabled={isPending}>
-          Cancel
-        </button>
-        <button
-          type="button"
-          className="btn bg-red-600 text-white font-size-sm flex-grow-1 d-inline-flex justify-content-center"
-          onClick={() => {
-            clearFormError();
-            remove(undefined, { onError: handleServerError });
-          }}
-          disabled={isPending}
-        >
-          {isPending ? <SingleSpinner /> : "Remove"}
-        </button>
-      </div>
-    </div>
+    <ConfirmDialog
+      icon={Trash2}
+      tone="danger"
+      title="Remove profile photo"
+      description="Your initials will show instead of your photo. You can add a new photo at any time."
+      confirmLabel="Remove photo"
+      onConfirm={() => {
+        clearFormError();
+        remove(undefined, { onError: handleServerError });
+      }}
+      onCancel={onCancel}
+      isPending={isPending}
+      cancelDisabled={isPending}
+      error={formError}
+      errorRef={errorBannerRef}
+      onDismissError={clearFormError}
+    />
   );
 }
 
 function ViewDialog({ src, name, onClose }) {
   return (
-    <div className="position-relative bg-iron-950 rounded-3 overflow-hidden">
-      <button
-        type="button"
-        className="profile-icon-btn profile-viewer__close position-absolute d-grid place-items-center border-0 rounded-circle text-white"
-        onClick={onClose}
-        aria-label="Close photo"
-      >
-        <X size={18} />
-      </button>
-      <img src={src} alt={name ? `${name}'s profile photo` : "Profile photo"} className="d-block w-100 profile-viewer__image" />
+    <div className="w-100 d-flex flex-column">
+      <DialogHeader icon={Eye} title={name ? `${name}'s profile photo` : "Profile photo"} onClose={onClose} />
+      <div className="p-3 d-grid place-items-center">
+        <img src={src} alt={name ? `${name}'s profile photo` : "Profile photo"} className="d-block rounded-4 profile-viewer__image" />
+      </div>
     </div>
   );
 }
@@ -174,6 +164,7 @@ function PhotoLayer({ show, onClose, dismissible = true, wide = false, children 
 export function useProfilePhoto({ photoUrl, name, inline = false }) {
   const inputRef = useRef(null);
   const [cropSource, setCropSource] = useState(null);
+  const [cropFile, setCropFile] = useState(null);
   const [dialog, setDialog] = useState(null);
 
   useEffect(() => () => cropSource && URL.revokeObjectURL(cropSource), [cropSource]);
@@ -181,6 +172,7 @@ export function useProfilePhoto({ photoUrl, name, inline = false }) {
   const close = useCallback(() => {
     setDialog(null);
     setCropSource(null);
+    setCropFile(null);
   }, []);
 
   const openPicker = useCallback(() => inputRef.current?.click(), []);
@@ -200,6 +192,7 @@ export function useProfilePhoto({ photoUrl, name, inline = false }) {
       toast.custom(<ToastDanger title="Can't use this file" description={problem} />);
       return;
     }
+    setCropFile(file);
     setCropSource(URL.createObjectURL(file));
     setDialog("crop");
   };
@@ -218,7 +211,7 @@ export function useProfilePhoto({ photoUrl, name, inline = false }) {
       {inline ? (
         <>
           <PhotoLayer show={dialog === "crop"} onClose={close} dismissible={false}>
-            {cropSource && <CropDialog source={cropSource} onCancel={close} onSaved={close} />}
+            {cropSource && <CropDialog source={cropSource} file={cropFile} onCancel={close} onSaved={close} />}
           </PhotoLayer>
           <PhotoLayer show={dialog === "remove"} onClose={close}>
             <RemoveDialog onCancel={close} onRemoved={close} />
@@ -230,12 +223,12 @@ export function useProfilePhoto({ photoUrl, name, inline = false }) {
       ) : (
         <>
           <CustomModal show={dialog === "crop"} handleClose={close} closeOnOutsideClick={false} centered>
-            {cropSource && <CropDialog source={cropSource} onCancel={close} onSaved={close} />}
+            {cropSource && <CropDialog source={cropSource} file={cropFile} onCancel={close} onSaved={close} />}
           </CustomModal>
-          <CustomModal show={dialog === "remove"} handleClose={close} size="sm" centered>
+          <CustomModal show={dialog === "remove"} handleClose={close} centered>
             <RemoveDialog onCancel={close} onRemoved={close} />
           </CustomModal>
-          <CustomModal show={dialog === "view"} handleClose={close} size="lg" centered contentClassName="bg-transparent border-0">
+          <CustomModal show={dialog === "view"} handleClose={close} size="lg" centered>
             {photoUrl && <ViewDialog src={photoUrl} name={name} onClose={close} />}
           </CustomModal>
         </>
