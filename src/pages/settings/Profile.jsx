@@ -14,7 +14,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
-import ProfileAvatar, { getAvatarUrl, getInitials } from "../../components/Profile/ProfileAvatar";
+import ProfileAvatar, { getAvatarSources, getInitials } from "../../components/Profile/ProfileAvatar";
 import ProfilePhotoMenu from "../../components/Profile/ProfilePhotoMenu";
 import { useProfilePhoto } from "../../components/Profile/useProfilePhoto";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -105,9 +105,9 @@ function Profile() {
   const [drawer, setDrawer] = useState({ open: false, focusField: null });
   const schoolAdmin = data?.data?.authSchoolAdmin;
   const school = data?.data?.schoolDetails?.school;
-  const photoUrl = getAvatarUrl(schoolAdmin);
+  const photoSources = getAvatarSources(schoolAdmin);
   const initials = getInitials(schoolAdmin?.first_name, schoolAdmin?.last_name, schoolAdmin?.name);
-  const photo = useProfilePhoto({ photoUrl, name: schoolAdmin?.name });
+  const photo = useProfilePhoto({ photoSources, name: schoolAdmin?.name });
 
   const openEditor = (focusField = null) => setDrawer({ open: true, focusField });
   const closeEditor = () => setDrawer((current) => ({ ...current, open: false }));
@@ -131,7 +131,7 @@ function Profile() {
             <div className="profile-header__avatar">
               <ProfilePhotoMenu
                 photo={photo}
-                src={photoUrl}
+                src={photoSources}
                 initials={initials}
                 name={schoolAdmin?.name}
                 size="7rem"
@@ -175,7 +175,7 @@ function Profile() {
             onClick={photo.hasPhoto ? photo.openViewer : photo.openPicker}
             aria-label={photo.hasPhoto ? "View profile photo" : "Upload profile photo"}
           >
-            <ProfileAvatar src={photoUrl} initials={initials} size="2.5rem" />
+            <ProfileAvatar src={photoSources} initials={initials} size="2.5rem" />
           </button>
           <span className="d-flex flex-column flex-grow-1 overflow-hidden gap-1">
             <span className="fw-medium lh-none">{photo.hasPhoto ? "Your profile photo" : "No profile photo yet"}</span>

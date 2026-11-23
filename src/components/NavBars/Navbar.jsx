@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetSchoolBranchDetails } from "../../hooks/schoolBranch/useGetSchoolBranchDetail";
 import { useGetAuthSchoolAdmin } from "../../hooks/schoolAdmin/useGetAuthSchoolAdmin";
-import ProfileAvatar, { getAvatarUrl, getInitials } from "../Profile/ProfileAvatar";
+import ProfileAvatar, { getAvatarSources, getInitials } from "../Profile/ProfileAvatar";
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -96,7 +96,7 @@ function Navbar() {
               } gainsboro-color dashboard-nav circle-action pointer-cursor`}
             >
               <ProfileAvatar
-                src={getAvatarUrl(admin)}
+                src={getAvatarSources(admin)}
                 initials={getInitials(admin?.first_name, admin?.last_name, admin?.name)}
                 size="2.5rem"
                 alt={admin?.name ? `${admin.name}'s profile photo` : ""}

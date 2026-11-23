@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assets";
 import { PenLine } from "lucide-react";
 import { useSelector } from "react-redux";
 import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
@@ -9,7 +10,7 @@ import UpdateEstablishedDate from "../../ModalContent/School/UpdateEstablishedDa
 import UpdateSchoolMotor from "../../ModalContent/School/UpdateSchoolMotor";
 import UpdateSchoolName from "../../ModalContent/School/UpdateSchoolName";
 import UploadSchoolLogo from "../../ModalContent/School/UploadSchoolLogo";
-import { cleanAssetPath, formatDate } from "../../utils/functions";
+import { formatDate } from "../../utils/functions";
 function School() {
   const userData = useSelector((state) => state.auth.user);
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -146,7 +147,7 @@ function School() {
                     <img
                       className="school-logo"
                       alt="school-logo"
-                      src={`https://cdn.smartschoolsuite.com/${cleanAssetPath(schoolDetails.data.current_logo.object_key)}`}
+                      src={assetUrl(schoolDetails.data.current_logo.object_key)}
                     />
                   ) : (
                     <div
