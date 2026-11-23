@@ -1,3 +1,4 @@
+import { assetUrl } from "../../../utils/assets";
 import {
   TextInput,
   DateTimeRangeInput,
@@ -18,7 +19,7 @@ import {
   setEventContent,
 } from "../../../Slices/schoolEvent/schoolEventSlice";
 import { useEffect, useRef, useState } from "react";
-import { allFieldsValid, cleanAssetPath } from "../../../utils/functions";
+import { allFieldsValid } from "../../../utils/functions";
 import MultiImageUploader from "../../../components/FormComponents/MultiImageUploader";
 import FormErrorBanner from "../../../components/errors/FormErrorBanner";
 import { useFormError } from "../../../hooks/form/useFormError";
@@ -32,8 +33,7 @@ export const MAX_EVENT_IMAGES = 5;
 export const MAX_EVENT_IMAGE_SIZE = 2 * 1024 * 1024;
 const EVENT_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-export const eventImageUrl = (objectKey) =>
-  `https://cdn.smartschoolsuite.com/${cleanAssetPath(objectKey)}`;
+export const eventImageUrl = (objectKey) => assetUrl(objectKey);
 
 // Thumbnail of an image file picked on this device.
 export function FilePreview({ file, style, className }) {

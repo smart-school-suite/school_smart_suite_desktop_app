@@ -118,12 +118,24 @@ function RemoveDialog({ onCancel, onRemoved }) {
   );
 }
 
-function ViewDialog({ src, name, onClose }) {
+function ViewDialog({ sources, name, onClose }) {
+  const [attempt, setAttempt] = useState(0);
+  const src = sources[attempt];
   return (
     <div className="w-100 d-flex flex-column">
       <DialogHeader icon={Eye} title={name ? `${name}'s profile photo` : "Profile photo"} onClose={onClose} />
       <div className="p-3 d-grid place-items-center">
-        <img src={src} alt={name ? `${name}'s profile photo` : "Profile photo"} className="d-block rounded-4 profile-viewer__image" />
+        {src ? (
+          <img
+            key={src}
+            src={src}
+            alt={name ? `${name}'s profile photo` : "Profile photo"}
+            className="d-block rounded-4 profile-viewer__image"
+            onError={() => setAttempt((current) => current + 1)}
+          />
+        ) : (
+          <span className="text-iron-500 font-size-sm py-4">This photo couldn't be loaded.</span>
+        )}
       </div>
     </div>
   );
@@ -161,7 +173,8 @@ function PhotoLayer({ show, onClose, dismissible = true, wide = false, children 
   );
 }
 
-export function useProfilePhoto({ photoUrl, name, inline = false }) {
+export function useProfilePhoto({ photoSources = [], name, inline = false }) {
+  const photoUrl = photoSources[0] ?? null;
   const inputRef = useRef(null);
   const [cropSource, setCropSource] = useState(null);
   const [cropFile, setCropFile] = useState(null);
@@ -217,7 +230,7 @@ export function useProfilePhoto({ photoUrl, name, inline = false }) {
             <RemoveDialog onCancel={close} onRemoved={close} />
           </PhotoLayer>
           <PhotoLayer show={dialog === "view"} onClose={close} wide>
-            {photoUrl && <ViewDialog src={photoUrl} name={name} onClose={close} />}
+            {photoUrl && <ViewDialog sources={photoSources} name={name} onClose={close} />}
           </PhotoLayer>
         </>
       ) : (
@@ -229,7 +242,7 @@ export function useProfilePhoto({ photoUrl, name, inline = false }) {
             <RemoveDialog onCancel={close} onRemoved={close} />
           </CustomModal>
           <CustomModal show={dialog === "view"} handleClose={close} size="lg" centered>
-            {photoUrl && <ViewDialog src={photoUrl} name={name} onClose={close} />}
+            {photoUrl && <ViewDialog sources={photoSources} name={name} onClose={close} />}
           </CustomModal>
         </>
       )}

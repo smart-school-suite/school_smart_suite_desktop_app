@@ -8,7 +8,7 @@ import {
 import { TextInput } from "../../components/FormComponents/InputComponents";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import ProfilePhotoMenu from "../../components/Profile/ProfilePhotoMenu";
-import { getAvatarUrl, getInitials } from "../../components/Profile/ProfileAvatar";
+import { getAvatarSources, getInitials } from "../../components/Profile/ProfileAvatar";
 import UsernameInput from "../../components/Profile/UsernameInput";
 import { useProfilePhoto } from "../../components/Profile/useProfilePhoto";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
@@ -63,7 +63,8 @@ export default function EditProfile({ handleClose, drawerData }) {
   const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
     useFormError("Couldn't update your profile");
   const { mutate: update, isPending } = useUpdateSchoolAdminProfile(handleClose);
-  const photo = useProfilePhoto({ photoUrl: getAvatarUrl(schoolAdmin), name: schoolAdmin?.name, inline: true });
+  const photoSources = getAvatarSources(schoolAdmin);
+  const photo = useProfilePhoto({ photoSources, name: schoolAdmin?.name, inline: true });
 
   useEffect(() => {
     if (!focusField) return;
@@ -114,7 +115,7 @@ export default function EditProfile({ handleClose, drawerData }) {
         <div className="d-flex align-items-center gap-3">
           <ProfilePhotoMenu
             photo={photo}
-            src={getAvatarUrl(schoolAdmin)}
+            src={photoSources}
             initials={getInitials(schoolAdmin?.first_name, schoolAdmin?.last_name, schoolAdmin?.name)}
             name={schoolAdmin?.name}
             size="4.5rem"

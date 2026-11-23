@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assets";
 import { TOKEN_KEY } from "@/constants";
 import { Icon } from "@iconify/react";
 import { CircleX, ImagePlus, Info } from "lucide-react";
@@ -8,11 +9,9 @@ import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedL
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { secureTokenStorage } from "../../services/secureStore/secureTokenStorage";
-import { cleanAssetPath } from "../../utils/functions";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { useFormError } from "../../hooks/form/useFormError";
 
-const CDN_BASE_URL = "https://cdn.smartschoolsuite.com";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ["image/png", "image/jpeg"];
 
@@ -89,7 +88,7 @@ function UploadSchoolLogo({ handleClose, rowData }) {
   const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
     useFormError("Failed To Upload School Logo");
   const currentLogoUrl = rowData?.schoolLogo
-    ? `${CDN_BASE_URL}/${cleanAssetPath(rowData.schoolLogo)}`
+    ? assetUrl(rowData.schoolLogo)
     : null;
   const initials = getInitials(rowData?.schoolName);
 
