@@ -16,9 +16,9 @@ export const useUpdateSchoolAdminProfile = (handleClose, attribute) => {
              }
 
              toast.custom(
-                <ToastSuccess 
-                   title={"Update Successfull"}
-                   description={`${attribute}, Was successfully updated`}
+                <ToastSuccess
+                   title={"Profile updated"}
+                   description={attribute ? `Your ${attribute} was updated.` : "Your changes were saved."}
                 />
              )
          },

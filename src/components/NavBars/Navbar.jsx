@@ -5,11 +5,15 @@ import NotificationDropdown from "../Dropdowns/NotificationDropdown";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetSchoolBranchDetails } from "../../hooks/schoolBranch/useGetSchoolBranchDetail";
+import { useGetAuthSchoolAdmin } from "../../hooks/schoolAdmin/useGetAuthSchoolAdmin";
+import ProfileAvatar, { getAvatarUrl, getInitials } from "../Profile/ProfileAvatar";
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: schoolBranchDetails, isLoading } = useGetSchoolBranchDetails();
   const userData = useSelector((state) => state.auth.user);
+  const { data: authSchoolAdmin } = useGetAuthSchoolAdmin();
+  const admin = authSchoolAdmin?.data?.authSchoolAdmin ?? userData?.authSchoolAdmin;
   const token = useSelector((state) => state.auth.token);
   const darkMode = useSelector((state) => state.theme.darkMode);
   const queryClient = useQueryClient();
@@ -91,9 +95,11 @@ function Navbar() {
                 darkMode ? "dark-bg" : "bg-white"
               } gainsboro-color dashboard-nav circle-action pointer-cursor`}
             >
-              <img
-                src={`http://127.0.0.1:8000/storage/SchoolAdminAvatars/${userData.authSchoolAdmin.profile_picture}`}
-                alt=""
+              <ProfileAvatar
+                src={getAvatarUrl(admin)}
+                initials={getInitials(admin?.first_name, admin?.last_name, admin?.name)}
+                size="2.5rem"
+                alt={admin?.name ? `${admin.name}'s profile photo` : ""}
               />
             </div>
           </div>

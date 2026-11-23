@@ -67,3 +67,23 @@ export const updateSchoolAdminProfile = async (updateData) => {
    const response = await axiosInstance.put("school-admin/update-profile", updateData);
    return response.data;
 }
+export const checkSchoolAdminUsername = async (username) => {
+  const response = await axiosInstance.get("school-admin/username-availability", {
+    params: { username },
+  });
+  return response.data;
+};
+
+export const uploadSchoolAdminAvatar = async (picture, onUploadProgress) => {
+  const formData = new FormData();
+  formData.append("picture", picture);
+  const response = await axiosInstance.post("school-asset/school-admin/upload", formData, {
+    onUploadProgress,
+  });
+  return response.data;
+};
+
+export const removeSchoolAdminAvatar = async () => {
+  const response = await axiosInstance.delete("school-asset/school-admin/remove");
+  return response.data;
+};
