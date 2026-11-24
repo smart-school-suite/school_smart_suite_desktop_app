@@ -95,3 +95,7 @@ export const importCourse = async (payload) => {
   );
   return response.data;
 };
+export const getCourseCreationOptions = async () => {
+  const response = await axiosInstance.get("course/creation-options");
+  return response.data;
+};
