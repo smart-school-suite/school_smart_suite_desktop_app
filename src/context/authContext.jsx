@@ -118,8 +118,7 @@ export const AuthProvider = ({ children }) => {
         TOKEN_KEY.AUTH_TOKEN,
         responseData.authToken,
       );
-      await getAuthenticatedUser(responseData.authToken);
-      navigate("/school-admins");
+      if (await getAuthenticatedUser(navigate)) navigate("/school-admins");
       await secureTokenStorage.remove(TOKEN_KEY.OTP_TOKEN);
     } catch (error) {
       const errorMessage =
@@ -170,7 +169,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
   const getAuthenticatedUser = useCallback(
-    async () => {
+    async (navigate) => {
        const token = await secureTokenStorage.get(TOKEN_KEY.AUTH_TOKEN);
       try {
         const response = await axios.get("auth/school-admin/me", {
@@ -179,9 +178,10 @@ export const AuthProvider = ({ children }) => {
           },
         });
         dispatch(handleSetAuthUser({ user: response.data.data }));
-      } catch (error) {
-        handleAdminLogout();
-        navigate("/login-school-admin");
+        return true;
+      } catch {
+        await handleAdminLogout(typeof navigate === "function" ? navigate : () => {});
+        return false;
       }
     },
     [handleAdminLogout],
@@ -214,8 +214,7 @@ export const AuthProvider = ({ children }) => {
         TOKEN_KEY.AUTH_TOKEN,
         responseData.authToken,
       );
-      await getAuthenticatedUser(responseData.authToken);
-      navigate("/school-admins");
+      if (await getAuthenticatedUser(navigate)) navigate("/school-admins");
     } catch (e) {
       setAuthError((prevState) => ({
         ...prevState,
