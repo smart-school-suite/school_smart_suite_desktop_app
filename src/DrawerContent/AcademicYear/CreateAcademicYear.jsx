@@ -16,6 +16,7 @@ import {
   safeRangePoints,
   SuggestionChip,
 } from "../../components/CreationFlow/CreationFlow";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import QueryErrorState from "../../components/errors/QueryErrorState";
@@ -74,7 +75,7 @@ function SpecialtyCard({ specialty, entry, selected, onSelect }) {
       tabIndex={disabled ? undefined : 0}
       aria-pressed={disabled ? undefined : selected}
       aria-disabled={disabled || undefined}
-      whileHover={disabled || selected ? undefined : { scale: 1.01 }}
+      whileHover={disabled || selected ? undefined : { scale: 1 }}
       whileTap={disabled || selected ? undefined : { scale: 0.99 }}
       onClick={select}
       onKeyDown={(event) => {
@@ -113,8 +114,10 @@ function SpecialtyCard({ specialty, entry, selected, onSelect }) {
           </div>
         </div>
         {selected && <CircleCheck size={16} className="green-color flex-shrink-0" />}
+        
       </div>
-      <div className="d-flex align-items-center justify-content-between gap-2 font-size-xs border-top pt-2">
+      <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+      <div className="d-flex align-items-center justify-content-between gap-2 font-size-xs pt-2">
         <span className={taken ? "text-iron-500" : "fw-medium"}>
           {taken
             ? `Added · ${dateSpan(entry.existing.start_date, entry.existing.end_date)}`
@@ -261,7 +264,7 @@ function CreateAcademicYear({ handleClose }) {
 
   return (
     <>
-      <div className="drawer-content scrollbar-xs ps-2 pt-3 pb-2 d-flex flex-column gap-4 font-size-sm">
+      <div className="drawer-content scrollbar-xs ps-2 pe-1 pt-3 pb-2 d-flex flex-column gap-4 font-size-sm">
         <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} />
 
         {step === 1 && (
@@ -286,9 +289,6 @@ function CreateAcademicYear({ handleClose }) {
                     <div className="flex-grow-1">
                       <SearchInput placeholder="Search specialty, level or department..." value={query} onChange={setQuery} />
                     </div>
-                    <small className="text-iron-400 text-nowrap">
-                      {visibleSpecialties.length} of {specialties.length}
-                    </small>
                   </div>
                   {visibleSpecialties.length ? (
                     visibleSpecialties.map((item) => (

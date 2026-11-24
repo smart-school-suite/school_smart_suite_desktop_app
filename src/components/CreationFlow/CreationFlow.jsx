@@ -154,7 +154,7 @@ export function FlowFooter({ backLabel, onBack, primaryLabel, onPrimary, canCont
 
 export function FlowSkeleton() {
   return (
-    <div className="d-flex flex-column gap-4 p-3">
+    <div className="d-flex flex-column gap-4 p-2">
       {[0, 1, 2].map((index) => (
         <div className="d-flex flex-column gap-2" key={index}>
           <RectangleSkeleton width="40%" height="1rem" />
