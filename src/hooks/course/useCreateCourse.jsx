@@ -9,6 +9,7 @@ export const useCreateCourse = (handleClose, specialtyId, semesterId) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
       queryClient.invalidateQueries({ queryKey: ["activeCourses"] });
+      queryClient.invalidateQueries({ queryKey: ["courseCreationOptions"] });
       queryClient.invalidateQueries({
         queryKey: ["courseSpecialtySemester", specialtyId, semesterId],
       });

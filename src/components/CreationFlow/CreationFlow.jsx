@@ -126,7 +126,7 @@ export function CreationSummary({ title, subtitle, start, end, copies = [], copy
   );
 }
 
-export function FlowFooter({ backLabel, onBack, primaryLabel, onPrimary, canContinue, isPending }) {
+export function FlowFooter({ backLabel, onBack, primaryLabel, onPrimary, canContinue, isPending, secondaryLabel, onSecondary, canSecondary = canContinue }) {
   return (
     <div className="drawer-footer border-top px-3 py-2 font-size-sm">
       <button
@@ -138,6 +138,16 @@ export function FlowFooter({ backLabel, onBack, primaryLabel, onPrimary, canCont
         <ChevronLeft size={16} strokeWidth={1.75} />
         {backLabel}
       </button>
+      {secondaryLabel && (
+        <button
+          type="button"
+          className={`btn btn-light font-size-sm px-3 me-2 ${canSecondary ? "" : "opacity-50"}`}
+          onClick={onSecondary}
+          disabled={!canSecondary || isPending}
+        >
+          {secondaryLabel}
+        </button>
+      )}
       <button
         type="button"
         className={`profile-primary-btn border-0 rounded-3 primary-background text-white font-size-sm px-3 d-inline-flex align-items-center gap-2 text-capitalize ${
