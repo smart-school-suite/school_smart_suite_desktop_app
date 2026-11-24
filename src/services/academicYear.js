@@ -50,3 +50,7 @@ export const getCurrentSystemAcademicYear = async () => {
      const response = await axiosInstance.get("system-academic-year/current-year");
      return response.data;
 }
+export const getSchoolAcademicYearCreationOptions = async () => {
+  const response = await axiosInstance.get("school-academic-year/creation-options");
+  return response.data;
+};
