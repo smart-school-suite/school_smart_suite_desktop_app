@@ -3,8 +3,8 @@ import { CalendarRange, Check, Copy, Info, Lightbulb, Sparkles } from "lucide-re
 import { useMemo, useRef, useState } from "react";
 import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
-import QueryErrorState from "../../components/errors/QueryErrorState";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
+import QueryErrorState from "../../components/errors/QueryErrorState";
 import { DateRangeInput } from "../../components/FormComponents/InputComponents";
 import { Badge, BADGE_VARIANT } from "../../components/Renderer/badges";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
@@ -193,7 +193,7 @@ function CreateSemester({ handleClose }) {
 
   return (
     <>
-      <div className="drawer-content scrollbar-xs px-3 pt-3 pb-2 d-flex flex-column gap-4 font-size-sm">
+      <div className="drawer-content scrollbar-xs ps-2 pt-3 pb-2 d-flex flex-column gap-4 font-size-sm">
         <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} />
 
         <Step number={1} title="Class" tip="Current years are listed first.">
