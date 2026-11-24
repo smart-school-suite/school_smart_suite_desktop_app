@@ -50,6 +50,7 @@ const slideVariants = {
 const backdropTransition = { duration: 0.25, ease: "easeOut" };
 
 export const DRAWER_SIZES = ["sm", "md", "lg", "xl"];
+export const DEFAULT_DRAWER_SIZE = "md";
 
 function useScrollLock(isLocked) {
   React.useLayoutEffect(() => {
@@ -83,7 +84,7 @@ export const Drawer = ({
   title,
   children,
   placement = "right",
-  size,
+  size = DEFAULT_DRAWER_SIZE,
   className = "",
   closeOnOutsideClick = true,
   closeOnEscape = true,
@@ -145,8 +146,8 @@ export const Drawer = ({
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                className={`drawer-panel drawer-panel--${placement} ${
-                  DRAWER_SIZES.includes(size) ? `drawer-panel--${size}` : ""
+                className={`drawer-panel drawer-panel--${placement} drawer-panel--${
+                  DRAWER_SIZES.includes(size) ? size : DEFAULT_DRAWER_SIZE
                 } ${className} bg-white`}
               >
                 {showHeader && (
