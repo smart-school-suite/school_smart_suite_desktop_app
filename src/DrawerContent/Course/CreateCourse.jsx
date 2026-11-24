@@ -22,10 +22,10 @@ import QueryErrorState from "../../components/errors/QueryErrorState";
 import { NumberInput, TextInput } from "../../components/FormComponents/InputComponents";
 import { RichTextEditor } from "../../components/FormComponents/RichTextEditor/RichTextEditor";
 import SearchInput from "../../components/input/search";
+import { useDebounce } from "../../hooks/common/useDebounce";
 import { useCreateCourse } from "../../hooks/course/useCreateCourse";
 import { useGetCourseCreationOptions } from "../../hooks/course/useGetCourseCreationOptions";
 import { useGetCourseTypes } from "../../hooks/course/useGetCourseTypes";
-import { useDebounce } from "../../hooks/common/useDebounce";
 import { useFormError } from "../../hooks/form/useFormError";
 
 const STEPS = ["Specialty & semester", "Course"];
@@ -62,7 +62,7 @@ function SpecialtyCard({ specialty, semesters, selected, semesterId, onSelect, o
       role="button"
       tabIndex={0}
       aria-pressed={selected}
-      whileHover={selected ? undefined : { scale: 1.01 }}
+      whileHover={selected ? undefined : { scale: 1 }}
       whileTap={selected ? undefined : { scale: 0.99 }}
       onClick={() => !selected && onSelect(specialty.id)}
       onKeyDown={(event) => {
@@ -329,7 +329,7 @@ function CreateCourse({ handleClose }) {
 
   return (
     <>
-      <div className="drawer-content scrollbar-xs ps-2 pt-3 pb-2 d-flex flex-column gap-4 font-size-sm">
+      <div className="drawer-content scrollbar-xs ps-2 pe-1 pt-3 pb-2 d-flex flex-column gap-4 font-size-sm">
         <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} />
 
         {step === 1 && (
@@ -340,9 +340,6 @@ function CreateCourse({ handleClose }) {
                   <div className="flex-grow-1">
                     <SearchInput placeholder="Search specialty, level or department..." value={query} onChange={setQuery} />
                   </div>
-                  <small className="text-iron-400 text-nowrap">
-                    {visibleSpecialties.length} of {specialties.length}
-                  </small>
                 </div>
                 {visibleSpecialties.length ? (
                   visibleSpecialties.map((item) => (
