@@ -104,6 +104,7 @@ function AcademicYear() {
                 title="Create Academic Year"
                 placement="right"
                 drawerChildren={CreateAcademicYear}
+                size="md"
               >
                 <button
                   className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize"
@@ -144,6 +145,7 @@ function AcademicYear() {
                   title="Create Academic Year"
                   placement="right"
                   drawerChildren={CreateAcademicYear}
+                size="md"
                 >
                   <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
                     <span>Create Academic Year</span>
