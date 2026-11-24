@@ -1,6 +1,6 @@
 import { differenceInCalendarDays, format, isValid, parseISO } from "date-fns";
 import { motion } from "framer-motion";
-import { CalendarPlus, CalendarRange, Check, ChevronLeft, CircleCheck, Copy, Dot, Info, Layers, Lightbulb, SearchX, Sparkles } from "lucide-react";
+import { CalendarPlus, CalendarRange, Check, ChevronLeft, CircleCheck, Copy, Dot, Info, Layers, Lightbulb, SearchX, ShieldCheck, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMemo, useRef, useState } from "react";
 import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
@@ -78,6 +78,30 @@ function SemesterChoice({ option, selected, recommended, onSelect }) {
         {taken ? `Added · ${dateSpan(option.existing.start_date, option.existing.end_date)}` : "Available"}
       </span>
     </button>
+  );
+}
+
+function SafeRange({ range, year }) {
+  const start = range?.start_date ?? year.start_date;
+  const end = range?.end_date ?? year.end_date;
+  const points = [
+    range?.after && `Starts after ${range.after.name} ends (${shortDate(range.after.end_date)})`,
+    range?.before && `Ends before ${range.before.name} starts (${shortDate(range.before.start_date)})`,
+    !range?.after && !range?.before && "Within the academic year",
+  ].filter(Boolean);
+
+  return (
+    <div className="d-flex flex-column gap-1 rounded-3 bg-iron-50 px-3 py-2 mt-3 font-size-xs">
+      <span className="d-flex align-items-center gap-1 text-iron-600">
+        <ShieldCheck size={13} strokeWidth={1.75} className="text-fern-600 flex-shrink-0" />
+        Safe dates <span className="fw-semibold text-iron-700">{dateSpan(start, end)}</span>
+      </span>
+      <ul className="m-0 ps-4 text-iron-500 d-flex flex-column gap-1">
+        {points.map((point) => (
+          <li key={point}>{point}</li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -202,15 +226,16 @@ function CreateSemester({ handleClose }) {
   const year = years.find((item) => item.id === yearId) ?? null;
   const semester = year?.semesters.find((item) => item.id === semesterId) ?? null;
   const suggestion = semester?.suggested ?? null;
+  const safeRange = semester?.allowed ?? null;
 
   const validationSchema = useMemo(
     () =>
       dateRangeValidationSchema({
-        minDate: year?.start_date,
-        maxDate: year?.end_date,
+        minDate: safeRange?.start_date ?? year?.start_date,
+        maxDate: safeRange?.end_date ?? year?.end_date,
         allowSameDay: false,
       }),
-    [year?.start_date, year?.end_date],
+    [safeRange?.start_date, safeRange?.end_date, year?.start_date, year?.end_date],
   );
 
   const resetDates = (next = { start_date: "", end_date: "" }) => {
@@ -361,7 +386,6 @@ function CreateSemester({ handleClose }) {
             number={2}
             title="Dates"
             context={`${semester.name} · ${year.label}`}
-            tip={`Between ${dateSpan(year.start_date, year.end_date)}.`}
           >
             <div className="d-flex flex-column gap-2">
               {suggestion && (
@@ -387,6 +411,7 @@ function CreateSemester({ handleClose }) {
                 onStartDateChange={(value) => setDates((current) => ({ ...current, start_date: value }))}
                 onEndDateChange={(value) => setDates((current) => ({ ...current, end_date: value }))}
               />
+              <SafeRange range={safeRange} year={year} />
               {startsInPast && (
                 <span className="d-flex align-items-center gap-1 text-iron-500 font-size-xs">
                   <Info size={13} strokeWidth={1.75} />
