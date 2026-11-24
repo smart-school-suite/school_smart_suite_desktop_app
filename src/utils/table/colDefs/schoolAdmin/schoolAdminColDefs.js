@@ -34,7 +34,6 @@ export function schoolAdminColDefs({ ActionComponent }) {
     textColumn({
       headerName: "Email",
       field: "email",
-      cellRenderer: TextComponent,
     }),
     textColumn({
       headerName: "Phone",
