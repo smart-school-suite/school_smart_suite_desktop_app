@@ -15,7 +15,7 @@ import { useGetSchoolSemesterCreationOptions } from "../../hooks/schoolSemester/
 
 const STATUS_LABEL = { ongoing: "Ongoing", upcoming: "Upcoming", ended: "Ended" };
 
-const STEPS = ["Class", "Semester", "Dates"];
+const STEPS = ["Semester", "Dates"];
 
 const toDate = (value) => {
   const date = value ? parseISO(value) : null;
@@ -156,7 +156,7 @@ function CreateSemester({ handleClose }) {
   const datesComplete = isCompleteDate(dates.start_date) && isCompleteDate(dates.end_date);
   const datesOk = datesComplete && validationSchema.isValidSync(dates);
   const canCreate = Boolean(year && semester && !semester.created && datesOk) && !isPending;
-  const canContinue = step === 1 ? Boolean(year) : step === 2 ? Boolean(semester && !semester.created) : canCreate;
+  const canContinue = step === 1 ? Boolean(year && semester && !semester.created) : canCreate;
   const maxSemesters = options?.max_semesters;
 
   const goBack = () => {
@@ -218,57 +218,55 @@ function CreateSemester({ handleClose }) {
         <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} />
 
         {step === 1 && (
-          <Step number={1} title="Class" tip={years.length ? "Current years are listed first." : null}>
-            {years.length ? (
-              <CustomDropdown
-                data={years}
-                displayKey={["label", "meta"]}
-                valueKey={["id"]}
-                placeholder="Pick a class"
-                onSelect={chooseYear}
-                value={year}
-                showFeedback={false}
-                dropdownWidth="27rem"
-              />
-            ) : (
-              <span className="d-flex align-items-center gap-2 text-iron-500">
-                <Info size={14} strokeWidth={1.75} />
-                Add an academic year first.
-              </span>
-            )}
-          </Step>
-        )}
-
-        {step === 2 && year && (
-          <Step
-            number={2}
-            title="Semester"
-            context={year.label}
-            tip={
-              year.recommended_semester_id
-                ? "We picked the next one."
-                : maxSemesters
-                  ? `All ${maxSemesters} semesters are added.`
-                  : "All semesters are added."
-            }
-          >
-            <div className="semester-choices d-grid gap-2">
-              {year.semesters.map((option) => (
-                <SemesterChoice
-                  key={option.id}
-                  option={option}
-                  selected={option.id === semesterId}
-                  recommended={option.id === year.recommended_semester_id}
-                  onSelect={chooseSemester}
+          <Step number={1} title="Semester" tip={years.length ? "Current years are listed first." : null}>
+            <div className="d-flex flex-column gap-3">
+              {years.length ? (
+                <CustomDropdown
+                  data={years}
+                  displayKey={["label", "meta"]}
+                  valueKey={["id"]}
+                  placeholder="Pick a class"
+                  onSelect={chooseYear}
+                  value={year}
+                  showFeedback={false}
+                  dropdownWidth="27rem"
                 />
-              ))}
+              ) : (
+                <span className="d-flex align-items-center gap-2 text-iron-500">
+                  <Info size={14} strokeWidth={1.75} />
+                  Add an academic year first.
+                </span>
+              )}
+              {year && (
+                <div className="d-flex flex-column gap-2">
+                  <span className="d-flex align-items-center gap-1 text-iron-500 font-size-xs">
+                    <Lightbulb size={13} strokeWidth={1.75} className="text-old-lace-500 flex-shrink-0" />
+                    {year.recommended_semester_id
+                      ? "We picked the next one."
+                      : maxSemesters
+                        ? `All ${maxSemesters} semesters are added.`
+                        : "All semesters are added."}
+                  </span>
+                  <div className="semester-choices d-grid gap-2">
+                    {year.semesters.map((option) => (
+                      <SemesterChoice
+                        key={option.id}
+                        option={option}
+                        selected={option.id === semesterId}
+                        recommended={option.id === year.recommended_semester_id}
+                        onSelect={chooseSemester}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </Step>
         )}
 
-        {step === 3 && year && semester && (
+        {step === 2 && year && semester && (
           <Step
-            number={3}
+            number={2}
             title="Dates"
             context={`${semester.name} · ${year.label}`}
             tip={`Between ${dateSpan(year.start_date, year.end_date)}.`}
@@ -307,7 +305,7 @@ function CreateSemester({ handleClose }) {
           </Step>
         )}
 
-        {step === 3 && year && semester && !semester.created && datesOk && (
+        {step === 2 && year && semester && !semester.created && datesOk && (
           <div className="semester-summary d-flex gap-3 rounded-3 p-3 bg-primary-50" aria-live="polite">
             <CalendarRange size={18} strokeWidth={1.75} className="text-primary-500 flex-shrink-0 mt-1" />
             <div className="d-flex flex-column gap-1 overflow-hidden">
