@@ -74,6 +74,7 @@ function CourseLayout() {
                   title="Create Course"
                   placement="right"
                   drawerChildren={CreateCourse}
+                  size="md"
                 >
                   <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                     <span>create course</span>

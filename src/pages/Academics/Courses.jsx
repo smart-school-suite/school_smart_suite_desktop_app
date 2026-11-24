@@ -93,6 +93,7 @@ function Courses() {
                   title="Create Course"
                   placement="right"
                   drawerChildren={CreateCourse}
+                  size="md"
                 >
                   <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
                     <span>Create Course</span>
@@ -124,6 +125,7 @@ function Courses() {
                   title="Create Course"
                   placement="right"
                   drawerChildren={CreateCourse}
+                  size="md"
                 >
                   <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
                     <span>Create Course</span>
