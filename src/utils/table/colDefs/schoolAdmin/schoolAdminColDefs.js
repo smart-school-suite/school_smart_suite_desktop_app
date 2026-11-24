@@ -1,9 +1,9 @@
 import { BadgeRenderer } from "@/components/Renderer/badges";
 import {
-  textColumn,
   actionsColumn,
   dateColumn,
   numberColumn,
+  textColumn,
 } from "@/utils/table/columns";
 import TextComponent from "../../../../components/DataTableComponents/TextComponent";
 import { AvatarRenderer } from "../../../../components/Renderer/AvatarRenderer";
@@ -34,6 +34,7 @@ export function schoolAdminColDefs({ ActionComponent }) {
     textColumn({
       headerName: "Email",
       field: "email",
+      cellRenderer: TextComponent,
     }),
     textColumn({
       headerName: "Phone",

@@ -1,22 +1,42 @@
 import { differenceInCalendarDays, format, isValid, parseISO } from "date-fns";
 import { motion } from "framer-motion";
-import { CalendarPlus, CalendarRange, Check, ChevronLeft, CircleCheck, Copy, Dot, Info, Layers, Lightbulb, SearchX, ShieldCheck, Sparkles } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import {
+  CalendarPlus,
+  CalendarRange,
+  Check,
+  ChevronLeft,
+  CircleCheck,
+  Copy,
+  Dot,
+  Info,
+  Layers,
+  Lightbulb,
+  SearchX,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
-import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
+import EmptyState, {
+  EmptyStateButton,
+} from "../../components/errors/EmptyState";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import QueryErrorState from "../../components/errors/QueryErrorState";
 import { DateRangeInput } from "../../components/FormComponents/InputComponents";
 import SearchInput from "../../components/input/search";
-import { Badge, BADGE_CONTEXT, BADGE_VARIANT } from "../../components/Renderer/badges";
+import {
+  Badge,
+  BADGE_CONTEXT,
+  BADGE_VARIANT,
+} from "../../components/Renderer/badges";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
 import { useDebounce } from "../../hooks/common/useDebounce";
 import { useFormError } from "../../hooks/form/useFormError";
 import { useCreateSchoolSemester } from "../../hooks/schoolSemester/useCreateSchoolSemester";
 import { useGetSchoolSemesterCreationOptions } from "../../hooks/schoolSemester/useGetSchoolSemesterCreationOptions";
-
 const STEPS = ["Level & semester", "Dates"];
 
 const toDate = (value) => {
@@ -31,21 +51,33 @@ const shortDate = (value) => {
 
 const dateSpan = (start, end) => `${shortDate(start)} – ${shortDate(end)}`;
 
-const isCompleteDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value ?? "") && Boolean(toDate(value));
+const isCompleteDate = (value) =>
+  /^\d{4}-\d{2}-\d{2}$/.test(value ?? "") && Boolean(toDate(value));
 
 function Step({ number, title, context, tip, children }) {
   return (
-    <section className="d-flex flex-column gap-2" aria-label={`Step ${number} of ${STEPS.length}: ${title}`}>
+    <section
+      className="d-flex flex-column gap-2"
+      aria-label={`Step ${number} of ${STEPS.length}: ${title}`}
+    >
       <div className="d-flex flex-column">
         <span className="font-size-xs text-iron-400" aria-live="polite">
           Step {number} of {STEPS.length}
         </span>
         <span className="fw-semibold font-size-md">{title}</span>
-        {context && <span className="font-size-xs text-iron-500 text-truncate text-capitalize">{context}</span>}
+        {context && (
+          <span className="font-size-xs text-iron-500 text-truncate text-capitalize">
+            {context}
+          </span>
+        )}
       </div>
       {tip && (
         <span className="d-flex align-items-center gap-1 text-iron-500 font-size-xs">
-          <Lightbulb size={13} strokeWidth={1.75} className="text-old-lace-500 flex-shrink-0" />
+          <Lightbulb
+            size={13}
+            strokeWidth={1.75}
+            className="text-old-lace-500 flex-shrink-0"
+          />
           {tip}
         </span>
       )}
@@ -67,15 +99,27 @@ function SemesterChoice({ option, selected, recommended, onSelect }) {
       } ${taken ? "semester-choice--taken" : ""}`}
     >
       <span className="d-flex align-items-center justify-content-between gap-2 w-100">
-        <span className="fw-medium text-capitalize text-truncate">{option.name}</span>
+        <span className="fw-medium text-capitalize text-truncate">
+          {option.name}
+        </span>
         {taken ? (
-          <Check size={15} strokeWidth={2} className="text-fern-600 flex-shrink-0" />
+          <Check
+            size={15}
+            strokeWidth={2}
+            className="text-fern-600 flex-shrink-0"
+          />
         ) : recommended ? (
-          <Badge variant={BADGE_VARIANT.PRIMARY} label="Next up" showIcon={false} />
+          <Badge
+            variant={BADGE_VARIANT.PRIMARY}
+            label="Next up"
+            showIcon={false}
+          />
         ) : null}
       </span>
       <span className="font-size-xs text-iron-500">
-        {taken ? `Added · ${dateSpan(option.existing.start_date, option.existing.end_date)}` : "Available"}
+        {taken
+          ? `Added · ${dateSpan(option.existing.start_date, option.existing.end_date)}`
+          : "Available"}
       </span>
     </button>
   );
@@ -85,16 +129,25 @@ function SafeRange({ range, year }) {
   const start = range?.start_date ?? year.start_date;
   const end = range?.end_date ?? year.end_date;
   const points = [
-    range?.after && `Starts after ${range.after.name} ends (${shortDate(range.after.end_date)})`,
-    range?.before && `Ends before ${range.before.name} starts (${shortDate(range.before.start_date)})`,
+    range?.after &&
+      `Starts after ${range.after.name} ends (${shortDate(range.after.end_date)})`,
+    range?.before &&
+      `Ends before ${range.before.name} starts (${shortDate(range.before.start_date)})`,
     !range?.after && !range?.before && "Within the academic year",
   ].filter(Boolean);
 
   return (
     <div className="d-flex flex-column gap-1 rounded-3 bg-iron-50 px-3 py-2 mt-3 font-size-xs">
       <span className="d-flex align-items-center gap-1 text-iron-600">
-        <ShieldCheck size={13} strokeWidth={1.75} className="text-fern-600 flex-shrink-0" />
-        Safe dates <span className="fw-semibold text-iron-700">{dateSpan(start, end)}</span>
+        <ShieldCheck
+          size={13}
+          strokeWidth={1.75}
+          className="text-fern-600 flex-shrink-0"
+        />
+        Safe dates{" "}
+        <span className="fw-semibold text-iron-700">
+          {dateSpan(start, end)}
+        </span>
       </span>
       <ul className="m-0 ps-4 text-iron-500 d-flex flex-column gap-1">
         {points.map((point) => (
@@ -127,7 +180,10 @@ function LevelCard({ year, selected, semesterId, onSelect, onSelectSemester }) {
       whileTap={selected ? undefined : { scale: 0.99 }}
       onClick={() => !selected && onSelect(year)}
       onKeyDown={(event) => {
-        if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
+        if (
+          event.target === event.currentTarget &&
+          (event.key === "Enter" || event.key === " ")
+        ) {
           event.preventDefault();
           onSelect(year);
         }
@@ -146,28 +202,47 @@ function LevelCard({ year, selected, semesterId, onSelect, onSelectSemester }) {
           <div className="d-flex flex-column overflow-hidden">
             <div className="d-flex align-items-center gap-2 flex-wrap">
               <span className="fw-semibold">{year.level_name ?? "Level"}</span>
-              <Badge status={year.status} context={BADGE_CONTEXT.ACADEMIC_PERIOD} />
+              <Badge
+                status={year.status}
+                context={BADGE_CONTEXT.ACADEMIC_PERIOD}
+              />
             </div>
             <div className="d-flex align-items-center text-iron-400 font-size-xs overflow-hidden">
-              <span className="text-truncate" title={year.specialty_name ?? ""}>{year.specialty_name ?? "-"}</span>
+              <span className="text-truncate" title={year.specialty_name ?? ""}>
+                {year.specialty_name ?? "-"}
+              </span>
               <Dot size={14} className="flex-shrink-0" />
               <span className="text-nowrap">{year.academic_year ?? "-"}</span>
             </div>
           </div>
         </div>
-        {selected && <CircleCheck size={16} className="green-color flex-shrink-0" />}
+        {selected && (
+          <CircleCheck size={16} className="green-color flex-shrink-0" />
+        )}
       </div>
-      <div className="d-flex align-items-center justify-content-between gap-2 font-size-xs border-top pt-2">
-        <span className="fw-medium">{dateSpan(year.start_date, year.end_date)}</span>
+      <HorizontalDashedLine dashed={false} color="#ccc" thickness={0.2} />
+      <div className="d-flex align-items-center justify-content-between gap-2 font-size-xs  pt-2">
+        <span className="fw-medium">
+          {dateSpan(year.start_date, year.end_date)}
+        </span>
         <span className={full ? "text-fern-600" : "text-iron-400"}>
           {added} of {total} semesters added
         </span>
       </div>
       {selected && (
-        <div className="d-flex flex-column gap-2" onClick={(event) => event.stopPropagation()}>
+        <div
+          className="d-flex flex-column gap-2"
+          onClick={(event) => event.stopPropagation()}
+        >
           <span className="d-flex align-items-center gap-1 text-iron-500 font-size-xs">
-            <Lightbulb size={13} strokeWidth={1.75} className="text-old-lace-500 flex-shrink-0" />
-            {year.recommended_semester_id ? "We picked the next one." : "All semesters are added."}
+            <Lightbulb
+              size={13}
+              strokeWidth={1.75}
+              className="text-old-lace-500 flex-shrink-0"
+            />
+            {year.recommended_semester_id
+              ? "We picked the next one."
+              : "All semesters are added."}
           </span>
           <div className="semester-choices d-grid gap-2">
             {year.semesters.map((option) => (
@@ -204,10 +279,17 @@ function CreateSemester({ handleClose }) {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 200);
-  const { data, isLoading, error, refetch } = useGetSchoolSemesterCreationOptions();
-  const { mutate: createSchoolSemester, isPending } = useCreateSchoolSemester(handleClose);
-  const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
-    useFormError("Couldn't create the semester");
+  const { data, isLoading, error, refetch } =
+    useGetSchoolSemesterCreationOptions();
+  const { mutate: createSchoolSemester, isPending } =
+    useCreateSchoolSemester(handleClose);
+  const {
+    formError,
+    errorBannerRef,
+    setClientError,
+    handleServerError,
+    clearFormError,
+  } = useFormError("Couldn't create the semester");
 
   const [step, setStep] = useState(1);
   const [yearId, setYearId] = useState(null);
@@ -217,14 +299,18 @@ function CreateSemester({ handleClose }) {
 
   const options = data?.data;
   const years = useMemo(() => options?.school_years ?? [], [options]);
-  const visibleYears = useMemo(() => years.filter((item) => matches(item, debouncedQuery)), [years, debouncedQuery]);
+  const visibleYears = useMemo(
+    () => years.filter((item) => matches(item, debouncedQuery)),
+    [years, debouncedQuery],
+  );
 
   const createAcademicYear = () => {
     handleClose?.();
     navigate("/academic-year");
   };
   const year = years.find((item) => item.id === yearId) ?? null;
-  const semester = year?.semesters.find((item) => item.id === semesterId) ?? null;
+  const semester =
+    year?.semesters.find((item) => item.id === semesterId) ?? null;
   const suggestion = semester?.suggested ?? null;
   const safeRange = semester?.allowed ?? null;
 
@@ -235,7 +321,12 @@ function CreateSemester({ handleClose }) {
         maxDate: safeRange?.end_date ?? year?.end_date,
         allowSameDay: false,
       }),
-    [safeRange?.start_date, safeRange?.end_date, year?.start_date, year?.end_date],
+    [
+      safeRange?.start_date,
+      safeRange?.end_date,
+      year?.start_date,
+      year?.end_date,
+    ],
   );
 
   const resetDates = (next = { start_date: "", end_date: "" }) => {
@@ -260,13 +351,19 @@ function CreateSemester({ handleClose }) {
   const applySuggestion = () => {
     if (!suggestion) return;
     clearFormError();
-    resetDates({ start_date: suggestion.start_date, end_date: suggestion.end_date });
+    resetDates({
+      start_date: suggestion.start_date,
+      end_date: suggestion.end_date,
+    });
   };
 
-  const datesComplete = isCompleteDate(dates.start_date) && isCompleteDate(dates.end_date);
+  const datesComplete =
+    isCompleteDate(dates.start_date) && isCompleteDate(dates.end_date);
   const datesOk = datesComplete && validationSchema.isValidSync(dates);
-  const canCreate = Boolean(year && semester && !semester.created && datesOk) && !isPending;
-  const canContinue = step === 1 ? Boolean(year && semester && !semester.created) : canCreate;
+  const canCreate =
+    Boolean(year && semester && !semester.created && datesOk) && !isPending;
+  const canContinue =
+    step === 1 ? Boolean(year && semester && !semester.created) : canCreate;
 
   const goBack = () => {
     clearFormError();
@@ -282,7 +379,13 @@ function CreateSemester({ handleClose }) {
   };
 
   const copies = useMemo(() => {
-    if (!year || !semester || !datesComplete || !options?.auto_creation?.enabled) return [];
+    if (
+      !year ||
+      !semester ||
+      !datesComplete ||
+      !options?.auto_creation?.enabled
+    )
+      return [];
     return year.copy_targets.filter(
       (target) =>
         !target.existing_semester_ids.includes(semester.id) &&
@@ -291,9 +394,20 @@ function CreateSemester({ handleClose }) {
     );
   }, [year, semester, datesComplete, dates, options?.auto_creation?.enabled]);
 
-  const startsInPast = datesComplete && options?.today && dates.start_date < options.today;
+  const startsInPast =
+    datesComplete && options?.today && dates.start_date < options.today;
   const lengthInWeeks = datesComplete
-    ? Math.max(1, Math.round((differenceInCalendarDays(toDate(dates.end_date), toDate(dates.start_date)) + 1) / 7))
+    ? Math.max(
+        1,
+        Math.round(
+          (differenceInCalendarDays(
+            toDate(dates.end_date),
+            toDate(dates.start_date),
+          ) +
+            1) /
+            7,
+        ),
+      )
     : null;
 
   const create = async () => {
@@ -307,7 +421,12 @@ function CreateSemester({ handleClose }) {
     }
     clearFormError();
     createSchoolSemester(
-      { school_year_id: year.id, semester_id: semester.id, start_date: dates.start_date, end_date: dates.end_date },
+      {
+        school_year_id: year.id,
+        semester_id: semester.id,
+        start_date: dates.start_date,
+        end_date: dates.end_date,
+      },
       { onError: handleServerError },
     );
   };
@@ -316,7 +435,11 @@ function CreateSemester({ handleClose }) {
   if (error) {
     return (
       <div className="p-3">
-        <QueryErrorState error={error} fallbackTitle="Couldn't load semester options" onRetry={refetch} />
+        <QueryErrorState
+          error={error}
+          fallbackTitle="Couldn't load semester options"
+          onRetry={refetch}
+        />
       </div>
     );
   }
@@ -324,15 +447,27 @@ function CreateSemester({ handleClose }) {
   return (
     <>
       <div className="drawer-content scrollbar-xs ps-2 pt-3 pb-2 d-flex flex-column gap-4 font-size-sm">
-        <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} />
+        <FormErrorBanner
+          ref={errorBannerRef}
+          error={formError}
+          onDismiss={clearFormError}
+        />
 
         {step === 1 && (
-          <Step number={1} title={STEPS[0]} tip="Levels come from your academic years.">
+          <Step
+            number={1}
+            title={STEPS[0]}
+            tip="Levels come from your academic years."
+          >
             {years.length ? (
               <div className="d-flex flex-column gap-3">
                 <div className="d-flex align-items-center gap-2">
                   <div className="flex-grow-1">
-                    <SearchInput placeholder="Search level, specialty or year..." value={query} onChange={setQuery} />
+                    <SearchInput
+                      placeholder="Search level, specialty or year..."
+                      value={query}
+                      onChange={setQuery}
+                    />
                   </div>
                   <small className="text-iron-400 text-nowrap">
                     {visibleYears.length} of {years.length}
@@ -356,7 +491,15 @@ function CreateSemester({ handleClose }) {
                     description={`Nothing matches "${debouncedQuery}".`}
                     height="30dvh"
                     mascotHeight="6rem"
-                    actions={<EmptyStateButton variant="secondary" icon={SearchX} onClick={() => setQuery("")}>Clear search</EmptyStateButton>}
+                    actions={
+                      <EmptyStateButton
+                        variant="secondary"
+                        icon={SearchX}
+                        onClick={() => setQuery("")}
+                      >
+                        Clear search
+                      </EmptyStateButton>
+                    }
                   />
                 )}
                 <button
@@ -375,7 +518,14 @@ function CreateSemester({ handleClose }) {
                 description="Semesters belong to an academic year."
                 height="40dvh"
                 mascotHeight="7rem"
-                actions={<EmptyStateButton icon={CalendarPlus} onClick={createAcademicYear}>Create an academic year</EmptyStateButton>}
+                actions={
+                  <EmptyStateButton
+                    icon={CalendarPlus}
+                    onClick={createAcademicYear}
+                  >
+                    Create an academic year
+                  </EmptyStateButton>
+                }
               />
             )}
           </Step>
@@ -396,7 +546,10 @@ function CreateSemester({ handleClose }) {
                 >
                   <Sparkles size={14} strokeWidth={1.75} />
                   <span>
-                    Use suggested dates <span className="fw-semibold">{dateSpan(suggestion.start_date, suggestion.end_date)}</span>
+                    Use suggested dates{" "}
+                    <span className="fw-semibold">
+                      {dateSpan(suggestion.start_date, suggestion.end_date)}
+                    </span>
                   </span>
                 </button>
               )}
@@ -408,8 +561,12 @@ function CreateSemester({ handleClose }) {
                 endValue={dates.end_date}
                 placeholderStart={suggestion?.start_date ?? year.start_date}
                 placeholderEnd={suggestion?.end_date ?? year.end_date}
-                onStartDateChange={(value) => setDates((current) => ({ ...current, start_date: value }))}
-                onEndDateChange={(value) => setDates((current) => ({ ...current, end_date: value }))}
+                onStartDateChange={(value) =>
+                  setDates((current) => ({ ...current, start_date: value }))
+                }
+                onEndDateChange={(value) =>
+                  setDates((current) => ({ ...current, end_date: value }))
+                }
               />
               <SafeRange range={safeRange} year={year} />
               {startsInPast && (
@@ -423,18 +580,32 @@ function CreateSemester({ handleClose }) {
         )}
 
         {step === 2 && year && semester && !semester.created && datesOk && (
-          <div className="semester-summary d-flex gap-3 rounded-3 p-3 bg-primary-50" aria-live="polite">
-            <CalendarRange size={18} strokeWidth={1.75} className="text-primary-500 flex-shrink-0 mt-1" />
+          <div
+            className="semester-summary d-flex gap-3 rounded-3 p-3 bg-primary-50"
+            aria-live="polite"
+          >
+            <CalendarRange
+              size={18}
+              strokeWidth={1.75}
+              className="text-primary-500 flex-shrink-0 mt-1"
+            />
             <div className="d-flex flex-column gap-1 overflow-hidden">
-              <span className="fw-semibold text-capitalize">{semester.name}</span>
+              <span className="fw-semibold text-capitalize">
+                {semester.name}
+              </span>
               <span className="text-iron-600 text-truncate">{year.label}</span>
               <span className="text-iron-600">
-                {dateSpan(dates.start_date, dates.end_date)} · {lengthInWeeks} {lengthInWeeks === 1 ? "week" : "weeks"}
+                {dateSpan(dates.start_date, dates.end_date)} · {lengthInWeeks}{" "}
+                {lengthInWeeks === 1 ? "week" : "weeks"}
               </span>
               {copies.length > 0 && (
-                <span className="d-flex align-items-center gap-1 text-primary-600 font-size-xs" title={copies.map((target) => target.label).join(", ")}>
+                <span
+                  className="d-flex align-items-center gap-1 text-primary-600 font-size-xs"
+                  title={copies.map((target) => target.label).join(", ")}
+                >
                   <Copy size={12} strokeWidth={1.75} />
-                  Also added to {copies.length} other {copies.length === 1 ? "class" : "classes"}.
+                  Also added to {copies.length} other{" "}
+                  {copies.length === 1 ? "class" : "classes"}.
                 </span>
               )}
             </div>
@@ -460,7 +631,13 @@ function CreateSemester({ handleClose }) {
           onClick={goNext}
           disabled={!canContinue}
         >
-          {isPending ? <SingleSpinner /> : step < STEPS.length ? "Next" : `Create ${semester?.name ?? "semester"}`}
+          {isPending ? (
+            <SingleSpinner />
+          ) : step < STEPS.length ? (
+            "Next"
+          ) : (
+            `Create ${semester?.name ?? "semester"}`
+          )}
         </button>
       </div>
     </>
