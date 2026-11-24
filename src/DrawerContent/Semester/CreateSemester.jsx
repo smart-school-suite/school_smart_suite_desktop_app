@@ -1,21 +1,23 @@
 import { differenceInCalendarDays, format, isValid, parseISO } from "date-fns";
-import { CalendarRange, Check, ChevronLeft, Copy, Info, Lightbulb, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { CalendarPlus, CalendarRange, Check, ChevronLeft, CircleCheck, Copy, Dot, Info, Layers, Lightbulb, SearchX, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useMemo, useRef, useState } from "react";
 import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
-import CustomDropdown from "../../components/Dropdowns/Dropdowns";
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import QueryErrorState from "../../components/errors/QueryErrorState";
 import { DateRangeInput } from "../../components/FormComponents/InputComponents";
-import { Badge, BADGE_VARIANT } from "../../components/Renderer/badges";
+import SearchInput from "../../components/input/search";
+import { Badge, BADGE_CONTEXT, BADGE_VARIANT } from "../../components/Renderer/badges";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
+import { useDebounce } from "../../hooks/common/useDebounce";
 import { useFormError } from "../../hooks/form/useFormError";
 import { useCreateSchoolSemester } from "../../hooks/schoolSemester/useCreateSchoolSemester";
 import { useGetSchoolSemesterCreationOptions } from "../../hooks/schoolSemester/useGetSchoolSemesterCreationOptions";
 
-const STATUS_LABEL = { ongoing: "Ongoing", upcoming: "Upcoming", ended: "Ended" };
-
-const STEPS = ["Semester", "Dates"];
+const STEPS = ["Level & semester", "Dates"];
 
 const toDate = (value) => {
   const date = value ? parseISO(value) : null;
@@ -79,6 +81,87 @@ function SemesterChoice({ option, selected, recommended, onSelect }) {
   );
 }
 
+const matches = (year, query) => {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return true;
+  return [year.specialty_name, year.level_name, year.academic_year, year.label]
+    .filter(Boolean)
+    .some((value) => value.toLowerCase().includes(needle));
+};
+
+function LevelCard({ year, selected, semesterId, onSelect, onSelectSemester }) {
+  const added = year.semesters.filter((option) => option.created).length;
+  const total = year.semesters.length;
+  const full = total > 0 && added >= total;
+
+  return (
+    <motion.div
+      role="button"
+      tabIndex={0}
+      aria-pressed={selected}
+      whileHover={selected ? undefined : { scale: 1.01 }}
+      whileTap={selected ? undefined : { scale: 0.99 }}
+      onClick={() => !selected && onSelect(year)}
+      onKeyDown={(event) => {
+        if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          onSelect(year);
+        }
+      }}
+      className={`card p-2 d-flex flex-column gap-2 ${selected ? "shadow-fern-100-lg border-fern-300" : "border-none border shadow-sm pointer-cursor"}`}
+      style={{ borderRadius: "0.85rem" }}
+    >
+      <div className="d-flex align-items-center justify-content-between gap-2">
+        <div className="d-flex align-items-center gap-2 overflow-hidden">
+          <div
+            className="d-grid place-items-center rounded-3 primary-background-50 color-primary flex-shrink-0"
+            style={{ height: "2.5rem", width: "2.5rem" }}
+          >
+            <Layers size={16} />
+          </div>
+          <div className="d-flex flex-column overflow-hidden">
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+              <span className="fw-semibold">{year.level_name ?? "Level"}</span>
+              <Badge status={year.status} context={BADGE_CONTEXT.ACADEMIC_PERIOD} />
+            </div>
+            <div className="d-flex align-items-center text-iron-400 font-size-xs overflow-hidden">
+              <span className="text-truncate" title={year.specialty_name ?? ""}>{year.specialty_name ?? "-"}</span>
+              <Dot size={14} className="flex-shrink-0" />
+              <span className="text-nowrap">{year.academic_year ?? "-"}</span>
+            </div>
+          </div>
+        </div>
+        {selected && <CircleCheck size={16} className="green-color flex-shrink-0" />}
+      </div>
+      <div className="d-flex align-items-center justify-content-between gap-2 font-size-xs border-top pt-2">
+        <span className="fw-medium">{dateSpan(year.start_date, year.end_date)}</span>
+        <span className={full ? "text-fern-600" : "text-iron-400"}>
+          {added} of {total} semesters added
+        </span>
+      </div>
+      {selected && (
+        <div className="d-flex flex-column gap-2" onClick={(event) => event.stopPropagation()}>
+          <span className="d-flex align-items-center gap-1 text-iron-500 font-size-xs">
+            <Lightbulb size={13} strokeWidth={1.75} className="text-old-lace-500 flex-shrink-0" />
+            {year.recommended_semester_id ? "We picked the next one." : "All semesters are added."}
+          </span>
+          <div className="semester-choices d-grid gap-2">
+            {year.semesters.map((option) => (
+              <SemesterChoice
+                key={option.id}
+                option={option}
+                selected={option.id === semesterId}
+                recommended={option.id === year.recommended_semester_id}
+                onSelect={onSelectSemester}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
 function CreateSemesterSkeleton() {
   return (
     <div className="d-flex flex-column gap-4 p-3">
@@ -94,6 +177,9 @@ function CreateSemesterSkeleton() {
 
 function CreateSemester({ handleClose }) {
   const dateRangeRef = useRef();
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 200);
   const { data, isLoading, error, refetch } = useGetSchoolSemesterCreationOptions();
   const { mutate: createSchoolSemester, isPending } = useCreateSchoolSemester(handleClose);
   const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
@@ -106,14 +192,13 @@ function CreateSemester({ handleClose }) {
   const [datesKey, setDatesKey] = useState(0);
 
   const options = data?.data;
-  const years = useMemo(
-    () =>
-      (options?.school_years ?? []).map((year) => ({
-        ...year,
-        meta: [year.academic_year, STATUS_LABEL[year.status]].filter(Boolean).join(" · "),
-      })),
-    [options],
-  );
+  const years = useMemo(() => options?.school_years ?? [], [options]);
+  const visibleYears = useMemo(() => years.filter((item) => matches(item, debouncedQuery)), [years, debouncedQuery]);
+
+  const createAcademicYear = () => {
+    handleClose?.();
+    navigate("/academic-year");
+  };
   const year = years.find((item) => item.id === yearId) ?? null;
   const semester = year?.semesters.find((item) => item.id === semesterId) ?? null;
   const suggestion = semester?.suggested ?? null;
@@ -157,7 +242,6 @@ function CreateSemester({ handleClose }) {
   const datesOk = datesComplete && validationSchema.isValidSync(dates);
   const canCreate = Boolean(year && semester && !semester.created && datesOk) && !isPending;
   const canContinue = step === 1 ? Boolean(year && semester && !semester.created) : canCreate;
-  const maxSemesters = options?.max_semesters;
 
   const goBack = () => {
     clearFormError();
@@ -218,49 +302,57 @@ function CreateSemester({ handleClose }) {
         <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} />
 
         {step === 1 && (
-          <Step number={1} title="Semester" tip={years.length ? "Current years are listed first." : null}>
-            <div className="d-flex flex-column gap-3">
-              {years.length ? (
-                <CustomDropdown
-                  data={years}
-                  displayKey={["label", "meta"]}
-                  valueKey={["id"]}
-                  placeholder="Pick a class"
-                  onSelect={chooseYear}
-                  value={year}
-                  showFeedback={false}
-                  dropdownWidth="27rem"
-                />
-              ) : (
-                <span className="d-flex align-items-center gap-2 text-iron-500">
-                  <Info size={14} strokeWidth={1.75} />
-                  Add an academic year first.
-                </span>
-              )}
-              {year && (
-                <div className="d-flex flex-column gap-2">
-                  <span className="d-flex align-items-center gap-1 text-iron-500 font-size-xs">
-                    <Lightbulb size={13} strokeWidth={1.75} className="text-old-lace-500 flex-shrink-0" />
-                    {year.recommended_semester_id
-                      ? "We picked the next one."
-                      : maxSemesters
-                        ? `All ${maxSemesters} semesters are added.`
-                        : "All semesters are added."}
-                  </span>
-                  <div className="semester-choices d-grid gap-2">
-                    {year.semesters.map((option) => (
-                      <SemesterChoice
-                        key={option.id}
-                        option={option}
-                        selected={option.id === semesterId}
-                        recommended={option.id === year.recommended_semester_id}
-                        onSelect={chooseSemester}
-                      />
-                    ))}
+          <Step number={1} title={STEPS[0]} tip="Levels come from your academic years.">
+            {years.length ? (
+              <div className="d-flex flex-column gap-3">
+                <div className="d-flex align-items-center gap-2">
+                  <div className="flex-grow-1">
+                    <SearchInput placeholder="Search level, specialty or year..." value={query} onChange={setQuery} />
                   </div>
+                  <small className="text-iron-400 text-nowrap">
+                    {visibleYears.length} of {years.length}
+                  </small>
                 </div>
-              )}
-            </div>
+                {visibleYears.length ? (
+                  visibleYears.map((item) => (
+                    <LevelCard
+                      key={item.id}
+                      year={item}
+                      selected={item.id === yearId}
+                      semesterId={semesterId}
+                      onSelect={chooseYear}
+                      onSelectSemester={chooseSemester}
+                    />
+                  ))
+                ) : (
+                  <EmptyState
+                    mascot="notFound"
+                    title="No matching levels"
+                    description={`Nothing matches "${debouncedQuery}".`}
+                    height="30dvh"
+                    mascotHeight="6rem"
+                    actions={<EmptyStateButton variant="secondary" icon={SearchX} onClick={() => setQuery("")}>Clear search</EmptyStateButton>}
+                  />
+                )}
+                <button
+                  type="button"
+                  className="step-back-btn d-inline-flex align-items-center gap-1 align-self-start border-0 bg-transparent p-0 font-size-xs"
+                  onClick={createAcademicYear}
+                >
+                  <CalendarPlus size={13} strokeWidth={1.75} />
+                  Can't find it? Create an academic year
+                </button>
+              </div>
+            ) : (
+              <EmptyState
+                mascot="empty"
+                title="No academic years yet"
+                description="Semesters belong to an academic year."
+                height="40dvh"
+                mascotHeight="7rem"
+                actions={<EmptyStateButton icon={CalendarPlus} onClick={createAcademicYear}>Create an academic year</EmptyStateButton>}
+              />
+            )}
           </Step>
         )}
 
