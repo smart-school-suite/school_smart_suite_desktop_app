@@ -1,3 +1,4 @@
+import { format, isValid, parseISO } from "date-fns";
 import * as Yup from "yup";
 
 
@@ -421,9 +422,17 @@ export const timeValidationSchema = ({
   return schema;
 };
 
+const formatBoundDate = (value) => {
+  const date = parseISO(value);
+  return isValid(date) ? format(date, "d MMM yyyy") : value;
+};
+
 export const dateRangeValidationSchema = ({
   optional = false,
   futureOnly = false,
+  minDate,
+  maxDate,
+  allowSameDay = true,
 } = {}) => {
   const buildDateSchema = (label) => {
     let schema = Yup.string()
@@ -453,6 +462,22 @@ export const dateRangeValidationSchema = ({
       );
     }
 
+    if (minDate) {
+      schema = schema.test(
+        "is-on-or-after-min",
+        `${label} must be on or after ${formatBoundDate(minDate)}`,
+        (value) => !value || !isValidMySQLDate(value) || value >= minDate,
+      );
+    }
+
+    if (maxDate) {
+      schema = schema.test(
+        "is-on-or-before-max",
+        `${label} must be on or before ${formatBoundDate(maxDate)}`,
+        (value) => !value || !isValidMySQLDate(value) || value <= maxDate,
+      );
+    }
+
     return schema;
   };
 
@@ -472,7 +497,9 @@ export const dateRangeValidationSchema = ({
         ) {
           return true;
         }
-        return new Date(value) >= new Date(start_date);
+        return allowSameDay
+          ? new Date(value) >= new Date(start_date)
+          : new Date(value) > new Date(start_date);
       },
     ),
   });
