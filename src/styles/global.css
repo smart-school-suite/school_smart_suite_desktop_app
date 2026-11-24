@@ -2931,20 +2931,6 @@ textarea::-webkit-scrollbar-thumb:hover {
   border: 1px solid var(--iron-200);
 }
 
-.create-step {
-  transition: opacity 0.15s ease;
-}
-
-.create-step--disabled {
-  opacity: 0.55;
-}
-
-.create-step__number {
-  width: 1.5rem;
-  height: 1.5rem;
-  background-color: var(--primary-color-50);
-  color: var(--primary-color-600);
-}
 
 .semester-choices {
   grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
@@ -2979,3 +2965,17 @@ textarea::-webkit-scrollbar-thumb:hover {
 .suggestion-chip:hover {
   background-color: var(--primary-color-100) !important;
 }
+
+.semester-count-choices {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.step-back-btn {
+  color: var(--iron-500);
+  transition: color 0.12s ease;
+}
+
+.step-back-btn:hover:not(:disabled) {
+  color: var(--primary-color-600);
+}
+
