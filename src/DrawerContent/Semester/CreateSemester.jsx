@@ -1,5 +1,5 @@
 import { differenceInCalendarDays, format, isValid, parseISO } from "date-fns";
-import { CalendarRange, Check, Copy, Info, Lightbulb, Sparkles } from "lucide-react";
+import { CalendarRange, Check, ChevronLeft, Copy, Info, Lightbulb, Sparkles } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { dateRangeValidationSchema } from "../../ComponentConfig/YupValidationSchema";
 import CustomDropdown from "../../components/Dropdowns/Dropdowns";
@@ -15,6 +15,8 @@ import { useGetSchoolSemesterCreationOptions } from "../../hooks/schoolSemester/
 
 const STATUS_LABEL = { ongoing: "Ongoing", upcoming: "Upcoming", ended: "Ended" };
 
+const STEPS = ["Class", "Semester", "Dates"];
+
 const toDate = (value) => {
   const date = value ? parseISO(value) : null;
   return date && isValid(date) ? date : null;
@@ -29,12 +31,15 @@ const dateSpan = (start, end) => `${shortDate(start)} – ${shortDate(end)}`;
 
 const isCompleteDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value ?? "") && Boolean(toDate(value));
 
-function Step({ number, title, tip, disabled, children }) {
+function Step({ number, title, context, tip, children }) {
   return (
-    <section className={`create-step d-flex flex-column gap-2 ${disabled ? "create-step--disabled" : ""}`} aria-disabled={disabled}>
-      <div className="d-flex align-items-center gap-2">
-        <span className="create-step__number d-grid place-items-center rounded-circle font-size-xs fw-semibold">{number}</span>
-        <span className="fw-semibold">{title}</span>
+    <section className="d-flex flex-column gap-2" aria-label={`Step ${number} of ${STEPS.length}: ${title}`}>
+      <div className="d-flex flex-column">
+        <span className="font-size-xs text-iron-400" aria-live="polite">
+          Step {number} of {STEPS.length}
+        </span>
+        <span className="fw-semibold font-size-md">{title}</span>
+        {context && <span className="font-size-xs text-iron-500 text-truncate text-capitalize">{context}</span>}
       </div>
       {tip && (
         <span className="d-flex align-items-center gap-1 text-iron-500 font-size-xs">
@@ -94,6 +99,7 @@ function CreateSemester({ handleClose }) {
   const { formError, errorBannerRef, setClientError, handleServerError, clearFormError } =
     useFormError("Couldn't create the semester");
 
+  const [step, setStep] = useState(1);
   const [yearId, setYearId] = useState(null);
   const [semesterId, setSemesterId] = useState(null);
   const [dates, setDates] = useState({ start_date: "", end_date: "" });
@@ -150,6 +156,21 @@ function CreateSemester({ handleClose }) {
   const datesComplete = isCompleteDate(dates.start_date) && isCompleteDate(dates.end_date);
   const datesOk = datesComplete && validationSchema.isValidSync(dates);
   const canCreate = Boolean(year && semester && !semester.created && datesOk) && !isPending;
+  const canContinue = step === 1 ? Boolean(year) : step === 2 ? Boolean(semester && !semester.created) : canCreate;
+  const maxSemesters = options?.max_semesters;
+
+  const goBack = () => {
+    clearFormError();
+    if (step === 1) handleClose?.();
+    else setStep(step - 1);
+  };
+
+  const goNext = () => {
+    if (!canContinue) return;
+    clearFormError();
+    if (step < STEPS.length) setStep(step + 1);
+    else create();
+  };
 
   const copies = useMemo(() => {
     if (!year || !semester || !datesComplete || !options?.auto_creation?.enabled) return [];
@@ -196,33 +217,41 @@ function CreateSemester({ handleClose }) {
       <div className="drawer-content scrollbar-xs ps-2 pt-3 pb-2 d-flex flex-column gap-4 font-size-sm">
         <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} />
 
-        <Step number={1} title="Class" tip="Current years are listed first.">
-          {years.length ? (
-            <CustomDropdown
-              data={years}
-              displayKey={["label", "meta"]}
-              valueKey={["id"]}
-              placeholder="Pick a class"
-              onSelect={chooseYear}
-              value={year}
-              showFeedback={false}
-              dropdownWidth="27rem"
-            />
-          ) : (
-            <span className="d-flex align-items-center gap-2 text-iron-500">
-              <Info size={14} strokeWidth={1.75} />
-              Add an academic year first.
-            </span>
-          )}
-        </Step>
+        {step === 1 && (
+          <Step number={1} title="Class" tip={years.length ? "Current years are listed first." : null}>
+            {years.length ? (
+              <CustomDropdown
+                data={years}
+                displayKey={["label", "meta"]}
+                valueKey={["id"]}
+                placeholder="Pick a class"
+                onSelect={chooseYear}
+                value={year}
+                showFeedback={false}
+                dropdownWidth="27rem"
+              />
+            ) : (
+              <span className="d-flex align-items-center gap-2 text-iron-500">
+                <Info size={14} strokeWidth={1.75} />
+                Add an academic year first.
+              </span>
+            )}
+          </Step>
+        )}
 
-        <Step
-          number={2}
-          title="Semester"
-          tip={year ? (year.recommended_semester_id ? "We picked the next one." : "All semesters are added.") : null}
-          disabled={!year}
-        >
-          {year ? (
+        {step === 2 && year && (
+          <Step
+            number={2}
+            title="Semester"
+            context={year.label}
+            tip={
+              year.recommended_semester_id
+                ? "We picked the next one."
+                : maxSemesters
+                  ? `All ${maxSemesters} semesters are added.`
+                  : "All semesters are added."
+            }
+          >
             <div className="semester-choices d-grid gap-2">
               {year.semesters.map((option) => (
                 <SemesterChoice
@@ -234,18 +263,16 @@ function CreateSemester({ handleClose }) {
                 />
               ))}
             </div>
-          ) : (
-            <span className="text-iron-400">Pick a class first.</span>
-          )}
-        </Step>
+          </Step>
+        )}
 
-        <Step
-          number={3}
-          title="Dates"
-          tip={year ? `Between ${dateSpan(year.start_date, year.end_date)}.` : null}
-          disabled={!semester || semester.created}
-        >
-          {semester && !semester.created ? (
+        {step === 3 && year && semester && (
+          <Step
+            number={3}
+            title="Dates"
+            context={`${semester.name} · ${year.label}`}
+            tip={`Between ${dateSpan(year.start_date, year.end_date)}.`}
+          >
             <div className="d-flex flex-column gap-2">
               {suggestion && (
                 <button
@@ -277,12 +304,10 @@ function CreateSemester({ handleClose }) {
                 </span>
               )}
             </div>
-          ) : (
-            <span className="text-iron-400">Pick a semester first.</span>
-          )}
-        </Step>
+          </Step>
+        )}
 
-        {year && semester && !semester.created && datesOk && (
+        {step === 3 && year && semester && !semester.created && datesOk && (
           <div className="semester-summary d-flex gap-3 rounded-3 p-3 bg-primary-50" aria-live="polite">
             <CalendarRange size={18} strokeWidth={1.75} className="text-primary-500 flex-shrink-0 mt-1" />
             <div className="d-flex flex-column gap-1 overflow-hidden">
@@ -303,18 +328,24 @@ function CreateSemester({ handleClose }) {
       </div>
 
       <div className="drawer-footer border-top px-3 py-2 font-size-sm">
-        <button type="button" className="btn btn-light font-size-sm px-3 me-auto" onClick={handleClose} disabled={isPending}>
-          Cancel
+        <button
+          type="button"
+          className="step-back-btn d-inline-flex align-items-center gap-1 border-0 bg-transparent p-0 font-size-sm me-auto"
+          onClick={goBack}
+          disabled={isPending}
+        >
+          <ChevronLeft size={16} strokeWidth={1.75} />
+          {step === 1 ? "Semesters" : STEPS[step - 2]}
         </button>
         <button
           type="button"
           className={`profile-primary-btn border-0 rounded-3 primary-background text-white font-size-sm px-3 d-inline-flex align-items-center gap-2 text-capitalize ${
-            canCreate ? "" : "opacity-50"
+            canContinue ? "" : "opacity-50"
           }`}
-          onClick={create}
-          disabled={!canCreate}
+          onClick={goNext}
+          disabled={!canContinue}
         >
-          {isPending ? <SingleSpinner /> : semester && !semester.created ? `Create ${semester.name}` : "Create semester"}
+          {isPending ? <SingleSpinner /> : step < STEPS.length ? "Next" : `Create ${semester?.name ?? "semester"}`}
         </button>
       </div>
     </>

@@ -8,6 +8,7 @@ export const useUpdateSetting = (handleClose) => {
     mutationFn: ({ payload }) => updateSetting(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["settings"] });
+      queryClient.invalidateQueries({ queryKey: ["schoolSemesterCreationOptions"] });
       // toast.custom(
       //   <ToastSuccess
       //     title={"Update Successfull"}
