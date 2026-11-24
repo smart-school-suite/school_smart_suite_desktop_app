@@ -135,9 +135,9 @@ function OrangeMobileMoneyPayment({ handleClose, rowData }) {
           </span>
         </div>
 
-        {(clientError || authError?.subscription) && (
+        {(clientError || authError?.subscribe) && (
           <div className="bg-red-100 p-2 rounded-3 text-red-700 my-1">
-            <p className="m-0">{clientError || authError?.subscription}</p>
+            <p className="m-0">{clientError || authError?.subscribe}</p>
           </div>
         )}
 

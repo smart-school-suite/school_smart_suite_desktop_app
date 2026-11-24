@@ -10,6 +10,15 @@ import {
   startOtpCooldown
 } from "../Slices/Asynslices/AuthSlice";
 import axios from "../axios/axios";
+
+const describeSubscribeError = (error) => {
+  const data = error?.response?.data;
+  if (!error?.response) return "We couldn't reach the server. Check your connection and try again.";
+  if (data?.errors?.description) return data.errors.description;
+  const fieldErrors = data?.errors && typeof data.errors === "object" ? Object.values(data.errors).flat() : [];
+  if (fieldErrors.length && typeof fieldErrors[0] === "string") return fieldErrors[0];
+  return data?.message || "We couldn't complete the subscription. Please try again.";
+};
 import { secureTokenStorage } from "../services/secureStore/secureTokenStorage";
 const AuthContext = createContext();
 export const useAuth = () => {
@@ -208,14 +217,9 @@ export const AuthProvider = ({ children }) => {
       await getAuthenticatedUser(responseData.authToken);
       navigate("/school-admins");
     } catch (e) {
-      const errorMessage =
-        e.response?.data?.message ||
-        e.response?.data?.error ||
-        "Something went wrong trying to create school";
-
       setAuthError((prevState) => ({
         ...prevState,
-        subscribe: errorMessage,
+        subscribe: describeSubscribeError(e),
       }));
     } finally {
       setLoading((prevState) => ({ ...prevState, subscribe: false }));
