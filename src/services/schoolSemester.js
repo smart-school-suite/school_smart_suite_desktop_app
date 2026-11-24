@@ -45,3 +45,8 @@ export const getSchoolSemesterUpdateRules = async (schoolSemesterId) => {
   const response = await axiosInstance.get(`school-semester/${schoolSemesterId}/update-rules`);
   return response.data;
 };
+
+export const getSchoolSemesterCreationOptions = async () => {
+  const response = await axiosInstance.get("school-semester/creation-options");
+  return response.data;
+};

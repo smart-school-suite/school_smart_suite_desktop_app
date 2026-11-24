@@ -106,6 +106,7 @@ function Semester() {
                 title="Create Semester"
                 placement="right"
                 drawerChildren={CreateSemester}
+                size="md"
               >
                 <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                   <span>Create Semester</span>
@@ -143,6 +144,7 @@ function Semester() {
                   title="Create Semester"
                   placement="right"
                   drawerChildren={CreateSemester}
+                  size="md"
                 >
                   <button className="border-none border rounded-3 font-size-sm px-3 py-2 primary-background text-white text-capitalize">
                     <span>Create Semester</span>
