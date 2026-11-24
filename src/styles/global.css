@@ -2107,7 +2107,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   right: 0;
   height: 100%;
   width: 100%;
-  max-width: 50dvw;
+  max-width: min(100%, max(var(--drawer-width), var(--drawer-fluid)));
   border-left-width: 1px;
 }
 
@@ -2116,7 +2116,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   left: 0;
   height: 100%;
   width: 100%;
-  max-width: 50dvw;
+  max-width: min(100%, max(var(--drawer-width), var(--drawer-fluid)));
   border-right-width: 1px;
 }
 
@@ -2140,20 +2140,27 @@ textarea::-webkit-scrollbar-thumb:hover {
   border-bottom-right-radius: 1rem;
 }
 
-:is(.drawer-panel--left, .drawer-panel--right).drawer-panel--sm {
-  max-width: min(300px, 100%);
+.drawer-panel {
+  --drawer-width: 500px;
+  --drawer-fluid: 0px;
 }
 
-:is(.drawer-panel--left, .drawer-panel--right).drawer-panel--md {
-  max-width: min(500px, 100%);
+.drawer-panel--sm {
+  --drawer-width: 360px;
+  --drawer-fluid: calc(1234px - 60.7vw);
 }
 
-:is(.drawer-panel--left, .drawer-panel--right).drawer-panel--lg {
-  max-width: min(800px, 100%);
+.drawer-panel--md {
+  --drawer-width: 500px;
+  --drawer-fluid: calc(1074px - 39.9vw);
 }
 
-:is(.drawer-panel--left, .drawer-panel--right).drawer-panel--xl {
-  max-width: min(1140px, 100%);
+.drawer-panel--lg {
+  --drawer-width: 800px;
+}
+
+.drawer-panel--xl {
+  --drawer-width: 1140px;
 }
 
 .drawer-header {

@@ -49,6 +49,7 @@ function GenerateButton({ course, label, outline = false }) {
     <DrawerTrigger
       drawerChildren={GenerateSlotsDrawer}
       drawerData={{ course }}
+      size="lg"
       showHeader={false}
       closeOnOutsideClick={false}
     >

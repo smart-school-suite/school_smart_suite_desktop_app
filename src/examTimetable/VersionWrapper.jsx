@@ -278,7 +278,7 @@ function ConstraintNavigator() {
         )}
       </div>
 
-      <Drawer isOpen={Boolean(Editor)} onClose={close} placement="right" title={active?.name} closeOnOutsideClick={false} showHeader={false}>
+      <Drawer isOpen={Boolean(Editor)} onClose={close} placement="right" size="lg" title={active?.name} closeOnOutsideClick={false} showHeader={false}>
         {Editor && <Editor handleClose={close} constraint={active} />}
       </Drawer>
     </section>

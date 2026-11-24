@@ -460,6 +460,7 @@ function ConstraintNavigator() {
         isOpen={showDrawer}
         onClose={handleCloseDrawer}
         placement={drawerConfig.placement}
+        size="lg"
         title={drawerConfig.title}
         closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
         showHeader={drawerConfig.showHeader}

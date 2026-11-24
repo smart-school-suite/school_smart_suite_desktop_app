@@ -193,6 +193,7 @@ export function ActionComponent(props) {
       placement = "right",
       closeOnOutsideClick = true,
       showHeader = true,
+      size,
     } = options;
 
     setDrawerConfig({
@@ -201,6 +202,7 @@ export function ActionComponent(props) {
       placement,
       closeOnOutsideClick,
       showHeader,
+      size,
     });
     setShowDrawer(true);
   };
@@ -277,6 +279,7 @@ export function ActionComponent(props) {
           onClick={() =>
             handleShowDrawer(ExamStanding, {
               title: "Exam Result Standings",
+              size: "lg",
               closeOnOutsideClick: true,
               showHeader: true,
             })
@@ -294,6 +297,7 @@ export function ActionComponent(props) {
         isOpen={showDrawer}
         onClose={handleCloseDrawer}
         placement={drawerConfig.placement}
+        size={drawerConfig.size}
         title={drawerConfig.title}
         closeOnOutsideClick={drawerConfig.closeOnOutsideClick}
         showHeader={drawerConfig.showHeader}
