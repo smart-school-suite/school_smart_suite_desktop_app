@@ -10,7 +10,7 @@ export const GRADE_SCALE_COLUMNS = [
     program_name: "exam_type",
     type: "standard_field",
     label: "Exam Type",
-    required: true,
+    required: false,
     aliases: ["exam_type", "exam"],
   },
   {
@@ -40,6 +40,13 @@ export const GRADE_SCALE_COLUMNS = [
     label: "Grade",
     required: true,
     aliases: ["grade", "letter_grade", "l_grade"],
+  },
+  {
+    program_name: "grade_points",
+    type: "standard_field",
+    label: "Grade Points",
+    required: true,
+    aliases: ["points", "gpa", "grade_point", "gp"],
   },
   {
     program_name: "result",

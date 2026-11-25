@@ -49,3 +49,11 @@ export const importTeacherCourse = (payload) =>
 
 export const importSpecialtyHall = (payload) =>
   uploadImport("specialty-hall/import", payload);
+
+export const importJointCourse = (payload) =>
+  uploadImport("joint-course/import", payload);
+
+export const importParent = (payload) => uploadImport("parent/import", payload);
+
+export const importStudentBatch = (payload) =>
+  uploadImport("student-batch/import", payload);

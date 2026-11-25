@@ -69,11 +69,8 @@ const jointCourseSlice = createSlice({
       const { selectedFile } = action.payload;
       state.import.selectedFile = selectedFile;
     },
-    setImportReset: (state, action) => {
-      state.import = {
-        status: "IDLE",
-        selectedFile: null,
-      };
+    setImportReset: (state) => {
+      state.import = initialState.import;
     },
     setColumnMapping: (state, action) => {
       state.import.mapping = action.payload;

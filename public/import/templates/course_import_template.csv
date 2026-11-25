@@ -1,0 +1,3 @@
+course_code,course_title,course_credit,semester,specialty,level,description,course_type_1,course_type_2
+SWE101,Introduction to Programming,4,First Semester,Software Engineering,Level One,Basics of programming with Python,Theoritical,Practical
+ACC101,Financial Accounting,3,First Semester,Accounting,Level One,,Theoritical,

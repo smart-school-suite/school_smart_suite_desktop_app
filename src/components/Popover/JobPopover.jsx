@@ -376,8 +376,8 @@ export default function JobPopOver({ category }) {
                             src="./sss-maskot/error.png"
                             alt="sss-timetable-maskot"
                             style={{
-                              height: "250px",
-                              width: "250px",
+                              height: "120px",
+                              width: "120px",
                               objectFit: "contain",
                             }}
                           />
@@ -464,8 +464,8 @@ export default function JobPopOver({ category }) {
                             src="./sss-maskot/404.png"
                             alt="sss-timetable-maskot"
                             style={{
-                              height: "250px",
-                              width: "250px",
+                              height: "120px",
+                              width: "120px",
                               objectFit: "contain",
                             }}
                           />

@@ -24,7 +24,7 @@ export const COURSE_COLUMNS = [
     program_name: "description",
     type: "standard_field",
     label: "Course Description",
-    required: true,
+    required: false,
     aliases: [
       "course_description",
       "description",
@@ -51,7 +51,7 @@ export const COURSE_COLUMNS = [
     program_name: "level",
     type: "standard_field",
     label: "Level Name",
-    required: true,
+    required: false,
     aliases: ["level_name", "level", "l_name"],
   },
   {

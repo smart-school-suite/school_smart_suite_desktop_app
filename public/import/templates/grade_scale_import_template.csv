@@ -1,0 +1,6 @@
+grade_title,exam_type,grade_max_score,grade,min_score,max_score,grade_points,result,resit_result,performance
+Level One Exam,exam,100,A,80,100,4,passed,no resit,Excellent
+Level One Exam,exam,100,B,70,79.99,3,passed,no resit,Very Good
+Level One Exam,exam,100,C,50,69.99,2,passed,no resit,Good
+Level One Exam,exam,100,D,40,49.99,1,failed,high resit potential,Fair
+Level One Exam,exam,100,F,0,39.99,0,failed,resit,Poor

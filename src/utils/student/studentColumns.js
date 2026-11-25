@@ -10,7 +10,7 @@ export const STUDENT_COLUMNS = [
     program_name: "full_names",
     type: "standard_field",
     label: "Full Names",
-    required: true,
+    required: false,
     aliases: ["name", "full_name", "teacher_name"],
   },
   {
@@ -28,6 +28,13 @@ export const STUDENT_COLUMNS = [
     aliases: ["lname", "surname", "family_name", "lastname"],
   },
   {
+    program_name: "gender",
+    type: "standard_field",
+    label: "Gender",
+    required: true,
+    aliases: ["sex"],
+  },
+  {
     program_name: "phone",
     type: "standard_field",
     label: "Phone",
@@ -38,7 +45,7 @@ export const STUDENT_COLUMNS = [
     program_name: "specialty",
     type: "standard_field",
     label: "Specialty",
-    required: false,
+    required: true,
     aliases: [
       "specialty",
       "spec",
@@ -58,28 +65,28 @@ export const STUDENT_COLUMNS = [
     program_name: "batch",
     type: "standard_field",
     label: "Student Batch",
-    required: false,
+    required: true,
     aliases: ["student_batch", "batch", "stud_batch"],
   },
   {
     program_name: "relationship",
     type: "standard_field",
     label: "Relationship",
-    required: false,
+    required: true,
     aliases: ["student_relationship", "student_parent_relationship", "relationship"],
   },
   {
     program_name: "guardian",
     type: "standard_field",
     label: "Guardian",
-    required: false,
+    required: true,
     aliases: ["guardian", "student_guardian"],
   },
   {
      program_name:"student_source",
      type: "standard_field",
      label: "Student Source",
-     required: false,
+     required: true,
      aliases: ["source", "student_source", "stud_source"]
   },
   {

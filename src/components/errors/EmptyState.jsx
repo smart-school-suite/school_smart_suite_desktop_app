@@ -34,8 +34,10 @@ export default function EmptyState({
   hint,
   actions,
   height = "75dvh",
-  mascotHeight = "11rem",
+  mascotHeight,
 }) {
+  // Error fallbacks stay small; a friendly empty state can be a bit larger.
+  mascotHeight ??= mascot === "empty" ? "9rem" : "7rem";
   const reduceMotion = useReducedMotion();
   return (
     <motion.div

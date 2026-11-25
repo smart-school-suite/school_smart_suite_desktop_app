@@ -113,8 +113,8 @@ export function MultiSelectAccordion({
                       src="./sss-maskot/404.png"
                       alt="sss-timetable-maskot"
                       style={{
-                        height: "200px",
-                        width: "200px",
+                        height: "120px",
+                        width: "120px",
                         objectFit: "contain",
                       }}
                     />

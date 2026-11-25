@@ -1,4 +1,8 @@
-export function Error({ title, description, children, maxHeight="250px", maxWidth="250px" }){
+/*
+ * Page fallbacks for a failed or empty load. The mascot is kept small
+ * (120px by default) so the message, not the artwork, is what people see.
+ */
+export function Error({ title, description, children, maxHeight="120px", maxWidth="120px" }){
     return(
       <>
       <div
@@ -28,7 +32,7 @@ export function Error({ title, description, children, maxHeight="250px", maxWidt
 }
 
 
-export function NotFoundError({ title, description, children, maxHeight="250px", maxWidth="250px" }){
+export function NotFoundError({ title, description, children, maxHeight="120px", maxWidth="120px" }){
     return(
       <>
       <div

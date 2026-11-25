@@ -1,3 +1,4 @@
+import { uploadImport } from "./import";
 import axiosInstance from "../axios/authAxios";
 import axiosUploadInstance from "../axios/axiosUploadInstance";
 import { appendFormData } from "../utils/functions";
@@ -115,10 +116,4 @@ export const getStudentSource = async () => {
   return response.data;
 };
 
-export const importStudent = async () => {
-  const formData = new FormData();
-  formData.append("file", payload.file, payload.file.name);
-  appendFormData(formData, payload.mapping, "mapping");
-  const response = await axiosUploadInstance.post("student/import", formData);
-  return response.data;
-};
+export const importStudent = (payload) => uploadImport("student/import", payload);
