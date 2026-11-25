@@ -1,6 +1,13 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import {
+  ChevronDown,
+  FileChartColumn,
+  FilePen,
+  FilePlus,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
@@ -15,12 +22,7 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import Table from "../../components/Tables/Tables";
 import ResitExamScoreDetails from "../../DrawerContent/ResitEvaluation/ResitExamScoreDetails";
 import { useGetResitCandidates } from "../../hooks/resitCandidate/useGetResitCandidates";
-import {
-  CreateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
+import { DeleteIcon } from "../../icons/ActionIcons";
 import { ExamCandidateIcon } from "../../icons/Icons";
 import AddResitScores from "../../ModalContent/ResitCandidate/AddResitScores";
 import DeleteCandidate from "../../ModalContent/ResitCandidate/DeleteCandidate";
@@ -268,7 +270,7 @@ function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
                 <span>Update Resit Scores</span>
-                <UpdateIcon />
+                <FilePen size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -288,44 +290,11 @@ function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
                 <span>Add Resit Scores</span>
-                <CreateIcon />
+                <FilePlus size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
         )}
-
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(DeleteCandidate, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
-              <span>Delete Candidate</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowModal(DeleteResitScores, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Resit Scores</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -341,7 +310,40 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Resit Exam Result</span>
-              <DetailsIcon />
+              <FileChartColumn size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteCandidate, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
+              <span>Delete Candidate</span>
+              <Trash2 size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeleteResitScores, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Resit Scores</span>
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

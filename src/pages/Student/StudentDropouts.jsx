@@ -1,5 +1,12 @@
 import { Icon } from "@iconify/react";
-import { ArrowDown, ChevronDown } from "lucide-react";
+import {
+  ArrowDown,
+  ChevronDown,
+  ReceiptText,
+  Trash2,
+  UserRoundCheck
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import React, {
   useCallback,
   useEffect,
@@ -22,11 +29,7 @@ import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import StudentDetails from "../../DrawerContent/Student/StudentDetails";
 import { useGetDropdoutStudents } from "../../hooks/student/useGetDropoutStudent";
-import {
-  DeleteIcon,
-  DetailsIcon,
-  ReinstateIcon,
-} from "../../icons/ActionIcons";
+import { DeleteIcon, ReinstateIcon } from "../../icons/ActionIcons";
 import { StudentIcon } from "../../icons/Icons";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import BulkDeleteStudent from "../../ModalContent/Student/BulkDeleteStudent";
@@ -282,6 +285,26 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
+            handleShowDrawer(StudentDetails, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Student Details</span>
+              <ReceiptText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
             handleShowModal(ReinistateStudent, {
               size: "md",
               closeOnOutsideClick: true,
@@ -292,13 +315,14 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Reinstate Student</span>
-              <ReinstateIcon />
+              <UserRoundCheck size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteStudent, {
@@ -311,26 +335,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Student</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(StudentDetails, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Student Details</span>
-              <DetailsIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

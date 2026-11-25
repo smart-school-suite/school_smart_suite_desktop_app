@@ -1,5 +1,17 @@
 import { AnimatePresence } from "framer-motion";
-import { ArrowUpFromLine, ChevronDown, CircleCheck, CircleOff, FilePen, FileSliders, Trash } from "lucide-react";
+import {
+  ArrowUpFromLine,
+  ChevronDown,
+  CircleCheck,
+  CircleOff,
+  FilePen,
+  FileSliders,
+  ListOrdered,
+  ReceiptText,
+  Trash,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
@@ -23,12 +35,7 @@ import GradeScale from "../../DrawerContent/GradeScale/GradeScale";
 import GradeScaleCategoryDetail from "../../DrawerContent/GradeScale/GradeScaleCategoryDetail";
 import UpdateGradeScaleWizzard from "../../DrawerContent/GradeScale/UpdateGradeScale/UpdateGradeScaleWizzard";
 import { useGetGradeScaleCategories } from "../../hooks/gradeScale/useGetGradeScaleCategories";
-import {
-  DeleteIcon,
-  DetailsIcon,
-  ReuseIcon,
-  SuspendIcon
-} from "../../icons/ActionIcons";
+import { DeleteIcon, ReuseIcon, SuspendIcon } from "../../icons/ActionIcons";
 import { GradeIcon } from "../../icons/Icons";
 import ActivateGradeScaleCategory from "../../ModalContent/GradesConfig/ActivateGradeScaleCategory";
 import BulkActivateGradeScaleCategory from "../../ModalContent/GradesConfig/BulkActivateGradeScaleCategory";
@@ -331,7 +338,7 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -350,7 +357,7 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>View Grades</span>
-              <GradeIcon />
+              <ListOrdered size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -369,10 +376,11 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Copy Grade Scale</span>
-              <ReuseIcon />
+              <FileSliders size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         {rowData.status == "active" ? (
           <DropDownMenuItem
             className={
@@ -414,9 +422,10 @@ function ActionComponent(props) {
             </div>
           </DropDownMenuItem>
         )}
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteGradeScale, {
@@ -429,7 +438,7 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Grade Scale</span>
-              <Trash size={16} strokeWidth={1.5} />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

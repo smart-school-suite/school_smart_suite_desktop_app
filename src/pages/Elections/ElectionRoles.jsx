@@ -1,6 +1,14 @@
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import { serverErrorCopy } from "../../utils/election/electionDisplay";
-import { Plus } from "lucide-react";
+import {
+  CircleCheck,
+  CircleOff,
+  FilePen,
+  Plus,
+  ReceiptText,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import CreateElectionRole from "../../DrawerContent/ElectionRole/CreateElectionRole";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { Icon } from "@iconify/react";
@@ -19,13 +27,7 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import ElectionRoleDetails from "../../DrawerContent/ElectionRole/ElectionRoleDetails";
 import UpdateElectionRole from "../../DrawerContent/ElectionRole/UpdateElectionRole";
 import { useGetElectionRoles } from "../../hooks/electionRole/useGetElectionRoles";
-import {
-  ActivateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  SuspendIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
+import { ActivateIcon, DeleteIcon, SuspendIcon } from "../../icons/ActionIcons";
 import ActivateElectionRole from "../../ModalContent/ElectionRoles/ActivateElectionRole";
 import BulkActivateElectionRole from "../../ModalContent/ElectionRoles/BulkActivateElectionRole";
 import BulkDeactivateElectionRole from "../../ModalContent/ElectionRoles/BulkDeactivateElectionRole";
@@ -258,7 +260,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Role</span>
-              <UpdateIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -277,10 +279,11 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Position Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -296,7 +299,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Deactivate Role</span>
-              <SuspendIcon />
+              <CircleOff size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -315,13 +318,14 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Activate Role</span>
-              <ActivateIcon />
+              <CircleCheck size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteElectionRole, {
@@ -334,7 +338,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Role</span>
-              <DeleteIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

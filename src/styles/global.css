@@ -2986,3 +2986,158 @@ textarea::-webkit-scrollbar-thumb:hover {
   color: var(--primary-color-600);
 }
 
+
+/* Dividers between groups of items in a table actions dropdown. A divider
+   whose neighbouring items were not rendered must not show. */
+.action-dropdown-menu > .horizontal-line:first-child,
+.action-dropdown-menu > .horizontal-line:last-child,
+.action-dropdown-menu > .horizontal-line + .horizontal-line {
+  display: none;
+}
+
+.dropdown-item-table.dropdown-item-danger:hover {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.action-dropdown-menu > .horizontal-line {
+  margin-top: 0.125rem !important;
+  margin-bottom: 0.125rem !important;
+}
+
+/* Network status toast */
+.network-toast-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 1.25rem;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2000;
+  padding: 0 1rem;
+}
+
+.network-toast {
+  pointer-events: auto;
+  font-family: var(--primary-font-family);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: min(28rem, 100%);
+  padding: 0.6rem 0.6rem 0.6rem 0.65rem;
+  border-radius: 0.85rem;
+  animation: network-toast-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.network-toast-leave {
+  animation: network-toast-out 0.22s ease-in both;
+}
+
+.network-toast-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.65rem;
+}
+
+.network-toast-pulse {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid;
+  border-radius: inherit;
+  opacity: 0;
+  animation: network-toast-pulse 2s ease-out infinite;
+}
+
+.network-toast-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.network-toast-action:disabled {
+  opacity: 0.75;
+  cursor: default;
+}
+
+.network-toast-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.85rem;
+  height: 1.85rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #666;
+  transition: background-color 0.2s;
+}
+
+.network-toast-close:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.network-toast-spin {
+  animation: network-toast-spin 0.9s linear infinite;
+}
+
+@keyframes network-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes network-toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes network-toast-pulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.45);
+  }
+}
+
+@keyframes network-toast-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-toast,
+  .network-toast-leave,
+  .network-toast-pulse,
+  .network-toast-spin {
+    animation: none;
+  }
+}
+
+.network-toast-small {
+  font-size: 0.75rem;
+  line-height: 1.35;
+}

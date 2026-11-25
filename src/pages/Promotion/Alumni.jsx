@@ -1,4 +1,5 @@
 import { PenLine, SquareText } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import ReinstateAlumnus from "../../DrawerContent/Alumni/ReinstateAlumnus";
@@ -142,44 +143,6 @@ export function ActionComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        {/* <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-           onClick={() =>
-             handleShowDrawer(AlumnusDetails, {
-               title: "Reinstate Alumnus",
-               closeOnOutsideClick: true,
-               showHeader: true,
-             })
-           }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Alumnus Details</span>
-              <PenLine size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem> */}
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(ReinstateAlumnus, {
-              title: "Reinstate Alumnus",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Reinstate Alumnus</span>
-              <PenLine size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem>
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -196,6 +159,45 @@ export function ActionComponent(props) {
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Add Note</span>
               <SquareText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        {/* <DropDownMenuItem
+                  className={
+                    "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+                  }
+                   onClick={() =>
+                     handleShowDrawer(AlumnusDetails, {
+                       title: "Reinstate Alumnus",
+                       closeOnOutsideClick: true,
+                       showHeader: true,
+                     })
+                   }
+                >
+                  <div>
+                    <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                      <span>Alumnus Details</span>
+                      <PenLine size={16} strokeWidth={1.5} />
+                    </div>
+                  </div>
+                </DropDownMenuItem> */}
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowDrawer(ReinstateAlumnus, {
+              title: "Reinstate Alumnus",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Reinstate Alumnus</span>
+              <PenLine size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

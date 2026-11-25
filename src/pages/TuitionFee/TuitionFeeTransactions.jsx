@@ -1,3 +1,5 @@
+import { ReceiptText, Trash2, Undo2 } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { Icon } from "@iconify/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +15,7 @@ import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { useGetTuitionFeeTransactions } from "../../hooks/FeePayment/useGetTuitionFeeTransactions";
-import { DeleteIcon, DetailsIcon, ReverseIcon } from "../../icons/ActionIcons";
+import { DeleteIcon, ReverseIcon } from "../../icons/ActionIcons";
 import BulkDeleteTuitionFeeTransaction from "../../ModalContent/TuitionFeeTransaction/BulkDeleteTuitionFeeTransaction";
 import BulkReverseTuitionFeeTransaction from "../../ModalContent/TuitionFeeTransaction/BulkReverseTuitionFeeTransaction";
 import DeleteTransaction from "../../ModalContent/TuitionFeeTransaction/DeleteTransaction";
@@ -205,6 +207,20 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
+          onClick={() => handleShowModal(TransactionDetails, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Transaction Details</span>
+              <ReceiptText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
           onClick={() =>
             handleShowModal(ReverseTransaction, {
               size: "md",
@@ -216,13 +232,13 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Reverse Transaction</span>
-              <ReverseIcon />
+              <Undo2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteTransaction, {
@@ -235,20 +251,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Transaction</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(TransactionDetails, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Transaction Details</span>
-              <DetailsIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

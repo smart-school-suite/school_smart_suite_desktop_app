@@ -1,3 +1,4 @@
+import { ReceiptText } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import TeacherAvailabilitySlot from "../../ModalContent/TeacherAvailability/TeacherAvailabilitySlot";
@@ -8,7 +9,6 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import Table from "../../components/Tables/Tables";
 import { Drawer } from "../../components/drawer/Drawer";
 import { useGetTeacherAvailability } from "../../hooks/teacherAvailability/useGetTeacherAvailability";
-import { DetailsIcon } from "../../icons/ActionIcons";
 import { teacherPrefTimeColDefs } from "../../utils/table/colDefs/teachers/teacherPrefTimeColDefs";
 import TableToolbar from "../../components/TableFilters/TableToolbar";
 import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
@@ -158,7 +158,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

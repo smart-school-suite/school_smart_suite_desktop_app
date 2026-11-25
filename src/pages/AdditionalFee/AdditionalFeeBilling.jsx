@@ -1,3 +1,4 @@
+import { HandCoins, ReceiptText } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import ActionButtonDropdown, {
@@ -208,6 +209,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Bill Student</span>
+              <HandCoins size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -226,6 +228,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Student Details</span>
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

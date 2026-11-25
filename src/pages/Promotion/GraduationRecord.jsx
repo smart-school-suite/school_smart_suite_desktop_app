@@ -5,7 +5,7 @@ import {
   GraduationCap,
   LockKeyhole,
   LockOpen,
-  UserStar,
+  UserStar
 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";

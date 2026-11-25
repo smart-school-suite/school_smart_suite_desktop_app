@@ -1,5 +1,12 @@
 import { Icon } from "@iconify/react";
-import { ArrowDown, ChevronDown } from "lucide-react";
+import {
+  ArrowDown,
+  ChevronDown,
+  FilePen,
+  ReceiptText,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import React, {
   useCallback,
   useEffect,
@@ -25,7 +32,7 @@ import CreateGuardian from "../../DrawerContent/Guardian/CreateGuardian";
 import GuardianDetails from "../../DrawerContent/Guardian/GuardianDetails";
 import UpdateGuardian from "../../DrawerContent/Guardian/UpdateGuardian";
 import { useGetAllParents } from "../../hooks/parent/useGetParents";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { DeleteIcon } from "../../icons/ActionIcons";
 import { ParentIcon } from "../../icons/Icons";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import BulkDeleteGuardian from "../../ModalContent/Parent/BulkDeleteGuardian";
@@ -314,7 +321,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Guardian</span>
-              <UpdateIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -333,13 +340,14 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Guardian Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteGuardian, {
@@ -352,7 +360,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Guardian</span>
-              <DeleteIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

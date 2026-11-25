@@ -1,5 +1,12 @@
 import { Icon } from "@iconify/react";
-import { ArrowDown, ChevronDown } from "lucide-react";
+import {
+  ArrowDown,
+  ChevronDown,
+  FilePen,
+  ReceiptText,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import React, {
   useCallback,
   useEffect,
@@ -30,7 +37,7 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import { useGetSchoolSemesters } from "../../hooks/schoolSemester/useGetSchoolSemesters";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { SemesterIcon } from "../../icons/Icons";
 import { semesterColDefs } from "../../utils/table/colDefs/semester/semesterColDefs";
 function Semester() {
@@ -247,20 +254,7 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update</span>
-              <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(DeleteSemester, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete</span>
-              <DeleteIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -273,7 +267,21 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteSemester, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete</span>
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

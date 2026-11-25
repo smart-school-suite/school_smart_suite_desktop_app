@@ -1,6 +1,15 @@
 import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CalendarPlus, CalendarClock, List, RotateCcw } from "lucide-react";
+import {
+  CalendarClock,
+  CalendarPlus,
+  FilePen,
+  List,
+  ReceiptText,
+  RotateCcw,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import ActionButtonDropdown, {
@@ -16,7 +25,6 @@ import { useTableFilters } from "../../components/TableFilters/useTableFilters";
 import CreateEventWizzard from "../../DrawerContent/SchoolEvent/CreateSchoolEvent/CreateEventWizzard";
 import SchoolEventDetails from "../../DrawerContent/SchoolEvent/SchoolEventDetails";
 import { useGetSchoolEventsByStatus } from "../../hooks/schoolEvent/useGetSchoolEvents";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import DeleteEvent from "../../ModalContent/Events/DeleteEvent";
 import UpdateEventContent from "../../ModalContent/Events/UpdateEventContent";
 import { schoolEventColDefs } from "../../utils/table/colDefs/schoolEvent/eventCategoryColDefs";
@@ -189,18 +197,16 @@ function Events({ status = "all" }) {
 }
 export default Events;
 
-function ActionMenuItem({ label, Icon, onClick }) {
+function ActionMenuItem({ label, Icon, onClick, danger = false }) {
   return (
     <DropDownMenuItem
-      className={
-        "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-      }
+      className={`remove-button-styles w-100 dropdown-item-table ${danger ? "dropdown-item-danger" : ""} p-0 rounded-2 pointer-cursor`}
       onClick={onClick}
     >
       <div>
         <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">
           <span>{label}</span>
-          <Icon />
+          <Icon size={16} strokeWidth={1.5} />
         </div>
       </div>
     </DropDownMenuItem>
@@ -279,7 +285,7 @@ export function ActionComponent(props) {
         {isDraft ? (
           <ActionMenuItem
             label="Edit & Publish Draft"
-            Icon={UpdateIcon}
+            Icon={FilePen}
             onClick={() =>
               handleShowDrawer(CreateEventWizzard, {
                 title: "Update Draft School Event",
@@ -291,7 +297,7 @@ export function ActionComponent(props) {
         ) : (
           <ActionMenuItem
             label="Update Content"
-            Icon={UpdateIcon}
+            Icon={FilePen}
             onClick={() =>
               handleShowDrawer(UpdateEventContent, {
                 title: "Update School Event Content",
@@ -302,13 +308,8 @@ export function ActionComponent(props) {
           />
         )}
         <ActionMenuItem
-          label="Delete Event"
-          Icon={DeleteIcon}
-          onClick={() => handleShowModal(DeleteEvent)}
-        />
-        <ActionMenuItem
           label="Event Details"
-          Icon={DetailsIcon}
+          Icon={ReceiptText}
           onClick={() =>
             handleShowDrawer(SchoolEventDetails, {
               title: "School Event Details",
@@ -316,6 +317,13 @@ export function ActionComponent(props) {
               showHeader: true,
             })
           }
+        />
+        <HorizontalLine />
+        <ActionMenuItem
+          label="Delete Event"
+          danger
+          Icon={Trash2}
+          onClick={() => handleShowModal(DeleteEvent)}
         />
       </ActionButtonDropdown>
       <Drawer

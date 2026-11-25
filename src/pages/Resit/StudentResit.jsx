@@ -1,5 +1,6 @@
 import { AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ReceiptText, Trash2 } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
@@ -14,7 +15,7 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import Table from "../../components/Tables/Tables";
 import ResitDetails from "../../DrawerContent/Resit/ResitDetails";
 import { useGetStudentResits } from "../../hooks/studentResit/useGetStudentResits";
-import { DeleteIcon, DetailsIcon, RepeatIcon } from "../../icons/ActionIcons";
+import { RepeatIcon } from "../../icons/ActionIcons";
 import DeleteStudentResit from "../../ModalContent/StudentResit/DeleteResit";
 import { resitColDefs } from "../../utils/table/colDefs/resit/resitColDefs";
 import TableToolbar from "../../components/TableFilters/TableToolbar";
@@ -246,25 +247,6 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowModal(DeleteStudentResit, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
             handleShowDrawer(ResitDetails, {
               title: "Resit Details",
               closeOnOutsideClick: true,
@@ -275,7 +257,27 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeleteStudentResit, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete</span>
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

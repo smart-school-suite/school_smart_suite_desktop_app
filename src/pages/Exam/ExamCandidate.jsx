@@ -1,6 +1,13 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import {
+  ChevronDown,
+  FileChartColumn,
+  FilePen,
+  FilePlus,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,12 +27,7 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import CaScoreDetails from "../../DrawerContent/Evaluation/CaScoreDetails";
 import ExamScoreDetails from "../../DrawerContent/Evaluation/ExamScoreDetails";
 import { useGetExamCandidates } from "../../hooks/examCandidate/useGetExamCandidates";
-import {
-  CreateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
+import { DeleteIcon } from "../../icons/ActionIcons";
 import { ExamCandidateIcon } from "../../icons/Icons";
 import AddCaScore from "../../ModalContent/ExamCandidate/AddCaScore";
 import AddExamScores from "../../ModalContent/ExamCandidate/AddExamScores";
@@ -287,7 +289,7 @@ export function ActionComponent(props) {
                 <div>
                   <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                     <span>Update CA Scores</span>
-                    <UpdateIcon />
+                    <FilePen size={16} strokeWidth={1.5} />
                   </div>
                 </div>
               </DropDownMenuItem>
@@ -318,7 +320,7 @@ export function ActionComponent(props) {
                 <div>
                   <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                     <span>Add CA Scores</span>
-                    <CreateIcon />
+                    <FilePlus size={16} strokeWidth={1.5} />
                   </div>
                 </div>
               </DropDownMenuItem>
@@ -353,7 +355,7 @@ export function ActionComponent(props) {
                 <div>
                   <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                     <span>Update Exam Scores</span>
-                    <UpdateIcon />
+                    <FilePen size={16} strokeWidth={1.5} />
                   </div>
                 </div>
               </DropDownMenuItem>
@@ -384,66 +386,12 @@ export function ActionComponent(props) {
                 <div>
                   <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                     <span>Add Exam Scores</span>
-                    <CreateIcon />
+                    <FilePlus size={16} strokeWidth={1.5} />
                   </div>
                 </div>
               </DropDownMenuItem>
             )}
           </>
-        )}
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(DeleteExamCandidate, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Candidate</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        {rowData.exam_type === "ca" ? (
-          <DropDownMenuItem
-            className={
-              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-            }
-            onClick={() =>
-              handleShowModal(DeleteCaScores, {
-                size: "md",
-                closeOnOutsideClick: true,
-                closeOnEscape: true,
-              })
-            }
-          >
-            <div>
-              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-                <span>Delete Ca Scores</span>
-                <DeleteIcon />
-              </div>
-            </div>
-          </DropDownMenuItem>
-        ) : (
-          <DropDownMenuItem
-            className={
-              "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-            }
-            onClick={() =>
-              handleShowModal(DeleteExamScores, {
-                size: "md",
-                closeOnOutsideClick: true,
-                closeOnEscape: true,
-              })
-            }
-          >
-            <div>
-              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-                <span>Delete Exam Score</span>
-                <DeleteIcon />
-              </div>
-            </div>
-          </DropDownMenuItem>
         )}
         {rowData.exam_type === "ca" ? (
           <DropDownMenuItem
@@ -461,7 +409,7 @@ export function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Ca Result</span>
-                <DetailsIcon />
+                <FileChartColumn size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -481,7 +429,62 @@ export function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Exam Result</span>
-                <DetailsIcon />
+                <FileChartColumn size={16} strokeWidth={1.5} />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        )}
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() => handleShowModal(DeleteExamCandidate, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Candidate</span>
+              <Trash2 size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        {rowData.exam_type === "ca" ? (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowModal(DeleteCaScores, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Delete Ca Scores</span>
+                <Trash2 size={16} strokeWidth={1.5} />
+              </div>
+            </div>
+          </DropDownMenuItem>
+        ) : (
+          <DropDownMenuItem
+            className={
+              "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+            }
+            onClick={() =>
+              handleShowModal(DeleteExamScores, {
+                size: "md",
+                closeOnOutsideClick: true,
+                closeOnEscape: true,
+              })
+            }
+          >
+            <div>
+              <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                <span>Delete Exam Score</span>
+                <Trash2 size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>

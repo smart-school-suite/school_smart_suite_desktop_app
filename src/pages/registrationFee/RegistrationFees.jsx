@@ -6,7 +6,13 @@ import ActionButtonDropdown, {
   ModalButton,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { Users } from "lucide-react";
+import {
+  Banknote,
+  ReceiptText,
+  Trash2,
+  Users
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useNavigate } from "react-router-dom";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import QueryErrorState from "../../components/errors/QueryErrorState";
@@ -19,7 +25,7 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkPayRegistrationFees from "../../DrawerContent/RegistrationFee/BulkPayRegistrationFees";
 import PayRegistrationFees from "../../DrawerContent/RegistrationFee/PayRegistrationFees";
 import { useGetRegistrationFees } from "../../hooks/registrationFee/useGetRegistrationFees";
-import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon } from "../../icons/ActionIcons";
 import BulkDeleteRegistrationFee from "../../ModalContent/RegistrationFees/BulkDeleteRegistrationFee";
 import DeleteRegistrationFee from "../../ModalContent/RegistrationFees/DeleteRegistrationFees";
 import RegistrationFeeDetail from "../../ModalContent/RegistrationFees/RegistrationFeeDetail";
@@ -226,7 +232,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Pay Fees</span>
-              <CreateIcon />
+              <Banknote size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -239,13 +245,14 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Fee Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteRegistrationFee, {
@@ -258,7 +265,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Fee</span>
-              <DeleteIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

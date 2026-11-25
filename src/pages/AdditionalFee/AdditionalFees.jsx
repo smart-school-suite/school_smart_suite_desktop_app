@@ -1,3 +1,10 @@
+import {
+  Banknote,
+  FilePen,
+  ReceiptText,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { Icon } from "@iconify/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,12 +27,7 @@ import BulkUpdateAdditionalFee from "../../DrawerContent/AdditionalFee/BulkUpdat
 import PayAdditionalFee from "../../DrawerContent/AdditionalFee/PayAdditionalFee";
 import UpdateAdditionalFee from "../../DrawerContent/AdditionalFee/UpdateAdditionalFee";
 import { useGetAdditionalFees } from "../../hooks/additionalFee/useGetAdditionalFees";
-import {
-  CreateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon, UpdateIcon } from "../../icons/ActionIcons";
 import AdditionalFeeDetail from "../../ModalContent/AdditionalFees/AdditionalFeesDetails";
 import BulkDeleteAdditionalFee from "../../ModalContent/AdditionalFees/BulkDeleteAdditionalFee";
 import DeleteAdditionalFees from "../../ModalContent/AdditionalFees/DeleteAdditionalFees";
@@ -216,7 +218,7 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Pay Fee</span>
-              <CreateIcon />
+              <Banknote size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -229,7 +231,7 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Fee Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -248,13 +250,14 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Fee</span>
-              <UpdateIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteAdditionalFees, {
@@ -267,7 +270,7 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Fee</span>
-              <DeleteIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

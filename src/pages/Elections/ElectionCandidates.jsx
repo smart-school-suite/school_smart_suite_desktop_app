@@ -1,6 +1,12 @@
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import { serverErrorCopy } from "../../utils/election/electionDisplay";
-import { Vote } from "lucide-react";
+import {
+  CircleOff,
+  ReceiptText,
+  UserRoundCheck,
+  Vote
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useNavigate } from "react-router-dom";
 import { participantTypeLabel } from "../../utils/election/electionDisplay";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -16,11 +22,7 @@ import Table from "../../components/Tables/Tables";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import ElectionCandidateDetails from "../../DrawerContent/ElectionCandidate/ElectionCandidateDetails";
 import { useGetElectionCandidates } from "../../hooks/electionCandidate/useGetElectionCandidates";
-import {
-  ActivateIcon,
-  DetailsIcon,
-  SuspendIcon,
-} from "../../icons/ActionIcons";
+import { ActivateIcon, SuspendIcon } from "../../icons/ActionIcons";
 import BulkDisqualifyCandidate from "../../ModalContent/ElectionCandidate/BulkDisqualifyCandidate";
 import BulkReinstateCandidate from "../../ModalContent/ElectionCandidate/BulkReinstateCandidate";
 import DisqualifyCandidate from "../../ModalContent/ElectionCandidate/DisqualifyCandidate";
@@ -233,10 +235,11 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Candidate Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -252,7 +255,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Disqualify Candidate</span>
-              <SuspendIcon />
+              <CircleOff size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -271,7 +274,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Reinstate Candidate</span>
-              <ActivateIcon />
+              <UserRoundCheck size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
