@@ -46,3 +46,6 @@ export const importSchoolAdmin = (payload) =>
 
 export const importTeacherCourse = (payload) =>
   uploadImport("teacher-course/import", payload);
+
+export const importSpecialtyHall = (payload) =>
+  uploadImport("specialty-hall/import", payload);

@@ -24,7 +24,8 @@ export const SPECIALTY_COLUMNS = [
     program_name: "registration_fee",
     type: "standard_field",
     label: "Registration Fee",
-    required: true,
+    // Optional: an empty fee takes the level's fee.
+    required: false,
     aliases: [
       "registration_fee",
       "reg_fee",
@@ -36,7 +37,8 @@ export const SPECIALTY_COLUMNS = [
     program_name: "school_fee",
     type: "standard_field",
     label: "Tuition Fee",
-    required: true,
+    // Optional: an empty fee takes the level's fee.
+    required: false,
     aliases: ["tuition_fee", "school_fees", "class_fee", "spec_school_fee", "specialty_school_fee"],
   },
   {

@@ -1,0 +1,4 @@
+specialty_name,department_name,level,registration_fee,school_fee,description
+Software Engineering,Computer Science,Level One,25000,350000,Design and construction of software
+Software Engineering,Computer Science,Level Two,,,Fees left empty take the level's fees
+Accounting,Business Studies,Level One,20000,300000,

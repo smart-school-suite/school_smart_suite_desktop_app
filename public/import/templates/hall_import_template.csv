@@ -1,0 +1,4 @@
+name,capacity,location,type_1,type_2
+Hall A,120,Block A Ground Floor,Lecture Hall,Exam Hall
+Lab 1,40,Block B First Floor,Practical Hall,
+Amphi 300,300,Main Building,Lecture Hall|Exam Hall,
