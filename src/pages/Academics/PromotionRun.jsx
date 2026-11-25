@@ -1,4 +1,11 @@
-import { Ban, MessageSquareCode, Play, RotateCcw, SquareText } from "lucide-react";
+import {
+  Ban,
+  MessageSquareCode,
+  Play,
+  ReceiptText,
+  RotateCcw
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PromotionDetails from "../../DrawerContent/PromotionRun/PromotionDetails";
 import PromotionRunLog from "../../DrawerContent/PromotionRun/PromotionRunLog";
@@ -202,7 +209,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Run Details</span>
-              <SquareText size={16} strokeWidth={1.5} />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -267,10 +274,11 @@ export function ActionComponent(props) {
           </div>
         </DropDownMenuItem>
         )}
+        <HorizontalLine />
         {allows("cancel") && (
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(CancelPromotionRun, {

@@ -1,3 +1,5 @@
+import { FilePen, Trash2 } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { Icon } from "@iconify/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -222,12 +224,14 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Category</span>
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteCategory, {
@@ -240,6 +244,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Category</span>
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

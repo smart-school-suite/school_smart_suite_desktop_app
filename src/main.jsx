@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { AuthProvider } from "./context/authContext";
+import NetworkStatusToast from "./components/Network/NetworkStatusToast";
 import Links from "./routers/Links";
 import { persistor, store } from "./store/store";
 
@@ -33,6 +34,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <AuthProvider>
           <QueryClientProvider client={queryClient}>
             <Links />
+            <NetworkStatusToast />
           </QueryClientProvider>
         </AuthProvider>
       </PersistGate>

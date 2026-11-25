@@ -1,3 +1,5 @@
+import { FilePen, ReceiptText, Trash2 } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { Icon } from "@iconify/react";
 import React, {
   useCallback,
@@ -25,7 +27,7 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetAnnouncementCategories } from "../../hooks/announcement/useGetAnnouncementCategories";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { DeleteIcon } from "../../icons/ActionIcons";
 import { announcementCategoryColDefs } from "../../utils/table/colDefs/announcement/announcementCategoryColDefs";
 function AnnouncementCategory() {
   const dispatch = useDispatch();
@@ -216,26 +218,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update</span>
-              <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowModal(DeleteAnnouncementCategory, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete</span>
-              <DeleteIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -254,7 +237,27 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeleteAnnouncementCategory, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete</span>
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

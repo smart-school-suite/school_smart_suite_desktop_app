@@ -1,4 +1,12 @@
-import { CircleCheck, CircleOff, FileText, Trash, UserPen, UserRoundMinus, UserRoundPlus } from "lucide-react";
+import {
+  CircleCheck,
+  CircleOff,
+  FilePen,
+  ReceiptText,
+  Trash,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import {
   useCallback,
   useEffect,
@@ -272,26 +280,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update</span>
-              <UserPen size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-3 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowModal(DeleteTeacher, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete</span>
-              <Trash size={16} strokeWidth={1.5} />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -310,10 +299,11 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Details</span>
-              <FileText size={16} strokeWidth={1.5} />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         {rowData.status == "active" ? (
           <DropDownMenuItem
             className={
@@ -330,7 +320,7 @@ export function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Deactivate</span>
-                <UserRoundMinus size={16} strokeWidth={1.5} />
+                <CircleOff size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -350,11 +340,31 @@ export function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Activate</span>
-                <UserRoundPlus />
+                <CircleCheck size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
         )}
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-3 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeleteTeacher, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete</span>
+              <Trash2 size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}

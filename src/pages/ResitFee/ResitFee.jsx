@@ -1,4 +1,4 @@
-import { CreditCard } from "lucide-react";
+import { Banknote, CreditCard, ReceiptText } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import ActionButtonDropdown, {
@@ -15,7 +15,6 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import BulkPayResitFee from "../../DrawerContent/ResitFee/BulkPayResitFee";
 import PayResitFee from "../../DrawerContent/ResitFee/PayResitFee";
 import { useGetStudentResits } from "../../hooks/studentResit/useGetStudentResits";
-import { CreateIcon, DetailsIcon } from "../../icons/ActionIcons";
 import ResitFeeDetails from "../../ModalContent/ResitFee/ResitFeeDetails";
 import { resitFeeColDefs } from "../../utils/table/colDefs/resitFee/resitFeeColDefs";
 import TableToolbar from "../../components/TableFilters/TableToolbar";
@@ -206,7 +205,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Pay Fee</span>
-              <CreateIcon />
+              <Banknote size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -219,7 +218,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Fee Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

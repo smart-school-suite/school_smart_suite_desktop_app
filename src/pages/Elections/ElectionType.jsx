@@ -1,6 +1,14 @@
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import { serverErrorCopy } from "../../utils/election/electionDisplay";
-import { Plus } from "lucide-react";
+import {
+  CircleCheck,
+  CircleOff,
+  FilePen,
+  Plus,
+  ReceiptText,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import CreateElectionType from "../../DrawerContent/ElectionType/CreateElectionType";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import React, {
@@ -21,13 +29,7 @@ import Table from "../../components/Tables/Tables";
 import ElectionTypeDetail from "../../DrawerContent/ElectionType/ElectionTypeDetail";
 import UpdateElectionType from "../../DrawerContent/ElectionType/UpdateElectionType";
 import { useGetElectionTypes } from "../../hooks/electionType/useGetElectionTypes";
-import {
-  ActivateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  SuspendIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
+import { ActivateIcon, DeleteIcon, SuspendIcon } from "../../icons/ActionIcons";
 import ActivateElectionType from "../../ModalContent/ElectionType/ActivateElectionType";
 import DeactivateElectionType from "../../ModalContent/ElectionType/DeactivateElectionType";
 import DeleteElectionType from "../../ModalContent/ElectionType/DeleteElectionType";
@@ -247,45 +249,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update</span>
-              <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowModal(DeactivateElectionType, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Deactivate Election Type</span>
-              <SuspendIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowModal(ActivateElectionType, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Activate Election Type</span>
-              <ActivateIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -304,13 +268,53 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Election Type Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeactivateElectionType, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Deactivate Election Type</span>
+              <CircleOff size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(ActivateElectionType, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Activate Election Type</span>
+              <CircleCheck size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteElectionType, {
@@ -323,7 +327,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete</span>
-              <DeleteIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

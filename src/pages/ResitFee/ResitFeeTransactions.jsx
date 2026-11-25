@@ -1,3 +1,5 @@
+import { ReceiptText, Trash2, Undo2 } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { Icon } from "@iconify/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -13,7 +15,7 @@ import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { useGetResitTransactions } from "../../hooks/studentResit/useGetResitTransactions";
-import { DeleteIcon, DetailsIcon, ReverseIcon } from "../../icons/ActionIcons";
+import { DeleteIcon, ReverseIcon } from "../../icons/ActionIcons";
 import BulkDeleteResitFeeTransaction from "../../ModalContent/ResitFee/BulkDeleteResitFeeTransaction";
 import BulkReverseResitFeeTransaction from "../../ModalContent/ResitFee/BulkReverseResitFeeTransaction";
 import DeleteResitFeeTransaction from "../../ModalContent/ResitFee/DeleteResitFeeTransaction";
@@ -198,6 +200,20 @@ export function ActionComponent(props) {
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
+          onClick={() => handleShowModal(ResitFeeTransactionDetails, "md")}
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Transaction Details</span>
+              <ReceiptText size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
           onClick={() =>
             handleShowModal(ReverseResitFeeTransaction, {
               size: "md",
@@ -209,13 +225,13 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Reverse Transaction</span>
-              <ReverseIcon />
+              <Undo2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteResitFeeTransaction, {
@@ -228,20 +244,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete</span>
-              <DeleteIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() => handleShowModal(ResitFeeTransactionDetails, "md")}
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Transaction Details</span>
-              <DetailsIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

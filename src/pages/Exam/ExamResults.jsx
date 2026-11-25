@@ -1,10 +1,9 @@
 import {
   ArrowDown,
   ChevronDown,
-  FileChartColumn,
   Megaphone,
   Podium,
-  ReceiptText,
+  ReceiptText
 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -268,7 +267,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Evaluation Details</span>
-              <FileChartColumn size={16} strokeWidth={1.5} />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

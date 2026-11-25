@@ -1,3 +1,5 @@
+import { FilePen, ReceiptText, Trash2 } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import React, { useMemo, useState } from "react";
 import { AnnouncementTableConfig } from "../../ComponentConfig/AgGridTableConfig";
 import AnnouncementDetails from "../../ModalContent/Announcement/AnnouncementDetails";
@@ -9,11 +11,6 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import Table from "../../components/Tables/Tables";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetAnnouncementByStatus } from "../../hooks/announcement/useGetAnnouncementByStatus";
-import {
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
 function ExpiredAnnoucement() {
   const {
     data: announcement,
@@ -93,7 +90,7 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Content</span>
-              <UpdateIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -106,20 +103,21 @@ export function DropdownComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Announcement Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() => handleShowModal(DeleteAnnouncement, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Announcement</span>
-              <DeleteIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

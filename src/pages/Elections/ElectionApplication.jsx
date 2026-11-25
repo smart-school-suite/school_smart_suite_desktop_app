@@ -1,6 +1,13 @@
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import { serverErrorCopy } from "../../utils/election/electionDisplay";
-import { Vote } from "lucide-react";
+import {
+  CircleCheck,
+  CircleX,
+  ReceiptText,
+  Trash2,
+  Vote
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useNavigate } from "react-router-dom";
 import { participantTypeLabel } from "../../utils/election/electionDisplay";
 import { Check, X } from "lucide-react";
@@ -23,12 +30,7 @@ import Table from "../../components/Tables/Tables";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import ElectionApplicationDetails from "../../DrawerContent/ElectionApplication/ElectionApplicationDetails";
 import { useGetElectionApplications } from "../../hooks/electionApplication/useGetElectionApplications";
-import {
-  ActivateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  SuspendIcon,
-} from "../../icons/ActionIcons";
+import { ActivateIcon, SuspendIcon } from "../../icons/ActionIcons";
 import ApproveApplication from "../../ModalContent/ElectionApplication/ApproveApplication";
 import DeleteApplication from "../../ModalContent/ElectionApplication/DeleteApplication";
 import RejectApplication from "../../ModalContent/ElectionApplication/RejectApplication";
@@ -246,10 +248,11 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Application Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
@@ -265,7 +268,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Approve Application</span>
-              <Check size={16} />
+              <CircleCheck size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -284,13 +287,14 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Reject Application</span>
-              <X size={16} />
+              <CircleX size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(DeleteApplication, {
@@ -303,7 +307,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Application</span>
-              <DeleteIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

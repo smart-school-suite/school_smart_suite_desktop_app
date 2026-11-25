@@ -1,3 +1,10 @@
+import {
+  CircleMinus,
+  CirclePlus,
+  Eye,
+  ListX
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import ActionButtonDropdown, {
@@ -13,7 +20,6 @@ import AssignHall from "../../DrawerContent/SpecialtyHall/AssignHall";
 import RemoveAssignedHall from "../../DrawerContent/SpecialtyHall/RemoveAssignedHall";
 import ViewAssignedHall from "../../DrawerContent/SpecialtyHall/ViewAssignedHall";
 import { useGetSpecialties } from "../../hooks/specialtyHall/useGetSpecialties";
-import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
 import RemoveAllAssignedHalls from "../../ModalContent/SpecialtyHall/RemoveAssignHall";
 import { hallSpecialtyColDefs } from "../../utils/table/colDefs/hall/hallSpecialtyColDefs";
 import TableToolbar from "../../components/TableFilters/TableToolbar";
@@ -239,26 +245,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Assign Hall</span>
-              <CreateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(RemoveAssignedHall, {
-              title: "Assign Hall",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Remove Assigned Hall</span>
-              <DeleteIcon />
+              <CirclePlus size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -277,13 +264,33 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>View assignments</span>
-              <DetailsIcon />
+              <Eye size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowDrawer(RemoveAssignedHall, {
+              title: "Assign Hall",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Remove Assigned Hall</span>
+              <CircleMinus size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
             handleShowModal(RemoveAllAssignedHalls, {
@@ -296,7 +303,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Remove All Assigned Halls</span>
-              <DeleteIcon />
+              <ListX size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

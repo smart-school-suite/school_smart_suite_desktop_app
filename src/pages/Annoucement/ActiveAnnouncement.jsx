@@ -1,3 +1,10 @@
+import {
+  ChartColumn,
+  FilePen,
+  ReceiptText,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { Icon } from "@iconify/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +23,7 @@ import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
 import { NotFoundError } from "../../components/errors/Error";
 import { useGetAnnouncementByStatus } from "../../hooks/announcement/useGetAnnouncementByStatus";
-import { DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
+import { DeleteIcon } from "../../icons/ActionIcons";
 import { announcementColDefs } from "../../utils/table/colDefs/announcement/announcementColDefs";
 import TableToolbar from "../../components/TableFilters/TableToolbar";
 import { TableFilterLayout } from "../../components/TableFilters/TableFilterPanel";
@@ -212,26 +219,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Content</span>
-              <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowModal(DeleteAnnouncement, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Announcement</span>
-              <DeleteIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -250,7 +238,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Announcement Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -269,7 +257,27 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Engagement Stats</span>
-              <Icon icon="hugeicons:touch-interaction-01" size={20} />
+              <ChartColumn size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeleteAnnouncement, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Announcement</span>
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

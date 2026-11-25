@@ -1,4 +1,5 @@
 import { LayerArrowUp, MessageSquareCode, RotateCcw } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ApprovePromotion from "../../DrawerContent/PromotionRecord/ApprovePromotion";
 import ApproveRepeat from "../../DrawerContent/PromotionRecord/ApproveRepeat";
@@ -191,6 +192,26 @@ export function ActionComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowDrawer(PromotionRecordLog, {
+              title: "Promotion Record Log",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Record Log</span>
+              <MessageSquareCode size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
         {allows("promote") && (
         <DropDownMenuItem
           className={
@@ -233,44 +254,25 @@ export function ActionComponent(props) {
           </div>
         </DropDownMenuItem>
         )}
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(PromotionRecordLog, {
-              title: "Promotion Record Log",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Record Log</span>
-              <MessageSquareCode size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem>
         {/* <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(PromotionRecordDetails, {
-              title: "Promotion Record Details",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Record Details</span>
-              <SquareText size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem> */}
+                  className={
+                    "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+                  }
+                  onClick={() =>
+                    handleShowDrawer(PromotionRecordDetails, {
+                      title: "Promotion Record Details",
+                      closeOnOutsideClick: true,
+                      showHeader: true,
+                    })
+                  }
+                >
+                  <div>
+                    <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                      <span>Record Details</span>
+                      <SquareText size={16} strokeWidth={1.5} />
+                    </div>
+                  </div>
+                </DropDownMenuItem> */}
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}

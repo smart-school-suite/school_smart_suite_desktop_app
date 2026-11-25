@@ -6,7 +6,9 @@ import {
   FilePen,
   ReceiptText,
   Trash,
+  Trash2
 } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import CreateSpecialty from "../../DrawerContent/Specialty/CreateSpecialty";
@@ -333,25 +335,6 @@ export function ActionComponent(props) {
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
           onClick={() =>
-            handleShowModal(DeleteSpecialty, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete</span>
-              <Trash size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
             handleShowDrawer(SpecialtyDetails, {
               title: "Specialty Details",
               closeOnOutsideClick: true,
@@ -366,6 +349,7 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         {rowData.status == "active" ? (
           <DropDownMenuItem
             className={
@@ -407,6 +391,26 @@ export function ActionComponent(props) {
             </div>
           </DropDownMenuItem>
         )}
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeleteSpecialty, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete</span>
+              <Trash2 size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}

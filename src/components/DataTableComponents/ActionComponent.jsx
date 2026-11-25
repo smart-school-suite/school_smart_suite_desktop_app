@@ -6,7 +6,7 @@ import {
   size,
   useFloating,
 } from "@floating-ui/react";
-import { Icon } from "@iconify/react";
+import { Ellipsis } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { CSSTransition } from "react-transition-group";
@@ -62,10 +62,11 @@ function ActionButtonDropdown({ children, style, buttonContent }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color:"#222"
+            color: darkMode ? "#ddd" : "#222",
           }}
+          aria-label="Row actions"
         >
-          <Icon icon="mage:dots" width={24} height={24} style={{color:"#222" }}/>
+          <Ellipsis size={20} strokeWidth={1.75} />
         </button>
         <CSSTransition
           in={isToggled}
@@ -76,7 +77,7 @@ function ActionButtonDropdown({ children, style, buttonContent }) {
           <div
             ref={refs.setFloating}
             style={{...floatingStyles, borderRadius:"0.85rem"}}
-            className={`${darkMode ? "dark-bg dark-mode-border" : "border"} dropdown-menu show position-absolute shadow-sm p-1 d-flex flex-column gap-1`}
+            className={`${darkMode ? "dark-bg dark-mode-border" : "border"} action-dropdown-menu dropdown-menu show position-absolute shadow-sm p-1 d-flex flex-column gap-1`}
           >
             {children}
           </div>

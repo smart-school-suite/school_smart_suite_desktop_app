@@ -1,4 +1,4 @@
-import { PenLine, SquareText } from "lucide-react";
+import { FilePen, ReceiptText } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import GraduationBatchDetails from "../../DrawerContent/GraduationBatch/GraduationBatchDetails";
@@ -157,7 +157,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Details</span>
-              <SquareText size={16} strokeWidth={1.5} />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -176,7 +176,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update</span>
-              <PenLine size={16} strokeWidth={1.5} />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

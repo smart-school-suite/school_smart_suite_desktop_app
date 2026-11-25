@@ -1,5 +1,14 @@
 import { Icon } from "@iconify/react";
-import { ArrowDown, ChevronDown } from "lucide-react";
+import {
+  ArrowDown,
+  ChevronDown,
+  CircleCheck,
+  CircleOff,
+  FilePen,
+  ReceiptText,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
@@ -19,13 +28,7 @@ import BatchDetails from "../../DrawerContent/StudentBatch/BatchDetails";
 import CreateBatch from "../../DrawerContent/StudentBatch/CreateBatch";
 import UpdateBatch from "../../DrawerContent/StudentBatch/UpdateBatch";
 import { useGetBatches } from "../../hooks/studentBatch/useGetBatches";
-import {
-  ActivateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  SuspendIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
+import { ActivateIcon, DeleteIcon, SuspendIcon } from "../../icons/ActionIcons";
 import { BatchIcon } from "../../icons/Icons";
 import ImportWizzard from "../../ModalContent/Import/ImportWizzard";
 import ActivateBatch from "../../ModalContent/StudentBatches/ActivateBatch";
@@ -315,26 +318,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update</span>
-              <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowModal(DeleteStudentBatch, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete</span>
-              <DeleteIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -353,10 +337,11 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         {rowData.status == "active" ? (
           <DropDownMenuItem
             className={
@@ -373,7 +358,7 @@ export function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Deactivate</span>
-                <SuspendIcon />
+                <CircleOff size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -393,11 +378,31 @@ export function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
                 <span>Activate</span>
-                <ActivateIcon />
+                <CircleCheck size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
         )}
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeleteStudentBatch, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete</span>
+              <Trash2 size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
       </ActionButtonDropdown>
       <Drawer
         isOpen={showDrawer}

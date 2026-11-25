@@ -1,5 +1,13 @@
 import { Icon } from "@iconify/react";
-import { ArrowDown, ChevronDown } from "lucide-react";
+import {
+  ArrowDown,
+  ChevronDown,
+  FilePen,
+  FileSliders,
+  ReceiptText,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
@@ -20,12 +28,7 @@ import CreateExamWizzard from "../../DrawerContent/Exam/CreateExam/CreateExamWiz
 import ExamDetails from "../../DrawerContent/Exam/ExamDetails";
 import UpdateExam from "../../DrawerContent/Exam/UpdateExam/UpdateExam";
 import { useGetExams } from "../../hooks/exam/useGetExams";
-import {
-  CreateIcon,
-  DeleteIcon,
-  DetailsIcon,
-  UpdateIcon,
-} from "../../icons/ActionIcons";
+import { CreateIcon, DeleteIcon } from "../../icons/ActionIcons";
 import { ExamIcon, GradeIcon } from "../../icons/Icons";
 import BulkAddExamGrading from "../../ModalContent/Exams/BulkAddExamGrading";
 import BulkDeleteExam from "../../ModalContent/Exams/BulkDeleteExam";
@@ -301,26 +304,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Update Exam</span>
-              <UpdateIcon />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowModal(DeleteExam, {
-              size: "md",
-              closeOnOutsideClick: true,
-              closeOnEscape: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Delete Exam</span>
-              <DeleteIcon />
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -339,7 +323,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Exam Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -358,7 +342,27 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Configure Grade Scale</span>
-              <GradeIcon />
+              <FileSliders size={16} strokeWidth={1.5} />
+            </div>
+          </div>
+        </DropDownMenuItem>
+        <HorizontalLine />
+        <DropDownMenuItem
+          className={
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
+          }
+          onClick={() =>
+            handleShowModal(DeleteExam, {
+              size: "md",
+              closeOnOutsideClick: true,
+              closeOnEscape: true,
+            })
+          }
+        >
+          <div>
+            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+              <span>Delete Exam</span>
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

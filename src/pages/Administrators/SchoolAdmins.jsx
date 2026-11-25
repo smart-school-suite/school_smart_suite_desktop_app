@@ -1,12 +1,16 @@
 import {
   ArrowUpFromLine,
   ChevronDown,
-  FileUser,
+  CircleCheck,
+  CircleOff,
+  FilePen,
+  ReceiptText,
   Trash,
-  UserPen,
+  Trash2,
   UserRoundMinus,
   UserRoundPlus
 } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import {
   useCallback,
   useEffect,
@@ -467,32 +471,71 @@ function ActionComponent(props) {
           "tableActionButton primary-background text-white font-size-sm px-2"
         }
       >
-        {/* <DropDownMenuItem
+        <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ManagePermission, "lg")}
+          onClick={() =>
+            handleShowDrawer(UpdateSchoolAdmin, {
+              title: "Update School Admin",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Manage Permission</span>
-              <PermissionIcon />
+              <span>Update</span>
+              <FilePen size={16} strokeWidth={1.5} />
             </div>
           </div>
-        </DropDownMenuItem> */}
-        {/* <DropDownMenuItem
+        </DropDownMenuItem>
+        <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
           }
-          onClick={() => handleShowModal(ManageRoles, "lg")}
+          onClick={() =>
+            handleShowDrawer(SchoolAdminDetails, {
+              title: "School Admin Details",
+              closeOnOutsideClick: true,
+              showHeader: true,
+            })
+          }
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Manage Role</span>
-              <RoleIcon />
+              <span>Details</span>
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
-        </DropDownMenuItem> */}
+        </DropDownMenuItem>
+        <HorizontalLine />
+        {/* <DropDownMenuItem
+                  className={
+                    "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+                  }
+                  onClick={() => handleShowModal(ManagePermission, "lg")}
+                >
+                  <div>
+                    <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                      <span>Manage Permission</span>
+                      <PermissionIcon />
+                    </div>
+                  </div>
+                </DropDownMenuItem> */}
+        {/* <DropDownMenuItem
+                  className={
+                    "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+                  }
+                  onClick={() => handleShowModal(ManageRoles, "lg")}
+                >
+                  <div>
+                    <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
+                      <span>Manage Role</span>
+                      <RoleIcon />
+                    </div>
+                  </div>
+                </DropDownMenuItem> */}
         {rowData.status == "active" ? (
           <DropDownMenuItem
             className={
@@ -509,7 +552,7 @@ function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
                 <span>Deactivate</span>
-                <UserRoundMinus size={16} strokeWidth={1.5} />
+                <CircleOff size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
@@ -529,14 +572,15 @@ function ActionComponent(props) {
             <div>
               <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between ">
                 <span>Activate</span>
-                <UserRoundPlus size={16} strokeWidth={1.5} />
+                <CircleCheck size={16} strokeWidth={1.5} />
               </div>
             </div>
           </DropDownMenuItem>
         )}
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           size={"lg"}
           onClick={() =>
@@ -550,45 +594,7 @@ function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete</span>
-              <Trash size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(UpdateSchoolAdmin, {
-              title: "Update School Admin",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Update</span>
-              <UserPen size={16} strokeWidth={1.5} />
-            </div>
-          </div>
-        </DropDownMenuItem>
-        <DropDownMenuItem
-          className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
-          }
-          onClick={() =>
-            handleShowDrawer(SchoolAdminDetails, {
-              title: "School Admin Details",
-              closeOnOutsideClick: true,
-              showHeader: true,
-            })
-          }
-        >
-          <div>
-            <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
-              <span>Details</span>
-              <FileUser size={16} strokeWidth={1.5} />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>

@@ -1,3 +1,10 @@
+import {
+  CalendarCog,
+  CalendarDays,
+  FilePen,
+  Trash2
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import Table from "../../components/Tables/Tables";
 import { useGetFeeSchedule } from "../../hooks/feeSchedule/useGetFeeSchedule";
 import { useState, useRef, useMemo } from "react";
@@ -9,7 +16,6 @@ import CreateFeeSchedule from "../../DrawerContent/FeeSchedule/CreateFeeSchedule
 import UpdateFeeSchedule from "../../DrawerContent/FeeSchedule/UpdateFeeSchedule";
 import FeeScheduleSlots from "../../ModalContent/FeeSchedule/FeeScheduleSlots";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
-import { CreateIcon, DeleteIcon, DetailsIcon, UpdateIcon } from "../../icons/ActionIcons";
 import { tuitionFeeScheduleColDefs } from "../../utils/table/colDefs/tuitionfee/tuitionFeeScheduleColDefs";
 import { NotFoundError } from "../../components/errors/Error";
 import { Drawer } from "../../components/drawer/Drawer";
@@ -148,7 +154,7 @@ export function ActionComponent(props) {
         {rowData?.config_status ? (
           <MenuItem
             label="Edit Schedule"
-            icon={<UpdateIcon />}
+            icon={<FilePen size={16} strokeWidth={1.5} />}
             onClick={() =>
               handleShowDrawer(UpdateFeeSchedule, { title: "Edit Payment Schedule" })
             }
@@ -156,7 +162,7 @@ export function ActionComponent(props) {
         ) : (
           <MenuItem
             label="Configure Schedule"
-            icon={<CreateIcon />}
+            icon={<CalendarCog size={16} strokeWidth={1.5} />}
             onClick={() =>
               handleShowDrawer(CreateFeeSchedule, { title: "Configure Payment Schedule" })
             }
@@ -164,12 +170,14 @@ export function ActionComponent(props) {
         )}
         <MenuItem
           label="View Schedule"
-          icon={<DetailsIcon />}
+          icon={<CalendarDays size={16} strokeWidth={1.5} />}
           onClick={() => handleShowModal(FeeScheduleSlots, { size: "md" })}
         />
+        <HorizontalLine />
         <MenuItem
           label="Delete Schedule"
-          icon={<DeleteIcon />}
+          danger
+          icon={<Trash2 size={16} strokeWidth={1.5} />}
           onClick={() => handleShowModal(DeleteFeeScheduleSlot, { size: "md" })}
         />
       </ActionButtonDropdown>
@@ -208,10 +216,10 @@ export function ActionComponent(props) {
   );
 }
 
-function MenuItem({ label, icon, onClick }) {
+function MenuItem({ label, icon, onClick, danger = false }) {
   return (
     <DropDownMenuItem
-      className="remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+      className={`remove-button-styles w-100 dropdown-item-table ${danger ? "dropdown-item-danger" : ""} p-0 rounded-2 pointer-cursor`}
       onClick={onClick}
     >
       <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm justify-content-between">

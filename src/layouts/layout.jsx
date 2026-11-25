@@ -1,19 +1,15 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { useRef } from "react";
 import { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { Outlet, useLocation } from "react-router-dom";
 import ErrorBoundary from "../components/errors/ErrorBoundary";
 import Sidebar from "../components/SideBars/Sidebar";
-import useNetworkStatus from "../hooks/network/useNetworkStatus";
 import useScreenSize from "../hooks/ui/useScreenSize";
 const appWindow = getCurrentWindow();
 
 function Layout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const { width, is, breakpoint } = useScreenSize();
-  const isOnline = useNetworkStatus();
-  const isFirstRender = useRef(true);
   const { pathname } = useLocation();
   return (
     <>

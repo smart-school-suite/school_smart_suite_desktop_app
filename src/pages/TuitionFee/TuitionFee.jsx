@@ -4,7 +4,14 @@ import ActionButtonDropdown, {
   DropDownMenuItem,
 } from "../../components/DataTableComponents/ActionComponent";
 import { Drawer } from "../../components/drawer/Drawer";
-import { CalendarRange, Users } from "lucide-react";
+import {
+  Banknote,
+  CalendarRange,
+  ReceiptText,
+  Trash2,
+  Users
+} from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useNavigate } from "react-router-dom";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import QueryErrorState from "../../components/errors/QueryErrorState";
@@ -14,7 +21,6 @@ import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSk
 import Table from "../../components/Tables/Tables";
 import PayTuitionFee from "../../DrawerContent/TuitionFee/PayTuitionFee";
 import { useGetTuitionFees } from "../../hooks/FeePayment/useGetTuitionFees";
-import { CreateIcon, DeleteIcon, DetailsIcon } from "../../icons/ActionIcons";
 import DeleteTuitionFee from "../../ModalContent/TuitionFee/DeleteTuitionFee";
 import TuitionFeeDetails from "../../ModalContent/TuitionFee/TuitionFeeDetails";
 import { tuitionFeeColDefs } from "../../utils/table/colDefs/tuitionfee/tuitionFeeColDefs";
@@ -195,7 +201,7 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Pay Tuition Fee</span>
-              <CreateIcon />
+              <Banknote size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
@@ -208,20 +214,21 @@ export function ActionComponent(props) {
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Tuition Fee Details</span>
-              <DetailsIcon />
+              <ReceiptText size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
-            "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"
+            "remove-button-styles w-100 dropdown-item-table dropdown-item-danger p-0 rounded-2 pointer-cursor"
           }
           onClick={() => handleShowModal(DeleteTuitionFee, "md")}
         >
           <div>
             <div className="px-2 d-flex flex-row align-items-center w-100 font-size-sm  justify-content-between">
               <span>Delete Tuition Fee</span>
-              <DeleteIcon />
+              <Trash2 size={16} strokeWidth={1.5} />
             </div>
           </div>
         </DropDownMenuItem>
