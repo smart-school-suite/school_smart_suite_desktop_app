@@ -104,10 +104,7 @@ function AppSettings() {
 
   return (
     <>
-      <main
-        className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-1 gap-2"
-        style={{ maxHeight: "84dvh", paddingBottom: "10rem" }}
-      >
+      <main className="position-relative h-100 overflow-y-auto overflow-x-hidden scrollbar-xs d-flex flex-column gap-3 pe-1 pb-3 font-size-sm">
         {isLoading ? (
           [...Array(6)].map((_, index) => (
             <div className="d-flex flex-column gap-1" key={index}>
