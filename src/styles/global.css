@@ -2995,14 +2995,32 @@ textarea::-webkit-scrollbar-thumb:hover {
   display: none;
 }
 
-.dropdown-item-table.dropdown-item-danger:hover {
-  background-color: #fef2f2;
+/* Table actions dropdown: compact rows, hover changes the text colour only. */
+.action-dropdown-menu {
+  gap: 0 !important;
+}
+
+.action-dropdown-menu .dropdown-item-table {
+  padding: 0.2rem 0 !important;
+  line-height: 1.25;
+  background-color: transparent !important;
+  transition: color 0.15s ease;
+}
+
+.action-dropdown-menu .dropdown-item-table:hover,
+.action-dropdown-menu .dropdown-item-table:focus-visible {
+  background-color: transparent !important;
+  color: var(--primary-color);
+}
+
+.action-dropdown-menu .dropdown-item-table.dropdown-item-danger:hover,
+.action-dropdown-menu .dropdown-item-table.dropdown-item-danger:focus-visible {
   color: #dc2626;
 }
 
 .action-dropdown-menu > .horizontal-line {
-  margin-top: 0.125rem !important;
-  margin-bottom: 0.125rem !important;
+  margin-top: 0.15rem !important;
+  margin-bottom: 0.15rem !important;
 }
 
 /* Network status toast */
