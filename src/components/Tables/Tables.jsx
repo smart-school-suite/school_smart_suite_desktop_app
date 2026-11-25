@@ -16,11 +16,10 @@ const Table = forwardRef((props, ref) => {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const gridRef = useRef();
 
+  // Rows are selectable with checkboxes unless selectable={false} (read-only previews).
   const rowSelection = useMemo(
-    () => ({
-      mode: "multiRow",
-    }),
-    [],
+    () => (props.selectable === false ? undefined : { mode: "multiRow" }),
+    [props.selectable],
   );
 
   // Define themes for light and dark. The header is shorter than the

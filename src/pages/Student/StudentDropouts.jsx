@@ -132,6 +132,7 @@ function StudentDropOuts() {
                   <JobPopOver category={"Student"} />
                   <ModalButton
                     action={{ modalContent: ImportWizzard }}
+                    closeOnOutsideClick={false}
                     size={"xl"}
                     rowData={{
                       moduleState: "student",

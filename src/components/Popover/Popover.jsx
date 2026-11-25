@@ -27,12 +27,17 @@ const stop = (event) => event.stopPropagation();
  *
  * Children may be a function receiving `close`, e.g. for menus that close
  * when an item is picked:  {({ close }) => <button onClick={close}>…</button>}
+ *
+ * Inside a dialog, pass portal={false} when the popover holds an input: the
+ * dialog keeps focus inside itself, so an input portalled out of it cannot
+ * be typed in. Fixed positioning still places it next to its trigger.
  */
 export default function Popover({
   trigger,
   triggerClassName = "",
   ariaLabel,
   placement = "bottom-start",
+  portal = true,
   children,
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,18 +67,20 @@ export default function Popover({
       >
         {trigger}
       </button>
-      {isOpen && (
-        <FloatingPortal>
-          <div
-            ref={refs.setFloating}
-            style={floatingStyles}
-            className="app-popover"
-            {...getFloatingProps({ onClick: stop, onKeyDown: stop })}
-          >
-            {typeof children === "function" ? children({ close: () => setIsOpen(false) }) : children}
-          </div>
-        </FloatingPortal>
-      )}
+      {isOpen &&
+        (() => {
+          const panel = (
+            <div
+              ref={refs.setFloating}
+              style={floatingStyles}
+              className="app-popover"
+              {...getFloatingProps({ onClick: stop, onKeyDown: stop })}
+            >
+              {typeof children === "function" ? children({ close: () => setIsOpen(false) }) : children}
+            </div>
+          );
+          return portal ? <FloatingPortal>{panel}</FloatingPortal> : panel;
+        })()}
     </>
   );
 }

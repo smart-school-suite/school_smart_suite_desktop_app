@@ -1,272 +1,148 @@
-import { Icon } from "@iconify/react";
+import { CircleAlert, CircleCheck, Info, TriangleAlert } from "lucide-react";
+import { useMemo, useState } from "react";
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import SearchInput from "../../components/input/search";
 import Table from "../../components/Tables/Tables";
-import { useRef, useMemo, useEffect, useState, Fragment } from "react";
-import { useSelector } from "react-redux";
-import {
-  readAndTransformSpreadsheetData, // Import the new function
-  categorizeImportData,
-  formatImportMapping,
-} from "../../utils/file/fileParser";
-import { reconstructFileFromRedux } from "../../utils/file/fileReconstruction";
-import { SingleSpinner } from "../../components/Spinners/Spinners";
-import {
-  CircleX,
-  ChevronDown,
-  Plus,
-  Dot,
-  ArrowRight,
-  Trash2,
-  TriangleAlert,
-  Info,
-  CircleCheck,
-} from "lucide-react";
-import { useImportModule } from "../../hooks/import/useImportModule";
-import FormErrorBanner from "../../components/errors/FormErrorBanner";
-import { useFormError } from "../../hooks/form/useFormError";
-function ImportReview({
-  moduleState: moduleStateType,
-  setImportReset,
-  moduleColumns,
-  module,
-  handleClose,
-  currentStep,
-  fullStep,
-  previousStep,
-  nextStep,
-  importModuleColDefs,
-}) {
-  const [fileData, setFileData] = useState([]);
-  const moduleState = useSelector((state) => state[moduleStateType].import);
-  const {
-    mutate: importModule,
-    isPending,
-    isError,
-    error,
-  } = useImportModule(moduleStateType, handleClose, setImportReset);
-  const { formError, errorBannerRef, handleServerError, clearFormError } =
-    useFormError("Failed To Import Review");
-  const [filter, setFilter] = useState("all");
-  const [searchText, setSearchText] = useState("");
-  const tableRef = useRef();
-  const mapping = moduleState.mapping;
-  const file = useMemo(() => {
-    const serializedFile = moduleState?.selectedFile?.serializedFile;
-    if (!serializedFile) return null;
-    try {
-      return reconstructFileFromRedux(serializedFile);
-    } catch (error) {
-      console.error("Failed to reconstruct file:", error);
-      return null;
-    }
-  }, [moduleState?.selectedFile?.serializedFile]);
+import { useDebounce } from "../../hooks/common/useDebounce";
+import { reviewRows, rowMatches, splitColumns } from "../../utils/file/importSpreadsheet";
 
-  useEffect(() => {
-    const loadFileData = async () => {
-      if (!file) return;
+const STATUS = {
+  ready: { label: "Ready", className: "bg-fern-50 text-fern-700" },
+  warning: { label: "Missing optional", className: "bg-old-lace-50 text-old-lace-800" },
+  error: { label: "Will be skipped", className: "bg-red-50 text-red-700" },
+};
 
-      try {
-        const data = await readAndTransformSpreadsheetData(file, mapping);
-        setFileData(data);
-      } catch (error) {
-        console.error("Failed to read file:", error);
-      }
-    };
-
-    loadFileData();
-  }, [file, mapping]);
-
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearchText(value);
-    if (tableRef.current && tableRef.current.setGridOption) {
-      tableRef.current.setGridOption("quickFilterText", value);
-    }
-  };
-
-  const categorizeData = categorizeImportData(moduleColumns, fileData);
-
-  const FILTERS = [
-    {
-      label: "All",
-      key: "all",
-      count: fileData?.length,
-    },
-    {
-      label: "Ready",
-      key: "ready",
-      count: categorizeData?.ready?.length,
-    },
-    {
-      label: "Warnings",
-      key: "warnings",
-      count: categorizeData?.warnings?.length,
-    },
-    {
-      label: "Errors",
-      key: "errors",
-      count: categorizeData?.errors?.length,
-    },
-  ];
-  const handleImport = async () => {
-    const formattedMapping = formatImportMapping(mapping);
-    clearFormError();
-    importModule({
-      file: file,
-      mapping: formattedMapping,
-    }, { onError: handleServerError });
-  };
-
+function StatusCell({ data }) {
+  const status = STATUS[data?.__status] ?? STATUS.ready;
+  const detail = [...(data?.__errors ?? []), ...(data?.__warnings ?? [])];
   return (
-    <>
-      <div className="d-flex flex-column font-size-sm gap-2">
-        <div
-          className="border-bottom rounded-top-4 p-2 d-flex flex-column justify-content-center"
-          style={{ height: "6dvh", background: "#f9f9f9" }}
-        >
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <div>
-              <span className="font-size-sm fw-semibold">Import Review</span>
-            </div>
-            <button
-              onClick={() => handleClose()}
-              className="border-none border rounded-circle bg-transparent p-0"
-              style={{
-                width: "2rem",
-                height: "2rem",
-                display: "grid",
-                placeItems: "center",
-                cursor: "pointer",
-              }}
-            >
-              <CircleX size={16} />
-            </button>
-          </div>
-        </div>
-        <FormErrorBanner
-          ref={errorBannerRef}
-          error={formError}
-          onDismiss={clearFormError}
-          className="mx-2 mt-2 mb-0"
-        />
-        <div className="px-2 d-flex flex-column gap-3">
-          <div className="d-flex flex-row justify-content-end fw-semibold">
-            <span>
-              {currentStep} of {fullStep} completed
-            </span>
-          </div>
-
-          <div>
-            <span className="fw-medium">Review {module?.name} data </span>
-            <p className="text-muted m-0">
-              Check your data and resolve any issues before importing.
-            </p>
-          </div>
-          <div className="d-flex flex-row justify-content-between">
-            <div className="d-flex row align-items-center gap-2 align-items-center text-center">
-              <span>rows</span>
-              <span className="fw-bold font-size-sm">
-                {fileData?.length || 0}
-              </span>
-            </div>
-            <div className="d-flex row align-items-center gap-2 align-items-center text-center">
-              <span> Ready</span>
-              <span className="fw-bold font-size-sm">
-                {categorizeData?.ready?.length || 0}
-              </span>
-            </div>
-            <div className="d-flex row align-items-center gap-2 align-items-center text-center">
-              <span>errors</span>
-              <span className="fw-bold font-size-sm">
-                {categorizeData?.errors?.length || 0}
-              </span>
-            </div>
-            <div className="d-flex row align-items-center gap-2 align-items-center text-center">
-              <span>Warnings</span>
-              <span className="fw-bold font-size-sm">
-                {categorizeData?.warnings?.length || 0}
-              </span>
-            </div>
-          </div>
-          <div className="d-flex flex-column gap-3">
-            <div className="d-flex flex-row align-items-center justify-content-between">
-              <div className="d-flex flex-row align-items-center gap-2">
-                {FILTERS.map((f) => (
-                  <Fragment key={f.key}>
-                    <button
-                      className={`font-size-sm border-none border text-capitalize gap-1 z-0 position-relative px-2 rounded-3 transition-all bg-none w-100`}
-                      onClick={() => {
-                        setFilter(f.key);
-                      }}
-                      style={{
-                        paddingTop: "0.45rem",
-                        paddingBottom: "0.45rem",
-                      }}
-                    >
-                      {f.key === filter && (
-                        <span
-                          className="primary-background rounded-circle position-absolute"
-                          style={{
-                            width: "0.6em",
-                            height: "0.6em",
-                            zIndex: 9999,
-                            right: "-2%",
-                            top: "-2%",
-                          }}
-                        ></span>
-                      )}
-                      <div className="d-flex flex-row align-items-center gap-1">
-                        <span>{f.label}</span> <span>{f.count}</span>
-                      </div>
-                    </button>
-                  </Fragment>
-                ))}
-              </div>
-              <input
-                type="search"
-                className="form-control font-size-sm w-25"
-                placeholder="Search......."
-                onChange={handleSearch}
-                value={searchText}
-              />
-            </div>
-            <div style={{ height: "42dvh" }}>
-              <Table
-                colDefs={importModuleColDefs()}
-                rowData={fileData}
-                ref={tableRef}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="mt-auto border-top p-2" style={{ height: "8dvh" }}>
-          <div className="d-flex flex-row align-items-center justify-content-between">
-            <button
-              className="border-none bg-transparent d-flex flex-row align-items-center gap-2"
-              onClick={() => previousStep()}
-            >
-              <span style={{ lineHeight: 0 }}>
-                <Icon
-                  icon="material-symbols:arrow-back-rounded"
-                  width={16}
-                  height={16}
-                />
-              </span>
-              <span>Back</span>
-            </button>
-            <button
-              className="border-none border primary-background font-size-sm text-white p-2 rounded-3"
-              onClick={() => handleImport()}
-            >
-              {isPending ? (
-                <SingleSpinner />
-              ) : (
-                `Import ${categorizeData?.ready?.length || 0} ${module.name}`
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+    <span
+      className={`d-inline-block rounded-pill px-2 font-size-xs ${status.className}`}
+      style={{ lineHeight: 1.8 }}
+      title={detail.length ? `Missing: ${detail.join(", ")}` : undefined}
+    >
+      {status.label}
+    </span>
   );
 }
-export default ImportReview;
+
+/** Columns of the preview, built from the module's fields so they always match what is imported. */
+const previewColumns = (columns, mapping) => {
+  const { fields, groups } = splitColumns(columns);
+  return [
+    { field: "__row", headerName: "Row", width: 80, flex: 0, pinned: "left", sortable: true },
+    { field: "__status", headerName: "Status", width: 160, flex: 0, cellRenderer: StatusCell, sortable: true },
+    ...fields
+      .filter((field) => mapping.standardFields?.[field.program_name]?.value)
+      .map((field) => ({ field: field.program_name, headerName: field.label, minWidth: 140, flex: 1, tooltipField: field.program_name })),
+    ...groups.map((group) => ({ field: group.program_name, headerName: group.label, minWidth: 180, flex: 1, tooltipField: group.program_name })),
+  ];
+};
+
+/**
+ * Step 3: see the rows as they will be imported. Counts double as filters,
+ * so problems are one click away, and the search covers every column.
+ * Rows that will be skipped are imported anyway by the others; the job's
+ * report lists them by reason afterwards.
+ */
+export default function ImportReview({ wizard, module }) {
+  const [filter, setFilter] = useState("all");
+  const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 250);
+
+  const rows = useMemo(
+    () => reviewRows(wizard.sheet?.rows ?? [], wizard.mapping, wizard.columns),
+    [wizard.sheet, wizard.mapping, wizard.columns],
+  );
+  const colDefs = useMemo(() => previewColumns(wizard.columns, wizard.mapping), [wizard.columns, wizard.mapping]);
+
+  const counts = useMemo(
+    () => rows.reduce((acc, row) => ({ ...acc, [row.__status]: (acc[row.__status] ?? 0) + 1 }), { ready: 0, warning: 0, error: 0 }),
+    [rows],
+  );
+
+  const visible = useMemo(
+    () => rows.filter((row) => (filter === "all" || row.__status === filter) && rowMatches(row, debouncedQuery)),
+    [rows, filter, debouncedQuery],
+  );
+
+  const filters = [
+    { key: "all", label: "All rows", count: rows.length, icon: Info },
+    { key: "ready", label: "Ready", count: counts.ready, icon: CircleCheck },
+    { key: "warning", label: "Missing optional", count: counts.warning, icon: TriangleAlert },
+    { key: "error", label: "Will be skipped", count: counts.error, icon: CircleAlert },
+  ];
+  const importable = counts.ready + counts.warning;
+  const moduleName = module?.name?.toLowerCase() ?? "records";
+
+  return (
+    <div className="d-flex flex-column gap-3 h-100" style={{ minHeight: 0 }}>
+      <div className="d-flex flex-column gap-1">
+        <span className="fw-semibold">Check the rows before importing</span>
+        <span className="text-iron-500">
+          {importable === rows.length
+            ? `All ${rows.length.toLocaleString()} rows have what they need.`
+            : `${importable.toLocaleString()} of ${rows.length.toLocaleString()} rows can be imported. ${counts.error.toLocaleString()} ${counts.error === 1 ? "misses" : "miss"} a required value and will be skipped; fix them in the file and import them later.`}{" "}
+          The server also checks for duplicates and unknown values; the job report will list any {moduleName} it could not add, grouped by reason.
+        </span>
+      </div>
+
+      <div className="d-flex flex-row flex-wrap gap-2" role="tablist" aria-label="Filter rows by status">
+        {filters.map(({ key, label, count, icon: FilterIcon }) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={filter === key}
+            className={`import-filter font-size-sm d-flex flex-row align-items-center gap-1 ${filter === key ? "import-filter--active" : ""}`}
+            onClick={() => setFilter(key)}
+            disabled={key !== "all" && count === 0}
+          >
+            <FilterIcon size={13} /> {label} <span className="fw-semibold">{count.toLocaleString()}</span>
+          </button>
+        ))}
+      </div>
+
+      <SearchInput
+        value={query}
+        onChange={setQuery}
+        placeholder={`Search ${rows.length.toLocaleString()} rows`}
+        resultCount={rows.length}
+        enableShortcut={false}
+        disabled={rows.length === 0}
+      />
+      {(debouncedQuery || filter !== "all") && visible.length > 0 && (
+        <span className="text-iron-500 font-size-xs" aria-live="polite">
+          Showing {visible.length.toLocaleString()} of {rows.length.toLocaleString()} rows
+        </span>
+      )}
+
+      <div className="flex-grow-1" style={{ minHeight: "16rem" }}>
+        {visible.length === 0 ? (
+          <EmptyState
+            mascot="notFound"
+            height="16rem"
+            mascotHeight="6rem"
+            title="No rows to show"
+            description={debouncedQuery ? `No row matches "${debouncedQuery}".` : "No row has this status."}
+            actions={
+              <EmptyStateButton
+                variant="secondary"
+                onClick={() => {
+                  setQuery("");
+                  setFilter("all");
+                }}
+              >
+                Show all rows
+              </EmptyStateButton>
+            }
+          />
+        ) : (
+          <div style={{ height: "22rem" }}>
+            <Table colDefs={colDefs} rowData={visible} selectable={false} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

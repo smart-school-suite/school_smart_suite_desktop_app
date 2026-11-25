@@ -122,6 +122,7 @@ function SchoolAdmins() {
                   <JobPopOver category={"School Admin"} />
                   <ModalButton
                     action={{ modalContent: ImportWizzard }}
+                    closeOnOutsideClick={false}
                     size={"xl"}
                     rowData={{
                       moduleState: "schoolAdmin",

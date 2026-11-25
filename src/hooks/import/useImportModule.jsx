@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import ToastSuccess from "../../components/Toast/ToastSuccess";
 import { trackJob } from "../../utils/jobs/jobTracker";
-import { getImportConfig } from "../../utils/maps/import/importConfigMap";
+import { IMPORT_CONFIG_MAP } from "../../utils/maps/import/importConfigMap";
 
 /**
  * Uploads an import. The API queues it and returns the job; the job is then
@@ -12,7 +12,13 @@ import { getImportConfig } from "../../utils/maps/import/importConfigMap";
  */
 export const useImportModule = (type, handleClose, setImportReset) => {
   const dispatch = useDispatch();
-  const config = getImportConfig(type);
+  // A module without a config gets a mutation that fails with a clear
+  // message instead of throwing while rendering.
+  const config = IMPORT_CONFIG_MAP[type] ?? {
+    mutationFn: () => Promise.reject(new Error(`No import is set up for "${type}".`)),
+    queryKey: null,
+    title: "Import",
+  };
 
   return useMutation({
     mutationFn: config.mutationFn,

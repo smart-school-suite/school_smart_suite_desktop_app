@@ -19,6 +19,7 @@ function TeacherImportTrigger() {
     <>
       <ModalButton
         action={{ modalContent: ImportWizzard }}
+        closeOnOutsideClick={false}
         size={"xl"}
         rowData={{
           moduleState: "teachers",

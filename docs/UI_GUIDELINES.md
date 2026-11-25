@@ -22,7 +22,7 @@ small variation; add a prop to the shared component rather than copying it.
 | Keep a rendering error inside one area (already around every page, `CustomModal` and `Drawer`) | `components/errors/ErrorBoundary` |
 | Enter CA, exam or resit scores (all states, inline validation) | `components/Evaluation/ScoreEntryDialog` + `hooks/evaluation/useScoreEntry` |
 | Tooltip (hover hint only) | `components/Tooltips/Tooltip` |
-| Click-to-open list / small panel | `components/Popover/Popover` |
+| Click-to-open list / small panel | `components/Popover/Popover` (inside a dialog, pass `portal={false}` when it holds an input, or the dialog's focus trap blocks typing) |
 | Dialog | `ModalButton` (`components/DataTableComponents/ActionComponent`) + content in `src/ModalContent/` |
 | Teacher summary / full profile | `components/Card/TeacherCard` / `ModalContent/Teacher/TeacherQuickView` |
 | Pick teachers from a list (all states built in) | `components/Teacher/TeacherSelectList` |
@@ -31,6 +31,9 @@ small variation; add a prop to the shared component rather than copying it.
 | Teacher course/specialty counts | `components/Card/TeacherStats` |
 | Confirmation dialog (title, copy, optional fields, error banner) | `components/Modals/ConfirmDialog` |
 | Multi-step drawer step bar | `components/Wizard/WizardStepBar` |
+| Spreadsheet import (choose file, match columns, review) | `ModalContent/Import/ImportWizzard` opened with `{ moduleState, moduleColumns, module }`; state in `hooks/import/useImportWizard`, parsing in `utils/file/importSpreadsheet` |
+| Pick a file column for a field (search, sample values, used columns) | `components/Import/ColumnSelect` |
+| File drop area with reading / error / chosen states | `components/Import/ImportDropzone` |
 | Status label with tone (and live pulse) | `components/Election/StatusPill` |
 | Person (student, teacher, admin) avatar + name + type | `components/Election/ParticipantIdentity` |
 | Pick one student, teacher or administrator | `components/Election/PersonPicker` |
@@ -135,6 +138,9 @@ Avoid a second drawer on top of a drawer; use a dialog.
   focus (`event.target === event.currentTarget`), so buttons inside it work.
 - Drawers close on Escape. Popovers and dialogs use `useEscapeKey` so Escape
   closes only the top layer.
+
+Read-only tables (previews) pass `selectable={false}` to `Table` so no
+selection checkboxes appear.
 
 ## 7. Search and selection
 

@@ -121,6 +121,7 @@ function Gradesconfiguration() {
                   <JobPopOver category={"Grade Scale"} />
                   <ModalButton
                     action={{ modalContent: ImportWizzard }}
+                    closeOnOutsideClick={false}
                     size={"xl"}
                     rowData={{
                       moduleState: "gradeScale",
