@@ -103,6 +103,7 @@ function Parents() {
               <JobPopOver category={"Parent"} />
               <ModalButton
                 action={{ modalContent: ImportWizzard }}
+                closeOnOutsideClick={false}
                 size={"xl"}
                 rowData={{
                   moduleState: "parent",

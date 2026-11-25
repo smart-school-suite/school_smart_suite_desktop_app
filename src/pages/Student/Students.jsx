@@ -114,6 +114,7 @@ function Students() {
               <JobPopOver category={"Student"} />
               <ModalButton
                 action={{ modalContent: ImportWizzard }}
+                closeOnOutsideClick={false}
                 size={"xl"}
                 rowData={{
                   moduleState: "student",

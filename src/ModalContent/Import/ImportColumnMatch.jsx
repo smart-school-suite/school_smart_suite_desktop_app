@@ -1,761 +1,301 @@
-import React, {
-  useState,
-  Fragment,
-  useEffect,
-  useMemo,
-  useCallback,
-  useRef,
-} from "react";
-import { Icon } from "@iconify/react";
-import { useDispatch, useSelector } from "react-redux";
+import { CircleAlert, CircleCheck, Plus, RotateCcw, Sparkles, Trash2, TriangleAlert } from "lucide-react";
+import { useMemo, useState } from "react";
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import ColumnSelect from "../../components/Import/ColumnSelect";
+import SearchInput from "../../components/input/search";
+import { useDebounce } from "../../hooks/common/useDebounce";
 import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  size,
-  useClick,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingFocusManager,
-} from "@floating-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { reconstructFileFromRedux } from "../../utils/file/fileReconstruction";
-import VerticalDashedLine from "../../components/DashedLine/VerticalDashedLine";
-import {
-  CircleX,
-  ChevronDown,
-  Plus,
-  Dot,
-  ArrowRight,
-  Trash2,
-  TriangleAlert,
-  Info,
-  CircleCheck,
-} from "lucide-react";
-import HorizontalDashedLine from "../../components/DashedLine/HorizonetalDashedLine";
-import { analyzeColumns, isLastElement } from "../../utils/functions";
-import {
-  getSpreadsheetHeaders,
-  autoMatchColumns,
-  categorizeImportData,
-} from "../../utils/file/fileParser";
-function ImportColumnMatch({
-  moduleState: moduleStateType,
-  setImportStatus,
-  setImportReset,
-  setImportSelectedFile,
-  moduleColumns: moduleCols,
-  addRepeatableGroup,
-  setColumnMapping,
-  removeRepeatableGroup,
-  setStandardGroupValue,
-  setRepeatableGroupValue,
-  module,
-  moduleInstanceMap,
-  handleClose,
-  currentStep,
-  fullStep,
-  previousStep,
-  nextStep,
-}) {
-  const dispatch = useDispatch();
-  const moduleState = useSelector((state) => state[moduleStateType]);
-  const file = useMemo(() => {
-    const serializedFile = moduleState.import.selectedFile?.serializedFile;
-    if (!serializedFile) return null;
-    try {
-      return reconstructFileFromRedux(serializedFile);
-    } catch (error) {
-      console.error("Failed to reconstruct file:", error);
-      return null;
-    }
-  }, [moduleState?.import?.selectedFile?.serializedFile]);
+  groupMax,
+  groupMin,
+  headerUsage,
+  isGroupRequired,
+  splitColumns,
+} from "../../utils/file/importSpreadsheet";
 
-  const [fileHeaders, setFileHeaders] = useState([]);
-  const [mapping, setMapping] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
-
-  const moduleColumns = useMemo(() => moduleCols, []);
-  const standardColumns = useMemo(
-    () => moduleColumns.filter((c) => c.type === "standard_field"),
-    [moduleColumns],
-  );
-  const loadHeaders = useCallback(async () => {
-    if (!file || initialLoadDone) return;
-
-    try {
-      setLoading(true);
-      const headers = await getSpreadsheetHeaders(file);
-      setFileHeaders(headers);
-
-      const initialMatch = autoMatchColumns(headers, standardColumns);
-
-      Object.entries(initialMatch).forEach(([programName, matchedHeader]) => {
-        if (matchedHeader) {
-          dispatch(
-            setStandardGroupValue({
-              field: programName,
-              value: matchedHeader,
-              automatched: true,
-            }),
-          );
-        }
-      });
-
-      setInitialLoadDone(true);
-    } catch (err) {
-      console.error("Failed to parse headers from file:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [file, standardColumns, initialLoadDone, dispatch]);
-
-  useEffect(() => {
-    loadHeaders();
-  }, [loadHeaders]);
-
-  const handleSelectHeader = useCallback((programName, selectedHeader) => {
-    setMapping((prev) => ({
-      ...prev,
-      [programName]: selectedHeader,
-    }));
-  }, []);
-
-  const totalFields = useMemo(() => moduleColumns.length, [moduleColumns]);
-
-  const matchedCount = useMemo(() => {
-    return Object.values(mapping).filter(Boolean).length;
-  }, [mapping]);
-
-  const missingRequiredFields = useMemo(() => {
-    return moduleColumns.filter(
-      (col) => col.required && !mapping[col.program_name],
-    );
-  }, [moduleColumns, mapping]);
-
-  const allRequiredMatched = useMemo(() => {
-    return missingRequiredFields.length === 0;
-  }, [missingRequiredFields]);
-
-  const alertContent = useMemo(() => {
-    if (loading) {
-      return (
-        <div className="p-3 border rounded-4 d-flex align-items-center justify-content-center gap-2">
-          <Icon
-            icon="solar:spinner-single-bold"
-            className="spin"
-            width={20}
-            height={20}
-          />
-          <span>Reading columns...</span>
-        </div>
-      );
-    }
-
-    return (
-      <div
-        className={`alert ${
-          allRequiredMatched ? "alert-success" : "alert-warning"
-        } d-flex flex-column rounded-4 m-0`}
-      >
-        <span className="fw-medium">
-          {matchedCount} of {totalFields} columns matched
-        </span>
-        <small>
-          {allRequiredMatched
-            ? "All required fields are matched"
-            : `Missing required: ${missingRequiredFields
-                .map((f) => f.label)
-                .join(", ")}`}
-        </small>
-      </div>
-    );
-  }, [
-    loading,
-    allRequiredMatched,
-    matchedCount,
-    totalFields,
-    missingRequiredFields,
-  ]);
-
-  const columnMappings = useMemo(() => {
-    return moduleColumns.map((col) => {
-      const selectedHeader = mapping[col.program_name] || "";
-      const dropdownOptions = ["-- Do not import --", ...fileHeaders];
-
-      return {
-        ...col,
-        selectedHeader,
-        dropdownOptions,
-      };
-    });
-  }, [moduleColumns, mapping, fileHeaders]);
-
-  return (
-    <div className="d-flex flex-column font-size-sm gap-2">
-      <div
-        className="border-bottom rounded-top-4 p-2 d-flex flex-column justify-content-center"
-        style={{ height: "6dvh", background: "#f9f9f9" }}
-      >
-        <div className="d-flex flex-row align-items-center justify-content-between">
-          <div>
-            <span className="font-size-sm fw-semibold">Match your columns</span>
-          </div>
-          <button
-            onClick={() => handleClose()}
-            className="border-none border rounded-circle bg-transparent p-0"
-            style={{
-              width: "2rem",
-              height: "2rem",
-              display: "grid",
-              placeItems: "center",
-              cursor: "pointer",
-            }}
-          >
-            <CircleX size={16} />
-          </button>
-        </div>
-      </div>
-      <div className="d-flex flex-row justify-content-end px-2">
-        <span className="fw-semibold">
-          {currentStep} of {fullStep} completed
-        </span>
-      </div>
-      <div className="d-flex flex-row align-items-start">
-        <div
-          className={`d-flex flex-column p-2 gap-3 ${moduleState?.import?.mapping?.repeatableGroups ? "w-50" : "w-100"}`}
-        >
-          <div className="d-flex flex-column gap-1">
-            <span className="fw-semibold">Standard Fields</span>
-            <input
-              type="search"
-              className="form-control font-size-sm p-2 rounded-3"
-              placeholder="Search Fields"
-            />
-          </div>
-          <div className="d-flex flex-column gap-2">
-            <div className="d-flex flex-row align-items-center justify-content-between fw-medium">
-              <span>{module?.name} Field</span>
-              <span>Your File Column</span>
-            </div>
-            <div
-              className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-1 gap-2"
-              style={{ maxHeight: "58dvh" }}
-            >
-              {moduleColumns
-                .filter((c) => c.type === "standard_field")
-                .map((column) => {
-                  const selectedValue =
-                    moduleState?.import?.mapping?.standardFields[
-                      column?.program_name
-                    ]?.value;
-                  return (
-                    <>
-                      <Fragment>
-                        <div className="d-flex flex-row align-items-center justify-content-between p-1 rounded-3 w-100">
-                          <div className="d-flex flex-column gap-1 align-items-start text-start">
-                            <span className="fw-semibold">{column?.label}</span>
-                            {column.required && selectedValue === "" ? (
-                              <div className="d-flex flex-row gap-1 align-items-center text-danger">
-                                <TriangleAlert size={12} />
-                                <small>Required</small>
-                              </div>
-                            ) : selectedValue === "" && !column.required ? (
-                              <div className="d-flex flex-row gap-1 align-items-center text-info">
-                                <Info size={12} />
-                                <small>Optional</small>
-                              </div>
-                            ) : !column.required && selectedValue ? (
-                              <div className="d-flex flex-row gap-1 align-items-center text-success">
-                                <CircleCheck size={12} />
-                                <small>Selected Manually</small>
-                              </div>
-                            ) : column.required && selectedValue ? (
-                              <div className="d-flex flex-row gap-1 align-items-center text-success">
-                                <CircleCheck size={12} />
-                                <small>Selected Manually</small>
-                              </div>
-                            ) : null}
-                          </div>
-                          <div className="w-50">
-                            <ColumnDropdown
-                              options={fileHeaders}
-                              onSelect={(value) =>
-                                dispatch(
-                                  setStandardGroupValue({
-                                    value: value,
-                                    field: column?.program_name,
-                                  }),
-                                )
-                              }
-                              moduleState={moduleState}
-                              selectedValue={selectedValue}
-                            />
-                          </div>
-                        </div>
-                      </Fragment>
-                    </>
-                  );
-                })}
-            </div>
-          </div>
-        </div>
-        {moduleState?.import?.mapping?.repeatableGroups && (
-          <>
-            <VerticalDashedLine
-              color={"#ddd"}
-              dashed={false}
-              thickness={1.5}
-              height="68dvh"
-            />
-            <div
-              className="d-flex flex-column gap-3 p-2 w-50 font-size-sm"
-              style={{ height: "68dvh" }}
-            >
-              <div className="d-flex flex-column gap-1 pe-2">
-                <span className="fw-semibold">Repeatable Groups</span>
-                <input
-                  type="search"
-                  className="form-control font-size-sm p-2 rounded-3"
-                  placeholder="Search Groups"
-                />
-              </div>
-              <div
-                className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-1 gap-2"
-                style={{ maxHeight: "60dvh" }}
-              >
-                {Object.keys(moduleState.import.mapping.repeatableGroups).map(
-                  (rG) => (
-                    <Fragment key={rG}>
-                      <RepeatableGroupAccordion
-                        rG={rG}
-                        moduleState={moduleState}
-                        fileHeaders={fileHeaders}
-                        moduleInstanceMap={moduleInstanceMap}
-                        addRepeatableGroup={addRepeatableGroup}
-                        removeRepeatableGroup={removeRepeatableGroup}
-                        setRepeatableGroupValue={setRepeatableGroupValue}
-                      />
-                    </Fragment>
-                  ),
-                )}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-      <div className="mt-auto border-top p-2" style={{ height: "8dvh" }}>
-        <div className="d-flex flex-row align-items-center justify-content-between">
-          <button
-            className="border-none bg-transparent d-flex flex-row align-items-center gap-2"
-            onClick={() => previousStep()}
-          >
-            <span style={{ lineHeight: 0 }}>
-              <Icon
-                icon="material-symbols:arrow-back-rounded"
-                width={16}
-                height={16}
-              />
-            </span>
-            <span>Back</span>
-          </button>
-          <button
-            className={`border-none rounded-3 px-3 py-2 border text-white primary-background`}
-            onClick={() => {
-              nextStep && nextStep();
-            }}
-          >
-            Preview
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-export default ImportColumnMatch;
-
-function ColumnDropdown({
-  options = [],
-  selectedValue,
-  onSelect,
-  moduleState,
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const searchInputRef = useRef(null);
-
-  const mappingState = moduleState?.import?.mapping || {};
-  const columns = analyzeColumns(
-    mappingState?.standardFields,
-    mappingState?.repeatableGroups,
-    options,
-  );
-
-  const { refs, floatingStyles, context } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    middleware: [
-      offset(6),
-      flip({ fallbackAxisSideDirection: "start" }),
-      shift({ padding: 8 }),
-    ],
-    whileElementsMounted: autoUpdate,
+/** First non-empty value of each column, shown next to it so it is recognisable. */
+const sampleValues = (sheet) => {
+  const samples = {};
+  (sheet?.headers ?? []).forEach((header) => {
+    const row = (sheet?.rows ?? []).slice(0, 50).find((item) => String(item[header] ?? "").trim() !== "");
+    if (row) samples[header] = String(row[header]).slice(0, 40);
   });
+  return samples;
+};
 
-  const click = useClick(context);
-  const dismiss = useDismiss(context);
-  const role = useRole(context, { role: "listbox" });
+const matches = (words, ...texts) => {
+  const text = texts.filter(Boolean).join(" ").toLowerCase();
+  return words.every((word) => text.includes(word));
+};
 
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    click,
-    dismiss,
-    role,
-  ]);
+/**
+ * Step 2: say which column of the file fills each field.
+ *
+ * Columns are matched automatically first, so most people only check the
+ * result. Required fields come first and anything still missing is
+ * highlighted and listed in the footer; the next step stays locked until it
+ * is fixed.
+ */
+export default function ImportColumnMatch({ wizard, module }) {
+  const [query, setQuery] = useState("");
+  const [onlyAttention, setOnlyAttention] = useState(false);
+  const debouncedQuery = useDebounce(query, 250);
+  const words = String(debouncedQuery).toLowerCase().split(/\s+/).filter(Boolean);
 
-  useEffect(() => {
-    if (isOpen) {
-      requestAnimationFrame(() => {
-        searchInputRef.current?.focus();
-      });
-    }
-  }, [isOpen]);
+  const { fields, groups } = useMemo(() => splitColumns(wizard.columns), [wizard.columns]);
+  const headers = wizard.sheet?.headers ?? [];
+  const samples = useMemo(() => sampleValues(wizard.sheet), [wizard.sheet]);
+  const usage = useMemo(() => headerUsage(wizard.mapping, wizard.columns), [wizard.mapping, wizard.columns]);
+  const problemKeys = useMemo(() => new Set(wizard.problems.map((problem) => problem.key)), [wizard.problems]);
 
-  const handleSelect = useCallback(
-    (option) => {
-      setIsOpen(false);
-      if (onSelect) {
-        onSelect(option);
-      }
-    },
-    [onSelect],
+  const fieldValue = (field) => wizard.mapping.standardFields?.[field.program_name]?.value ?? "";
+  const needsAttention = (field) => field.required && !fieldValue(field);
+
+  const visibleFields = fields.filter(
+    (field) =>
+      (!onlyAttention || needsAttention(field)) &&
+      matches(words, field.label, field.program_name, fieldValue(field)),
+  );
+  const requiredFields = visibleFields.filter((field) => field.required);
+  const optionalFields = visibleFields.filter((field) => !field.required);
+  const visibleGroups = groups.filter(
+    (group) =>
+      (!onlyAttention || problemKeys.has(group.program_name)) &&
+      matches(words, group.label, group.program_name, ...(group.fields ?? []).map((field) => field.label)),
   );
 
-  return (
-    <div>
-      <button
-        ref={refs.setReference}
-        {...getReferenceProps()}
-        className={`border-none border bg-transparent rounded-3 d-flex flex-row align-items-center justify-content-between p-2 ${
-          isOpen && "shadow-lg"
-        }`}
-        style={{ width: "100%", cursor: "pointer" }}
-        type="button"
-      >
-        <span className="text-truncate">
-          {selectedValue === "" ? "Select Column" : selectedValue}
-        </span>
-        <motion.span
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="d-flex align-items-center"
-        >
-          <Icon icon="majesticons:chevron-down" width={16} height={16} />
-        </motion.span>
-      </button>
+  const matchedFields = fields.filter((field) => fieldValue(field)).length;
+  const autoMatched = fields.filter((field) => wizard.mapping.standardFields?.[field.program_name]?.auto).length;
+  const total = fields.length;
+  const nothingVisible = visibleFields.length === 0 && visibleGroups.length === 0;
 
-      <AnimatePresence>
-        {isOpen && (
-          <div
-            ref={refs.setFloating}
-            style={{ ...floatingStyles, zIndex: 1000, paddingBottom: "2rem" }}
-            {...getFloatingProps()}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -4 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -4 }}
-              transition={{ duration: 0.15, ease: "easeOut" }}
-              className={`bg-white border shadow-sm d-flex flex-column gap-2 p-2 ${
-                isOpen && "shadow-lg"
-              }`}
-              style={{
-                width: "28vw",
-                minWidth: "180px",
-                borderRadius: "0.82rem",
+  return (
+    <div className="d-flex flex-column gap-3">
+      <div className="d-flex flex-row align-items-start justify-content-between gap-3">
+        <div className="d-flex flex-column gap-1">
+          <span className="fw-semibold">Match the columns of your file</span>
+          <span className="text-iron-500">
+            {autoMatched > 0
+              ? `${autoMatched} of ${total} fields were matched for you. Check them and fill in the rest.`
+              : `Choose which column of "${wizard.sheet?.info?.name}" fills each ${module?.name?.toLowerCase() ?? ""} field.`}
+          </span>
+        </div>
+        <button type="button" onClick={wizard.rematch} className="border rounded-3 bg-white px-2 py-1 font-size-sm d-flex flex-row align-items-center gap-1 flex-shrink-0" title="Match the columns again from their names">
+          <RotateCcw size={13} /> Match again
+        </button>
+      </div>
+
+      <MatchProgress matched={matchedFields} total={total} problems={wizard.problems} />
+
+      <div className="d-flex flex-row align-items-center gap-2">
+        <div className="flex-grow-1">
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder={`Search ${total + groups.length} fields`}
+            enableShortcut={false}
+          />
+        </div>
+        <button
+          type="button"
+          className={`import-filter font-size-sm d-flex flex-row align-items-center gap-1 flex-shrink-0 ${onlyAttention ? "import-filter--active" : ""}`}
+          onClick={() => setOnlyAttention((current) => !current)}
+          aria-pressed={onlyAttention}
+          disabled={wizard.problems.length === 0 && !onlyAttention}
+        >
+          <CircleAlert size={13} /> Needs attention{wizard.problems.length > 0 ? ` · ${wizard.problems.length}` : ""}
+        </button>
+      </div>
+
+      {nothingVisible ? (
+        <EmptyState
+          mascot={onlyAttention && !words.length ? "empty" : "notFound"}
+          height="14rem"
+          mascotHeight="6rem"
+          title={onlyAttention && !words.length ? "Nothing needs attention" : "No field matches your search"}
+          description={onlyAttention && !words.length ? "Every required field has a column." : `Nothing matches "${debouncedQuery}".`}
+          actions={
+            <EmptyStateButton
+              variant="secondary"
+              onClick={() => {
+                setQuery("");
+                setOnlyAttention(false);
               }}
             >
-              <input
-                ref={searchInputRef}
-                type="search"
-                className="form-control font-size-sm p-2 rounded-3"
-                placeholder="Search Columns"
-              />
-              <div
-                style={{
-                  maxHeight: "32dvh",
-                }}
-                className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column gap-3 pb-4 pe-1"
-              >
-                {columns?.available_columns?.length > 0 && (
-                  <div className="d-flex flex-column gap-2">
-                    <small className="fw-medium text-muted">
-                      Available Columns
-                    </small>
-                    <div className="d-flex flex-column gap-1">
-                      {columns?.available_columns?.map((ac, index) => (
-                        <Fragment key={index}>
-                          <button
-                            type="button"
-                            onClick={() => handleSelect(ac)}
-                            className={`py-2 px-1 text-start border-none fw-semibold  rounded-2 ${ac === selectedValue ? "primary-backgroun-100 color-primary" : "hover-neutral"}`}
-                            style={{ background: "none" }}
-                          >
-                            {ac}
-                          </button>
-                          {!isLastElement(
-                            index,
-                            columns?.available_columns,
-                          ) && <hr />}
-                        </Fragment>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {(columns?.already_used_columns?.length > 0 ||
-                  columns?.already_used_columns > 0) && (
-                  <div className="d-flex flex-column gap-2">
-                    <small className="fw-medium text-muted">Already Used</small>
-                    <div className="d-flex flex-column gap-1">
-                      {columns?.already_used_columns?.map((c, index) => (
-                        <Fragment key={index}>
-                          <button
-                            type="button"
-                            onClick={() => handleSelect(c?.column)}
-                            className={`py-2 px-1 text-start border-none fw-semibold rounded-2 d-flex flex-column gap-2 ${c?.column === selectedValue ? "color-primary" : "hover-neutral"}`}
-                            style={{
-                              background:
-                                c?.column === selectedValue
-                                  ? "#e0f2fe"
-                                  : "none",
-                            }}
-                          >
-                            <span>{c?.column}</span>
-                            <div
-                              className={`d-flex flex-row align-items-center gap-2 fw-medium  ${c?.column === selectedValue ? "color-primary" : " text-muted"}`}
-                            >
-                              <small>Mapped to</small>
-                              <ArrowRight size={16} />
-                              {c?.mapped_to.map((mt, mtIndex) => (
-                                <Fragment key={mtIndex}>
-                                  <small>{mt}</small>
-                                  {!isLastElement(mtIndex, c?.mapped_to) && (
-                                    <span>,</span>
-                                  )}
-                                </Fragment>
-                              ))}
-                            </div>
-                          </button>
-                          {!isLastElement(
-                            index,
-                            columns?.already_used_columns,
-                          ) && <hr />}
-                        </Fragment>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              Show all fields
+            </EmptyStateButton>
+          }
+        />
+      ) : (
+        <>
+          {requiredFields.length > 0 && (
+            <FieldSection title="Required" hint="These must have a column.">
+              {requiredFields.map((field) => (
+                <FieldRow key={field.program_name} field={field} entry={wizard.mapping.standardFields?.[field.program_name]} headers={headers} samples={samples} usage={usage} onChange={(header) => wizard.setField(field.program_name, header)} />
+              ))}
+            </FieldSection>
+          )}
+
+          {visibleGroups.map((group) => (
+            <GroupCard key={group.program_name} group={group} wizard={wizard} headers={headers} samples={samples} usage={usage} hasProblem={problemKeys.has(group.program_name)} />
+          ))}
+
+          {optionalFields.length > 0 && (
+            <FieldSection title="Optional" hint="Leave a field without a column to skip it.">
+              {optionalFields.map((field) => (
+                <FieldRow key={field.program_name} field={field} entry={wizard.mapping.standardFields?.[field.program_name]} headers={headers} samples={samples} usage={usage} onChange={(header) => wizard.setField(field.program_name, header)} />
+              ))}
+            </FieldSection>
+          )}
+        </>
+      )}
     </div>
   );
 }
 
-function RepeatableGroupAccordion({
-  rG,
-  moduleState,
-  fileHeaders,
-  moduleInstanceMap,
-  addRepeatableGroup,
-  removeRepeatableGroup,
-  setRepeatableGroupValue,
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const dispatch = useDispatch();
-  const toggleAccordion = () => {
-    setIsOpen((prev) => !prev);
-  };
-  const rgInstance = moduleInstanceMap.find((i) => i.key.toLowerCase() === rG);
+function MatchProgress({ matched, total, problems }) {
+  const percent = total > 0 ? Math.round((matched / total) * 100) : 100;
+  const done = problems.length === 0;
   return (
-    <div
-      className="d-flex flex-column gap-3 border p-2 card"
-      style={{ borderRadius: "0.75rem" }}
-    >
-      <div
-        className="d-flex flex-row align-items-center justify-content-between cursor-pointer pe-2"
-        onClick={toggleAccordion}
-        role="button"
-        tabIndex={0}
-        aria-expanded={isOpen}
-      >
-        <div className="d-flex flex-column gap-2">
-          <span className="fw-semibold text-capitalize">
-            {rG.replaceAll("_", " ")}
-          </span>
-          <div className="d-flex flex-row align-items-center gap-1">
-            <small
-              style={{ background: "#fff2c5", color: "#e27200" }}
-              className="px-2 rounded-pill"
-            >
-              Required
-            </small>
-            <Dot />
-            <small
-              style={{ background: "#e3f5e3", color: "#45a245" }}
-              className="px-2 rounded-pill"
-            >
-              1 of
-              {
-                moduleState?.import?.mapping?.repeatableGroups[rG]?.instances
-                  ?.length
-              }
-              configured
-            </small>
-            <Dot />
-            <small
-              style={{ background: "#e0f2fe", color: "#0ea7e9" }}
-              className="px-2 rounded-pill"
-            >
-              Maximum 5 allowed
-            </small>
-          </div>
-        </div>
+    <div className={`rounded-4 p-3 d-flex flex-column gap-2 ${done ? "bg-fern-50" : "bg-old-lace-50"}`} role="status">
+      <div className="d-flex flex-row align-items-center justify-content-between gap-2">
+        <span className={`fw-semibold d-flex flex-row align-items-center gap-2 ${done ? "text-fern-700" : "text-old-lace-800"}`}>
+          {done ? <CircleCheck size={16} /> : <CircleAlert size={16} />}
+          {done ? "All required fields have a column" : `${problems.length} ${problems.length === 1 ? "thing" : "things"} to fix before you can continue`}
+        </span>
+        <span className="text-iron-600 font-size-xs flex-shrink-0">{matched} of {total} fields matched</span>
+      </div>
+      <div className="rounded-pill bg-white overflow-hidden" style={{ height: 6 }}>
+        <div className={`h-100 rounded-pill ${done ? "bg-fern-500" : "bg-old-lace-500"}`} style={{ width: `${percent}%`, transition: "width 0.3s ease" }} />
+      </div>
+      {!done && (
+        <ul className="m-0 ps-3 text-old-lace-800 font-size-xs">
+          {problems.slice(0, 4).map((problem) => (
+            <li key={`${problem.key}-${problem.message}`}>{problem.message}</li>
+          ))}
+          {problems.length > 4 && <li>and {problems.length - 4} more</li>}
+        </ul>
+      )}
+    </div>
+  );
+}
 
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="d-flex align-items-center"
+function FieldSection({ title, hint, children }) {
+  return (
+    <section className="d-flex flex-column gap-2">
+      <div className="d-flex flex-row align-items-baseline gap-2">
+        <span className="fw-semibold">{title}</span>
+        <span className="text-iron-500 font-size-xs">{hint}</span>
+      </div>
+      <div className="d-flex flex-column gap-2">{children}</div>
+    </section>
+  );
+}
+
+function FieldStatus({ required, value, auto }) {
+  if (value) {
+    return (
+      <span className="d-flex flex-row align-items-center gap-1 text-fern-600 font-size-xs">
+        {auto ? <Sparkles size={12} /> : <CircleCheck size={12} />}
+        {auto ? "Matched automatically" : "Matched"}
+      </span>
+    );
+  }
+  return required ? (
+    <span className="d-flex flex-row align-items-center gap-1 text-red-600 font-size-xs">
+      <CircleAlert size={12} /> Choose a column
+    </span>
+  ) : (
+    <span className="text-iron-500 font-size-xs">Not imported</span>
+  );
+}
+
+function FieldRow({ field, entry, headers, samples, usage, onChange, labelSuffix = "", usageLabel }) {
+  const value = entry?.value ?? "";
+  const missing = field.required && !value;
+  // How headerUsage names this field, to leave it out of "same column as".
+  const ownLabel = usageLabel ?? field.label;
+  const sharedWith = value ? (usage[value] ?? []).filter((label) => label !== ownLabel) : [];
+  return (
+    <div className={`import-field d-flex flex-row align-items-center justify-content-between gap-3 px-3 py-2 ${missing ? "import-field--missing" : ""}`}>
+      <div className="d-flex flex-column" style={{ minWidth: 0 }}>
+        <span className="fw-medium text-truncate">
+          {field.label}
+          {labelSuffix}
+          {field.required && <span className="text-red-500 ms-1" aria-hidden="true">*</span>}
+        </span>
+        <FieldStatus required={field.required} value={value} auto={entry?.auto} />
+        {sharedWith.length > 0 && (
+          <span className="d-flex flex-row align-items-center gap-1 text-old-lace-700 font-size-xs">
+            <TriangleAlert size={12} /> Same column as {sharedWith.join(", ")}
+          </span>
+        )}
+      </div>
+      <div className="flex-shrink-0" style={{ width: "min(16rem, 50%)" }}>
+        <ColumnSelect label={field.label} value={value} headers={headers} samples={samples} usage={usage} onChange={onChange} />
+      </div>
+    </div>
+  );
+}
+
+function GroupCard({ group, wizard, headers, samples, usage, hasProblem }) {
+  const instances = wizard.mapping.repeatableGroups?.[group.program_name] ?? [];
+  const max = groupMax(group);
+  const min = groupMin(group);
+  const required = isGroupRequired(group);
+
+  return (
+    <section className={`border rounded-4 p-3 d-flex flex-column gap-3 bg-white ${hasProblem ? "border-danger-subtle" : ""}`}>
+      <div className="d-flex flex-row align-items-start justify-content-between gap-2">
+        <div className="d-flex flex-column gap-1">
+          <span className="fw-semibold">
+            {group.label}
+            {required && <span className="text-red-500 ms-1" aria-hidden="true">*</span>}
+          </span>
+          <span className="text-iron-500 font-size-xs">
+            Each row can have several; one set is these columns ({(group.fields ?? []).map((field) => field.label).join(", ")}). {instances.length} of up to {max} {max === 1 ? "set" : "sets"} used.
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={() => wizard.addGroupInstance(group.program_name)}
+          disabled={instances.length >= max}
+          className="border rounded-3 bg-white px-2 py-1 font-size-sm d-flex flex-row align-items-center gap-1 flex-shrink-0"
+          style={{ opacity: instances.length >= max ? 0.5 : 1 }}
+          title={instances.length >= max ? `At most ${max} sets` : `Add a set of ${group.label} columns`}
         >
-          <button
-            type="button"
-            className="border-none gap-2 font-size-sm bg-transparent border-0 p-0"
-            tabIndex={-1}
-          >
-            <ChevronDown size={16} />
-          </button>
-        </motion.div>
+          <Plus size={13} /> Add set
+        </button>
       </div>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
-            style={{ overflow: "hidden" }}
-            className="d-flex flex-column gap-3"
-          >
-            <div
-              className="scroll-bar-sm over-flow-x-hidden over-flow-y-auto height-auto d-flex flex-column pe-2 gap-3"
-              style={{ maxHeight: "42dvh" }}
-            >
-              {moduleState.import.mapping.repeatableGroups[rG].instances.map(
-                (g, index) => (
-                  <Fragment key={g.id}>
-                    <div className="d-flex flex-column gap-2">
-                      <div className="d-flex flex-row align-items-center justify-content-between fw-medium text-capitalize">
-                        <span>
-                          {rG.replaceAll("_", " ")} #{index + 1}
-                        </span>
-                      </div>
-                      <div className="d-flex flex-column gap-2">
-                        {Object.keys(g?.mapping).map((mKey, mIndex) => {
-                          const selectedValue = g?.mapping[mKey].value;
-                          return (
-                            <Fragment key={mIndex}>
-                              <div className="d-flex flex-row align-items-center justify-content-between p-1 rounded-3 w-100">
-                                <div className="d-flex flex-column gap-1">
-                                  <span className="text-capitalize">
-                                    {mKey.replaceAll("_", " ")}
-                                  </span>
-                                  {selectedValue === "" ? (
-                                    <div className="d-flex flex-row gap-1 align-items-center text-danger">
-                                      <TriangleAlert size={12} />
-                                      <small>Required</small>
-                                    </div>
-                                  ) : (
-                                    <div className="d-flex flex-row gap-1 align-items-center text-success">
-                                      <CircleCheck size={12} />
-                                      <small>Selected Manually</small>
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="w-50">
-                                  <ColumnDropdown
-                                    options={fileHeaders}
-                                    onSelect={(value) =>
-                                      dispatch(
-                                        setRepeatableGroupValue({
-                                          value: value,
-                                          id: g.id,
-                                          field: mKey,
-                                          group: rG,
-                                        }),
-                                      )
-                                    }
-                                    selectedValue={selectedValue}
-                                    moduleState={moduleState}
-                                  />
-                                </div>
-                              </div>
-                            </Fragment>
-                          );
-                        })}
-                        <div className="d-flex flex-row gap-2">
-                          {index > 0 && (
-                            <button
-                              className="hover-text-danger border-none bg-transparent border rounded-circle"
-                              style={{ width: "2rem", height: "2rem" }}
-                              onClick={() =>
-                                dispatch(
-                                  removeRepeatableGroup({
-                                    field: rG,
-                                    id: g.id,
-                                  }),
-                                )
-                              }
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {!isLastElement(
-                      index,
-                      moduleState.import.mapping.repeatableGroups[rG].instances,
-                    ) && (
-                      <HorizontalDashedLine
-                        thickness={1}
-                        dashed={false}
-                        color={"#ddd"}
-                      />
-                    )}
-                  </Fragment>
-                ),
-              )}
-            </div>
-            <div className="d-flex flex-row justify-content-end pt-1">
+      {instances.map((instance, index) => (
+        <div key={instance.id} className="d-flex flex-column gap-2">
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <span className="text-iron-600 font-size-xs fw-medium">Set {index + 1}</span>
+            {instances.length > min && (
               <button
                 type="button"
-                className="font-size-sm border-none rounded-3 p-2 bg-transparent border d-flex flex-row align-items-center gap-2"
-                onClick={() => dispatch(addRepeatableGroup({ field: rG }))}
+                className="border-0 bg-transparent text-red-600 font-size-xs d-flex flex-row align-items-center gap-1"
+                onClick={() => wizard.removeGroupInstance(group.program_name, instance.id)}
               >
-                <Plus size={16} />
-                <span className="text-capitalize">
-                  Add {rG.replaceAll("_", " ")}
-                </span>
+                <Trash2 size={12} /> Remove set
               </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            )}
+          </div>
+          {(group.fields ?? []).map((field) => (
+            <FieldRow
+              key={field.program_name}
+              field={{ ...field, required: field.required && (required || Object.values(instance.mapping ?? {}).some((entry) => entry?.value)) }}
+              entry={instance.mapping?.[field.program_name]}
+              headers={headers}
+              samples={samples}
+              usage={usage}
+              labelSuffix={instances.length > 1 ? ` #${index + 1}` : ""}
+              usageLabel={`${field.label} #${index + 1}`}
+              onChange={(header) => wizard.setGroupField(group.program_name, instance.id, field.program_name, header)}
+            />
+          ))}
+        </div>
+      ))}
+    </section>
   );
 }

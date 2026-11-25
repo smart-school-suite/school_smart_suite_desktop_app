@@ -3156,3 +3156,94 @@ textarea::-webkit-scrollbar-thumb:hover {
   font-size: 0.75rem;
   line-height: 1.35;
 }
+
+/* ---- Import wizard (components/Import) ---- */
+.import-dropzone {
+  border: 1.5px dashed var(--iron-300);
+  border-radius: 1rem;
+  background: #fff;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  outline: none;
+}
+.import-dropzone:hover,
+.import-dropzone:focus-visible {
+  border-color: var(--primary-color-400);
+  background: var(--primary-color-50);
+}
+.import-dropzone:focus-visible {
+  box-shadow: 0 0 0 0.2rem var(--primary-color-100);
+}
+.import-dropzone--dragging {
+  border-color: var(--primary-color-500);
+  border-style: solid;
+  background: var(--primary-color-50);
+}
+.import-dropzone--error {
+  border-color: var(--red-300);
+  background: var(--red-50);
+}
+.import-dropzone--busy {
+  cursor: progress;
+}
+.import-field {
+  border: 1px solid var(--iron-200);
+  border-radius: 0.75rem;
+  background: #fff;
+  transition: border-color 0.15s ease;
+}
+.import-field--missing {
+  border-color: var(--red-200);
+  background: var(--red-50);
+}
+.import-select__trigger {
+  width: 100%;
+  min-height: 2.25rem;
+  border: 1px solid var(--iron-200);
+  border-radius: 0.5rem;
+  background: #fff;
+  text-align: left;
+}
+.import-select__trigger:hover,
+.import-select__trigger:focus-visible {
+  border-color: var(--primary-color-400);
+  outline: none;
+}
+.import-select__trigger--empty {
+  color: var(--iron-500);
+}
+.import-select__option {
+  width: 100%;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+}
+.import-select__option:hover,
+.import-select__option:focus-visible {
+  background: var(--iron-50);
+  outline: none;
+}
+.import-select__option--selected {
+  background: var(--primary-color-50);
+  color: var(--primary-color-700);
+}
+.import-filter {
+  border: 1px solid var(--iron-200);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0.3rem 0.75rem;
+}
+.import-filter:hover {
+  border-color: var(--primary-color-300);
+}
+.import-filter--active {
+  border-color: var(--primary-color-500);
+  background: var(--primary-color-50);
+  color: var(--primary-color-700);
+}
+.import-filter:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

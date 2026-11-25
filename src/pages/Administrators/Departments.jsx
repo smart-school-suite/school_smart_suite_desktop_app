@@ -104,6 +104,7 @@ function Departments() {
               <JobPopOver category={"Department"} />
               <ModalButton
                 action={{ modalContent: ImportWizzard }}
+                closeOnOutsideClick={false}
                 size={"xl"}
                 rowData={{
                   moduleState: "department",
