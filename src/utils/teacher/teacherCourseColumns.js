@@ -4,7 +4,7 @@ export const TEACHER_COURSE_COLUMNS = [
     type: "standard_field",
     label: "Teacher Name",
     required: true,
-    aliases: ["name", "full_name", "teacher_name", "teacher"],
+    aliases: ["name", "full_name", "teacher_name", "teacher", "teacher_email", "email"],
   },
   {
     program_name: "specialty",

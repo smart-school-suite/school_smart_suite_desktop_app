@@ -85,7 +85,7 @@ function JobProgressCard({
         <div className="d-flex flex-row justify-content-between align-items-center font-size-sm">
           <div className="d-flex flex-row align-items-center gap-1">
             <span>
-              {processed.toLocaleString()} of {total.toLocaleString()}
+              {(processed ?? 0).toLocaleString()} of {(total ?? 0).toLocaleString()}
             </span>
 
             <span className="text-muted">{unit}</span>
