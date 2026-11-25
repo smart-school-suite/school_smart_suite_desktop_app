@@ -10,7 +10,7 @@ export const DEPARTMENT_COLUMNS = [
     program_name: "description",
     type: "standard_field",
     label: "Description",
-    required: true,
+    required: false,
     aliases: ["explaination", "des", "desc", "department_description", "dept_description", "dept_desc"],
   },
 ];

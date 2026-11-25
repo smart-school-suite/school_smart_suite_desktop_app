@@ -8,6 +8,7 @@ import { importTeacherSpecialty } from "../../../services/teacherSpecialty";
 import { importGradeScale } from "../../../services/gradeScale";
 import {
   importSchoolAdmin,
+  importSpecialtyHall,
   importTeacherCourse,
 } from "../../../services/import";
 
@@ -33,6 +34,10 @@ const IMPORT_CONFIG_MAP = {
     mutationFn: importDepartment,
     queryKey: ["departments"],
     title: "Department Import",
+    template: {
+      path: "/import/templates/department_import_template.csv",
+      fileName: "department_import_template.csv",
+    },
   },
   teacher: teacherConfig,
   teachers: teacherConfig,
@@ -68,12 +73,31 @@ const IMPORT_CONFIG_MAP = {
   specialty: {
     mutationFn: importSpecialty,
     queryKey: ["specialties"],
+    refreshKeys: [["specialty-hall-specialties"]],
     title: "Specialty Import",
+    template: {
+      path: "/import/templates/specialty_import_template.csv",
+      fileName: "specialty_import_template.csv",
+    },
   },
   hall: {
     mutationFn: importHall,
-    queryKey: ["hall"],
+    queryKey: ["halls"],
     title: "Hall Import",
+    template: {
+      path: "/import/templates/hall_import_template.csv",
+      fileName: "hall_import_template.csv",
+    },
+  },
+  hallSpecialty: {
+    mutationFn: importSpecialtyHall,
+    queryKey: ["specialty-hall-specialties"],
+    refreshKeys: [["halls"]],
+    title: "Specialty Hall Import",
+    template: {
+      path: "/import/templates/specialty_hall_import_template.csv",
+      fileName: "specialty_hall_import_template.csv",
+    },
   },
   course: {
     mutationFn: importCourse,

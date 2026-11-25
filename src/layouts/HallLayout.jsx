@@ -1,29 +1,24 @@
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
-import { ArrowUpFromLine } from "lucide-react";
 import { useSelector } from "react-redux";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useMemo } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import JobPopOver from "../components/Popover/JobPopover";
 import CreateHall from "../DrawerContent/Hall/CreateHall";
 import { HallIcon } from "../icons/Icons";
-import ImportWizzard from "../ModalContent/Import/ImportWizzard";
-import {
-  addRepeatableGroup,
-  removeRepeatableGroup,
-  setColumnMapping,
-  setImportReset,
-  setImportSelectedFile,
-  setImportStatus,
-  setRepeatableGroupValue,
-  setStandardGroupValue,
-} from "../Slices/administrator/hallSlice";
-import { HALL_COLUMNS } from "../utils/hall/hallColumns";
-import { hallImportColDefs } from "../utils/table/colDefs/hall/hallImportColDefs";
+import { HALL_IMPORT_TRIGGER_MAP } from "../utils/maps/hall/hallImportMap";
 function HallLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const navigate = useNavigate();
+  const location = useLocation();
+  const ImportTrigger = useMemo(
+    () =>
+      (HALL_IMPORT_TRIGGER_MAP[location.pathname] ?? HALL_IMPORT_TRIGGER_MAP["/hall"])
+        .component,
+    [location.pathname],
+  );
   const sideBarData = [
     { title: "Hall", path: "/hall" },
     { title: "Hall Specialty", path: "/specialty-hall" },
@@ -50,34 +45,7 @@ function HallLayout() {
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Hall"} />
-              <ModalButton
-                classname={
-                  "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
-                }
-                action={{ modalContent: ImportWizzard }}
-                size={"xl"}
-                rowData={{
-                  moduleState: "hall",
-                  setImportStatus: setImportStatus,
-                  setImportReset: setImportReset,
-                  setImportSelectedFile: setImportSelectedFile,
-                  moduleColumns: HALL_COLUMNS,
-                  setColumnMapping: setColumnMapping,
-                  setStandardGroupValue: setStandardGroupValue,
-                  addRepeatableGroup: addRepeatableGroup,
-                  removeRepeatableGroup: removeRepeatableGroup,
-                  setRepeatableGroupValue: setRepeatableGroupValue,
-                  moduleInstanceMap: [],
-                  module: { name: "Hall" },
-                  importModuleColDefs: hallImportColDefs,
-                }}
-                style={{ height: 36 }}
-              >
-                <span style={{ lineHeight: "16px" }}>Import</span>
-                <span>
-                  <ArrowUpFromLine  size={12} />
-                </span>
-              </ModalButton>
+              <ImportTrigger />
               <ModalButton
                 classname={
                   "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"

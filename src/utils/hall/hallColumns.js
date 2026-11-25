@@ -17,7 +17,7 @@ export const HALL_COLUMNS = [
     program_name: "location",
     type: "standard_field",
     label: "Hall Location",
-    required: true,
+    required: false,
     aliases: ["hall_location", "location", "h_location"],
   },
   {

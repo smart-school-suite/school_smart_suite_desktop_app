@@ -14,7 +14,14 @@ const initialState = {
   import: {
     status: "IDLE",
     selectedFile: null,
-    mapping: {},
+    mapping: {
+      standardFields: {
+        hall: { value: "", error: null, automatched: false },
+        specialty: { value: "", error: null, automatched: false },
+        level: { value: "", error: null, automatched: false },
+      },
+      repeatableGroups: {},
+    },
   },
 };
 
@@ -30,11 +37,19 @@ const hallSpecialtySlice = createSlice({
       const { selectedFile } = action.payload;
       state.import.selectedFile = selectedFile;
     },
-    setImportReset: (state, action) => {
-      state.import = {
-        status: "IDLE",
-        selectedFile: null,
-      };
+    setImportReset: (state) => {
+      state.import = initialState.import;
+    },
+    setStandardGroupValue: (state, action) => {
+      const { field, value, automatched = false } = action.payload;
+      const group = state.import.mapping.standardFields;
+
+      if (!group[field]) {
+        group[field] = { value: "", error: null, automatched: false };
+      }
+
+      group[field].value = value;
+      group[field].automatched = automatched;
     },
     setColumnMapping: (state, action) => {
       state.import.mapping = action.payload;
@@ -94,7 +109,8 @@ export const {
   setImportStatus,
   setImportSelectedFile,
   setImportReset,
-  setColumnMapping
+  setColumnMapping,
+  setStandardGroupValue,
 } = hallSpecialtySlice.actions;
 
 export default hallSpecialtySlice.reducer;

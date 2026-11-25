@@ -10,3 +10,7 @@ column names the import matches automatically; repeatable groups are numbered
 | `teacher_import_template.csv` | Teachers | Gender is required. Qualification: an abbreviation such as BSc, MSc, PhD, HND. Level: a level name of your school's level system; one cell may hold several separated by `\|`. |
 | `teacher_specialty_import_template.csv` | Teacher specialties | Teacher: full name or email. Level is needed only when several specialties share a name. The teacher must be allowed to teach the specialty's level. |
 | `teacher_course_import_template.csv` | Teacher courses | Course: code or title. Specialty and level only tell apart courses sharing a title. The course must belong to one of the teacher's specialties, and a course has one teacher. |
+| `department_import_template.csv` | Departments | Description is optional. Existing names are reported, not overwritten. |
+| `specialty_import_template.csv` | Specialties | Department and level by name. Empty fees take the level's fees. With "Automatically Create Specialties Across All Levels" on, one row creates the specialty at every level. |
+| `hall_import_template.csv` | Halls | At least one hall type: Lecture Hall, Exam Hall or Practical Hall. One cell may hold several separated by `\|`. |
+| `specialty_hall_import_template.csv` | Specialty halls | Hall and specialty by name. Level is needed only when several specialties share a name. |
