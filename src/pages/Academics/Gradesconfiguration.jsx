@@ -1,16 +1,5 @@
 import { AnimatePresence } from "framer-motion";
-import {
-  ArrowUpFromLine,
-  ChevronDown,
-  CircleCheck,
-  CircleOff,
-  FilePen,
-  FileSliders,
-  ListOrdered,
-  ReceiptText,
-  Trash,
-  Trash2
-} from "lucide-react";
+import { ArrowUpFromLine, CircleCheck, CircleOff, FilePen, FileSliders, ListOrdered, ReceiptText, Trash, Trash2 } from "lucide-react";
 import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -142,15 +131,6 @@ function Gradesconfiguration() {
                   >
                     <span style={{ lineHeight: "16px" }}>Import</span>
                     <ArrowUpFromLine size={12} />
-                  </ModalButton>
-                  <ModalButton
-                    classname={
-                      "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
-                    }
-                    style={{ height: 36 }}
-                  >
-                    <span style={{ lineHeight: "16px" }}>Actions</span>
-                    <ChevronDown size={16} />
                   </ModalButton>
                 </div>
               </div>

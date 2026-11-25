@@ -61,21 +61,6 @@ function SchoolEventLayout() {
                   <Icon icon="tabler:arrow-down" width={14} height={14} />
                 </span>
               </button>
-              <button
-                className={
-                  "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
-                }
-                style={{ height: 36 }}
-              >
-                <span style={{ lineHeight: "16px" }}>Actions</span>
-                <span>
-                  <Icon
-                    icon="majesticons:chevron-down"
-                    width={16}
-                    height={16}
-                  />
-                </span>
-              </button>
               <DrawerTrigger
                 title="Create School Event"
                 placement="right"

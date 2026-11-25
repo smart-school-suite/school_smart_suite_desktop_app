@@ -1,10 +1,4 @@
-import {
-  ArrowDown,
-  ChevronDown,
-  Megaphone,
-  Podium,
-  ReceiptText
-} from "lucide-react";
+import { ArrowDown, Megaphone, Podium, ReceiptText } from "lucide-react";
 import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -102,15 +96,6 @@ function ExamResults() {
                     >
                       <span style={{ lineHeight: "16px" }}>Import</span>
                       <ArrowDown size={16} />
-                    </button>
-                  </ModalButton>
-                  <ModalButton>
-                    <button
-                      className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg gap-2"
-                      style={{ height: 36, padding: "0.65rem" }}
-                    >
-                      <span style={{ lineHeight: "16px" }}>Actions</span>
-                      <ChevronDown size={16} />
                     </button>
                   </ModalButton>
                 </div>

@@ -1,8 +1,7 @@
-import { ArrowDown, ChevronDown, ClipboardList, UserCheck, UserPlus } from "lucide-react";
+import { ArrowDown, ClipboardList, UserCheck, UserPlus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import InvigilatorCard from "../../components/Card/InvigilatorCard";
-import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import DrawerTrigger from "../../components/drawer/DrawerTrigger";
 import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
 import SearchInput from "../../components/input/search";
@@ -274,15 +273,6 @@ export function InvigilatorManager({ config }) {
         </div>
         <div className="d-flex flex-row align-item-center gap-2">
           <JobPopOver />
-          <ModalButton
-            classname={
-              "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-2 white-bg"
-            }
-            style={{ height: 36 }}
-          >
-            <span style={{ lineHeight: "16px" }}>Actions</span>
-            <ChevronDown size={16} />
-          </ModalButton>
         </div>
       </div>
 

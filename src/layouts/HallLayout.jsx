@@ -1,9 +1,7 @@
-import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import JobPopOver from "../components/Popover/JobPopover";
 import CreateHall from "../DrawerContent/Hall/CreateHall";
@@ -46,21 +44,6 @@ function HallLayout() {
             <div className="d-flex flex-row align-item-center gap-2">
               <JobPopOver category={"Hall"} />
               <ImportTrigger />
-              <ModalButton
-                classname={
-                  "border-none border rounded-3 font-size-sm p-2 d-flex flex-row align-items-center gap-1 white-bg"
-                }
-                style={{ height: 36 }}
-              >
-                <span style={{ lineHeight: "16px" }}>Actions</span>
-                <span>
-                  <Icon
-                    icon="majesticons:chevron-down"
-                    width={16}
-                    height={16}
-                  />
-                </span>
-              </ModalButton>
               {location.pathname === sideBarData[0].path && (
                 <DrawerTrigger
                   title="Create Hall"
