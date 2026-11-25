@@ -19,11 +19,12 @@ export const useUpdateSetting = (handleClose) => {
          handleClose()
       }
     },
-    onError: () => {
+    onError: (error) => {
+      const details = error?.response?.data?.errors;
       toast.custom(
         <ToastDanger
-          title={"Updated Failed"}
-          description={`Failed to update  due to an error please try again !!`}
+          title={details?.title ?? "Update failed"}
+          description={details?.description ?? "We couldn't update this setting. Please try again."}
         />,
       );
     },
