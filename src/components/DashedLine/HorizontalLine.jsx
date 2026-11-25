@@ -1,5 +1,4 @@
 import React from "react";
-import { useSelector } from "react-redux";
 
 /**
  * A thin solid divider.
@@ -9,31 +8,40 @@ import { useSelector } from "react-redux";
  * it were not rendered) is hidden by CSS, so callers can place it freely.
  */
 function HorizontalLine({
-  color,
-  thickness = 1,
+  color = "#ccc",
+  thickness = 0.2,
   spacing = "0.25rem",
   inset = "0.25rem",
   className = "",
   style,
 }) {
-  const darkMode = useSelector((state) => state.theme.darkMode);
-  const lineColor = color ?? (darkMode ? "#333" : "#ececec");
-
   return (
     <div
       role="separator"
       aria-orientation="horizontal"
       className={`horizontal-line ${className}`}
       style={{
-        height: thickness,
-        minHeight: thickness,
-        backgroundColor: lineColor,
         margin: `${spacing} ${inset}`,
-        borderRadius: thickness,
         flexShrink: 0,
+        lineHeight: 0,
         ...style,
       }}
-    />
+    >
+      <svg
+        width="100%"
+        height={Math.max(thickness, 1)}
+        style={{ display: "block", overflow: "visible" }}
+      >
+        <line
+          x1="0"
+          y1="50%"
+          x2="100%"
+          y2="50%"
+          stroke={color}
+          strokeWidth={thickness}
+        />
+      </svg>
+    </div>
   );
 }
 
