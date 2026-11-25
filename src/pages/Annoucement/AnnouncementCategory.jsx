@@ -25,10 +25,19 @@ import Table from "../../components/Tables/Tables";
 import BulkActionsToast from "../../components/Toast/BulkActionsToast";
 import CustomTooltip from "../../components/Tooltips/Tooltip";
 import { Drawer } from "../../components/drawer/Drawer";
-import { NotFoundError } from "../../components/errors/Error";
+import CreateFirstState from "../../components/errors/CreateFirstState";
+import EmptyState, { EmptyStateButton } from "../../components/errors/EmptyState";
+import CreateAnnouncementCategory from "../../DrawerContent/AnnouncementCategory/CreateAnnouncementCategory";
+import { isEmptyListError } from "../../utils/query/emptyList";
 import { useGetAnnouncementCategories } from "../../hooks/announcement/useGetAnnouncementCategories";
 import { DeleteIcon } from "../../icons/ActionIcons";
 import { announcementCategoryColDefs } from "../../utils/table/colDefs/announcement/announcementCategoryColDefs";
+// Server titles sometimes end with an emoji ("No Categories Found 📂"); show text only.
+const withoutEmoji = (text) =>
+  String(text ?? "")
+    .replace(/[\p{Extended_Pictographic}\uFE0F\u200D]/gu, "")
+    .trim();
+
 function AnnouncementCategory() {
   const dispatch = useDispatch();
   const tableRef = useRef(null);
@@ -37,7 +46,10 @@ function AnnouncementCategory() {
     tableRef,
   );
   const tableWrapperRef = useRef(null);
-  const { data: category, isLoading, error } = useGetAnnouncementCategories();
+  const { data: category, isLoading, error, refetch } = useGetAnnouncementCategories();
+  // The API answers 404 when there are no categories yet: that is the
+  // empty state (create the first one), not a failure.
+  const isEmpty = isEmptyListError(error) || (!error && !isLoading && (category?.data ?? []).length === 0);
   const [rowCount, setRowCount] = useState(0);
   const [selectedCategories, setSelectedCategory] = useState([]);
 
@@ -68,11 +80,26 @@ function AnnouncementCategory() {
         <div className="h-100">
           {isLoading ? (
             <RectangleSkeleton width="100%" height="100%" />
+          ) : isEmpty ? (
+            <CreateFirstState
+              title="No announcement categories yet"
+              description="Categories group your announcements, for example Exams, Events or Fees, so the people receiving them can tell at a glance what each one is about. Create your first category to start."
+              createLabel="Create category"
+              drawerTitle="Create Announcement Category"
+              createDrawer={CreateAnnouncementCategory}
+            />
           ) : error ? (
-            <NotFoundError
-              title={error?.response?.data?.errors?.title}
-              description={error?.response?.data?.errors?.description}
-            ></NotFoundError>
+            <EmptyState
+              mascot="error"
+              height="100%"
+              mascotHeight="6rem"
+              title={withoutEmoji(error?.response?.data?.errors?.title) || "Categories could not be loaded"}
+              description={
+                withoutEmoji(error?.response?.data?.errors?.description) ||
+                "Check your connection and try again."
+              }
+              actions={<EmptyStateButton onClick={() => refetch()}>Try again</EmptyStateButton>}
+            />
           ) : (
             <>
               <div className="d-flex flex-column gap-2 h-100">

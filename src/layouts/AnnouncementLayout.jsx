@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import { useSelector } from "react-redux";
@@ -7,11 +7,14 @@ import { Megaphone } from "lucide-react";
 import JobPopOver from "../components/Popover/JobPopover";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
 import CreateAnnouncementWizzard from "../DrawerContent/Announcement/CreateAnnouncement/CreateAnnouncementWizzard";
+import CreateAnnouncementCategory from "../DrawerContent/AnnouncementCategory/CreateAnnouncementCategory";
 import { useGetAnnouncementSummary } from "../hooks/announcement/useGetAnnouncementSummary";
 function AnnouncementLayout() {
   const darkMode = useSelector((state) => state.theme.darkMode);
   const { data: summary, isLoading } = useGetAnnouncementSummary();
   const navigate = useNavigate();
+  const location = useLocation();
+  const onCategoryTab = location.pathname === "/announcement-category";
   const sideBarData = [
     {
       title: "All",
@@ -78,18 +81,30 @@ function AnnouncementLayout() {
                   <Icon icon="tabler:arrow-down" width={14} height={14} />
                 </span>
               </ModalButton>
-              <DrawerTrigger
-                title="Create Announcement"
-                placement="right"
-                drawerChildren={CreateAnnouncementWizzard}
-                closeOnOutsideClick={false}
-                closeOnEscape={false}
-                showHeader={false}
-              >
-                <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
-                  <span>Create Announcement</span>
-                </button>
-              </DrawerTrigger>
+              {onCategoryTab ? (
+                <DrawerTrigger
+                  title="Create Announcement Category"
+                  placement="right"
+                  drawerChildren={CreateAnnouncementCategory}
+                >
+                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
+                    <span>Create Category</span>
+                  </button>
+                </DrawerTrigger>
+              ) : (
+                <DrawerTrigger
+                  title="Create Announcement"
+                  placement="right"
+                  drawerChildren={CreateAnnouncementWizzard}
+                  closeOnOutsideClick={false}
+                  closeOnEscape={false}
+                  showHeader={false}
+                >
+                  <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
+                    <span>Create Announcement</span>
+                  </button>
+                </DrawerTrigger>
+              )}
             </div>
           </div>
           <div className="page-head__tabs d-flex flex-row align-items-center gap-4 font-size-sm">
