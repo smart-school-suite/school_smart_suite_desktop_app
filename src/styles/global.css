@@ -3247,3 +3247,17 @@ textarea::-webkit-scrollbar-thumb:hover {
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* Import preview table: cells hold their text (the global .ag-cell rule lets
+   text overflow into the next column and centres it). */
+.import-preview .ag-cell {
+  overflow: hidden;
+  justify-content: flex-start;
+  text-align: left;
+}
+.import-preview .ag-cell.import-preview__cell--end {
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+}
+.import-preview .import-preview__header--end .ag-header-cell-label {
+  justify-content: flex-end;
+}
