@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { format, isValid, parseISO } from "date-fns";
 import { useMemo } from "react";
-import toast from "react-hot-toast";
 import { Badge, BADGE_VARIANT } from "@/components/Renderer/badges";
 import { ModalButton } from "../../components/DataTableComponents/ActionComponent";
 import { NotFoundError } from "../../components/errors/Error";
@@ -21,8 +20,9 @@ import ProfilePhotoMenu from "../../components/Profile/ProfilePhotoMenu";
 import { useSchoolLogo } from "../../components/Profile/useProfilePhoto";
 import { SettingsRow, SettingsSection, useSettingsTone } from "../../components/Settings/SettingsSection";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
+import DrawerTrigger from "../../components/drawer/DrawerTrigger";
+import CreateSchoolBranch from "../../DrawerContent/SchoolBranch/CreateSchoolBranch";
 import Table from "../../components/Tables/Tables";
-import ToastWarning from "../../components/Toast/ToastWarning";
 import { useGetSchoolDetails } from "../../hooks/school/useGetSchoolDetails";
 import { useGetAuthSchoolAdmin } from "../../hooks/schoolAdmin/useGetAuthSchoolAdmin";
 import UpdateEstablishedDate from "../../ModalContent/School/UpdateEstablishedDate";
@@ -86,13 +86,6 @@ function School() {
   );
   const colDefs = useMemo(() => schoolBranchColDefs(), []);
 
-  const createBranch = () =>
-    toast.custom(
-      <ToastWarning
-        title="Creating branches is coming soon"
-        description="You'll be able to add a new branch to this school from here."
-      />,
-    );
 
   if (isLoading) return <SchoolSkeleton />;
   if (error) {
@@ -210,14 +203,21 @@ function School() {
       <SettingsSection
         title={`School branches · ${branches.length}`}
         action={
-          <button
-            type="button"
-            className="border-0 rounded-3 primary-background text-white font-size-sm px-3 py-1-5 d-inline-flex align-items-center gap-2"
-            onClick={createBranch}
+          <DrawerTrigger
+            drawerChildren={CreateSchoolBranch}
+            title="Create Branch"
+            placement="right"
+            size="md"
+            closeOnOutsideClick={false}
           >
-            <Plus size={15} strokeWidth={2} />
-            Create branch
-          </button>
+            <button
+              type="button"
+              className="border-0 rounded-3 primary-background text-white font-size-sm px-3 py-1-5 d-inline-flex align-items-center gap-2"
+            >
+              <Plus size={15} strokeWidth={2} />
+              Create branch
+            </button>
+          </DrawerTrigger>
         }
         padded
       >
