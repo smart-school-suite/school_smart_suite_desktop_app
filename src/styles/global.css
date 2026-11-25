@@ -2995,13 +2995,10 @@ textarea::-webkit-scrollbar-thumb:hover {
   display: none;
 }
 
-/* Table actions dropdown: compact rows, hover changes the text colour only. */
-.action-dropdown-menu {
-  gap: 0 !important;
-}
-
+/* Table actions dropdown: rows are spaced by the menu's gap-3 only, and
+   hover changes the text colour only. */
 .action-dropdown-menu .dropdown-item-table {
-  padding: 0.2rem 0 !important;
+  padding: 0 !important;
   line-height: 1.25;
   background-color: transparent !important;
   transition: color 0.15s ease;
@@ -3019,8 +3016,8 @@ textarea::-webkit-scrollbar-thumb:hover {
 }
 
 .action-dropdown-menu > .horizontal-line {
-  margin-top: 0.15rem !important;
-  margin-bottom: 0.15rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 /* Network status toast */
