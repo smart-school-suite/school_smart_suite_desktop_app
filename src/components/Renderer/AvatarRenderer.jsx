@@ -1,5 +1,5 @@
-import ProfileAvatar from "../Profile/ProfileAvatar";
 import { assetUrl } from "../../utils/assets";
+import ProfileAvatar from "../Profile/ProfileAvatar";
 
 const getFieldValue = (data, field, aliases) => {
   if (!data) return "";

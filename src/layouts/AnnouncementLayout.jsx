@@ -1,11 +1,11 @@
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import { ModalButton } from "../components/DataTableComponents/ActionComponent";
-import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { Megaphone } from "lucide-react";
-import JobPopOver from "../components/Popover/JobPopover";
+import { useSelector } from "react-redux";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { ModalButton } from "../components/DataTableComponents/ActionComponent";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import JobPopOver from "../components/Popover/JobPopover";
 import CreateAnnouncementWizzard from "../DrawerContent/Announcement/CreateAnnouncement/CreateAnnouncementWizzard";
 import CreateAnnouncementCategory from "../DrawerContent/AnnouncementCategory/CreateAnnouncementCategory";
 import { useGetAnnouncementSummary } from "../hooks/announcement/useGetAnnouncementSummary";
@@ -99,6 +99,7 @@ function AnnouncementLayout() {
                   closeOnOutsideClick={false}
                   closeOnEscape={false}
                   showHeader={false}
+                  size={"lg"}
                 >
                   <button className="border-none border rounded-3 font-size-sm p-2 primary-background text-white text-capitalize" style={{ height: 36 }}>
                     <span>Create Announcement</span>

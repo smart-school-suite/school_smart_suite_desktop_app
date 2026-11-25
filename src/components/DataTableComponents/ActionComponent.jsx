@@ -24,7 +24,7 @@ function ActionButtonDropdown({ children, style, buttonContent }) {
         apply({ elements }) {
           // Set the width of the floating element directly
           Object.assign(elements.floating.style, {
-            width: `20vw`, // Set width to 30% of viewport width
+            width: `16vw`, // Set width to 30% of viewport width
           });
         },
       }),
@@ -75,8 +75,8 @@ function ActionButtonDropdown({ children, style, buttonContent }) {
         >
           <div
             ref={refs.setFloating}
-            style={{...floatingStyles, borderRadius:"0.85rem"}}
-            className={`${darkMode ? "dark-bg dark-mode-border" : "border"} action-dropdown-menu dropdown-menu show position-absolute shadow-sm p-2 d-flex flex-column gap-3`}
+            style={{...floatingStyles, borderRadius:"0.85rem", gap:"0.8rem"}}
+            className={`${darkMode ? "dark-bg dark-mode-border" : "border"} action-dropdown-menu dropdown-menu show position-absolute shadow-sm py-3 d-flex flex-column `}
           >
             {children}
           </div>
