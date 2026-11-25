@@ -393,6 +393,7 @@ export function ActionComponent(props) {
             )}
           </>
         )}
+        <HorizontalLine />
         {rowData.exam_type === "ca" ? (
           <DropDownMenuItem
             className={

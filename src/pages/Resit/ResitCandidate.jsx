@@ -295,6 +295,7 @@ function ActionComponent(props) {
             </div>
           </DropDownMenuItem>
         )}
+        <HorizontalLine />
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"

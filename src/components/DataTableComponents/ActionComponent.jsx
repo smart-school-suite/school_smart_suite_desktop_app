@@ -6,7 +6,7 @@ import {
   size,
   useFloating,
 } from "@floating-ui/react";
-import { Ellipsis } from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { CSSTransition } from "react-transition-group";
@@ -54,7 +54,7 @@ function ActionButtonDropdown({ children, style, buttonContent }) {
           onClick={() => {
             toggleDropdown();
           }}
-          className={style}
+          className={`${(style ?? "").replace(/\btext-white\b/g, "")} ${darkMode ? "text-white" : "text-iron-700"}`}
           style={{
             background: "none",
             border: "none",
@@ -62,11 +62,10 @@ function ActionButtonDropdown({ children, style, buttonContent }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: darkMode ? "#ddd" : "#222",
           }}
           aria-label="Row actions"
         >
-          <Ellipsis size={20} strokeWidth={1.75} />
+          <EllipsisVertical size={20} strokeWidth={1.75} />
         </button>
         <CSSTransition
           in={isToggled}

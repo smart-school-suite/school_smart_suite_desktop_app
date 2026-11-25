@@ -325,6 +325,7 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={menuItemClassName}
           onClick={() =>
