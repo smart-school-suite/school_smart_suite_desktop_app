@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import FormErrorBanner from "../../components/errors/FormErrorBanner";
 import { DialogHeader } from "../../components/Modals/ConfirmDialog";
 import { SingleSpinner } from "../../components/Spinners/Spinners";
-import WizardStepBar from "../../components/Wizard/WizardStepBar";
+import ImportSteps from "../../components/Import/ImportSteps";
 import { useFormError } from "../../hooks/form/useFormError";
 import { useImportModule } from "../../hooks/import/useImportModule";
 import { useImportWizard } from "../../hooks/import/useImportWizard";
@@ -16,7 +16,7 @@ import ImportReview from "./ImportReview";
 const STEPS = [
   { step: "upload", label: "Choose file" },
   { step: "match", label: "Match columns" },
-  { step: "review", label: "Review & import" },
+  { step: "review", label: "Review" },
 ];
 
 /**
@@ -105,7 +105,7 @@ function ImportWizzard({ rowData = {}, handleClose }) {
         onClose={requestClose}
         closeDisabled={busy}
       />
-      <WizardStepBar steps={STEPS} stepIndex={stepIndex} canJumpTo={canJumpTo} navigate={goTo} ariaLabel="Import steps" layoutId="import-wizard-active-step" />
+      <ImportSteps steps={STEPS} stepIndex={stepIndex} canJumpTo={canJumpTo} navigate={goTo} />
 
       <div className="flex-grow-1 scroll-bar-sm over-flow-y-auto px-3 py-3" style={{ minHeight: 0 }}>
         <FormErrorBanner ref={errorBannerRef} error={formError} onDismiss={clearFormError} className="mb-3" />

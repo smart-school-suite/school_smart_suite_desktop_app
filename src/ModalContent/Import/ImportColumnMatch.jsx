@@ -74,7 +74,9 @@ export default function ImportColumnMatch({ wizard, module }) {
         <div className="d-flex flex-column gap-1">
           <span className="fw-semibold">Match the columns of your file</span>
           <span className="text-iron-500">
-            {autoMatched > 0
+            {autoMatched > 0 && autoMatched === total
+              ? `All ${total} fields were matched for you. Check them, then review the rows.`
+              : autoMatched > 0
               ? `${autoMatched} of ${total} fields were matched for you. Check them and fill in the rest.`
               : `Choose which column of "${wizard.sheet?.info?.name}" fills each ${module?.name?.toLowerCase() ?? ""} field.`}
           </span>
@@ -156,25 +158,21 @@ function MatchProgress({ matched, total, problems }) {
   const percent = total > 0 ? Math.round((matched / total) * 100) : 100;
   const done = problems.length === 0;
   return (
-    <div className={`rounded-4 p-3 d-flex flex-column gap-2 ${done ? "bg-fern-50" : "bg-old-lace-50"}`} role="status">
-      <div className="d-flex flex-row align-items-center justify-content-between gap-2">
-        <span className={`fw-semibold d-flex flex-row align-items-center gap-2 ${done ? "text-fern-700" : "text-old-lace-800"}`}>
-          {done ? <CircleCheck size={16} /> : <CircleAlert size={16} />}
-          {done ? "All required fields have a column" : `${problems.length} ${problems.length === 1 ? "thing" : "things"} to fix before you can continue`}
+    <div className="d-flex flex-column gap-1" role="status">
+      <div className="d-flex flex-row align-items-center justify-content-between gap-2 font-size-xs">
+        <span className={`d-flex flex-row align-items-center gap-1 fw-medium ${done ? "text-fern-700" : "text-old-lace-800"}`}>
+          {done ? <CircleCheck size={13} /> : <CircleAlert size={13} />}
+          {done
+            ? "All required fields have a column"
+            : problems.length === 1
+              ? problems[0].message
+              : `${problems.length} things to fix: ${problems.map((problem) => problem.label).join(", ")}`}
         </span>
-        <span className="text-iron-600 font-size-xs flex-shrink-0">{matched} of {total} fields matched</span>
+        <span className="text-iron-500 flex-shrink-0">{matched} of {total} matched</span>
       </div>
-      <div className="rounded-pill bg-white overflow-hidden" style={{ height: 6 }}>
+      <div className="rounded-pill bg-iron-100 overflow-hidden" style={{ height: 3 }}>
         <div className={`h-100 rounded-pill ${done ? "bg-fern-500" : "bg-old-lace-500"}`} style={{ width: `${percent}%`, transition: "width 0.3s ease" }} />
       </div>
-      {!done && (
-        <ul className="m-0 ps-3 text-old-lace-800 font-size-xs">
-          {problems.slice(0, 4).map((problem) => (
-            <li key={`${problem.key}-${problem.message}`}>{problem.message}</li>
-          ))}
-          {problems.length > 4 && <li>and {problems.length - 4} more</li>}
-        </ul>
-      )}
     </div>
   );
 }

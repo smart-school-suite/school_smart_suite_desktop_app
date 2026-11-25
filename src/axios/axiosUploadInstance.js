@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/constants";
+import { API_BASE_URL, TOKEN_KEY } from "@/constants";
 import axios from 'axios';
 import { secureTokenStorage } from "../services/secureStore/secureTokenStorage";
 import { store } from "../store/store";
@@ -16,7 +16,9 @@ axiosUploadInstance.interceptors.request.use(
   async (config) => {
     const state = store.getState();
 
-    const token = await secureTokenStorage.get("authToken");
+    // Same key as every other request (authAxios); "authToken" was never set,
+    // so uploads went out without a token and got "Unauthenticated".
+    const token = await secureTokenStorage.get(TOKEN_KEY.AUTH_TOKEN);
     const apiKey = state.auth?.apiKey;
 
     if (!config.headers) {
