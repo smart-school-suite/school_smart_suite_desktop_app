@@ -24,7 +24,7 @@ export const JOINT_COURSE_COLUMNS = [
     program_name: "description",
     type: "standard_field",
     label: "Course Description",
-    required: true,
+    required: false,
     aliases: [
       "course_description",
       "description",
@@ -73,7 +73,7 @@ export const JOINT_COURSE_COLUMNS = [
       {
         program_name: "level",
         label: "level",
-        required: true,
+        required: false,
       },
     ],
   },

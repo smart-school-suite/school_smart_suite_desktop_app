@@ -174,8 +174,8 @@ function DiagnosticComponent() {
               src="./sss-maskot/td-maskot.png"
               alt="sss-timetable-maskot"
               style={{
-                height: "200px",
-                width: "250px",
+                height: "120px",
+                width: "120px",
                 objectFit: "contain",
               }}
             />

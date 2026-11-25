@@ -301,8 +301,8 @@ function TimetableGridPlaceholder() {
           src="./sss-maskot/timetable.png"
           alt="sss-timetable-maskot"
           style={{
-            height: "250px",
-            width: "250px",
+            height: "120px",
+            width: "120px",
             objectFit: "contain",
           }}
         />

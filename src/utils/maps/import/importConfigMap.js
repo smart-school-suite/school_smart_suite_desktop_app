@@ -7,8 +7,11 @@ import { importStudent } from "../../../services/student";
 import { importTeacherSpecialty } from "../../../services/teacherSpecialty";
 import { importGradeScale } from "../../../services/gradeScale";
 import {
+  importJointCourse,
+  importParent,
   importSchoolAdmin,
   importSpecialtyHall,
+  importStudentBatch,
   importTeacherCourse,
 } from "../../../services/import";
 
@@ -102,17 +105,60 @@ const IMPORT_CONFIG_MAP = {
   course: {
     mutationFn: importCourse,
     queryKey: ["courses"],
+    refreshKeys: [["activeCourses"]],
     title: "Course Import",
+    template: {
+      path: "/import/templates/course_import_template.csv",
+      fileName: "course_import_template.csv",
+    },
+  },
+  jointCourse: {
+    mutationFn: importJointCourse,
+    queryKey: ["joint-courses"],
+    refreshKeys: [["courses"]],
+    title: "Joint Course Import",
+    template: {
+      path: "/import/templates/joint_course_import_template.csv",
+      fileName: "joint_course_import_template.csv",
+    },
   },
   student: {
     mutationFn: importStudent,
     queryKey: ["students"],
+    refreshKeys: [["registrationFees"], ["tuitionFees"]],
     title: "Student Import",
+    template: {
+      path: "/import/templates/student_import_template.csv",
+      fileName: "student_import_template.csv",
+    },
+  },
+  parent: {
+    mutationFn: importParent,
+    queryKey: ["parents"],
+    title: "Guardian Import",
+    template: {
+      path: "/import/templates/guardian_import_template.csv",
+      fileName: "guardian_import_template.csv",
+    },
+  },
+  studentBatch: {
+    mutationFn: importStudentBatch,
+    queryKey: ["studentBatches"],
+    title: "Student Batch Import",
+    template: {
+      path: "/import/templates/student_batch_import_template.csv",
+      fileName: "student_batch_import_template.csv",
+    },
   },
   gradeScale: {
     mutationFn: importGradeScale,
-    queryKey: ["grade-scale"],
+    queryKey: ["grade-scale-categories"],
+    refreshKeys: [["grade-scale-category"], ["grade-scale-categories-active"]],
     title: "Grade Scale Import",
+    template: {
+      path: "/import/templates/grade_scale_import_template.csv",
+      fileName: "grade_scale_import_template.csv",
+    },
   },
 };
 

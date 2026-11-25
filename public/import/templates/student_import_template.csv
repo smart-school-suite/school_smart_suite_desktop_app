@@ -1,0 +1,3 @@
+email,full_names,first_name,last_name,gender,phone,specialty,level,batch,guardian,relationship,student_source,fee_payment_format
+ada.mbarga@example.com,Ada Mbarga,Ada,Mbarga,Female,690000001,Software Engineering,Level One,2025/2026,Paul Mbarga,Father,Social Media,installmental
+eric.ndi@example.com,Eric Ndi,Eric,Ndi,Male,,Accounting,Level One,2025/2026,699234567,Mother,School Website,one time

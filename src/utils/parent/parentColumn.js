@@ -30,14 +30,14 @@ export const PARENT_COLUMNS = [
     program_name: "contact_method",
     type: "standard_field",
     label: "Contact Method",
-    required: true,
+    required: false,
     aliases: ["contact_method", "contact"],
   },
   {
     program_name: "language",
     type: "standard_field",
     label: "Language",
-    required: true,
+    required: false,
     aliases: ["language"],
   },
 ];

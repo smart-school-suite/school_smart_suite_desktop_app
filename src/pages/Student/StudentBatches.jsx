@@ -97,7 +97,7 @@ function StudentBatches() {
               <span className="fw-semibold font-size-sm">Manage Batches</span>
             </div>
             <div className="d-flex flex-row align-item-center gap-2">
-              <JobPopOver category={"studentBatch"} />
+              <JobPopOver category={"Student Batch"} />
               <ModalButton
                 action={{ modalContent: ImportWizzard }}
                 size={"xl"}

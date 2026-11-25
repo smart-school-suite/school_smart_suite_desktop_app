@@ -118,7 +118,7 @@ function Gradesconfiguration() {
                   </span>
                 </div>
                 <div className="d-flex flex-row align-item-center gap-2">
-                  <JobPopOver />
+                  <JobPopOver category={"Grade Scale"} />
                   <ModalButton
                     action={{ modalContent: ImportWizzard }}
                     size={"xl"}
