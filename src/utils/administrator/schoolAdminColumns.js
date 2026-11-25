@@ -10,7 +10,8 @@ export const SCHOOL_ADMIN_COLUMNS = [
     program_name: "full_names",
     type: "standard_field",
     label: "Full Names",
-    required: true,
+    // Optional: first name + last name is used when there is no full name column.
+    required: false,
     aliases: ["name", "full_name", "admin_name"],
   },
   {

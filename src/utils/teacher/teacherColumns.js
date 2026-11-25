@@ -10,7 +10,8 @@ export const TEACHER_COLUMNS = [
     program_name: "full_names",
     type: "standard_field",
     label: "Full Names",
-    required: true,
+    // Optional: first name + last name is used when there is no full name column.
+    required: false,
     aliases: ["name", "full_name", "teacher_name"],
   },
   {
@@ -45,7 +46,7 @@ export const TEACHER_COLUMNS = [
     program_name: "gender",
     type: "standard_field",
     label: "Gender",
-    required: false,
+    required: true,
     aliases: ["sex"],
   },
   {
@@ -69,7 +70,7 @@ export const TEACHER_COLUMNS = [
       },
       {
         program_name: "university",
-        label: "university",
+        label: "University",
         required: true,
       },
       {
@@ -82,7 +83,7 @@ export const TEACHER_COLUMNS = [
   {
     type: "repeatable_group",
     program_name: "allowed_levels",
-    label: "Qualifications",
+    label: "Allowed Levels",
     occurrences: {
       min: 1,
       max: 5,

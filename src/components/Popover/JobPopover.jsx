@@ -14,13 +14,17 @@ import {
 import { Icon } from "@iconify/react";
 import { useChannel } from "ably/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetJobs } from "../../hooks/job/useGetJobs";
 import { isLastElement } from "../../utils/functions";
+import { subscribeToJobs } from "../../utils/jobs/jobTracker";
 import { jobProgressMap } from "../../utils/maps/jobProgressMap";
 import HorizontalDashedLine from "../DashedLine/HorizonetalDashedLine";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
+/** While a job of this list is running, refresh the list this often, live event or not. */
+const ACTIVE_POLL_INTERVAL_MS = 5000;
+
 export default function JobPopOver({ category }) {
   const [isOpen, setIsOpen] = useState(false);
   const [jobs, setJobs] = useState([]);
@@ -67,6 +71,18 @@ export default function JobPopOver({ category }) {
       ...(activeTab !== "all" && { status: activeTab }),
     });
   };
+  // Polling and the job tracker call the latest fetchJobs (current tab).
+  const fetchJobsRef = useRef(fetchJobs);
+  fetchJobsRef.current = fetchJobs;
+
+  // A job started, progressed or finished somewhere in the app: refresh.
+  useEffect(
+    () =>
+      subscribeToJobs(({ type }) => {
+        if (type === "started" || type === "finished") fetchJobsRef.current();
+      }),
+    [],
+  );
 
   useEffect(() => {
     if (data?.data) {
@@ -107,17 +123,24 @@ export default function JobPopOver({ category }) {
             ...group,
             jobs: group.jobs.map((j) => {
               if (j.id === payload.job_id) {
-                const updatedJob = {
-                  ...j,
-                  progress_percentage:
-                    payload.progress ?? j.progress_percentage,
-                  status: payload.status ?? j.status,
-                  stage: payload.stage ?? j.stage,
-                };
+                // Newer events carry the whole job; older ones only progress.
+                const updatedJob = payload.job
+                  ? { ...j, ...payload.job }
+                  : {
+                      ...j,
+                      progress_percentage:
+                        payload.progress ?? j.progress_percentage,
+                      status: payload.status ?? j.status,
+                      stage: payload.stage ?? j.stage,
+                    };
 
                 if (
-                  payload.progress === 100 ||
-                  payload.status === JOB_STATUS.COMPLETED
+                  payload.is_finished ||
+                  [
+                    JOB_STATUS.COMPLETED,
+                    JOB_STATUS.COMPLETED_WITH_ISSUES,
+                    JOB_STATUS.FAILED,
+                  ].includes(payload.status)
                 ) {
                   jobCompleted = true;
                 }
@@ -157,6 +180,17 @@ export default function JobPopOver({ category }) {
       return total + activeInGroup;
     }, 0);
   }, [jobs]);
+
+  // The live event can be missed (connection dropped, app asleep): while a
+  // job is running, ask the API until it finishes.
+  useEffect(() => {
+    if (activeJobsCount === 0) return undefined;
+    const timer = setInterval(
+      () => fetchJobsRef.current(),
+      ACTIVE_POLL_INTERVAL_MS,
+    );
+    return () => clearInterval(timer);
+  }, [activeJobsCount]);
 
   const filteredJobs = useMemo(() => {
     if (!debouncedSearch.trim()) return jobs;
@@ -226,7 +260,11 @@ export default function JobPopOver({ category }) {
                 >
                   <div className="d-flex flex-column">
                     <span className="fw-semibold">Jobs</span>
-                    <span>Background activity for Teacher Management</span>
+                    <span className="text-muted">
+                      {category
+                        ? `Background activity for ${category}`
+                        : "Background activity"}
+                    </span>
                   </div>
                 </div>
                 <div className=" d-flex flex-column gap-2">
@@ -344,11 +382,11 @@ export default function JobPopOver({ category }) {
                             }}
                           />
                           <span className="fw-semibold font-size-sm">
-                            Timetable Generation Failed
+                            Jobs could not be loaded
                           </span>
                           <p className="text-muted font-size-sm mb-0">
-                            Consider the diagnostic report to identify and
-                            resolve constraint conflicts
+                            Check your connection; the list refreshes on its
+                            own while a job is running.
                           </p>
                         </div>
                       </div>
@@ -384,12 +422,20 @@ export default function JobPopOver({ category }) {
                                         type={jobItem.type}
                                         processed={jobItem?.successful_items}
                                         issuesCount={jobItem?.failed_items}
+                                        summary={jobItem?.summary}
+                                        errorMessage={jobItem?.error_message}
+                                        status={jobItem?.status}
                                         total={jobItem?.total_items}
                                         failedItems={jobItem?.failed_items}
                                         startedAt={jobItem?.started_at}
                                         queuedAt={jobItem?.started_at}
                                         timestamp={jobItem?.finished_at}
-                                        unit={jobItem?.unit}
+                                        unit={
+                                          jobItem?.type === "Import"
+                                            ? "records imported"
+                                            : jobItem?.unit
+                                        }
+                                        completedAt={jobItem?.finished_at}
                                         processedUnit={jobItem?.processed_unit}
                                         progress={jobItem?.progress_percentage}
                                       />

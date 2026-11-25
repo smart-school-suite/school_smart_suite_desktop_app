@@ -68,7 +68,7 @@ function JobCompletedCard({
 
       <div className="d-flex flex-row justify-content-between align-items-center font-size-sm text-muted">
         <span>
-          {processed.toLocaleString()} {unit}
+          {(processed ?? 0).toLocaleString()} {unit}
         </span>
 
         {formattedCompletedAt && <span>{formattedCompletedAt}</span>}

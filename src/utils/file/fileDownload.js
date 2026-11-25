@@ -46,7 +46,7 @@ export const saveFile = async (data, fileName, mimeType = "") => {
 /**
  * Download a file that ships with the application (e.g. files in /public).
  *
- * @param {string} filePath  Path of the bundled asset, e.g. "/import/examples/teacher_example.csv"
+ * @param {string} filePath  Path of the bundled asset, e.g. "/import/templates/teacher_import_template.csv"
  * @param {string} [fileName] Suggested file name for the saved file
  */
 export const downloadFile = async (filePath, fileName) => {

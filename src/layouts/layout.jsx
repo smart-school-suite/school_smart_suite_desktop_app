@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { Outlet, useLocation } from "react-router-dom";
 import ErrorBoundary from "../components/errors/ErrorBoundary";
+import JobWatcher from "../components/jobs/JobWatcher";
 import Sidebar from "../components/SideBars/Sidebar";
 import useScreenSize from "../hooks/ui/useScreenSize";
 const appWindow = getCurrentWindow();
@@ -14,7 +15,9 @@ function Layout() {
   return (
     <>
       <Toaster position="bottom-right" reverseOrder={false}></Toaster>
-      
+      {/* Follows imports started from this window until they finish. */}
+      <JobWatcher />
+
       <div className={`${darkMode && "dark-bg-light"}`}>
         <div className="d-flex flex-row w-100">
           {/* The sidebar sets its own width (expanded or icon rail). */}

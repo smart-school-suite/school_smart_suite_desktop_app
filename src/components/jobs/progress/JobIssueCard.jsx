@@ -17,6 +17,9 @@ function JobIssueCard({
   issuesCount = 0,
   processedUnit = "imported",
   issuesUnit = "need attention",
+  status,
+  summary,
+  errorMessage,
   timestamp,
   onViewIssues,
   onClick,
@@ -80,22 +83,28 @@ function JobIssueCard({
         )}
       </div>
 
+      {(errorMessage || summary) && (
+        <span className="font-size-sm text-muted">
+          {status === "failed" ? errorMessage ?? summary : summary}
+        </span>
+      )}
+
       <div className="d-flex flex-row justify-content-between align-items-center font-size-sm">
         <div className="d-flex flex-row align-items-center fw-semibold gap-2">
           <span>
-            {processed.toLocaleString()} {processedUnit}
+            {(processed ?? 0).toLocaleString()} {processedUnit}
           </span>
           <span>
             <Dot size={12} />
           </span>
           <span>
-            {issuesCount.toLocaleString()} {issuesUnit}
+            {(issuesCount ?? 0).toLocaleString()} {issuesUnit}
           </span>
         </div>
 
         <ModalButton
           action={{ modalContent: JobError }}
-          rowData={{ jobId }}
+          rowData={{ jobId, title }}
           size={"lg"}
           classname={
             "border-none bg-transparent p-0 m-0 d-flex flex-row align-items-center gap-2 border-bottom"

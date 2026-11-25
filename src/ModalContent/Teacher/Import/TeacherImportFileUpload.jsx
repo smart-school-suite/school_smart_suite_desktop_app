@@ -402,8 +402,8 @@ function TeacherImportFileUpload({
           <button
             onClick={() =>
               handleTemplateDownload(
-                "/import/examples/teacher_example.csv",
-                "teacher_example.csv",
+                "/import/templates/teacher_import_template.csv",
+                "teacher_import_template.csv",
               )
             }
             className="font-size-sm border-none rounded-3 p-2 d-flex flex-row align-items-center gap-2 w-100 justify-content-center bg-light"

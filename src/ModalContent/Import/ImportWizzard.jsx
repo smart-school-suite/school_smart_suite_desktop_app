@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { IMPORT_STEP_FLOW } from "../../utils/steps/import/importStepFlow";
-import { useSelector } from "react-redux";
+import { IMPORT_CONFIG_MAP } from "../../utils/maps/import/importConfigMap";
 function ImportWizzard({ rowData, handleClose }) {
   const {
     moduleState,
@@ -46,7 +46,11 @@ function ImportWizzard({ rowData, handleClose }) {
         removeRepeatableGroup={removeRepeatableGroup}
         setStandardGroupValue={setStandardGroupValue}
         setRepeatableGroupValue={setRepeatableGroupValue}
-        module={module}
+        module={{
+          ...module,
+          // The module's CSV template, unless the trigger passed its own.
+          template: module?.template ?? IMPORT_CONFIG_MAP[moduleState]?.template,
+        }}
         moduleInstanceMap={moduleInstanceMap}
         importModuleColDefs={importModuleColDefs}
       />
