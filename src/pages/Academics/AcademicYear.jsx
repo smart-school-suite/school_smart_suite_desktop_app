@@ -1,10 +1,4 @@
-import {
-  ArrowDown,
-  ChevronDown,
-  FilePen,
-  ReceiptText,
-  Trash2
-} from "lucide-react";
+import { ArrowDown, FilePen, ReceiptText, Trash2 } from "lucide-react";
 import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -93,15 +87,6 @@ function AcademicYear() {
               >
                 <span style={{ lineHeight: "16px" }}>Import</span>
                 <ArrowDown size={16} />
-              </ModalButton>
-              <ModalButton
-                classname={
-                  "border-none border rounded-3 font-size-sm d-flex flex-row align-items-center gap-2 white-bg"
-                }
-                style={{ height: 36, padding: "0.6rem" }}
-              >
-                <span style={{ lineHeight: "16px" }}>Actions</span>
-                <ChevronDown size={16} />
               </ModalButton>
               <DrawerTrigger
                 title="Create Academic Year"

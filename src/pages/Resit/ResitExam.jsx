@@ -1,12 +1,5 @@
 import { Icon } from "@iconify/react";
-import {
-  ArrowDown,
-  ChevronDown,
-  FilePen,
-  FileSliders,
-  ReceiptText,
-  Trash2
-} from "lucide-react";
+import { ArrowDown, FilePen, FileSliders, ReceiptText, Trash2 } from "lucide-react";
 import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -122,15 +115,6 @@ function ResitExam() {
                   >
                     <span style={{ lineHeight: "16px" }}>Import</span>
                     <ArrowDown size={16} />
-                  </button>
-                </ModalButton>
-                <ModalButton>
-                  <button
-                    className="border-none border rounded-3 px-2 font-size-sm d-flex flex-row align-items-center white-bg gap-2"
-                    style={{ height: 36, padding: "0.65rem" }}
-                  >
-                    <span style={{ lineHeight: "16px" }}>Actions</span>
-                    <ChevronDown size={16} />
                   </button>
                 </ModalButton>
               </div>
