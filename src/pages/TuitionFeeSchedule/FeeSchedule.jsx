@@ -168,6 +168,7 @@ export function ActionComponent(props) {
             }
           />
         )}
+        <HorizontalLine />
         <MenuItem
           label="View Schedule"
           icon={<CalendarDays size={16} strokeWidth={1.5} />}

@@ -226,6 +226,7 @@ export function ActionComponent(props) {
             </div>
           </DropDownMenuItem>
         )}
+        <HorizontalLine />
         {rowData?.status != "draft" && (
           <DropDownMenuItem
             className={
@@ -247,6 +248,7 @@ export function ActionComponent(props) {
             </div>
           </DropDownMenuItem>
         )}
+        <HorizontalLine />
         {rowData.status != "draft" && (
           <DropDownMenuItem
             className={

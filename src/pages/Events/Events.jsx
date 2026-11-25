@@ -307,6 +307,7 @@ export function ActionComponent(props) {
             }
           />
         )}
+        <HorizontalLine />
         <ActionMenuItem
           label="Event Details"
           Icon={ReceiptText}

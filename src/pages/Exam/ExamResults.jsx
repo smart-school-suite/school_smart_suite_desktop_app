@@ -5,6 +5,7 @@ import {
   Podium,
   ReceiptText
 } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionButtonDropdown, {
@@ -233,6 +234,7 @@ export function ActionComponent(props) {
             </div>
           </div>
         </DropDownMenuItem>
+        <HorizontalLine />
         <DropDownMenuItem
           className={
             "remove-button-styles w-100 dropdown-item-table p-0 rounded-2 pointer-cursor"

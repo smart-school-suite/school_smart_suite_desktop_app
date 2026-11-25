@@ -1,4 +1,5 @@
 import { FileChartColumn, Megaphone, ReceiptText } from "lucide-react";
+import HorizontalLine from "../../components/DashedLine/HorizontalLine";
 import { useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import ActionButtonDropdown, {
@@ -109,6 +110,7 @@ export function ActionComponent(props) {
         >
           <MenuLabel label="Publication Details" icon={ReceiptText} />
         </DropDownMenuItem>
+        <HorizontalLine />
         {canPublish && (
           <DropDownMenuItem className={ITEM_CLASS} onClick={() => setModal(() => PublishResitResult)}>
             <MenuLabel label={rowData?.publication_status === "scheduled" ? "Reschedule Results" : "Publish Results"} icon={Megaphone} />
