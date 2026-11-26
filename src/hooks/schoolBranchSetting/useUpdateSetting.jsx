@@ -9,6 +9,8 @@ export const useUpdateSetting = (handleClose) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["settings"] });
       queryClient.invalidateQueries({ queryKey: ["schoolSemesterCreationOptions"] });
+      // Level settings change which levels every level list shows.
+      queryClient.invalidateQueries({ queryKey: ["levels"] });
       // toast.custom(
       //   <ToastSuccess
       //     title={"Update Successfull"}
