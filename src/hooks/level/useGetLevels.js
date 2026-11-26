@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getLevels } from "../../services/level";
 
-export const useGetLevels = () => {
+/** Offered levels by default; scope "system" for every level of the school's level system. */
+export const useGetLevels = (scope) => {
     return useQuery({
-         queryKey:["levels"],
-         queryFn:() => getLevels()
+         queryKey:["levels", scope ?? "offered"],
+         queryFn:() => getLevels(scope)
     })
 }

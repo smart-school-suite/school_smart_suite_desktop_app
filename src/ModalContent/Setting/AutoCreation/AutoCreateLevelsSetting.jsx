@@ -20,10 +20,24 @@ const toLevelIds = (raw) => {
   return Array.isArray(parsed) ? parsed.filter((id) => typeof id === "string") : [];
 };
 
-// Multi-select: only the checked levels receive automatically created
-// records (semesters or academic years, named by `noun`).
-function AutoCreateLevelsSetting({ handleClose = () => {}, rowData, noun = "semester" }) {
-  const { data: levels, isLoading, error: levelError } = useGetLevels();
+/**
+ * Pick a list of levels for a setting. By default: the levels that receive
+ * automatically created records (semesters or academic years, named by
+ * `noun`). Other level-list settings pass their own title and description;
+ * `levelScope="system"` lists every level of the school's level system
+ * (for "Levels Offered by the School"), and `requireOne` refuses an empty
+ * selection.
+ */
+function AutoCreateLevelsSetting({
+  handleClose = () => {},
+  rowData,
+  noun = "semester",
+  title = "Applicable Academic Levels",
+  description,
+  levelScope,
+  requireOne = false,
+}) {
+  const { data: levels, isLoading, error: levelError } = useGetLevels(levelScope);
   const { mutate: updateSetting, isPending } = useUpdateSetting(handleClose);
   const { formError, errorBannerRef, handleServerError, clearFormError } =
     useFormError();
@@ -51,6 +65,10 @@ function AutoCreateLevelsSetting({ handleClose = () => {}, rowData, noun = "seme
       setError("You haven't made any changes yet. Select or clear a level to update.");
       return;
     }
+    if (requireOne && value.length === 0) {
+      setError("Select at least one level.");
+      return;
+    }
     clearFormError();
     updateSetting(
       { payload: { setting_id: rowData?.id, value } },
@@ -65,7 +83,7 @@ function AutoCreateLevelsSetting({ handleClose = () => {}, rowData, noun = "seme
         style={{ height: "6dvh", background: "#f9f9f9" }}
       >
         <div className="d-flex flex-row align-items-center justify-content-between">
-          <span className="font-size-sm fw-semibold">Applicable Academic Levels</span>
+          <span className="font-size-sm fw-semibold">{title}</span>
           <button
             type="button"
             onClick={handleClose}
@@ -91,8 +109,12 @@ function AutoCreateLevelsSetting({ handleClose = () => {}, rowData, noun = "seme
           </div>
         )}
         <span className="text-iron-400">
-          Only the selected levels receive automatically created {noun}s. The
-          level {noun === "academic year" ? "an" : "a"} {noun} is created for always receives it.
+          {description ?? (
+            <>
+              Only the selected levels receive automatically created {noun}s. The
+              level {noun === "academic year" ? "an" : "a"} {noun} is created for always receives it.
+            </>
+          )}
         </span>
         {isLoading ? (
           [...Array(4)].map((_, i) => <RectangleSkeleton key={i} width="100%" height="4dvh" />)
