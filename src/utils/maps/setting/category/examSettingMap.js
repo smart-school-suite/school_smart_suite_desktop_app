@@ -3,9 +3,15 @@ import Switch from "../../../../components/input/Switch";
 import CaDefaultMaxScoreSetting from "../../../../ModalContent/Setting/Exam/CaDefaultMaxScoreSetting";
 import ExamDefaultMaxScoreSetting from "../../../../ModalContent/Setting/Exam/ExamDefaultMaxScoreSetting";
 import ResitExamDefaultMaxScoreSetting from "../../../../ModalContent/Setting/Exam/ResitExamDefaultMaxScoreSetting";
+import AutoCreateExamTypesSetting, { examTypeOptionLabel } from "../../../../ModalContent/Setting/Exam/AutoCreateExamTypesSetting";
 import AutoCreateLevelsSetting from "../../../../ModalContent/Setting/AutoCreation/AutoCreateLevelsSetting";
 
 const isOn = (value) => value === true || value === 1 || value === "1" || value === "true";
+
+const autoCreateOff = (values) =>
+  isOn(values["exam.auto_create"] ?? true)
+    ? null
+    : "Turn on Automatically Create Exams for Matching Semesters to change this setting.";
 
 const AutoExamLevelsSetting = (props) =>
   createElement(AutoCreateLevelsSetting, {
@@ -30,28 +36,41 @@ export const examSettingMap = {
     editor: "modal",
     valueType: "json",
     component: AutoExamLevelsSetting,
-    disabledReason: (values) =>
-      isOn(values["exam.auto_create"] ?? true)
-        ? null
-        : "Turn on Automatically Create Exams for Matching Semesters to change this setting.",
+    disabledReason: autoCreateOff,
+  },
+  "exam.auto_create_types": {
+    key: "exam.auto_create_types",
+    order: 3,
+    editor: "modal",
+    valueType: "string",
+    component: AutoCreateExamTypesSetting,
+    formatValue: examTypeOptionLabel,
+    disabledReason: autoCreateOff,
+  },
+  "exam.auto_attach_grade_scale": {
+    key: "exam.auto_attach_grade_scale",
+    order: 4,
+    editor: "switch",
+    valueType: "boolean",
+    component: Switch
   },
   "exam.ca_default_max_score": {
     key: "exam.ca_default_max_score",
-    order: 3,
+    order: 5,
     editor: "modal",
     valueType: "float",
     component: CaDefaultMaxScoreSetting
   },
   "exam.exam_default_max_score": {
     key: "exam.exam_default_max_score",
-    order: 4,
+    order: 6,
     editor: "modal",
     valueType: "float",
     component: ExamDefaultMaxScoreSetting
   },
   "exam.resit_exam_default_max_score": {
     key: "exam.resit_exam_default_max_score",
-    order: 5,
+    order: 7,
     editor: "modal",
     valueType: "float",
     component: ResitExamDefaultMaxScoreSetting

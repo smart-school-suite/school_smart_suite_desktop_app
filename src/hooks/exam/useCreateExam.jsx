@@ -16,6 +16,12 @@ const createdDescription = (exam) => {
   } else if (skipped.length > 1) {
     parts.push(`${skipped.length} specialties were skipped (no students, missing CA or already created).`);
   }
+  const scale = exam?.grade_scale_attachment;
+  if (scale?.status === "attached" && scale.grade_scale) {
+    parts.push(`Grade scale ${scale.grade_scale} attached.`);
+  } else if (scale?.status === "several") {
+    parts.push("Several grade scales fit, so attach one by hand.");
+  }
   return parts.length ? parts.join(" ") : "Exam created successfully.";
 };
 
