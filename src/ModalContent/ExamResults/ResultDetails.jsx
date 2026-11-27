@@ -4,9 +4,11 @@ import { ExamIcon, StudentIcon } from "../../icons/Icons";
 import { useSelector } from "react-redux";
 import RectangleSkeleton from "../../components/SkeletonPageLoader/RectangularSkeleton";
 import { NotFoundError } from "../../components/errors/Error";
+import { useMaxGpa } from "../../hooks/schoolBranchSetting/useMaxGpa";
 function ExamResultDetails({ handleClose, rowData }) {
   const { id: resultId } = rowData;
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const maxGpa = useMaxGpa();
   const {
     data: resultDetails,
     isLoading,
@@ -88,7 +90,7 @@ function ExamResultDetails({ handleClose, rowData }) {
                 </div>
                 <div className="d-flex flex-column font-size-sm">
                   <span>{items.gratification}</span>
-                  <span>Grade Points Earned {items.grade_points}/4.00</span>
+                  <span>Grade Points Earned {items.grade_points}/{maxGpa.toFixed(2)}</span>
                 </div>
                 <div className="d-flex flex-row align-items-center justify-content-between w-100  font-size-sm fw-semibold">
                   <span className="text-capitalize">{items.grade_status}</span>
