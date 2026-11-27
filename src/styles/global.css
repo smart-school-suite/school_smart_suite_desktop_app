@@ -3261,3 +3261,32 @@ textarea::-webkit-scrollbar-thumb:hover {
 .import-preview .import-preview__header--end .ag-header-cell-label {
   justify-content: flex-end;
 }
+
+/* ---- Timetable constraint summary (components/Timetable/ConstraintSummary) ---- */
+.constraint-summary__row {
+  background: transparent;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+.constraint-summary__row:not(.border-top) {
+  border-top: 0;
+}
+.constraint-summary__row--editable {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.constraint-summary__row--editable:hover,
+.constraint-summary__row--editable:focus-visible {
+  background: var(--primary-color-50);
+  outline: none;
+}
+.constraint-summary__chevron {
+  color: var(--iron-400);
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+.constraint-summary__row--editable:hover .constraint-summary__chevron,
+.constraint-summary__row--editable:focus-visible .constraint-summary__chevron {
+  color: var(--primary-color-500);
+  transform: translateX(2px);
+}

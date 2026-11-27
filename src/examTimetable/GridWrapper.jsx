@@ -6,7 +6,9 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Drawer } from "../components/drawer/Drawer";
 import DrawerTrigger from "../components/drawer/DrawerTrigger";
+import ConstraintSummary from "../components/Timetable/ConstraintSummary";
 import RectangleSkeleton from "../components/SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../components/Spinners/Spinners";
 import ToastWarning from "../components/Toast/ToastWarning";
@@ -16,6 +18,7 @@ import { formatExamDate, useJointCourseReadiness } from "./constraints/fields";
 import DiagnosticWrapper from "./DiagnosticWrapper";
 import ExamSessionCard from "./ExamSessionCard";
 import ExamTimetableStatusBar from "./ExamTimetableStatusBar";
+import { examTimetableConstraintMap } from "./constraints/constraintMap";
 import { useKindState, useTimetableKind } from "./TimetableKindContext";
 
 // `progress` is the latest realtime event for the selected version (or null).
@@ -237,36 +240,57 @@ function ConfigurationSummary() {
   const { problems, unscheduled } = useStartGeneration();
   const { joint, scheduled } = useJointCourseReadiness();
   const op = constraints.operational_period;
-  const requests =
-    constraints.course_requested_slot.length +
-    constraints.requested_assignment.length +
-    constraints.hall_requested_slot.length +
-    constraints.invigilator_requested_slot.length;
+
+  // The constraints these rows show, as the constraints list loads them, so a
+  // row opens the same editor drawer as clicking it in the list.
+  const { data: constraintList } = kind.queries.useConstraints();
+  const [active, setActive] = useState(null);
+  const constraintFor = (key) => {
+    for (const category of constraintList?.data ?? []) {
+      const found = category.constraints?.find((item) => item.key === key);
+      if (found) return { ...found, category: category.category };
+    }
+    return null;
+  };
+  const editable = (key) => {
+    const constraint = constraintFor(key);
+    return constraint && examTimetableConstraintMap[key] ? () => setActive(constraint) : undefined;
+  };
+  const Editor = active ? examTimetableConstraintMap[active.key]?.component : null;
 
   const rows = [
-    [kind.copy.period, exam?.start_date && exam?.end_date ? `${formatExamDate(exam.start_date?.slice(0, 10))} – ${formatExamDate(exam.end_date?.slice(0, 10))}` : kind.copy.periodMissing],
-    ["Exam hours", `${op.start_time} – ${op.end_time}${op.date_exclusions.length ? ` · ${op.date_exclusions.length} date(s) excluded` : ""}`],
-    ["Exam length", `${constraints.session_duration.duration} minutes${constraints.session_duration.course_exceptions.length ? ` · ${constraints.session_duration.course_exceptions.length} exception(s)` : ""}`],
-    // ["Exams per day", constraints.student_daily_load_range.enabled ? `${constraints.student_daily_load_range.min_sessions} to ${constraints.student_daily_load_range.max_sessions}` : "No limit, spread over the period"],
-    // ["Invigilators", Number(constraints.candidates_per_invigilator) > 0 ? `One per ${constraints.candidates_per_invigilator} candidates` : "One per hall"],
-    // ["Requests", requests ? `${requests} request(s)` : "None"],
-    kind.joint.needsTime
-      ? [kind.joint.rowLabel, joint.length ? `${scheduled.length} of ${joint.length} time(s) set` : "None"]
-      : [kind.joint.rowLabel, joint.length ? `${joint.length} at another specialty's time` : "None"],
+    {
+      label: kind.copy.period,
+      value: exam?.start_date && exam?.end_date ? `${formatExamDate(exam.start_date?.slice(0, 10))} – ${formatExamDate(exam.end_date?.slice(0, 10))}` : kind.copy.periodMissing,
+      hint: "Set on the exam itself",
+    },
+    {
+      label: "Exam hours",
+      value: `${op.start_time} – ${op.end_time}${op.date_exclusions.length ? ` · ${op.date_exclusions.length} date(s) excluded` : ""}`,
+      onEdit: editable("operational_period"),
+    },
+    {
+      label: "Exam length",
+      value: `${constraints.session_duration.duration} minutes${constraints.session_duration.course_exceptions.length ? ` · ${constraints.session_duration.course_exceptions.length} exception(s)` : ""}`,
+      onEdit: editable("session_duration"),
+    },
+    {
+      label: kind.joint.rowLabel,
+      value: kind.joint.needsTime
+        ? joint.length ? `${scheduled.length} of ${joint.length} time(s) set` : "None"
+        : joint.length ? `${joint.length} at another specialty's time` : "None",
+      onEdit: editable("required_joint_course_periods"),
+    },
   ];
 
   return (
     <div className="d-flex flex-grow-1 align-items-center justify-content-center w-100">
       <div className="d-flex flex-column align-items-center gap-3" style={{ width: "min(30rem, 100%)" }}>
-        <img src="./sss-maskot/timetable.png" alt="sss-timetable-maskot" style={{ height: "180px", width: "180px", objectFit: "contain" }} />
-        <div className="border rounded-3 bg-white w-100">
-          {rows.map(([label, value], index) => (
-            <div key={label} className={`d-flex flex-row justify-content-between gap-3 px-3 py-2 font-size-sm ${index ? "border-top" : ""}`}>
-              <span className="text-iron-500">{label}</span>
-              <span className="fw-medium text-end">{value}</span>
-            </div>
-          ))}
+        <div className="d-flex flex-column align-items-center gap-1 text-center">
+          <span className="fw-semibold">Ready to generate</span>
+          <span className="font-size-sm text-iron-500">The {kind.noun} timetable will be generated with these settings. Click one to change it.</span>
         </div>
+        <ConstraintSummary rows={rows} />
         {unscheduled.length > 0 && (
           <div className="jcs-alert w-100 mb-0" role="alert" style={{ background: "#fdf3e3", color: "#9a5b0b" }}>
             <Icon icon="lucide:clock-alert" width={18} height={18} className="jcs-alert__icon" />
@@ -287,10 +311,13 @@ function ConfigurationSummary() {
           <span className="font-size-xs text-old-lace-700 text-center">{problems[0].text}</span>
         )}
         <span className="font-size-xs text-iron-500 text-center">
-          Change these from the constraints on the left. Nobody invigilates a course they teach.
+          The other constraints are in the list on the left. Nobody invigilates a course they teach.
         </span>
         <GenerateButton />
       </div>
+      <Drawer isOpen={Boolean(Editor)} onClose={() => setActive(null)} placement="right" size="lg" title={active?.name} closeOnOutsideClick={false} showHeader={false}>
+        {Editor && <Editor handleClose={() => setActive(null)} constraint={active} />}
+      </Drawer>
     </div>
   );
 }
