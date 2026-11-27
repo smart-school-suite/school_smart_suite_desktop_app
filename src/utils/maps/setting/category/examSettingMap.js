@@ -1,29 +1,57 @@
+import { createElement } from "react";
 import Switch from "../../../../components/input/Switch";
 import CaDefaultMaxScoreSetting from "../../../../ModalContent/Setting/Exam/CaDefaultMaxScoreSetting";
 import ExamDefaultMaxScoreSetting from "../../../../ModalContent/Setting/Exam/ExamDefaultMaxScoreSetting";
 import ResitExamDefaultMaxScoreSetting from "../../../../ModalContent/Setting/Exam/ResitExamDefaultMaxScoreSetting";
+import AutoCreateLevelsSetting from "../../../../ModalContent/Setting/AutoCreation/AutoCreateLevelsSetting";
+
+const isOn = (value) => value === true || value === 1 || value === "1" || value === "true";
+
+const AutoExamLevelsSetting = (props) =>
+  createElement(AutoCreateLevelsSetting, {
+    ...props,
+    title: "Levels for Automatic Exam Creation",
+    description:
+      "When an exam is created, specialties at the selected levels whose semester has the same start and end dates get it too. The specialty it is created for always gets it.",
+    requireOne: true,
+  });
 
 export const examSettingMap = {
   "exam.auto_create": {
     key: "exam.auto_create",
+    order: 1,
     editor: "switch",
     valueType: "boolean",
     component: Switch
   },
+  "exam.auto_create_levels": {
+    key: "exam.auto_create_levels",
+    order: 2,
+    editor: "modal",
+    valueType: "json",
+    component: AutoExamLevelsSetting,
+    disabledReason: (values) =>
+      isOn(values["exam.auto_create"] ?? true)
+        ? null
+        : "Turn on Automatically Create Exams for Matching Semesters to change this setting.",
+  },
   "exam.ca_default_max_score": {
     key: "exam.ca_default_max_score",
+    order: 3,
     editor: "modal",
     valueType: "float",
     component: CaDefaultMaxScoreSetting
   },
   "exam.exam_default_max_score": {
     key: "exam.exam_default_max_score",
+    order: 4,
     editor: "modal",
     valueType: "float",
     component: ExamDefaultMaxScoreSetting
   },
   "exam.resit_exam_default_max_score": {
     key: "exam.resit_exam_default_max_score",
+    order: 5,
     editor: "modal",
     valueType: "float",
     component: ResitExamDefaultMaxScoreSetting
