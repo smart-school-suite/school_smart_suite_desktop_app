@@ -10,6 +10,7 @@ import {
 } from "../../../ComponentConfig/YupValidationSchema";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
+import { useMaxGpa } from "../../../hooks/schoolBranchSetting/useMaxGpa";
 import {
   setDraftFieldValue,
   setDraftFieldValidation,
@@ -32,6 +33,7 @@ function GradeEditor({
   drawerData,
 }) {
   const dispatch = useDispatch();
+  const maxGpa = useMaxGpa();
   const moduleState = useSelector((state) => state.gradeScale.gradeScale);
   const config = moduleState?.configContext?.scale;
   const draftState = moduleState?.draft?.grades[config.letter_grade_id];
@@ -131,15 +133,18 @@ function GradeEditor({
             </div>
           </div>
           <div className="d-flex flex-column gap-1 w-100">
-            <span className="fw-semibold">Grade Point</span>
+            <span className="fw-semibold">
+              Grade Point{" "}
+              <span className="fw-normal text-iron-500">(0 – {maxGpa.toFixed(2)})</span>
+            </span>
             <NumberInput
               placeholder={"Enter Grade Point"}
               validationSchema={numberSchema({
                 min: 0,
-                max: 4.0,
+                max: maxGpa,
                 required: true,
                 messages: {
-                  max: `Grade Point Must Not Exceed 4`,
+                  max: `Grade points cannot exceed the Maximum Attainable GPA (${maxGpa.toFixed(2)})`,
                   min: `Grade Point Must Be Atleast 0`,
                   required: "Grade Point Required",
                 },
