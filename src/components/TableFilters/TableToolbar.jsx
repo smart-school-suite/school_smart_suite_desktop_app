@@ -317,7 +317,8 @@ function ChipPicker({ filters }) {
 
   return (
     <Popover
-      width={240}
+      width={220}
+      className="tf-pop--compact"
       trigger={
         <button
           type="button"
@@ -344,7 +345,7 @@ function ChipPicker({ filters }) {
               onChange={(event) => setQuery(event.target.value)}
             />
           )}
-          <ul className="tf-multi__list">
+          <ul className="tf-multi__list scrollbar-xs">
             {visible.map((column) => {
               const isOn = selected.includes(column.field);
               return (

@@ -23,6 +23,7 @@ function Popover({
   children,
   placement = "bottom-start",
   width = 300,
+  className = "",
 }) {
   const [open, setOpen] = useState(false);
   const { refs, floatingStyles, context } = useFloating({
@@ -58,7 +59,7 @@ function Popover({
                 ref={refs.setFloating}
                 style={{ ...floatingStyles, width, zIndex: 1050 }}
                 {...getFloatingProps()}
-                className="tf-pop"
+                className={`tf-pop ${className}`.trim()}
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
