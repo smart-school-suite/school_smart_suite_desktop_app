@@ -41,7 +41,11 @@ import {
 } from "../../utils/semesterTimetable/schedulerStatus";
 import BreakPeriodCard from "../Card/BreakPeriodCard";
 import PeriodCard from "../Card/PeriodCard";
+import { Drawer } from "../drawer/Drawer";
 import DrawerTrigger from "../drawer/DrawerTrigger";
+import ConstraintSummary from "../Timetable/ConstraintSummary";
+import { useGetSemesterTimetableConstraints } from "../../hooks/semesterTimetable/useGetSemesterTimetableConstraint";
+import { semesterTimetableConstraintMap } from "../../utils/maps/semesterTimetable/importSemesterTimetableMap";
 import RectangleSkeleton from "../SkeletonPageLoader/RectangularSkeleton";
 import { SingleSpinner } from "../Spinners/Spinners";
 
@@ -291,47 +295,85 @@ function GenerationProgress({ version, progress }) {
   );
 }
 
+/** Before the first generation: the defaults it will use; each opens its editor. */
 function TimetableGridPlaceholder() {
   const semesterTimetable = useSelector((state) => state.semesterTimetable);
   const hardConstraints = semesterTimetable.hard_constraints;
+  const { data: constraintList } = useGetSemesterTimetableConstraints();
+  const [active, setActive] = useState(null);
+
+  // The same editor drawer as the constraints list on the left.
+  const constraintFor = (key) => {
+    for (const category of constraintList?.data ?? []) {
+      const found = category.constraints?.find((item) => item.key === key);
+      if (found) return { ...found, category: category.category };
+    }
+    return null;
+  };
+  const editable = (key) => {
+    const constraint = constraintFor(key);
+    const entry = semesterTimetableConstraintMap[key];
+    return constraint && entry && entry.ready !== false ? () => setActive(constraint) : undefined;
+  };
+  const Editor = active ? semesterTimetableConstraintMap[active.key]?.component : null;
+  const { isConfigured } = useStartGeneration();
+
+  const range = (start, end) => (start && end ? `${start} – ${end}` : "Not set");
+  const duration = hardConstraints?.schedule_period_duration_minutes?.duration_minutes;
+  const rows = [
+    {
+      label: "Teaching hours",
+      value: range(hardConstraints?.operational_period?.start_time?.value, hardConstraints?.operational_period?.end_time?.value),
+      onEdit: editable("operational_period"),
+    },
+    {
+      label: "Period length",
+      value: duration ? `${duration} minutes` : "Not set",
+      onEdit: editable("schedule_period_duration_minutes"),
+    },
+    {
+      label: "Break",
+      value: range(hardConstraints?.break_period?.start_time?.value, hardConstraints?.break_period?.end_time?.value),
+      onEdit: editable("break_period"),
+    },
+  ];
+
   return (
-    <div className="d-flex flex-grow-1 align-items-center justify-content-center">
-      <div className="d-flex flex-column align-items-center gap-2">
-        <img
-          src="./sss-maskot/timetable.png"
-          alt="sss-timetable-maskot"
-          style={{
-            height: "120px",
-            width: "120px",
-            objectFit: "contain",
-          }}
-        />
-        <div className="font-size-sm d-flex flex-row align-items-center gap-2">
-          <span>
-            Configure Operational Period{" "}
-            {hardConstraints.operational_period.start_time.value} -{" "}
-            {hardConstraints.operational_period.end_time.value}
+    <div className="d-flex flex-grow-1 align-items-center justify-content-center w-100">
+      <div className="d-flex flex-column align-items-center gap-3" style={{ width: "min(30rem, 100%)" }}>
+        <div className="d-flex flex-column align-items-center gap-1 text-center">
+          <span className="fw-semibold">{isConfigured ? "Ready to generate" : "Set up the timetable"}</span>
+          <span className="font-size-sm text-iron-500">
+            {isConfigured
+              ? "The timetable will be generated with these settings. Click one to change it."
+              : "Click a setting to configure it."}
           </span>
         </div>
-        <div className="font-size-sm d-flex flex-row align-items-center gap-2">
-          <span>
-            Configure Period Duration{" "}
-            {
-              hardConstraints?.schedule_period_duration_minutes
-                ?.duration_minutes
-            }{" "}
-            minutes
-          </span>
-        </div>
-        <div className="font-size-sm d-flex flex-row align-items-center gap-2">
-          <span>
-            Configure Break Period{" "}
-            {hardConstraints.break_period.start_time.value} -{" "}
-            {hardConstraints.break_period.end_time.value}
-          </span>
-        </div>
+        <ConstraintSummary rows={rows} />
+        <span className="font-size-xs text-iron-500 text-center">
+          {isConfigured
+            ? "The other constraints are in the list on the left."
+            : "Set the teaching hours, period length and break to generate the timetable."}
+        </span>
         <GenerateButton />
       </div>
+      <Drawer
+        isOpen={Boolean(Editor)}
+        onClose={() => setActive(null)}
+        placement="right"
+        size="lg"
+        title={active?.name}
+        closeOnOutsideClick={false}
+        showHeader={false}
+      >
+        {Editor && (
+          <Editor
+            handleClose={() => setActive(null)}
+            constraint={active}
+            drawerData={{ ...semesterTimetable.schoolSemester }}
+          />
+        )}
+      </Drawer>
     </div>
   );
 }
